@@ -20,10 +20,12 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
+            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             if ((_v.Target.PlayerCategory & CharacterCategory.Female) == 0)
-                _v.TryAlterCommandStatuses();
+                TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
             else
                 _v.Context.Flags |= BattleCalcFlags.Miss;
+            TranceSeekCustomAPI.SpecialSA(_v);
         }
     }
 }

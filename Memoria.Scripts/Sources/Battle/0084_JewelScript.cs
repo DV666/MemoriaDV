@@ -21,10 +21,12 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
+            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             _v.MagicAccuracy();
             _v.Target.PenaltyShellHitRate();
             if (_v.TryMagicHit())
                 BattleItem.AddToInventory(RegularItem.Ore);
+            TranceSeekCustomAPI.SpecialSA(_v);
         }
     }
 }

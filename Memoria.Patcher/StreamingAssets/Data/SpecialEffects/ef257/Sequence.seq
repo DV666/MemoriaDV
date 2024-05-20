@@ -16,6 +16,7 @@ StartThread: CasterIsPlayer
 	ShowMesh: Char=Caster ; Enable=False ; IsDisappear=True
 EndThread
 EffectPoint: Char=AllTargets ; Type=Effect
+ChangeTextures: Char=Marcus ; Textures=CustomTextures/MarcusTrance/45_0.png CustomTextures/MarcusTrance/45_1.png
 Wait: Time=1
 StartThread: CasterIsPlayer
 	ShowMesh: Char=Caster ; Enable=True ; IsDisappear=True

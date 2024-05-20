@@ -244,6 +244,7 @@
     <Compile Include="Sources\Battle\0063_MagicSwordAttackScript.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
+    <Compile Include="Sources\Battle\0064_Special.cs" />
     <Compile Include="Sources\Battle\0065_EatScript.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
@@ -283,9 +284,13 @@
     <Compile Include="Sources\Battle\0077_DarkMatterScript.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
+    <Compile Include="Sources\Battle\0078_PumpkinHeadScript.cs" />
+    <Compile Include="Sources\Battle\0079_ReiWindScript.cs" />
     <Compile Include="Sources\Battle\0080_DoubleCastSpecial.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
+    <Compile Include="Sources\Battle\0081_BanditScript.cs" />
+    <Compile Include="Sources\Battle\0082_MagicAttackIgnoreDefenceScript.cs" />
     <Compile Include="Sources\Battle\0083_MassSpearScript.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
@@ -367,9 +372,20 @@
     <Compile Include="Sources\Battle\0109_MiniScript.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
+    <Compile Include="Sources\Battle\0110_FearScript.cs" />
+    <Compile Include="Sources\Battle\0111_ReactionScript.cs" />
+    <Compile Include="Sources\Battle\0112_CryintheNightScript.cs" />
+    <Compile Include="Sources\Battle\0113_ShockScript.cs" />
+    <Compile Include="Sources\Battle\0114_FullBreakScript.cs" />
+    <Compile Include="Sources\Battle\0115_MagicLancerScript.cs" />
+    <Compile Include="Sources\Battle\0116_LowRandomMagic.cs" />
+    <Compile Include="Sources\Battle\0117_Rollback.cs" />
+    <Compile Include="Sources\Battle\0118_PoisonMagicAttackScript.cs" />
+    <Compile Include="Sources\Battle\0119_PoisonMagicLancerScript.cs" />
     <Compile Include="Sources\Battle\BaseWeaponScript.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
+    <Compile Include="Sources\Battle\TranceSeekCustomAPI.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Assembly-CSharp\Assembly-CSharp.csproj">

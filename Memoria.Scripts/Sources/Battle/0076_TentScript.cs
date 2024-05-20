@@ -20,6 +20,7 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
+            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             _v.Target.Flags |= CalcFlag.HpAlteration | CalcFlag.HpRecovery | CalcFlag.MpAlteration | CalcFlag.MpRecovery;
             _v.Target.HpDamage = (Int32)(_v.Target.MaximumHp >> 1);
             _v.Target.MpDamage = (Int32)(_v.Target.MaximumMp >> 1);
@@ -28,8 +29,9 @@ namespace Memoria.Scripts.Battle
             if (item.HitRate < GameRandom.Next16() % 100)
             {
                 UiState.SetBattleFollowFormatMessage(BattleMesages.Bitten);
-                _v.Target.TryAlterStatuses(item.Status, false, _v.Caster);
+                _v.Target.TryAlterStatuses(item.Status, false);
             }
+            TranceSeekCustomAPI.SpecialSA(_v);
         }
     }
 }

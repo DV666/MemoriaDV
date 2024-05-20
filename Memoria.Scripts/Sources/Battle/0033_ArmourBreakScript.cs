@@ -1,4 +1,5 @@
-using System;
+﻿using System;
+using System.Collections.Generic;
 using Memoria.Data;
 
 namespace Memoria.Scripts.Battle
@@ -20,27 +21,69 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            _v.MagicAccuracy();
-            _v.Target.PenaltyShellHitRate();
-            if (_v.TryMagicHit())
-                _v.Target.PhysicalDefence /= 2;
+            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
+            if (!_v.Target.TryKillFrozen())
+            {
+                if (_v.Target.PhysicalDefence == 255)
+                {
+                    _v.Context.Flags |= BattleCalcFlags.Guard;
+                    return;
+                }
+                if (_v.Target.IsUnderAnyStatus(BattleStatus.Vanish) || _v.Target.PhysicalEvade == 255)
+                {
+                    _v.Context.Flags |= BattleCalcFlags.Miss;
+                    return;
+                }
+
+                if (_v.Caster.IsPlayer)
+                {
+                    _v.WeaponPhysicalParams();
+                    TranceSeekCustomAPI.CharacterBonusPassive(_v, "LowPhysicalAttack");
+                }
+                else
+                {
+                    _v.NormalPhysicalParams();
+                }
+                _v.MagicAccuracy();
+                _v.Caster.EnemyTranceBonusAttack();
+                _v.Caster.PhysicalPenaltyAndBonusAttack();
+                TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
+                _v.BonusElement();
+                if (TranceSeekCustomAPI.TryMagicHitWithoutBattleCalcFlag(_v) && TranceSeekCustomAPI.SPSSpecialStatus[_v.Target.Data][2] == -1)
+                {
+                    TranceSeekCustomAPI.AddSpecialSPS(_v.Target.Data, 2, -1, 1.0f);
+                }
+                _v.CalcHpDamage();
+                _v.TryAlterMagicStatuses();
+                TranceSeekCustomAPI.SpecialSA(_v);
+            } 
         }
 
         public Single RateTarget()
         {
-            Int32 defenceDiff = _v.Target.PhysicalDefence / 2;
+            _v.NormalMagicParams();
+            TranceSeekCustomAPI.CharacterBonusPassive(_v, "MagicAttack");
+            _v.Caster.PenaltyMini();
+            TranceSeekCustomAPI.PenaltyShellAttack(_v);
+            _v.PenaltyCommandDividedAttack();
+            _v.BonusElement();
 
-            Single result = defenceDiff * BattleScriptAccuracyEstimate.RatePlayerAttackEvade(_v.Context.Evade);
+            if (!TranceSeekCustomAPI.CanAttackMagic(_v))
+                return 0;
 
-            if (_v.Target.IsUnderAnyStatus(BattleStatus.Shell))
-                result *= BattleScriptAccuracyEstimate.RatePlayerAttackHit(_v.Context.HitRate >> 1);
-            else
-                result *= BattleScriptAccuracyEstimate.RatePlayerAttackHit(_v.Context.HitRate);
+            if (_v.Target.IsUnderAnyStatus(BattleStatus.Reflect) && !_v.Command.IsReflectNull)
+                return 0;
 
+            _v.CalcHpDamage();
+
+            Single rate = Math.Min(_v.Target.HpDamage, _v.Target.CurrentHp);
+
+            if ((_v.Target.Flags & CalcFlag.HpRecovery) == CalcFlag.HpRecovery)
+                rate *= -1;
             if (_v.Target.IsPlayer)
-                result *= -1;
+                rate *= -1;
 
-            return result;
+            return rate;
         }
     }
 }

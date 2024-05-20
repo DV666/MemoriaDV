@@ -1,4 +1,6 @@
-using System;
+﻿using System;
+using System.Collections.Generic;
+using FF9;
 using Memoria.Data;
 
 namespace Memoria.Scripts.Battle
@@ -20,18 +22,44 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            _v.Target.Flags |= CalcFlag.HpAlteration;
-
-            _v.WeaponPhysicalParams(CalcAttackBonus.Random);
-            _v.Context.Attack = _v.Context.Attack * 3 >> 1;
-
-            _v.Caster.PenaltyMini();
-            _v.Target.PhysicalPenaltyAndBonusAttack();
-
-            if (_v.Context.Attack < 4)
-                _v.Context.Attack = 4;
-            _v.CalcHpDamage();
-            _v.Target.HpDamage /= BattleState.TargetCount(false);
+            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
+            if (_v.Target.PhysicalDefence == 255)
+            {
+                _v.Context.Flags |= BattleCalcFlags.Guard;
+            }
+            else if (_v.Target.IsUnderAnyStatus(BattleStatus.Vanish) || _v.Target.PhysicalEvade == 255)
+            {
+                _v.Context.Flags |= BattleCalcFlags.Miss;
+                return;
+            }
+            else
+            {
+                int num = Comn.random16() % (1 + (_v.Caster.Level + _v.Caster.Strength >> 3));
+                _v.Context.AttackPower = _v.Caster.WeaponPower;
+                _v.Context.Attack = ((short)(_v.Caster.Strength + num));
+                if (_v.Caster.HasSupportAbility(SupportAbility1.HighJump) && GameRandom.Next8() % 2 == 0 || _v.Caster.HasSupportAbilityByIndex((SupportAbility)1021))
+                {
+                    if (TranceSeekCustomAPI.SPSSpecialStatus[_v.Target.Data][33] == -1)
+                    {
+                        TranceSeekCustomAPI.AddSpecialSPS(_v.Target.Data, 33, -1, 1.0f);
+                    }
+                }
+                byte PhysicalDefence = (byte)_v.Target.PhysicalDefence;
+                _v.Target.PhysicalDefence = (byte)(_v.Target.PhysicalDefence * 60 / 100);
+                _v.Target.SetPhysicalDefense();
+                _v.BonusSupportAbilitiesAttack();
+                _v.Caster.PenaltyMini();
+                TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
+                _v.Caster.BonusWeaponElement();
+                if (_v.CanAttackWeaponElementalCommand())
+                {
+                    TranceSeekCustomAPI.IpsenCastleMalus(_v);
+                    TranceSeekCustomAPI.RaiseTrouble(_v);
+                    _v.CalcPhysicalHpDamage();
+                }
+                _v.Target.PhysicalDefence = PhysicalDefence;
+            }
+            TranceSeekCustomAPI.SpecialSA(_v);
         }
     }
 }

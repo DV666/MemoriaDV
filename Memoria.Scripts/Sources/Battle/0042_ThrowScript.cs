@@ -1,4 +1,6 @@
 using System;
+using System.Runtime.Remoting.Contexts;
+using FF9;
 using Memoria.Data;
 
 namespace Memoria.Scripts.Battle
@@ -20,20 +22,94 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            if (_v.Target.TryKillFrozen())
-                return;
+            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
+            if (_v.Caster.IsPlayer)
+            {
+                if (_v.Command.ItemId == (RegularItem)1032) // Smoking Bomb
+                {
+                    btl_mot.HideMesh(_v.Target.Data, 65535, true);
+                    btl_cmd.SetCommand(FF9StateSystem.Battle.FF9Battle.cmd_escape, BattleCommandId.SysEscape, 1, 15, 1U);
+                }
+                else if (_v.Command.ItemId == (RegularItem)1033) // Image
+                {
+                    _v.Target.AlterStatus(BattleStatus.Vanish);
+                }
+                else
+                {
+                    if (_v.Command.ItemId == (RegularItem)1034 || _v.Command.ItemId == (RegularItem)1035 || _v.Command.ItemId == (RegularItem)1036)
+                    {
+                        _v.Context.AttackPower = _v.Command.Weapon.Power << 1;
+                        _v.Context.Attack = (Int16)(_v.Caster.Magic + Comn.random16() % (1 + (_v.Caster.Level + _v.Caster.Magic >> 3)));
+                        _v.Target.SetMagicDefense();
+                        _v.Caster.PenaltyMini();
+                        TranceSeekCustomAPI.PenaltyShellAttack(_v);
+                        if (_v.Target.IsUnderAnyStatus(BattleStatus.Vanish))
+                            _v.Target.RemoveStatus(BattleStatus.Vanish);
+                    }
+                    else
+                    {
+                        if (!_v.Target.TryKillFrozen())
+                        {
+                            if (_v.Target.IsUnderAnyStatus(BattleStatus.Vanish))
+                            {
+                                _v.Context.Flags |= BattleCalcFlags.Miss;
+                            }
+                            _v.Caster.SetLowPhysicalAttack();
+                            TranceSeekCustomAPI.CharacterBonusPassive(_v, "LowPhysicalAttack");
+                            _v.Target.SetPhysicalDefense();
+                            _v.Context.AttackPower = _v.Command.Weapon.Power << 1;
+                            _v.Caster.PhysicalPenaltyAndBonusAttack();
+                        }
+                    }
+                    if ((_v.Command.Weapon.Element & _v.Caster.WeakElement) != 0)
+                        _v.Context.Attack = (Int16)(_v.Context.Attack * 3 >> 1);
+                    TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
+                    if (CanAttackMagic(_v))
+                    {
+                        _v.CalcPhysicalHpDamage();
+                    }
+                    if (_v.Command.Weapon.HitRate > Comn.random16() % 100)
+                        _v.Target.TryAlterStatuses(_v.Command.Weapon.Status, false);
+                }
+            }
+            else
+            {
+                if (!_v.Target.TryKillFrozen())
+                {
+                    if (_v.Target.IsUnderAnyStatus(BattleStatus.Vanish))
+                    {
+                        _v.Context.Flags |= BattleCalcFlags.Miss;
+                    }
+                    else
+                    {
+                        _v.NormalPhysicalParams();
+                        _v.Caster.PhysicalPenaltyAndBonusAttack();
+                        _v.Caster.EnemyTranceBonusAttack();
+                        _v.Target.GambleDefence();
+                        TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
+                        TranceSeekCustomAPI.BonusBackstabAndPenaltyLongDistanceTranceSeek(_v);
+                        _v.CalcHpDamage();
+                        TranceSeekCustomAPI.RaiseTrouble(_v);
+                        _v.TryAlterMagicStatuses();
+                    }
+                }
+            }
+            TranceSeekCustomAPI.SpecialSA(_v);
+        }
 
-            _v.Caster.SetLowPhysicalAttack();
-            _v.Target.SetPhysicalDefense();
-            _v.Context.AttackPower = _v.Command.Weapon.Power << 1;
+        public static Boolean CanAttackMagic(BattleCalculator _v)
+        {
+            if (_v.Target.CanGuardElement(_v.Command.Weapon.Element))
+                return false;
 
-            _v.Caster.PhysicalPenaltyAndBonusAttack();
-            _v.Target.PhysicalPenaltyAndBonusAttack();
-
-            if (_v.Target.HasCategory(EnemyCategory.Flight))
-                _v.Context.Attack = _v.Context.Attack * 3 >> 1;
-
-            _v.CalcPhysicalHpDamage();
+            _v.Target.PenaltyHalfElement(_v.Command.Weapon.Element);
+            _v.Target.BonusWeakElement(_v.Command.Weapon.Element);
+            if (_v.Target.CanAbsorbElement(_v.Command.Weapon.Element))
+            {
+                // v.Context.DefensePower = 0;
+            }
+            _v.Target.AlterStatuses(_v.Command.Weapon.Element);
+            return true;
         }
     }
 }

@@ -19,8 +19,10 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
+            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             _v.Target.Flags |= CalcFlag.HpAlteration;
             _v.Target.HpDamage = 1 << Math.Min(20, GameState.Tonberies - 1);
+            TranceSeekCustomAPI.SpecialSA(_v);
         }
     }
 }

@@ -19,6 +19,7 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
+            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             if (_v.Caster.CurrentHp != 1)
             {
                 _v.Context.Flags |= BattleCalcFlags.Miss;
@@ -27,6 +28,7 @@ namespace Memoria.Scripts.Battle
 
             _v.Target.Flags |= CalcFlag.HpAlteration;
             _v.Target.HpDamage = _v.Command.Power * 100 + _v.Command.HitRate;
+            TranceSeekCustomAPI.SpecialSA(_v);
         }
     }
 }

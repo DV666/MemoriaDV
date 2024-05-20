@@ -1,3 +1,4 @@
+using Memoria.Data;
 using System;
 
 namespace Memoria.Scripts.Battle
@@ -10,6 +11,7 @@ namespace Memoria.Scripts.Battle
         public WillWeaponScript(BattleCalculator v)
             : base(v, CalcAttackBonus.WillPower)
         {
+
         }
     }
 }

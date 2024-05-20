@@ -19,8 +19,10 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
+            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             _v.Target.Flags |= CalcFlag.HpAlteration;
             _v.Target.HpDamage = _v.Command.Item.Power * (ff9item.FF9Item_GetCount(_v.Command.ItemId) + 1);
+            TranceSeekCustomAPI.SpecialSA(_v);
         }
     }
 }

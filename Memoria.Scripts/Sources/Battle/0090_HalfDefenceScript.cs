@@ -19,8 +19,10 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
+            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             _v.Target.PhysicalDefence /= 2;
             _v.Target.MagicDefence /= 2;
+            TranceSeekCustomAPI.SpecialSA(_v);
         }
     }
 }

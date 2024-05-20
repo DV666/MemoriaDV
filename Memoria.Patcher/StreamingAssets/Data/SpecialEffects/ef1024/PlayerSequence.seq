@@ -1,0 +1,33 @@
+// Player sequence of SidéMoug
+
+StartThread: Target = Caster ; Sync=True
+	PlaySound: Sound=1362
+	SetupReflect: Delay=SFXLoaded
+	LoadSFX: SFX=Red_Smoke ; Reflect=True ; Target=Caster ; Char=Caster
+	WaitSFXLoaded: SFX=Red_Smoke ; Reflect=True
+	PlaySFX: SFX=Red_Smoke ; Reflect=True ; SkipSequence
+	PlaySound: Sound=1074
+	PlaySound: Sound=1075
+	PlaySound: Sound=1076
+	EffectPoint: Char=AllTargets ; Type=Both
+	WaitSFXDone: SFX=Red_Smoke ; Reflect=True
+	LoadSFX: SFX=Red_Smoke ; Reflect=True ; Target=Caster
+	Channel
+	WaitSFXLoaded: SFX=Red_Smoke ; Reflect=True
+	Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
+	PlayAnimation: Char=Caster ; Anim=ANH_NPC_F4_MOG_INTO_EIK_2
+	WaitAnimation: Char=Caster
+	PlaySound: Sound=1363
+	StopChannel
+	PlaySFX: SFX=Red_Smoke ; Reflect=True ; SkipSequence ; Target=Caster ; Char=Caster
+	PlaySound: Sound=1074
+	PlaySound: Sound=1075
+	PlaySound: Sound=1076
+	EffectPoint: Char=AllTargets ; Type=Both
+	WaitSFXDone: SFX=Red_Smoke ; Reflect=True
+EndThread
+LoadSFX: SFX=Poly ; Reflect=True
+WaitSFXLoaded: SFX=Poly ; Reflect=True
+PlaySFX: SFX=Poly ; Reflect=True ; MeshColors=(1.0, 0.0, 0.5)
+WaitSFXDone: SFX=Poly ; Reflect=True
+WaitAnimation: Char=Caster

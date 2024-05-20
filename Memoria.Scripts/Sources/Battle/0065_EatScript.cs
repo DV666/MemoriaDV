@@ -1,6 +1,8 @@
 using System;
+using System.Runtime.Remoting.Contexts;
 using Assets.Sources.Scripts.UI.Common;
 using FF9;
+using Memoria.Assets;
 using Memoria.Data;
 
 namespace Memoria.Scripts.Battle
@@ -22,39 +24,142 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            if (!_v.Target.CheckUnsafetyOrMiss() || !_v.Target.CanBeAttacked() || _v.Target.HasCategory(EnemyCategory.Humanoid))
-            {
-                _v.Context.EatResult = EatResult.CannotEat;
-                UiState.SetBattleFollowFormatMessage(BattleMesages.CannotEat);
-                return;
-            }
-
-            if (_v.Target.CurrentHp > _v.Target.MaximumHp / _v.Command.Power)
-            {
-                _v.Context.EatResult = EatResult.Failed;
-                UiState.SetBattleFollowFormatMessage(BattleMesages.CannotEatStrong);
-                return;
-            }
-
+            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             BattleEnemyPrototype enemyPrototype = BattleEnemyPrototype.Find(_v.Target);
             Int32 blueMagicId = enemyPrototype.BlueMagicId;
-            _v.Target.Kill(_v.Caster);
-
-            if (blueMagicId == 0 || ff9abil.FF9Abil_IsMaster(_v.Caster.Player, blueMagicId))
+            if (_v.Caster.IsUnderAnyStatus(BattleStatus.Trance))
             {
-                _v.Context.EatResult = EatResult.TasteBad;
-                UiState.SetBattleFollowFormatMessage(BattleMesages.TasteBad);
-                return;
+                _v.WeaponPhysicalParams(CalcAttackBonus.Random);
+                _v.BonusSupportAbilitiesAttack();
+                _v.Caster.PhysicalPenaltyAndBonusAttack();
+                _v.Target.GambleDefence();
+                TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
+                TranceSeekCustomAPI.BonusBackstabAndPenaltyLongDistanceTranceSeek(_v);
+                _v.Caster.BonusWeaponElement();
+                if (_v.CanAttackWeaponElementalCommand())
+                {
+                    TranceSeekCustomAPI.TryCriticalHit(_v);
+                    TranceSeekCustomAPI.IpsenCastleMalus(_v);
+                    _v.Target.Flags |= (CalcFlag.HpAlteration | CalcFlag.MpAlteration);
+                    _v.Caster.Flags |= (CalcFlag.HpAlteration | CalcFlag.HpRecovery | CalcFlag.MpAlteration | CalcFlag.MpRecovery);
+                    int hpDamage = Math.Min(9999, _v.Context.PowerDifference * _v.Context.EnsureAttack);
+                    int mpDamage = Math.Min(9999, _v.Context.PowerDifference * _v.Context.EnsureAttack >> 4);
+                    if (_v.Target.CurrentHp < hpDamage && !_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill) && !_v.Target.HasCategory(EnemyCategory.Humanoid))
+                    {
+                        hpDamage = (int)(_v.Target.CurrentHp - 1);
+                    }
+                    _v.Target.HpDamage = hpDamage;
+                    _v.Target.MpDamage = mpDamage;
+                    _v.Caster.HpDamage = hpDamage;
+                    _v.Caster.MpDamage = mpDamage;
+                }
             }
-
-            _v.Context.EatResult = EatResult.Yummy;
-
-            ff9abil.FF9Abil_SetMaster(_v.Caster.Player, blueMagicId);
-            BattleState.RaiseAbilitiesAchievement(blueMagicId);
-            if (ff9abil.IsAbilityActive(blueMagicId))
-                UiState.SetBattleFollowFormatMessage(BattleMesages.Learned, FF9TextTool.ActionAbilityName(ff9abil.GetActiveAbilityFromAbilityId(blueMagicId)));
+            if ((blueMagicId == 0 || !_v.Target.CanBeAttacked() || btl_util.getEnemyTypePtr(_v.Target.Data).category == 1))
+            {
+                if (!_v.Caster.IsUnderAnyStatus(BattleStatus.Trance))
+                {
+                    UiState.SetBattleFollowFormatMessage(BattleMesages.CannotEat, new object[0]);
+                    _v.Context.Flags |= BattleCalcFlags.Miss;
+                    return;
+                }
+            }
             else
-                UiState.SetBattleFollowFormatMessage(BattleMesages.Learned, FF9TextTool.SupportAbilityName(ff9abil.GetSupportAbilityFromAbilityId(blueMagicId)));
+            {
+                if (_v.Target.CurrentHp <= _v.Target.MaximumHp / _v.Command.Power)
+                {
+                    if (blueMagicId == 0 || ff9abil.FF9Abil_IsMaster(_v.Caster.Player, blueMagicId))
+                    {
+                        _v.Caster.Flags |= (CalcFlag.HpAlteration | CalcFlag.HpRecovery | CalcFlag.MpAlteration | CalcFlag.MpRecovery);
+                        _v.Caster.HpDamage = (int)(_v.Caster.MaximumHp / (_v.Command.Power / 2));
+                        _v.Caster.MpDamage = (int)(_v.Caster.MaximumMp / (_v.Command.Power / 2));
+                        UiState.SetBattleFollowFormatMessage(BattleMesages.TasteBad);
+                    }
+                    else
+                    {
+                        _v.Caster.Flags |= (CalcFlag.HpAlteration | CalcFlag.HpRecovery | CalcFlag.MpAlteration | CalcFlag.MpRecovery);
+                        _v.Caster.HpDamage = (int)(_v.Caster.MaximumHp / _v.Command.Power);
+                        _v.Caster.MpDamage = (int)(_v.Caster.MaximumMp / _v.Command.Power);
+                        ff9abil.FF9Abil_SetMaster(_v.Caster.Player, blueMagicId);
+                        BattleState.RaiseAbilitiesAchievement(blueMagicId);
+                        if (ff9abil.IsAbilityActive(blueMagicId))
+                            UiState.SetBattleFollowFormatMessage(BattleMesages.Learned, FF9TextTool.ActionAbilityName(ff9abil.GetActiveAbilityFromAbilityId(blueMagicId)));
+                        else
+                            UiState.SetBattleFollowFormatMessage(BattleMesages.Learned, FF9TextTool.SupportAbilityName(ff9abil.GetSupportAbilityFromAbilityId(blueMagicId)));
+                    }
+                    _v.Target.Kill(_v.Caster);
+                }
+                else
+                {
+                    if (!_v.Caster.IsUnderAnyStatus(BattleStatus.Trance) && blueMagicId != 0)
+                    {
+                        if (_v.Target.CurrentHp <= _v.Target.MaximumHp / 4U)
+                        {
+                            if ((EmbadedTextResources.CurrentSymbol ?? Localization.GetSymbol()) == "FR")
+                            {
+                                UIManager.Battle.SetBattleMessage("Miam ! Encore quelques coups de fourchettes...", 3);
+                            }
+                            else
+                            {
+                                UIManager.Battle.SetBattleMessage("Yummy! A few more fork strokes...", 3);
+                            }
+                        }
+                        else
+                        {
+                            if (_v.Target.CurrentHp > _v.Target.MaximumHp / 2U)
+                            {
+                                UiState.SetBattleFollowFormatMessage(BattleMesages.CannotEatStrong, new object[0]);
+                            }
+                            else
+                            {
+                                if ((EmbadedTextResources.CurrentSymbol ?? Localization.GetSymbol()) == "FR")
+                                {
+                                    UIManager.Battle.SetBattleMessage("Plus de la moitié du travail a été fait... Miam !", 3);
+                                }
+                                else
+                                {
+                                    UIManager.Battle.SetBattleMessage("More than half the work has been done... Yummy !", 3);
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (!_v.Target.HasCategory(EnemyCategory.Humanoid) && blueMagicId != 0)
+                        {
+                            if (_v.Target.CurrentHp <= _v.Target.MaximumHp / 4U)
+                            {
+                                if ((EmbadedTextResources.CurrentSymbol ?? Localization.GetSymbol()) == "FR")
+                                {
+                                    UIManager.Battle.SetBattleMessage("Miam ! Encore quelques coups de fourchettes...", 3);
+                                }
+                                else
+                                {
+                                    UIManager.Battle.SetBattleMessage("Yummy! A few more fork strokes...", 3);
+                                }
+                            }
+                            else
+                            {
+                                if (_v.Target.CurrentHp <= _v.Target.MaximumHp / 2U)
+                                {
+                                    if ((EmbadedTextResources.CurrentSymbol ?? Localization.GetSymbol()) == "FR")
+                                    {
+                                        UIManager.Battle.SetBattleMessage("Plus de la moitié du travail a été fait... Miam !", 3);
+                                    }
+                                    else
+                                    {
+                                        UIManager.Battle.SetBattleMessage("More than half the work has been done... Yummy !", 3);
+                                    }
+                                }
+                                else
+                                {
+                                    UiState.SetBattleFollowFormatMessage(BattleMesages.CannotEatStrong, new object[0]);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            TranceSeekCustomAPI.SpecialSA(_v);
         }
 
         public Single RateTarget()

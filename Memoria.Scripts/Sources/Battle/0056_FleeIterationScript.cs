@@ -19,6 +19,7 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
+            // TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             if (_v.CanEscape())
             {
                 _v.TryEscape();

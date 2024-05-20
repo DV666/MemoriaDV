@@ -1,4 +1,6 @@
+using Memoria.Data;
 using System;
+using UnityEngine;
 
 namespace Memoria.Scripts.Battle
 {
@@ -19,19 +21,34 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
+            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             _v.NormalPhysicalParams();
+            TranceSeekCustomAPI.CharacterBonusPassive(_v, "PhysicalAttack");
             _v.Caster.PhysicalPenaltyAndBonusAttack();
-            _v.Target.PhysicalPenaltyAndBonusAttack();
-            _v.BonusBackstabAndPenaltyLongDistance();
+            _v.Target.GambleDefence();
+            TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
+            TranceSeekCustomAPI.BonusBackstabAndPenaltyLongDistanceTranceSeek(_v);
             _v.BonusElement();
-            if (!_v.CanAttackElementalCommand())
-                return;
-
-            _v.CalcHpDamage();
-            if (_v.Target.Row != 0)
-                _v.Target.ChangeRow();
-
-            _v.TryAlterMagicStatuses();
+            if (_v.CanAttackElementalCommand())
+            {
+                _v.CalcHpDamage();
+                if (_v.Command.HitRate == 255)
+                {
+                    if ((Mathf.Abs((_v.Caster.Row - _v.Target.Row)) <= 1) && (!_v.Target.HasSupportAbilityByIndex((SupportAbility)1026))) // Stone Skin+
+                    {
+                        _v.Target.ChangeRow();
+                    }
+                }
+                else
+                {
+                    if ((_v.Target.Row > 0) && (!_v.Target.HasSupportAbilityByIndex((SupportAbility)1026))) // Stone Skin+
+                    {
+                        _v.Target.ChangeRow();
+                    }
+                }
+                _v.TryAlterMagicStatuses();
+            }
+            TranceSeekCustomAPI.SpecialSA(_v);
         }
     }
 }
