@@ -26,7 +26,7 @@ namespace Memoria.Scripts.Battle
 
         public static Dictionary<BTL_DATA, Int32[]> MonsterMechanic = new Dictionary<BTL_DATA, Int32[]>(); // [0] => Trance Activated ; [1] => Special1 ; [2] => Special2 ; [3] => HPBoss10000? ; [4] => ResistStatusEasyKill ; [5] => Dragon
 
-        public static Dictionary<BTL_DATA, Int32[]> SpecialSAEffect = new Dictionary<BTL_DATA, Int32[]>(); // [0] => Millionaire (not used anymore) ; [1] => LastStand ; [2] => Instinct ; [3] => ResetOnDeath
+        public static Dictionary<BTL_DATA, Int32[]> SpecialSAEffect = new Dictionary<BTL_DATA, Int32[]>(); // [0] => Millionaire (not used anymore) ; [1] => LastStand ; [2] => Instinct ; [3] => ResetOnDeath ; [4] => Mode EX
         public static Dictionary<BTL_DATA, Int32[]> PerfectBonus = new Dictionary<BTL_DATA, Int32[]>(); // [0] => Dodge ; [1] => Crit ; [2] => Not used anymore
         public static Dictionary<BTL_DATA, Int32[]> RollBackStats = new Dictionary<BTL_DATA, Int32[]>();
         public static Dictionary<BTL_DATA, BattleStatus> RollBackBattleStatus = new Dictionary<BTL_DATA, BattleStatus>();
@@ -96,7 +96,7 @@ namespace Memoria.Scripts.Battle
                     if (!MonsterMechanic.TryGetValue(unit.Data, out Int32[] monstermechanic))
                         MonsterMechanic[unit.Data] = new Int32[] { 0, 0, 0, 0, 120, 0 };
                     if (!SpecialSAEffect.TryGetValue(unit.Data, out Int32[] specialSAeffect))
-                        SpecialSAEffect[unit.Data] = new Int32[] { 0, 0, 2, 0 };
+                        SpecialSAEffect[unit.Data] = new Int32[] { 0, 0, 2, 0, 0 };
                     if (!RollBackStats.TryGetValue(unit.Data, out Int32[] rb))
                         RollBackStats[unit.Data] = new Int32[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
                     if (!RollBackBattleStatus.TryGetValue(unit.Data, out BattleStatus rs))
@@ -1592,10 +1592,18 @@ namespace Memoria.Scripts.Battle
             {
                 HealHPSAOrItem += v.Target.HpDamage / (v.Caster.HasSupportAbilityByIndex((SupportAbility)1115) ? 2 : 4);
             }
-            if (v.Caster.HasSupportAbilityByIndex((SupportAbility)117)) // Mode EX
+            if (v.Caster.HasSupportAbilityByIndex((SupportAbility)117) && SpecialSAEffect[v.Caster][4] == 0) // Mode EX
             {
                 HealHPSAOrItem += (int)(v.Caster.MaximumHp * (v.Caster.HasSupportAbilityByIndex((SupportAbility)1117) ? 16 : 8) / 100);
                 HealMPSAOrItem += (int)(v.Caster.MaximumMp * (v.Caster.HasSupportAbilityByIndex((SupportAbility)1117) ? 16 : 8) / 100);
+                SpecialSAEffect[v.Caster][4] = 1;
+                v.Caster.AddDelayedModifier(
+                caster => caster.CurrentAtb >= caster.MaximumAtb,
+                caster =>
+                {
+                    SpecialSAEffect[v.Caster][4] = 0;
+                }
+                );
             }
             if (HealHPSAOrItem > 0 || HealMPSAOrItem > 0)
             {
