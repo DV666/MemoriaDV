@@ -229,13 +229,14 @@ namespace Memoria.Scripts.Battle
                     TranceSeekCustomAPI.ModelEiko[_v.Caster.Data] = "";
                 }
             }
-            else if (_v.Caster.Data.dms_geo_id == 573)
+            else if (_v.Caster.Data.dms_geo_id == 573) // Duel - Le Rouge
             {
                 if (_v.Command.Power == 1)
                 {
                     _v.Caster.Data.mot[0] = "ANH_MAIN_B0_012_401";
                     _v.Caster.Data.mot[2] = "ANH_MAIN_B0_012_401";
-                    
+                    _v.Caster.AlterStatus(BattleStatus.Defend, _v.Caster);
+
                 }
                 else if (_v.Command.Power == 2)
                 {

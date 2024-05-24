@@ -1,4 +1,5 @@
 using FF9;
+using Memoria.Data;
 using System;
 
 namespace Memoria.Scripts.Battle
@@ -26,10 +27,10 @@ namespace Memoria.Scripts.Battle
 
                 if (_v.Caster.Data.mot[0] == "ANH_MAIN_B0_012_401") // Red Scarlet Fight
                 {
-                    _v.Caster.PhysicalDefence = 14;
                     _v.Caster.PhysicalEvade = 10;
                     _v.Caster.Data.mot[0] = "ANH_MON_B3_182_000";
                     _v.Caster.Data.mot[2] = "ANH_MON_B3_182_003";
+                    _v.Caster.RemoveStatus(BattleStatus.Defend);
                 }
             }
             if (!_v.Target.TryKillFrozen())
