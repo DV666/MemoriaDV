@@ -28,7 +28,7 @@ namespace Memoria.Scripts.Battle
                 if (_v.Command.ItemId == (RegularItem)1032) // Smoking Bomb
                 {
                     btl_mot.HideMesh(_v.Target.Data, 65535, true);
-                    btl_cmd.SetCommand(FF9StateSystem.Battle.FF9Battle.cmd_escape, BattleCommandId.SysEscape, 1, 15, 1U);
+                    BattleState.EnqueueCommand(BattleState.EscapeCommand, BattleCommandId.SysEscape, 0U, 15, true);
                 }
                 else if (_v.Command.ItemId == (RegularItem)1033) // Image
                 {
