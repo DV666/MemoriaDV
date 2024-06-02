@@ -1,6 +1,6 @@
 // Player sequence of SFX Throw_Disc
 
-StartThread: Condition=WeaponThrowShape == 43 && WeaponThrowColor == 1
+StartThread: Condition=WeaponThrowShape == 43 && GetItemProperty(ItemUseId, 'Color') == 1
 	WaitAnimation: Char=Caster
 	Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
 	LoadSFX: SFX=Flame_2
@@ -22,7 +22,7 @@ StartThread: Condition=WeaponThrowShape == 43 && WeaponThrowColor == 1
 		PlaySFX: SFX=Flame_2
 	EndThread
 	WaitSFXDone: SFX=Flame_2 ; Reflect=True
-ElseThread: Condition=WeaponThrowShape == 43 && WeaponThrowColor == 2
+ElseThread: Condition=WeaponThrowShape == 43 && GetItemProperty(ItemUseId, 'Color') == 2
 	WaitAnimation: Char=Caster
 	Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
 	LoadSFX: SFX=Tsunami
@@ -44,7 +44,7 @@ ElseThread: Condition=WeaponThrowShape == 43 && WeaponThrowColor == 2
 		PlaySFX: SFX=Tsunami
 	EndThread
 	WaitSFXDone: SFX=Tsunami ; Reflect=True
-ElseThread: Condition=WeaponThrowShape == 43 && WeaponThrowColor == 3
+ElseThread: Condition=WeaponThrowShape == 43 && GetItemProperty(ItemUseId, 'Color') == 3
 	WaitAnimation: Char=Caster
 	Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
 	Turn: Char=Caster ; BaseAngle=AllTargets ; Time=5
@@ -68,7 +68,7 @@ ElseThread: Condition=WeaponThrowShape == 43 && WeaponThrowColor == 3
 		EndThread
 	EndThread
 	WaitSFXDone: SFX=Lightning ; Reflect=True
-ElseThread: Condition=WeaponThrowShape == 43 && WeaponThrowColor == 4
+ElseThread: Condition=WeaponThrowShape == 43 && GetItemProperty(ItemUseId, 'Color') == 4
 	WaitAnimation: Char=Caster
 	Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
 	Turn: Char=Caster ; BaseAngle=AllTargets ; Time=5
@@ -92,7 +92,7 @@ ElseThread: Condition=WeaponThrowShape == 43 && WeaponThrowColor == 4
 		EndThread
 	EndThread
 	WaitSFXDone: SFX=Lightning ; Reflect=True
-ElseThread: Condition=WeaponThrowShape == 43 && WeaponThrowColor == 5
+ElseThread: Condition=WeaponThrowShape == 43 && GetItemProperty(ItemUseId, 'Color') == 5
 	WaitAnimation: Char=Caster
 	Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
 	LoadSFX: SFX=Vanish
