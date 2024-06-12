@@ -41,6 +41,7 @@ namespace Memoria.Assets
             public static String ItemEffectsFile => "ItemEffects.csv";
             public static String ShopItems => "ShopItems.csv";
             public static String InitialItemsFile => "InitialItems.csv";
+            public static String MixItemsFile => "MixItems.csv";
             public static String ItemEquipPatchFile => "ItemEquipPatch.txt";
 
             public static String ModDirectory(String modFolder)
@@ -158,6 +159,22 @@ namespace Memoria.Assets
             public static readonly String Directory = AssetManagerUtil.GetStreamingAssetsPath() + "/" + PureDirectory;
 
             public static String TripleTriadFile => "TripleTriad.csv";
+
+            public static String ModDirectory(String modFolder)
+            {
+                if (String.IsNullOrEmpty(modFolder))
+                    return Directory;
+                return modFolder + "/" + AssetManagerUtil.GetStreamingAssetsPath() + "/" + PureDirectory;
+            }
+        }
+
+        public static class SpecialEffects
+        {
+            public static readonly String PureDirectory = PureDataDirectory + "SpecialEffects/";
+            public static readonly String Directory = AssetManagerUtil.GetStreamingAssetsPath() + "/" + PureDirectory;
+
+            public static String SPSPrototypeFile => "Common/SPS.csv";
+            public static String SHPPrototypeFile => "Common/SHP.csv";
 
             public static String ModDirectory(String modFolder)
             {

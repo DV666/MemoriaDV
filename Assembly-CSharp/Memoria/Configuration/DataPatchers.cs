@@ -294,7 +294,24 @@ namespace Memoria
 						}
 					}
 				}
-				else if (String.Compare(entry[0], "WorldMusicList") == 0 && entry.Length >= 7)
+                else if (String.Compare(entry[0], "MixCommand") == 0)
+                {
+                    // eg.: MixCommand Add 1000
+                    Boolean add = String.Compare(entry[1], "Remove") != 0;
+                    if (String.Compare(entry[1], "Set") == 0)
+                        BattleHUD.MixCommandSet.Clear();
+                    for (Int32 i = 2; i < entry.Length; i++)
+                    {
+                        if (entry[i].TryEnumParse(out BattleCommandId cmdId))
+                        {
+                            if (add)
+                                BattleHUD.MixCommandSet.Add(cmdId);
+                            else
+                                BattleHUD.MixCommandSet.Remove(cmdId);
+                        }
+                    }
+                }
+                else if (String.Compare(entry[0], "WorldMusicList") == 0 && entry.Length >= 7)
 				{
 					// eg.: WorldMusicList 69 22 112 45 95 96 61 62
 					if (ff9.w_musicSet == null)
@@ -487,26 +504,6 @@ namespace Memoria
                     }
                     String[] TexturesCustomModel = TexturesList.ToArray();
                     ModelFactory.CustomModelField.Add(entry[1] + "#" + entry[2], TexturesCustomModel);
-                }
-                else if (String.Compare(entry[0], "SPSTexture") == 0)
-                {
-                    // eg.: SPSTexture customfireorb shp 3 400 0 0 5 5
-                    if (!Int32.TryParse(entry[3], out Int32 numbertexture))
-                        continue;
-                    if (!float.TryParse(entry[4], out float posx))
-                        continue;
-                    if (!float.TryParse(entry[5], out float posy))
-                        continue;
-                    if (!float.TryParse(entry[6], out float posz))
-                        continue;
-
-                    if (!float.TryParse(entry[7], out float SPSScale))
-                        SPSScale = 4;
-                    if (!float.TryParse(entry[8], out float SPSDistance))
-                        SPSDistance = 5;
-
-                    Vector3 SPSpos = new Vector3(posx, posy, posz);
-                    BattleSPSSystem.statusTextures.Add(new BattleSPSSystem.SPSTexture(entry[1], entry[2], numbertexture, SPSpos, SPSScale, SPSDistance));
                 }
             }
 			if (shouldUpdateBattleStatus)

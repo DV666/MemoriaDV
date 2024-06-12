@@ -1,4 +1,5 @@
-﻿using FF9;
+﻿using Assets.Sources.Scripts.UI.Common;
+using FF9;
 using Memoria;
 using Memoria.Data;
 using Memoria.Database;
@@ -190,6 +191,13 @@ public partial class BattleHUD : UIScene
                         SetCommandVisibility(false, false);
                         SetItemPanelVisibility(true, false);
                     }
+                    else if (ff9Command.Type == CharacterCommandType.Item)
+                    {
+                        _subMenuType = SubMenuType.Item;
+                        DisplayItem(false);
+                        SetCommandVisibility(false, false);
+                        SetItemPanelVisibility(true, false);
+                    }
                     break;
                 case BattleCommandMenu.Item:
                     DisplayItem(false);
@@ -264,11 +272,27 @@ public partial class BattleHUD : UIScene
         {
             if (_itemIdList[_currentSubMenuIndex] != RegularItem.NoItem)
             {
+                ItemListDetailWithIconHUD detailHUD = new ItemListDetailWithIconHUD(go, true);
+                if (detailHUD.NameLabel.color == FF9TextTool.Gray || detailHUD.NameLabel.color == FF9TextTool.DarkYellow)
+                {
+                    FF9Sfx.FF9SFX_Play(102);
+                    return true;
+                }
                 FF9Sfx.FF9SFX_Play(103);
                 _currentSubMenuIndex = go.GetComponent<RecycleListItem>().ItemDataIndex;
                 _abilityCursorMemorize[new PairCharCommand(CurrentPlayerIndex, _currentCommandId)] = _currentSubMenuIndex;
-                SetItemPanelVisibility(false, false);
-                SetTargetVisibility(true);
+                if (IsMixCast && _doubleCastCount < 2)
+                {
+                    ++_doubleCastCount;
+                    _firstCommand = ProcessCommand(1, _cursorType);
+                    DisplayItem(CharacterCommands.Commands[_firstCommand.CommandId].Type == CharacterCommandType.Throw);
+                    SetItemPanelVisibility(true, true);
+                }
+                else
+                {
+                    SetItemPanelVisibility(false, false);
+                    SetTargetVisibility(true);
+                }
             }
             else
             {
@@ -309,7 +333,10 @@ public partial class BattleHUD : UIScene
                             SetItemPanelVisibility(true, true);
                             break;
                         }
-                        SetCommandVisibility(true, true);
+                        if (IsMixCast)
+                            SetItemPanelVisibility(true, true);
+                        else
+                            SetCommandVisibility(true, true);
                         break;
                     case BattleCommandMenu.Item:
                         SetItemPanelVisibility(true, true);
@@ -334,8 +361,18 @@ public partial class BattleHUD : UIScene
             else if (ButtonGroupState.ActiveGroup == ItemGroupButton)
             {
                 FF9Sfx.FF9SFX_Play(101);
-                SetItemPanelVisibility(false, false);
-                SetCommandVisibility(true, true);
+                if (IsDoubleCast && _doubleCastCount > 0)
+                    --_doubleCastCount;
+                if (_doubleCastCount == 0)
+                {
+                    SetItemPanelVisibility(false, false);
+                    SetCommandVisibility(true, true);
+                }
+                else
+                {
+                    SetItemPanelVisibility(true, false);
+                    DisplayItem(CharacterCommands.Commands[_currentCommandId].Type == CharacterCommandType.Throw);
+                }
             }
             else if (ButtonGroupState.ActiveGroup == String.Empty && UIManager.Input.ContainsAndroidQuitKey())
             {

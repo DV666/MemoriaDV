@@ -507,6 +507,9 @@
     <None Include="StreamingAssets\Data\Items\InitialItems.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="StreamingAssets\Data\Items\MixItems.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="StreamingAssets\Data\Items\ShopItems.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -538,6 +541,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="StreamingAssets\Data\SpecialEffects\Common\SequenceDefend.seq">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="StreamingAssets\Data\SpecialEffects\Common\SHP.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="StreamingAssets\Data\SpecialEffects\Common\SPS.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="StreamingAssets\Data\SpecialEffects\ef000\PlayerSequence.seq">
