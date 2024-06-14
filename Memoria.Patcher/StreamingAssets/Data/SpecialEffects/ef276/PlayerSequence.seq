@@ -14,6 +14,7 @@ StartThread: Condition=CasterCharacterIndex == CharacterId_Garnet
 		Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
 		Channel
 		PlayAnimation: Char=Caster ; Anim=ANH_MAIN_B0_002_601 ; Loop=True
+		SetBackgroundIntensity: Intensity=0.5 ; Time=20
 		WaitSFXLoaded: SFX=Ifrit__Full ; Reflect=True
 		WaitAnimation: Char=Caster
 		PlayAnimation: Char=Caster ; Anim=ANH_MAIN_B0_002_602
