@@ -20,10 +20,22 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            const UInt32 alteringStatuses = (UInt32)
-            (BattleStatus.Petrify | BattleStatus.Silence | BattleStatus.Blind | BattleStatus.Trouble | BattleStatus.Zombie
-             | BattleStatus.Death | BattleStatus.Confuse | BattleStatus.Berserk | BattleStatus.Stop | BattleStatus.Poison
-             | BattleStatus.Sleep | BattleStatus.Heat | BattleStatus.Freeze | BattleStatus.Doom | BattleStatus.Mini);
+            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
+            UInt32 alteringStatuses = 0;
+            if (_v.Command.Power == 1) // Friendly Mu - Surprise
+            {
+                alteringStatuses = (UInt32)
+                (BattleStatus.Silence | BattleStatus.Blind | BattleStatus.Trouble | BattleStatus.Slow
+                 | BattleStatus.Death | BattleStatus.Confuse | BattleStatus.Berserk | BattleStatus.Poison
+                 | BattleStatus.Sleep | BattleStatus.Heat | BattleStatus.Freeze | BattleStatus.Doom | BattleStatus.Venom);
+            }
+            else
+            {
+                alteringStatuses = (UInt32)
+                (BattleStatus.Petrify | BattleStatus.Silence | BattleStatus.Blind | BattleStatus.Trouble | BattleStatus.Zombie
+                 | BattleStatus.Death | BattleStatus.Confuse | BattleStatus.Berserk | BattleStatus.Stop | BattleStatus.Poison
+                 | BattleStatus.Sleep | BattleStatus.Heat | BattleStatus.Freeze | BattleStatus.Doom | BattleStatus.Mini);
+            }
 
             if (!_v.Target.CanBeAttacked())
                 return;
@@ -44,6 +56,7 @@ namespace Memoria.Scripts.Battle
                     _v.Target.CurrentHp = (UInt32)(1 + GameRandom.Next8() % 9);
                 }
             }
+            TranceSeekCustomAPI.SpecialSA(_v);
         }
     }
 }

@@ -20,8 +20,10 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
+            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             RegularItem itemId = (RegularItem)_v.Command.Power;
             BattleItem.AddToInventory(itemId);
+            TranceSeekCustomAPI.SpecialSA(_v);
         }
     }
 }

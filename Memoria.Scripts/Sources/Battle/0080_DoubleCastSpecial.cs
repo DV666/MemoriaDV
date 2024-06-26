@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace Memoria.Scripts.Battle
 {
@@ -20,6 +20,7 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
+            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
         }
     }
 }

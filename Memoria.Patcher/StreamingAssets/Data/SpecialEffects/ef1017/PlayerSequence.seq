@@ -1,0 +1,31 @@
+// Player sequence of Soin Moug
+
+PlaySound: Sound=1362
+SetupReflect: Delay=SFXLoaded
+LoadSFX: SFX=Red_Smoke ; Reflect=True
+WaitSFXLoaded: SFX=Red_Smoke ; Reflect=True
+PlaySFX: SFX=Red_Smoke ; Reflect=True ; SkipSequence
+PlaySound: Sound=1074
+PlaySound: Sound=1075
+PlaySound: Sound=1076
+EffectPoint: Char=AllTargets ; Type=Both
+WaitSFXDone: SFX=Red_Smoke ; Reflect=True
+LoadSFX: SFX=Red_Smoke ; Reflect=True
+Channel
+WaitSFXLoaded: SFX=Red_Smoke ; Reflect=True
+Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
+PlayAnimation: Char=Caster ; Anim=ANH_NPC_F4_MOG_INTO_EIK_2
+WaitAnimation: Char=Caster
+PlaySound: Sound=1363
+StopChannel
+PlaySFX: SFX=Red_Smoke ; Reflect=True ; SkipSequence
+PlaySound: Sound=1074
+PlaySound: Sound=1075
+PlaySound: Sound=1076
+EffectPoint: Char=AllTargets ; Type=Both
+WaitSFXDone: SFX=Red_Smoke ; Reflect=True
+LoadSFX: SFX=Chakra__Multi ; Reflect=True
+WaitSFXLoaded: SFX=Chakra__Multi ; Reflect=True
+PlaySFX: SFX=Chakra__Multi ; Reflect=True ; MeshColors=(1.0, 0.0, 0.5)
+WaitSFXDone: SFX=Chakra__Multi ; Reflect=True
+WaitAnimation: Char=Caster

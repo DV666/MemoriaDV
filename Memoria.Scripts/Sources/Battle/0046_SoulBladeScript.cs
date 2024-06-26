@@ -1,3 +1,8 @@
+<<<<<<< HEAD
+=======
+using System;
+using FF9;
+>>>>>>> origin/TranceSeekCurrent
 using Memoria.Data;
 using System;
 
@@ -20,27 +25,31 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            RegularItem weaponNumber = _v.Caster.Weapon;
-            switch (weaponNumber)
+            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
+            BattleStatus status = _v.Caster.WeaponStatus;
+            if (ff9item._FF9Item_Data[_v.Caster.Weapon].shape != 2 || status == 0) // Shape 1 => Dagger, Shape 2 => Thief Sword
             {
-                case RegularItem.ButterflySword:
-                case RegularItem.TheOgre:
-                case RegularItem.Exploda:
-                case RegularItem.RuneTooth:
-                case RegularItem.AngelBless:
-                case RegularItem.Sargatanas:
-                case RegularItem.Masamune:
-                case RegularItem.TheTower:
-                case RegularItem.UltimaWeapon:
-                    break;
-                default:
-                    _v.Context.Flags |= BattleCalcFlags.Miss;
-                    return;
+                _v.Context.Flags |= BattleCalcFlags.Miss;
+                return;
             }
 
-            BattleStatus status = _v.Caster.WeaponStatus;
-            if ((status & BattleStatus.Death) == 0 || _v.Target.CheckUnsafetyOrGuard())
-                _v.Target.TryAlterStatuses(status, true, _v.Caster);
+            if (!_v.Target.IsPlayer)
+            {
+                if ((status & BattleStatus.Death) == 0 || _v.Target.CheckUnsafetyOrGuard())
+                    _v.Target.TryAlterStatuses(status, true, _v.Caster);
+            }
+            else
+            {
+                if (_v.Target.IsUnderStatus(status))
+                {
+                    _v.Target.RemoveStatus(status);
+                }
+                else
+                {
+                    _v.Context.Flags |= BattleCalcFlags.Miss;
+                }
+            }
+            TranceSeekCustomAPI.SpecialSA(_v);
         }
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using Memoria.Data;
 
 namespace Memoria.Scripts.Battle
 {
@@ -19,20 +20,42 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            if (_v.Target.TryKillFrozen())
-                return;
-
-            _v.NormalPhysicalParams();
-            _v.Caster.EnemyTranceBonusAttack();
-            _v.Caster.PhysicalPenaltyAndBonusAttack();
-            _v.Target.PhysicalPenaltyAndBonusAttack();
-            _v.BonusBackstabAndPenaltyLongDistance();
-            _v.BonusElement();
-            if (!_v.CanAttackElementalCommand())
-                return;
-
-            _v.CalcHpDamage();
-            _v.TryAlterMagicStatuses();
+            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
+            if (_v.Target.IsUnderStatus(Data.BattleStatus.Mini) && _v.Command.HitRate == 1) // Yeti Friendly - Nom nom nom
+            {
+                _v.Target.Remove();
+            }
+            else
+            {
+                if (!_v.Target.TryKillFrozen())
+                {
+                    if (_v.Command.HitRate == 111)
+                    {
+                        _v.SetCommandPower();
+                        _v.Caster.SetPhysicalAttack();
+                    }
+                    else
+                    {
+                        _v.NormalPhysicalParams();
+                        TranceSeekCustomAPI.CharacterBonusPassive(_v, "PhysicalAttack");
+                    }
+                    _v.Caster.PhysicalPenaltyAndBonusAttack();
+                    _v.Caster.EnemyTranceBonusAttack();
+                    TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
+                    if (_v.Command.HitRate != 255)
+                    {
+                        TranceSeekCustomAPI.BonusBackstabAndPenaltyLongDistanceTranceSeek(_v);
+                    }
+                    _v.BonusElement();
+                    if (_v.CanAttackElementalCommand())
+                    {
+                        TranceSeekCustomAPI.RaiseTrouble(_v);
+                        _v.CalcHpDamage();
+                        _v.TryAlterMagicStatuses();
+                    }
+                }
+            }
+            TranceSeekCustomAPI.SpecialSA(_v);
         }
     }
 }
