@@ -1,0 +1,10 @@
+// Player sequence of SFX Runic
+
+WaitAnimation: Char=Caster
+SetupReflect: Delay=SFXLoaded
+LoadSFX: SFX=Chakra__Multi ; FirstBone=0 ; SecondBone=0 ; Args=0 ; Reflect=True
+WaitSFXLoaded: Reflect=True
+PlaySFX: Reflect=True
+WaitTurn: Char=Caster
+ActivateReflect
+WaitReflect

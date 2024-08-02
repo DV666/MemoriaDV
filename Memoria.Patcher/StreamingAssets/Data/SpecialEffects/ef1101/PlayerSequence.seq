@@ -1,0 +1,14 @@
+// Player sequence of SFX Thundera__Single__Staff
+
+WaitAnimation: Char=Caster
+SetupReflect: Delay=SFXLoaded
+SetBackgroundIntensity: Intensity=0.5 ; Time=20
+LoadSFX: SFX=Thundera__Single ; Reflect=True
+WaitSFXLoaded: SFX=Thundera__Single ; Reflect=True
+PlaySFX: SFX=Thundera__Single ; Reflect=True
+WaitSFXDone: SFX=Thundera__Single ; Reflect=True
+ActivateReflect
+WaitReflect
+PlayAnimation: Char=Caster ; Anim=Idle
+Turn: Char=Caster ; BaseAngle=Default ; Time=5
+WaitTurn: Char=Caster

@@ -1,5 +1,5 @@
-using Memoria.Data;
 using System;
+using Memoria.Data;
 
 namespace Memoria.Scripts.Battle
 {
@@ -20,7 +20,19 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
+            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             _v.TryRemoveItemStatuses();
+            if (_v.Command.ItemId == RegularItem.Annoyntment)
+            {
+                _v.Target.AlterStatus(TranceSeekCustomAPI.CustomStatus.Vieillissement, _v.Caster);
+                return;
+            }
+            if (_v.Command.ItemId == RegularItem.Remedy || _v.Command.ItemId == RegularItem.Annoyntment || _v.Command.ItemId == (RegularItem)1003)
+            {
+                _v.Target.RemoveStatus(TranceSeekCustomAPI.CustomStatus.Vieillissement);
+                _v.Context.Flags = 0;
+            }
+            TranceSeekCustomAPI.SpecialSA(_v);
         }
 
         public Single RateTarget()
@@ -31,7 +43,7 @@ namespace Memoria.Scripts.Battle
             Int32 rating = BattleScriptStatusEstimate.RateStatuses(removedStatus);
 
             if (_v.Target.IsPlayer)
-                return -1 * rating;
+                return -1 * rating;     
 
             return rating;
         }

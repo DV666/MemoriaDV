@@ -1,0 +1,25 @@
+// Player sequence of SFX Prithvi Sword
+
+WaitAnimation: Char=Caster
+Channel
+SetupReflect: Delay=SFXLoaded
+LoadMonsterSFX: SFX=Earth_Shake ; FirstBone=0 ; SecondBone=0 ; Args=0 ; Reflect=True
+PlayTextureAnimation: Char=Caster ; Anim=2 ; Once=False ; Stop=True
+PlayTextureAnimation: Char=Caster ; Anim=0 ; Once=True ; Stop=False
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_122_020
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_122_021
+WaitMonsterSFXLoaded: Reflect=True
+WaitAnimation: Char=Caster
+PlayTextureAnimation: Char=Caster ; Anim=1 ; Once=True ; Stop=False
+PlayTextureAnimation: Char=Caster ; Anim=2 ; Once=False ; Stop=False
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_122_022
+PlayMonsterSFX: Reflect=True
+Wait: Time=15
+Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=False
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=Idle
+WaitMonsterSFXDone: Reflect=True
+WaitTurn: Char=Caster
+ActivateReflect
+WaitReflect

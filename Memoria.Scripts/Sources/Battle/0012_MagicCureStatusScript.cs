@@ -1,3 +1,4 @@
+using FF9;
 using Memoria.Data;
 using System;
 
@@ -20,7 +21,69 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
+            TranceSeekCustomAPI.InitCustomBTLDATA(_v);             
+            if (_v.Caster.Data.dms_geo_id == 410) // Lamie
+            {
+                if (_v.Command.Power == 99)
+                {
+                    switch (_v.Command.AbilityStatus)
+                    {
+                        case BattleStatus.Blind:
+                            {
+                                TranceSeekCustomAPI.MonsterMechanic[_v.Caster.Data][2] = 16;
+                                break;
+                            }
+                        case BattleStatus.Silence:
+                            {
+                                TranceSeekCustomAPI.MonsterMechanic[_v.Caster.Data][2] = 8;
+                                break;
+                            }
+                        case BattleStatus.Poison:
+                            {
+                                TranceSeekCustomAPI.MonsterMechanic[_v.Caster.Data][2] = 65536;
+                                break;
+                            }
+                        case BattleStatus.Venom:
+                            {
+                                TranceSeekCustomAPI.MonsterMechanic[_v.Caster.Data][2] = 2;
+                                break;
+                            }
+                        case BattleStatus.Petrify:
+                            {
+                                TranceSeekCustomAPI.MonsterMechanic[_v.Caster.Data][2] = 1;
+                                break;
+                            }
+                        case BattleStatus.Slow:
+                            {
+                                TranceSeekCustomAPI.MonsterMechanic[_v.Caster.Data][2] = 1048576;
+                                break;
+                            }
+                    }
+                    _v.Context.Flags = 0;
+                }
+                TranceSeekCustomAPI.SpecialSA(_v);
+                return;
+            }
+            if (_v.Command.AbilityId == BattleAbilityId.Esuna)
+            {
+                _v.Command.AbilityStatus |= TranceSeekCustomAPI.CustomStatus.Vieillissement;             
+            }
+            if (_v.Command.Power == 111)
+            {
+                for (Int32 i = 33; i < 63; i++)
+                {
+                    BattleStatusId statusId = (BattleStatusId)i;
+                    _v.Target.RemoveStatus(statusId.ToBattleStatus());
+                }
+            }
+
             _v.TryRemoveAbilityStatuses();
+
+            if (_v.Command.HitRate == 222)
+            {
+                _v.Context.Flags = 0;
+            }
+            TranceSeekCustomAPI.SpecialSA(_v);
         }
 
         public Single RateTarget()

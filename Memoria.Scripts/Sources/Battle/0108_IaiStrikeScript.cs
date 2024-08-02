@@ -19,14 +19,24 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            if (!_v.Target.CheckUnsafetyOrGuard())
-                return;
-
-            _v.MagicAccuracy();
-            _v.Target.PenaltyShellHitRate();
-            _v.PenaltyCommandDividedHitRate();
-            if (_v.TryMagicHit())
-                _v.TryAlterCommandStatuses();
+            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
+            _v.Command.Power = _v.Command.Power * (_v.Target.PhysicalDefence / 100);
+            if (_v.Command.Power < 1)
+            {
+                _v.Command.Power = 1;
+            }
+            _v.WeaponPhysicalParams();
+            _v.Context.DefensePower = _v.Context.DefensePower / _v.Command.Power;
+            _v.Caster.EnemyTranceBonusAttack();
+            _v.Caster.PhysicalPenaltyAndBonusAttack();
+            TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
+            _v.BonusElement();
+            if (_v.CanAttackWeaponElementalCommand())
+            {
+                _v.CalcHpDamage();
+                _v.TryAlterMagicStatuses();
+            }
+            TranceSeekCustomAPI.SpecialSA(_v);
         }
     }
 }

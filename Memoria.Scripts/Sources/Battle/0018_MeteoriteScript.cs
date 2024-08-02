@@ -1,4 +1,3 @@
-using Memoria.Data;
 using System;
 
 namespace Memoria.Scripts.Battle
@@ -20,25 +19,19 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            if (IsMeteorMiss() || IsCometMiss())
-            {
-                _v.Context.Flags |= BattleCalcFlags.Miss;
-                return;
-            }
-
+            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             InitializeAttackParams();
-
-            _v.Caster.EnemyTranceBonusAttack();
             _v.Caster.PenaltyMini();
-            _v.Target.PenaltyShellAttack();
+            _v.Caster.EnemyTranceBonusAttack();
+            TranceSeekCustomAPI.PenaltyShellAttack(_v);
             _v.PenaltyCommandDividedAttack();
             _v.BonusElement();
-
-            if (_v.CanAttackMagic())
+            if (TranceSeekCustomAPI.CanAttackMagic(_v))
             {
                 _v.CalcHpDamage();
-                _v.TryAlterMagicStatuses();
             }
+            _v.TryAlterMagicStatuses();
+            TranceSeekCustomAPI.SpecialSA(_v);
         }
 
         private void InitializeAttackParams()
@@ -46,16 +39,6 @@ namespace Memoria.Scripts.Battle
             _v.Context.Attack = GameRandom.Next16() % (_v.Caster.Magic + _v.Caster.Level);
             _v.SetCommandPower();
             _v.Context.DefensePower = 0;
-        }
-
-        private Boolean IsMeteorMiss()
-        {
-            return _v.Command.AbilityId == BattleAbilityId.Meteor && _v.Command.IsMeteorMiss;
-        }
-
-        private Boolean IsCometMiss()
-        {
-            return _v.Command.SpecialEffect == SpecialEffect.Comet && GameRandom.Next8() > 170;
         }
     }
 }

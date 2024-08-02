@@ -3,4 +3,7 @@
 PlaySound: Sound=1074
 PlaySound: Sound=1075
 PlaySound: Sound=1076
+StartThread: Condition=CasterIsPlayer
+	EffectPoint: Char=AllTargets ; Type=Both
+EndThread
 Wait: Time=20

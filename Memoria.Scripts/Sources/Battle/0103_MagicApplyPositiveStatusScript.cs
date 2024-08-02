@@ -1,9 +1,11 @@
-using System;
+﻿using System;
+using System.Collections.Generic;
+using Memoria.Data;
 
 namespace Memoria.Scripts.Battle
 {
     /// <summary>
-    /// Regen, Shell, Protect, Haste, Reflect, Float, Carbuncle, Mighty Guard, Vanish, Auto-Life, Reis�s Wind, Luna, Aura, Defend
+    /// Regen, Shell, Protect, Haste, Reflect, Float, Carbuncle, Mighty Guard, Vanish, Auto-Life, Reis’s Wind, Luna, Aura, Defend
     /// </summary>
     [BattleScript(Id)]
     public sealed class MagicApplyPositiveStatusScript : IBattleScript
@@ -19,7 +21,60 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            _v.TryAlterCommandStatuses();
+            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
+            if (_v.Caster.PlayerIndex == CharacterId.Steiner) // Rempart
+            {
+                if (_v.Command.AbilityId == (BattleAbilityId)1007)
+                {
+                    _v.Target.AlterStatus(TranceSeekCustomAPI.CustomStatus.Bulwark, _v.Caster);
+                }
+            }
+            if (_v.Command.AbilityId == (BattleAbilityId)1015 || _v.Command.AbilityId == (BattleAbilityId)1016) // Sentinel and Duel
+            {
+                _v.Caster.SummonCount = 1;
+                TranceSeekCustomAPI.SteinerPassive[_v.Caster.Data][0] = 1;
+            }
+            if (!_v.Target.IsPlayer)
+            {
+                if (_v.Command.Element == EffectElement.Earth && _v.Command.Power == 1)
+                {
+                    _v.Target.Flags |= (CalcFlag.HpAlteration | CalcFlag.HpRecovery);
+                    _v.Target.HpDamage = (int)_v.Target.MaximumHp;
+                    return;
+                }
+            }
+            if (_v.Caster.Data.dms_geo_id == 125 && _v.Command.Power == 1) // Valseur 2 - Stasis
+            {
+                _v.Target.PhysicalDefence = 255;
+                _v.Target.MagicDefence = 255;
+                btl_stat.MakeStatusesPermanent(_v.Target, BattleStatus.Stop, true);
+            }
+            else if (_v.Caster.Data.dms_geo_id == 36 && _v.Command.Power == 1) // Silver Dragon - Shinryu's dance
+            {
+                _v.Caster.AlterStatus(BattleStatus.Regen);
+                _v.Caster.AlterStatus(BattleStatus.Haste);
+                if (_v.Caster.PhysicalEvade < 255)
+                    _v.Caster.PhysicalEvade += 10;
+                else
+                    _v.Caster.PhysicalEvade = 255;
+                Dictionary<String, String> localizedMessage = new Dictionary<String, String>
+                {
+                    { "US", "↑ Dodge ↑" },
+                    { "UK", "↑ Dodge ↑" },
+                    { "JP", "↑ かいひりつ ↑" },
+                    { "ES", "↑ DST fisica ↑" },
+                    { "FR", "↑ Esquive ↑" },
+                    { "GR", "↑ Evasión F ↑" },
+                    { "IT", "↑ Reflex ↑" },
+                };
+                btl2d.Btl2dReqSymbolMessage(_v.Caster.Data, "[FFC0CB]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 5);
+            }
+            else if (_v.Caster.Data.dms_geo_id == 412 && _v.Command.Power == 99) // Vin de Bacchus
+            {
+                btl_stat.AlterStatus(_v.Target, TranceSeekCustomAPI.CustomStatusId.PowerUp, parameters: "4");
+            }
+            TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
+            TranceSeekCustomAPI.SpecialSA(_v);
         }
     }
 }

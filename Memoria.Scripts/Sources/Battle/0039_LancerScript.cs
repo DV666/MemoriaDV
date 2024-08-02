@@ -1,4 +1,5 @@
 using System;
+using Memoria.Data;
 
 namespace Memoria.Scripts.Battle
 {
@@ -19,15 +20,102 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            _v.WeaponPhysicalParams();
-            _v.Caster.EnemyTranceBonusAttack();
-            _v.Caster.PhysicalPenaltyAndBonusAttack();
-            _v.Target.PhysicalPenaltyAndBonusAttack();
-            _v.CalcHpDamage();
-            _v.Target.Flags |= CalcFlag.MpAlteration;
-            if ((_v.Target.Flags & CalcFlag.HpRecovery) != 0)
-                _v.Target.Flags |= CalcFlag.MpRecovery;
-            _v.Target.MpDamage = _v.Target.HpDamage >> 4;
+            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
+            if (_v.Caster.PlayerIndex == CharacterId.Freya)
+            {
+                if (_v.IsCasterNotTarget() && _v.Target.CanBeAttacked() && !_v.Target.TryKillFrozen())
+                {
+                    _v.WeaponPhysicalParams();
+                    _v.Caster.PhysicalPenaltyAndBonusAttack();
+                    TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
+                    _v.Caster.Flags |= CalcFlag.HpAlteration;
+                    if (_v.Context.PowerDifference > 0)
+                    {
+                        TranceSeekCustomAPI.BonusBackstabAndPenaltyLongDistanceTranceSeek(_v);
+                        _v.Caster.BonusWeaponElement();
+                        if (_v.CanAttackWeaponElementalCommand())
+                        {
+                            TranceSeekCustomAPI.TryCriticalHitDragon(_v);
+                            TranceSeekCustomAPI.IpsenCastleMalus(_v);
+                            TranceSeekCustomAPI.RaiseTrouble(_v);
+                            if (_v.Caster.HasSupportAbility(SupportAbility1.AddStatus))
+                            {
+                                _v.Context.StatusRate = _v.Caster.WeaponRate;
+                                if (_v.Context.StatusRate > GameRandom.Next16() % 100)
+                                {
+                                    _v.Context.Flags |= BattleCalcFlags.AddStat;
+                                }
+                            }
+                        }
+                        _v.CalcPhysicalHpDamage();
+                        int hpDamage = _v.Target.HpDamage;
+                        _v.Target.FaceTheEnemy();
+                        if (!_v.Context.IsAbsorb)
+                        {
+                            _v.Caster.Flags |= CalcFlag.HpRecovery;
+                            _v.Target.Flags |= (CalcFlag.HpAlteration | CalcFlag.MpAlteration);
+                            _v.Target.MpDamage = (hpDamage >> 5);
+                            _v.Caster.HpDamage = (hpDamage / 2);
+                            if (TranceSeekCustomAPI.MonsterMechanic[_v.Target.Data][5] > 0 || _v.Caster.IsUnderStatus(BattleStatus.Trance))
+                            {
+                                _v.Caster.Flags |= (CalcFlag.MpAlteration | CalcFlag.MpRecovery);
+                                _v.Caster.MpDamage = _v.Target.MpDamage / 2;
+                            }
+                        }
+                        _v.TryAlterMagicStatuses();
+                    }
+                }
+            }
+            else
+            {
+                if (_v.Command.Power == 1)
+                {
+                    if (_v.Target.CanBeAttacked())
+                    {
+                        _v.Target.CurrentHp = 1U;
+                        _v.Target.CurrentMp = 1U;
+                        _v.TryAlterMagicStatuses();
+                    }
+                }
+                else
+                {
+                    if (_v.IsCasterNotTarget() && _v.Target.CanBeAttacked() && !_v.Target.TryKillFrozen())
+                    {
+                        _v.PhysicalAccuracy();
+                        if (TranceSeekCustomAPI.TryPhysicalHit(_v))
+                        {
+                            _v.NormalPhysicalParams();
+                            TranceSeekCustomAPI.CharacterBonusPassive(_v, "PhysicalAttack");
+                            _v.Caster.PhysicalPenaltyAndBonusAttack();
+                            TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
+                            TranceSeekCustomAPI.BonusBackstabAndPenaltyLongDistanceTranceSeek(_v);
+                            _v.BonusElement();
+                            if (_v.CanAttackElementalCommand())
+                            {
+                                // TranceSeekCustomAPI.TryCriticalHit(_v);
+                                TranceSeekCustomAPI.IpsenCastleMalus(_v);
+                                _v.Target.Flags |= (CalcFlag.HpAlteration | CalcFlag.MpAlteration);
+                                _v.CalcPhysicalHpDamage();
+                                int hpDamage3 = _v.Target.HpDamage;
+                                if ((_v.Target.Flags & CalcFlag.HpRecovery) != 0)
+                                {
+                                    _v.Target.FaceTheEnemy();
+                                }
+                                _v.Target.MpDamage = hpDamage3 >> 4;
+                                BTL_DATA data = _v.Caster.Data;
+                                if (data.dms_geo_id == 297)
+                                {
+                                    _v.Caster.Flags |= (CalcFlag.HpAlteration | CalcFlag.HpRecovery);
+                                    _v.Caster.HpDamage = hpDamage3 / 2;
+                                }
+                                TranceSeekCustomAPI.RaiseTrouble(_v);
+                                _v.TryAlterMagicStatuses();
+                            }
+                        }
+                    }
+                }
+            }
+            TranceSeekCustomAPI.SpecialSA(_v);
         }
     }
 }

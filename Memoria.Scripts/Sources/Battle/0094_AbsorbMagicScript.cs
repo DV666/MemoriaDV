@@ -1,5 +1,5 @@
-using System;
-using Memoria.Data;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Memoria.Scripts.Battle
 {
@@ -20,9 +20,10 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            _v.Target.TryAlterSingleStatus(BattleStatusId.ChangeStat, true, _v.Caster, "Magic", _v.Target.Magic / 2);
-            if ((_v.Context.Flags & (BattleCalcFlags.Miss | BattleCalcFlags.Guard)) == 0)
-                btl_stat.AlterStatus(_v.Caster, BattleStatusId.ChangeStat, _v.Caster, false, "Magic", Math.Min(Byte.MaxValue, _v.Caster.Magic * 2));
+            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
+            _v.Caster.AlterStatus(TranceSeekCustomAPI.CustomStatus.MagicUp, _v.Caster);
+            _v.Target.AlterStatus(TranceSeekCustomAPI.CustomStatus.MagicBreak, _v.Caster);
+            TranceSeekCustomAPI.SpecialSA(_v);
         }
     }
 }
