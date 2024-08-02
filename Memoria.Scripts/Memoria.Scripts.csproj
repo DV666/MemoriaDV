@@ -244,6 +244,7 @@
     <Compile Include="Sources\Battle\0063_MagicSwordAttackScript.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
+    <Compile Include="Sources\Battle\0064_Special.cs" />
     <Compile Include="Sources\Battle\0065_EatScript.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
@@ -283,9 +284,13 @@
     <Compile Include="Sources\Battle\0077_DarkMatterScript.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
+    <Compile Include="Sources\Battle\0078_PumpkinHeadScript.cs" />
+    <Compile Include="Sources\Battle\0079_ReiWindScript.cs" />
     <Compile Include="Sources\Battle\0080_DoubleCastSpecial.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
+    <Compile Include="Sources\Battle\0081_BanditScript.cs" />
+    <Compile Include="Sources\Battle\0082_MagicAttackIgnoreDefenceScript.cs" />
     <Compile Include="Sources\Battle\0083_MassSpearScript.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
@@ -367,15 +372,66 @@
     <Compile Include="Sources\Battle\0109_MiniScript.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
+    <Compile Include="Sources\Battle\0110_FearScript.cs" />
+    <Compile Include="Sources\Battle\0111_ZombieArmorScript.cs" />
+    <Compile Include="Sources\Battle\0112_CryintheNightScript.cs" />
+    <Compile Include="Sources\Battle\0113_ShockScript.cs" />
+    <Compile Include="Sources\Battle\0114_FullBreakScript.cs" />
+    <Compile Include="Sources\Battle\0115_MagicLancerScript.cs" />
+    <Compile Include="Sources\Battle\0116_LowRandomMagic.cs" />
+    <Compile Include="Sources\Battle\0117_Rollback.cs" />
+    <Compile Include="Sources\Battle\0118_PoisonMagicAttackScript.cs" />
+    <Compile Include="Sources\Battle\0119_PoisonMagicLancerScript.cs" />
+    <Compile Include="Sources\Battle\0120_SwitchWeaponScript.cs" />
+    <Compile Include="Sources\Battle\0121_PassiveEikoScript.cs" />
+    <Compile Include="Sources\Battle\0122_MechanicalArmorScript.cs" />
+    <Compile Include="Sources\Battle\ArmorBreakStatusScript.cs" />
+    <Compile Include="Sources\Battle\ArmorUpStatusScript.cs" />
     <Compile Include="Sources\Battle\BaseWeaponScript.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
+    <Compile Include="Sources\Battle\BlindStatusScript.cs" />
+    <Compile Include="Sources\Battle\BulwarkStatusScript.cs" />
+    <Compile Include="Sources\Battle\DamageModifierScript.cs" />
+    <Compile Include="Sources\Battle\DeathStatusScript.cs" />
+    <Compile Include="Sources\Battle\DoomStatusScript.cs" />
+    <Compile Include="Sources\Battle\DragonStatusScript.cs" />
+    <Compile Include="Sources\Battle\FreezeStatusScript.cs" />
+    <Compile Include="Sources\Battle\HeatStatusScript.cs" />
+    <Compile Include="Sources\Battle\JumpStatusScript.cs" />
+    <Compile Include="Sources\Battle\MagicBreakStatusScript.cs" />
+    <Compile Include="Sources\Battle\MagicUpStatusScript.cs" />
+    <Compile Include="Sources\Battle\MechanicalArmorStatusScript.cs" />
+    <Compile Include="Sources\Battle\MentalBreakStatusScript.cs" />
+    <Compile Include="Sources\Battle\MentalUpStatusScript.cs" />
+    <Compile Include="Sources\Battle\PerfectCritStatusScript.cs" />
+    <Compile Include="Sources\Battle\PerfectDodgeStatusScript.cs" />
+    <Compile Include="Sources\Battle\PoisonStatusScript.cs" />
+    <Compile Include="Sources\Battle\PowerBreakStatusScript.cs" />
+    <Compile Include="Sources\Battle\PowerUpStatusScript.cs" />
+    <Compile Include="Sources\Battle\RebirthFlameScript.cs" />
+    <Compile Include="Sources\Battle\RedemptionStatusScript.cs" />
+    <Compile Include="Sources\Battle\RegenStatusScript.cs" />
+    <Compile Include="Sources\Battle\SilenceStatusScript.cs" />
+    <Compile Include="Sources\Battle\SleepStatusScript.cs" />
+    <Compile Include="Sources\Battle\StopStatusScript.cs" />
+    <Compile Include="Sources\Battle\TranceSeekCustomAPI.cs" />
+    <Compile Include="Sources\Battle\TranceStatusScript.cs" />
+    <Compile Include="Sources\Battle\TroubleStatusScript.cs" />
+    <Compile Include="Sources\Battle\VenomStatusScript.cs" />
+    <Compile Include="Sources\Battle\VieillissementStatusScript.cs" />
+    <Compile Include="Sources\Battle\ZombieArmorStatusScript.cs" />
+    <Compile Include="Sources\Battle\ZombieStatusScript.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Assembly-CSharp\Assembly-CSharp.csproj">
       <Project>{3FE6492C-C2E2-48EE-9AD6-B2D9A7D43C93}</Project>
       <Name>Assembly-CSharp</Name>
       <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\Memoria.Prime\Memoria.Prime.csproj">
+      <Project>{110f557e-abff-44c5-886a-c7c7f0614558}</Project>
+      <Name>Memoria.Prime</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />
