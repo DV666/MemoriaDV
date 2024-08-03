@@ -28,6 +28,11 @@ namespace Memoria.DefaultScripts
                     target.RemoveStatus(BattleStatusId.CustomStatus2);
                     return btl_stat.ALTER_SUCCESS_NO_SET;
                 }
+                else
+                {
+                    Int32.TryParse(Parameter, out Int32 PutStack);
+                    Stack = PutStack - 1;
+                }
             }
             if (target.IsUnderAnyStatus(BattleStatusId.CustomStatus6))
             {

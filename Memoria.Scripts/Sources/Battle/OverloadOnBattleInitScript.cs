@@ -1,6 +1,7 @@
 ﻿using System;
 using Memoria.Data;
 using UnityEngine;
+using static Memoria.Scripts.Battle.TranceSeekCustomAPI;
 
 namespace Memoria.Scripts.Battle
 {
@@ -46,51 +47,51 @@ namespace Memoria.Scripts.Battle
                     }
                 }
 
-                if (!TranceSeekCustomAPI.ZidanePassive.TryGetValue(unit.Data, out Int32[] zidanepassive))
-                    TranceSeekCustomAPI.ZidanePassive[unit.Data] = new Int32[] { 0, 0, 0, 0, 0 };
-                if (!TranceSeekCustomAPI.ViviPreviousSpell.TryGetValue(unit.Data, out BattleAbilityId e))
-                    TranceSeekCustomAPI.ViviPreviousSpell[unit.Data] = BattleAbilityId.Void;
-                if (!TranceSeekCustomAPI.ViviPassive.TryGetValue(unit.Data, out Int32[] vivipassive))
-                    TranceSeekCustomAPI.ViviPassive[unit.Data] = new Int32[] { 0, 0 };
-                if (!TranceSeekCustomAPI.SteinerPassive.TryGetValue(unit.Data, out Int32[] steinerpassive))
-                    TranceSeekCustomAPI.SteinerPassive[unit.Data] = new Int32[] { 0, 0 };
-                if (!TranceSeekCustomAPI.BeatrixPassive.TryGetValue(unit.Data, out Int32[] beatrixpassive))
-                    TranceSeekCustomAPI.BeatrixPassive[unit.Data] = new Int32[] { 0, 0, 0, 0 };
-                if (!TranceSeekCustomAPI.MonsterMechanic.TryGetValue(unit.Data, out Int32[] monstermechanic))
-                    TranceSeekCustomAPI.MonsterMechanic[unit.Data] = new Int32[] { 0, 0, 0, 0, 100, 0 };
-                if (!TranceSeekCustomAPI.SpecialSAEffect.TryGetValue(unit.Data, out Int32[] specialSAeffect))
-                    TranceSeekCustomAPI.SpecialSAEffect[unit.Data] = new Int32[] { 0, 0, 2, 0, 0 };
-                if (!TranceSeekCustomAPI.RollBackStats.TryGetValue(unit.Data, out Int32[] rb))
-                    TranceSeekCustomAPI.RollBackStats[unit.Data] = new Int32[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-                if (!TranceSeekCustomAPI.RollBackBattleStatus.TryGetValue(unit.Data, out BattleStatus rs))
-                    TranceSeekCustomAPI.RollBackBattleStatus[unit.Data] = 0;
-                if (!TranceSeekCustomAPI.StatusBeforeScript.TryGetValue(unit.Data, out BattleStatus sbs))
-                    TranceSeekCustomAPI.StatusBeforeScript[unit.Data] = 0;
+                if (!ZidanePassive.TryGetValue(unit.Data, out Int32[] zidanepassive))
+                    ZidanePassive[unit.Data] = new Int32[] { 0, 0, 0, 0, 0 };
+                if (!ViviPreviousSpell.TryGetValue(unit.Data, out BattleAbilityId e))
+                    ViviPreviousSpell[unit.Data] = BattleAbilityId.Void;
+                if (!ViviPassive.TryGetValue(unit.Data, out Int32[] vivipassive))
+                    ViviPassive[unit.Data] = new Int32[] { 0, 0 };
+                if (!SteinerPassive.TryGetValue(unit.Data, out Int32[] steinerpassive))
+                    SteinerPassive[unit.Data] = new Int32[] { 0, 0 };
+                if (!BeatrixPassive.TryGetValue(unit.Data, out Int32[] beatrixpassive))
+                    BeatrixPassive[unit.Data] = new Int32[] { 0, 0, 0, 0 };
+                if (!MonsterMechanic.TryGetValue(unit.Data, out Int32[] monstermechanic))
+                    MonsterMechanic[unit.Data] = new Int32[] { 0, 0, 0, 0, 100, 0 };
+                if (!SpecialSAEffect.TryGetValue(unit.Data, out Int32[] specialSAeffect))
+                    SpecialSAEffect[unit.Data] = new Int32[] { 0, 0, 2, 0, 0 };
+                if (!RollBackStats.TryGetValue(unit.Data, out Int32[] rb))
+                    RollBackStats[unit.Data] = new Int32[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+                if (!RollBackBattleStatus.TryGetValue(unit.Data, out BattleStatus rs))
+                    RollBackBattleStatus[unit.Data] = 0;
+                if (!StatusBeforeScript.TryGetValue(unit.Data, out BattleStatus sbs))
+                    StatusBeforeScript[unit.Data] = 0;
 
                 if (unit.HasSupportAbilityByIndex((SupportAbility)1041)) // Alert+
                 {
-                    //PerfectBonus[unit.Data][0] += 2;
+                    btl_stat.AlterStatus(unit, CustomStatusId.PerfectDodge, parameters: "2");
                 }
                 if (unit.HasSupportAbilityByIndex((SupportAbility)52)) // Last Stand
                 {
-                    TranceSeekCustomAPI.SpecialSAEffect[unit.Data][1] = unit.HasSupportAbilityByIndex((SupportAbility)1052) ? 2 : 1;
+                    SpecialSAEffect[unit.Data][1] = unit.HasSupportAbilityByIndex((SupportAbility)1052) ? 2 : 1;
                 }
 
                 if (!unit.IsPlayer) // Check if boss have +10000 HP for scripts
                 {
-                    for (Int32 i = 0; i < TranceSeekCustomAPI.BossBattleBonusHP.GetLength(0); i++)
+                    for (Int32 i = 0; i < BossBattleBonusHP.GetLength(0); i++)
                     {
-                        if (TranceSeekCustomAPI.BossBattleBonusHP[i, 0] == FF9StateSystem.Battle.battleMapIndex && TranceSeekCustomAPI.BossBattleBonusHP[i, 1] == sb2Pattern.Monster[unit.Data.bi.slot_no].TypeNo)
+                        if (BossBattleBonusHP[i, 0] == FF9StateSystem.Battle.battleMapIndex && BossBattleBonusHP[i, 1] == sb2Pattern.Monster[unit.Data.bi.slot_no].TypeNo)
                         {
-                            TranceSeekCustomAPI.MonsterMechanic[unit.Data][3] = 1;
+                            MonsterMechanic[unit.Data][3] = 1;
                             break;
                         }
                     }
                 }
 
-                if (!unit.IsPlayer && unit.IsUnderAnyStatus(BattleStatus.Trance) && TranceSeekCustomAPI.MonsterMechanic[unit.Data][0] == 0 && !unit.IsUnderAnyStatus(BattleStatus.EasyKill)) // +50% HP/MP Max if monster get under Trance
+                if (!unit.IsPlayer && unit.IsUnderAnyStatus(BattleStatus.Trance) && MonsterMechanic[unit.Data][0] == 0 && !unit.IsUnderAnyStatus(BattleStatus.EasyKill)) // +50% HP/MP Max if monster get under Trance
                 { // [!!!TODO!!!] Move to end method
-                    TranceSeekCustomAPI.MonsterMechanic[unit.Data][0] = 1;
+                    MonsterMechanic[unit.Data][0] = 1;
                     unit.MaximumHp += (unit.MaximumHp / 2);
                     unit.MaximumMp += (unit.MaximumMp / 2);
                     unit.CurrentHp = unit.MaximumHp;

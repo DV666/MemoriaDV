@@ -49,7 +49,7 @@ StartThread: Condition=CasterCharacterIndex != CharacterId_Garnet
 	PlayAnimation: Char=Caster ; Anim=MP_CHANT ; Loop=True
 	Channel
 	Wait: Time=13
-	ShowMesh: Enable=False ; Time=16 ; Char=AllPlayers
+	ShowMesh: Enable=False ; Time=16 ; Char=AllNonTargets
 	WaitSFXLoaded: SFX=Leviathan__Full ; Reflect=True
 	WaitAnimation: Char=Caster
 	StopChannel

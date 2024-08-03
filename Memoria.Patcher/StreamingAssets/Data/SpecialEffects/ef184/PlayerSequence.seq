@@ -31,7 +31,7 @@ StartThread: Condition=CasterCharacterIndex == CharacterId_Garnet
 		WaitTurn: Char=Caster
 		SetVariable: Variable=cmd_status ; Value=|2 ; Reflect=True
 EndThread
-	StartThread: Condition=CasterCharacterIndex != CharacterId_Garnet
+StartThread: Condition=CasterCharacterIndex != CharacterId_Garnet
 	WaitAnimation: Char=Caster
 	SetVariable: Variable=cmd_status ; Value=&65533 ; Reflect=True
 	StartThread: Condition=CasterRow == 0 && AreCasterAndSelectedTargetsEnemies ; Sync=True
