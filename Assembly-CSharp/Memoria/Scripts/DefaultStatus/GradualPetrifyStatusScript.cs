@@ -21,6 +21,7 @@ namespace Memoria.DefaultScripts
             GPInflicter = inflicter;
             InitialCounter = parameters.Length > 0 ? (Int32)parameters[0] : 10;
             Counter = InitialCounter;
+            Counter *= Target.HasSupportAbility(SupportAbility1.AutoRegen) ? 2 : 1;
             Message = Singleton<HUDMessage>.Instance.Show(attachTransf, $"{Counter}", HUDMessage.MessageStyle.DEATH_SENTENCE, new Vector3(0f, iconOff.y), 0);
             btl2d.StatusMessages.Add(Message);
             UpdateLabel();
