@@ -18,6 +18,8 @@ namespace Memoria.DefaultScripts
 
         public override UInt32 Apply(BattleUnit target, BattleUnit inflicter, params Object[] parameters)
         {
+            if (target.IsUnderAnyStatus(BattleStatus.EasyKill) && target.IsUnderAnyStatus(BattleStatus.CustomStatus2))
+                return btl_stat.ALTER_INVALID;
             base.Apply(target, inflicter, parameters);
             if (parameters.Length > 0)
             {
