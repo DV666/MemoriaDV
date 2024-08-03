@@ -20,7 +20,6 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             if (_v.Target.CheckUnsafetyOrMiss())
             {
                 _v.SetCommandAttack();
@@ -56,7 +55,6 @@ namespace Memoria.Scripts.Battle
                     }
                 }
                 _v.TryAlterMagicStatuses();
-                TranceSeekCustomAPI.SpecialSA(_v);
             }
         }
     }

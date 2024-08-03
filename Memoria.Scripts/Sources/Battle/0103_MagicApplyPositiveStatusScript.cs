@@ -21,7 +21,6 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             if (_v.Caster.PlayerIndex == CharacterId.Steiner) // Rempart
             {
                 if (_v.Command.AbilityId == (BattleAbilityId)1007)
@@ -74,7 +73,6 @@ namespace Memoria.Scripts.Battle
                 btl_stat.AlterStatus(_v.Target, TranceSeekCustomAPI.CustomStatusId.PowerUp, parameters: "4");
             }
             TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
-            TranceSeekCustomAPI.SpecialSA(_v);
         }
     }
 }

@@ -18,7 +18,6 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             if (_v.Command.Power == 1)
             {
                 _v.Target.Flags |= CalcFlag.HpAlteration;
@@ -52,7 +51,6 @@ namespace Memoria.Scripts.Battle
                     _v.Target.TryAlterSingleStatus(BattleStatusId.CustomStatus10, true, _v.Caster, _v.Target.HpDamage);
                 }
             }
-            TranceSeekCustomAPI.SpecialSA(_v);
         }
     }
 }

@@ -20,7 +20,6 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             BTL_DATA data = _v.Target.Data;
             if (data.dms_geo_id == 221 || data.dms_geo_id == 83)
             {
@@ -38,7 +37,6 @@ namespace Memoria.Scripts.Battle
             {
                 _v.TryRemoveItemStatuses();
             }
-            TranceSeekCustomAPI.SpecialSA(_v);
         }
 
         public Single RateTarget()

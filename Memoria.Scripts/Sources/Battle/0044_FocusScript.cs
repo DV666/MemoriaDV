@@ -21,7 +21,6 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             if (_v.Caster.PlayerIndex == CharacterId.Vivi)
             {
                 if (_v.Caster.IsUnderStatus(BattleStatus.Trance))
@@ -81,7 +80,6 @@ namespace Memoria.Scripts.Battle
             {
                 _v.Target.AlterStatus(TranceSeekCustomAPI.CustomStatus.MagicUp, _v.Caster);
             }
-            TranceSeekCustomAPI.SpecialSA(_v);
         }
     }
 }

@@ -21,7 +21,6 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             if (_v.Caster.PlayerIndex == CharacterId.Quina)
             {
                 if (_v.Command.AbilityId == BattleAbilityId.Doom)
@@ -172,7 +171,6 @@ namespace Memoria.Scripts.Battle
                             TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
                         }
                     }
-                    TranceSeekCustomAPI.SpecialSA(_v);
                     return;
                 }
                 else if (_v.Caster.Data.dms_geo_id == 166) // Thousand Fears (from Dark Beatrix)
@@ -203,7 +201,6 @@ namespace Memoria.Scripts.Battle
                     {
                         TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
                     }
-                    TranceSeekCustomAPI.SpecialSA(_v);
                     return;
                 }
                 else if (_v.Command.Power == 7)
@@ -232,7 +229,6 @@ namespace Memoria.Scripts.Battle
                             _v.Context.Flags = 0;
                         }
                     }
-                    TranceSeekCustomAPI.SpecialSA(_v);
                     return;
                 }
                 else if (_v.Command.HitRate == 255 || (_v.Caster.PlayerIndex == CharacterId.Amarant && _v.Caster.IsUnderStatus(BattleStatus.Trance) && _v.Command.AbilityId == BattleAbilityId.Revive2))
@@ -244,7 +240,6 @@ namespace Memoria.Scripts.Battle
                     TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
                 }
             }
-            TranceSeekCustomAPI.SpecialSA(_v);
         }
     }
 }

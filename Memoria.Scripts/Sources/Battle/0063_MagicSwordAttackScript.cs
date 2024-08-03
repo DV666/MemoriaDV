@@ -20,7 +20,6 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             if ((_v.Caster.PlayerIndex == CharacterId.Steiner && _v.Command.AbilityId == BattleAbilityId.None7)) // Comet Sword + Meteor Sword
             {
                 _v.Context.Attack = UnityEngine.Random.Range(((_v.Caster.Strength + _v.Caster.Level) / 3), (_v.Caster.Strength + _v.Caster.Level));
@@ -43,7 +42,6 @@ namespace Memoria.Scripts.Battle
                 _v.CalcHpDamage();
             }
             _v.TryAlterMagicStatuses();
-            TranceSeekCustomAPI.SpecialSA(_v);
         }
     }
 }

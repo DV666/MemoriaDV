@@ -20,7 +20,6 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             if (_v.Caster.PlayerIndex == CharacterId.Freya)
             {
                 if (_v.IsCasterNotTarget() && _v.Target.CanBeAttacked() && !_v.Target.TryKillFrozen())
@@ -92,7 +91,6 @@ namespace Memoria.Scripts.Battle
                             _v.BonusElement();
                             if (_v.CanAttackElementalCommand())
                             {
-                                // TranceSeekCustomAPI.TryCriticalHit(_v);
                                 TranceSeekCustomAPI.IpsenCastleMalus(_v);
                                 _v.Target.Flags |= (CalcFlag.HpAlteration | CalcFlag.MpAlteration);
                                 _v.CalcPhysicalHpDamage();
@@ -115,7 +113,6 @@ namespace Memoria.Scripts.Battle
                     }
                 }
             }
-            TranceSeekCustomAPI.SpecialSA(_v);
         }
     }
 }

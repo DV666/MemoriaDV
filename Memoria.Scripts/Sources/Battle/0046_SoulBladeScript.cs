@@ -20,7 +20,6 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             BattleStatus status = _v.Caster.WeaponStatus;
             if (ff9item._FF9Item_Data[_v.Caster.Weapon].shape != 2 || status == 0) // Shape 1 => Dagger, Shape 2 => Thief Sword
             {
@@ -44,7 +43,6 @@ namespace Memoria.Scripts.Battle
                     _v.Context.Flags |= BattleCalcFlags.Miss;
                 }
             }
-            TranceSeekCustomAPI.SpecialSA(_v);
         }
     }
 }

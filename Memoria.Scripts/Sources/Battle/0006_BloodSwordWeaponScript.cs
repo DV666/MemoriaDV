@@ -20,7 +20,6 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             if (_v.Target.CanBeAttacked() && !_v.Target.TryKillFrozen())
             {
                 _v.PhysicalAccuracy();
@@ -72,7 +71,6 @@ namespace Memoria.Scripts.Battle
                             _v.Caster.HpDamage = (int)currentHp;
                         }
                     }
-                    TranceSeekCustomAPI.SpecialSA(_v);
                 }
             }
         }

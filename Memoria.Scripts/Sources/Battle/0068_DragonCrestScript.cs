@@ -19,10 +19,8 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             _v.Target.Flags |= CalcFlag.HpAlteration;
             _v.Target.HpDamage = GameState.CategoryKillCount[3] * GameState.CategoryKillCount[3];
-            TranceSeekCustomAPI.SpecialSA(_v);
         }
     }
 }

@@ -20,7 +20,6 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             if (_v.Caster.PlayerIndex == CharacterId.Quina)
             {
                 if (_v.Target.IsUnderAnyStatus(BattleStatus.Poison) & _v.Target.HasSupportAbility(SupportAbility2.Antibody))
@@ -76,7 +75,6 @@ namespace Memoria.Scripts.Battle
                     _v.Target.RemoveStatus(BattleStatus.Slow);
                 }
             }
-            TranceSeekCustomAPI.SpecialSA(_v);
         }
     }
 }

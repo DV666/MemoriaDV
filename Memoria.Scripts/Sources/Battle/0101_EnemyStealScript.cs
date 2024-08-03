@@ -21,13 +21,11 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             _v.PhysicalAccuracy();
             if (TranceSeekCustomAPI.TryPhysicalHit(_v))
                 RemoveItem();
             else
                 UiState.SetBattleFollowFormatMessage(BattleMesages.CouldNotStealAnything);
-            TranceSeekCustomAPI.SpecialSA(_v);
         }
 
         private void RemoveItem()

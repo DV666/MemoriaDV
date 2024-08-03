@@ -19,7 +19,6 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             _v.MagicAccuracy();
             _v.Caster.EnemyTranceBonusAttack();
             _v.Target.PenaltyShellHitRate();
@@ -29,7 +28,6 @@ namespace Memoria.Scripts.Battle
                 _v.Target.Flags |= CalcFlag.HpAlteration;
                 _v.Target.HpDamage = _v.Target.Level * _v.Command.Power;
             }
-            TranceSeekCustomAPI.SpecialSA(_v);
         }
     }
 }

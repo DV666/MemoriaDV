@@ -20,7 +20,6 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             if (_v.Caster.PlayerIndex == CharacterId.Amarant)
             {
                 if (_v.Command.AbilityId == BattleAbilityId.NoMercy1 || _v.Command.AbilityId == BattleAbilityId.NoMercy2) // Fragilité
@@ -42,7 +41,6 @@ namespace Memoria.Scripts.Battle
                     //if (_v.TryMagicHit())
                     TranceSeekCustomAPI.TryAlterCommandStatuses(_v);            
                 }
-                TranceSeekCustomAPI.SpecialSA(_v);
                 return;
             }
             if (_v.Command.Power > 0)
@@ -148,7 +146,6 @@ namespace Memoria.Scripts.Battle
                     _v.Target.TryAlterStatuses(BattleStatus.Doom, true, _v.Caster);
                 }
             }
-            TranceSeekCustomAPI.SpecialSA(_v);
         }
     }
 }

@@ -21,7 +21,6 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             btl_sys.CheckEscape(false);
             if (_v.CanEscape())
             {
@@ -34,7 +33,6 @@ namespace Memoria.Scripts.Battle
                     BattleState.EnqueueCommand(BattleState.EscapeCommand, BattleCommandId.SysEscape, 0U, 15, true);
                 }
             }
-            TranceSeekCustomAPI.SpecialSA(_v);
         }
     }
 }

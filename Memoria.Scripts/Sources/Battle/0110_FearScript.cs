@@ -17,7 +17,6 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             byte trancefear = (byte)(Comn.random16() % ((_v.Caster.Will * 2) - _v.Target.Will));
             if (trancefear < _v.Target.Trance)
             {
@@ -52,7 +51,6 @@ namespace Memoria.Scripts.Battle
                     TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
                 }
             }
-            TranceSeekCustomAPI.SpecialSA(_v);
         }
     }
 }

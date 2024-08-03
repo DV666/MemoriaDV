@@ -21,7 +21,6 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             if (_v.Command.AbilityId == BattleAbilityId.MagicHammer || _v.Command.HitRate == 20)
             {
                 if (_v.Target.IsZombie)
@@ -101,7 +100,6 @@ namespace Memoria.Scripts.Battle
                     _v.TryAlterMagicStatuses();
                 }
             }
-            TranceSeekCustomAPI.SpecialSA(_v);
         }
     }
 }

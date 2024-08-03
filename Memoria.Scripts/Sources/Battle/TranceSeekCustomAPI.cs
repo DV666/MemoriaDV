@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Assets.Sources.Scripts.UI.Common;
 using FF9;
 using Memoria.Data;
-using Memoria.DefaultScripts;
 using UnityEngine;
 
 namespace Memoria.Scripts.Battle
@@ -49,6 +48,8 @@ namespace Memoria.Scripts.Battle
             public const BattleStatus PerfectDodge = BattleStatus.CustomStatus14;
             public const BattleStatus PerfectCrit = BattleStatus.CustomStatus15;
             public const BattleStatus Vieillissement = BattleStatus.CustomStatus16;
+            public const BattleStatus SleepEasyKill = BattleStatus.CustomStatus17;
+            public const BattleStatus SilenceEasyKill = BattleStatus.CustomStatus18;
         }
 
         public static class CustomStatusId
@@ -69,9 +70,11 @@ namespace Memoria.Scripts.Battle
             public const BattleStatusId PerfectDodge = BattleStatusId.CustomStatus14;
             public const BattleStatusId PerfectCrit = BattleStatusId.CustomStatus15;
             public const BattleStatusId Vieillissement = BattleStatusId.CustomStatus16;
+            public const BattleStatusId SleepEasyKill = BattleStatusId.CustomStatus17;
+            public const BattleStatusId SilenceEasyKill = BattleStatusId.CustomStatus18;
         }
 
-        public static void InitCustomBTLDATA(this BattleCalculator v)
+        public static void InitCustomBTLDATA()
         {
             foreach (BattleUnit unit in BattleState.EnumerateUnits())
             {
@@ -81,12 +84,12 @@ namespace Memoria.Scripts.Battle
                 if (!InitBTL[unit.Data])
                 {
                     SB2_PATTERN sb2Pattern = FF9StateSystem.Battle.FF9Battle.btl_scene.PatAddr[FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum];
-                    foreach (BattleUnit player in BattleState.EnumerateUnits())
+                    foreach (BattleUnit PlayerUnit in BattleState.EnumerateUnits())
                     {
-                        if (!player.IsPlayer)
+                        if (!PlayerUnit.IsPlayer)
                             continue;
 
-                        if (player.HasSupportAbilityByIndex((SupportAbility)1045)) // Pluriche+
+                        if (PlayerUnit.HasSupportAbilityByIndex((SupportAbility)1045)) // Pluriche+
                         {
                             foreach (BattleUnit monster in BattleState.EnumerateUnits())
                             {
@@ -143,7 +146,7 @@ namespace Memoria.Scripts.Battle
                             }
                         }
                     }
-
+                    btl_stat.MakeStatusesPermanent(unit, BattleStatus.Shell);
                     InitBTL[unit.Data] = true;
                 }
                 if (!unit.IsPlayer && unit.IsUnderAnyStatus(BattleStatus.Trance) && MonsterMechanic[unit.Data][0] == 0 && !unit.IsUnderAnyStatus(BattleStatus.EasyKill)) // +50% HP/MP Max if monster get under Trance
@@ -154,17 +157,17 @@ namespace Memoria.Scripts.Battle
                     unit.CurrentHp = unit.MaximumHp;
                 }
             }
-            if (v.Caster.Data.dms_geo_id == 410 && MonsterMechanic[v.Caster.Data][2] > 0 && v.Command.ScriptId != 12) // Lamie
-            {
-                v.Command.AbilityStatus = (BattleStatus)MonsterMechanic[v.Caster.Data][2];
-            }
-            if (!v.Target.IsPlayer && ((v.Command.AbilityStatus & (BattleStatus.Stop | BattleStatus.Sleep | BattleStatus.Freeze)) != 0))
-            {
-                if (MonsterMechanic[v.Target.Data][4] <= 20)
-                    v.Target.ResistStatus |= (BattleStatus.Stop | BattleStatus.Sleep | BattleStatus.Freeze);
-                else
-                    StatusBeforeScript[v.Target.Data] = v.Target.CurrentStatus;
-            }
+            //if (v.Caster.Data.dms_geo_id == 410 && MonsterMechanic[v.Caster.Data][2] > 0 && v.Command.ScriptId != 12) // Lamie [!!!TODO!!!] Rework Lani mecanique.
+            //{
+            //    v.Command.AbilityStatus = (BattleStatus)MonsterMechanic[v.Caster.Data][2];
+            //}
+            //if (!v.Target.IsPlayer && ((v.Command.AbilityStatus & (BattleStatus.Stop | BattleStatus.Sleep | BattleStatus.Freeze)) != 0))
+            //{
+            //    if (MonsterMechanic[v.Target.Data][4] <= 20)
+            //        v.Target.ResistStatus |= (BattleStatus.Stop | BattleStatus.Sleep | BattleStatus.Freeze);
+            //    else
+            //        StatusBeforeScript[v.Target.Data] = v.Target.CurrentStatus;
+            //}
         }
 
         public static void WeaponPhysicalParams(CalcAttackBonus bonus, BattleCalculator v)
@@ -498,7 +501,7 @@ namespace Memoria.Scripts.Battle
             if (v.Target.IsUnderAnyStatus(BattleStatus.Shell))
                 v.Context.Attack >>= 1;
 
-            if (v.Caster.IsUnderAnyStatus(BattleStatus.Silence) && v.Caster.IsUnderAnyStatus(BattleStatus.EasyKill)) // 10% magic attack malus for bosses with Silence.
+            if (v.Caster.IsUnderAnyStatus(BattleStatus.CustomStatus18)) // Silence Easy Kill - 10% magic attack malus for bosses with Silence.
                 v.Context.Attack = (9 * v.Context.Attack) / 10;
 
             ViviFocus(v);

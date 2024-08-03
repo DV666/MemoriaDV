@@ -21,7 +21,6 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             if (_v.Caster.Data.dms_geo_id == 401 && _v.Command.HitRate == 1) // Friendly Feather Circle - Mega Death
             {
                 if (SFX.currentEffectID == SpecialEffect.LV5_Death)
@@ -73,7 +72,6 @@ namespace Memoria.Scripts.Battle
                         TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
                     }
             }
-            TranceSeekCustomAPI.SpecialSA(_v);
             }
         }
     }

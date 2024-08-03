@@ -2,8 +2,6 @@
 using UnityEngine;
 using Memoria.Data;
 using Object = System.Object;
-using System.Collections.Generic;
-using Unity.IO.Compression;
 
 namespace Memoria.DefaultScripts
 {

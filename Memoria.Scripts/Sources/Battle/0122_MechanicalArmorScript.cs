@@ -22,7 +22,6 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             if (_v.Caster.Data.dms_geo_id == 446) // Garland - Armor Mechanic
             {
                 if (_v.Command.Power == 100 && _v.Command.HitRate == 100)
@@ -51,7 +50,6 @@ namespace Memoria.Scripts.Battle
                 }
                 _v.Target.TryRemoveStatuses(_v.Command.AbilityStatus);
             }
-            TranceSeekCustomAPI.SpecialSA(_v);
         }
     }
 }

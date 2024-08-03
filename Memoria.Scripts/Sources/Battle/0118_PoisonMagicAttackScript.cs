@@ -17,7 +17,6 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             _v.NormalMagicParams();
             TranceSeekCustomAPI.CharacterBonusPassive(_v, "MagicAttack");
             _v.Caster.PenaltyMini();
@@ -40,7 +39,6 @@ namespace Memoria.Scripts.Battle
                 _v.CalcHpDamage();
             }
             _v.TryAlterMagicStatuses();          
-            TranceSeekCustomAPI.SpecialSA(_v);
         }
 
         public Single RateTarget()

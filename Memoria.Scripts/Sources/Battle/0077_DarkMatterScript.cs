@@ -19,13 +19,11 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             if (_v.Target.CanBeAttacked())
             {
                 _v.Target.Flags |= CalcFlag.HpAlteration;
                 _v.Target.HpDamage = 9999;
             }
-            TranceSeekCustomAPI.SpecialSA(_v);
         }
     }
 }

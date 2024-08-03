@@ -20,7 +20,6 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             if (_v.Caster.PlayerIndex == CharacterId.Freya && _v.Command.AbilityId == BattleAbilityId.Luna)
             {
                 if (_v.Target.IsUnderAnyStatus(TranceSeekCustomAPI.CustomStatus.Dragon))
@@ -100,7 +99,6 @@ namespace Memoria.Scripts.Battle
                     }
                 }
             }
-            TranceSeekCustomAPI.SpecialSA(_v);
         }
     }
 }

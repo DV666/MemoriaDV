@@ -21,7 +21,6 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            TranceSeekCustomAPI.InitCustomBTLDATA(_v);             
             if (_v.Caster.Data.dms_geo_id == 410) // Lamie
             {
                 if (_v.Command.Power == 99)
@@ -61,7 +60,6 @@ namespace Memoria.Scripts.Battle
                     }
                     _v.Context.Flags = 0;
                 }
-                TranceSeekCustomAPI.SpecialSA(_v);
                 return;
             }
             if (_v.Command.AbilityId == BattleAbilityId.Esuna)
@@ -83,7 +81,6 @@ namespace Memoria.Scripts.Battle
             {
                 _v.Context.Flags = 0;
             }
-            TranceSeekCustomAPI.SpecialSA(_v);
         }
 
         public Single RateTarget()

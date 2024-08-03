@@ -20,7 +20,6 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             if (_v.Target.IsUnderAnyStatus(BattleStatus.Mini))
             {
                 TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
@@ -32,7 +31,6 @@ namespace Memoria.Scripts.Battle
             _v.PenaltyCommandDividedHitRate();
             if (_v.TryMagicHit())
                 TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
-            TranceSeekCustomAPI.SpecialSA(_v);
         }
     }
 }

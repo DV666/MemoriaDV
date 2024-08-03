@@ -20,14 +20,12 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             _v.PhysicalAccuracy();
             if (_v.Command.AbilityId != BattleAbilityId.Darkside)
             {
                 if (TranceSeekCustomAPI.TryPhysicalHit(_v))
                 {
                     _v.Context.Flags |= BattleCalcFlags.Miss;
-                    TranceSeekCustomAPI.SpecialSA(_v);
                     return;
                 }
             }
@@ -60,7 +58,6 @@ namespace Memoria.Scripts.Battle
                 }
                 TranceSeekCustomAPI.RaiseTrouble(_v);
             }           
-            TranceSeekCustomAPI.SpecialSA(_v);
         }
     }
 }

@@ -21,7 +21,6 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             if (_v.Command.Id == BattleCommandId.Attack && _v.Caster.PlayerIndex == CharacterId.Quina)
             {
                 _v.PhysicalAccuracy();
@@ -80,7 +79,6 @@ namespace Memoria.Scripts.Battle
 
             _v.Target.MpDamage = damage;
             _v.Caster.MpDamage = damage;
-            TranceSeekCustomAPI.SpecialSA(_v);
         }
     }
 }

@@ -21,7 +21,6 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             if (_v.Command.AbilityStatus == BattleStatus.AutoLife)
             {
                 _v.Target.RemoveStatus(BattleStatus.AutoLife);
@@ -105,7 +104,6 @@ namespace Memoria.Scripts.Battle
                     }
                 );
             }
-            TranceSeekCustomAPI.SpecialSA(_v);
         }
     }
 }

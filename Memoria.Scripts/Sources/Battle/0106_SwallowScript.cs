@@ -19,7 +19,6 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             if (_v.Command.HitRate == 111)
             {
                 _v.TryAlterMagicStatuses();
@@ -35,7 +34,6 @@ namespace Memoria.Scripts.Battle
                     _v.Caster.MpDamage = (int)(_v.Target.MaximumMp * _v.Command.Power / 100U);
                 }
             }
-            TranceSeekCustomAPI.SpecialSA(_v);
         }
     }
 }

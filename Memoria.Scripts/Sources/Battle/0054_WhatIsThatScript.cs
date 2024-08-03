@@ -22,7 +22,6 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             short num = 0;
             string text = string.Empty;
             string text2 = string.Empty;
@@ -302,7 +301,6 @@ namespace Memoria.Scripts.Battle
                 });
                 return;
             }
-            TranceSeekCustomAPI.SpecialSA(_v);
         }
 
         private static bool HasStealableItems(BattleEnemy enemy)

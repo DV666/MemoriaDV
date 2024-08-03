@@ -40,6 +40,7 @@ namespace Memoria.DefaultScripts
                     UILabel UILabelHUD = MechanicalArmorHUD.GetComponent<UILabel>();
                     UILabelHUD.spacingY = -10;
                     MechanicalArmorHUD.FontSize = 20;
+                    MechanicalArmorHUD.Follower.clampToScreen = false;
                     target.AddDelayedModifier(UpdateMessageShow, null);
                     btl2d.StatusMessages.Add(MechanicalArmorHUD);
                 }
@@ -79,6 +80,7 @@ namespace Memoria.DefaultScripts
             UILabel UILabelHUD = MechanicalArmorHUD.GetComponent<UILabel>();
             UILabelHUD.spacingY = -10;
             MechanicalArmorHUD.FontSize = 20;
+            MechanicalArmorHUD.Follower.clampToScreen = false;
             if (KeepText)
                 MechanicalArmorHUD.Label = $"[FFA500]   {Stack}";
             else

@@ -19,7 +19,6 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             if (_v.Caster.Data.dms_geo_id == 446 && _v.Command.HitRate == 111) // Garland - Meteor
             {
                 _v.Caster.Data.mot[0] = "ANH_MON_B3_185_008";
@@ -41,7 +40,6 @@ namespace Memoria.Scripts.Battle
                 if (_v.CanAttackElementalCommand())
                     _v.CalcHpDamage();
             }
-            TranceSeekCustomAPI.SpecialSA(_v);
         }
     }
 }

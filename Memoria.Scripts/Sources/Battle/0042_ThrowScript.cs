@@ -21,7 +21,6 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             if (_v.Caster.IsPlayer)
             {
                 if (_v.Command.ItemId == (RegularItem)1032) // Smoking Bomb
@@ -93,7 +92,6 @@ namespace Memoria.Scripts.Battle
                     }
                 }
             }
-            TranceSeekCustomAPI.SpecialSA(_v);
         }
 
         public static Boolean CanAttackMagic(BattleCalculator _v)

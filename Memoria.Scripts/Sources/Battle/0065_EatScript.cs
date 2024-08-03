@@ -23,7 +23,6 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             BattleEnemyPrototype enemyPrototype = BattleEnemyPrototype.Find(_v.Target);
             Int32 blueMagicId = enemyPrototype.BlueMagicId;
             if (_v.Caster.IsUnderAnyStatus(BattleStatus.Trance))
@@ -158,7 +157,6 @@ namespace Memoria.Scripts.Battle
                     }
                 }
             }
-            TranceSeekCustomAPI.SpecialSA(_v);
         }
 
         public Single RateTarget()

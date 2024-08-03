@@ -392,7 +392,8 @@
     </Compile>
     <Compile Include="Sources\Battle\BlindStatusScript.cs" />
     <Compile Include="Sources\Battle\BulwarkStatusScript.cs" />
-    <Compile Include="Sources\Battle\DamageModifierScript.cs" />
+    <Compile Include="Sources\Battle\OverloadOnBattleInitScript.cs" />
+    <Compile Include="Sources\Battle\OverloadDamageModifierScript.cs" />
     <Compile Include="Sources\Battle\DeathStatusScript.cs" />
     <Compile Include="Sources\Battle\DoomStatusScript.cs" />
     <Compile Include="Sources\Battle\DragonStatusScript.cs" />
@@ -409,10 +410,12 @@
     <Compile Include="Sources\Battle\PoisonStatusScript.cs" />
     <Compile Include="Sources\Battle\PowerBreakStatusScript.cs" />
     <Compile Include="Sources\Battle\PowerUpStatusScript.cs" />
-    <Compile Include="Sources\Battle\RebirthFlameScript.cs" />
+    <Compile Include="Sources\Battle\OverloadOnGameOverScript.cs" />
     <Compile Include="Sources\Battle\RedemptionStatusScript.cs" />
     <Compile Include="Sources\Battle\RegenStatusScript.cs" />
+    <Compile Include="Sources\Battle\SilenceEasyKillStatusScript.cs" />
     <Compile Include="Sources\Battle\SilenceStatusScript.cs" />
+    <Compile Include="Sources\Battle\SleepEasyKillStatusScript.cs" />
     <Compile Include="Sources\Battle\SleepStatusScript.cs" />
     <Compile Include="Sources\Battle\StopStatusScript.cs" />
     <Compile Include="Sources\Battle\TranceSeekCustomAPI.cs" />
@@ -420,6 +423,7 @@
     <Compile Include="Sources\Battle\TroubleStatusScript.cs" />
     <Compile Include="Sources\Battle\VenomStatusScript.cs" />
     <Compile Include="Sources\Battle\VieillissementStatusScript.cs" />
+    <Compile Include="Sources\Battle\VirusStatusScript.cs" />
     <Compile Include="Sources\Battle\ZombieArmorStatusScript.cs" />
     <Compile Include="Sources\Battle\ZombieStatusScript.cs" />
   </ItemGroup>

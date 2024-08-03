@@ -17,7 +17,6 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             if (_v.Target.MagicDefence == 255)
             {
                 _v.Context.Flags |= BattleCalcFlags.Guard;
@@ -32,7 +31,6 @@ namespace Memoria.Scripts.Battle
             _v.BonusElement();
             _v.CalcHpDamage();
             _v.TryAlterMagicStatuses();
-            TranceSeekCustomAPI.SpecialSA(_v);
         }
 
         public Single RateTarget()

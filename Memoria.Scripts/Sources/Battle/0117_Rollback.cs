@@ -21,7 +21,6 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             if (_v.Command.Power == 0 && TranceSeekCustomAPI.RollBackStats[_v.Target.Data][0] == 0)
             {
                 TranceSeekCustomAPI.RollBackStats[_v.Target.Data][0] = 1;
@@ -54,7 +53,6 @@ namespace Memoria.Scripts.Battle
                 _v.Target.AlterStatus(TranceSeekCustomAPI.RollBackBattleStatus[_v.Target.Data], _v.Caster);
                 _v.Target.Trance = (byte)TranceSeekCustomAPI.RollBackStats[_v.Target.Data][10];
             }
-            TranceSeekCustomAPI.SpecialSA(_v);
         }
     }
 }

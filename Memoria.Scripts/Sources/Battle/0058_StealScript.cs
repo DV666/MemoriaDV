@@ -22,9 +22,6 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-
-            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
-            TranceSeekCustomAPI.SpecialSA(_v);
             BattleEnemy battleEnemy = BattleEnemy.Find(_v.Target);
             if (!HasStealableItems(battleEnemy))
             {

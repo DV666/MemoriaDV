@@ -21,7 +21,6 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             if (_v.Target.PhysicalDefence == 255)
             {
                 _v.Context.Flags |= BattleCalcFlags.Guard;
@@ -55,7 +54,6 @@ namespace Memoria.Scripts.Battle
                 }
                 _v.Target.PhysicalDefence = (byte)(_v.Target.PhysicalDefence * 2);
             }
-            TranceSeekCustomAPI.SpecialSA(_v);
         }
     }
 }

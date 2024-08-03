@@ -20,7 +20,6 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             _v.Context.Attack = 15;
             _v.Context.AttackPower = _v.Command.Item.Power;
             _v.Context.DefensePower = 0;
@@ -73,7 +72,6 @@ namespace Memoria.Scripts.Battle
                 return;
             }
             _v.CalcMpMagicRecovery();
-            TranceSeekCustomAPI.SpecialSA(_v);
         }
 
         public Single RateTarget()

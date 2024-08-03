@@ -20,7 +20,6 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             if (!_v.Target.TryKillFrozen())
             {
                 if (_v.Target.PhysicalDefence == 255)
@@ -51,7 +50,6 @@ namespace Memoria.Scripts.Battle
                 _v.Target.AlterStatus(TranceSeekCustomAPI.CustomStatus.ArmorBreak, _v.Caster);
                 _v.CalcHpDamage();
                 _v.TryAlterMagicStatuses();
-                TranceSeekCustomAPI.SpecialSA(_v);
             } 
         }
 

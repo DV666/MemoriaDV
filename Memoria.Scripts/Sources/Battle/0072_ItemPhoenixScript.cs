@@ -25,7 +25,6 @@ namespace Memoria.Scripts.Battle
                 return;
 
             if (_v.Target.IsZombie)
-            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             if (_v.Target.Data.dms_geo_id == 401 && (FF9StateSystem.Battle.battleMapIndex == 631 || FF9StateSystem.Battle.battleMapIndex == 632)) // Friendly Feather Circle
             {
                 _v.Target.Flags |= CalcFlag.HpAlteration | CalcFlag.HpRecovery;
@@ -80,7 +79,6 @@ namespace Memoria.Scripts.Battle
                     _v.TryRemoveItemStatuses();
                 }
             }
-            TranceSeekCustomAPI.SpecialSA(_v);
         }
 
         public Single RateTarget()

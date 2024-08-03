@@ -21,7 +21,6 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
 			if (_v.Caster.PlayerIndex == CharacterId.Freya || _v.Caster.Data.dms_geo_id == 297)
 			{
                 if (!_v.Target.CanBeAttacked())
@@ -90,7 +89,6 @@ namespace Memoria.Scripts.Battle
                     return;
                 }
             }
-            TranceSeekCustomAPI.SpecialSA(_v);
         }
     }
 }

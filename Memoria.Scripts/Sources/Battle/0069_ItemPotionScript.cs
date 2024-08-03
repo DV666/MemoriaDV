@@ -21,7 +21,6 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             _v.Context.Attack = 15;
             if (!_v.Caster.IsPlayer)
             {
@@ -146,7 +145,6 @@ namespace Memoria.Scripts.Battle
                 TranceSeekCustomAPI.MonsterMechanic[_v.Target.Data][1] = _v.Target.HpDamage;
                 _v.Target.TryAlterSingleStatus(BattleStatusId.CustomStatus10, true, _v.Caster, _v.Target.HpDamage);
             }         
-            TranceSeekCustomAPI.SpecialSA(_v);
         }
 
         public Single RateTarget()

@@ -20,7 +20,6 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             if (_v.Caster.IsPlayer)
             {
                 _v.Target.RemoveStatus(BattleStatus.Protect);
@@ -43,7 +42,6 @@ namespace Memoria.Scripts.Battle
                     int num = Math.Min(9999, _v.Context.PowerDifference * _v.Context.EnsureAttack);
                     _v.Target.MpDamage = (int)((short)(num >> 4));
                 }
-                TranceSeekCustomAPI.SpecialSA(_v);
                 return;
             }
             _v.PhysicalAccuracy();
@@ -90,7 +88,6 @@ namespace Memoria.Scripts.Battle
                     _v.TryAlterMagicStatuses();
                 }
             }
-            TranceSeekCustomAPI.SpecialSA(_v);
         }
     }
 }

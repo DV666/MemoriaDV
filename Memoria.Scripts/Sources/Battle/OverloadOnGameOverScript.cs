@@ -4,7 +4,7 @@ using Memoria.Data;
 
 namespace Memoria.Scripts.Battle
 {
-    public class RebirthFlameScript : IOverloadOnGameOverScript
+    public class OverloadOnGameOverScript : IOverloadOnGameOverScript
     {
         public Boolean OnGameOver(FF9StateBattleSystem state, BattleUnit dyingPC)
         {

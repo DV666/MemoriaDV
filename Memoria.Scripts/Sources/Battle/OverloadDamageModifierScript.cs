@@ -3,7 +3,7 @@ using Memoria.Data;
 
 namespace Memoria.Scripts.Battle
 {
-    public class DamageModifierScript : IOverloadDamageModifierScript
+    public class OverloadDamageModifierScript : IOverloadDamageModifierScript
     {
         public void OnDamageModifierChange(BattleCalculator v, Int32 previousValue, Int32 bonus)
         {
@@ -30,6 +30,7 @@ namespace Memoria.Scripts.Battle
                 v.Target.HpDamage = (Int32)Math.Round(modifier_factor * v.Target.HpDamage) * reflectMultiplier;
             if ((v.Target.Flags & CalcFlag.MpAlteration) != 0)
                 v.Target.MpDamage = (Int32)Math.Round(modifier_factor * v.Target.MpDamage) * reflectMultiplier;
+            TranceSeekCustomAPI.SpecialSA(v);
         }
     }
 }

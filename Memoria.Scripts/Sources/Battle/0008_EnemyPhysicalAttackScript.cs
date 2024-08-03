@@ -21,7 +21,6 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             if (_v.Caster.Data.dms_geo_id == 573)
             {
 
@@ -100,7 +99,6 @@ namespace Memoria.Scripts.Battle
                             TranceSeekCustomAPI.RaiseTrouble(_v);
                             _v.TryAlterMagicStatuses();
                         }
-                        TranceSeekCustomAPI.SpecialSA(_v);
                     }
                 }
             }

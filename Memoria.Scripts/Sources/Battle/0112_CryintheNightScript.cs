@@ -17,7 +17,6 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             if (_v.Target.IsUnderAnyStatus(_v.Command.AbilityStatus) && _v.Target.CheckUnsafetyOrGuard())
             {
                 _v.Target.TryAlterStatuses(BattleStatus.Death, false, _v.Target);
@@ -41,7 +40,6 @@ namespace Memoria.Scripts.Battle
             }
             if (_v.Command.HitRate > 0)
                 _v.TryAlterMagicStatuses();
-            TranceSeekCustomAPI.SpecialSA(_v);
         }
     }
 }

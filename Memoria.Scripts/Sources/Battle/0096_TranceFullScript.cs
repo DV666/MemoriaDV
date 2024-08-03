@@ -20,7 +20,6 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             if (!_v.Target.IsPlayer)
             {
                 _v.Target.ResistStatus &= ~BattleStatus.Trance;
@@ -36,7 +35,6 @@ namespace Memoria.Scripts.Battle
                 _v.Target.Trance = Byte.MaxValue;
             }
             _v.Target.AlterStatus(BattleStatus.Trance);
-            TranceSeekCustomAPI.SpecialSA(_v);
         }
     }
 }

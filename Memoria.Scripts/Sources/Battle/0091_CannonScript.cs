@@ -20,7 +20,6 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             _v.PhysicalAccuracy();
             if (TranceSeekCustomAPI.TryPhysicalHit(_v))
             {
@@ -41,7 +40,6 @@ namespace Memoria.Scripts.Battle
                     _v.TryAlterMagicStatuses();
                 }
             }
-            TranceSeekCustomAPI.SpecialSA(_v);
         }
     }
 }

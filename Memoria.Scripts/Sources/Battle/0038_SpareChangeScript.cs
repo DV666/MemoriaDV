@@ -20,7 +20,6 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             _v.Target.Flags |= CalcFlag.HpAlteration;
 
             Int32 power = _v.Command.Power * _v.Caster.Level;
@@ -30,7 +29,6 @@ namespace Memoria.Scripts.Battle
                 damage /= BattleState.TargetCount(false);
 
             _v.Target.HpDamage = (Int32)damage;
-            TranceSeekCustomAPI.SpecialSA(_v);
         }
     }
 }

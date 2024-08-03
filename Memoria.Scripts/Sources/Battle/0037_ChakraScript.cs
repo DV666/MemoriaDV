@@ -22,7 +22,6 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             if (_v.Command.Power == 111 && _v.Command.HitRate == 111)
             {
                 if (_v.Caster.PlayerIndex == CharacterId.Amarant) // Amarant - Plenitude
@@ -37,7 +36,6 @@ namespace Memoria.Scripts.Battle
                     TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
                     _v.Target.AlterStatus(TranceSeekCustomAPI.CustomStatus.MagicUp, _v.Caster);
                     _v.Target.AlterStatus(TranceSeekCustomAPI.CustomStatus.MentalUp, _v.Caster);
-                    TranceSeekCustomAPI.SpecialSA(_v);
                 }
                 else // Ogre - Zenitude
                 {
@@ -91,7 +89,6 @@ namespace Memoria.Scripts.Battle
                     _v.Target.RemoveStatus(BattleStatus.Blind);
                 }
             }
-            TranceSeekCustomAPI.SpecialSA(_v);
         }
     }
 }

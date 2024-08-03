@@ -20,14 +20,12 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             Boolean applyToPlayer = _v.Target.IsPlayer;
             MutableBattleCommand command = new MutableBattleCommand(_v.Caster, _v.Target.Id, _v.Command.Id, applyToPlayer ? BattleAbilityId.RebirthFlame : BattleAbilityId.Phoenix);
             command.IsShortSummon = _v.Command.IsShortSummon;
             command.ScriptId = (Byte)(applyToPlayer ? ReviveScript.Id : MagicAttackScript.Id);
             SBattleCalculator.CalcMain(_v.Caster, _v.Target, command);
             _v.PerformCalcResult = false;
-            TranceSeekCustomAPI.SpecialSA(_v);
         }
     }
 }

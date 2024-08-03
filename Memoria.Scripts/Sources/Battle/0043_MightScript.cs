@@ -21,7 +21,6 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             if (_v.Caster.PlayerIndex == CharacterId.Beatrix && (_v.Command.AbilityId == (BattleAbilityId)1012 || _v.Command.AbilityId == (BattleAbilityId)1054)) // Bravoure
             {
                 if (TranceSeekCustomAPI.BeatrixPassive[_v.Caster.Data][2] > 0)
@@ -40,14 +39,12 @@ namespace Memoria.Scripts.Battle
                 {
                     TranceSeekCustomAPI.BeatrixPassive[_v.Caster.Data][2] = 1;
                 }
-                TranceSeekCustomAPI.SpecialSA(_v);
                 return;
             }
 
             _v.TryAlterMagicStatuses();
             _v.Target.AlterStatus(TranceSeekCustomAPI.CustomStatus.PowerUp, _v.Caster);
             _v.Target.AlterStatus(TranceSeekCustomAPI.CustomStatus.MagicUp, _v.Caster);
-            TranceSeekCustomAPI.SpecialSA(_v);
         }
     }
 }

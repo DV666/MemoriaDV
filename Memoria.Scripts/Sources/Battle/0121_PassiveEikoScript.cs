@@ -22,7 +22,6 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             if (_v.Caster.PlayerIndex == CharacterId.Eiko)
             {
                 if (!TranceSeekCustomAPI.StateMoug.TryGetValue(_v.Caster.Data, out Int32 State))
@@ -158,7 +157,6 @@ namespace Memoria.Scripts.Battle
                     return;
                 }
             }         
-            TranceSeekCustomAPI.SpecialSA(_v);
         }
     }
 }

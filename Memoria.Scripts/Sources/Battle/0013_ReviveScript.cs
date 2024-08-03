@@ -20,7 +20,6 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             if (!_v.Target.CanBeRevived())
             {
                 _v.Context.Flags |= BattleCalcFlags.Miss;
@@ -81,7 +80,6 @@ namespace Memoria.Scripts.Battle
                 _v.Target.HpDamage = (Int32)(_v.Target.MaximumHp * (_v.Target.Will + _v.Command.Power) / 100);
             }
             _v.TryRemoveAbilityStatuses();
-            TranceSeekCustomAPI.SpecialSA(_v);
         }
 
         private Boolean HitRateForZombie()

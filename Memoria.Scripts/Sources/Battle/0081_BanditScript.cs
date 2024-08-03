@@ -20,7 +20,6 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             SB2_PATTERN sb2Pattern = FF9StateSystem.Battle.FF9Battle.btl_scene.PatAddr[FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum];
             if (_v.Caster.PlayerIndex == CharacterId.Amarant && _v.Command.AbilityId == BattleAbilityId.NoMercy1) // Intimidation
             {
@@ -36,7 +35,6 @@ namespace Memoria.Scripts.Battle
                 {
                     _v.Target.AlterStatus(BattleStatus.Stop | BattleStatus.Trouble, _v.Caster);
                 }
-                TranceSeekCustomAPI.SpecialSA(_v);
                 return;
             }
             if (_v.Target.IsUnderAnyStatus(BattleStatus.Vanish) | _v.Target.PhysicalEvade == 255)
@@ -80,7 +78,6 @@ namespace Memoria.Scripts.Battle
             } 
             uint PVCharacter = (_v.Caster.CurrentHp * 100U / _v.Caster.MaximumHp); // Zidane or Markus
             uint PVMonster = (100 - RatioPVMonster);
-            TranceSeekCustomAPI.SpecialSA(_v);
             if (battleEnemy.StealableItems[3] != RegularItem.NoItem && (GameRandom.Next8() % 100) < (PVCharacter / 2) && (GameRandom.Next8() % 100) < (PVMonster / 2))
             {
                 _v.StealItem(battleEnemy, 3);
@@ -101,7 +98,6 @@ namespace Memoria.Scripts.Battle
             {
                 UiState.SetBattleFollowFormatMessage(BattleMesages.CouldNotStealAnything);
             }
-            TranceSeekCustomAPI.SpecialSA(_v);
         }
 
         private static bool HasStealableItems(BattleEnemy enemy)

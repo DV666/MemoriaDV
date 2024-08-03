@@ -20,7 +20,6 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             if (_v.Caster.IsPlayer)
             {
                 if (!_v.Target.IsUnderStatus(BattleStatus.EasyKill))
@@ -39,7 +38,6 @@ namespace Memoria.Scripts.Battle
                     _v.Target.Libra(BattleHUD.LibraInformation.Default);
                 }
             }
-            TranceSeekCustomAPI.SpecialSA(_v);
         }
     }
 }

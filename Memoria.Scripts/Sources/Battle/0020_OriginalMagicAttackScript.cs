@@ -24,7 +24,6 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             BTL_DATA data = _v.Caster.Data;
             Boolean reducemagique = _v.Command.AbilityId == BattleAbilityId.FreeEnergy || _v.Command.AbilityId == BattleAbilityId.Solution9 && _v.Caster.CurrentHp % 10 != 9;
             if (_v.Command.AbilityId == (BattleAbilityId)1002) // Lame effilée
@@ -177,7 +176,6 @@ namespace Memoria.Scripts.Battle
                 _v.CalcHpDamage();
             }
             _v.TryAlterMagicStatuses();
-            TranceSeekCustomAPI.SpecialSA(_v);
         }
     }
 }

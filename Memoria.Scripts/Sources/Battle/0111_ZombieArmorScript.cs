@@ -17,7 +17,6 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             if (_v.Caster.Data.dms_geo_id == 7 && _v.Command.Power == 66 && _v.Command.HitRate == 66) // Siamois - Zombie Armor
             {
                 _v.Target.TryAlterSingleStatus(BattleStatusId.CustomStatus10, true, _v.Caster, -1);
@@ -40,7 +39,6 @@ namespace Memoria.Scripts.Battle
 
                 //_v.Target.TryAlterSingleStatus(BattleStatusId.CustomStatus10, true, _v.Caster, _v.Target.HpDamage);
             }
-            TranceSeekCustomAPI.SpecialSA(_v);
         }
     }
 }

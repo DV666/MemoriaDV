@@ -21,7 +21,6 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             _v.NormalPhysicalParams();
             TranceSeekCustomAPI.CharacterBonusPassive(_v, "PhysicalAttack");
             _v.Caster.PhysicalPenaltyAndBonusAttack();
@@ -50,7 +49,6 @@ namespace Memoria.Scripts.Battle
             {
                 RemoveItem();
             }
-            TranceSeekCustomAPI.SpecialSA(_v);
         }
 
         private void RemoveItem()

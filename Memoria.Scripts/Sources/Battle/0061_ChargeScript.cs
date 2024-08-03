@@ -20,7 +20,6 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             const BattleStatus cannotAttack = BattleStatus.Petrify | BattleStatus.Death | BattleStatus.Confuse | BattleStatus.Berserk
                                               | BattleStatus.Stop | BattleStatus.Sleep | BattleStatus.Freeze | BattleStatus.Jump;
 
@@ -52,7 +51,6 @@ namespace Memoria.Scripts.Battle
                 _v.Context.Flags = 0;
                 UiState.SetBattleFollowFormatMessage(BattleMesages.ChargeFailed);
             }
-            TranceSeekCustomAPI.SpecialSA(_v);
         }
     }
 }

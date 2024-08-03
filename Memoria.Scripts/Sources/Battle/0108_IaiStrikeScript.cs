@@ -19,7 +19,6 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             _v.Command.Power = _v.Command.Power * (_v.Target.PhysicalDefence / 100);
             if (_v.Command.Power < 1)
             {
@@ -36,7 +35,6 @@ namespace Memoria.Scripts.Battle
                 _v.CalcHpDamage();
                 _v.TryAlterMagicStatuses();
             }
-            TranceSeekCustomAPI.SpecialSA(_v);
         }
     }
 }

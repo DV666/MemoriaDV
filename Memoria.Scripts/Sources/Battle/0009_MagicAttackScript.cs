@@ -17,7 +17,6 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             if (_v.Caster.Data.dms_geo_id == 404 && _v.Command.Power == 57 && SFX.currentEffectID == SpecialEffect.Aerial_Slash_Garuda) // Kjata's Dance - Friendly Garuda
             {
                 if (_v.Caster.SummonCount == 0)
@@ -74,7 +73,6 @@ namespace Memoria.Scripts.Battle
                 _v.TryAlterMagicStatuses();
             }
             TranceSeekCustomAPI.RaiseTrouble(_v);
-            TranceSeekCustomAPI.SpecialSA(_v);
         }
 
         public Single RateTarget()

@@ -20,10 +20,8 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             _v.Caster.AlterStatus(TranceSeekCustomAPI.CustomStatus.PowerUp, _v.Caster);
             _v.Target.AlterStatus(TranceSeekCustomAPI.CustomStatus.PowerBreak, _v.Caster);
-            TranceSeekCustomAPI.SpecialSA(_v);
         }
     }
 }

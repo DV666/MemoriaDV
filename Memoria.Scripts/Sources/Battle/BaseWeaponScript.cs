@@ -19,7 +19,7 @@ namespace Memoria.Scripts.Battle
 
         public virtual void Perform()
         {
-            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
+            //TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             if (Configuration.TetraMaster.TripleTriad == 16388 && _v.Caster.IsPlayer)
             {
                 if (!_v.Target.IsPlayer)
@@ -170,7 +170,7 @@ namespace Memoria.Scripts.Battle
                             TranceSeekCustomAPI.IpsenCastleMalus(_v);
                             _v.CalcPhysicalHpDamage();
                             TranceSeekCustomAPI.RaiseTrouble(_v);
-                            TranceSeekCustomAPI.SpecialSA(_v);
+                            //TranceSeekCustomAPI.SpecialSA(_v);
                         }
                     }
                 }

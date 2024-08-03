@@ -20,7 +20,6 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             _v.TryRemoveItemStatuses();
             if (_v.Command.ItemId == RegularItem.Annoyntment)
             {
@@ -32,7 +31,6 @@ namespace Memoria.Scripts.Battle
                 _v.Target.RemoveStatus(TranceSeekCustomAPI.CustomStatus.Vieillissement);
                 _v.Context.Flags = 0;
             }
-            TranceSeekCustomAPI.SpecialSA(_v);
         }
 
         public Single RateTarget()

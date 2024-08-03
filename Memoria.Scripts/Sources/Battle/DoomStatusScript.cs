@@ -1,8 +1,8 @@
 ﻿using System;
 using UnityEngine;
 using Memoria.Data;
+using System.Collections.Generic;
 using Object = System.Object;
-using static EventDelegate;
 
 namespace Memoria.DefaultScripts
 {
@@ -28,6 +28,25 @@ namespace Memoria.DefaultScripts
         {
             btl2d.StatusMessages.Remove(Message);
             Singleton<HUDMessage>.Instance.ReleaseObject(Message);
+            if (Target.IsUnderAnyStatus(BattleStatus.EasyKill))
+            {
+                List<BattleStatus> statuschoosen = new List<BattleStatus>{ BattleStatus.Poison, BattleStatus.Venom, BattleStatus.Blind, BattleStatus.Silence, BattleStatus.Trouble,
+                BattleStatus.Sleep, BattleStatus.Freeze, BattleStatus.Heat, BattleStatus.Mini, BattleStatus.Petrify, BattleStatus.GradualPetrify,
+                BattleStatus.Berserk, BattleStatus.Confuse, BattleStatus.Stop, BattleStatus.Zombie, BattleStatus.Slow };
+
+                for (Int32 i = 0; i < (statuschoosen.Count - 1); i++)
+                {
+                    if ((statuschoosen[i] & Target.Data.stat.invalid) != 0)
+                    {
+                        statuschoosen.Remove(statuschoosen[i]);
+                    }
+                }
+
+                for (Int32 i = 0; i < 2; i++)
+                {
+                    Target.AlterStatus(statuschoosen[GameRandom.Next16() % statuschoosen.Count], DoomInflicter);
+                }
+            }
             return true;
         }
 
@@ -35,7 +54,7 @@ namespace Memoria.DefaultScripts
         public Int32 SetupDoomOpr()
         {
             // Use the duration "ContiCnt" of Doom even if it is not registered as BattleStatusConst.ContiCount
-            return (Int32)(Target.StatusDurationFactor[BattleStatusId.Doom] * BattleStatusId.Doom.GetStatData().ContiCnt * (60 - Target.Will << 3) / 10);
+            return (Int32)(Target.StatusDurationFactor[BattleStatusId.Doom] * BattleStatusId.Doom.GetStatData().ContiCnt * (60 + Target.Will << 2) / 10);
         }
 
         public Boolean OnOpr()

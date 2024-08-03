@@ -20,7 +20,6 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             if (_v.Command.Power == 0)
             {
                 if (_v.IsTargetLevelMultipleOfCommandRate() && _v.Target.CanBeAttacked())
@@ -54,7 +53,6 @@ namespace Memoria.Scripts.Battle
                 _v.Target.PhysicalDefence = _v.Target.PhysicalDefence / 2;
                 _v.Target.MagicDefence = _v.Target.MagicDefence / 2;
             }
-            TranceSeekCustomAPI.SpecialSA(_v);
         }
     }
 }

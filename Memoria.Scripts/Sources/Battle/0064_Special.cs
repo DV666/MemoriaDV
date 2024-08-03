@@ -24,7 +24,6 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             if (_v.Caster.Data.dms_geo_id == 573) // Duel - Le Rouge
             {
                 if (_v.Command.Power == 1)
@@ -272,7 +271,6 @@ namespace Memoria.Scripts.Battle
                 }
                 _v.Caster.Data.gameObject.SetActive(true);
             }
-            TranceSeekCustomAPI.SpecialSA(_v);
         }
     }
 }

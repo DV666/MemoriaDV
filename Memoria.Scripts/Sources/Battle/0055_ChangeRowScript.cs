@@ -20,10 +20,8 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             if (!_v.Target.HasSupportAbilityByIndex((SupportAbility)1026))
                 _v.Target.ChangeRow();
-            TranceSeekCustomAPI.SpecialSA(_v);
         }
     }
 }

@@ -20,7 +20,6 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             if (_v.Command.HitRate == 111 || _v.Caster.PlayerIndex == CharacterId.Quina && _v.Command.AbilityId == (BattleAbilityId)1029) // ?000 epines
             {
                 short num = (short)(GameRandom.Next8() % (_v.Caster.Level / 10) + 1);
@@ -36,7 +35,6 @@ namespace Memoria.Scripts.Battle
                 _v.Target.Flags |= CalcFlag.HpAlteration;
                 _v.Target.HpDamage = (_v.Command.Power * 100 + _v.Command.HitRate);
             }
-            TranceSeekCustomAPI.SpecialSA(_v);
         }
     }
 }

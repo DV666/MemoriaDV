@@ -20,7 +20,6 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             uint num = ((_v.Caster.MaximumHp - _v.Caster.CurrentHp) / 33);
             _v.NormalMagicParams();
             _v.Context.AttackPower = (int)(_v.Command.Power + num);
@@ -37,7 +36,6 @@ namespace Memoria.Scripts.Battle
                 _v.CalcHpDamage();
             }
             _v.TryAlterMagicStatuses();
-            TranceSeekCustomAPI.SpecialSA(_v);
         }
     }
 }

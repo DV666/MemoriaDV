@@ -19,7 +19,6 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             _v.Target.Flags |= CalcFlag.HpAlteration;
             _v.Target.HpDamage = (Int32)_v.Target.MaximumHp - (Int32)_v.Target.CurrentHp;
 
@@ -36,7 +35,6 @@ namespace Memoria.Scripts.Battle
             _v.Target.Flags = 0;
             _v.Target.HpDamage = 0;
             _v.PerformCalcResult = false;
-            TranceSeekCustomAPI.SpecialSA(_v);
         }
     }
 }

@@ -23,13 +23,11 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             if (_v.Caster.PlayerIndex == CharacterId.Zidane)
             {
                 if (_v.Command.AbilityId == (BattleAbilityId)1004) // Echauffement
                 {
                     _v.Target.AlterStatus(TranceSeekCustomAPI.CustomStatus.PerfectDodge, _v.Caster);
-                    TranceSeekCustomAPI.SpecialSA(_v);
                     return;
                 }
                 else if (_v.Command.AbilityId == BattleAbilityId.LuckySeven) // Extorquer
@@ -76,7 +74,6 @@ namespace Memoria.Scripts.Battle
                         return;
                     }
                     _v.Context.Flags |= BattleCalcFlags.Miss;
-                    TranceSeekCustomAPI.SpecialSA(_v);
                     return;
                 }
             }
@@ -100,7 +97,6 @@ namespace Memoria.Scripts.Battle
                             TranceSeekCustomAPI.RaiseTrouble(_v);
                             _v.TryAlterMagicStatuses();
                         }
-                        TranceSeekCustomAPI.SpecialSA(_v);
                         if (_v.Target.Data.bi.player != 0)
                             UIManager.Battle.RemovePlayerFromAction(_v.Target.Data.btl_id, true);
                         if (!btl_cmd.KillCommand2(_v.Target.Data))
@@ -112,7 +108,6 @@ namespace Memoria.Scripts.Battle
                     }
                 }
             }
-            TranceSeekCustomAPI.SpecialSA(_v);
         }
     }
 }

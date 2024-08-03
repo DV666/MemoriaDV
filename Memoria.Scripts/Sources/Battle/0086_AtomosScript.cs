@@ -20,7 +20,6 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             if (!_v.Target.CheckUnsafetyOrMiss())
                 return;
 
@@ -31,7 +30,6 @@ namespace Memoria.Scripts.Battle
 
             _v.Context.Attack += ff9item.FF9Item_GetCount(RegularItem.Amethyst);
             _v.CalcProportionDamage();
-            TranceSeekCustomAPI.SpecialSA(_v);           
         }
     }
 }

@@ -19,7 +19,6 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             InitializeAttackParams();
             _v.Caster.PenaltyMini();
             _v.Caster.EnemyTranceBonusAttack();
@@ -31,7 +30,6 @@ namespace Memoria.Scripts.Battle
                 _v.CalcHpDamage();
             }
             _v.TryAlterMagicStatuses();
-            TranceSeekCustomAPI.SpecialSA(_v);
         }
 
         private void InitializeAttackParams()

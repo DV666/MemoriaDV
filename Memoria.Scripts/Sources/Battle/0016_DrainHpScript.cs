@@ -21,7 +21,6 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             // SFX.currentEffectID == SpecialEffect.Osmose
             if (_v.Caster.Data.dms_geo_id == 105 && _v.Command.HitRate == 222) // Soul Dance - Zombance
             {
@@ -58,7 +57,6 @@ namespace Memoria.Scripts.Battle
 
                     _v.Target.MpDamage = damage;
                     _v.Caster.MpDamage = damage;
-                    TranceSeekCustomAPI.SpecialSA(_v);
                     if (GameRandom.Next16() % 2 == 0)
                     {
                         _v.Caster.SummonCount = 0;
@@ -136,7 +134,6 @@ namespace Memoria.Scripts.Battle
                     _v.Caster.AlterStatus(TranceSeekCustomAPI.CustomStatus.PowerUp, _v.Caster);
                     _v.Caster.AlterStatus(TranceSeekCustomAPI.CustomStatus.MagicUp, _v.Caster);
                 }
-                TranceSeekCustomAPI.SpecialSA(_v);
             }
         }
     }

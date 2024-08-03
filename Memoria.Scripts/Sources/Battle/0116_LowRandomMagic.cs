@@ -21,7 +21,6 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             if (_v.Caster.Data.dms_geo_id == 446 && _v.Command.Power == 200 && TranceSeekCustomAPI.MonsterMechanic[_v.Caster.Data][2] == 1) // Garland - Meteor
             {
                 _v.Caster.Data.mot[0] = "ANH_MON_B3_185_008";
@@ -42,7 +41,6 @@ namespace Memoria.Scripts.Battle
                 _v.CalcHpDamage();
             }
             _v.TryAlterMagicStatuses();
-            TranceSeekCustomAPI.SpecialSA(_v);
         }
     }
 }

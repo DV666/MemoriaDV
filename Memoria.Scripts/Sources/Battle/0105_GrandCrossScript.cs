@@ -20,7 +20,6 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             UInt32 alteringStatuses = 0;
             if (_v.Command.Power == 1) // Friendly Mu - Surprise
             {
@@ -56,7 +55,6 @@ namespace Memoria.Scripts.Battle
                     _v.Target.CurrentHp = (UInt32)(1 + GameRandom.Next8() % 9);
                 }
             }
-            TranceSeekCustomAPI.SpecialSA(_v);
         }
     }
 }

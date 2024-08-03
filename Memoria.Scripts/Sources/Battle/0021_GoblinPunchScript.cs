@@ -20,7 +20,6 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             BTL_DATA data = _v.Caster.Data;
             if (_v.Caster.PlayerIndex != CharacterId.Steiner && data.dms_geo_id != 296 && data.dms_geo_id != 298)
             {
@@ -97,7 +96,6 @@ namespace Memoria.Scripts.Battle
                     }
                 }
             }
-            TranceSeekCustomAPI.SpecialSA(_v);
         }
     }
 }

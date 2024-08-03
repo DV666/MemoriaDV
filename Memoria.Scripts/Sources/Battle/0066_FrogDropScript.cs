@@ -19,14 +19,12 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             _v.Target.Flags |= CalcFlag.HpAlteration;
 
             if (GameState.Frogs == 0)
                 _v.Target.HpDamage = 1;
             else
                 _v.Target.HpDamage = GameState.Frogs * _v.Caster.Level;
-            TranceSeekCustomAPI.SpecialSA(_v);
         }
     }
 }

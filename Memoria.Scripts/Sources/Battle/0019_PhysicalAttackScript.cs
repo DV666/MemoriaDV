@@ -21,7 +21,6 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             if (_v.Caster.IsPlayer)
             {
                 _v.WeaponPhysicalParams();
@@ -99,7 +98,6 @@ namespace Memoria.Scripts.Battle
                     _v.TryAlterMagicStatuses();
                 }
             }
-            TranceSeekCustomAPI.SpecialSA(_v);
         }
     }
 }

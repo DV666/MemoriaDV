@@ -19,7 +19,6 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            TranceSeekCustomAPI.InitCustomBTLDATA(_v);
             if (_v.Target.CheckUnsafetyOrMiss() && _v.Target.CanBeAttacked())
             {
                 _v.MagicAccuracy();
@@ -59,7 +58,6 @@ namespace Memoria.Scripts.Battle
                     _v.Context.Flags |= BattleCalcFlags.Miss;
                 }
             }
-            TranceSeekCustomAPI.SpecialSA(_v);
         }
     }
 }
