@@ -176,7 +176,6 @@ namespace Memoria.Scripts.Battle
                     if ((statuschoosen[i].ToBattleStatus() & _v.Caster.CurrentStatus) != 0)
                     {
                         btl_stat.RemoveStatus(_v.Target, statuschoosen[i]);
-                        btl_stat.AlterStatus(_v.Target, statuschoosen[i], parameters:"Clear");
                     }
                 }
             }

@@ -9,7 +9,7 @@ namespace Memoria.DefaultScripts
 
     public class ZombieArmorStatusScript : StatusScriptBase
     {
-        public HUDMessageChild ZombieArmorHUD = null;
+        public HUDMessageChild NumberHUD = null;
         public Int32 BasicPhysicalDefence;
         public Int32 BasicMagicDefence;
         public Int32 Stack;
@@ -35,21 +35,22 @@ namespace Memoria.DefaultScripts
                     return btl_stat.ALTER_INVALID;
                 if (Stack > 1)
                 {
-                    if (ZombieArmorHUD != null)
+                    if (NumberHUD != null)
                     {
-                        ZombieArmorHUD.FontSize = DefautSize;
-                        btl2d.StatusMessages.Remove(ZombieArmorHUD);
-                        Singleton<HUDMessage>.Instance.ReleaseObject(ZombieArmorHUD);
+                        NumberHUD.FontSize = DefautSize;
+                        btl2d.StatusMessages.Remove(NumberHUD);
+                        Singleton<HUDMessage>.Instance.ReleaseObject(NumberHUD);
                     }
                     btl2d.GetIconPosition(target, btl2d.ICON_POS_DEFAULT, out Transform attachTransf, out Vector3 iconOff);
                     Vector3 OffSetPos = (statusData.SHPExtraPos + iconOff);
-                    ZombieArmorHUD = Singleton<HUDMessage>.Instance.Show(attachTransf, $"[FFA500]   {Stack}", HUDMessage.MessageStyle.DEATH_SENTENCE, OffSetPos, 0);
-                    DefautSize = ZombieArmorHUD.FontSize;
-                    UILabel UILabelHUD = ZombieArmorHUD.GetComponent<UILabel>();
+                    NumberHUD = Singleton<HUDMessage>.Instance.Show(attachTransf, $"[FFA500]   {Stack}", HUDMessage.MessageStyle.DEATH_SENTENCE, OffSetPos, 0);
+                    DefautSize = NumberHUD.FontSize;
+                    UILabel UILabelHUD = NumberHUD.GetComponent<UILabel>();
                     UILabelHUD.spacingY = -10;
-                    ZombieArmorHUD.FontSize = 20;
+                    NumberHUD.FontSize = 20;
+                    NumberHUD.Follower.clampToScreen = false;
                     target.AddDelayedModifier(UpdateMessageShow, null);
-                    btl2d.StatusMessages.Add(ZombieArmorHUD);
+                    btl2d.StatusMessages.Add(NumberHUD);
                 }
                 target.PhysicalDefence = (byte)Math.Max(1, BasicPhysicalDefence + (4 * Stack));
                 target.MagicDefence = (byte)Math.Max(1, BasicMagicDefence + (4 * Stack));
@@ -84,32 +85,41 @@ namespace Memoria.DefaultScripts
                 }
                 if (Stack > 1)
                 {
-                    if (ZombieArmorHUD != null)
+                    if (NumberHUD != null)
                     {
-                        ZombieArmorHUD.FontSize = DefautSize;
-                        btl2d.StatusMessages.Remove(ZombieArmorHUD);
-                        Singleton<HUDMessage>.Instance.ReleaseObject(ZombieArmorHUD);
+                        NumberHUD.FontSize = DefautSize;
+                        btl2d.StatusMessages.Remove(NumberHUD);
+                        Singleton<HUDMessage>.Instance.ReleaseObject(NumberHUD);
                     }
                     btl2d.GetIconPosition(Target, btl2d.ICON_POS_DEFAULT, out Transform attachTransf, out Vector3 iconOff);
                     Vector3 OffSetPos = (statusData.SHPExtraPos + iconOff);
-                    ZombieArmorHUD = Singleton<HUDMessage>.Instance.Show(attachTransf, $"[FFA500]   {Stack}", HUDMessage.MessageStyle.DEATH_SENTENCE, OffSetPos, 0);
-                    DefautSize = ZombieArmorHUD.FontSize;
-                    UILabel UILabelHUD = ZombieArmorHUD.GetComponent<UILabel>();
+                    NumberHUD = Singleton<HUDMessage>.Instance.Show(attachTransf, $"[FFA500]   {Stack}", HUDMessage.MessageStyle.DEATH_SENTENCE, OffSetPos, 0);
+                    DefautSize = NumberHUD.FontSize;
+                    UILabel UILabelHUD = NumberHUD.GetComponent<UILabel>();
                     UILabelHUD.spacingY = -10;
-                    ZombieArmorHUD.FontSize = 20;
+                    NumberHUD.FontSize = 20;
                     target.AddDelayedModifier(UpdateMessageShow, null);
-                    btl2d.StatusMessages.Add(ZombieArmorHUD);
+                    btl2d.StatusMessages.Add(NumberHUD);
                 }
                 else
                 {
-                    ZombieArmorHUD.FontSize = DefautSize;
-                    btl2d.StatusMessages.Remove(ZombieArmorHUD);
-                    Singleton<HUDMessage>.Instance.ReleaseObject(ZombieArmorHUD);
+                    NumberHUD.FontSize = DefautSize;
+                    btl2d.StatusMessages.Remove(NumberHUD);
+                    Singleton<HUDMessage>.Instance.ReleaseObject(NumberHUD);
                 }
                 target.PhysicalDefence = (byte)Math.Max(1, BasicPhysicalDefence + (4 * Stack));
                 target.MagicDefence = (byte)Math.Max(1, BasicMagicDefence + (4 * Stack));
             }
             return btl_stat.ALTER_SUCCESS;
+        }
+        public override Boolean Remove()
+        {
+            NumberHUD.FontSize = DefautSize;
+            btl2d.StatusMessages.Remove(NumberHUD);
+            Singleton<HUDMessage>.Instance.ReleaseObject(NumberHUD);
+            Target.PhysicalDefence = (Byte)BasicPhysicalDefence;
+            Target.MagicDefence = (Byte)BasicMagicDefence;
+            return true;
         }
 
         private Boolean UpdateMessageShow(BattleUnit unit)
@@ -126,34 +136,28 @@ namespace Memoria.DefaultScripts
         private void Refresh(Boolean KeepText)
         {
             BattleStatusDataEntry statusData = FF9StateSystem.Battle.FF9Battle.status_data[BattleStatusId.CustomStatus10];
-            if (ZombieArmorHUD != null)
+            if (NumberHUD != null)
             {
-                ZombieArmorHUD.FontSize = DefautSize;
-                btl2d.StatusMessages.Remove(ZombieArmorHUD);
-                Singleton<HUDMessage>.Instance.ReleaseObject(ZombieArmorHUD);
+                NumberHUD.FontSize = DefautSize;
+                btl2d.StatusMessages.Remove(NumberHUD);
+                Singleton<HUDMessage>.Instance.ReleaseObject(NumberHUD);
             }
-            btl2d.GetIconPosition(Target, btl2d.ICON_POS_DEFAULT, out Transform attachTransf, out Vector3 iconOff);
-            Vector3 OffSetPos = (statusData.SHPExtraPos + iconOff);
-            ZombieArmorHUD = Singleton<HUDMessage>.Instance.Show(attachTransf, $"[FFA500]   {Stack}", HUDMessage.MessageStyle.DEATH_SENTENCE, OffSetPos, 0);
-            DefautSize = ZombieArmorHUD.FontSize;
-            UILabel UILabelHUD = ZombieArmorHUD.GetComponent<UILabel>();
-            UILabelHUD.spacingY = -10;
-            ZombieArmorHUD.FontSize = 20;
-            if (KeepText)
-                ZombieArmorHUD.Label = $"[FFA500]   {Stack}";
-            else
-                ZombieArmorHUD.Label = "";
-            btl2d.StatusMessages.Add(ZombieArmorHUD);
-        }
-
-        public override Boolean Remove()
-        {
-            ZombieArmorHUD.FontSize = DefautSize;
-            btl2d.StatusMessages.Remove(ZombieArmorHUD);
-            Singleton<HUDMessage>.Instance.ReleaseObject(ZombieArmorHUD);
-            Target.PhysicalDefence = (Byte)BasicPhysicalDefence;
-            Target.MagicDefence = (Byte)BasicMagicDefence;
-            return true;
+            if (Stack > 1)
+            {
+                btl2d.GetIconPosition(Target, btl2d.ICON_POS_DEFAULT, out Transform attachTransf, out Vector3 iconOff);
+                Vector3 OffSetPos = (statusData.SHPExtraPos + iconOff);
+                NumberHUD = Singleton<HUDMessage>.Instance.Show(attachTransf, $"[FFA500]   {Stack}", HUDMessage.MessageStyle.DEATH_SENTENCE, OffSetPos, 0);
+                DefautSize = NumberHUD.FontSize;
+                UILabel UILabelHUD = NumberHUD.GetComponent<UILabel>();
+                UILabelHUD.spacingY = -10;
+                NumberHUD.FontSize = 20;
+                NumberHUD.Follower.clampToScreen = false;
+                if (KeepText)
+                    NumberHUD.Label = $"[FFA500]   {Stack}";
+                else
+                    NumberHUD.Label = "";
+                btl2d.StatusMessages.Add(NumberHUD);
+            }
         }
     }
 }

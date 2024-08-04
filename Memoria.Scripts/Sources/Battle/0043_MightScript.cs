@@ -41,16 +41,10 @@ namespace Memoria.Scripts.Battle
                 }
                 return;
             }
-            else if (_v.Caster.Data.dms_geo_id == 410 && _v.Command.Power == 4)
+            else if (_v.Caster.Data.dms_geo_id == 410 && _v.Command.Power == 4 || _v.Command.AbilityId == (BattleAbilityId)1081) // Super Muscles
             {
-                _v.Target.AlterStatus(TranceSeekCustomAPI.CustomStatus.PowerUp, _v.Caster);
-                _v.Target.AlterStatus(TranceSeekCustomAPI.CustomStatus.PowerUp, _v.Caster);
-                _v.Target.AlterStatus(TranceSeekCustomAPI.CustomStatus.PowerUp, _v.Caster);
-                _v.Target.AlterStatus(TranceSeekCustomAPI.CustomStatus.PowerUp, _v.Caster);
-                _v.Target.AlterStatus(TranceSeekCustomAPI.CustomStatus.ArmorUp, _v.Caster);
-                _v.Target.AlterStatus(TranceSeekCustomAPI.CustomStatus.ArmorUp, _v.Caster);
-                _v.Target.AlterStatus(TranceSeekCustomAPI.CustomStatus.ArmorUp, _v.Caster);
-                _v.Target.AlterStatus(TranceSeekCustomAPI.CustomStatus.ArmorUp, _v.Caster);
+                btl_stat.AlterStatus(_v.Target, TranceSeekCustomAPI.CustomStatusId.PowerUp, parameters: "4");
+                btl_stat.AlterStatus(_v.Target, TranceSeekCustomAPI.CustomStatusId.ArmorUp, parameters: "4");
                 return;
             }
 
