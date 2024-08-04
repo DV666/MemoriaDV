@@ -45,7 +45,7 @@ namespace Memoria.Scripts.Battle
                 _v.BonusSupportAbilitiesAttack();
                 _v.Caster.PenaltyMini();
                 TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
-                _v.Caster.BonusWeaponElement();
+                TranceSeekCustomAPI.BonusWeaponElement(_v);
                 if (_v.CanAttackWeaponElementalCommand())
                 {
                     TranceSeekCustomAPI.IpsenCastleMalus(_v);

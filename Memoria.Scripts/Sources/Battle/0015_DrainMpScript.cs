@@ -34,7 +34,7 @@ namespace Memoria.Scripts.Battle
                 _v.Caster.PhysicalPenaltyAndBonusAttack();
                 TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
                 _v.BonusBackstabAndPenaltyLongDistance();
-                _v.Caster.BonusWeaponElement();
+                TranceSeekCustomAPI.BonusWeaponElement(_v);
                 if (_v.CanAttackWeaponElementalCommand())
                 {
                     if (_v.Context.IsAbsorb)

@@ -33,7 +33,7 @@ namespace Memoria.Scripts.Battle
                 _v.Target.GambleDefence();
                 TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
                 TranceSeekCustomAPI.BonusBackstabAndPenaltyLongDistanceTranceSeek(_v);
-                _v.Caster.BonusWeaponElement();
+                TranceSeekCustomAPI.BonusWeaponElement(_v);
                 if (_v.CanAttackWeaponElementalCommand())
                 {
                     TranceSeekCustomAPI.TryCriticalHit(_v);

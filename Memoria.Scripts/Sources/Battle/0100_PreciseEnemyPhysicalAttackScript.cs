@@ -50,6 +50,7 @@ namespace Memoria.Scripts.Battle
                     {
                         TranceSeekCustomAPI.RaiseTrouble(_v);
                         _v.CalcHpDamage();
+                        TranceSeekCustomAPI.InfusedWeaponStatus(_v);
                         _v.TryAlterMagicStatuses();
                     }
                 }

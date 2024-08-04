@@ -65,8 +65,10 @@ namespace Memoria.Scripts.Battle
                     RollBackStats[unit.Data] = new Int32[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
                 if (!RollBackBattleStatus.TryGetValue(unit.Data, out BattleStatus rs))
                     RollBackBattleStatus[unit.Data] = 0;
-                if (!StatusBeforeScript.TryGetValue(unit.Data, out BattleStatus sbs))
-                    StatusBeforeScript[unit.Data] = 0;
+                if (!WeaponNewElement.TryGetValue(unit.Data, out EffectElement wpelem))
+                    WeaponNewElement[unit.Data] = EffectElement.None;
+                if (!WeaponNewStatus.TryGetValue(unit.Data, out BattleStatus wpstatus))
+                    WeaponNewStatus[unit.Data] = 0;
 
                 if (unit.HasSupportAbilityByIndex((SupportAbility)1041)) // Alert+
                 {
@@ -86,6 +88,14 @@ namespace Memoria.Scripts.Battle
                             MonsterMechanic[unit.Data][3] = 1;
                             break;
                         }
+                    }
+                }
+                else
+                {
+                    if (Configuration.TetraMaster.TripleTriad == 16388)
+                    {
+                        unit.MagicDefence = 254;
+                        unit.PhysicalDefence = 254;
                     }
                 }
 

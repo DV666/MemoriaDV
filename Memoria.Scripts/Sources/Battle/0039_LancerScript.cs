@@ -31,7 +31,7 @@ namespace Memoria.Scripts.Battle
                     if (_v.Context.PowerDifference > 0)
                     {
                         TranceSeekCustomAPI.BonusBackstabAndPenaltyLongDistanceTranceSeek(_v);
-                        _v.Caster.BonusWeaponElement();
+                        TranceSeekCustomAPI.BonusWeaponElement(_v);
                         if (_v.CanAttackWeaponElementalCommand())
                         {
                             TranceSeekCustomAPI.TryCriticalHitDragon(_v);

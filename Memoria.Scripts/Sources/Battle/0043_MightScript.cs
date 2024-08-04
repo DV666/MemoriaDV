@@ -41,6 +41,18 @@ namespace Memoria.Scripts.Battle
                 }
                 return;
             }
+            else if (_v.Caster.Data.dms_geo_id == 410 && _v.Command.Power == 4)
+            {
+                _v.Target.AlterStatus(TranceSeekCustomAPI.CustomStatus.PowerUp, _v.Caster);
+                _v.Target.AlterStatus(TranceSeekCustomAPI.CustomStatus.PowerUp, _v.Caster);
+                _v.Target.AlterStatus(TranceSeekCustomAPI.CustomStatus.PowerUp, _v.Caster);
+                _v.Target.AlterStatus(TranceSeekCustomAPI.CustomStatus.PowerUp, _v.Caster);
+                _v.Target.AlterStatus(TranceSeekCustomAPI.CustomStatus.ArmorUp, _v.Caster);
+                _v.Target.AlterStatus(TranceSeekCustomAPI.CustomStatus.ArmorUp, _v.Caster);
+                _v.Target.AlterStatus(TranceSeekCustomAPI.CustomStatus.ArmorUp, _v.Caster);
+                _v.Target.AlterStatus(TranceSeekCustomAPI.CustomStatus.ArmorUp, _v.Caster);
+                return;
+            }
 
             _v.TryAlterMagicStatuses();
             _v.Target.AlterStatus(TranceSeekCustomAPI.CustomStatus.PowerUp, _v.Caster);

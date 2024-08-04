@@ -384,6 +384,7 @@
     <Compile Include="Sources\Battle\0119_PoisonMagicLancerScript.cs" />
     <Compile Include="Sources\Battle\0120_SwitchWeaponScript.cs" />
     <Compile Include="Sources\Battle\0121_PassiveEikoScript.cs" />
+    <Compile Include="Sources\Battle\0123_InfuseWeaponScript.cs" />
     <Compile Include="Sources\Battle\0122_MechanicalArmorScript.cs" />
     <Compile Include="Sources\Battle\ArmorBreakStatusScript.cs" />
     <Compile Include="Sources\Battle\ArmorUpStatusScript.cs" />
@@ -411,6 +412,7 @@
     <Compile Include="Sources\Battle\PowerBreakStatusScript.cs" />
     <Compile Include="Sources\Battle\PowerUpStatusScript.cs" />
     <Compile Include="Sources\Battle\OverloadOnGameOverScript.cs" />
+    <Compile Include="Sources\Battle\RageStatusScript.cs" />
     <Compile Include="Sources\Battle\RedemptionStatusScript.cs" />
     <Compile Include="Sources\Battle\RegenStatusScript.cs" />
     <Compile Include="Sources\Battle\SilenceEasyKillStatusScript.cs" />

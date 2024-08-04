@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.Remoting.Contexts;
 using Assets.Sources.Scripts.UI.Common;
 using FF9;
 using Memoria.Data;
@@ -28,7 +29,8 @@ namespace Memoria.Scripts.Battle
 
         public static Dictionary<BTL_DATA, Int32[]> RollBackStats = new Dictionary<BTL_DATA, Int32[]>();
         public static Dictionary<BTL_DATA, BattleStatus> RollBackBattleStatus = new Dictionary<BTL_DATA, BattleStatus>();
-        public static Dictionary<BTL_DATA, BattleStatus> StatusBeforeScript = new Dictionary<BTL_DATA, BattleStatus>(); // Lani's mechanic
+        public static Dictionary<BTL_DATA, EffectElement> WeaponNewElement = new Dictionary<BTL_DATA, EffectElement>();
+        public static Dictionary<BTL_DATA, BattleStatus> WeaponNewStatus = new Dictionary<BTL_DATA, BattleStatus>();
 
         public static class CustomStatus
         {
@@ -50,6 +52,7 @@ namespace Memoria.Scripts.Battle
             public const BattleStatus Vieillissement = BattleStatus.CustomStatus16;
             public const BattleStatus SleepEasyKill = BattleStatus.CustomStatus17;
             public const BattleStatus SilenceEasyKill = BattleStatus.CustomStatus18;
+            public const BattleStatus Rage = BattleStatus.CustomStatus19;
         }
 
         public static class CustomStatusId
@@ -72,102 +75,7 @@ namespace Memoria.Scripts.Battle
             public const BattleStatusId Vieillissement = BattleStatusId.CustomStatus16;
             public const BattleStatusId SleepEasyKill = BattleStatusId.CustomStatus17;
             public const BattleStatusId SilenceEasyKill = BattleStatusId.CustomStatus18;
-        }
-
-        public static void InitCustomBTLDATA()
-        {
-            foreach (BattleUnit unit in BattleState.EnumerateUnits())
-            {
-                if (!InitBTL.TryGetValue(unit.Data, out Boolean init))
-                    InitBTL[unit.Data] = false;
-
-                if (!InitBTL[unit.Data])
-                {
-                    SB2_PATTERN sb2Pattern = FF9StateSystem.Battle.FF9Battle.btl_scene.PatAddr[FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum];
-                    foreach (BattleUnit PlayerUnit in BattleState.EnumerateUnits())
-                    {
-                        if (!PlayerUnit.IsPlayer)
-                            continue;
-
-                        if (PlayerUnit.HasSupportAbilityByIndex((SupportAbility)1045)) // Pluriche+
-                        {
-                            foreach (BattleUnit monster in BattleState.EnumerateUnits())
-                            {
-                                if (!monster.IsPlayer)
-                                {
-                                    BattleEnemy battleEnemy = BattleEnemy.Find(monster);
-                                    battleEnemy.Data.bonus_item_rate[3] = 16;
-                                    battleEnemy.Data.bonus_item_rate[2] = 96;
-                                    battleEnemy.Data.bonus_item_rate[1] = 192;
-                                }
-                            }
-                            break;
-                        }
-                    }
-
-                    if (!ZidanePassive.TryGetValue(unit.Data, out Int32[] zidanepassive))
-                        ZidanePassive[unit.Data] = new Int32[] { 0, 0, 0, 0, 0 };
-                    if (!ViviPreviousSpell.TryGetValue(unit.Data, out BattleAbilityId e))
-                        ViviPreviousSpell[unit.Data] = BattleAbilityId.Void;
-                    if (!ViviPassive.TryGetValue(unit.Data, out Int32[] vivipassive))
-                        ViviPassive[unit.Data] = new Int32[] { 0, 0 };
-                    if (!SteinerPassive.TryGetValue(unit.Data, out Int32[] steinerpassive))
-                        SteinerPassive[unit.Data] = new Int32[] { 0, 0 };
-                    if (!BeatrixPassive.TryGetValue(unit.Data, out Int32[] beatrixpassive))
-                        BeatrixPassive[unit.Data] = new Int32[] { 0, 0, 0, 0 };
-                    if (!MonsterMechanic.TryGetValue(unit.Data, out Int32[] monstermechanic))
-                        MonsterMechanic[unit.Data] = new Int32[] { 0, 0, 0, 0, 100, 0 };
-                    if (!SpecialSAEffect.TryGetValue(unit.Data, out Int32[] specialSAeffect))
-                        SpecialSAEffect[unit.Data] = new Int32[] { 0, 0, 2, 0, 0 };
-                    if (!RollBackStats.TryGetValue(unit.Data, out Int32[] rb))
-                        RollBackStats[unit.Data] = new Int32[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-                    if (!RollBackBattleStatus.TryGetValue(unit.Data, out BattleStatus rs))
-                        RollBackBattleStatus[unit.Data] = 0;
-                    if (!StatusBeforeScript.TryGetValue(unit.Data, out BattleStatus sbs))
-                        StatusBeforeScript[unit.Data] = 0;
-
-                    if (unit.HasSupportAbilityByIndex((SupportAbility)1041)) // Alert+
-                    {
-                        // PerfectBonus[unit.Data][0] += 2;
-                    }
-                    if (unit.HasSupportAbilityByIndex((SupportAbility)52)) // Last Stand
-                    {
-                        SpecialSAEffect[unit.Data][1] = unit.HasSupportAbilityByIndex((SupportAbility)1052) ? 2 : 1;
-                    }
-
-                    if (!unit.IsPlayer) // Check if boss have +10000 HP for scripts
-                    {
-                        for (Int32 i = 0; i < BossBattleBonusHP.GetLength(0); i++)
-                        {
-                            if (BossBattleBonusHP[i, 0] == FF9StateSystem.Battle.battleMapIndex && BossBattleBonusHP[i, 1] == sb2Pattern.Monster[unit.Data.bi.slot_no].TypeNo)
-                            {
-                                MonsterMechanic[unit.Data][3] = 1;
-                                break;
-                            }
-                        }
-                    }
-                    btl_stat.MakeStatusesPermanent(unit, BattleStatus.Shell);
-                    InitBTL[unit.Data] = true;
-                }
-                if (!unit.IsPlayer && unit.IsUnderAnyStatus(BattleStatus.Trance) && MonsterMechanic[unit.Data][0] == 0 && !unit.IsUnderAnyStatus(BattleStatus.EasyKill)) // +50% HP/MP Max if monster get under Trance
-                {
-                    MonsterMechanic[unit.Data][0] = 1;
-                    unit.MaximumHp += (unit.MaximumHp / 2);
-                    unit.MaximumMp += (unit.MaximumMp / 2);
-                    unit.CurrentHp = unit.MaximumHp;
-                }
-            }
-            //if (v.Caster.Data.dms_geo_id == 410 && MonsterMechanic[v.Caster.Data][2] > 0 && v.Command.ScriptId != 12) // Lamie [!!!TODO!!!] Rework Lani mecanique.
-            //{
-            //    v.Command.AbilityStatus = (BattleStatus)MonsterMechanic[v.Caster.Data][2];
-            //}
-            //if (!v.Target.IsPlayer && ((v.Command.AbilityStatus & (BattleStatus.Stop | BattleStatus.Sleep | BattleStatus.Freeze)) != 0))
-            //{
-            //    if (MonsterMechanic[v.Target.Data][4] <= 20)
-            //        v.Target.ResistStatus |= (BattleStatus.Stop | BattleStatus.Sleep | BattleStatus.Freeze);
-            //    else
-            //        StatusBeforeScript[v.Target.Data] = v.Target.CurrentStatus;
-            //}
+            public const BattleStatusId Rage = BattleStatusId.CustomStatus19;
         }
 
         public static void WeaponPhysicalParams(CalcAttackBonus bonus, BattleCalculator v)
@@ -507,6 +415,40 @@ namespace Memoria.Scripts.Battle
             ViviFocus(v);
         }
 
+        public static void BonusWeaponElement(this BattleCalculator v)
+        {
+            if ((v.Caster.WeaponElement & v.Caster.BonusElement) != 0)
+                ++v.Context.DamageModifierCount;
+
+            if ((WeaponNewElement[v.Caster.Data] & v.Caster.BonusElement) != 0)
+                ++v.Context.DamageModifierCount;
+        }
+
+
+        public static void InfusedWeaponStatus(this BattleCalculator v)
+        {
+            if (WeaponNewStatus[v.Caster.Data] != 0 && WeaponNewStatus[v.Caster.Data] != BattleStatus.Protect && WeaponNewStatus[v.Caster.Data] != BattleStatus.Shell)
+            {
+                foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(v.Caster))
+                    saFeature.TriggerOnAbility(v, "HitRateSetup", false);
+                foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(v.Target))
+                    saFeature.TriggerOnAbility(v, "HitRateSetup", true);
+
+                if (v.Caster.IsPlayer)
+                {
+                    if (v.Caster.WeaponRate > Comn.random16() % 100)
+                        v.Target.TryAlterStatuses(WeaponNewStatus[v.Caster.Data], false, v.Caster);
+                }
+                else
+                {
+                    if (v.Command.HitRate > Comn.random16() % 100)
+                    {
+                        v.Target.TryAlterStatuses(WeaponNewStatus[v.Caster.Data], false, v.Caster);
+                    }
+                }
+            }
+        }
+
         public static void ViviFocus(this BattleCalculator v)
         {
             if (v.Caster.PlayerIndex == CharacterId.Vivi)
@@ -682,8 +624,7 @@ namespace Memoria.Scripts.Battle
                 CasterNewWill += (byte)(CasterNewWill * ff9item.FF9Item_GetCount(RegularItem.Ruby) / 200);
             }
             v.Caster.Will = (byte)(CasterNewWill < 100 ? CasterNewWill : 99);
-            BattleStatus status = v.Command.AbilityStatus;
-            v.Target.TryAlterStatuses(status, true, v.Caster);
+            v.Target.TryAlterStatuses(v.Command.AbilityStatus, true, v.Caster);
             v.Caster.Will = CasterWill;
         }
 
@@ -824,6 +765,14 @@ namespace Memoria.Scripts.Battle
             if (v.Caster.HasSupportAbilityByIndex((SupportAbility)115) && (v.Target.WeakElement & v.Command.Element) != 0) // Soul Drain
             {
                 HealHPSAOrItem += v.Target.HpDamage / (v.Caster.HasSupportAbilityByIndex((SupportAbility)1115) ? 2 : 4);
+            }
+            if (WeaponNewStatus[v.Caster.Data] != BattleStatus.Protect && (v.Command.Id == BattleCommandId.Attack || v.Command.Id == BattleCommandId.Counter))
+            {
+                HealHPSAOrItem += v.Target.HpDamage / 4;
+            }
+            if (WeaponNewStatus[v.Caster.Data] != BattleStatus.Shell && (v.Command.Id == BattleCommandId.Attack || v.Command.Id == BattleCommandId.Counter))
+            {
+                HealMPSAOrItem += v.Target.MpDamage / 40;
             }
             if (v.Caster.HasSupportAbilityByIndex((SupportAbility)117) && SpecialSAEffect[v.Caster][4] == 0) // Mode EX
             {

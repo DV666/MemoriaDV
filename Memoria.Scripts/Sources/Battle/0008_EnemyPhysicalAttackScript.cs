@@ -96,6 +96,7 @@ namespace Memoria.Scripts.Battle
                                 TranceSeekCustomAPI.TryCriticalHit(_v);
                             }
                             _v.CalcPhysicalHpDamage();
+                            TranceSeekCustomAPI.InfusedWeaponStatus(_v);
                             TranceSeekCustomAPI.RaiseTrouble(_v);
                             _v.TryAlterMagicStatuses();
                         }

@@ -74,7 +74,14 @@ namespace Memoria.DefaultScripts
             if (BasicStrength == 0)
                 BasicStrength = Target.Strength;
           
-            if (Stack > 1 && !Target.IsUnderAnyStatus(BattleStatusId.CustomStatus16)) // Vieillissement
+            if (Target.IsUnderAnyStatus(BattleStatusId.Death) || Target.CurrentHp != 0)
+            {
+                NumberHUD.FontSize = DefautSize;
+                btl2d.StatusMessages.Remove(NumberHUD);
+                Singleton<HUDMessage>.Instance.ReleaseObject(NumberHUD);
+                return true;
+            }
+            else if (Stack > 1 && !Target.IsUnderAnyStatus(BattleStatusId.CustomStatus16)) // Vieillissement
             {
                 Stack--;
                 if (Stack > 1)

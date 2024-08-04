@@ -81,7 +81,7 @@ namespace Memoria.Scripts.Battle
                         TranceSeekCustomAPI.BonusBackstabAndPenaltyLongDistanceTranceSeek(_v);
                         if (_v.Caster.IsPlayer)
                         {
-                            _v.Caster.BonusWeaponElement();
+                            TranceSeekCustomAPI.BonusWeaponElement(_v);
                         }
                         else
                         {

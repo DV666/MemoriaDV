@@ -21,10 +21,6 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            if (!_v.Target.CanBeRevived())
-                return;
-
-            if (_v.Target.IsZombie)
             if (_v.Target.Data.dms_geo_id == 401 && (FF9StateSystem.Battle.battleMapIndex == 631 || FF9StateSystem.Battle.battleMapIndex == 632)) // Friendly Feather Circle
             {
                 _v.Target.Flags |= CalcFlag.HpAlteration | CalcFlag.HpRecovery;
@@ -44,10 +40,7 @@ namespace Memoria.Scripts.Battle
             else
             {
                 if (!_v.Target.CanBeRevived())
-                {
-                    _v.Context.Flags |= BattleCalcFlags.Miss;
                     return;
-                }
 
                 if (_v.Target.Accessory == (RegularItem)1213) // Anneau Maudit
                 {

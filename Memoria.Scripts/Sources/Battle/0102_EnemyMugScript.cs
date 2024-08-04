@@ -27,12 +27,13 @@ namespace Memoria.Scripts.Battle
             _v.Caster.EnemyTranceBonusAttack();
             TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
             TranceSeekCustomAPI.BonusBackstabAndPenaltyLongDistanceTranceSeek(_v);
+            TranceSeekCustomAPI.InfusedWeaponStatus(_v);
             _v.CalcHpDamage();
-            if (_v.Caster.Data.dms_geo_id == 410 && !_v.Caster.IsPlayer) // Lamie
+            if ((_v.Caster.Data.dms_geo_id == 410 || _v.Caster.Data.dms_geo_id == 412) && !_v.Caster.IsPlayer) // Lamie et Bandit
             {              
                 RegularItem itemId = (RegularItem)_v.Command.HitRate;
                 if (_v.Command.HitRate == 227)
-                    itemId = (RegularItem)1000; // Ultra Poton
+                    itemId = (RegularItem)1000; // Ultra Potion
                 if (ff9item.FF9Item_GetCount(itemId) == 0)
                 {
                     UiState.SetBattleFollowFormatMessage(BattleMesages.DoesNotHaveAnything);

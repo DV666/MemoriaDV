@@ -31,6 +31,7 @@ namespace Memoria.Scripts.Battle
             if (_v.CanAttackElementalCommand())
             {
                 _v.CalcHpDamage();
+                TranceSeekCustomAPI.InfusedWeaponStatus(_v);
                 if (_v.Command.HitRate == 255)
                 {
                     if ((Mathf.Abs((_v.Caster.Row - _v.Target.Row)) <= 1) && (!_v.Target.HasSupportAbilityByIndex((SupportAbility)1026))) // Stone Skin+

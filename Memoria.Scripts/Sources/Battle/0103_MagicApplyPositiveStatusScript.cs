@@ -21,11 +21,15 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            if (_v.Caster.PlayerIndex == CharacterId.Steiner) // Rempart
+            if (_v.Caster.PlayerIndex == CharacterId.Steiner) 
             {
-                if (_v.Command.AbilityId == (BattleAbilityId)1007)
+                if (_v.Command.AbilityId == (BattleAbilityId)1099) // Iron Clast
                 {
-                    _v.Target.AlterStatus(TranceSeekCustomAPI.CustomStatus.Bulwark, _v.Caster);
+                    _v.Command.AbilityStatus |= TranceSeekCustomAPI.CustomStatus.ArmorUp;
+                }
+                else if (_v.Command.AbilityId == (BattleAbilityId)1007) // Rempart
+                {
+                    _v.Command.AbilityStatus |= TranceSeekCustomAPI.CustomStatus.Bulwark;
                 }
             }
             if (_v.Command.AbilityId == (BattleAbilityId)1015 || _v.Command.AbilityId == (BattleAbilityId)1016) // Sentinel and Duel
