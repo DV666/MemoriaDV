@@ -4,6 +4,7 @@ using System.Runtime.Remoting.Contexts;
 using Assets.Sources.Scripts.UI.Common;
 using FF9;
 using Memoria.Data;
+using Memoria.Prime;
 using UnityEngine;
 
 namespace Memoria.Scripts.Battle
@@ -53,6 +54,7 @@ namespace Memoria.Scripts.Battle
             public const BattleStatus SleepEasyKill = BattleStatus.CustomStatus17;
             public const BattleStatus SilenceEasyKill = BattleStatus.CustomStatus18;
             public const BattleStatus Rage = BattleStatus.CustomStatus19;
+            public const BattleStatus Runic = BattleStatus.CustomStatus20;
         }
 
         public static class CustomStatusId
@@ -76,6 +78,7 @@ namespace Memoria.Scripts.Battle
             public const BattleStatusId SleepEasyKill = BattleStatusId.CustomStatus17;
             public const BattleStatusId SilenceEasyKill = BattleStatusId.CustomStatus18;
             public const BattleStatusId Rage = BattleStatusId.CustomStatus19;
+            public const BattleStatusId Runic = BattleStatusId.CustomStatus20;
         }
 
         public static void WeaponPhysicalParams(CalcAttackBonus bonus, BattleCalculator v)
@@ -284,6 +287,15 @@ namespace Memoria.Scripts.Battle
 
         public static Boolean CanAttackMagic(this BattleCalculator v)
         {
+            if (v.Target.IsUnderAnyStatus(CustomStatus.Runic))
+            {
+                v.CalcHpDamage();
+                v.Target.Flags = (CalcFlag.HpDamageOrHeal | CalcFlag.MpDamageOrHeal);
+                v.Target.MpDamage = (v.Target.HpDamage / 80);
+                v.Target.HpDamage = (v.Target.HpDamage / 4);
+                return false;
+            }
+
             if (v.Target.IsLevitate && v.Command.IsGround)
             {
                 v.Context.Flags |= BattleCalcFlags.Miss;
@@ -748,6 +760,17 @@ namespace Memoria.Scripts.Battle
             if (v.Caster.HasSupportAbility(SupportAbility1.ReflectNull) && v.Target.IsUnderAnyStatus(BattleStatus.Reflect) && !v.Caster.HasSupportAbilityByIndex((SupportAbility)1030))
                 v.Target.HpDamage >>= 1;
 
+            if (v.Caster.PlayerIndex == CharacterId.Zidane && (v.Command.Id == BattleCommandId.Attack || v.Command.Id == BattleCommandId.Counter) && ff9item._FF9Item_Data[FF9StateSystem.Common.FF9.player[(CharacterId)v.Caster.Data.bi.slot_no].equip[0]].shape == 1)
+            { // Zidane - Dagger double hits
+                v.Target.HpDamage /= 2;
+                if (ZidanePassive[v.Caster.Data][4] == 2)
+                {
+                    ZidanePassive[v.Caster.Data][4] = 0;
+                    if (v.Target.CurrentHp > v.Target.HpDamage)
+                        v.Command.AbilityCategory += 64;
+                }
+            }
+
             int HealHPSAOrItem = 0;
             int HealMPSAOrItem = 0;
             if (v.Command.AbilityId == BattleAbilityId.DemiShock2) // Tobigeri+
@@ -766,13 +789,13 @@ namespace Memoria.Scripts.Battle
             {
                 HealHPSAOrItem += v.Target.HpDamage / (v.Caster.HasSupportAbilityByIndex((SupportAbility)1115) ? 2 : 4);
             }
-            if (WeaponNewStatus[v.Caster.Data] != BattleStatus.Protect && (v.Command.Id == BattleCommandId.Attack || v.Command.Id == BattleCommandId.Counter))
+            if (WeaponNewStatus[v.Caster.Data] == BattleStatus.Protect && (v.Command.Id == BattleCommandId.Attack || v.Command.Id == BattleCommandId.Counter)) // Drain MagiLame
             {
                 HealHPSAOrItem += v.Target.HpDamage / 4;
             }
-            if (WeaponNewStatus[v.Caster.Data] != BattleStatus.Shell && (v.Command.Id == BattleCommandId.Attack || v.Command.Id == BattleCommandId.Counter))
+            if (WeaponNewStatus[v.Caster.Data] == BattleStatus.Shell && (v.Command.Id == BattleCommandId.Attack || v.Command.Id == BattleCommandId.Counter)) // Osmose MagiLame
             {
-                HealMPSAOrItem += v.Target.MpDamage / 40;
+                HealMPSAOrItem += v.Target.MpDamage / 80;
             }
             if (v.Caster.HasSupportAbilityByIndex((SupportAbility)117) && SpecialSAEffect[v.Caster][4] == 0) // Mode EX
             {
@@ -789,13 +812,21 @@ namespace Memoria.Scripts.Battle
             }
             if (HealHPSAOrItem > 0 || HealMPSAOrItem > 0)
             {
-                if (HealHPSAOrItem > 0)
-                    v.Caster.Flags |= CalcFlag.HpDamageOrHeal;
-                if (HealMPSAOrItem > 0)
-                    v.Caster.Flags |= CalcFlag.MpDamageOrHeal;
-                v.Caster.HpDamage = HealHPSAOrItem;
-                if (HealMPSAOrItem > 0)
-                    v.Caster.MpDamage = HealMPSAOrItem;
+                v.Caster.AddDelayedModifier(
+                    caster => caster.CurrentAtb >= caster.MaximumAtb,
+                    caster =>
+                    {
+                        if (HealHPSAOrItem > 0)
+                        {
+                            caster.CurrentHp = Math.Min(caster.CurrentHp + (uint)HealHPSAOrItem, caster.MaximumHp);
+                        }
+                        if (HealMPSAOrItem > 0)
+                        {
+                            caster.CurrentMp = Math.Min(caster.CurrentMp + (uint)HealMPSAOrItem, caster.MaximumMp);
+                        }
+                        btl2d.Btl2dStatReq(caster, -HealHPSAOrItem, -HealMPSAOrItem);
+                    }
+                );
             }
 
             if (v.Target.HasSupportAbilityByIndex((SupportAbility)52) && SpecialSAEffect[v.Target.Data][1] > 0 && v.Target.HpDamage > v.Target.CurrentHp && v.Target.CurrentMp > 0) // Last Stand
@@ -814,17 +845,6 @@ namespace Memoria.Scripts.Battle
                                 { "IT", "Last Stand!" },
                             };
                 btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[FDEE00]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 10);
-            }
-
-            if (v.Caster.PlayerIndex == CharacterId.Zidane && (v.Command.Id == BattleCommandId.Attack || v.Command.Id == BattleCommandId.Counter) && ff9item._FF9Item_Data[FF9StateSystem.Common.FF9.player[(CharacterId)v.Caster.Data.bi.slot_no].equip[0]].shape == 1) // Zidane - Dagger double hits
-            {
-                v.Target.HpDamage /= 2;
-                if (ZidanePassive[v.Caster.Data][4] == 2)
-                {
-                    ZidanePassive[v.Caster.Data][4] = 0;
-                    if (v.Target.CurrentHp > v.Target.HpDamage)
-                        v.Command.AbilityCategory += 64;
-                }
             }
 
             if (v.Caster.Weapon == (RegularItem)1100 && (v.Target.Flags & CalcFlag.HpRecovery) == 0)

@@ -21,21 +21,22 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            if (_v.Caster.PlayerIndex == CharacterId.Steiner) 
+            if (_v.Command.AbilityId == (BattleAbilityId)1099) // Iron Clast
             {
-                if (_v.Command.AbilityId == (BattleAbilityId)1099) // Iron Clast
-                {
-                    _v.Command.AbilityStatus |= TranceSeekCustomAPI.CustomStatus.ArmorUp;
-                }
-                else if (_v.Command.AbilityId == (BattleAbilityId)1007) // Rempart
-                {
-                    _v.Command.AbilityStatus |= TranceSeekCustomAPI.CustomStatus.Bulwark;
-                }
+                _v.Command.AbilityStatus |= TranceSeekCustomAPI.CustomStatus.ArmorUp;
             }
-            if (_v.Command.AbilityId == (BattleAbilityId)1015 || _v.Command.AbilityId == (BattleAbilityId)1016) // Sentinel and Duel
+            else if (_v.Command.AbilityId == (BattleAbilityId)1007) // Rempart
+            {
+                _v.Command.AbilityStatus |= TranceSeekCustomAPI.CustomStatus.Bulwark;
+            }
+            else if (_v.Command.AbilityId == (BattleAbilityId)1015 || _v.Command.AbilityId == (BattleAbilityId)1016) // Sentinel and Duel
             {
                 _v.Caster.SummonCount = 1;
                 TranceSeekCustomAPI.SteinerPassive[_v.Caster.Data][0] = 1;
+            }
+            else if (_v.Command.AbilityId == (BattleAbilityId)1059) // Runic
+            {
+                _v.Command.AbilityStatus |= TranceSeekCustomAPI.CustomStatus.Runic;
             }
             if (!_v.Target.IsPlayer)
             {

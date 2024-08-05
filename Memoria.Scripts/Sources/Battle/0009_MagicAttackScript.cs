@@ -68,11 +68,11 @@ namespace Memoria.Scripts.Battle
                     }
                     if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)102))
                         TranceSeekCustomAPI.TryCriticalHit(_v);
-                    _v.CalcHpDamage(); 
+                    _v.CalcHpDamage();
+                    TranceSeekCustomAPI.RaiseTrouble(_v);
                 }
                 _v.TryAlterMagicStatuses();
-            }
-            TranceSeekCustomAPI.RaiseTrouble(_v);
+            }            
         }
 
         public Single RateTarget()

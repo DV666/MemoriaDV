@@ -415,6 +415,7 @@
     <Compile Include="Sources\Battle\RageStatusScript.cs" />
     <Compile Include="Sources\Battle\RedemptionStatusScript.cs" />
     <Compile Include="Sources\Battle\RegenStatusScript.cs" />
+    <Compile Include="Sources\Battle\RunicStatusScript.cs" />
     <Compile Include="Sources\Battle\SilenceEasyKillStatusScript.cs" />
     <Compile Include="Sources\Battle\SilenceStatusScript.cs" />
     <Compile Include="Sources\Battle\SleepEasyKillStatusScript.cs" />
