@@ -388,6 +388,7 @@
     <Compile Include="Sources\Battle\0122_MechanicalArmorScript.cs" />
     <Compile Include="Sources\Battle\ArmorBreakStatusScript.cs" />
     <Compile Include="Sources\Battle\ArmorUpStatusScript.cs" />
+    <Compile Include="Sources\Battle\AutoLifeStatusScript.cs" />
     <Compile Include="Sources\Battle\BaseWeaponScript.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
