@@ -3473,6 +3473,22 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="ff9.ico" />
+    <Content Include="StreamingAssets\Shaders\PSX\BattleCharacterShaderRef.txt" />
+    <Content Include="StreamingAssets\Shaders\PSX\BattleMap_StatusEffect_RealLighting.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="StreamingAssets\Shaders\PSX\BattleMap_StatusEffect_Toon.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="StreamingAssets\Shaders\PSX\FieldMapActor_RealLighting.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="StreamingAssets\Shaders\PSX\FieldMapActor_Toon.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="StreamingAssets\Shaders\PSX\Skybox_Cubemap.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="StreamingAssets\Data\Text\LocalizationPatch.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -3620,7 +3636,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="StreamingAssets\Shaders\PSX\BattleMap_Ground.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="StreamingAssets\Shaders\PSX\BattleMap_Ground_Abr_0.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -3629,7 +3645,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="StreamingAssets\Shaders\PSX\BattleMap_Minus.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="StreamingAssets\Shaders\PSX\BattleMap_Minus_Abr_0.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -3641,7 +3657,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="StreamingAssets\Shaders\PSX\BattleMap_Plus.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="StreamingAssets\Shaders\PSX\BattleMap_Plus_Abr_0.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -3665,7 +3681,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="StreamingAssets\Shaders\PSX\BattleMap_Sky.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="StreamingAssets\Shaders\PSX\BattleMap_Sky_Abr_0.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -3698,7 +3714,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="StreamingAssets\Shaders\PSX\FieldMapActorShadow.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="StreamingAssets\Shaders\PSX\FieldMapActor_Abr_1.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -3920,7 +3936,6 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
