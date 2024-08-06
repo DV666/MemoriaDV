@@ -110,12 +110,43 @@ namespace Memoria.Scripts.Battle
             }
         }
 
-        public static void TryCriticalHitDragon(this BattleCalculator v)
+        public static void TryApplyDragon(this BattleCalculator v)
         {
-            Int32 quarterWill = v.Caster.Data.elem.wpr >> 2;
-            if (quarterWill != 0 && (Comn.random16() % quarterWill) + v.Caster.Data.critical_rate_deal_bonus + v.Target.Data.critical_rate_receive_resistance > Comn.random16() % 100 || v.Target.IsUnderAnyStatus(CustomStatus.Dragon))
+            if (v.Caster.PlayerIndex == CharacterId.Freya && !v.Target.IsUnderAnyStatus(CustomStatus.Dragon))
             {
-                v.Target.RemoveStatus(BattleStatus.CustomStatus9);
+                Int32 quarterWill = v.Caster.Data.elem.wpr >> 2;
+                Int32 bonus = 0;
+                switch (v.Caster.Weapon)
+                {
+                    case RegularItem.MythrilSpear:
+                    case RegularItem.Partisan:
+                        bonus += 5;
+                        break;
+                    case RegularItem.IceLance:
+                    case RegularItem.Trident:
+                        bonus += 8;
+                        break;
+                    case RegularItem.HeavyLance:
+                    case RegularItem.Obelisk:
+                        bonus += 10;
+                        break;
+                    case RegularItem.HolyLance:
+                        bonus += 15;
+                        break;
+                    case RegularItem.KainLance:
+                        bonus += 20;
+                        break;
+                    case RegularItem.DragonHair:
+                        bonus += 25;
+                        break;
+                }
+                if (v.Command.AbilityId == BattleAbilityId.CherryBlossom)
+                    bonus += 25;
+
+                if (quarterWill != 0 && (((Comn.random16() % quarterWill) + bonus) > Comn.random16() % 100))
+                {
+                    v.Target.AlterStatus(CustomStatus.Dragon, v.Caster);
+                }
             }
         }
 
@@ -124,7 +155,8 @@ namespace Memoria.Scripts.Battle
             if (v.Caster.HasSupportAbilityByIndex((SupportAbility)1102)) // Archimage+ (10% crit en bonus)
                 ZidanePassive[v.Caster.Data][1] = 40;
             Int32 quarterWill = (v.Caster.Data.elem.wpr + ZidanePassive[v.Caster.Data][1]) >> 2;
-            if (quarterWill != 0 && ((Comn.random16() % quarterWill) + v.Caster.Data.critical_rate_deal_bonus + v.Target.Data.critical_rate_receive_resistance > Comn.random16() % 100) || v.Target.IsUnderAnyStatus(CustomStatus.PerfectCrit))
+            BonusCriticalFromWeapon(v.Caster.Weapon, out Int32 BonusWeaponCritical);
+            if (quarterWill != 0 && ((Comn.random16() % quarterWill) + v.Caster.Data.critical_rate_deal_bonus + v.Target.Data.critical_rate_receive_resistance + BonusWeaponCritical > Comn.random16() % 100) || v.Target.IsUnderAnyStatus(CustomStatus.PerfectCrit))
             {
                 if (v.Target.IsUnderAnyStatus(CustomStatus.PerfectCrit)) // Perfect Crit
                     v.Target.RemoveStatus(CustomStatus.PerfectCrit);
@@ -151,6 +183,50 @@ namespace Memoria.Scripts.Battle
                         { "IT", "↑ KRITISCH ↑" },
                     };
                 btl2d.Btl2dReqSymbolMessage(v.Caster.Data, "[FFFF00]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 15);
+            }
+        }
+
+        public static void BonusCriticalFromWeapon(RegularItem Weapon, out Int32 BonusWeaponCritical)
+        {
+            BonusWeaponCritical = 0;
+            switch (Weapon)
+            {
+                case RegularItem.ButterflySword:
+                    BonusWeaponCritical += 1;
+                    break;
+                case RegularItem.TheOgre:
+                    BonusWeaponCritical += 2;
+                    break;
+                case (RegularItem)1004: // Gladius Sword
+                    BonusWeaponCritical += 2;
+                    break;
+                case RegularItem.Exploda:
+                    BonusWeaponCritical += 3;
+                    break;
+                case RegularItem.RuneTooth:
+                    BonusWeaponCritical += 3;
+                    break;
+                case (RegularItem)1005: // Zorlin Sword
+                    BonusWeaponCritical += 4;
+                    break;
+                case RegularItem.AngelBless:
+                    BonusWeaponCritical += 5;
+                    break;
+                case RegularItem.Sargatanas:
+                    BonusWeaponCritical += 6;
+                    break;
+                case RegularItem.Masamune:
+                    BonusWeaponCritical += 7;
+                    break;
+                case (RegularItem)1006: // Orichalcon Sword
+                    BonusWeaponCritical += 8;
+                    break;
+                case RegularItem.TheTower:
+                    BonusWeaponCritical += 9;
+                    break;
+                case RegularItem.UltimaWeapon:
+                    BonusWeaponCritical += 10;
+                    break;
             }
         }
 
@@ -424,6 +500,37 @@ namespace Memoria.Scripts.Battle
             if (v.Caster.IsUnderAnyStatus(BattleStatus.CustomStatus18)) // Silence Easy Kill - 10% magic attack malus for bosses with Silence.
                 v.Context.Attack = (9 * v.Context.Attack) / 10;
 
+            Int32 ReduceWeaponDamage = 0;
+            switch (v.Target.Weapon)
+            {
+                case RegularItem.IronSword:
+                    ReduceWeaponDamage += 10;
+                    break;
+                case RegularItem.MythrilSword:
+                    ReduceWeaponDamage += 15;
+                    break;
+                case RegularItem.IceBrand:
+                    ReduceWeaponDamage += 20;
+                    break;
+                case RegularItem.CoralSword:
+                    ReduceWeaponDamage += 20;
+                    break;
+                case RegularItem.DiamondSword:
+                    ReduceWeaponDamage += 25;
+                    break;
+                case RegularItem.FlameSaber:
+                    ReduceWeaponDamage += 25;
+                    break;
+                case RegularItem.RuneBlade:
+                    ReduceWeaponDamage += 30;
+                    break;
+                case RegularItem.Defender:
+                    ReduceWeaponDamage += 30;
+                    break;
+            }
+            if (ReduceWeaponDamage > 0 && v.Target.IsUnderAnyStatus(BattleStatus.Defend))
+                v.Context.Attack -= (ReduceWeaponDamage * v.Context.Attack) / 100;
+
             ViviFocus(v);
         }
 
@@ -472,7 +579,31 @@ namespace Memoria.Scripts.Battle
                         ViviPassive[v.Caster.Data][1] = (ushort)(v.Command.TargetCount);
                         if (FF9TextTool.ActionAbilityName(ViviPreviousSpell[v.Caster.Data]) != v.Command.AbilityName)
                         {
-                            if (ViviPassive[v.Caster.Data][0] < 50)
+                            Int32 BonusFocusMax = 0;
+                            switch (v.Caster.Weapon)
+                            {
+                                case RegularItem.FlameStaff:
+                                case RegularItem.IceStaff:
+                                case RegularItem.LightningStaff:
+                                    BonusFocusMax += 5;
+                                    break;
+                                case RegularItem.OakStaff:
+                                    BonusFocusMax += 10;
+                                    break;
+                                case RegularItem.CypressPile:
+                                    BonusFocusMax += 10;
+                                    break;
+                                case RegularItem.OctagonRod:
+                                    BonusFocusMax += 15;
+                                    break;
+                                case RegularItem.HighMageStaff:
+                                    BonusFocusMax += 25;
+                                    break;
+                                case RegularItem.MaceOfZeus:
+                                    BonusFocusMax += 50;
+                                    break;
+                            }
+                            if (ViviPassive[v.Caster.Data][0] < (50 + BonusFocusMax))
                             {
                                 ViviPassive[v.Caster.Data][0] += 5;
                             }

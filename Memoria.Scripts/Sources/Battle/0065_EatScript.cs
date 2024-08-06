@@ -63,13 +63,34 @@ namespace Memoria.Scripts.Battle
             }
             else
             {
-                if (_v.Target.CurrentHp <= _v.Target.MaximumHp / _v.Command.Power)
+                if (_v.Target.CurrentHp <= _v.Target.MaximumHp)
                 {
+                    Int32 BonusHealFork = 0;
+                    switch (_v.Caster.Weapon)
+                    {
+                        case RegularItem.NeedleFork:
+                            BonusHealFork += 25;
+                            break;
+                        case RegularItem.MythrilFork:
+                            BonusHealFork += 50;
+                            break;
+                        case RegularItem.SilverFork:
+                            BonusHealFork += 75;
+                            break;
+                        case RegularItem.BistroFork:
+                            BonusHealFork += 100;
+                            break;
+                        case RegularItem.GastroFork:
+                            BonusHealFork += 100;
+                            break;
+                    }
                     if (blueMagicId == 0 || ff9abil.FF9Abil_IsMaster(_v.Caster.Player, blueMagicId))
                     {
                         _v.Caster.Flags |= (CalcFlag.HpAlteration | CalcFlag.HpRecovery | CalcFlag.MpAlteration | CalcFlag.MpRecovery);
                         _v.Caster.HpDamage = (int)(_v.Caster.MaximumHp / (_v.Command.Power / 2));
                         _v.Caster.MpDamage = (int)(_v.Caster.MaximumMp / (_v.Command.Power / 2));
+                        _v.Caster.HpDamage += (_v.Caster.HpDamage * BonusHealFork) / 100;                        
+                        _v.Caster.MpDamage += (_v.Caster.MpDamage * BonusHealFork) / 100;
                         UiState.SetBattleFollowFormatMessage(BattleMesages.TasteBad);
                     }
                     else
@@ -77,6 +98,8 @@ namespace Memoria.Scripts.Battle
                         _v.Caster.Flags |= (CalcFlag.HpAlteration | CalcFlag.HpRecovery | CalcFlag.MpAlteration | CalcFlag.MpRecovery);
                         _v.Caster.HpDamage = (int)(_v.Caster.MaximumHp / _v.Command.Power);
                         _v.Caster.MpDamage = (int)(_v.Caster.MaximumMp / _v.Command.Power);
+                        _v.Caster.HpDamage += (_v.Caster.HpDamage * BonusHealFork) / 100;
+                        _v.Caster.MpDamage += (_v.Caster.MpDamage * BonusHealFork) / 100;
                         ff9abil.FF9Abil_SetMaster(_v.Caster.Player, blueMagicId);
                         BattleState.RaiseAbilitiesAchievement(blueMagicId);
                         if (ff9abil.IsAbilityActive(blueMagicId))

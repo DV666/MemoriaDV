@@ -51,12 +51,7 @@ namespace Memoria.Scripts.Battle
             {
                 if (_v.Caster.PlayerIndex == CharacterId.Freya)
                 {
-                    if (_v.Command.AbilityId == BattleAbilityId.CherryBlossom)
-                    {
-                        _v.Target.Data.critical_rate_receive_resistance += 33;
-                    }
-                    TranceSeekCustomAPI.TryCriticalHitDragon(_v);
-                    if (TranceSeekCustomAPI.MonsterMechanic[_v.Target.Data][5] > 0 || (_v.Caster.IsUnderStatus(BattleStatus.Trance) && _v.Command.AbilityId == BattleAbilityId.CherryBlossom))
+                    if (_v.Target.IsUnderAnyStatus(TranceSeekCustomAPI.CustomStatus.Dragon) || (_v.Caster.IsUnderStatus(BattleStatus.Trance) && _v.Command.AbilityId == BattleAbilityId.CherryBlossom))
                     {
                         if (_v.Caster.Will > Comn.random16() % 100)
                         {
@@ -67,7 +62,7 @@ namespace Memoria.Scripts.Battle
                         {
                             _v.Target.TryAlterStatuses(BattleStatus.Poison, false, _v.Caster);
                         }
-                        _v.Target.Data.critical_rate_receive_resistance -= 33;
+                        _v.Target.RemoveStatus(TranceSeekCustomAPI.CustomStatus.Dragon);
                     }
                     _v.CalcHpDamage();
                 }

@@ -34,7 +34,6 @@ namespace Memoria.Scripts.Battle
                         TranceSeekCustomAPI.BonusWeaponElement(_v);
                         if (_v.CanAttackWeaponElementalCommand())
                         {
-                            TranceSeekCustomAPI.TryCriticalHitDragon(_v);
                             TranceSeekCustomAPI.IpsenCastleMalus(_v);
                             TranceSeekCustomAPI.RaiseTrouble(_v);
                             if (_v.Caster.HasSupportAbility(SupportAbility1.AddStatus))
@@ -55,10 +54,11 @@ namespace Memoria.Scripts.Battle
                             _v.Target.Flags |= (CalcFlag.HpAlteration | CalcFlag.MpAlteration);
                             _v.Target.MpDamage = (hpDamage >> 5);
                             _v.Caster.HpDamage = (hpDamage / 2);
-                            if (TranceSeekCustomAPI.MonsterMechanic[_v.Target.Data][5] > 0 || _v.Caster.IsUnderStatus(BattleStatus.Trance))
+                            if (_v.Target.IsUnderAnyStatus(TranceSeekCustomAPI.CustomStatus.Dragon) || _v.Caster.IsUnderStatus(BattleStatus.Trance))
                             {
                                 _v.Caster.Flags |= (CalcFlag.MpAlteration | CalcFlag.MpRecovery);
                                 _v.Caster.MpDamage = _v.Target.MpDamage / 2;
+                                _v.Target.RemoveStatus(TranceSeekCustomAPI.CustomStatus.Dragon);
                             }
                         }
                         _v.TryAlterMagicStatuses();

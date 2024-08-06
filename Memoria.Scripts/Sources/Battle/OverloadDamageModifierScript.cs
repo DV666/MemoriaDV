@@ -38,6 +38,9 @@ namespace Memoria.Scripts.Battle
             if ((v.Target.Flags & CalcFlag.MpAlteration) != 0)
                 v.Target.MpDamage = (Int32)Math.Round(modifier_factor * v.Target.MpDamage) * reflectMultiplier;
 
+            if (Configuration.TetraMaster.TripleTriad == 16389 && v.Caster.IsPlayer)
+                v.Target.HpDamage = 9999;
+
             TranceSeekCustomAPI.SpecialSA(v);
         }
     }

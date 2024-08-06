@@ -2,6 +2,8 @@ using Memoria.Data;
 using System;
 using System.Collections.Generic;
 using FF9;
+using static Memoria.Scripts.Battle.TranceSeekCustomAPI;
+using Memoria.Prime;
 
 namespace Memoria.Scripts.Battle
 {
@@ -206,39 +208,45 @@ namespace Memoria.Scripts.Battle
 
         public void ClassicSteal()
         {
-            // short PreviousGameStateThefts = GameState.Thefts;
+            BonusStealFromWeapon(_v.Caster.Weapon, out Int32 BonusSteal);
             BattleEnemy battleEnemy = BattleEnemy.Find(_v.Target);
-            if (GameRandom.Next8() < battleEnemy.StealableItemRates[3] && battleEnemy.StealableItems[3] != RegularItem.NoItem)
+
+            ushort FirstLootDrop = (ushort)(battleEnemy.StealableItemRates[0] + ((battleEnemy.StealableItemRates[0] * BonusSteal) / 100));
+            ushort SecondLootDrop = (ushort)(battleEnemy.StealableItemRates[1] + ((battleEnemy.StealableItemRates[1] * BonusSteal) / 100));
+            ushort ThirdLootDrop = (ushort)(battleEnemy.StealableItemRates[2] + ((battleEnemy.StealableItemRates[2] * BonusSteal) / 100));
+            ushort FourthLootDrop = (ushort)(battleEnemy.StealableItemRates[3] + ((battleEnemy.StealableItemRates[3] * BonusSteal) / 100));
+
+            if (GameRandom.Next8() < FourthLootDrop && battleEnemy.StealableItems[3] != RegularItem.NoItem)
             {
                 _v.StealItem(battleEnemy, 3);
             }
-            else if (GameRandom.Next8() < battleEnemy.StealableItemRates[2] && battleEnemy.StealableItems[2] != RegularItem.NoItem)
+            else if (GameRandom.Next8() < ThirdLootDrop && battleEnemy.StealableItems[2] != RegularItem.NoItem)
             {
                 _v.StealItem(battleEnemy, 2);
             }
-            else if (GameRandom.Next8() < battleEnemy.StealableItemRates[1] && battleEnemy.StealableItems[1] != RegularItem.NoItem)
+            else if (GameRandom.Next8() < SecondLootDrop && battleEnemy.StealableItems[1] != RegularItem.NoItem)
             {
                 _v.StealItem(battleEnemy, 1);
             }
-            else if (GameRandom.Next8() < battleEnemy.StealableItemRates[0] && battleEnemy.StealableItems[0] != RegularItem.NoItem)
+            else if (GameRandom.Next8() < FirstLootDrop && battleEnemy.StealableItems[0] != RegularItem.NoItem)
             {
                 _v.StealItem(battleEnemy, 0);
             }
-            else if (TranceSeekCustomAPI.ZidanePassive[_v.Target.Data][2] > 0) // Oeil de voleur activé
+            else if (ZidanePassive[_v.Target.Data][2] > 0) // Oeil de voleur activé
             {  
-                if (GameRandom.Next8() < battleEnemy.StealableItemRates[3] && battleEnemy.StealableItems[3] != RegularItem.NoItem)
+                if (GameRandom.Next8() < FourthLootDrop && battleEnemy.StealableItems[3] != RegularItem.NoItem)
                 {
                     _v.StealItem(battleEnemy, 3);
                 }
-                else if (GameRandom.Next8() < battleEnemy.StealableItemRates[2] && battleEnemy.StealableItems[2] != RegularItem.NoItem)
+                else if (GameRandom.Next8() < ThirdLootDrop && battleEnemy.StealableItems[2] != RegularItem.NoItem)
                 {
                     _v.StealItem(battleEnemy, 2);
                 }
-                else if (GameRandom.Next8() < battleEnemy.StealableItemRates[1] && battleEnemy.StealableItems[1] != RegularItem.NoItem)
+                else if (GameRandom.Next8() < SecondLootDrop && battleEnemy.StealableItems[1] != RegularItem.NoItem)
                 {
                     _v.StealItem(battleEnemy, 1);
                 }
-                else if (GameRandom.Next8() < battleEnemy.StealableItemRates[0] && battleEnemy.StealableItems[0] != RegularItem.NoItem)
+                else if (GameRandom.Next8() < FirstLootDrop && battleEnemy.StealableItems[0] != RegularItem.NoItem)
                 {
                     _v.StealItem(battleEnemy, 0);
                 }
@@ -286,6 +294,56 @@ namespace Memoria.Scripts.Battle
                     battleEnemy.Data.steal_item_rate[slot[slotchoosen]] += 8;
                 }
                 UiState.SetBattleFollowFormatMessage(BattleMesages.CouldNotStealAnything);
+            }
+        }
+
+        public void BonusStealFromWeapon(RegularItem Weapon, out Int32 BonusWeaponSteal)
+        {
+            BonusWeaponSteal = 0;
+            switch (Weapon)
+            {
+                case RegularItem.MageMasher:
+                    BonusWeaponSteal += 10;
+                    break;
+                case RegularItem.MythrilDagger:
+                    BonusWeaponSteal += 20;
+                    break;
+                case (RegularItem)1007: // Butterfly Sword
+                    BonusWeaponSteal += 30;
+                    break;
+                case (RegularItem)1008: // The Ogre
+                    BonusWeaponSteal += 35;
+                    break;
+                case RegularItem.Gladius:
+                    BonusWeaponSteal += 45;
+                    break;
+                case (RegularItem)1009: // Exploda
+                    BonusWeaponSteal += 40;
+                    break;
+                case (RegularItem)1010: // Rune Tooth
+                    BonusWeaponSteal += 45;
+                    break;
+                case RegularItem.ZorlinShape:
+                    BonusWeaponSteal += 50;
+                    break;
+                case (RegularItem)1011: // Angel Bless
+                    BonusWeaponSteal += 55;
+                    break;
+                case (RegularItem)1012: // Sargatanas
+                    BonusWeaponSteal += 60;
+                    break;
+                case (RegularItem)1013: // Masamune
+                    BonusWeaponSteal += 70;
+                    break;
+                case RegularItem.Orichalcon:
+                    BonusWeaponSteal += 80;
+                    break;
+                case (RegularItem)1014: // The Tower
+                    BonusWeaponSteal += 90;
+                    break;
+                case (RegularItem)1015: // The Monarch
+                    BonusWeaponSteal += 100;
+                    break;
             }
         }
     }

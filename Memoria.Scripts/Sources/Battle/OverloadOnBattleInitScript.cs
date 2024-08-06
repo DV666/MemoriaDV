@@ -78,6 +78,11 @@ namespace Memoria.Scripts.Battle
                 {
                     SpecialSAEffect[unit.Data][1] = unit.HasSupportAbilityByIndex((SupportAbility)1052) ? 2 : 1;
                 }
+                if (unit.Weapon == RegularItem.Defender)
+                {
+                    unit.AlterStatus(TranceSeekCustomAPI.CustomStatus.ArmorUp, unit);
+                    unit.AlterStatus(TranceSeekCustomAPI.CustomStatus.MentalUp, unit);
+                }
 
                 if (!unit.IsPlayer) // Check if boss have +10000 HP for scripts
                 {

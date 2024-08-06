@@ -124,9 +124,7 @@ namespace Memoria.Scripts.Battle
             {
                 if (_v.Caster.PlayerIndex == CharacterId.Freya) // Dragon abilities
                 {
-                    TranceSeekCustomAPI.TryCriticalHitDragon(_v);
-
-                    if (TranceSeekCustomAPI.MonsterMechanic[_v.Target.Data][5] > 0 || _v.Caster.IsUnderStatus(BattleStatus.Trance))
+                    if (_v.Target.IsUnderAnyStatus(TranceSeekCustomAPI.CustomStatus.Dragon) || _v.Caster.IsUnderStatus(BattleStatus.Trance))
                     {
                         switch (_v.Command.AbilityId)
                         {
@@ -166,6 +164,7 @@ namespace Memoria.Scripts.Battle
                                 }                                   
                                 break;
                         }
+                        _v.Target.RemoveStatus(TranceSeekCustomAPI.CustomStatus.Dragon);
                     } 
                 }
                 else if (_v.Caster.PlayerIndex == CharacterId.Beatrix && _v.Command.AbilityId == (BattleAbilityId)1043)
