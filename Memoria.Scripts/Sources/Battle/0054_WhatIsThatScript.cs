@@ -35,9 +35,9 @@ namespace Memoria.Scripts.Battle
                     {
                         battleUnit.FaceAsUnit(_v.Caster);
                         BattleEnemy battleEnemy = BattleEnemy.Find(battleUnit);
-                        if (WhatIsThatScript.HasStealableItems(battleEnemy))
+                        if (HasStealableItems(battleEnemy))
                         {
-                            if (battleEnemy.StealableItems[3] != RegularItem.NoItem && GameRandom.Next8() < 1)
+                            if (battleEnemy.StealableItems[3] != RegularItem.NoItem && GameRandom.Next8() < StealScript.NewStealableItemRates(battleEnemy.StealableItemRates[3], _v.Caster.Weapon))
                             {
                                 if (num == 0)
                                 {
@@ -57,7 +57,7 @@ namespace Memoria.Scripts.Battle
                                 }
                                 _v.StealItem(battleEnemy, 3);
                             }
-                            else if (battleEnemy.StealableItems[2] != RegularItem.NoItem && GameRandom.Next8() < 16)
+                            else if (battleEnemy.StealableItems[2] != RegularItem.NoItem && GameRandom.Next8() < StealScript.NewStealableItemRates(battleEnemy.StealableItemRates[2], _v.Caster.Weapon))
                             {
                                 if (num == 0)
                                 {
@@ -77,7 +77,7 @@ namespace Memoria.Scripts.Battle
                                 }
                                 _v.StealItem(battleEnemy, 2);
                             }
-                            else if (battleEnemy.StealableItems[1] != RegularItem.NoItem && GameRandom.Next8() < 32)
+                            else if (battleEnemy.StealableItems[1] != RegularItem.NoItem && GameRandom.Next8() < StealScript.NewStealableItemRates(battleEnemy.StealableItemRates[1], _v.Caster.Weapon))
                             {
                                 if (num == 0)
                                 {
@@ -117,9 +117,9 @@ namespace Memoria.Scripts.Battle
                                 }
                                 _v.StealItem(battleEnemy, 0);
                             }
-                            else if (TranceSeekCustomAPI.ZidanePassive[battleUnit.Data][2] > 0)
+                            else if (TranceSeekCustomAPI.ZidanePassive[battleUnit.Data][2] > 0) // Oeil de voleur
                             {
-                                if (battleEnemy.StealableItems[3] != RegularItem.NoItem && GameRandom.Next8() < 1)
+                                if (battleEnemy.StealableItems[3] != RegularItem.NoItem && GameRandom.Next8() < StealScript.NewStealableItemRates(battleEnemy.StealableItemRates[3], _v.Caster.Weapon))
                                 {
                                     if (num == 0)
                                     {
@@ -139,7 +139,7 @@ namespace Memoria.Scripts.Battle
                                     }
                                     _v.StealItem(battleEnemy, 3);
                                 }
-                                else if (battleEnemy.StealableItems[2] != RegularItem.NoItem && GameRandom.Next8() < 16)
+                                else if (battleEnemy.StealableItems[2] != RegularItem.NoItem && GameRandom.Next8() < StealScript.NewStealableItemRates(battleEnemy.StealableItemRates[2], _v.Caster.Weapon))
                                 {
                                     if (num == 0)
                                     {
@@ -159,7 +159,7 @@ namespace Memoria.Scripts.Battle
                                     }
                                     _v.StealItem(battleEnemy, 2);
                                 }
-                                else if (battleEnemy.StealableItems[1] != RegularItem.NoItem && GameRandom.Next8() < 32)
+                                else if (battleEnemy.StealableItems[1] != RegularItem.NoItem && GameRandom.Next8() < StealScript.NewStealableItemRates(battleEnemy.StealableItemRates[1], _v.Caster.Weapon))
                                 {
                                     if (num == 0)
                                     {

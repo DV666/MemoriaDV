@@ -775,7 +775,17 @@ namespace Memoria.Scripts.Battle
         {
             if (v.Target.PhysicalDefence != 255 || v.Target.PhysicalDefence != 255 || v.Target.MagicDefence != 255 || v.Target.MagicEvade != 255 && !v.Command.IsManyTarget)
                 if (v.Command.Data.tar_id == v.Target.Id && v.Target.IsUnderAnyStatus(BattleStatus.Trouble) && (v.Context.AddedStatuses & BattleStatus.Trouble) == 0 && (v.Target.Flags & CalcFlag.HpRecovery) == 0)
-                    v.Target.Data.fig_info |= Param.FIG_INFO_TROUBLE;
+                {
+                    Int32 dmg = v.Target.HpDamage >> 1;
+                    foreach (BattleUnit unit in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
+                    {
+                        if (unit.IsPlayer == v.Target.IsPlayer && unit.Id != v.Target.Id && unit.IsTargetable && unit.PhysicalDefence != 255 &&
+                            unit.PhysicalDefence != 255 && unit.MagicDefence != 255 && unit.MagicEvade != 255 && !unit.IsUnderAnyStatus(BattleStatus.Death))
+                        {
+                            btl_para.SetDamage(unit, dmg, 0, requestFigureNow: true);
+                        }
+                    }
+                }
         }
         public static void SpecialSA(this BattleCalculator v)
         {
@@ -927,19 +937,6 @@ namespace Memoria.Scripts.Battle
             if (WeaponNewStatus[v.Caster.Data] == BattleStatus.Shell && (v.Command.Id == BattleCommandId.Attack || v.Command.Id == BattleCommandId.Counter)) // Osmose MagiLame
             {
                 HealMPSAOrItem += v.Target.MpDamage / 80;
-            }
-            if (v.Caster.HasSupportAbilityByIndex((SupportAbility)117) && SpecialSAEffect[v.Caster][4] == 0) // Mode EX
-            {
-                HealHPSAOrItem += (int)(v.Caster.MaximumHp * (v.Caster.HasSupportAbilityByIndex((SupportAbility)1117) ? 16 : 8) / 100);
-                HealMPSAOrItem += (int)(v.Caster.MaximumMp * (v.Caster.HasSupportAbilityByIndex((SupportAbility)1117) ? 16 : 8) / 100);
-                SpecialSAEffect[v.Caster][4] = 1;
-                v.Caster.AddDelayedModifier(
-                caster => caster.CurrentAtb >= caster.MaximumAtb,
-                caster =>
-                {
-                    SpecialSAEffect[v.Caster][4] = 0;
-                }
-                );
             }
             if (HealHPSAOrItem > 0 || HealMPSAOrItem > 0)
             {

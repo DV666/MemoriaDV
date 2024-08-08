@@ -27,14 +27,17 @@ namespace Memoria.DefaultScripts
                 if (Parameter == "Add")
                 {
                     Stack++;
-                    return btl_stat.ALTER_SUCCESS_NO_SET;
+                    if (Stack > 9)
+                        Stack = 9;
                 }
                 else if (Parameter == "Remove")
                 {
                     Stack--;
                     if (Stack == 0)
+                    {
                         target.RemoveStatus(BattleStatusId.CustomStatus2);
-                    return btl_stat.ALTER_SUCCESS_NO_SET;
+                        return btl_stat.ALTER_SUCCESS_NO_SET;
+                    }
                 }
                 else
                 {
@@ -55,7 +58,6 @@ namespace Memoria.DefaultScripts
             if (BasicMagic == 0)
                 BasicMagic = Target.Magic;
 
-            Stack++;
             if (Stack > 9)
                 return btl_stat.ALTER_INVALID;
             if (Stack > 1)
@@ -89,9 +91,13 @@ namespace Memoria.DefaultScripts
 
         public override Boolean Remove()
         {
-            NumberHUD.FontSize = DefautSize;
-            btl2d.StatusMessages.Remove(NumberHUD);
-            Singleton<HUDMessage>.Instance.ReleaseObject(NumberHUD);
+            Stack = 0;
+            if (NumberHUD != null)
+            {
+                NumberHUD.FontSize = DefautSize;
+                btl2d.StatusMessages.Remove(NumberHUD);
+                Singleton<HUDMessage>.Instance.ReleaseObject(NumberHUD);
+            }
             Target.Magic = (Byte)BasicMagic;
             return true;
         }

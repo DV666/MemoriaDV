@@ -2,6 +2,8 @@
 using Memoria.Data;
 using FF9;
 using Object = System.Object;
+using static Memoria.Scripts.Battle.TranceSeekCustomAPI;
+using Memoria.Prime;
 
 namespace Memoria.DefaultScripts
 {
@@ -40,6 +42,14 @@ namespace Memoria.DefaultScripts
         {
             base.Apply(target, inflicter, parameters);
             btl_cmd.SetCommand(target.Data.cmd[4], BattleCommandId.SysTrans, 0, target.Id, 0u);
+            if (!Target.IsPlayer && MonsterMechanic[Target.Data][0] == 0 && !Target.IsUnderAnyStatus(BattleStatus.EasyKill)) // +50% HP/MP Max if monster get under Trance
+            {
+                MonsterMechanic[Target.Data][0] = 1;
+                Target.MaximumHp += (Target.MaximumHp / 2);
+                Target.MaximumMp += (Target.MaximumMp / 2);
+                Target.CurrentHp = Target.MaximumHp;
+                Target.CurrentMp = Target.MaximumMp;
+            }
             if (target.PlayerIndex == CharacterId.Garnet)
                 target.AddDelayedModifier(ProcessPhantomRecast, ClearPhantomRecast);
             return btl_stat.ALTER_SUCCESS;

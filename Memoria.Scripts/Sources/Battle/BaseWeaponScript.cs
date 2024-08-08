@@ -64,7 +64,7 @@ namespace Memoria.Scripts.Battle
                         if (GameRandom.Next16() % _v.Context.HitRate >= GameRandom.Next16() % _v.Context.Evade || _v.Caster.HasSupportAbility(SupportAbility2.Bandit))
                         {
                             BattleEnemy battleEnemy = BattleEnemy.Find(_v.Target);
-                            if (battleEnemy.StealableItems[3] != RegularItem.NoItem && GameRandom.Next8() < 1)
+                            if (battleEnemy.StealableItems[3] != RegularItem.NoItem && GameRandom.Next8() < StealScript.NewStealableItemRates(battleEnemy.StealableItemRates[3], _v.Caster.Weapon))
                             {
                                 GameState.Thefts += 1;
                                 BattleItem.AddToInventory(battleEnemy.StealableItems[3]);
@@ -74,46 +74,37 @@ namespace Memoria.Scripts.Battle
                                 });
                                 battleEnemy.StealableItems[3] = RegularItem.NoItem;
                             }
-                            else
+                            else if (battleEnemy.StealableItems[2] != RegularItem.NoItem && GameRandom.Next8() < StealScript.NewStealableItemRates(battleEnemy.StealableItemRates[2], _v.Caster.Weapon))
                             {
-                                if (battleEnemy.StealableItems[2] != RegularItem.NoItem && GameRandom.Next8() < 16)
+                                GameState.Thefts += 1;
+                                BattleItem.AddToInventory(battleEnemy.StealableItems[2]);
+                                UiState.SetBattleFollowFormatMessage(BattleMesages.Stole, new object[]
                                 {
-                                    GameState.Thefts += 1;
-                                    BattleItem.AddToInventory(battleEnemy.StealableItems[2]);
-                                    UiState.SetBattleFollowFormatMessage(BattleMesages.Stole, new object[]
-                                    {
                                             FF9TextTool.ItemName(battleEnemy.StealableItems[2])
-                                    });
-                                    battleEnemy.StealableItems[2] = RegularItem.NoItem;
-                                }
-                                else
-                                {
-                                    if (battleEnemy.StealableItems[1] != RegularItem.NoItem && GameRandom.Next8() < 64)
-                                    {
-                                        GameState.Thefts += 1;
-                                        BattleItem.AddToInventory(battleEnemy.StealableItems[1]);
-                                        UiState.SetBattleFollowFormatMessage(BattleMesages.Stole, new object[]
-                                        {
-                                                FF9TextTool.ItemName(battleEnemy.StealableItems[1])
-                                        });
-                                        battleEnemy.StealableItems[1] = RegularItem.NoItem;
-                                    }
-                                    else
-                                    {
-                                        if (battleEnemy.StealableItems[0] != RegularItem.NoItem)
-                                        {
-                                            GameState.Thefts += 1;
-                                            BattleItem.AddToInventory(battleEnemy.StealableItems[0]);
-                                            UiState.SetBattleFollowFormatMessage(BattleMesages.Stole, new object[]
-                                            {
-                                                    FF9TextTool.ItemName(battleEnemy.StealableItems[0])
-                                            });
-                                            battleEnemy.StealableItems[0] = RegularItem.NoItem;
-                                        }
-                                    }
-                                }
+                                });
+                                battleEnemy.StealableItems[2] = RegularItem.NoItem;
                             }
-                        }
+                            else if (battleEnemy.StealableItems[1] != RegularItem.NoItem && GameRandom.Next8() < StealScript.NewStealableItemRates(battleEnemy.StealableItemRates[1], _v.Caster.Weapon))
+                            {
+                                GameState.Thefts += 1;
+                                BattleItem.AddToInventory(battleEnemy.StealableItems[1]);
+                                UiState.SetBattleFollowFormatMessage(BattleMesages.Stole, new object[]
+                                {
+                                                FF9TextTool.ItemName(battleEnemy.StealableItems[1])
+                                });
+                                battleEnemy.StealableItems[1] = RegularItem.NoItem;
+                            }
+                            else if (battleEnemy.StealableItems[0] != RegularItem.NoItem)
+                            {
+                                GameState.Thefts += 1;
+                                BattleItem.AddToInventory(battleEnemy.StealableItems[0]);
+                                UiState.SetBattleFollowFormatMessage(BattleMesages.Stole, new object[]
+                                {
+                                                    FF9TextTool.ItemName(battleEnemy.StealableItems[0])
+                                });
+                                battleEnemy.StealableItems[0] = RegularItem.NoItem;
+                            }
+                        }                      
                     }
                     if (_v.Caster.PlayerIndex == CharacterId.Amarant)
                     {

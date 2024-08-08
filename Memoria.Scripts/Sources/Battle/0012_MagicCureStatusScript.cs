@@ -21,9 +21,11 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
+            _v.TryRemoveAbilityStatuses();
             if (_v.Command.AbilityId == BattleAbilityId.Esuna)
             {
-                _v.Command.AbilityStatus |= TranceSeekCustomAPI.CustomStatus.Vieillissement;             
+                _v.Command.AbilityStatus |= TranceSeekCustomAPI.CustomStatus.Vieillissement;
+                _v.Context.Flags = 0;
             }
             if (_v.Command.Power == 111)
             {
@@ -32,9 +34,7 @@ namespace Memoria.Scripts.Battle
                     BattleStatusId statusId = (BattleStatusId)i;
                     _v.Target.RemoveStatus(statusId.ToBattleStatus());
                 }
-            }
-
-            _v.TryRemoveAbilityStatuses();
+            }        
 
             if (_v.Command.HitRate == 222)
             {

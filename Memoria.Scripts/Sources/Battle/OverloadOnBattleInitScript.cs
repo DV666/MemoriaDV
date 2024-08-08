@@ -80,8 +80,8 @@ namespace Memoria.Scripts.Battle
                 }
                 if (unit.Weapon == RegularItem.Defender)
                 {
-                    unit.AlterStatus(TranceSeekCustomAPI.CustomStatus.ArmorUp, unit);
-                    unit.AlterStatus(TranceSeekCustomAPI.CustomStatus.MentalUp, unit);
+                    unit.AlterStatus(CustomStatus.ArmorUp, unit);
+                    unit.AlterStatus(CustomStatus.MentalUp, unit);
                 }
 
                 if (!unit.IsPlayer) // Check if boss have +10000 HP for scripts
@@ -97,19 +97,11 @@ namespace Memoria.Scripts.Battle
                 }
                 else
                 {
-                    if (Configuration.TetraMaster.TripleTriad == 16388)
+                    if (Configuration.TetraMaster.TripleTriad >= 16388)
                     {
                         unit.MagicDefence = 254;
                         unit.PhysicalDefence = 254;
                     }
-                }
-
-                if (!unit.IsPlayer && unit.IsUnderAnyStatus(BattleStatus.Trance) && MonsterMechanic[unit.Data][0] == 0 && !unit.IsUnderAnyStatus(BattleStatus.EasyKill)) // +50% HP/MP Max if monster get under Trance
-                { // [!!!TODO!!!] Move to end method
-                    MonsterMechanic[unit.Data][0] = 1;
-                    unit.MaximumHp += (unit.MaximumHp / 2);
-                    unit.MaximumMp += (unit.MaximumMp / 2);
-                    unit.CurrentHp = unit.MaximumHp;
                 }
             }
         }

@@ -145,24 +145,24 @@ namespace Memoria.Scripts.Battle
             int MasterThiefTrigger = TranceSeekCustomAPI.ZidanePassive[_v.Caster.Data][3];
             if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1022) && MasterThiefTrigger == 0) // If steal failed, will work the second time.
                 MasterThiefTrigger = 1;
-            if ((battleEnemy.StealableItems[0] != RegularItem.NoItem) && (MasterThiefTrigger >= 2 || GameRandom.Next8() < battleEnemy.StealableItemRates[0]))
+            if ((battleEnemy.StealableItems[3] != RegularItem.NoItem) && (MasterThiefTrigger >= 2 || GameRandom.Next8() < NewStealableItemRates(battleEnemy.StealableItemRates[3], _v.Caster.Weapon)))
             {
-                _v.StealItem(battleEnemy, 0);
+                _v.StealItem(battleEnemy, 3);
                 TranceSeekCustomAPI.ZidanePassive[_v.Caster.Data][3] = 0;
             }
-            else if ((battleEnemy.StealableItems[1] != RegularItem.NoItem) && (MasterThiefTrigger >= 2 || GameRandom.Next8() < battleEnemy.StealableItemRates[1]))
-            {
-                _v.StealItem(battleEnemy, 1);
-                TranceSeekCustomAPI.ZidanePassive[_v.Caster.Data][3] = 0;
-            }
-            else if ((battleEnemy.StealableItems[2] != RegularItem.NoItem) && (MasterThiefTrigger >= 2 || GameRandom.Next8() < battleEnemy.StealableItemRates[2]))
+            else if ((battleEnemy.StealableItems[2] != RegularItem.NoItem) && (MasterThiefTrigger >= 2 || GameRandom.Next8() < NewStealableItemRates(battleEnemy.StealableItemRates[2], _v.Caster.Weapon)))
             {
                 _v.StealItem(battleEnemy, 2);
                 TranceSeekCustomAPI.ZidanePassive[_v.Caster.Data][3] = 0;
             }
-            else if ((battleEnemy.StealableItems[3] != RegularItem.NoItem) && (MasterThiefTrigger >= 2 || GameRandom.Next8() < battleEnemy.StealableItemRates[3]))
+            else if ((battleEnemy.StealableItems[1] != RegularItem.NoItem) && (MasterThiefTrigger >= 2 || GameRandom.Next8() < NewStealableItemRates(battleEnemy.StealableItemRates[1], _v.Caster.Weapon)))
             {
-                _v.StealItem(battleEnemy, 3);
+                _v.StealItem(battleEnemy, 1);
+                TranceSeekCustomAPI.ZidanePassive[_v.Caster.Data][3] = 0;
+            }
+            else if ((battleEnemy.StealableItems[0] != RegularItem.NoItem) && (MasterThiefTrigger >= 2 || GameRandom.Next8() < NewStealableItemRates(battleEnemy.StealableItemRates[0], _v.Caster.Weapon)))
+            {
+                _v.StealItem(battleEnemy, 0);
                 TranceSeekCustomAPI.ZidanePassive[_v.Caster.Data][3] = 0;
             }
             else
@@ -208,45 +208,38 @@ namespace Memoria.Scripts.Battle
 
         public void ClassicSteal()
         {
-            BonusStealFromWeapon(_v.Caster.Weapon, out Int32 BonusSteal);
             BattleEnemy battleEnemy = BattleEnemy.Find(_v.Target);
-
-            ushort FirstLootDrop = (ushort)(battleEnemy.StealableItemRates[0] + ((battleEnemy.StealableItemRates[0] * BonusSteal) / 100));
-            ushort SecondLootDrop = (ushort)(battleEnemy.StealableItemRates[1] + ((battleEnemy.StealableItemRates[1] * BonusSteal) / 100));
-            ushort ThirdLootDrop = (ushort)(battleEnemy.StealableItemRates[2] + ((battleEnemy.StealableItemRates[2] * BonusSteal) / 100));
-            ushort FourthLootDrop = (ushort)(battleEnemy.StealableItemRates[3] + ((battleEnemy.StealableItemRates[3] * BonusSteal) / 100));
-
-            if (GameRandom.Next8() < FourthLootDrop && battleEnemy.StealableItems[3] != RegularItem.NoItem)
+            if (GameRandom.Next8() < NewStealableItemRates(battleEnemy.StealableItemRates[3], _v.Caster.Weapon) && battleEnemy.StealableItems[3] != RegularItem.NoItem)
             {
                 _v.StealItem(battleEnemy, 3);
             }
-            else if (GameRandom.Next8() < ThirdLootDrop && battleEnemy.StealableItems[2] != RegularItem.NoItem)
+            else if (GameRandom.Next8() < NewStealableItemRates(battleEnemy.StealableItemRates[2], _v.Caster.Weapon) && battleEnemy.StealableItems[2] != RegularItem.NoItem)
             {
                 _v.StealItem(battleEnemy, 2);
             }
-            else if (GameRandom.Next8() < SecondLootDrop && battleEnemy.StealableItems[1] != RegularItem.NoItem)
+            else if (GameRandom.Next8() < NewStealableItemRates(battleEnemy.StealableItemRates[1], _v.Caster.Weapon) && battleEnemy.StealableItems[1] != RegularItem.NoItem)
             {
                 _v.StealItem(battleEnemy, 1);
             }
-            else if (GameRandom.Next8() < FirstLootDrop && battleEnemy.StealableItems[0] != RegularItem.NoItem)
+            else if (GameRandom.Next8() < NewStealableItemRates(battleEnemy.StealableItemRates[0], _v.Caster.Weapon) && battleEnemy.StealableItems[0] != RegularItem.NoItem)
             {
                 _v.StealItem(battleEnemy, 0);
             }
             else if (ZidanePassive[_v.Target.Data][2] > 0) // Oeil de voleur activé
             {  
-                if (GameRandom.Next8() < FourthLootDrop && battleEnemy.StealableItems[3] != RegularItem.NoItem)
+                if (GameRandom.Next8() < NewStealableItemRates(battleEnemy.StealableItemRates[3], _v.Caster.Weapon) && battleEnemy.StealableItems[3] != RegularItem.NoItem)
                 {
                     _v.StealItem(battleEnemy, 3);
                 }
-                else if (GameRandom.Next8() < ThirdLootDrop && battleEnemy.StealableItems[2] != RegularItem.NoItem)
+                else if (GameRandom.Next8() < NewStealableItemRates(battleEnemy.StealableItemRates[2], _v.Caster.Weapon) && battleEnemy.StealableItems[2] != RegularItem.NoItem)
                 {
                     _v.StealItem(battleEnemy, 2);
                 }
-                else if (GameRandom.Next8() < SecondLootDrop && battleEnemy.StealableItems[1] != RegularItem.NoItem)
+                else if (GameRandom.Next8() < NewStealableItemRates(battleEnemy.StealableItemRates[1], _v.Caster.Weapon) && battleEnemy.StealableItems[1] != RegularItem.NoItem)
                 {
                     _v.StealItem(battleEnemy, 1);
                 }
-                else if (GameRandom.Next8() < FirstLootDrop && battleEnemy.StealableItems[0] != RegularItem.NoItem)
+                else if (GameRandom.Next8() < NewStealableItemRates(battleEnemy.StealableItemRates[0], _v.Caster.Weapon) && battleEnemy.StealableItems[0] != RegularItem.NoItem)
                 {
                     _v.StealItem(battleEnemy, 0);
                 }
@@ -297,10 +290,10 @@ namespace Memoria.Scripts.Battle
             }
         }
 
-        public void BonusStealFromWeapon(RegularItem Weapon, out Int32 BonusWeaponSteal)
+        public static float NewStealableItemRates(ushort StealableItemRates, RegularItem weapon)
         {
-            BonusWeaponSteal = 0;
-            switch (Weapon)
+            Int32 BonusWeaponSteal = 0;
+            switch (weapon)
             {
                 case RegularItem.MageMasher:
                     BonusWeaponSteal += 10;
@@ -345,6 +338,8 @@ namespace Memoria.Scripts.Battle
                     BonusWeaponSteal += 100;
                     break;
             }
+
+            return (StealableItemRates + ((float)(StealableItemRates * BonusWeaponSteal) / 100));
         }
     }
 }

@@ -21,11 +21,6 @@ namespace Memoria.Scripts.Battle
         public void Perform()
         {
             _v.TryRemoveItemStatuses();
-            if (_v.Command.ItemId == RegularItem.Annoyntment)
-            {
-                _v.Target.AlterStatus(TranceSeekCustomAPI.CustomStatus.Vieillissement, _v.Caster);
-                return;
-            }
             if (_v.Command.ItemId == RegularItem.Remedy || _v.Command.ItemId == RegularItem.Annoyntment || _v.Command.ItemId == (RegularItem)1003)
             {
                 _v.Target.RemoveStatus(TranceSeekCustomAPI.CustomStatus.Vieillissement);
