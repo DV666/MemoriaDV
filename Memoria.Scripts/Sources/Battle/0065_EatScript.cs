@@ -63,7 +63,7 @@ namespace Memoria.Scripts.Battle
             }
             else
             {
-                if (_v.Target.CurrentHp <= _v.Target.MaximumHp)
+                if (_v.Target.CurrentHp <= _v.Target.MaximumHp / _v.Command.Power)
                 {
                     Int32 BonusHealFork = 0;
                     switch (_v.Caster.Weapon)

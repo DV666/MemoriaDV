@@ -7,13 +7,13 @@ namespace Memoria.Scripts.Battle
     /// Dark Matter
     /// </summary>
     [BattleScript(Id)]
-    public sealed class ShockScript : IBattleScript
+    public sealed class ShockMagicalScript : IBattleScript
     {
         public const Int32 Id = 00113;
 
         private readonly BattleCalculator _v;
 
-        public ShockScript(BattleCalculator v)
+        public ShockMagicalScript(BattleCalculator v)
         {
             _v = v;
         }
@@ -27,7 +27,7 @@ namespace Memoria.Scripts.Battle
                 _v.Target.RemoveStatus(BattleStatus.Vanish);
                 _v.Target.RemoveStatus(BattleStatus.Reflect);
                 _v.WeaponPhysicalParams();
-                TranceSeekCustomAPI.CharacterBonusPassive(_v, "PhysicalAttack");
+                TranceSeekCustomAPI.CharacterBonusPassive(_v, "MagicAttack");
                 TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
                 _v.Caster.PhysicalPenaltyAndBonusAttack();
                 _v.BonusElement();
@@ -45,26 +45,6 @@ namespace Memoria.Scripts.Battle
                 return;
             }
             _v.PhysicalAccuracy();
-            if (_v.Command.AbilityStatus == BattleStatus.Protect)
-            {
-                if (!TranceSeekCustomAPI.TryPhysicalHit(_v))
-                {
-                    return;
-                }
-                _v.NormalPhysicalParams();
-                TranceSeekCustomAPI.CharacterBonusPassive(_v, "PhysicalAttack");
-                _v.Caster.PhysicalPenaltyAndBonusAttack();
-                _v.Caster.EnemyTranceBonusAttack();
-                TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
-                _v.BonusElement();
-                if (_v.CanAttackElementalCommand())
-                {
-                    _v.CalcPhysicalHpDamage();
-                    TranceSeekCustomAPI.RaiseTrouble(_v);
-                    _v.Target.RemoveStatus(BattleStatus.Protect);
-                    return;
-                }
-            }
             if (!_v.Target.TryKillFrozen())
             {
                 _v.Target.RemoveStatus(BattleStatus.Protect);

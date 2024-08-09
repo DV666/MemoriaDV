@@ -20,29 +20,28 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            if (_v.Caster.PlayerIndex == CharacterId.Amarant)
+
+            if (_v.Command.AbilityId == BattleAbilityId.NoMercy1 || _v.Command.AbilityId == BattleAbilityId.NoMercy2) // Fragilité
             {
-                if (_v.Command.AbilityId == BattleAbilityId.NoMercy1 || _v.Command.AbilityId == BattleAbilityId.NoMercy2) // Fragilité
+                _v.MagicAccuracy();
+                _v.Target.PenaltyShellHitRate();
+                _v.PenaltyCommandDividedHitRate();
+                //foreach (BattleStatusId statusId in _v.Target.CurrentStatus.ToStatusList()) [!!!TODO!!!]
+                //{
+                //    if ((statusId.ToBattleStatus() & BattleStatusConst.OprCount) == 0)
+                //        continue;
+                //    _v.Target.Data.stat.opr[statusId] += _v.Target.Data.stat.opr[statusId];
+                //}
+                if (_v.Command.AbilityId == BattleAbilityId.NoMercy2)
                 {
-                    _v.MagicAccuracy();
-                    _v.Target.PenaltyShellHitRate();
-                    _v.PenaltyCommandDividedHitRate();
-                    //foreach (BattleStatusId statusId in _v.Target.CurrentStatus.ToStatusList()) [!!!TODO!!!]
-                    //{
-                    //    if ((statusId.ToBattleStatus() & BattleStatusConst.OprCount) == 0)
-                    //        continue;
-                    //    _v.Target.Data.stat.opr[statusId] += _v.Target.Data.stat.opr[statusId];
-                    //}
-                    if (_v.Command.AbilityId == BattleAbilityId.NoMercy2)
-                    {
-                        _v.Command.AbilityStatus |= (BattleStatus.Poison | BattleStatus.Venom);
-                    }
-                    _v.Command.AbilityStatus = BattleStatus.Confuse;
-                    //if (_v.TryMagicHit())
-                    TranceSeekCustomAPI.TryAlterCommandStatuses(_v);            
+                    _v.Command.AbilityStatus |= (BattleStatus.Poison | BattleStatus.Venom);
                 }
-                return;
-            }
+                _v.Command.AbilityStatus = BattleStatus.Confuse;
+                //if (_v.TryMagicHit())
+                TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
+            return;
+            }               
+            
             if (_v.Command.Power > 0)
             {
                 if (_v.Target.MagicDefence == 255)
@@ -79,39 +78,37 @@ namespace Memoria.Scripts.Battle
                 _v.Command.Element = (EffectElement)(1 << (GameRandom.Next16() % 8));
             }
             UiState.SetBattleFollowMessage(BattleMesages.BecameWeakAgainst, _v.Command.Element);
+            _v.Context.Flags = 0;
             if ((_v.Command.Element & _v.Target.AbsorbElement) > 0)
             {
                 _v.Target.AbsorbElement &= ~_v.Command.Element;
                 _v.Target.GuardElement |= _v.Command.Element;
             }
+            else if ((_v.Command.Element & _v.Target.GuardElement) > 0)
+            {
+                _v.Target.GuardElement &= ~_v.Command.Element;
+                _v.Target.HalfElement |= _v.Command.Element;
+            }
+            else if ((_v.Command.Element & _v.Target.HalfElement) > 0)
+            {
+                _v.Target.HalfElement &= ~_v.Command.Element;
+            }
             else
             {
-                if ((_v.Command.Element & _v.Target.GuardElement) > 0)
+                _v.Target.WeakElement |= _v.Command.Element;
+                if (_v.Command.AbilityStatus != 0)
                 {
-                    _v.Target.GuardElement &= ~_v.Command.Element;
-                    _v.Target.HalfElement |= _v.Command.Element;
-                }
-                else
-                {
-                    if ((_v.Command.Element & _v.Target.HalfElement) > 0)
+                    if (_v.Command.HitRate == 255)
                     {
-                        _v.Target.HalfElement &= ~_v.Command.Element;
+                        _v.TryRemoveAbilityStatuses();
                     }
                     else
                     {
-                        _v.Target.WeakElement |= _v.Command.Element;
-                        if (_v.Command.HitRate == 255)
-                        {
-                            _v.TryRemoveAbilityStatuses();
-                        }
-                        else
-                        {
-                            _v.TryAlterMagicStatuses();
-                        }
+                        _v.TryAlterMagicStatuses();
                     }
                 }
             }
-            if (_v.Caster.PlayerIndex == CharacterId.Amarant && _v.Command.AbilityId == BattleAbilityId.Curse2)
+            if (_v.Caster.PlayerIndex == CharacterId.Amarant && _v.Command.AbilityId == BattleAbilityId.Curse2) // Sort+
             {
                 if (_v.Command.Element == EffectElement.Fire)
                 {

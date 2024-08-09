@@ -375,7 +375,8 @@
     <Compile Include="Sources\Battle\0110_FearScript.cs" />
     <Compile Include="Sources\Battle\0111_ZombieArmorScript.cs" />
     <Compile Include="Sources\Battle\0112_CryintheNightScript.cs" />
-    <Compile Include="Sources\Battle\0113_ShockScript.cs" />
+    <Compile Include="Sources\Battle\0125_ShockMagicalScript.cs" />
+    <Compile Include="Sources\Battle\0113_ShockPhysicalScript.cs" />
     <Compile Include="Sources\Battle\0114_FullBreakScript.cs" />
     <Compile Include="Sources\Battle\0115_MagicLancerScript.cs" />
     <Compile Include="Sources\Battle\0116_LowRandomMagic.cs" />
