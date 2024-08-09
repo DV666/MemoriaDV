@@ -480,7 +480,7 @@ public class FieldMap : HonoBehavior
         this.walkMesh.CreateProjectedWalkMesh();
         this.walkMesh.BGI_simInit();
         SmoothCamDelay = 6;
-        SmoothCamActive = (!SmoothCamExcludeMaps.Contains(FF9StateSystem.Common.FF9.fldMapNo));
+        SmoothCamActive = !SmoothCamExcludeMaps.Contains(FF9StateSystem.Common.FF9.fldMapNo);
         FPSManager.DelayMainLoop(Time.realtimeSinceStartup - loadStartTime);
         if (dbug) Log.Message("_ LoadFieldMap | ShaderMulX: " + ShaderMulX + " | bgCamera.depthOffset: " + bgCamera.depthOffset + " | bgCamera.vrpMaxX " + bgCamera.vrpMaxX + " | bgCamera.depthOffset: " + bgCamera.depthOffset + " | this.scene.maxX: " + this.scene.maxX);
     }
@@ -714,20 +714,35 @@ public class FieldMap : HonoBehavior
             }
             switch (map) // offsets for scrolling maps stretched to WS
             {
+                case 312: // Ice caver out (white line left)
+                    CamPositionX = CamPositionX + 1; break;
                 case 456: // Dali Mountain/Summit
                     CamPositionX = Configuration.Graphics.ScreenIs16to10() ? 195 : 160; break;
                 case 505: // Cargo ship offset
                     CamPositionX = Configuration.Graphics.ScreenIs16to10() ? 70 : 105; break;
+                case 507: // Cargo ship offset (white line left)
+                    CamPositionX = CamPositionX + 1; break;
                 case 1153: // Rose Rouge cockpit offset
                     CamPositionX = Configuration.Graphics.ScreenIs16to10() ? 140 : 175; break;
                 case 2716: // fix for Kuja descending camera too high
                     CamPositionY = (float)Math.Min(0, CamPositionY); break;
-                case 2903: // Dali Mountain/Summit
+                case 2903: // Memoria castle
                     if (ActualPsxScreenWidth > 510)
                         CamPositionX = 0; break;
                 default:
                     break;
             }
+        }
+
+        if (!MBG.IsNull && MBG.Instance.HasJustFinished())
+        {
+            // Fix #667: move camera instantly after MBG
+            if (SmoothCamActive)
+            {
+                Prev_CamPositionX = CamPositionX;
+                Prev_CamPositionY = CamPositionY;
+            }
+            return;
         }
 
         if (SmoothCamActive)
@@ -1362,6 +1377,8 @@ public class FieldMap : HonoBehavior
                 bgSprite.transform.localPosition = cacheLocalPos;
             }
             bgOverlay.transform.localPosition = new Vector3((float)bgOverlay.curX, (float)bgOverlay.curY, bgOverlay.transform.localPosition.z);
+            if (FF9StateSystem.Common.FF9.fldMapNo == 2903 && ovrNdx == 1)
+                bgOverlay.transform.localPosition = new Vector3((float)bgOverlay.curX - 1f, (float)bgOverlay.curY, bgOverlay.transform.localPosition.z);
         }
         else if ((bgOverlay.flags & BGOVERLAY_DEF.OVERLAY_FLAG.ScrollWithOffset) != 0)
         {
