@@ -2,6 +2,7 @@
 using Memoria.Data;
 using FF9;
 using Object = System.Object;
+using static Memoria.Scripts.Battle.TranceSeekCustomAPI;
 
 namespace Memoria.DefaultScripts
 {
@@ -40,6 +41,8 @@ namespace Memoria.DefaultScripts
                 btl_stat.RemoveStatus(target, BattleStatusId.Trance);
                 target.Trance = Math.Min((Byte)254, target.Trance);
             }
+            if (target.PlayerIndex == CharacterId.Beatrix)
+                BeatrixPassive[target.Data][2] = 0;
             return btl_stat.ALTER_SUCCESS;
         }
 

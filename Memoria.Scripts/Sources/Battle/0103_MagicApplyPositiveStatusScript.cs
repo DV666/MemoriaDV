@@ -21,6 +21,12 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
+            if (_v.Command.AbilityId == BattleAbilityId.Defend) // Defense
+            {
+                if (_v.Caster.PlayerIndex == CharacterId.Beatrix)
+                    _v.Caster.AlterStatus(TranceSeekCustomAPI.CustomStatus.Redemption);
+            }
+
             if (_v.Command.AbilityId == (BattleAbilityId)1099) // Iron Clast
             {
                 _v.Command.AbilityStatus |= TranceSeekCustomAPI.CustomStatus.ArmorUp;

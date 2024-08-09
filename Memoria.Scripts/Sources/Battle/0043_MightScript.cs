@@ -1,6 +1,6 @@
 ﻿using Memoria.Data;
 using System;
-using System.Collections.Generic;
+using static Memoria.Scripts.Battle.TranceSeekCustomAPI;
 
 namespace Memoria.Scripts.Battle
 {
@@ -23,34 +23,37 @@ namespace Memoria.Scripts.Battle
         {
             if (_v.Caster.PlayerIndex == CharacterId.Beatrix && (_v.Command.AbilityId == (BattleAbilityId)1012 || _v.Command.AbilityId == (BattleAbilityId)1054)) // Bravoure
             {
-                if (TranceSeekCustomAPI.BeatrixPassive[_v.Caster.Data][2] > 0)
+                if (BeatrixPassive[_v.Caster.Data][2] > 0)
                 {
                     _v.Context.Flags |= BattleCalcFlags.Miss;
                     return;
                 }
-
+                _v.Target.AlterStatus(CustomStatus.PowerUp, _v.Caster);
+                _v.Target.AlterStatus(CustomStatus.MagicUp, _v.Caster);
+                _v.Target.AlterStatus(CustomStatus.Redemption, _v.Caster);
+                _v.Target.AlterStatus(CustomStatus.Redemption, _v.Caster);
                 if (_v.Caster.IsUnderAnyStatus(BattleStatus.Trance))
                 {
-                    TranceSeekCustomAPI.BeatrixPassive[_v.Caster.Data][2] = 2;
+                    BeatrixPassive[_v.Caster.Data][2] = 2;
                     _v.Caster.AlterStatus(BattleStatus.Regen);
                     _v.Caster.AlterStatus(BattleStatus.AutoLife);
                 }
                 else
                 {
-                    TranceSeekCustomAPI.BeatrixPassive[_v.Caster.Data][2] = 1;
+                    BeatrixPassive[_v.Caster.Data][2] = 1;
                 }
                 return;
             }
             else if (_v.Caster.Data.dms_geo_id == 410 && _v.Command.Power == 4 || _v.Command.AbilityId == (BattleAbilityId)1081) // Super Muscles
             {
-                btl_stat.AlterStatus(_v.Target, TranceSeekCustomAPI.CustomStatusId.PowerUp, parameters: "4");
-                btl_stat.AlterStatus(_v.Target, TranceSeekCustomAPI.CustomStatusId.ArmorUp, parameters: "4");
+                btl_stat.AlterStatus(_v.Target, CustomStatusId.PowerUp, parameters: "4");
+                btl_stat.AlterStatus(_v.Target, CustomStatusId.ArmorUp, parameters: "4");
                 return;
             }
 
             _v.TryAlterMagicStatuses();
-            _v.Target.AlterStatus(TranceSeekCustomAPI.CustomStatus.PowerUp, _v.Caster);
-            _v.Target.AlterStatus(TranceSeekCustomAPI.CustomStatus.MagicUp, _v.Caster);
+            _v.Target.AlterStatus(CustomStatus.PowerUp, _v.Caster);
+            _v.Target.AlterStatus(CustomStatus.MagicUp, _v.Caster);
         }
     }
 }

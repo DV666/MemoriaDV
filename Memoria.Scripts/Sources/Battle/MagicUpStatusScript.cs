@@ -55,8 +55,11 @@ namespace Memoria.DefaultScripts
                 BasicMagic = Target.Magic;
 
             if (Stack > 9)
+            {
+                Stack = 9;
                 return btl_stat.ALTER_INVALID;
-            if (Stack > 1)
+            }
+            else if (Stack > 1)
             {
                 if (NumberHUD != null)
                 {

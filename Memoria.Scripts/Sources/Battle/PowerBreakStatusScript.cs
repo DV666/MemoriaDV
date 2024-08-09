@@ -56,10 +56,13 @@ namespace Memoria.DefaultScripts
             BattleStatusDataEntry statusData = FF9StateSystem.Battle.FF9Battle.status_data[BattleStatusId.CustomStatus1];
             if (BasicStrength == 0)
                 BasicStrength = Target.Strength;
-         
+
             if (Stack > 9)
+            {
+                Stack = 9;
                 return btl_stat.ALTER_INVALID;
-            if (Stack > 1)
+            }
+            else if (Stack > 1)
             {
                 if (NumberHUD != null)
                 {

@@ -395,6 +395,7 @@
     </Compile>
     <Compile Include="Sources\Battle\BlindStatusScript.cs" />
     <Compile Include="Sources\Battle\BulwarkStatusScript.cs" />
+    <Compile Include="Sources\Battle\DefendStatusScript.cs" />
     <Compile Include="Sources\Battle\OverloadOnBattleScriptStartScript.cs" />
     <Compile Include="Sources\Battle\OverloadOnBattleInitScript.cs" />
     <Compile Include="Sources\Battle\OverloadDamageModifierScript.cs" />

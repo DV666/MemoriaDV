@@ -819,14 +819,7 @@ namespace Memoria.Scripts.Battle
                 if (BeatrixPassive[v.Caster.Data][3] == 0)
                 {
                     BeatrixPassive[v.Caster.Data][3] = (ushort)(v.Command.TargetCount);
-                    if ((v.Command.AbilityId == (BattleAbilityId)1012 || v.Command.AbilityId == (BattleAbilityId)1054)) // Bravoure & Héroïsme
-                    {
-                        v.Target.AlterStatus(CustomStatus.PowerUp, v.Caster);
-                        v.Target.AlterStatus(CustomStatus.MagicUp, v.Caster);
-                        v.Target.AlterStatus(CustomStatus.Redemption, v.Caster);
-                        v.Target.AlterStatus(CustomStatus.Redemption, v.Caster);               
-                    }
-                    else if (v.Command.Id == BattleCommandId.Attack || v.Command.Id == BattleCommandId.Defend || v.Command.Id == BattleCommandId.Counter ||
+                    if (v.Command.Id == BattleCommandId.Attack || v.Command.Id == BattleCommandId.Defend || v.Command.Id == BattleCommandId.Counter ||
                         v.Command.Id == BattleCommandId.HolyWhiteMagic || v.Caster.IsUnderAnyStatus(BattleStatus.Trance))
                     {
                         v.Caster.AlterStatus(CustomStatus.Redemption, v.Caster);
