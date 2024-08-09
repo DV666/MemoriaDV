@@ -1,9 +1,9 @@
-// Player sequence of SFX Bloody Strike
+// Player sequence of SFX Demonic Feast
 
 WaitAnimation: Char=Caster
 Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
 SetupReflect: Delay=SFXLoaded
-LoadSFX: SFX=Minus_Strike_1 ; Reflect=True
+LoadSFX: SFX=Stock_Break_1 ; Reflect=True
 PlayAnimation: Char=Caster ; Anim=MP_SET
 WaitAnimation: Char=Caster
 MoveToTarget: Char=Caster ; Target=AllTargets ; Distance=600 ; UseCollisionRadius=True ; Anim=MP_RUN
@@ -13,9 +13,9 @@ MoveToTarget: Char=Caster ; Target=AllTargets ; Distance=0 ; UseCollisionRadius=
 WaitMove: Char=Caster
 StartThread
 	Wait: Time=1
-	WaitSFXLoaded: SFX=Minus_Strike_1 ; Reflect=True
-	PlaySFX: SFX=Minus_Strike_1 ; Reflect=True ; MeshColors=(0.5, 0.0, 0.0)
-	WaitSFXDone: SFX=Minus_Strike_1 ; Reflect=True
+	WaitSFXLoaded: SFX=Stock_Break_1 ; Reflect=True
+	PlaySFX: SFX=Stock_Break_1 ; Reflect=True ; MeshColors=(0.5, 0.0, 0.0)
+	WaitSFXDone: SFX=Stock_Break_1 ; Reflect=True
 EndThread
 PlayAnimation: Char=Caster ; Anim=MP_ATTACK
 WaitAnimation: Char=Caster

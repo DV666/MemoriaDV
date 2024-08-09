@@ -1,14 +1,20 @@
-// Player sequence of SFX Thundera__Single__Staff
+// Player sequence of SFX Larcin
 
+LoadSFX: SFX=Magic_Tag
+WaitSFXLoaded: SFX=Magic_Tag
+Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
 WaitAnimation: Char=Caster
-SetupReflect: Delay=SFXLoaded
-SetBackgroundIntensity: Intensity=0.5 ; Time=20
-LoadSFX: SFX=Thundera__Single ; Reflect=True
-WaitSFXLoaded: SFX=Thundera__Single ; Reflect=True
-PlaySFX: SFX=Thundera__Single ; Reflect=True
-WaitSFXDone: SFX=Thundera__Single ; Reflect=True
-ActivateReflect
-WaitReflect
+PlayAnimation: Char=Caster ; Anim=MP_SET
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=MP_SPECIAL1
+MoveToTarget: Char=Caster ; Target=AllTargets ; Distance=-50 ; UseCollisionRadius=True ; Time=0
+Turn: Char=Caster ; BaseAngle=AllTargets ; Time=0
+PlaySFX: SFX=Magic_Tag ; MeshColors=(0.3, 0.38, 0.31)
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=MP_ATK_TO_NORMAL
+MoveToPosition: Char=Caster ; AbsolutePosition=Default ; Time=0
+Turn: Char=Caster ; BaseAngle=Default ; Time=0
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=MP_IDLE_NORMAL
 PlayAnimation: Char=Caster ; Anim=Idle
-Turn: Char=Caster ; BaseAngle=Default ; Time=5
-WaitTurn: Char=Caster
+WaitSFXDone: SFX=Magic_Tag

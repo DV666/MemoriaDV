@@ -4,7 +4,7 @@ WaitAnimation: Char=Caster
 LoadSFX: SFX=Player_Attack_Zidane_Dagger
 PlayAnimation: Char=Caster ; Anim=MP_SET
 WaitAnimation: Char=Caster
-Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
+Message: Priority=4 ; Title=True ; Reflect=True ; TextUS=[STRT=49,1]Extreme Speed ; TextUK=[STRT=49,1]Extreme Speed ; TextJP=[STRT=44,1Extreme Speed ; TextES=[STRT=79,1]Extreme Speed ; TextFR=[STRT=77,1]Vitesse Extrême ; TextGR=[STRT=77,1]Extreme Speed ; TextIT=[STRT=45,1]Extreme Speed
 StartThread: Condition=AreCasterAndTargetsEnemies ; Sync=True
 	MoveToTarget: Char=Caster ; Target=AllTargets ; Distance=670 ; UseCollisionRadius=True ; Anim=MP_RUN
 	Turn: Char=Caster ; BaseAngle=AllTargets ; Time=4

@@ -1,4 +1,4 @@
-// Player sequence of SFX Curagaga__Single
+// Player sequence of SFX Curaga__Single
 
 WaitAnimation: Char=Caster
 StartThread: Condition=CasterRow == 0 && AreCasterAndSelectedTargetsEnemies ; Sync=True
@@ -10,86 +10,21 @@ StartThread: Condition=IsSingleSelectedTarget
 EndThread
 Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
 SetupReflect: Delay=SFXLoaded
-StartThread: Condition=CasterHasSA(1027) ; Sync=True
-	StartThread: Sync=True ; Condition=ItemUseId == 1000 && TargetIsPlayer
+StartThread: Condition=CasterHasSA(1027) && ItemUseId == 1000 && TargetIsPlayer ; Sync
 		LoadSFX: SFX=Curaga__Multi ; Reflect=True ; Target = AllPlayers
 		PlayAnimation: Char=Caster ; Anim=MP_ITEM1
 		WaitAnimation: Char=Caster
 		WaitSFXLoaded: SFX=Curaga__Multi ; Reflect=True
-		PlaySFX: SFX=Curaga__Multi ; Reflect=True ; SkipSequence
-		PlaySound: Sound=473
-		PlaySound: Sound=468
-		PlaySound: Sound=461
-		Wait: Time=40
-		EffectPoint: Char=AllTargets ; Type=Effect
-		EffectPoint: Char=Everyone ; Type=Figure
-		Wait: Time=10
+		PlaySFX: SFX=Curaga__Multi ; Reflect=True
 		WaitSFXDone: SFX=Curaga__Multi ; Reflect=True
-	EndThread
-	StartThread: Sync=True ; Condition=ItemUseId == 1000 && !TargetIsPlayer
-		LoadSFX: SFX=Curaga__Multi ; Reflect=True ; Target = AllEnemies
-		PlayAnimation: Char=Caster ; Anim=MP_ITEM1
-		WaitAnimation: Char=Caster
-		WaitSFXLoaded: SFX=Curaga__Multi ; Reflect=True
-		PlaySFX: SFX=Curaga__Multi ; Reflect=True ; SkipSequence
-		PlaySound: Sound=473
-		PlaySound: Sound=468
-		PlaySound: Sound=461
-		Wait: Time=40
-		EffectPoint: Char=AllTargets ; Type=Effect
-		EffectPoint: Char=Everyone ; Type=Figure
-		Wait: Time=10
-		WaitSFXDone: SFX=Curaga__Multi ; Reflect=True
-	EndThread
-	StartThread: Sync=True ; Condition=ItemUseId != 1000
-		StartThread: Condition=IsSingleTarget ; Sync=True
-			LoadSFX: SFX=Curaga__Single ; Reflect=True
-			StartThread: Condition=ItemUseId == 255 ; Sync=True
-				PlayAnimation: Char=Caster ; Anim=MP_IDLE_TO_CHANT
-				WaitAnimation: Char=Caster
-				PlayAnimation: Char=Caster ; Anim=MP_CHANT ; Loop=True
-				Channel
-				WaitSFXLoaded: SFX=Curaga__Single ; Reflect=True
-				WaitAnimation: Char=Caster
-				StopChannel
-				PlayAnimation: Char=Caster ; Anim=MP_MAGIC
-				WaitAnimation: Char=Caster
-			EndThread
-			StartThread: Condition=ItemUseId != 255 ; Sync=True
-				PlayAnimation: Char=Caster ; Anim=MP_ITEM1
-				WaitAnimation: Char=Caster
-				WaitSFXLoaded: SFX=Curaga__Single ; Reflect=True
-			EndThread
-			PlaySFX: SFX=Curaga__Single ; Reflect=True
-			WaitSFXDone: SFX=Curaga__Single ; Reflect=True
-		EndThread
-		StartThread: Condition=!IsSingleTarget ; Sync=True
-			StartThread: Condition=ItemUseId == 255 ; Sync=True
-				PlayAnimation: Char=Caster ; Anim=MP_IDLE_TO_CHANT
-				WaitAnimation: Char=Caster
-				PlayAnimation: Char=Caster ; Anim=MP_CHANT ; Loop=True
-				Channel
-				WaitAnimation: Char=Caster
-				WaitAnimation: Char=Caster
-				StopChannel
-				PlayAnimation: Char=Caster ; Anim=MP_MAGIC
-				WaitAnimation: Char=Caster
-			EndThread
-			StartThread: Condition=ItemUseId != 255 ; Sync=True
-				PlayAnimation: Char=Caster ; Anim=MP_ITEM1
-				WaitAnimation: Char=Caster
-			EndThread
-			StartThread: TargetLoop=True ; Chain=True ; Sync=True
-				LoadSFX: SFX=Curaga__Single ; Reflect=True ; UseCamera=False
-				WaitSFXLoaded: SFX=Curaga__Single ; Reflect=True
-				PlaySFX: SFX=Curaga__Single ; Reflect=True
-				Wait: Time=10
-			EndThread
-			WaitSFXDone: SFX=Curaga__Single ; Reflect=True
-		EndThread
-	EndThread
-EndThread
-StartThread: Condition=!CasterHasSA(1027) ; Sync=True
+ElseThread: Condition=CasterHasSA(1027) && ItemUseId == 1000 && !TargetIsPlayer ; Sync
+	LoadSFX: SFX=Curaga__Multi ; Reflect=True ; Target = AllEnemies
+	PlayAnimation: Char=Caster ; Anim=MP_ITEM1
+	WaitAnimation: Char=Caster
+	WaitSFXLoaded: SFX=Curaga__Multi ; Reflect=True
+	PlaySFX: SFX=Curaga__Multi ; Reflect=True
+	WaitSFXDone: SFX=Curaga__Multi ; Reflect=True
+ElseThread: Sync
 	StartThread: Condition=IsSingleTarget ; Sync=True
 		LoadSFX: SFX=Curaga__Single ; Reflect=True
 		StartThread: Condition=ItemUseId == 255 ; Sync=True
