@@ -476,7 +476,7 @@ namespace Memoria.Scripts.Battle
                         if (!unit.IsPlayer || unit.Position == v.Target.Position)
                             continue;
 
-                        if (v.Target.Row != unit.Row && !unit.IsUnderAnyStatus(BattleStatusConst.NoReaction) && (unit.Position == v.Target.Position + 1 || unit.Position == v.Target.Position - 1))
+                        if (v.Target.Row != unit.Row && !unit.IsUnderAnyStatus(BattleStatusConst.Immobilized) && (unit.Position == v.Target.Position + 1 || unit.Position == v.Target.Position - 1))
                             longDistance = true;
                     }
                 }
@@ -546,7 +546,6 @@ namespace Memoria.Scripts.Battle
 
         public static void InfusedWeaponStatus(this BattleCalculator v)
         {
-            Log.Message("WeaponNewStatus[v.Caster.Data] = " + WeaponNewStatus[v.Caster.Data]);
             if (WeaponNewStatus[v.Caster.Data] != 0 && WeaponNewStatus[v.Caster.Data] != BattleStatus.Protect && WeaponNewStatus[v.Caster.Data] != BattleStatus.Shell)
             {
                 foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(v.Caster))

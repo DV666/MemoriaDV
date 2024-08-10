@@ -47,11 +47,11 @@ namespace Memoria.Scripts.Battle
                 _v.Caster.PhysicalPenaltyAndBonusAttack();
                 TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
                 _v.BonusElement();
-                _v.Target.AlterStatus(TranceSeekCustomAPI.CustomStatus.PowerBreak, _v.Caster);
-                _v.Target.AlterStatus(TranceSeekCustomAPI.CustomStatus.MagicBreak, _v.Caster);
-                _v.Target.AlterStatus(TranceSeekCustomAPI.CustomStatus.ArmorBreak, _v.Caster);
-                _v.Target.AlterStatus(TranceSeekCustomAPI.CustomStatus.MentalBreak, _v.Caster);
                 _v.CalcHpDamage();
+                _v.Command.AbilityStatus |= TranceSeekCustomAPI.CustomStatus.PowerBreak;
+                _v.Command.AbilityStatus |= TranceSeekCustomAPI.CustomStatus.MagicBreak;
+                _v.Command.AbilityStatus |= TranceSeekCustomAPI.CustomStatus.ArmorBreak;
+                _v.Command.AbilityStatus |= TranceSeekCustomAPI.CustomStatus.MentalBreak;
                 _v.TryAlterMagicStatuses();
             }
         }
