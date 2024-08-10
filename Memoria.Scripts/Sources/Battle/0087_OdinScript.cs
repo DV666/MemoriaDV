@@ -25,9 +25,8 @@ namespace Memoria.Scripts.Battle
                 _v.MagicAccuracy();
                 _v.Context.HitRate += (Int16)(ff9item.FF9Item_GetCount(RegularItem.Ore) >> 1);
                 if (_v.TryMagicHit())
-                    _v.TryAlterCommandStatuses();
+                    TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
             }
-
             // The effect of OdinSword is now coded in AbilityFeatures.txt
             /*if ((_v.Context.Flags & (BattleCalcFlags.Guard | BattleCalcFlags.Miss)) != 0 && _v.Caster.HasSupportAbility(SupportAbility2.OdinSword))
             {

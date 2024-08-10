@@ -1,0 +1,6 @@
+// Sequence of the command Gardien
+
+WaitAnimation: Char=Caster
+Message: Text=[CastName] ; Priority=1 ; Title=True
+EffectPoint: Char=AllTargets ; Type=Both
+PlayAnimation: Char=Caster ; Anim=Idle

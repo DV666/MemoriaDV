@@ -25,7 +25,7 @@ namespace Memoria.Scripts.Battle
 
             _v.SetCommandAttack();
             _v.BonusElement();
-            if (!_v.CanAttackMagic())
+            if (!TranceSeekCustomAPI.CanAttackMagic(_v))
                 return;
 
             _v.Context.Attack += ff9item.FF9Item_GetCount(RegularItem.Amethyst);

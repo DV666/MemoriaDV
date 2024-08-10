@@ -19,7 +19,21 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            _v.Target.Remove();
+            if (_v.Command.HitRate == 111)
+            {
+                _v.TryAlterMagicStatuses();
+                _v.Target.Remove(false);
+            }
+            else
+            {
+                _v.Target.Remove();
+                if (_v.Command.HitRate == 255)
+                {
+                    _v.Caster.Flags |= (CalcFlag.HpAlteration | CalcFlag.HpRecovery | CalcFlag.MpAlteration | CalcFlag.MpRecovery);
+                    _v.Caster.HpDamage = (int)(_v.Target.MaximumHp * _v.Command.Power / 100U);
+                    _v.Caster.MpDamage = (int)(_v.Target.MaximumMp * _v.Command.Power / 100U);
+                }
+            }
         }
     }
 }

@@ -3,8 +3,14 @@
 PlaySound: Sound=1903
 PlaySound: Sound=1904
 PlaySound: Sound=1905
-Wait: Time=32
+Wait: Time=12
 EffectPoint: Char=AllTargets ; Type=Effect
-Wait: Time=24
 EffectPoint: Char=Everyone ; Type=Figure
 Wait: Time=12
+EffectPoint: Char=AllTargets ; Type=Effect
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=12
+EffectPoint: Char=AllTargets ; Type=Effect
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=24
+

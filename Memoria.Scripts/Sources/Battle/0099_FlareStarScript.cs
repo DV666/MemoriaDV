@@ -20,6 +20,7 @@ namespace Memoria.Scripts.Battle
         public void Perform()
         {
             _v.MagicAccuracy();
+            _v.Caster.EnemyTranceBonusAttack();
             _v.Target.PenaltyShellHitRate();
             _v.PenaltyCommandDividedHitRate();
             if (_v.TryMagicHit())

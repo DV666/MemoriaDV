@@ -1,3 +1,4 @@
+using FF9;
 using Memoria.Data;
 using System;
 
@@ -21,6 +22,24 @@ namespace Memoria.Scripts.Battle
         public void Perform()
         {
             _v.TryRemoveAbilityStatuses();
+            if (_v.Command.AbilityId == BattleAbilityId.Esuna)
+            {
+                _v.Command.AbilityStatus |= TranceSeekCustomAPI.CustomStatus.Vieillissement;
+                _v.Context.Flags = 0;
+            }
+            if (_v.Command.Power == 111)
+            {
+                for (Int32 i = 33; i < 63; i++)
+                {
+                    BattleStatusId statusId = (BattleStatusId)i;
+                    _v.Target.RemoveStatus(statusId.ToBattleStatus());
+                }
+            }        
+
+            if (_v.Command.HitRate == 222)
+            {
+                _v.Context.Flags = 0;
+            }
         }
 
         public Single RateTarget()

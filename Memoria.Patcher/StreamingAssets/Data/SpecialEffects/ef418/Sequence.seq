@@ -1,5 +1,25 @@
 // Shared sequence of SFX Special_Steiner_VS_Blank
 
+StartThread: Condition=CasterIsPlayer
+SetBackgroundIntensity: Intensity=0.5 ; Time=4 ; HoldDuration=195
+PlaySound: Sound=1648
+PlaySound: Sound=1649
+PlaySound: Sound=1650
+Wait: Time=81
+PlayAnimation: Char=Caster ; Anim=MP_MAGIC
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=Idle
+PlaySound: Sound=2660
+PlaySound: Sound=2661
+PlaySound: Sound=2662
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=15
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=6
+SetBackgroundIntensity: Intensity=1 ; Time=16
+ResetCamera
+EndThread
+StartThread: Condition=!CasterIsPlayer
 SetBackgroundIntensity: Intensity=0.5 ; Time=4 ; HoldDuration=195
 PlaySound: Sound=1648
 PlaySound: Sound=1649
@@ -24,3 +44,4 @@ Wait: Time=39
 SetBackgroundIntensity: Intensity=1 ; Time=16
 Wait: Time=29
 SetVariable: Variable=gEventGlobal ; Index=199 ; Value=|16
+EndThread

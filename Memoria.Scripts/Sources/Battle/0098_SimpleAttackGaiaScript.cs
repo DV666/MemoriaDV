@@ -23,6 +23,7 @@ namespace Memoria.Scripts.Battle
             if ((_v.Target.PlayerCategory & CharacterCategory.Terra) == 0)
             {
                 _v.NormalPhysicalParams();
+                TranceSeekCustomAPI.CharacterBonusPassive(_v, "PhysicalAttack");
                 _v.Caster.EnemyTranceBonusAttack();
                 _v.CalcHpDamage();
             }

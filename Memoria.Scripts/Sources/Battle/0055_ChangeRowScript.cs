@@ -1,3 +1,4 @@
+using Memoria.Data;
 using System;
 
 namespace Memoria.Scripts.Battle
@@ -19,7 +20,8 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            _v.Target.ChangeRow();
+            if (!_v.Target.HasSupportAbilityByIndex((SupportAbility)1026))
+                _v.Target.ChangeRow();
         }
     }
 }

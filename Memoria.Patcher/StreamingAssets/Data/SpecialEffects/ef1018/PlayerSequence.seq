@@ -1,0 +1,16 @@
+// Player sequence of Câlin Moug
+
+PlaySound: Sound=1362
+SetupReflect: Delay=SFXLoaded
+EffectPoint: Char=Caster ; Type=Both
+Wait: Time=30
+EffectPoint: Char=Caster ; Type=Both
+Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
+Wait: Time=10
+LoadSFX: SFX=Ether ; Reflect=True
+WaitSFXLoaded: SFX=Ether ; Reflect=True
+PlaySFX: SFX=Ether ; Reflect=True ; MeshColors=(1.0, 0.0, 0.5)
+WaitSFXDone: SFX=Ether ; Reflect=True
+PlaySound: Sound=1363
+EffectPoint: Char=Caster ; Type=Both
+WaitAnimation: Char=Caster
