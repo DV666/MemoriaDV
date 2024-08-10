@@ -26,7 +26,7 @@ namespace Memoria.Scripts.Battle
 
         public static Dictionary<BTL_DATA, Int32[]> MonsterMechanic = new Dictionary<BTL_DATA, Int32[]>(); // [0] => Trance Activated ; [1] => Special1 ; [2] => Special2 ; [3] => HPBoss10000? ; [4] => ResistStatusEasyKill ; [5] => Dragon
 
-        public static Dictionary<BTL_DATA, Int32[]> SpecialSAEffect = new Dictionary<BTL_DATA, Int32[]>(); // [0] => Millionaire (not used anymore) ; [1] => LastStand ; [2] => Instinct ; [3] => ResetOnDeath ; [4] => Mode EX
+        public static Dictionary<BTL_DATA, Int32[]> SpecialSAEffect = new Dictionary<BTL_DATA, Int32[]>(); // [0] => Millionaire (not used anymore) ; [1] => LastStand ; [2] => Instinct ; [3] => PreventTranceSFX ; [4] => Mode EX
 
         public static Dictionary<BTL_DATA, Int32[]> RollBackStats = new Dictionary<BTL_DATA, Int32[]>();
         public static Dictionary<BTL_DATA, BattleStatus> RollBackBattleStatus = new Dictionary<BTL_DATA, BattleStatus>();
@@ -546,6 +546,7 @@ namespace Memoria.Scripts.Battle
 
         public static void InfusedWeaponStatus(this BattleCalculator v)
         {
+            Log.Message("WeaponNewStatus[v.Caster.Data] = " + WeaponNewStatus[v.Caster.Data]);
             if (WeaponNewStatus[v.Caster.Data] != 0 && WeaponNewStatus[v.Caster.Data] != BattleStatus.Protect && WeaponNewStatus[v.Caster.Data] != BattleStatus.Shell)
             {
                 foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(v.Caster))
@@ -838,7 +839,7 @@ namespace Memoria.Scripts.Battle
                     BeatrixPassive[v.Caster.Data][3] = 0;
             }
             if (v.Caster.HasSupportAbilityByIndex((SupportAbility)110) && !v.Command.IsManyTarget && v.Command.Id != BattleCommandId.Attack && v.Target.HpDamage > 0 && 
-                (v.Command.ScriptId == 9 || v.Command.ScriptId == 10 || v.Command.ScriptId == 17 || v.Command.ScriptId == 18 
+                (v.Command.ScriptId == 9 || v.Command.ScriptId == 10 || v.Command.ScriptId == 17 || v.Command.ScriptId == 18 || v.Command.ScriptId == 116 || v.Command.ScriptId == 118
                 || v.Command.AbilityId == BattleAbilityId.PumpkinHead || v.Command.AbilityId == BattleAbilityId.ThousandNeedles || v.Command.AbilityId == BattleAbilityId.GoblinPunch
                 || v.Command.AbilityId == BattleAbilityId.AutoLife)) // Prolifération
             {
@@ -846,31 +847,22 @@ namespace Memoria.Scripts.Battle
                 BTL_DATA targetdefault = v.Target.Data;
                 foreach (BattleUnit unit in BattleState.EnumerateUnits())
                 {
-                    if ((unit.IsPlayer && !v.Target.IsPlayer || !unit.IsPlayer && v.Target.IsPlayer) || unit.MagicDefence == 255 || unit.PhysicalEvade == 255)
+                    if ((unit.IsPlayer && !v.Target.IsPlayer || !unit.IsPlayer && v.Target.IsPlayer) || unit.MagicDefence == 255 || unit.PhysicalEvade == 255 || unit.Data == targetdefault)
                         continue;
 
                     if (unit.Data != targetdefault) 
                     {
                         if (v.Caster.HasSupportAbilityByIndex((SupportAbility)1110))
                         {
-                            v.Target.HpDamage = basedamage / 2;
+                            basedamage = v.Target.HpDamage / 2;
                         }
                         else
                         {
-                            v.Target.HpDamage = basedamage / 4;
+                            basedamage = v.Target.HpDamage / 4;
                         }
-                    }
-                    else
-                    {
-                        v.Target.HpDamage = basedamage;
-                    }
-                    v.Target.Change(unit);
-                    SBattleCalculator.CalcResult(v);
-                    BattleState.Unit2DReq(unit);
+                        btl2d.Btl2dStatReq(unit, basedamage, 0);
+                    }                   
                 }
-                v.Target.Flags = 0;
-                v.Target.HpDamage = 0;
-                v.PerformCalcResult = false;
             }
             if (v.Caster.HasSupportAbilityByIndex((SupportAbility)119) && v.Command.Id == BattleCommandId.MagicSword) // Entente
             {

@@ -83,7 +83,10 @@ namespace Memoria.Scripts.Battle
                     unit.AlterStatus(CustomStatus.ArmorUp, unit);
                     unit.AlterStatus(CustomStatus.MentalUp, unit);
                 }
-
+                if (unit.IsUnderAnyStatus(BattleStatus.EasyKill))
+                {
+                    MonsterMechanic[unit.Data][4] = 100; // Reduce time for Sleep/Freeze/Stop
+                }
                 if (!unit.IsPlayer) // Check if boss have +10000 HP for scripts
                 {
                     for (Int32 i = 0; i < BossBattleBonusHP.GetLength(0); i++)

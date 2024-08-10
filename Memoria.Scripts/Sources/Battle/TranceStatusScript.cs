@@ -66,8 +66,8 @@ namespace Memoria.DefaultScripts
                 btl_mot.setMotion(Target, Target.Data.bi.def_idle);
                 Target.Data.evt.animFrame = 0;
             }
-            if (!Target.IsMonsterTransform)
-                btl_cmd.SetCommand(Target.Data.cmd[4], BattleCommandId.SysTrans, 0, Target.Id, 0u);
+            if (!Target.IsMonsterTransform && SpecialSAEffect[Target][3] == 0)
+                btl_cmd.SetCommand(Target.Data.cmd[4], BattleCommandId.SysTrans, 0, Target.Id, 0u);         
             return true;
         }
 

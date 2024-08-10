@@ -19,10 +19,8 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            if ((_v.Target.WeaponElement & _v.Command.Element) != 0)
-                TranceSeekCustomAPI.WeaponNewElement[_v.Target.Data] = _v.Command.Element;
-            if ((_v.Target.WeaponStatus & _v.Command.AbilityStatus) != 0)
-                TranceSeekCustomAPI.WeaponNewStatus[_v.Target.Data] = _v.Command.AbilityStatus;
+            TranceSeekCustomAPI.WeaponNewElement[_v.Target.Data] = _v.Command.Element;
+            TranceSeekCustomAPI.WeaponNewStatus[_v.Target.Data] = _v.Command.AbilityStatus;
         }
     }
 }

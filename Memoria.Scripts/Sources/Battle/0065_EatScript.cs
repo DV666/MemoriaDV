@@ -30,7 +30,6 @@ namespace Memoria.Scripts.Battle
                 _v.WeaponPhysicalParams(CalcAttackBonus.Random);
                 _v.BonusSupportAbilitiesAttack();
                 _v.Caster.PhysicalPenaltyAndBonusAttack();
-                _v.Target.GambleDefence();
                 TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
                 TranceSeekCustomAPI.BonusBackstabAndPenaltyLongDistanceTranceSeek(_v);
                 TranceSeekCustomAPI.BonusWeaponElement(_v);

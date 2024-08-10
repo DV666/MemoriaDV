@@ -62,7 +62,7 @@ namespace Memoria.Scripts.Battle
                 }
    
             }
-            else if (_v.Caster.Data.dms_geo_id == 5 || _v.Caster.Data.dms_geo_id == 267)
+            else if (_v.Caster.Data.dms_geo_id == 5 || _v.Caster.Data.dms_geo_id == 267) // Kuja (Double & Triple)
             {
                 if (_v.Command.Power == 1)
                 {

@@ -1,4 +1,5 @@
 using System;
+using static Memoria.Scripts.Battle.TranceSeekCustomAPI;
 
 namespace Memoria.Scripts.Battle
 {
@@ -19,8 +20,8 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            _v.Target.PhysicalDefence /= 2;
-            _v.Target.MagicDefence /= 2;
+            btl_stat.AlterStatus(_v.Target, CustomStatusId.ArmorBreak, parameters: "+4");
+            btl_stat.AlterStatus(_v.Target, CustomStatusId.MentalBreak, parameters: "+4");
         }
     }
 }

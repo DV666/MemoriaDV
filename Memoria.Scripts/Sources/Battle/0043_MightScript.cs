@@ -44,7 +44,13 @@ namespace Memoria.Scripts.Battle
                 }
                 return;
             }
-            else if (_v.Caster.Data.dms_geo_id == 410 && _v.Command.Power == 4 || _v.Command.AbilityId == (BattleAbilityId)1081) // Super Muscles
+            else if (_v.Caster.Data.dms_geo_id == 410 && _v.Command.Power == 2) // [Lani] Adrénaline
+            {
+                btl_stat.AlterStatus(_v.Target, CustomStatusId.PowerUp, parameters: "2");
+                btl_stat.AlterStatus(_v.Target, CustomStatusId.ArmorUp, parameters: "2");
+                return;
+            }
+            else if (_v.Caster.Data.dms_geo_id == 410 && _v.Command.Power == 4 || _v.Command.AbilityId == (BattleAbilityId)1081) // [Lani] Super Muscles
             {
                 btl_stat.AlterStatus(_v.Target, CustomStatusId.PowerUp, parameters: "4");
                 btl_stat.AlterStatus(_v.Target, CustomStatusId.ArmorUp, parameters: "4");

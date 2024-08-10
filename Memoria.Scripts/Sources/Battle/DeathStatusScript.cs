@@ -35,12 +35,14 @@ namespace Memoria.DefaultScripts
                         target.Data.die_seq = 1;
                 }
                 btl_sys.CheckForecastMenuOff(target);
-            }
-            if ((target.CurrentStatus & BattleStatus.Trance) != 0 && btl_cmd.KillSpecificCommand(target, BattleCommandId.SysTrans))
+            }         
+            if (target.IsUnderAnyStatus(BattleStatus.Trance) && btl_cmd.KillSpecificCommand(target, BattleCommandId.SysTrans))
             {
+                SpecialSAEffect[target][3] = 1; // Fix SFX "Trance__Out" if character die in a combo attack
                 btl_stat.RemoveStatus(target, BattleStatusId.Trance);
-                target.Trance = Math.Min((Byte)254, target.Trance);
-            }
+                SpecialSAEffect[target][3] = 0;
+                target.Trance = 254;
+            }          
             if (target.PlayerIndex == CharacterId.Beatrix)
                 BeatrixPassive[target.Data][2] = 0;
             return btl_stat.ALTER_SUCCESS;

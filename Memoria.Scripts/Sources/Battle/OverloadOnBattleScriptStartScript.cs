@@ -30,6 +30,13 @@ namespace Memoria.Scripts.Battle
                 }
                 );
             }
+            if (v.Caster.Data.dms_geo_id == 410 && !v.Caster.IsPlayer) // Refresh Lani boss version animations (after Runic)
+            {
+                v.Caster.Data.mot[0] = "ANH_MON_B3_122_000";
+                v.Caster.Data.mot[2] = "ANH_MON_B3_122_043";
+                btl_stat.MakeStatusesPermanent(v.Caster, CustomStatus.Runic, false);
+                btl_stat.MakeStatusesPermanent(v.Caster, BattleStatus.Defend, false);
+            }
             return false;
         }
     }

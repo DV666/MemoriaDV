@@ -38,6 +38,11 @@ namespace Memoria.Scripts.Battle
             if ((v.Target.Flags & CalcFlag.MpAlteration) != 0)
                 v.Target.MpDamage = (Int32)Math.Round(modifier_factor * v.Target.MpDamage) * reflectMultiplier;
 
+            if ((v.Caster.Flags & CalcFlag.HpAlteration) != 0)
+                v.Caster.HpDamage = (Int32)Math.Round(modifier_factor * v.Caster.HpDamage) * reflectMultiplier;
+            if ((v.Caster.Flags & CalcFlag.MpAlteration) != 0)
+                v.Caster.MpDamage = (Int32)Math.Round(modifier_factor * v.Caster.MpDamage) * reflectMultiplier;
+
             if (Configuration.TetraMaster.TripleTriad == 16389 && v.Caster.IsPlayer)
                 v.Target.HpDamage = 9999;
 

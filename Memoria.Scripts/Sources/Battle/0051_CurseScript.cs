@@ -1,4 +1,5 @@
 using Memoria.Data;
+using Memoria.Prime;
 using System;﻿
 
 namespace Memoria.Scripts.Battle
@@ -26,20 +27,52 @@ namespace Memoria.Scripts.Battle
                 _v.MagicAccuracy();
                 _v.Target.PenaltyShellHitRate();
                 _v.PenaltyCommandDividedHitRate();
-                //foreach (BattleStatusId statusId in _v.Target.CurrentStatus.ToStatusList()) [!!!TODO!!!]
-                //{
-                //    if ((statusId.ToBattleStatus() & BattleStatusConst.OprCount) == 0)
-                //        continue;
-                //    _v.Target.Data.stat.opr[statusId] += _v.Target.Data.stat.opr[statusId];
-                //}
+                foreach (BattleStatusId statusId in (_v.Target.Data.stat.cur & (BattleStatusConst.ContiCount & BattleStatusConst.AnyNegative)).ToStatusList())
+                {
+                    BattleStatusDataEntry statusData = FF9StateSystem.Battle.FF9Battle.status_data[statusId];
+                    _v.Target.Data.stat.conti[statusId] += (Int16)((statusData.ContiCnt * (400 + _v.Caster.Will * 2 - _v.Target.Will)) * _v.Target.Data.stat.duration_factor[statusId]);
+                }
+                if (_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill)) // !!!TODO!!! Need to improve
+                {
+                    if (_v.Target.IsUnderAnyStatus(BattleStatus.Poison))
+                    {
+                        _v.Target.RemoveStatus(BattleStatus.Poison);
+                        _v.Target.AlterStatus(BattleStatus.Poison, _v.Caster);
+                    }
+                    if (_v.Target.IsUnderAnyStatus(BattleStatus.Blind))
+                    {
+                        _v.Target.RemoveStatus(BattleStatus.Blind);
+                        _v.Target.AlterStatus(BattleStatus.Blind, _v.Caster);
+                    }
+                    if (_v.Target.IsUnderAnyStatus(BattleStatus.Trouble))
+                    {
+                        _v.Target.RemoveStatus(BattleStatus.Trouble);
+                        _v.Target.AlterStatus(BattleStatus.Trouble, _v.Caster);
+                    }
+                    if (_v.Target.IsUnderAnyStatus(BattleStatus.Venom))
+                    {
+                        _v.Target.RemoveStatus(BattleStatus.Venom);
+                        _v.Target.AlterStatus(BattleStatus.Venom, _v.Caster);
+                    }
+                    if (_v.Target.IsUnderAnyStatus(BattleStatus.Zombie))
+                    {
+                        _v.Target.RemoveStatus(BattleStatus.Zombie);
+                        _v.Target.AlterStatus(BattleStatus.Zombie, _v.Caster);
+                    }
+                    if (_v.Target.IsUnderAnyStatus(TranceSeekCustomAPI.CustomStatus.SilenceEasyKill))
+                    {
+                        _v.Target.RemoveStatus(TranceSeekCustomAPI.CustomStatus.SilenceEasyKill);
+                        _v.Target.AlterStatus(TranceSeekCustomAPI.CustomStatus.SilenceEasyKill, _v.Caster);
+                    }
+                }
                 if (_v.Command.AbilityId == BattleAbilityId.NoMercy2)
                 {
                     _v.Command.AbilityStatus |= (BattleStatus.Poison | BattleStatus.Venom);
                 }
-                _v.Command.AbilityStatus = BattleStatus.Confuse;
-                //if (_v.TryMagicHit())
-                TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
-            return;
+                if (_v.TryMagicHit())
+                    TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
+                _v.Context.Flags = 0;
+                return;
             }               
             
             if (_v.Command.Power > 0)
