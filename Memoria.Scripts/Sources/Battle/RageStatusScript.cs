@@ -15,7 +15,6 @@ namespace Memoria.DefaultScripts
         public override UInt32 Apply(BattleUnit target, BattleUnit inflicter, params Object[] parameters)
         {
             base.Apply(target, inflicter, parameters);
-            BattleStatusDataEntry statusData = FF9StateSystem.Battle.FF9Battle.status_data[BattleStatusId.CustomStatus19];
             Int32 StackMaximum = 3;
             if (parameters.Length > 0)
             {
@@ -38,14 +37,26 @@ namespace Memoria.DefaultScripts
                 else
                 {
                     Int32.TryParse(Parameter, out Int32 PutStack);
-                    Stack = PutStack;
+                    Stack += PutStack;
+                    if (Stack > StackMaximum)
+                        Stack = StackMaximum;
+                    else if (Stack <= 0)
+                    {
+                        target.RemoveStatus(BattleStatusId.CustomStatus19);
+                        return btl_stat.ALTER_SUCCESS_NO_SET;
+                    }
                 }
             }
             else
             {
                 Stack++;
-            }            
-            if (Stack < StackMaximum)
+            }
+            if (Stack > StackMaximum)
+            {
+                Stack = StackMaximum;
+                return btl_stat.ALTER_INVALID;
+            }
+            else if (Stack > 1)
             {
                 if (NumberHUD != null)
                 {
@@ -53,29 +64,37 @@ namespace Memoria.DefaultScripts
                     btl2d.StatusMessages.Remove(NumberHUD);
                     Singleton<HUDMessage>.Instance.ReleaseObject(NumberHUD);
                 }
-                if (Stack > 1)
-                {
-                    btl2d.GetIconPosition(target, btl2d.ICON_POS_DEFAULT, out Transform attachTransf, out Vector3 iconOff);
-                    Vector3 OffSetPos = (statusData.SHPExtraPos + iconOff);
-                    NumberHUD = Singleton<HUDMessage>.Instance.Show(attachTransf, $"[FFA500]   {Stack}", HUDMessage.MessageStyle.DEATH_SENTENCE, OffSetPos, 0);
-                    DefautSize = NumberHUD.FontSize;
-                    UILabel UILabelHUD = NumberHUD.GetComponent<UILabel>();
-                    UILabelHUD.spacingY = -10;
-                    NumberHUD.FontSize = 20;
-                    NumberHUD.Follower.clampToScreen = false;
-                    target.AddDelayedModifier(UpdateMessageShow, null);
-                    btl2d.StatusMessages.Add(NumberHUD);
-                }
-                return btl_stat.ALTER_SUCCESS;
+                BattleStatusDataEntry statusData = FF9StateSystem.Battle.FF9Battle.status_data[BattleStatusId.CustomStatus19];
+                btl2d.GetIconPosition(target, btl2d.ICON_POS_DEFAULT, out Transform attachTransf, out Vector3 iconOff);
+                Vector3 OffSetPos = (statusData.SHPExtraPos + iconOff);
+                NumberHUD = Singleton<HUDMessage>.Instance.Show(attachTransf, $"[FFA500]   {Stack}", HUDMessage.MessageStyle.DEATH_SENTENCE, OffSetPos, 0);
+                DefautSize = NumberHUD.FontSize;
+                UILabel UILabelHUD = NumberHUD.GetComponent<UILabel>();
+                UILabelHUD.spacingY = -10;
+                NumberHUD.FontSize = 20;
+                NumberHUD.Follower.clampToScreen = false;
+                target.AddDelayedModifier(UpdateMessageShow, null);
+                btl2d.StatusMessages.Add(NumberHUD);
             }
-            return btl_stat.ALTER_SUCCESS_NO_SET;
+            else if (NumberHUD != null)
+            {
+                NumberHUD.Label = "";
+                NumberHUD.FontSize = DefautSize;
+                btl2d.StatusMessages.Remove(NumberHUD);
+                Singleton<HUDMessage>.Instance.ReleaseObject(NumberHUD);
+            }
+            return btl_stat.ALTER_SUCCESS;
         }
 
         public override Boolean Remove()
         {
-            NumberHUD.FontSize = DefautSize;
-            btl2d.StatusMessages.Remove(NumberHUD);
-            Singleton<HUDMessage>.Instance.ReleaseObject(NumberHUD);
+            Stack = 0;
+            if (NumberHUD != null)
+            {
+                NumberHUD.FontSize = DefautSize;
+                btl2d.StatusMessages.Remove(NumberHUD);
+                Singleton<HUDMessage>.Instance.ReleaseObject(NumberHUD);
+            }
             return true;
         }
 

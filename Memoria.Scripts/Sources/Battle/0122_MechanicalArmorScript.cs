@@ -30,15 +30,8 @@ namespace Memoria.Scripts.Battle
                     _v.Target.Data.mot[2] = "ANH_MON_B3_185_000";
                     _v.Target.Flags |= CalcFlag.HpDamageOrHeal;
                     _v.Target.HpDamage = 5000;
+                    _v.Target.PhysicalEvade = 0;
                     _v.Target.TryAlterSingleStatus(TranceSeekCustomAPI.CustomStatusId.MechanicalArmor, true, _v.Caster, TranceSeekCustomAPI.MonsterMechanic[_v.Caster.Data][1]);
-                }
-                else if (_v.Command.Power == 111 && _v.Command.HitRate == 111)
-                {
-                    _v.Caster.Data.mot[0] = "ANH_MON_B3_185_011";
-                    _v.Caster.Data.mot[1] = "ANH_MON_B3_185_000";
-                    _v.Caster.Data.mot[2] = "ANH_MON_B3_185_011";
-                    TranceSeekCustomAPI.MonsterMechanic[_v.Caster.Data][2] = 1;
-                    return;
                 }
                 else if (_v.Command.Power == 200 && _v.Command.HitRate == 200)
                 {

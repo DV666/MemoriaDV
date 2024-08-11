@@ -34,8 +34,9 @@ namespace Memoria.DefaultScripts
 
                 if (heat_damage > 0)
                 {
+                    Int32 wait = 1;
                     Target.AddDelayedModifier(
-                    target => target.CurrentAtb >= target.MaximumAtb,
+                    target => (wait -= BattleState.ATBTickCount) > 0,
                     caster =>
                     {
                         if ((EffectElement.Fire & caster.AbsorbElement) != 0)

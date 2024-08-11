@@ -42,6 +42,7 @@ namespace Memoria.Scripts.Battle
                 {
                     BattleEnemy battleEnemy = BattleEnemy.Find(_v.Caster);
                     battleEnemy.Data.steal_item[0] = itemId;
+                    battleEnemy.Data.bonus_item[0] = itemId;
                     BattleItem.RemoveFromInventory(itemId);
                     UiState.SetBattleFollowFormatMessage(BattleMesages.WasStolen, FF9TextTool.ItemName(itemId));
                 }

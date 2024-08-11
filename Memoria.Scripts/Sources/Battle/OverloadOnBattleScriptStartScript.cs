@@ -1,4 +1,6 @@
-﻿using Memoria.Data;
+﻿using FF9;
+using Memoria.Data;
+using Memoria.Prime;
 using System;
 using static Memoria.Scripts.Battle.TranceSeekCustomAPI;
 
@@ -36,6 +38,39 @@ namespace Memoria.Scripts.Battle
                 v.Caster.Data.mot[2] = "ANH_MON_B3_122_043";
                 btl_stat.MakeStatusesPermanent(v.Caster, CustomStatus.Runic, false);
                 btl_stat.MakeStatusesPermanent(v.Caster, BattleStatus.Defend, false);
+            }
+            if (v.Caster.PlayerIndex == (CharacterId)12 && v.Command.Data.info.effect_counter == 1) // Lani's Rage Mechanic
+            {
+                switch (v.Command.AbilityId)
+                {
+                    case (BattleAbilityId)1076: // Combo
+                    case (BattleAbilityId)1079: // Mad Rush
+                    case (BattleAbilityId)1082: // Flame Tongue
+                    case (BattleAbilityId)1083: // Ice Brand
+                    case (BattleAbilityId)1084: // Thunder Blade
+                    case (BattleAbilityId)1085: // Liquid Steel
+                    {
+                        btl_stat.AlterStatus(v.Caster, CustomStatusId.Rage, parameters: "-1");
+                        break;
+                    }
+                    case (BattleAbilityId)1077: // Carnage
+                    case (BattleAbilityId)1080: // Hatred
+                    case (BattleAbilityId)1086: // Agni's Blade
+                    case (BattleAbilityId)1087: // Shiva Blade
+                    case (BattleAbilityId)1088: // Indra Blade
+                    case (BattleAbilityId)1089: // Varuna Blade
+                    {
+                        btl_stat.AlterStatus(v.Caster, CustomStatusId.Rage, parameters: "-2");
+                        break;
+                    }
+                    case (BattleAbilityId)1078: // Ripping
+                    case (BattleAbilityId)1081: // Super Muscles
+                    case (BattleAbilityId)1090: // Prithvi Blade
+                    {
+                        btl_stat.AlterStatus(v.Caster, CustomStatusId.Rage, parameters: "-3");
+                        break;
+                    }
+                }
             }
             return false;
         }

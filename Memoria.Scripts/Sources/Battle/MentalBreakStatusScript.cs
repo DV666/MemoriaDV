@@ -40,7 +40,22 @@ namespace Memoria.DefaultScripts
                 else
                 {
                     Int32.TryParse(Parameter, out Int32 PutStack);
-                    Stack = PutStack;
+                    if (Parameter.Contains("+"))
+                    {
+                        Stack += PutStack;
+                        if (Stack > 9)
+                            Stack = 9;
+                    }
+                    else if (Parameter.Contains("-"))
+                    {
+                        Stack -= PutStack;
+                        if (Stack < 0)
+                            Stack = 0;
+                    }
+                    else
+                    {
+                        Stack = PutStack;
+                    }
                 }
             }
             else

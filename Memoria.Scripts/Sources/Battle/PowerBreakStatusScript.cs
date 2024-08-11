@@ -41,7 +41,22 @@ namespace Memoria.DefaultScripts
                 else
                 {
                     Int32.TryParse(Parameter, out Int32 PutStack);
-                    Stack = PutStack;
+                    if (Parameter.Contains("+"))
+                    {
+                        Stack += PutStack;
+                        if (Stack > 9)
+                            Stack = 9;
+                    }
+                    else if (Parameter.Contains("-"))
+                    {
+                        Stack -= PutStack;
+                        if (Stack < 0)
+                            Stack = 0;
+                    }
+                    else
+                    {
+                        Stack = PutStack;
+                    }
                 }
             }
             else
@@ -53,7 +68,6 @@ namespace Memoria.DefaultScripts
                 btl_stat.AlterStatus(Target, BattleStatusId.CustomStatus5, parameters: "Remove");
                 return btl_stat.ALTER_SUCCESS_NO_SET;
             }
-            BattleStatusDataEntry statusData = FF9StateSystem.Battle.FF9Battle.status_data[BattleStatusId.CustomStatus1];
             if (BasicStrength == 0)
                 BasicStrength = Target.Strength;
 
@@ -70,6 +84,7 @@ namespace Memoria.DefaultScripts
                     btl2d.StatusMessages.Remove(NumberHUD);
                     Singleton<HUDMessage>.Instance.ReleaseObject(NumberHUD);
                 }
+                BattleStatusDataEntry statusData = FF9StateSystem.Battle.FF9Battle.status_data[BattleStatusId.CustomStatus1];
                 btl2d.GetIconPosition(target, btl2d.ICON_POS_DEFAULT, out Transform attachTransf, out Vector3 iconOff);
                 Vector3 OffSetPos = (statusData.SHPExtraPos + iconOff);
                 NumberHUD = Singleton<HUDMessage>.Instance.Show(attachTransf, $"[FFA500]   {Stack}", HUDMessage.MessageStyle.DEATH_SENTENCE, OffSetPos, 0);

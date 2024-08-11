@@ -32,7 +32,7 @@ namespace Memoria.Scripts.Battle
             if ((v.Target.Flags & CalcFlag.HpAlteration) != 0)
             {
                 v.Target.HpDamage = (Int32)Math.Round(modifier_factor * v.Target.HpDamage) * reflectMultiplier;
-                if (v.Target.PlayerIndex == (CharacterId)12) // Lani's Rage Mechanic
+                if (v.Target.PlayerIndex == (CharacterId)12 && (v.Target.Flags & CalcFlag.HpRecovery) == 0) // Lani's Rage Mechanic
                     v.Target.AlterStatus(CustomStatus.Rage, v.Caster);
             }
             if ((v.Target.Flags & CalcFlag.MpAlteration) != 0)

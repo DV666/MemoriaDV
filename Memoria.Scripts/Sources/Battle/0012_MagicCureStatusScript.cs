@@ -20,13 +20,12 @@ namespace Memoria.Scripts.Battle
         }
 
         public void Perform()
-        {
-            _v.TryRemoveAbilityStatuses();
+        {       
             if (_v.Command.AbilityId == BattleAbilityId.Esuna)
             {
                 _v.Command.AbilityStatus |= TranceSeekCustomAPI.CustomStatus.Vieillissement;
-                _v.Context.Flags = 0;
             }
+            _v.TryRemoveAbilityStatuses();
             if (_v.Command.Power == 111)
             {
                 for (Int32 i = 33; i < 63; i++)
