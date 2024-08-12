@@ -21,43 +21,36 @@ namespace Memoria.DefaultScripts
             if (target.IsUnderAnyStatus(BattleStatus.EasyKill) && target.IsUnderAnyStatus(BattleStatus.CustomStatus3))
                 return btl_stat.ALTER_INVALID;
             base.Apply(target, inflicter, parameters);
+            Int32 StackMaximum = 9;
             if (parameters.Length > 0)
             {
                 String Parameter = parameters[0] as String;
                 if (Parameter == "Add")
                 {
                     Stack++;
-                    if (Stack > 9)
-                        Stack = 9;
+                    if (Stack > StackMaximum)
+                        Stack = StackMaximum;
                 }
                 else if (Parameter == "Remove")
                 {
                     Stack--;
                     if (Stack == 0)
                     {
-                        target.RemoveStatus(BattleStatusId.CustomStatus5);
+                        target.RemoveStatus(BattleStatusId.CustomStatus3);
                         return btl_stat.ALTER_SUCCESS_NO_SET;
                     }
                 }
                 else
                 {
                     Int32.TryParse(Parameter, out Int32 PutStack);
-                    if (Parameter.Contains("+"))
+                    Stack += PutStack;
+                    if (Stack > StackMaximum)
+                        Stack = StackMaximum;
+                    else if (Stack <= 0)
                     {
-                        Stack += PutStack;
-                        if (Stack > 9)
-                            Stack = 9;
+                        target.RemoveStatus(BattleStatusId.CustomStatus3);
+                        return btl_stat.ALTER_SUCCESS_NO_SET;
                     }
-                    else if (Parameter.Contains("-"))
-                    {
-                        Stack -= PutStack;
-                        if (Stack < 0)
-                            Stack = 0;
-                    }
-                    else
-                    {
-                        Stack = PutStack;
-                    }                                
                 }
             }
             else
@@ -73,9 +66,9 @@ namespace Memoria.DefaultScripts
             if (BasicPhysicalDefence == 0)
                 BasicPhysicalDefence = Target.PhysicalDefence;
 
-            if (Stack > 9)
+            if (Stack > StackMaximum)
             {
-                Stack = 9;
+                Stack = StackMaximum;
                 return btl_stat.ALTER_INVALID;
             }                
             else if (Stack > 1)

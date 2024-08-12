@@ -21,7 +21,15 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            if (_v.Caster.Data.dms_geo_id == 446 && _v.Command.Power == 111 && _v.Command.HitRate == 111)
+            if (_v.Caster.Data.dms_geo_id == 349 && _v.Command.Power == 10 && _v.Command.HitRate == 10) // Gisamark - Plongée
+            {
+                foreach (BattleStatusId statusid in (_v.Caster.Data.stat.cur).ToStatusList())
+                {
+                    _v.Caster.RemoveStatus(statusid);
+                }              
+                return;
+            }
+            else if (_v.Caster.Data.dms_geo_id == 446 && _v.Command.Power == 111 && _v.Command.HitRate == 111) // Garland - Meteor Cast
             {
                 _v.Caster.Data.mot[0] = "ANH_MON_B3_185_011";
                 _v.Caster.Data.mot[1] = "ANH_MON_B3_185_000";

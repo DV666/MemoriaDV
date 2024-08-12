@@ -48,7 +48,7 @@ namespace Memoria.Scripts.Battle
                 }
 
                 if (!ZidanePassive.TryGetValue(unit.Data, out Int32[] zidanepassive))
-                    ZidanePassive[unit.Data] = new Int32[] { 0, 0, 0, 0, 0 };
+                    ZidanePassive[unit.Data] = new Int32[] { 0, 0, 0, 0, 0, 255, 255 };
                 if (!ViviPreviousSpell.TryGetValue(unit.Data, out BattleAbilityId e))
                     ViviPreviousSpell[unit.Data] = BattleAbilityId.Void;
                 if (!ViviPassive.TryGetValue(unit.Data, out Int32[] vivipassive))
@@ -72,7 +72,7 @@ namespace Memoria.Scripts.Battle
 
                 if (unit.HasSupportAbilityByIndex((SupportAbility)1041)) // Alert+
                 {
-                    btl_stat.AlterStatus(unit, CustomStatusId.PerfectDodge, parameters: "2");
+                    btl_stat.AlterStatus(unit, CustomStatusId.PerfectDodge, parameters: "+2");
                 }
                 if (unit.HasSupportAbilityByIndex((SupportAbility)52)) // Last Stand
                 {

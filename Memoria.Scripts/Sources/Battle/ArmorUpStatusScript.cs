@@ -17,14 +17,15 @@ namespace Memoria.DefaultScripts
         public override UInt32 Apply(BattleUnit target, BattleUnit inflicter, params Object[] parameters)
         {
             base.Apply(target, inflicter, parameters);
+            Int32 StackMaximum = 9;
             if (parameters.Length > 0)
             {
                 String Parameter = parameters[0] as String;
                 if (Parameter == "Add")
                 {
                     Stack++;
-                    if (Stack > 9)
-                        Stack = 9;
+                    if (Stack > StackMaximum)
+                        Stack = StackMaximum;
                 }
                 else if (Parameter == "Remove")
                 {
@@ -38,21 +39,13 @@ namespace Memoria.DefaultScripts
                 else
                 {
                     Int32.TryParse(Parameter, out Int32 PutStack);
-                    if (Parameter.Contains("+"))
+                    Stack += PutStack;
+                    if (Stack > StackMaximum)
+                        Stack = StackMaximum;
+                    else if (Stack <= 0)
                     {
-                        Stack += PutStack;
-                        if (Stack > 9)
-                            Stack = 9;
-                    }
-                    else if (Parameter.Contains("-"))
-                    {
-                        Stack -= PutStack;
-                        if (Stack < 0)
-                            Stack = 0;
-                    }
-                    else
-                    {
-                        Stack = PutStack;
+                        target.RemoveStatus(BattleStatusId.CustomStatus7);
+                        return btl_stat.ALTER_SUCCESS_NO_SET;
                     }
                 }
             }
@@ -69,9 +62,9 @@ namespace Memoria.DefaultScripts
             if (BasicPhysicalDefence == 0)
                 BasicPhysicalDefence = Target.PhysicalDefence;
 
-            if (Stack > 9)
+            if (Stack > StackMaximum)
             {
-                Stack = 9;
+                Stack = StackMaximum;
                 return btl_stat.ALTER_INVALID;
             }
             else if (Stack > 1)

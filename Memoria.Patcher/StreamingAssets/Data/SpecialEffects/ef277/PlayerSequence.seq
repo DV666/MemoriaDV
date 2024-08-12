@@ -119,22 +119,18 @@ ElseThread: Condition=AbilityId == BattleAbilityId_Attack
 	WaitSFXLoaded: SFX=Throw_Disc ; Reflect=True
 	WaitAnimation: Char=Caster
 	PlayAnimation: Char=Caster ; Anim=MP_SPECIAL1
-	StartThread
-		WaitAnimation: Char=Caster
-		PlayAnimation: Char=Caster ; Anim=MP_IDLE_NORMAL
-		PlayAnimation: Char=Caster ; Anim=Idle
-		Turn: Char=Caster ; BaseAngle=Default ; Time=5
-		WaitTurn: Char=Caster
-	EndThread
-	Wait: Time=6
-	PlaySFX: SFX=Throw_Disc ; Reflect=True
-	StartThread: Sync
-		Wait: Time=2
-		WaitSFXLoaded: SFX=Throw_Disc ; Reflect=True
+	WaitAnimation: Char=Caster
+	PlayAnimation: Char=Caster ; Anim=MP_IDLE_NORMAL
+	PlayAnimation: Char=Caster ; Anim=Idle
+	Turn: Char=Caster ; BaseAngle=Default ; Time=5
+	WaitTurn: Char=Caster
+	StartThread: Sync=False
 		LoadSFX: SFX=Throw_Disc ; UseCamera=False
 		WaitSFXLoaded: SFX=Throw_Disc
 		PlaySFX: SFX=Throw_Disc ; SkipSequence ; JumpToFrame=20
 	EndThread
+	Wait: Time=6
+	PlaySFX: SFX=Throw_Disc ; Reflect=True
 	WaitSFXDone: SFX=Throw_Disc ; Reflect=True
 ElseThread: Condition=AbilityId != BattleAbilityId_Attack
 	WaitAnimation: Char=Caster

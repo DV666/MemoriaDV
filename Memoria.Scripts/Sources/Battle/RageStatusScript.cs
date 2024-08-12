@@ -2,6 +2,7 @@
 using UnityEngine;
 using Memoria.Data;
 using Object = System.Object;
+using static PSXTextureMgr;
 
 namespace Memoria.DefaultScripts
 {

@@ -13,7 +13,7 @@ namespace Memoria.Scripts.Battle
     {
         public static Dictionary<BTL_DATA, Boolean> InitBTL = new Dictionary<BTL_DATA, Boolean>();
 
-        public static Dictionary<BTL_DATA, Int32[]> ZidanePassive = new Dictionary<BTL_DATA, Int32[]>(); // [0] => Dodge ; [1] => Critical ; [2] => Eye of the thief ; [3] => Master Thief ; [4] => Dagger Attack
+        public static Dictionary<BTL_DATA, Int32[]> ZidanePassive = new Dictionary<BTL_DATA, Int32[]>(); // [0] => Dodge ; [1] => Critical ; [2] => Eye of the thief ; [3] => Master Thief ; [4] => Dagger Attack ; [5] => FirstItemMug ; [6] => SecondItemMug
 
         public static Dictionary<BTL_DATA, Int32[]> ViviPassive = new Dictionary<BTL_DATA, Int32[]>(); // [0] => Focus ; [1] => NumberTargets
         public static Dictionary<BTL_DATA, BattleAbilityId> ViviPreviousSpell = new Dictionary<BTL_DATA, BattleAbilityId>();
@@ -159,7 +159,7 @@ namespace Memoria.Scripts.Battle
             if (quarterWill != 0 && ((Comn.random16() % quarterWill) + v.Caster.Data.critical_rate_deal_bonus + v.Target.Data.critical_rate_receive_resistance + BonusWeaponCritical > Comn.random16() % 100) || v.Target.IsUnderAnyStatus(CustomStatus.PerfectCrit))
             {
                 if (v.Target.IsUnderAnyStatus(CustomStatus.PerfectCrit)) // Perfect Crit
-                    v.Target.RemoveStatus(CustomStatus.PerfectCrit);
+                    btl_stat.AlterStatus(v.Target, CustomStatusId.PerfectCrit, parameters: "-1");
                 else
                     ZidanePassive[v.Caster.Data][1] = 0;
                 v.Context.Attack *= 2;
@@ -309,7 +309,7 @@ namespace Memoria.Scripts.Battle
 
             if (v.Target.IsUnderAnyStatus(CustomStatus.PerfectDodge) && !v.Caster.HasSupportAbility(SupportAbility1.Healer)) // Perfect Dodge
             {
-                v.Target.RemoveStatus(CustomStatus.PerfectDodge);
+                btl_stat.AlterStatus(v.Target, CustomStatusId.PerfectDodge, parameters: "-1");
                 v.Context.Flags |= BattleCalcFlags.Miss;
                 return false;
             }
@@ -982,6 +982,7 @@ namespace Memoria.Scripts.Battle
             { 2, 2 }, // Gardienne du feu
             { 107, 0 }, // Gargantua
             { 890, 0 }, // Garland
+            { 326, 0 }, // Gisamark
             { 723, 0 }, // Friendly Garuda
             { 57, 0 }, // Ozma
             { 211, 0 }, // Ozma

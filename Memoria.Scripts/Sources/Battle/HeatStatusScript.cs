@@ -1,5 +1,6 @@
 ﻿using System;
 using Memoria.Data;
+using Memoria.Prime;
 using Memoria.Scripts.Battle;
 using Object = System.Object;
 
@@ -34,23 +35,15 @@ namespace Memoria.DefaultScripts
 
                 if (heat_damage > 0)
                 {
-                    Int32 wait = 1;
-                    Target.AddDelayedModifier(
-                    target => (wait -= BattleState.ATBTickCount) > 0,
-                    caster =>
-                    {
-                        if ((EffectElement.Fire & caster.AbsorbElement) != 0)
-                            caster.Data.fig_info = FF9.Param.FIG_INFO_HP_RECOVER;
-                        else
-                            caster.Data.fig_info = FF9.Param.FIG_INFO_DISP_HP;
+                    if ((EffectElement.Fire & Target.AbsorbElement) != 0)
+                        Target.Data.fig_info = FF9.Param.FIG_INFO_HP_RECOVER;
+                    else
+                        Target.Data.fig_info = FF9.Param.FIG_INFO_DISP_HP;
 
-                        if (Target.CurrentHp > heat_damage)
-                            Target.CurrentHp -= heat_damage;
-                        else
-                            Target.Kill(HeatInflicter);
-                        btl2d.Btl2dStatReq(Target, (Int32)heat_damage, 0);
-                    }
-                );
+                    if (Target.CurrentHp > heat_damage)
+                        Target.CurrentHp -= heat_damage;
+
+                    btl2d.Btl2dStatReq(Target, (Int32)heat_damage, 0);
                 }
             }
         }

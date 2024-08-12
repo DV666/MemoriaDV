@@ -89,7 +89,7 @@ namespace Memoria.Scripts.Battle
                     _v.Context.AttackPower = 1250;
                 }
                 if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1027) && (_v.Target.IsPlayer && BattleState.BattleUnitCount(true) > 1 || !_v.Target.IsPlayer && BattleState.BattleUnitCount(false) > 1))
-                {                    
+                { // Herboriste +
                     foreach (BattleUnit unit in BattleState.EnumerateUnits())
                     {
                         _v.Caster.Flags = CalcFlag.HpAlteration;
@@ -126,6 +126,14 @@ namespace Memoria.Scripts.Battle
                             {
                                 _v.Caster.HpDamage = _v.Context.AttackPower * _v.Context.Attack;
                             }
+                        }
+                        if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)100)) // Medecin
+                        {
+                            _v.Caster.HpDamage += _v.Caster.HpDamage / 4;
+                        }
+                        else if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1100)) // Medecin +
+                        {
+                            _v.Caster.HpDamage += _v.Caster.HpDamage / 2;
                         }
                         _v.Caster.Change(unit);
                         SBattleCalculator.CalcResult(_v);
