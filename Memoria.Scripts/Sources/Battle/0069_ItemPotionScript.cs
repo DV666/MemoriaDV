@@ -90,6 +90,15 @@ namespace Memoria.Scripts.Battle
                 }
                 if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1027) && (_v.Target.IsPlayer && BattleState.BattleUnitCount(true) > 1 || !_v.Target.IsPlayer && BattleState.BattleUnitCount(false) > 1))
                 { // Herboriste +
+                    Int32 Medecin = 0;
+                    if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)100)) // Medecin
+                    {
+                        Medecin = 1;
+                    }
+                    else if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1100)) // Medecin +
+                    {
+                        Medecin = 2;
+                    }
                     foreach (BattleUnit unit in BattleState.EnumerateUnits())
                     {
                         _v.Caster.Flags = CalcFlag.HpAlteration;
@@ -127,11 +136,11 @@ namespace Memoria.Scripts.Battle
                                 _v.Caster.HpDamage = _v.Context.AttackPower * _v.Context.Attack;
                             }
                         }
-                        if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)100)) // Medecin
+                        if (Medecin == 1) // Medecin
                         {
                             _v.Caster.HpDamage += _v.Caster.HpDamage / 4;
                         }
-                        else if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1100)) // Medecin +
+                        else if (Medecin == 2) // Medecin +
                         {
                             _v.Caster.HpDamage += _v.Caster.HpDamage / 2;
                         }

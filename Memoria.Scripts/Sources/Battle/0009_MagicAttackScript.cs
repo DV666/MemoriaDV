@@ -1,5 +1,8 @@
 using System;
+using System.Runtime.Remoting.Contexts;
+using FF9;
 using Memoria.Data;
+using Memoria.Prime;
 
 namespace Memoria.Scripts.Battle
 {
@@ -41,7 +44,23 @@ namespace Memoria.Scripts.Battle
             }
             else
             {
-                _v.NormalMagicParams();
+                if (_v.Command.AbilityId == BattleAbilityId.Attack) // Racket
+                {
+                    _v.PhysicalAccuracy();
+                    if (TranceSeekCustomAPI.TryPhysicalHit(_v))
+                    {
+                        Int32 baseDamage = Comn.random16() % (1 + (_v.Caster.Level + _v.Caster.Magic >> 3));
+                        _v.Context.AttackPower = _v.Caster.GetWeaponPower(_v.Command);
+                        _v.Target.SetMagicDefense();
+                        _v.Context.Attack = _v.Caster.Magic + baseDamage;
+                        TranceSeekCustomAPI.BonusWeaponElement(_v);
+                    }
+                    else
+                        return;
+                }
+                else
+                    _v.NormalMagicParams();
+
                 TranceSeekCustomAPI.CharacterBonusPassive(_v, "MagicAttack");
                 _v.Caster.PenaltyMini();
                 _v.Caster.EnemyTranceBonusAttack();

@@ -52,6 +52,14 @@ namespace Memoria.Scripts.Battle
                     {
                         _v.Target.HpDamage = (int)(_v.Target.MaximumHp * 3UL / 4UL);
                     }
+                    if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)100)) // Medecin
+                    {
+                        _v.Target.HpDamage += _v.Caster.HpDamage / 4;
+                    }
+                    else if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1100)) // Medecin +
+                    {
+                        _v.Target.HpDamage += _v.Caster.HpDamage / 2;
+                    }
                 }
                 return;
             }
@@ -78,6 +86,14 @@ namespace Memoria.Scripts.Battle
             else
             {
                 _v.Target.HpDamage = (Int32)(_v.Target.MaximumHp * (_v.Target.Will + _v.Command.Power) / 100);
+                if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)100)) // Medecin
+                {
+                    _v.Target.HpDamage += _v.Caster.HpDamage / 4;
+                }
+                else if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1100)) // Medecin +
+                {
+                    _v.Target.HpDamage += _v.Caster.HpDamage / 2;
+                }
             }
             _v.TryRemoveAbilityStatuses();
         }
