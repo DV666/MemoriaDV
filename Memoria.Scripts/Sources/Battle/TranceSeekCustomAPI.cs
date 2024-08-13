@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.Remoting.Contexts;
 using Assets.Sources.Scripts.UI.Common;
 using FF9;
+using Memoria.Assets;
 using Memoria.Data;
 using Memoria.Prime;
 using UnityEngine;
@@ -308,8 +309,11 @@ namespace Memoria.Scripts.Battle
 
             if (v.Target.IsUnderAnyStatus(CustomStatus.PerfectDodge) && !v.Caster.HasSupportAbility(SupportAbility1.Healer)) // Perfect Dodge
             {
-                btl_stat.AlterStatus(v.Target, CustomStatusId.PerfectDodge, parameters: "-1");
-                v.Context.Flags |= BattleCalcFlags.Miss;
+                v.Context.Flags |= BattleCalcFlags.Miss | BattleCalcFlags.Dodge;
+                btl_stat.AlterStatus(v.Target, CustomStatusId.PerfectDodge, parameters: "Remove");
+                //if (v.Target.IsUnderAnyStatus(CustomStatus.PerfectDodge)) // Didn't work when Stack > 1.... ?
+                //    btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[FFFFFF]", Localization.Get("Miss"), HUDMessage.MessageStyle.DAMAGE, 0);
+
                 return false;
             }
 
@@ -777,19 +781,99 @@ namespace Memoria.Scripts.Battle
         public static void RaiseTrouble(this BattleCalculator v)
         {
             if (v.Target.PhysicalDefence != 255 || v.Target.PhysicalDefence != 255 || v.Target.MagicDefence != 255 || v.Target.MagicEvade != 255 && !v.Command.IsManyTarget)
-                if (v.Command.Data.tar_id == v.Target.Id && v.Target.IsUnderAnyStatus(BattleStatus.Trouble) && (v.Context.AddedStatuses & BattleStatus.Trouble) == 0 && (v.Target.Flags & CalcFlag.HpRecovery) == 0)
-                {
-                    Int32 dmg = v.Target.HpDamage >> 1;
-                    foreach (BattleUnit unit in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
-                    {
-                        if (unit.IsPlayer == v.Target.IsPlayer && unit.Id != v.Target.Id && unit.IsTargetable && unit.PhysicalDefence != 255 &&
-                            unit.PhysicalDefence != 255 && unit.MagicDefence != 255 && unit.MagicEvade != 255 && !unit.IsUnderAnyStatus(BattleStatus.Death))
-                        {
-                            btl_para.SetDamage(unit, dmg, 0, requestFigureNow: true);
-                        }
-                    }
-                }
+                v.RaiseTrouble();
         }
+        public static void SOS_SA(this BattleCalculator v)
+        {
+            if (v.Target.HasSupportAbilityByIndex((SupportAbility)103)) // SOS Carapace
+            {
+                v.Target.AddDelayedModifier(
+                    target => !target.IsUnderAnyStatus(BattleStatus.LowHP),
+                    target =>
+                    {
+                        target.AlterStatus(BattleStatus.Protect, target);
+                    }
+                );
+            }
+
+            if (v.Target.HasSupportAbilityByIndex((SupportAbility)104)) // SOS Blindage
+            {
+                v.Target.AddDelayedModifier(
+                    target => !target.IsUnderAnyStatus(BattleStatus.LowHP),
+                    target =>
+                    {
+                        target.AlterStatus(BattleStatus.Shell, target);
+                    }
+                );
+            }
+
+            if (v.Target.HasSupportAbilityByIndex((SupportAbility)105)) // SOS Regen
+            {
+                v.Target.AddDelayedModifier(
+                    target => !target.IsUnderAnyStatus(BattleStatus.LowHP),
+                    target =>
+                    {
+                        target.AlterStatus(BattleStatus.Regen, target);
+                    }
+                );
+            }
+
+            if (v.Target.HasSupportAbilityByIndex((SupportAbility)106)) // SOS Booster
+            {
+                v.Target.AddDelayedModifier(
+                    target => !target.IsUnderAnyStatus(BattleStatus.LowHP),
+                    target =>
+                    {
+                        target.AlterStatus(BattleStatus.Haste, target);
+                    }
+                );
+            }
+
+            if (v.Target.HasSupportAbilityByIndex((SupportAbility)1103)) // SOS Carapace+
+            {
+                v.Target.AddDelayedModifier(
+                    target => target.CurrentHp > (target.MaximumHp / 2),
+                    target =>
+                    {
+                        target.AlterStatus(BattleStatus.Protect, target);
+                    }
+                );
+            }
+
+            if (v.Target.HasSupportAbilityByIndex((SupportAbility)1104)) // SOS Blindage+
+            {
+                v.Target.AddDelayedModifier(
+                    target => target.CurrentHp > (target.MaximumHp / 2),
+                    target =>
+                    {
+                        target.AlterStatus(BattleStatus.Shell, target);
+                    }
+                );
+            }
+
+            if (v.Target.HasSupportAbilityByIndex((SupportAbility)1105)) // SOS Regen+
+            {
+                v.Target.AddDelayedModifier(
+                    target => target.CurrentHp > (target.MaximumHp / 2),
+                    target =>
+                    {
+                        target.AlterStatus(BattleStatus.Regen, target);
+                    }
+                );
+            }
+
+            if (v.Target.HasSupportAbilityByIndex((SupportAbility)1106)) // SOS Booster+
+            {
+                v.Target.AddDelayedModifier(
+                    target => target.CurrentHp > (target.MaximumHp / 2),
+                    target =>
+                    {
+                        target.AlterStatus(BattleStatus.Haste, target);
+                    }
+                );
+            }
+        }
+
         public static void SpecialSA(this BattleCalculator v)
         {
             if (MonsterMechanic[v.Target.Data][5] > 0)

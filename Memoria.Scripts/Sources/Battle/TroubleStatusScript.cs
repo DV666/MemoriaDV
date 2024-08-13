@@ -7,7 +7,7 @@ using System.IO;
 namespace Memoria.DefaultScripts
 {
     [StatusScript(BattleStatusId.Trouble)]
-    public class TroubleStatusScript : StatusScriptBase
+    public class TroubleStatusScript : StatusScriptBase, IFigurePointStatusScript
     {
         public override UInt32 Apply(BattleUnit target, BattleUnit inflicter, params Object[] parameters)
         {
@@ -32,24 +32,23 @@ namespace Memoria.DefaultScripts
             return true;
         }
 
-        //public void OnFigurePoint(ref UInt16 fig_info, ref Int32 fig, ref Int32 m_fig) IFigurePointStatusScript
-        //{
-        //    if ((fig_info & Param.FIG_INFO_TROUBLE) == 0)
-        //        return;
-        //    if ((fig_info & Param.FIG_INFO_DISP_HP) == 0)
-        //        return;
-        //    if ((fig_info & (Param.FIG_INFO_HP_RECOVER | Param.FIG_INFO_GUARD | Param.FIG_INFO_MISS | Param.FIG_INFO_DEATH)) != 0)
-        //        return;
-        //    Int32 dmg = fig >> 1;
-        //    foreach (BattleUnit unit in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
-        //    {
-        //        if (unit.IsPlayer == Target.IsPlayer && unit.Id != Target.Id && unit.IsTargetable && unit.PhysicalDefence != 255 &&
-        //            unit.PhysicalDefence != 255 && unit.MagicDefence != 255 && unit.MagicEvade != 255 && !unit.IsUnderAnyStatus(BattleStatus.Death))
-        //        {
-        //            btl_para.SetDamage(unit, dmg, 0, requestFigureNow: true);
-        //            BattleVoice.TriggerOnStatusChange(Target, "Used", BattleStatusId.Trouble);
-        //        }
-        //    }
-        //}
+        public void OnFigurePoint(ref UInt16 fig_info, ref Int32 fig, ref Int32 m_fig)
+        {
+            if ((fig_info & Param.FIG_INFO_TROUBLE) == 0)
+                return;
+            if ((fig_info & Param.FIG_INFO_DISP_HP) == 0)
+                return;
+            if ((fig_info & (Param.FIG_INFO_HP_RECOVER | Param.FIG_INFO_GUARD | Param.FIG_INFO_MISS | Param.FIG_INFO_DEATH)) != 0)
+                return;
+            Int32 dmg = fig >> 1;
+            foreach (BattleUnit unit in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
+            {
+                if (unit.IsPlayer == Target.IsPlayer && unit.Id != Target.Id && unit.IsTargetable)
+                {
+                    btl_para.SetDamage(unit, dmg, 0, requestFigureNow: true);
+                    BattleVoice.TriggerOnStatusChange(Target, "Used", BattleStatusId.Trouble);
+                }
+            }
+        }
     }
 }

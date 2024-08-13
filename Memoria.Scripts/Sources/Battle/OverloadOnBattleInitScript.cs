@@ -12,6 +12,11 @@ namespace Memoria.Scripts.Battle
 
         public void OnBattleInit()
         {
+            SB2_PATTERN sb2Pattern = FF9StateSystem.Battle.FF9Battle.btl_scene.PatAddr[FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum];
+
+            if (FF9StateSystem.Battle.battleMapIndex == 93 && FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum == 3) // Prison Cage + Little Girl
+                HonoluluBattleMain.SetupAttachModel(FF9StateSystem.Battle.FF9Battle.btl_data[4], FF9StateSystem.Battle.FF9Battle.btl_data[5], 55, 25);
+
             foreach (BattleUnit unit in BattleState.EnumerateUnits())
             {
                 if (!InitHUDMessageChild) // Just to reset FontSize (didn't adjust after soft reset)
@@ -25,7 +30,6 @@ namespace Memoria.Scripts.Battle
                     InitHUDMessageChild = true;
                 }
 
-                SB2_PATTERN sb2Pattern = FF9StateSystem.Battle.FF9Battle.btl_scene.PatAddr[FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum];
                 foreach (BattleUnit PlayerUnit in BattleState.EnumerateUnits())
                 {
                     if (!PlayerUnit.IsPlayer)
@@ -94,7 +98,7 @@ namespace Memoria.Scripts.Battle
                 {
                     for (Int32 i = 0; i < BossBattleBonusHP.GetLength(0); i++)
                     {
-                        if (BossBattleBonusHP[i, 0] == FF9StateSystem.Battle.battleMapIndex && BossBattleBonusHP[i, 1] == sb2Pattern.Monster[unit.Data.bi.slot_no].TypeNo)
+                        if (FF9StateSystem.Battle.battleMapIndex == BossBattleBonusHP[i, 0] && sb2Pattern.Monster[unit.Data.bi.slot_no].TypeNo == BossBattleBonusHP[i, 1])
                         {
                             MonsterMechanic[unit.Data][3] = 1;
                             break;

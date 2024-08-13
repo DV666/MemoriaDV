@@ -46,7 +46,7 @@ namespace Memoria.Scripts.Battle
             if (Configuration.TetraMaster.TripleTriad == 16389 && v.Caster.IsPlayer)
                 v.Target.HpDamage = 9999;
 
-            TranceSeekCustomAPI.SpecialSA(v);
+            TranceSeekCustomAPI.SpecialSA(v);          
         }
     }
 }

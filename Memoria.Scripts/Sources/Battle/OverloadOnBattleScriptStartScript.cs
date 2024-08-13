@@ -72,6 +72,7 @@ namespace Memoria.Scripts.Battle
                     }
                 }
             }
+            TranceSeekCustomAPI.SOS_SA(v);
             return false;
         }
     }
