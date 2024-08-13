@@ -18,7 +18,6 @@ namespace Memoria.Scripts.Battle
         public static Dictionary<BTL_DATA, Int32[]> ViviPassive = new Dictionary<BTL_DATA, Int32[]>(); // [0] => Focus ; [1] => NumberTargets
         public static Dictionary<BTL_DATA, BattleAbilityId> ViviPreviousSpell = new Dictionary<BTL_DATA, BattleAbilityId>();
 
-        public static Dictionary<BTL_DATA, Int32[]> SteinerPassive = new Dictionary<BTL_DATA, Int32[]>(); // [0] => Flawless
         public static Dictionary<BTL_DATA, Int32[]> BeatrixPassive = new Dictionary<BTL_DATA, Int32[]>(); // [0] => Strength ; [1] => Magic ; [2] => Bravoure ; [3] => TargetCount
 
         public static Dictionary<BTL_DATA, Int32> StateMoug = new Dictionary<BTL_DATA, Int32>();
@@ -419,14 +418,18 @@ namespace Memoria.Scripts.Battle
 
         public static void TargetPhysicalPenaltyAndBonusAttack(this BattleCalculator v)
         {
+            if (v.Target.PhysicalDefence == 255)
+            {
+                v.Context.Flags |= BattleCalcFlags.Guard;
+                return;
+            }
             if (v.Target.PlayerIndex == CharacterId.Beatrix)
             {
                 v.Context.DefensePower += BeatrixPassive[v.Caster.Data][0];
             }
 
-            if (v.Target.PlayerIndex == CharacterId.Steiner && v.Target.IsUnderAnyStatus(BattleStatus.Defend) && SteinerPassive[v.Target.Data][0] > 0 && v.Target.HasSupportAbilityByIndex((SupportAbility)118)) // Flawless Steiner
+            if (v.Target.PlayerIndex == CharacterId.Steiner && v.Target.IsUnderAnyStatus(BattleStatus.Defend) && v.Target.IsCovering && v.Target.HasSupportAbilityByIndex((SupportAbility)118)) // Flawless Steiner
             {
-                SteinerPassive[v.Target.Data][0] = 0;
                 if (v.Target.HasSupportAbilityByIndex((SupportAbility)1118))
                 {
                     v.Context.Flags |= BattleCalcFlags.Guard;
@@ -802,7 +805,7 @@ namespace Memoria.Scripts.Battle
                     v.Context.Flags |= BattleCalcFlags.Guard;
                 }
                 MonsterMechanic[v.Target.Data][1] -= 1;
-                if (MonsterMechanic[v.Target.Data][1] < 4 && MonsterMechanic[v.Target.Data][2] == 0)
+                if (MonsterMechanic[v.Target.Data][1] < 4 && MonsterMechanic[v.Target.Data][2] == 0 && v.Target.Data.dms_geo_id == 446) // Refresh Garland stand animation
                     v.Target.Data.mot[2] = "ANH_MON_B3_185_003";
                 if (MonsterMechanic[v.Target.Data][1] < 0)
                     MonsterMechanic[v.Target.Data][1] = 0;

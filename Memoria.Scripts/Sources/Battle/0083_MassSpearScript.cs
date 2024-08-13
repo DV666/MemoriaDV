@@ -42,7 +42,7 @@ namespace Memoria.Scripts.Battle
                 byte PhysicalDefence = (byte)_v.Target.PhysicalDefence;
                 _v.Target.PhysicalDefence = (byte)(_v.Target.PhysicalDefence * 60 / 100);
                 _v.Target.SetPhysicalDefense();
-                _v.BonusSupportAbilitiesAttack();
+                _v.BonusKillerAbilities();
                 _v.Caster.PenaltyMini();
                 TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
                 TranceSeekCustomAPI.BonusWeaponElement(_v);

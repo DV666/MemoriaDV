@@ -53,8 +53,6 @@ namespace Memoria.Scripts.Battle
                     ViviPreviousSpell[unit.Data] = BattleAbilityId.Void;
                 if (!ViviPassive.TryGetValue(unit.Data, out Int32[] vivipassive))
                     ViviPassive[unit.Data] = new Int32[] { 0, 0 };
-                if (!SteinerPassive.TryGetValue(unit.Data, out Int32[] steinerpassive))
-                    SteinerPassive[unit.Data] = new Int32[] { 0, 0 };
                 if (!BeatrixPassive.TryGetValue(unit.Data, out Int32[] beatrixpassive))
                     BeatrixPassive[unit.Data] = new Int32[] { 0, 0, 0, 0 };
                 if (!MonsterMechanic.TryGetValue(unit.Data, out Int32[] monstermechanic))
@@ -82,6 +80,11 @@ namespace Memoria.Scripts.Battle
                 {
                     unit.AlterStatus(CustomStatus.ArmorUp, unit);
                     unit.AlterStatus(CustomStatus.MentalUp, unit);
+                }
+                if (unit.Armor == (RegularItem)1220) // Mechanical Armor
+                {
+                    MonsterMechanic[unit.Data][1] = 10;
+                    btl_stat.AlterStatus(unit, CustomStatusId.MechanicalArmor, parameters: 10);
                 }
                 if (unit.IsUnderAnyStatus(BattleStatus.EasyKill))
                 {

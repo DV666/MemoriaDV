@@ -41,7 +41,7 @@ namespace Memoria.Scripts.Battle
                 }
                 _v.Target.PhysicalDefence = (byte)(_v.Target.PhysicalDefence / 2);
                 _v.Target.SetPhysicalDefense();
-                _v.BonusSupportAbilitiesAttack();
+                _v.BonusKillerAbilities();
                 _v.Caster.PenaltyMini();
                 _v.Caster.EnemyTranceBonusAttack();
                 TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);

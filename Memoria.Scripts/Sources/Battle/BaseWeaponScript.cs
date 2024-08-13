@@ -42,7 +42,7 @@ namespace Memoria.Scripts.Battle
             _v.PhysicalAccuracy();
             if (_v.Caster.PlayerIndex == CharacterId.Amarant)
             {
-                if (_v.Caster.IsUnderAnyStatus(BattleStatus.Defend) && _v.Caster.SummonCount != 0 && _v.Target.PhysicalEvade != 255) // Duel Amarant - Prevent dodge
+                if (_v.Caster.IsUnderAnyStatus(BattleStatus.Defend) && _v.Command.Id == BattleCommandId.Counter && _v.Target.PhysicalEvade != 255) // Duel Amarant - Prevent dodge
                 {
                     _v.Context.Evade = 0;
                 }
@@ -77,7 +77,7 @@ namespace Memoria.Scripts.Battle
                     if (_v.Caster.PlayerIndex == CharacterId.Amarant)
                     {
                         TranceSeekCustomAPI.AmarantPassive(_v);
-                        if (_v.Caster.IsUnderAnyStatus(BattleStatus.Defend) && _v.Caster.SummonCount != 0) // Duel Amarant
+                        if (_v.Caster.IsUnderAnyStatus(BattleStatus.Defend) && _v.Command.Id == BattleCommandId.Counter) // Duel Amarant
                         {
                             short criticalbonus = _v.Caster.Data.critical_rate_deal_bonus;
                             _v.Caster.Data.critical_rate_deal_bonus += _v.Caster.Will;
@@ -91,7 +91,6 @@ namespace Memoria.Scripts.Battle
                                         _v.Target.TryAlterStatuses(status, false, _v.Caster);
                                 }
                             }
-                            _v.Caster.SummonCount = 0;
                             TranceSeekCustomAPI.TryCriticalHit(_v);
                             _v.Caster.Data.critical_rate_deal_bonus = criticalbonus;
                         }

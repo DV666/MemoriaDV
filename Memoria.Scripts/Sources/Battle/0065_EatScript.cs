@@ -28,7 +28,7 @@ namespace Memoria.Scripts.Battle
             if (_v.Caster.IsUnderAnyStatus(BattleStatus.Trance))
             {
                 _v.WeaponPhysicalParams(CalcAttackBonus.Random);
-                _v.BonusSupportAbilitiesAttack();
+                _v.BonusKillerAbilities();
                 _v.Caster.PhysicalPenaltyAndBonusAttack();
                 TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
                 TranceSeekCustomAPI.BonusBackstabAndPenaltyLongDistanceTranceSeek(_v);
