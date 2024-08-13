@@ -1,6 +1,7 @@
 ﻿using System;
 using Memoria.Data;
 using Memoria.Prime;
+using Memoria.Scripts.Battle;
 using Object = System.Object;
 
 namespace Memoria.DefaultScripts
@@ -17,7 +18,10 @@ namespace Memoria.DefaultScripts
             if (target.PlayerIndex == CharacterId.Steiner)
                 Gardien = 1;
             if (target.PlayerIndex == CharacterId.Amarant)
+            {
                 Duel = 1;
+                TranceSeekCustomAPI.SpecialSAEffect[target.Data][0] = 1;
+            }
             return btl_stat.ALTER_SUCCESS;
         }
 
@@ -32,7 +36,7 @@ namespace Memoria.DefaultScripts
         {
             if (Target.PlayerIndex == CharacterId.Steiner && Target.IsUnderAnyStatus(BattleStatus.Defend) && Target.IsCovering)
                 Gardien = 0;
-            if (Target.PlayerIndex == CharacterId.Amarant && Target.IsUnderAnyStatus(BattleStatus.Defend))
+            if (Target.PlayerIndex == CharacterId.Amarant && TranceSeekCustomAPI.SpecialSAEffect[Target.Data][0] == 1)
                 Duel = 0;
         }
     }

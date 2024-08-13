@@ -36,9 +36,9 @@ namespace Memoria.DefaultScripts
                 if (heat_damage > 0)
                 {
                     if ((EffectElement.Fire & Target.AbsorbElement) != 0)
-                        Target.Data.fig_info = FF9.Param.FIG_INFO_HP_RECOVER;
+                        Target.Data.fig.info = FF9.Param.FIG_INFO_HP_RECOVER;
                     else
-                        Target.Data.fig_info = FF9.Param.FIG_INFO_DISP_HP;
+                        Target.Data.fig.info = FF9.Param.FIG_INFO_DISP_HP;
 
                     if (Target.CurrentHp > heat_damage)
                         Target.CurrentHp -= heat_damage;

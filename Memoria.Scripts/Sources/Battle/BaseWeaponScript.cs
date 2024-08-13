@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System;
 using System.Runtime.Remoting.Contexts;
 using FF9;
+using static SiliconStudio.Social.ResponseData;
 
 namespace Memoria.Scripts.Battle
 {
@@ -79,6 +80,7 @@ namespace Memoria.Scripts.Battle
                         TranceSeekCustomAPI.AmarantPassive(_v);
                         if (_v.Caster.IsUnderAnyStatus(BattleStatus.Defend) && _v.Command.Id == BattleCommandId.Counter) // Duel Amarant
                         {
+                            TranceSeekCustomAPI.SpecialSAEffect[_v.Caster.Data][0] = 0;
                             short criticalbonus = _v.Caster.Data.critical_rate_deal_bonus;
                             _v.Caster.Data.critical_rate_deal_bonus += _v.Caster.Will;
                             BattleStatus status = _v.Caster.WeaponStatus;
