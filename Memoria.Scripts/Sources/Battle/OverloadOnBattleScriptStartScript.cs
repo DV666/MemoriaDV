@@ -10,6 +10,10 @@ namespace Memoria.Scripts.Battle
     {
         public Boolean OnBattleScriptStart(BattleCalculator v)
         {
+            if (MonsterMechanic[v.Target.Data][3] == 1 && v.Target.CurrentHp <= 10000) // Prevent boss to die => Maybe use CustomBattleFlagsMeaning ?
+            {
+                v.Target.CurrentHp = 10000;
+            }
             if (v.Caster.HasSupportAbilityByIndex((SupportAbility)117) && SpecialSAEffect[v.Caster][4] == 0 && v.Caster.IsUnderAnyStatus(BattleStatus.Trance)) // Mode EX
             {
                 Int32 HealHPSAOrItem = (int)(v.Caster.MaximumHp * (v.Caster.HasSupportAbilityByIndex((SupportAbility)1117) ? 16 : 8) / 100);
