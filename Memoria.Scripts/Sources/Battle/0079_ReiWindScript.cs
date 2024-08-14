@@ -37,7 +37,6 @@ namespace Memoria.Scripts.Battle
                     _v.Target.Flags |= CalcFlag.HpRecovery;
                 if (_v.Target.IsUnderAnyStatus(BattleStatus.LowHP) || (_v.Target.CurrentHp <= _v.Target.MaximumHp / 4 && HPratio <= Comn.random16() % 100) || _v.Target.IsUnderAnyStatus(TranceSeekCustomAPI.CustomStatus.Dragon) || _v.Caster.IsUnderAnyStatus(BattleStatus.Trance))
                 {
-                    _v.Target.RemoveStatus(TranceSeekCustomAPI.CustomStatus.Dragon);
                     int num4 = GameRandom.Next16() % 7;
                     if (num4 == 0)
                     {

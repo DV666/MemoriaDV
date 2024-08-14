@@ -61,7 +61,6 @@ namespace Memoria.Scripts.Battle
                         {
                             _v.Target.TryAlterStatuses(BattleStatus.Poison, false, _v.Caster);
                         }
-                        _v.Target.RemoveStatus(TranceSeekCustomAPI.CustomStatus.Dragon);
                     }
                     _v.CalcHpDamage();
                 }

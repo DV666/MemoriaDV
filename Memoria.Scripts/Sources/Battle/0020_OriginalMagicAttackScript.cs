@@ -164,7 +164,6 @@ namespace Memoria.Scripts.Battle
                                 }                                   
                                 break;
                         }
-                        _v.Target.RemoveStatus(TranceSeekCustomAPI.CustomStatus.Dragon);
                     } 
                 }
                 else if (_v.Caster.PlayerIndex == CharacterId.Beatrix && _v.Command.AbilityId == (BattleAbilityId)1043)

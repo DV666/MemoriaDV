@@ -972,6 +972,14 @@ namespace Memoria.Scripts.Battle
             if (v.Caster.HasSupportAbility(SupportAbility1.ReflectNull) && v.Target.IsUnderAnyStatus(BattleStatus.Reflect) && !v.Caster.HasSupportAbilityByIndex((SupportAbility)1030))
                 v.Target.HpDamage >>= 1;
 
+            if (v.Target.IsUnderAnyStatus(CustomStatus.Dragon) && !v.Caster.IsUnderStatus(BattleStatus.Trance) && v.Command.Id == BattleCommandId.DragonAct) // Trigger Dragon status
+            {
+                float DragonRemove = v.Caster.HasSupportAbilityByIndex((SupportAbility)1122) ? 25 : (v.Caster.HasSupportAbilityByIndex((SupportAbility)122) ? 12.5f : 0); // Eye of the dragon
+
+                if (DragonRemove < Comn.random16() % 100)
+                    v.Target.RemoveStatus(CustomStatus.Dragon);
+            }
+
             if (v.Caster.PlayerIndex == CharacterId.Zidane && (v.Command.Id == BattleCommandId.Attack || v.Command.Id == BattleCommandId.Counter) && ff9item._FF9Item_Data[FF9StateSystem.Common.FF9.player[(CharacterId)v.Caster.Data.bi.slot_no].equip[0]].shape == 1)
             { // Zidane - Dagger double hits
                 v.Target.HpDamage /= 2;

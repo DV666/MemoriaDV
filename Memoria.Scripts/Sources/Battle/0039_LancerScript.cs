@@ -58,7 +58,6 @@ namespace Memoria.Scripts.Battle
                             {
                                 _v.Caster.Flags |= (CalcFlag.MpAlteration | CalcFlag.MpRecovery);
                                 _v.Caster.MpDamage = _v.Target.MpDamage / 2;
-                                _v.Target.RemoveStatus(TranceSeekCustomAPI.CustomStatus.Dragon);
                             }
                         }
                         _v.TryAlterMagicStatuses();
