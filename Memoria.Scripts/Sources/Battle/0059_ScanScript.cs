@@ -1,4 +1,5 @@
 using System;
+using FF9;
 using Memoria.Data;
 
 namespace Memoria.Scripts.Battle
@@ -22,7 +23,11 @@ namespace Memoria.Scripts.Battle
         {
             if (_v.Caster.IsPlayer)
             {
-                if (!_v.Target.IsUnderStatus(BattleStatus.EasyKill))
+                if (_v.Command.AbilityId == (BattleAbilityId)1075) // Lani - Predator's Eye
+                {
+                    _v.Target.Libra(BattleHUD.LibraInformation.NameLevel | BattleHUD.LibraInformation.Category | BattleHUD.LibraInformation.ElementalAffinities);
+                }
+                else if (!_v.Target.IsUnderStatus(BattleStatus.EasyKill))
                 {
                     _v.Target.Libra(BattleHUD.LibraInformation.Default | BattleHUD.LibraInformation.ItemSteal);
                 }

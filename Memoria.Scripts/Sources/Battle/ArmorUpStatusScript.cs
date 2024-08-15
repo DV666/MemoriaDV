@@ -92,7 +92,7 @@ namespace Memoria.DefaultScripts
                 btl2d.StatusMessages.Remove(NumberHUD);
                 Singleton<HUDMessage>.Instance.ReleaseObject(NumberHUD);
             }
-            target.PhysicalDefence = (byte)Math.Max(1, BasicPhysicalDefence + (BasicPhysicalDefence * Stack) / 10);
+            target.PhysicalDefence = (byte)Math.Min(BasicPhysicalDefence + ((BasicPhysicalDefence * Stack) / 10), 255);
             return btl_stat.ALTER_SUCCESS;
         }
 

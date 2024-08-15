@@ -21,7 +21,6 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            // SFX.currentEffectID == SpecialEffect.Osmose
             if (_v.Caster.Data.dms_geo_id == 105 && _v.Command.HitRate == 222) // Soul Dance - Zombance
             {
                 if (_v.Caster.SummonCount == 1)
@@ -90,8 +89,8 @@ namespace Memoria.Scripts.Battle
                     TranceSeekCustomAPI.TryCriticalHit(_v);
                 if (_v.Command.HitRate == 254)
                 {
-                    _v.Caster.Flags |= (CalcFlag)27;
-                    _v.Target.Flags |= (CalcFlag)9;
+                    _v.Caster.Flags |= CalcFlag.HpDamageOrHeal | CalcFlag.MpDamageOrHeal;
+                    _v.Target.Flags |= CalcFlag.HpAlteration | CalcFlag.MpAlteration;
                     _v.CalcMpDamage();
                     _v.CalcHpDamage();
                     int num = _v.Target.MpDamage / 2;
@@ -107,7 +106,14 @@ namespace Memoria.Scripts.Battle
                 else
                 {
                     _v.PrepareHpDraining();
-                    if (_v.Command.HitRate == 255)
+                    if (_v.Command.HitRate == 222) // Prison Cage CD4 - Vampire
+                    {
+                        if (_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill))
+                            _v.Target.HpDamage = (int)((_v.Target.MaximumHp - 10000) / 3);
+                        else
+                            _v.Target.HpDamage = (int)(_v.Target.MaximumHp / 3);
+                    }
+                    else if (_v.Command.HitRate == 255) // Crowler - Deadly Drain
                     {
                         _v.Target.HpDamage = (int)(_v.Target.CurrentHp - 1U);
                     }

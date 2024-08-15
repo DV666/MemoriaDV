@@ -66,7 +66,7 @@ namespace Memoria.Scripts.Battle
                 _v.Caster.EnemyTranceBonusAttack();
                 TranceSeekCustomAPI.PenaltyShellAttack(_v);
                 _v.PenaltyCommandDividedAttack();
-                if (_v.Caster.Data.dms_geo_id == 5 || _v.Caster.Data.dms_geo_id == 267) 
+                if (_v.Caster.Data.dms_geo_id == 5 || _v.Caster.Data.dms_geo_id == 267) // Kuja (multiple target malus)
                 {
                     if (_v.Context.sfxThread.targetId != 1 && _v.Context.sfxThread.targetId != 2 && _v.Context.sfxThread.targetId != 4 && _v.Context.sfxThread.targetId != 8)
                     {

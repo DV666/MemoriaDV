@@ -39,8 +39,8 @@ namespace Memoria.Scripts.Battle
                     TranceSeekCustomAPI.IpsenCastleMalus(_v);
                     _v.Target.Flags |= (CalcFlag.HpAlteration | CalcFlag.MpAlteration);
                     _v.Caster.Flags |= (CalcFlag.HpAlteration | CalcFlag.HpRecovery | CalcFlag.MpAlteration | CalcFlag.MpRecovery);
-                    int hpDamage = Math.Min(9999, _v.Context.PowerDifference * _v.Context.EnsureAttack);
-                    int mpDamage = Math.Min(9999, _v.Context.PowerDifference * _v.Context.EnsureAttack >> 4);
+                    int hpDamage = Math.Max(1, _v.Context.PowerDifference * _v.Context.EnsureAttack);
+                    int mpDamage = Math.Max(1, _v.Context.PowerDifference * _v.Context.EnsureAttack >> 4);
                     if (_v.Target.CurrentHp < hpDamage && !_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill) && !_v.Target.HasCategory(EnemyCategory.Humanoid))
                     {
                         hpDamage = (int)(_v.Target.CurrentHp - 1);

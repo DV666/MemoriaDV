@@ -36,14 +36,6 @@ namespace Memoria.Scripts.Battle
                 _v.MagicAccuracy();
                 _v.Target.PenaltyShellHitRate();
                 _v.PenaltyCommandDividedHitRate();
-                if (_v.Caster.Data.dms_geo_id == 5 || _v.Caster.Data.dms_geo_id == 267)
-                {
-                    if (SFX.request.arg0 > 0) // [DV] TODO - Improve... ?
-                    {
-                        _v.Context.Attack /= 2;
-                        _v.Context.HitRate /= 2;
-                    }
-                }
                 if (_v.TryMagicHit())
                 {
                     TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
@@ -55,38 +47,64 @@ namespace Memoria.Scripts.Battle
                 TranceSeekCustomAPI.ViviFocus(_v);
                 _v.Target.PenaltyShellHitRate();
                 _v.PenaltyCommandDividedHitRate();
-                if (_v.Command.Power == 10)
+                if (_v.Caster.Data.dms_geo_id == 5 || _v.Caster.Data.dms_geo_id == 267) // Kuja (multiple target malus)
                 {
-                    if (_v.TryMagicHit())
+                    if (_v.Context.sfxThread.targetId != 1 && _v.Context.sfxThread.targetId != 2 && _v.Context.sfxThread.targetId != 4 && _v.Context.sfxThread.targetId != 8)
                     {
-                        _v.Target.AlterStatus(TranceSeekCustomAPI.CustomStatus.Vieillissement, _v.Caster);
-                        TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
+                        _v.Context.Attack /= 2;
+                        _v.Context.HitRate /= 2;
                     }
                 }
-                else if (_v.Command.Power == 1)
+                if (_v.Command.Power == 1) // Friendly Jabberwock - Reflect???
                 {
                     if (_v.Target.IsUnderStatus(BattleStatus.Reflect))
                     {
-                        _v.Target.TryAlterStatuses(BattleStatus.Silence, false, _v.Caster);
-                        _v.Target.TryAlterStatuses(BattleStatus.Blind, false, _v.Caster);
-                        _v.Target.TryAlterStatuses(BattleStatus.Slow, false, _v.Caster);
-                    }
-                    else
-                    {
-                        _v.Context.Flags |= BattleCalcFlags.Miss;
+                        _v.Command.AbilityStatus |= (BattleStatus.Silence | BattleStatus.Blind | BattleStatus.Slow);
                     }
                 }
-                else if (_v.Command.Power == 2)
+                else if (_v.Command.Power == 2) // Meltigemini - T Virus
+                {
+                    _v.Command.AbilityStatus |= (BattleStatus.Zombie | BattleStatus.Virus);
+                }
+                else if (_v.Command.Power == 7)
                 {
                     if (_v.TryMagicHit())
                     {
-                        _v.Target.TryAlterStatuses(BattleStatus.Zombie, false, _v.Caster);
-                        _v.Target.TryAlterStatuses(BattleStatus.Virus, false, _v.Caster);
+                        TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
                     }
                     else
                     {
-                        _v.Context.Flags |= BattleCalcFlags.Miss;
+                        uint num = (uint)(1 + GameRandom.Next8() % 9);
+                        if (_v.Target.CurrentHp == 1U)
+                        {
+                            _v.Context.Flags |= BattleCalcFlags.Miss;
+                        }
+                        else
+                        {
+                            if (_v.Target.CurrentHp < num)
+                            {
+                                _v.Target.CurrentHp = (uint)(1L + GameRandom.Next8() % num);
+                            }
+                            else
+                            {
+                                _v.Target.CurrentHp = num;
+                            }
+                            _v.Context.Flags = 0;
+                        }
                     }
+                    return;
+                }
+                else if (_v.Command.Power == 10) // Garland - Regression
+                {
+                    _v.Command.AbilityStatus |= (TranceSeekCustomAPI.CustomStatus.Vieillissement);
+                }
+                else if (_v.Command.Power == 100) // Bass - Shackle Foe
+                {
+                    _v.Command.AbilityStatus |= (TranceSeekCustomAPI.CustomStatus.PowerBreak);
+                }
+                else if (_v.Command.Power == 101) // Bass - Armor Corrosive
+                {
+                    _v.Command.AbilityStatus |= (TranceSeekCustomAPI.CustomStatus.ArmorBreak);
                 }
                 else if (_v.Caster.Data.dms_geo_id == 142) // Cauchemard (from Dark Beatrix)
                 {
@@ -203,40 +221,8 @@ namespace Memoria.Scripts.Battle
                     }
                     return;
                 }
-                else if (_v.Command.Power == 7)
-                {
-                    if (_v.TryMagicHit())
-                    {
-                        TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
-                    }
-                    else
-                    {
-                        uint num = (uint)(1 + GameRandom.Next8() % 9);
-                        if (_v.Target.CurrentHp == 1U)
-                        {
-                            _v.Context.Flags |= BattleCalcFlags.Miss;
-                        }
-                        else
-                        {
-                            if (_v.Target.CurrentHp < num)
-                            {
-                                _v.Target.CurrentHp = (uint)(1L + GameRandom.Next8() % num);
-                            }
-                            else
-                            {
-                                _v.Target.CurrentHp = num;
-                            }
-                            _v.Context.Flags = 0;
-                        }
-                    }
-                    return;
-                }
-                else if (_v.Command.HitRate == 255 || (_v.Caster.PlayerIndex == CharacterId.Amarant && _v.Caster.IsUnderStatus(BattleStatus.Trance) && _v.Command.AbilityId == BattleAbilityId.Revive2))
-                {
-                    TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
-                }
-                else if (_v.TryMagicHit())
-                {
+                if (_v.TryMagicHit() || _v.Command.HitRate == 255 || (_v.Caster.PlayerIndex == CharacterId.Amarant && _v.Caster.IsUnderStatus(BattleStatus.Trance) && _v.Command.AbilityId == BattleAbilityId.Revive2))
+                { // 3 Plaies+
                     TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
                 }
             }

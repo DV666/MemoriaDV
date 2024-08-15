@@ -92,7 +92,7 @@ namespace Memoria.DefaultScripts
                 btl2d.StatusMessages.Remove(NumberHUD);
                 Singleton<HUDMessage>.Instance.ReleaseObject(NumberHUD);
             }
-            target.Magic = (byte)Math.Max(1, BasicMagic + (BasicMagic * Stack) / 10);
+            target.Magic = (byte)Math.Min(BasicMagic + ((BasicMagic * Stack) / 10), 255);
             return btl_stat.ALTER_SUCCESS;
         }
 

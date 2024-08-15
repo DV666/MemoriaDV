@@ -79,6 +79,9 @@
     <Compile Include="Sources\Battle\0007_LevelWeaponScript.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
+    <Compile Include="Sources\Battle\0127_EnemyPhysicalBuffedAttackScript.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
     <Compile Include="Sources\Battle\0008_EnemyPhysicalAttackScript.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
