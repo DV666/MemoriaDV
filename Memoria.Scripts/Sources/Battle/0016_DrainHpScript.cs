@@ -113,6 +113,20 @@ namespace Memoria.Scripts.Battle
                         else
                             _v.Target.HpDamage = (int)(_v.Target.MaximumHp / 3);
                     }
+                    else if (_v.Caster.Data.dms_geo_id == 347 && _v.Command.HitRate == 1) // Ponction - Blambourine
+                    {
+                        _v.Caster.AlterStatus(TranceSeekCustomAPI.CustomStatus.PowerUp, _v.Caster);
+                        _v.Caster.AlterStatus(TranceSeekCustomAPI.CustomStatus.MagicUp, _v.Caster);
+                    }
+                    else if (_v.Command.HitRate == 223) // Prison Cage CD4 - Super Vampire
+                    {
+                        if (_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill))
+                            _v.Target.HpDamage = (int)((_v.Target.MaximumHp - 10000) / 2);
+                        else
+                            _v.Target.HpDamage = (int)(_v.Target.MaximumHp / 2);
+
+                        _v.Caster.HpDamage = _v.Target.HpDamage * 100;
+                    }
                     else if (_v.Command.HitRate == 255) // Crowler - Deadly Drain
                     {
                         _v.Target.HpDamage = (int)(_v.Target.CurrentHp - 1U);
@@ -134,11 +148,6 @@ namespace Memoria.Scripts.Battle
                         }
                         _v.TryAlterMagicStatuses();
                     }
-                }
-                if (_v.Caster.Data.dms_geo_id == 347 && _v.Command.HitRate == 1) // Ponction - Blambourine
-                {
-                    _v.Caster.AlterStatus(TranceSeekCustomAPI.CustomStatus.PowerUp, _v.Caster);
-                    _v.Caster.AlterStatus(TranceSeekCustomAPI.CustomStatus.MagicUp, _v.Caster);
                 }
             }
         }

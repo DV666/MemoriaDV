@@ -6,7 +6,15 @@ LoadSFX: SFX=Boomerang ; Reflect=True ; UseCamera=False ; Target=AllEnemies
 WaitSFXLoaded: SFX=Boomerang ; Reflect=True
 StartThread: Sync=False ; Target=AllEnemies
 	Wait: Time=1
-	PlaySFX: SFX=Boomerang ; Reflect=True ; JumpToFrame=40 ; HideMeshes=0, 1, 2, 3 ; MeshColors=(0.0, 2.0, 2.0)
+	PlaySFX: SFX=Boomerang ; Reflect=True ; JumpToFrame=40 ; HideMeshes=0, 1, 2, 3 ; MeshColors=(0.0, 2.0, 2.0) ; SkipSequence
+	Wait: Time=17
+	PlaySound: Sound=1918
+	PlaySound: Sound=1919
+	PlaySound: Sound=1920
+	EffectPoint: Char=AllTargets ; Type=Effect
+	Wait: Time=16
+	EffectPoint: Char=Everyone ; Type=Figure
+	Wait: Time=24
 EndThread
 StartThread: Target=AllEnemies
 	PlayAnimation: Char=Caster ; Anim=MP_SET

@@ -165,7 +165,7 @@ namespace Memoria.Scripts.Battle
             { 296, 0 }, // Valseur 3
             { 668, 0 },  { 217, 0 }, { 670, 0 }, { 751, 0 }, { 652, 0 }, { 664, 0 }, { 216, 0 }, // Friendly Yeti
             // CD4 Bosses
-            { 93, 2 } // Prison Cage + Little Girl
+            { 93, 2 }, { 93, 3 }, { 93, 4 }, { 93, 5 } // Prison Cage + Little Girl
         };
     }
 }
