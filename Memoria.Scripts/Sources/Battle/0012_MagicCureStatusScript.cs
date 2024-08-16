@@ -28,11 +28,9 @@ namespace Memoria.Scripts.Battle
             _v.TryRemoveAbilityStatuses();
             if (_v.Command.Power == 111)
             {
-                for (Int32 i = 33; i < 63; i++)
-                {
-                    BattleStatusId statusId = (BattleStatusId)i;
-                    _v.Target.RemoveStatus(statusId.ToBattleStatus());
-                }
+                foreach (BattleStatusId statusId in _v.Target.Data.stat.cur.ToStatusList())
+                    btl_stat.RemoveStatus(_v.Target, statusId);
+                _v.Context.Flags = 0;
             }        
 
             if (_v.Command.HitRate == 222)

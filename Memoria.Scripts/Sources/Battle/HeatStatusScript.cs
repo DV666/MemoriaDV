@@ -42,6 +42,8 @@ namespace Memoria.DefaultScripts
 
                     if (Target.CurrentHp > heat_damage)
                         Target.CurrentHp -= heat_damage;
+                    else
+                        Target.CurrentHp = 1;
 
                     btl2d.Btl2dStatReq(Target, (Int32)heat_damage, 0);
                 }

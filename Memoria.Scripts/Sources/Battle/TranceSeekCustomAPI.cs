@@ -541,6 +541,19 @@ namespace Memoria.Scripts.Battle
             ViviFocus(v);
         }
 
+        public static void PrepareHpDraining(this BattleCalculator v)
+        {
+            v.Target.Flags |= CalcFlag.HpAlteration;
+            v.Caster.Flags |= CalcFlag.HpAlteration;
+
+            if (v.Target.IsZombie || v.Context.IsAbsorb)
+                v.Target.Flags |= CalcFlag.HpRecovery;
+            else
+                v.Caster.Flags |= CalcFlag.HpRecovery;
+
+            v.Context.IsDrain = true;
+        }
+
         public static void BonusWeaponElement(this BattleCalculator v)
         {
             if ((v.Caster.WeaponElement & v.Caster.BonusElement) != 0)

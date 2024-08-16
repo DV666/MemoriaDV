@@ -105,48 +105,51 @@ namespace Memoria.Scripts.Battle
                 }
                 else
                 {
-                    _v.PrepareHpDraining();
-                    if (_v.Command.HitRate == 222) // Prison Cage CD4 - Vampire
+                    if (TranceSeekCustomAPI.CanAttackMagic(_v))
                     {
-                        if (_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill))
-                            _v.Target.HpDamage = (int)((_v.Target.MaximumHp - 10000) / 3);
-                        else
-                            _v.Target.HpDamage = (int)(_v.Target.MaximumHp / 3);
-                    }
-                    else if (_v.Caster.Data.dms_geo_id == 347 && _v.Command.HitRate == 1) // Ponction - Blambourine
-                    {
-                        _v.Caster.AlterStatus(TranceSeekCustomAPI.CustomStatus.PowerUp, _v.Caster);
-                        _v.Caster.AlterStatus(TranceSeekCustomAPI.CustomStatus.MagicUp, _v.Caster);
-                    }
-                    else if (_v.Command.HitRate == 223) // Prison Cage CD4 - Super Vampire
-                    {
-                        if (_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill))
-                            _v.Target.HpDamage = (int)((_v.Target.MaximumHp - 10000) / 2);
-                        else
-                            _v.Target.HpDamage = (int)(_v.Target.MaximumHp / 2);
-
-                        _v.Caster.HpDamage = _v.Target.HpDamage * 100;
-                    }
-                    else if (_v.Command.HitRate == 255) // Crowler - Deadly Drain
-                    {
-                        _v.Target.HpDamage = (int)(_v.Target.CurrentHp - 1U);
-                    }
-                    else
-                    {
-                        if (_v.Context.PowerDifference >= 1 && TranceSeekCustomAPI.CanAttackMagic(_v))
+                        TranceSeekCustomAPI.PrepareHpDraining(_v);
+                        if (_v.Command.HitRate == 222) // Prison Cage CD4 - Vampire
                         {
-                            _v.CalcHpDamage();
-                            
-                            if (_v.Target.HpDamage > currentHp)
-                            {
-                                _v.Caster.HpDamage = (int)currentHp;
-                            }
+                            if (_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill))
+                                _v.Target.HpDamage = (int)((_v.Target.MaximumHp - 10000) / 3);
                             else
-                            {
-                                _v.Caster.HpDamage = _v.Target.HpDamage;
-                            }
+                                _v.Target.HpDamage = (int)(_v.Target.MaximumHp / 3);
                         }
-                        _v.TryAlterMagicStatuses();
+                        else if (_v.Caster.Data.dms_geo_id == 347 && _v.Command.HitRate == 1) // Ponction - Blambourine
+                        {
+                            _v.Caster.AlterStatus(TranceSeekCustomAPI.CustomStatus.PowerUp, _v.Caster);
+                            _v.Caster.AlterStatus(TranceSeekCustomAPI.CustomStatus.MagicUp, _v.Caster);
+                        }
+                        else if (_v.Command.HitRate == 223) // Prison Cage CD4 - Super Vampire
+                        {
+                            if (_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill))
+                                _v.Target.HpDamage = (int)((_v.Target.MaximumHp - 10000) / 2);
+                            else
+                                _v.Target.HpDamage = (int)(_v.Target.MaximumHp / 2);
+
+                            _v.Caster.HpDamage = _v.Target.HpDamage * 100;
+                        }
+                        else if (_v.Command.HitRate == 255) // Crowler - Deadly Drain
+                        {
+                            _v.Target.HpDamage = (int)(_v.Target.CurrentHp - 1U);
+                        }
+                        else
+                        {
+                            if (_v.Context.PowerDifference >= 1 && TranceSeekCustomAPI.CanAttackMagic(_v))
+                            {
+                                _v.CalcHpDamage();
+
+                                if (_v.Target.HpDamage > currentHp)
+                                {
+                                    _v.Caster.HpDamage = (int)currentHp;
+                                }
+                                else
+                                {
+                                    _v.Caster.HpDamage = _v.Target.HpDamage;
+                                }
+                            }
+                            _v.TryAlterMagicStatuses();
+                        }
                     }
                 }
             }
