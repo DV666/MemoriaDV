@@ -55,33 +55,31 @@ namespace Memoria.DefaultScripts
             if (Stack > StackMaximum)
             {
                 Stack = StackMaximum;
+                NumberHUD.Label = $"[FFA500]   {Stack}";
                 return btl_stat.ALTER_INVALID;
             }
             else if (Stack > 1)
             {
-                if (NumberHUD != null)
+                if (NumberHUD == null)
                 {
-                    NumberHUD.FontSize = DefautSize;
-                    btl2d.StatusMessages.Remove(NumberHUD);
-                    Singleton<HUDMessage>.Instance.ReleaseObject(NumberHUD);
+                    BattleStatusDataEntry statusData = FF9StateSystem.Battle.FF9Battle.status_data[BattleStatusId.CustomStatus15];
+                    btl2d.GetIconPosition(target, btl2d.ICON_POS_DEFAULT, out Transform attachTransf, out Vector3 iconOff);
+                    Vector3 OffSetPos = (statusData.SHPExtraPos + iconOff);
+                    NumberHUD = Singleton<HUDMessage>.Instance.Show(attachTransf, $"[FFA500]   {Stack}", HUDMessage.MessageStyle.DEATH_SENTENCE, OffSetPos, 0);
+                    DefautSize = NumberHUD.FontSize;
+                    UILabel UILabelHUD = NumberHUD.GetComponent<UILabel>();
+                    UILabelHUD.spacingY = -10;
+                    NumberHUD.FontSize = 20;
+                    NumberHUD.Follower.clampToScreen = false;
+                    target.AddDelayedModifier(UpdateMessageShow, null);
+                    btl2d.StatusMessages.Add(NumberHUD);
                 }
-                BattleStatusDataEntry statusData = FF9StateSystem.Battle.FF9Battle.status_data[BattleStatusId.CustomStatus15];
-                btl2d.GetIconPosition(target, btl2d.ICON_POS_DEFAULT, out Transform attachTransf, out Vector3 iconOff);
-                Vector3 OffSetPos = (statusData.SHPExtraPos + iconOff);
-                NumberHUD = Singleton<HUDMessage>.Instance.Show(attachTransf, $"[FFA500]   {Stack}", HUDMessage.MessageStyle.DEATH_SENTENCE, OffSetPos, 0);
-                DefautSize = NumberHUD.FontSize;
-                UILabel UILabelHUD = NumberHUD.GetComponent<UILabel>();
-                UILabelHUD.spacingY = -10;
-                NumberHUD.FontSize = 20;
-                NumberHUD.Follower.clampToScreen = false;
-                target.AddDelayedModifier(UpdateMessageShow, null);
-                btl2d.StatusMessages.Add(NumberHUD);
+                NumberHUD.Label = $"[FFA500]   {Stack}";
             }
-            else if (NumberHUD != null)
+            else
             {
-                NumberHUD.FontSize = DefautSize;
-                btl2d.StatusMessages.Remove(NumberHUD);
-                Singleton<HUDMessage>.Instance.ReleaseObject(NumberHUD);
+                if (NumberHUD != null)
+                    NumberHUD.Label = "";
             }
             return btl_stat.ALTER_SUCCESS;
         }
@@ -103,37 +101,10 @@ namespace Memoria.DefaultScripts
             if (!unit.IsUnderAnyStatus(BattleStatusId.CustomStatus15))
                 return false;
             if (btl2d.ShouldShowSPS && unit.Data.bi.disappear == 0)
-                Refresh(true);
+                NumberHUD.Label = $"[FFA500]   {Stack}";
             else
-                Refresh(false);
+                NumberHUD.Label = "";
             return true;
-        }
-
-        private void Refresh(Boolean KeepText)
-        {
-            if (NumberHUD != null)
-            {
-                NumberHUD.FontSize = DefautSize;
-                btl2d.StatusMessages.Remove(NumberHUD);
-                Singleton<HUDMessage>.Instance.ReleaseObject(NumberHUD);
-            }
-            if (Stack > 1)
-            {
-                BattleStatusDataEntry statusData = FF9StateSystem.Battle.FF9Battle.status_data[BattleStatusId.CustomStatus15];
-                btl2d.GetIconPosition(Target, btl2d.ICON_POS_DEFAULT, out Transform attachTransf, out Vector3 iconOff);
-                Vector3 OffSetPos = (statusData.SHPExtraPos + iconOff);
-                NumberHUD = Singleton<HUDMessage>.Instance.Show(attachTransf, $"[FFA500]   {Stack}", HUDMessage.MessageStyle.DEATH_SENTENCE, OffSetPos, 0);
-                DefautSize = NumberHUD.FontSize;
-                UILabel UILabelHUD = NumberHUD.GetComponent<UILabel>();
-                UILabelHUD.spacingY = -10;
-                NumberHUD.FontSize = 20;
-                NumberHUD.Follower.clampToScreen = false;
-                if (KeepText)
-                    NumberHUD.Label = $"[FFA500]   {Stack}";
-                else
-                    NumberHUD.Label = "";
-                btl2d.StatusMessages.Add(NumberHUD);
-            }
         }
     }
 }

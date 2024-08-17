@@ -372,6 +372,7 @@ namespace Memoria.Scripts.Battle
                 v.Target.Flags = (CalcFlag.HpDamageOrHeal | CalcFlag.MpDamageOrHeal);
                 v.Target.MpDamage = Math.Max(1, v.Target.HpDamage / 40);
                 v.Target.HpDamage = Math.Max(1, v.Target.HpDamage / 2);
+                v.Command.AbilityStatus = 0;
                 return false;
             }
 

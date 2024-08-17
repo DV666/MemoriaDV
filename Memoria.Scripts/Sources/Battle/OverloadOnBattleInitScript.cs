@@ -19,16 +19,13 @@ namespace Memoria.Scripts.Battle
 
             foreach (BattleUnit unit in BattleState.EnumerateUnits())
             {
-                if (!InitHUDMessageChild) // Just to reset FontSize (didn't adjust after soft reset)
-                {
-                    btl2d.GetIconPosition(unit.Data, btl2d.ICON_POS_DEFAULT, out Transform attachTransf, out Vector3 iconOff);
-                    HUDToReset = Singleton<HUDMessage>.Instance.Show(attachTransf, "", HUDMessage.MessageStyle.DEATH_SENTENCE, Vector3.zero, 0);
-                    HUDToReset.FontSize = 36;
-                    btl2d.StatusMessages.Add(HUDToReset);
-                    btl2d.StatusMessages.Remove(HUDToReset);
-                    Singleton<HUDMessage>.Instance.ReleaseObject(HUDToReset);
-                    InitHUDMessageChild = true;
-                }
+                btl2d.GetIconPosition(unit.Data, btl2d.ICON_POS_DEFAULT, out Transform attachTransf, out Vector3 iconOff);
+                HUDToReset = Singleton<HUDMessage>.Instance.Show(attachTransf, "", HUDMessage.MessageStyle.DEATH_SENTENCE, Vector3.zero, 0);
+                HUDToReset.FontSize = 36;
+                btl2d.StatusMessages.Add(HUDToReset);
+                btl2d.StatusMessages.Remove(HUDToReset);
+                Singleton<HUDMessage>.Instance.ReleaseObject(HUDToReset);
+                InitHUDMessageChild = true;
 
                 foreach (BattleUnit PlayerUnit in BattleState.EnumerateUnits())
                 {

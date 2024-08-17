@@ -1,11 +1,8 @@
 ﻿using Assets.Sources.Scripts.UI.Common;
 using Memoria.Data;
-using Memoria.Prime;
 using System.Collections.Generic;
 using System;
-using System.Runtime.Remoting.Contexts;
 using FF9;
-using static SiliconStudio.Social.ResponseData;
 
 namespace Memoria.Scripts.Battle
 {
