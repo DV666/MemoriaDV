@@ -9,7 +9,7 @@ namespace Memoria.DefaultScripts
 
     public class MechanicalArmorStatusScript : StatusScriptBase
     {
-        public HUDMessageChild NumberHUD = null;
+        public HUDMessageChild MechanicalArmorHUD = null;
         public Int32 Stack;
         public Int32 DefautSize;
 
@@ -25,27 +25,24 @@ namespace Memoria.DefaultScripts
             if (level > 0)
             {
                 Stack = level;
+                if (MechanicalArmorHUD != null)
+                {
+                    MechanicalArmorHUD.FontSize = DefautSize;
+                    btl2d.StatusMessages.Remove(MechanicalArmorHUD);
+                    Singleton<HUDMessage>.Instance.ReleaseObject(MechanicalArmorHUD);
+                }
                 if (Stack > 1)
                 {
-                    if (NumberHUD == null)
-                    {
-                        btl2d.GetIconPosition(target, btl2d.ICON_POS_DEFAULT, out Transform attachTransf, out Vector3 iconOff);
-                        Vector3 OffSetPos = (statusData.SHPExtraPos + iconOff);
-                        NumberHUD = Singleton<HUDMessage>.Instance.Show(attachTransf, $"[FFA500]   {Stack}", HUDMessage.MessageStyle.DEATH_SENTENCE, OffSetPos, 0);
-                        DefautSize = NumberHUD.FontSize;
-                        UILabel UILabelHUD = NumberHUD.GetComponent<UILabel>();
-                        UILabelHUD.spacingY = -10;
-                        NumberHUD.FontSize = 20;
-                        NumberHUD.Follower.clampToScreen = false;
-                        target.AddDelayedModifier(UpdateMessageShow, null);
-                        btl2d.StatusMessages.Add(NumberHUD);
-                    }
-                    NumberHUD.Label = $"[FFA500]   {Stack}";
-                }
-                else
-                {
-                    if (NumberHUD != null)
-                        NumberHUD.Label = "";
+                    btl2d.GetIconPosition(target, btl2d.ICON_POS_DEFAULT, out Transform attachTransf, out Vector3 iconOff);
+                    Vector3 OffSetPos = (statusData.SHPExtraPos + iconOff);
+                    MechanicalArmorHUD = Singleton<HUDMessage>.Instance.Show(attachTransf, $"[FFA500]   {Stack}", HUDMessage.MessageStyle.DEATH_SENTENCE, OffSetPos, 0);
+                    DefautSize = MechanicalArmorHUD.FontSize;
+                    UILabel UILabelHUD = MechanicalArmorHUD.GetComponent<UILabel>();
+                    UILabelHUD.spacingY = -10;
+                    MechanicalArmorHUD.FontSize = 20;
+                    MechanicalArmorHUD.Follower.clampToScreen = false;
+                    target.AddDelayedModifier(UpdateMessageShow, null);
+                    btl2d.StatusMessages.Add(MechanicalArmorHUD);
                 }
                 return btl_stat.ALTER_SUCCESS;
             }
@@ -53,26 +50,13 @@ namespace Memoria.DefaultScripts
             {
                 btl_stat.RemoveStatus(target, BattleStatusId.CustomStatus11);
                 return btl_stat.ALTER_SUCCESS_NO_SET;
-            }           
-        }
-
-        public override Boolean Remove()
-        {
-            Stack = 0;
-            if (NumberHUD != null)
-            {
-                NumberHUD.FontSize = DefautSize;
-                btl2d.StatusMessages.Remove(NumberHUD);
-                Singleton<HUDMessage>.Instance.ReleaseObject(NumberHUD);
             }
-            return true;
         }
 
         private Boolean UpdateMessageShow(BattleUnit unit)
         {
             if (!unit.IsUnderAnyStatus(BattleStatusId.CustomStatus11))
                 return false;
-            SHPEffect shp = HonoluluBattleMain.battleSPS.GetBtlSHPObj(unit, BattleStatusId.CustomStatus11);
             if (btl2d.ShouldShowSPS && unit.Data.bi.disappear == 0)
                 Refresh(true);
             else
@@ -83,28 +67,36 @@ namespace Memoria.DefaultScripts
         private void Refresh(Boolean KeepText)
         {
             BattleStatusDataEntry statusData = FF9StateSystem.Battle.FF9Battle.status_data[BattleStatusId.CustomStatus11];
-            if (NumberHUD != null)
+            if (MechanicalArmorHUD != null)
             {
-                NumberHUD.FontSize = DefautSize;
-                btl2d.StatusMessages.Remove(NumberHUD);
-                Singleton<HUDMessage>.Instance.ReleaseObject(NumberHUD);
+                MechanicalArmorHUD.FontSize = DefautSize;
+                btl2d.StatusMessages.Remove(MechanicalArmorHUD);
+                Singleton<HUDMessage>.Instance.ReleaseObject(MechanicalArmorHUD);
             }
             if (Stack > 1)
             {
                 btl2d.GetIconPosition(Target, btl2d.ICON_POS_DEFAULT, out Transform attachTransf, out Vector3 iconOff);
                 Vector3 OffSetPos = (statusData.SHPExtraPos + iconOff);
-                NumberHUD = Singleton<HUDMessage>.Instance.Show(attachTransf, $"[FFA500]   {Stack}", HUDMessage.MessageStyle.DEATH_SENTENCE, OffSetPos, 0);
-                DefautSize = NumberHUD.FontSize;
-                UILabel UILabelHUD = NumberHUD.GetComponent<UILabel>();
+                MechanicalArmorHUD = Singleton<HUDMessage>.Instance.Show(attachTransf, $"[FFA500]   {Stack}", HUDMessage.MessageStyle.DEATH_SENTENCE, OffSetPos, 0);
+                DefautSize = MechanicalArmorHUD.FontSize;
+                UILabel UILabelHUD = MechanicalArmorHUD.GetComponent<UILabel>();
                 UILabelHUD.spacingY = -10;
-                NumberHUD.FontSize = 20;
-                NumberHUD.Follower.clampToScreen = false;
+                MechanicalArmorHUD.FontSize = 20;
+                MechanicalArmorHUD.Follower.clampToScreen = false;
                 if (KeepText)
-                    NumberHUD.Label = $"[FFA500]   {Stack}";
+                    MechanicalArmorHUD.Label = $"[FFA500]   {Stack}";
                 else
-                    NumberHUD.Label = "";
-                btl2d.StatusMessages.Add(NumberHUD);
+                    MechanicalArmorHUD.Label = "";
+                btl2d.StatusMessages.Add(MechanicalArmorHUD);
             }
+        }
+
+        public override Boolean Remove()
+        {
+            MechanicalArmorHUD.FontSize = DefautSize;
+            btl2d.StatusMessages.Remove(MechanicalArmorHUD);
+            Singleton<HUDMessage>.Instance.ReleaseObject(MechanicalArmorHUD);
+            return true;
         }
     }
 }

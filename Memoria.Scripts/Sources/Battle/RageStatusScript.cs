@@ -80,9 +80,24 @@ namespace Memoria.DefaultScripts
             else
             {
                 if (NumberHUD != null)
-                    NumberHUD.Label = "";
+                {
+                    NumberHUD.FontSize = DefautSize;
+                    btl2d.StatusMessages.Remove(NumberHUD);
+                    Singleton<HUDMessage>.Instance.ReleaseObject(NumberHUD);
+                }
             }
             return btl_stat.ALTER_SUCCESS;
+        }
+
+        public override Boolean Remove()
+        {
+            if (NumberHUD != null)
+            {
+                NumberHUD.FontSize = DefautSize;
+                btl2d.StatusMessages.Remove(NumberHUD);
+                Singleton<HUDMessage>.Instance.ReleaseObject(NumberHUD);
+            }
+            return true;
         }
 
         private Boolean UpdateMessageShow(BattleUnit unit)
@@ -96,7 +111,7 @@ namespace Memoria.DefaultScripts
             return true;
         }
 
-        private void Refresh(Boolean KeepText)
+        private void Refresh(Boolean CreateNumberHUD)
         {
             BattleStatusDataEntry statusData = FF9StateSystem.Battle.FF9Battle.status_data[BattleStatusId.CustomStatus19];
             if (NumberHUD != null)
@@ -105,7 +120,7 @@ namespace Memoria.DefaultScripts
                 btl2d.StatusMessages.Remove(NumberHUD);
                 Singleton<HUDMessage>.Instance.ReleaseObject(NumberHUD);
             }
-            if (Stack > 1)
+            if (Stack > 1 && CreateNumberHUD)
             {
                 btl2d.GetIconPosition(Target, btl2d.ICON_POS_DEFAULT, out Transform attachTransf, out Vector3 iconOff);
                 Vector3 OffSetPos = (statusData.SHPExtraPos + iconOff);
@@ -115,10 +130,6 @@ namespace Memoria.DefaultScripts
                 UILabelHUD.spacingY = -10;
                 NumberHUD.FontSize = 20;
                 NumberHUD.Follower.clampToScreen = false;
-                if (KeepText)
-                    NumberHUD.Label = $"[FFA500]   {Stack}";
-                else
-                    NumberHUD.Label = "";
                 btl2d.StatusMessages.Add(NumberHUD);
             }
         }

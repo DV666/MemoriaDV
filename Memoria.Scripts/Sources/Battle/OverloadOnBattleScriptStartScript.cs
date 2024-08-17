@@ -43,7 +43,7 @@ namespace Memoria.Scripts.Battle
                 btl_stat.MakeStatusesPermanent(v.Caster, CustomStatus.Runic, false);
                 btl_stat.MakeStatusesPermanent(v.Caster, BattleStatus.Defend, false);
             }
-            if (v.Caster.PlayerIndex == (CharacterId)12 && v.Command.Data.info.effect_counter == 1) // Lani's Rage Mechanic
+            if (v.Caster.PlayerIndex == (CharacterId)12 && v.Command.Data.info.effect_counter == 1 && !v.Caster.InTrance) // Lani's Rage Mechanic
             {
                 switch (v.Command.AbilityId)
                 {

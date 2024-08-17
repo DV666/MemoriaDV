@@ -55,8 +55,17 @@ namespace Memoria.DefaultScripts
             }
             if (target.IsUnderAnyStatus(BattleStatusId.CustomStatus3))
             {
-                btl_stat.AlterStatus(Target, BattleStatusId.CustomStatus3, parameters: "Remove");
-                return btl_stat.ALTER_SUCCESS_NO_SET;
+                Int32 ReduceStack = Stack;
+                for (int i = 0; i < ReduceStack; i++)
+                {
+                    if (target.IsUnderAnyStatus(BattleStatusId.CustomStatus3))
+                    {
+                        btl_stat.AlterStatus(Target, BattleStatusId.CustomStatus3, parameters: "Remove");
+                        Stack--;
+                        if (Stack <= 0)
+                            return btl_stat.ALTER_INVALID;
+                    }
+                }
             }
             if (BasicPhysicalDefence == 0)
                 BasicPhysicalDefence = Target.PhysicalDefence;
@@ -91,6 +100,7 @@ namespace Memoria.DefaultScripts
                     NumberHUD.Label = "";
             }
             target.PhysicalDefence = (byte)Math.Min(BasicPhysicalDefence + ((BasicPhysicalDefence * Stack) / 10), 255);
+            Memoria.Prime.Log.Message("target.PhysicalDefence = " + target.PhysicalDefence);
             return btl_stat.ALTER_SUCCESS;
         }
 

@@ -3,6 +3,8 @@ using UnityEngine;
 using Memoria.Data;
 using Object = System.Object;
 using static PSXTextureMgr;
+using static SiliconStudio.Social.ResponseData;
+using static UIManager;
 
 namespace Memoria.DefaultScripts
 {
@@ -56,8 +58,17 @@ namespace Memoria.DefaultScripts
             }
             if (target.IsUnderAnyStatus(BattleStatusId.CustomStatus1))
             {
-                btl_stat.AlterStatus(Target, BattleStatusId.CustomStatus1, parameters: "Remove");
-                return btl_stat.ALTER_SUCCESS_NO_SET;
+                Int32 ReduceStack = Stack;
+                for (int i = 0; i < ReduceStack; i++)
+                {
+                    if (target.IsUnderAnyStatus(BattleStatusId.CustomStatus1))
+                    {
+                        btl_stat.AlterStatus(Target, BattleStatusId.CustomStatus1, parameters: "Remove");
+                        Stack--;
+                        if (Stack <= 0)
+                            return btl_stat.ALTER_INVALID;
+                    }
+                }
             }
             if (BasicStrength == 0)
                 BasicStrength = Target.Strength;

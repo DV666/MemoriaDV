@@ -35,25 +35,22 @@ namespace Memoria.DefaultScripts
                     return btl_stat.ALTER_INVALID;
                 if (Stack > 1)
                 {
-                    if (NumberHUD == null)
-                    {
-                        btl2d.GetIconPosition(target, btl2d.ICON_POS_DEFAULT, out Transform attachTransf, out Vector3 iconOff);
-                        Vector3 OffSetPos = (statusData.SHPExtraPos + iconOff);
-                        NumberHUD = Singleton<HUDMessage>.Instance.Show(attachTransf, $"[FFA500]   {Stack}", HUDMessage.MessageStyle.DEATH_SENTENCE, OffSetPos, 0);
-                        DefautSize = NumberHUD.FontSize;
-                        UILabel UILabelHUD = NumberHUD.GetComponent<UILabel>();
-                        UILabelHUD.spacingY = -10;
-                        NumberHUD.FontSize = 20;
-                        NumberHUD.Follower.clampToScreen = false;
-                        target.AddDelayedModifier(UpdateMessageShow, null);
-                        btl2d.StatusMessages.Add(NumberHUD);
-                    }
-                    NumberHUD.Label = $"[FFA500]   {Stack}";
-                }
-                else
-                {
                     if (NumberHUD != null)
-                        NumberHUD.Label = "";
+                    {
+                        NumberHUD.FontSize = DefautSize;
+                        btl2d.StatusMessages.Remove(NumberHUD);
+                        Singleton<HUDMessage>.Instance.ReleaseObject(NumberHUD);
+                    }
+                    btl2d.GetIconPosition(target, btl2d.ICON_POS_DEFAULT, out Transform attachTransf, out Vector3 iconOff);
+                    Vector3 OffSetPos = (statusData.SHPExtraPos + iconOff);
+                    NumberHUD = Singleton<HUDMessage>.Instance.Show(attachTransf, $"[FFA500]   {Stack}", HUDMessage.MessageStyle.DEATH_SENTENCE, OffSetPos, 0);
+                    DefautSize = NumberHUD.FontSize;
+                    UILabel UILabelHUD = NumberHUD.GetComponent<UILabel>();
+                    UILabelHUD.spacingY = -10;
+                    NumberHUD.FontSize = 20;
+                    NumberHUD.Follower.clampToScreen = false;
+                    target.AddDelayedModifier(UpdateMessageShow, null);
+                    btl2d.StatusMessages.Add(NumberHUD);
                 }
                 target.PhysicalDefence = (byte)Math.Max(1, BasicPhysicalDefence + (4 * Stack));
                 target.MagicDefence = (byte)Math.Max(1, BasicMagicDefence + (4 * Stack));
@@ -88,24 +85,27 @@ namespace Memoria.DefaultScripts
                 }
                 if (Stack > 1)
                 {
-                    if (NumberHUD == null)
+                    if (NumberHUD != null)
                     {
-                        btl2d.GetIconPosition(Target, btl2d.ICON_POS_DEFAULT, out Transform attachTransf, out Vector3 iconOff);
-                        Vector3 OffSetPos = (statusData.SHPExtraPos + iconOff);
-                        NumberHUD = Singleton<HUDMessage>.Instance.Show(attachTransf, $"[FFA500]   {Stack}", HUDMessage.MessageStyle.DEATH_SENTENCE, OffSetPos, 0);
-                        DefautSize = NumberHUD.FontSize;
-                        UILabel UILabelHUD = NumberHUD.GetComponent<UILabel>();
-                        UILabelHUD.spacingY = -10;
-                        NumberHUD.FontSize = 20;
-                        target.AddDelayedModifier(UpdateMessageShow, null);
-                        btl2d.StatusMessages.Add(NumberHUD);
+                        NumberHUD.FontSize = DefautSize;
+                        btl2d.StatusMessages.Remove(NumberHUD);
+                        Singleton<HUDMessage>.Instance.ReleaseObject(NumberHUD);
                     }
-                    NumberHUD.Label = $"[FFA500]   {Stack}";
+                    btl2d.GetIconPosition(Target, btl2d.ICON_POS_DEFAULT, out Transform attachTransf, out Vector3 iconOff);
+                    Vector3 OffSetPos = (statusData.SHPExtraPos + iconOff);
+                    NumberHUD = Singleton<HUDMessage>.Instance.Show(attachTransf, $"[FFA500]   {Stack}", HUDMessage.MessageStyle.DEATH_SENTENCE, OffSetPos, 0);
+                    DefautSize = NumberHUD.FontSize;
+                    UILabel UILabelHUD = NumberHUD.GetComponent<UILabel>();
+                    UILabelHUD.spacingY = -10;
+                    NumberHUD.FontSize = 20;
+                    target.AddDelayedModifier(UpdateMessageShow, null);
+                    btl2d.StatusMessages.Add(NumberHUD);
                 }
                 else
                 {
-                    if (NumberHUD != null)
-                        NumberHUD.Label = "";
+                    NumberHUD.FontSize = DefautSize;
+                    btl2d.StatusMessages.Remove(NumberHUD);
+                    Singleton<HUDMessage>.Instance.ReleaseObject(NumberHUD);
                 }
                 target.PhysicalDefence = (byte)Math.Max(1, BasicPhysicalDefence + (4 * Stack));
                 target.MagicDefence = (byte)Math.Max(1, BasicMagicDefence + (4 * Stack));
@@ -114,12 +114,9 @@ namespace Memoria.DefaultScripts
         }
         public override Boolean Remove()
         {
-            if (NumberHUD != null)
-            {
-                NumberHUD.FontSize = DefautSize;
-                btl2d.StatusMessages.Remove(NumberHUD);
-                Singleton<HUDMessage>.Instance.ReleaseObject(NumberHUD);
-            }
+            NumberHUD.FontSize = DefautSize;
+            btl2d.StatusMessages.Remove(NumberHUD);
+            Singleton<HUDMessage>.Instance.ReleaseObject(NumberHUD);
             Target.PhysicalDefence = (Byte)BasicPhysicalDefence;
             Target.MagicDefence = (Byte)BasicMagicDefence;
             return true;
@@ -129,7 +126,6 @@ namespace Memoria.DefaultScripts
         {
             if (!unit.IsUnderAnyStatus(BattleStatusId.CustomStatus10))
                 return false;
-            SHPEffect shp = HonoluluBattleMain.battleSPS.GetBtlSHPObj(unit, BattleStatusId.CustomStatus10);
             if (btl2d.ShouldShowSPS && unit.Data.bi.disappear == 0)
                 Refresh(true);
             else

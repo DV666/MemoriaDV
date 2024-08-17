@@ -902,12 +902,13 @@ namespace Memoria.Scripts.Battle
                     v.Target.Flags = 0;
                     v.Context.Flags |= BattleCalcFlags.Guard;
                 }
-                MonsterMechanic[v.Target.Data][1] -= 1;
+                MonsterMechanic[v.Target.Data][1]--;
                 if (MonsterMechanic[v.Target.Data][1] < 4 && MonsterMechanic[v.Target.Data][2] == 0 && v.Target.Data.dms_geo_id == 446) // Refresh Garland stand animation
                     v.Target.Data.mot[2] = "ANH_MON_B3_185_003";
                 if (MonsterMechanic[v.Target.Data][1] < 0)
                     MonsterMechanic[v.Target.Data][1] = 0;
 
+                Log.Message("MonsterMechanic[v.Target.Data][1] = " + MonsterMechanic[v.Target.Data][1]);
                 v.Target.TryAlterSingleStatus(CustomStatusId.MechanicalArmor, true, v.Caster, MonsterMechanic[v.Target.Data][1]);
             }
             if (v.Context.IsAbsorb)

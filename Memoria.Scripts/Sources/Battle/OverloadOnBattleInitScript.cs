@@ -17,15 +17,15 @@ namespace Memoria.Scripts.Battle
             if (FF9StateSystem.Battle.battleMapIndex == 93 && FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum == 3) // Prison Cage + Little Girl
                 HonoluluBattleMain.SetupAttachModel(FF9StateSystem.Battle.FF9Battle.btl_data[4], FF9StateSystem.Battle.FF9Battle.btl_data[5], 55, 25);
 
+            if (!InitHUDMessageChild)
+            {
+                foreach (HUDMessageChild HUDToReset in Singleton<HUDMessage>.Instance.AllMessagePool)
+                    HUDToReset.FontSize = 36;
+                InitHUDMessageChild = true;
+            }
+
             foreach (BattleUnit unit in BattleState.EnumerateUnits())
             {
-                if (!InitHUDMessageChild)
-                {
-                    foreach (HUDMessageChild HUDToReset in Singleton<HUDMessage>.Instance.AllMessagePool)
-                        HUDToReset.FontSize = 36;
-                    InitHUDMessageChild = true;
-                }
-
                 foreach (BattleUnit PlayerUnit in BattleState.EnumerateUnits())
                 {
                     if (!PlayerUnit.IsPlayer)
@@ -84,7 +84,7 @@ namespace Memoria.Scripts.Battle
                 if (unit.Armor == (RegularItem)1220) // Mechanical Armor
                 {
                     MonsterMechanic[unit.Data][1] = 10;
-                    btl_stat.AlterStatus(unit, CustomStatusId.MechanicalArmor, parameters: 10);
+                    btl_stat.AlterStatus(unit, CustomStatusId.MechanicalArmor, parameters: MonsterMechanic[unit.Data][1]);
                 }
                 if (unit.IsUnderAnyStatus(BattleStatus.EasyKill))
                 {
