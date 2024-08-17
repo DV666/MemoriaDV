@@ -19,13 +19,12 @@ namespace Memoria.Scripts.Battle
 
             foreach (BattleUnit unit in BattleState.EnumerateUnits())
             {
-                btl2d.GetIconPosition(unit.Data, btl2d.ICON_POS_DEFAULT, out Transform attachTransf, out Vector3 iconOff);
-                HUDToReset = Singleton<HUDMessage>.Instance.Show(attachTransf, "", HUDMessage.MessageStyle.DEATH_SENTENCE, Vector3.zero, 0);
-                HUDToReset.FontSize = 36;
-                btl2d.StatusMessages.Add(HUDToReset);
-                btl2d.StatusMessages.Remove(HUDToReset);
-                Singleton<HUDMessage>.Instance.ReleaseObject(HUDToReset);
-                InitHUDMessageChild = true;
+                if (!InitHUDMessageChild)
+                {
+                    foreach (HUDMessageChild HUDToReset in Singleton<HUDMessage>.Instance.AllMessagePool)
+                        HUDToReset.FontSize = 36;
+                    InitHUDMessageChild = true;
+                }
 
                 foreach (BattleUnit PlayerUnit in BattleState.EnumerateUnits())
                 {
