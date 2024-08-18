@@ -1,6 +1,6 @@
 ﻿using System;
 using Memoria.Data;
-using UnityEngine;
+using Memoria.DefaultScripts;
 using static Memoria.Scripts.Battle.TranceSeekCustomAPI;
 
 namespace Memoria.Scripts.Battle
@@ -21,6 +21,7 @@ namespace Memoria.Scripts.Battle
             {
                 foreach (HUDMessageChild HUDToReset in Singleton<HUDMessage>.Instance.AllMessagePool)
                     HUDToReset.FontSize = 36;
+                OverlapSHP.ClearInBattleInit();
                 InitHUDMessageChild = true;
             }
 
@@ -55,6 +56,8 @@ namespace Memoria.Scripts.Battle
                     ViviPassive[unit.Data] = new Int32[] { 0, 0 };
                 if (!BeatrixPassive.TryGetValue(unit.Data, out Int32[] beatrixpassive))
                     BeatrixPassive[unit.Data] = new Int32[] { 0, 0, 0, 0 };
+                if (!StackBreakOrUpStatus.TryGetValue(unit.Data, out Int32[] stackstatus))
+                    StackBreakOrUpStatus[unit.Data] = new Int32[] { 0, 0, 0, 0 };
                 if (!MonsterMechanic.TryGetValue(unit.Data, out Int32[] monstermechanic))
                     MonsterMechanic[unit.Data] = new Int32[] { 0, 0, 0, 0, 100, 0 };
                 if (!SpecialSAEffect.TryGetValue(unit.Data, out Int32[] specialSAeffect))

@@ -24,6 +24,8 @@ namespace Memoria.Scripts.Battle
         public static Dictionary<BTL_DATA, Int32> StateMoug = new Dictionary<BTL_DATA, Int32>();
         public static Dictionary<BTL_DATA, GameObject> ModelMoug = new Dictionary<BTL_DATA, GameObject>();
 
+        public static Dictionary<BTL_DATA, Int32[]> StackBreakOrUpStatus = new Dictionary<BTL_DATA, Int32[]>();  // [0] => StackStrength ; [1] => StackMagic ; [2] => StackArmor ; [3] => StackMental
+
         public static Dictionary<BTL_DATA, Int32[]> MonsterMechanic = new Dictionary<BTL_DATA, Int32[]>(); // [0] => Trance Activated ; [1] => Special1 ; [2] => Special2 ; [3] => HPBoss10000? ; [4] => ResistStatusEasyKill ; [5] => Dragon
 
         public static Dictionary<BTL_DATA, Int32[]> SpecialSAEffect = new Dictionary<BTL_DATA, Int32[]>(); // [0] => Millionaire (not used anymore) ; [1] => LastStand ; [2] => Instinct ; [3] => PreventTranceSFX ; [4] => Mode EX
@@ -462,6 +464,11 @@ namespace Memoria.Scripts.Battle
 
             if (v.Target.IsUnderAnyStatus(BattleStatus.Mini) || v.Target.IsUnderAnyStatus(BattleStatus.Sleep) && !v.Target.IsUnderAnyStatus(BattleStatus.EasyKill) || v.Target.IsUnderAnyStatus(BattleStatus.Freeze))
                 v.Context.Attack = (Int16)(v.Context.Attack * 3 >> 1);
+
+            if (StackBreakOrUpStatus[v.Caster.Data][0] != 0)
+                v.Context.Attack += ((StackBreakOrUpStatus[v.Caster.Data][0] * 10 * v.Context.Attack) / 100);
+            if (StackBreakOrUpStatus[v.Target.Data][2] != 0)
+                v.Context.Attack += ((StackBreakOrUpStatus[v.Target.Data][2] * 10 * v.Context.Attack) / 100);
         }
 
         public static void BonusBackstabAndPenaltyLongDistanceTranceSeek(this BattleCalculator v)
@@ -493,6 +500,24 @@ namespace Memoria.Scripts.Battle
             }
         }
 
+        public static void MagicAccuracy(this BattleCalculator v)
+        {
+            v.Context.HitRate = (Int16)(v.Command.HitRate + (v.Caster.Magic >> 2) + v.Caster.Level - v.Target.Level);
+
+            //if (v.Context.HitRate > 100)
+            //    v.Context.HitRate = 100;
+
+            if (StackBreakOrUpStatus[v.Caster.Data][1] != 0)
+                v.Context.HitRate += ((StackBreakOrUpStatus[v.Caster.Data][1] * 10 * v.Context.Attack) / 100);
+            if (StackBreakOrUpStatus[v.Target.Data][3] != 0)
+                v.Context.HitRate += -((StackBreakOrUpStatus[v.Target.Data][3] * 10 * v.Context.Attack) / 100);
+
+            if (v.Context.HitRate < 1)
+                v.Context.HitRate = 1;
+
+            v.Context.Evade = v.Target.MagicEvade;
+        }
+
         public static void PenaltyShellAttack(this BattleCalculator v)
         {
             if (v.Target.MagicDefence == 255)
@@ -504,6 +529,11 @@ namespace Memoria.Scripts.Battle
 
             if (v.Target.IsUnderAnyStatus(BattleStatus.Shell))
                 v.Context.Attack >>= 1;
+
+            if (StackBreakOrUpStatus[v.Caster.Data][1] != 0)
+                v.Context.Attack += ((StackBreakOrUpStatus[v.Caster.Data][1] * 10 * v.Context.Attack) / 100);
+            if (StackBreakOrUpStatus[v.Target.Data][3] != 0)
+                v.Context.Attack += ((StackBreakOrUpStatus[v.Target.Data][3] * 10 * v.Context.Attack) / 100);
 
             if (v.Caster.IsUnderAnyStatus(BattleStatus.CustomStatus18)) // Silence Easy Kill - 10% magic attack malus for bosses with Silence.
                 v.Context.Attack = (9 * v.Context.Attack) / 10;
@@ -908,7 +938,6 @@ namespace Memoria.Scripts.Battle
                 if (MonsterMechanic[v.Target.Data][1] < 0)
                     MonsterMechanic[v.Target.Data][1] = 0;
 
-                Log.Message("MonsterMechanic[v.Target.Data][1] = " + MonsterMechanic[v.Target.Data][1]);
                 v.Target.TryAlterSingleStatus(CustomStatusId.MechanicalArmor, true, v.Caster, MonsterMechanic[v.Target.Data][1]);
             }
             if (v.Context.IsAbsorb)

@@ -102,7 +102,7 @@ namespace Memoria.Scripts.Battle
         {
             if (_v.Target.IsZombie)
             {
-                _v.MagicAccuracy();
+                TranceSeekCustomAPI.MagicAccuracy(_v);
                 return true;
             }
             return false;
@@ -115,7 +115,7 @@ namespace Memoria.Scripts.Battle
 
             if (_v.Target.IsZombie)
             {
-                _v.MagicAccuracy();
+                TranceSeekCustomAPI.MagicAccuracy(_v);
 
                 Single hitRate = BattleScriptAccuracyEstimate.RatePlayerAttackHit(_v.Context.HitRate);
                 Single evaRate = BattleScriptAccuracyEstimate.RatePlayerAttackEvade(_v.Context.Evade);

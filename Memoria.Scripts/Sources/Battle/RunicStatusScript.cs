@@ -4,9 +4,10 @@ using Object = System.Object;
 
 namespace Memoria.DefaultScripts
 {
-    [StatusScript(BattleStatusId.CustomStatus20)]
+    [StatusScript(BattleStatusId.CustomStatus20)] // Runic
     public class RunicStatusScript : StatusScriptBase
     {
+
         public override UInt32 Apply(BattleUnit target, BattleUnit inflicter, params Object[] parameters)
         {
             base.Apply(target, inflicter, parameters);

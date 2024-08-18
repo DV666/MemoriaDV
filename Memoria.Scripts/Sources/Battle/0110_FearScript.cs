@@ -43,7 +43,7 @@ namespace Memoria.Scripts.Battle
             }
             else if (_v.Command.HitRate > 0 && _v.Command.Power == 0)
             {
-                _v.MagicAccuracy();
+                TranceSeekCustomAPI.MagicAccuracy(_v);
                 _v.Target.PenaltyShellHitRate();
                 _v.PenaltyCommandDividedHitRate();
                 if (_v.TryMagicHit())

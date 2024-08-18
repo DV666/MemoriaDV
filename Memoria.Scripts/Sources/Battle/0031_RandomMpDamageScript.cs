@@ -47,7 +47,7 @@ namespace Memoria.Scripts.Battle
                     _v.Target.MpDamage = num;
                     _v.Caster.MpDamage = num;
                 }
-                _v.MagicAccuracy();
+                TranceSeekCustomAPI.MagicAccuracy(_v);
                 _v.TryAlterMagicStatuses();
             }
             else
@@ -87,7 +87,7 @@ namespace Memoria.Scripts.Battle
                     }
                     if (_v.Command.Power == 10)
                     {
-                        _v.MagicAccuracy();
+                        TranceSeekCustomAPI.MagicAccuracy(_v);
                         if (_v.Command.HitRate > Comn.random16() % 100)
                         {
                             _v.Target.AlterStatus(BattleStatus.Confuse, _v.Caster);

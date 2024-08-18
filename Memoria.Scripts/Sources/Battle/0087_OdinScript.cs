@@ -22,7 +22,7 @@ namespace Memoria.Scripts.Battle
         {
             if (_v.Target.CheckUnsafetyOrGuard())
             {
-                _v.MagicAccuracy();
+                TranceSeekCustomAPI.MagicAccuracy(_v);
                 _v.Context.HitRate += (Int16)(ff9item.FF9Item_GetCount(RegularItem.Ore) >> 1);
                 if (_v.TryMagicHit())
                     TranceSeekCustomAPI.TryAlterCommandStatuses(_v);

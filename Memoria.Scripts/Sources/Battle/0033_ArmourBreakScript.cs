@@ -42,7 +42,7 @@ namespace Memoria.Scripts.Battle
                 {
                     _v.NormalPhysicalParams();
                 }
-                _v.MagicAccuracy();
+                TranceSeekCustomAPI.MagicAccuracy(_v);
                 _v.Caster.EnemyTranceBonusAttack();
                 _v.Caster.PhysicalPenaltyAndBonusAttack();
                 TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);

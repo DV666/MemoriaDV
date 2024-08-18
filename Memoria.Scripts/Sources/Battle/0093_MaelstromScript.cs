@@ -21,7 +21,7 @@ namespace Memoria.Scripts.Battle
         {
             if (_v.Target.CheckUnsafetyOrMiss() && _v.Target.CanBeAttacked())
             {
-                _v.MagicAccuracy();
+                TranceSeekCustomAPI.MagicAccuracy(_v);
                 _v.Target.PenaltyShellHitRate();
                 _v.PenaltyCommandDividedHitRate();
                 _v.Command.HitRate += (byte)(_v.Caster.Level - _v.Target.Level);

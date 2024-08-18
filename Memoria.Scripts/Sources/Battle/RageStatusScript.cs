@@ -56,7 +56,6 @@ namespace Memoria.DefaultScripts
             if (Stack > StackMaximum)
             {
                 Stack = StackMaximum;
-                NumberHUD.Label = $"[FFA500]   {Stack}";
                 return btl_stat.ALTER_INVALID;
             }
             else if (Stack > 1)
@@ -75,7 +74,6 @@ namespace Memoria.DefaultScripts
                     target.AddDelayedModifier(UpdateMessageShow, null);
                     btl2d.StatusMessages.Add(NumberHUD);
                 }
-                NumberHUD.Label = $"[FFA500]   {Stack}";
             }
             else
             {

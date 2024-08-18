@@ -404,6 +404,7 @@
     <Compile Include="Sources\Battle\0124_BloodyStrikeScript.cs" />
     <Compile Include="Sources\Battle\0125_ShockMagicalScript.cs" />
     <Compile Include="Sources\Battle\0126_SpecialStatusScript.cs" />
+    <Compile Include="Sources\Battle\OverlapSHP.cs" />
     <Compile Include="Sources\Battle\ArmorBreakStatusScript.cs" />
     <Compile Include="Sources\Battle\ArmorUpStatusScript.cs" />
     <Compile Include="Sources\Battle\AutoLifeStatusScript.cs" />

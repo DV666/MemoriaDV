@@ -33,7 +33,7 @@ namespace Memoria.Scripts.Battle
                     _v.Target.Flags |= CalcFlag.HpAlteration;
                     _v.Target.HpDamage = (int)_v.Caster.CurrentHp;
                 }
-                _v.MagicAccuracy();
+                TranceSeekCustomAPI.MagicAccuracy(_v);
                 _v.Target.PenaltyShellHitRate();
                 _v.PenaltyCommandDividedHitRate();
                 if (_v.TryMagicHit())
@@ -43,7 +43,7 @@ namespace Memoria.Scripts.Battle
             }
             else
             {
-                _v.MagicAccuracy();
+                TranceSeekCustomAPI.MagicAccuracy(_v);
                 TranceSeekCustomAPI.ViviFocus(_v);
                 _v.Target.PenaltyShellHitRate();
                 _v.PenaltyCommandDividedHitRate();

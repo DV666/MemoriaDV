@@ -26,7 +26,7 @@ namespace Memoria.Scripts.Battle
                 return;
             }
 
-            _v.MagicAccuracy();
+            TranceSeekCustomAPI.MagicAccuracy(_v);
             _v.Target.PenaltyShellHitRate();
             _v.PenaltyCommandDividedHitRate();
             if (_v.TryMagicHit())

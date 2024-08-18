@@ -24,7 +24,7 @@ namespace Memoria.Scripts.Battle
 
             if (_v.Command.AbilityId == BattleAbilityId.NoMercy1 || _v.Command.AbilityId == BattleAbilityId.NoMercy2) // Fragilité
             {
-                _v.MagicAccuracy();
+                TranceSeekCustomAPI.MagicAccuracy(_v);
                 _v.Target.PenaltyShellHitRate();
                 _v.PenaltyCommandDividedHitRate();
                 foreach (BattleStatusId statusId in (_v.Target.Data.stat.cur & (BattleStatusConst.ContiCount & BattleStatusConst.AnyNegative)).ToStatusList())

@@ -1,9 +1,8 @@
 ﻿using System;
 using UnityEngine;
 using Memoria.Data;
+using static Memoria.Scripts.Battle.TranceSeekCustomAPI;
 using Object = System.Object;
-using System.Collections.Generic;
-using Unity.IO.Compression;
 
 namespace Memoria.DefaultScripts
 {
@@ -15,13 +14,15 @@ namespace Memoria.DefaultScripts
         public Int32 BasicPhysicalDefence;
         public Int32 Stack;
         public Int32 DefautSize;
+        public Boolean ShowNumberHUD;
 
         public override UInt32 Apply(BattleUnit target, BattleUnit inflicter, params Object[] parameters)
         {
             if (target.IsUnderAnyStatus(BattleStatus.EasyKill) && target.IsUnderAnyStatus(BattleStatus.CustomStatus3))
                 return btl_stat.ALTER_INVALID;
             base.Apply(target, inflicter, parameters);
-            Int32 StackMaximum = 9;
+            OverlapSHP.SetupOverlappingSHP(target);
+            Int32 StackMaximum = 5;
             if (parameters.Length > 0)
             {
                 String Parameter = parameters[0] as String;
@@ -59,17 +60,27 @@ namespace Memoria.DefaultScripts
             }
             if (target.IsUnderAnyStatus(BattleStatusId.CustomStatus7))
             {
-                btl_stat.AlterStatus(Target, BattleStatusId.CustomStatus7, parameters: "Remove");
-                return btl_stat.ALTER_SUCCESS_NO_SET;
+                Int32 ReduceStack = Stack;
+                for (int i = 0; i < ReduceStack; i++)
+                {
+                    if (target.IsUnderAnyStatus(BattleStatusId.CustomStatus7))
+                    {
+                        btl_stat.AlterStatus(Target, BattleStatusId.CustomStatus7, parameters: "Remove");
+                        Stack--;
+                        if (Stack <= 0)
+                            return btl_stat.ALTER_INVALID;
+                    }
+                }
             }
 
             if (BasicPhysicalDefence == 0)
                 BasicPhysicalDefence = Target.PhysicalDefence;
 
+            StackBreakOrUpStatus[Target.Data][2] = -Stack;
+
             if (Stack > StackMaximum)
             {
                 Stack = StackMaximum;
-                NumberHUD.Label = $"[FFA500]   {Stack}";
                 return btl_stat.ALTER_INVALID;
             }
             else if (Stack > 1)
@@ -88,14 +99,17 @@ namespace Memoria.DefaultScripts
                     target.AddDelayedModifier(UpdateMessageShow, null);
                     btl2d.StatusMessages.Add(NumberHUD);
                 }
-                NumberHUD.Label = $"[FFA500]   {Stack}";
             }
             else
             {
                 if (NumberHUD != null)
-                    NumberHUD.Label = "";
+                {
+                    NumberHUD.FontSize = DefautSize;
+                    btl2d.StatusMessages.Remove(NumberHUD);
+                    Singleton<HUDMessage>.Instance.ReleaseObject(NumberHUD);
+                }
             }
-            target.PhysicalDefence = (byte)Math.Max(1, BasicPhysicalDefence - (BasicPhysicalDefence * Stack) / 10);
+            //target.PhysicalDefence = (byte)Math.Max(1, BasicPhysicalDefence - (BasicPhysicalDefence * Stack) / 10);
             return btl_stat.ALTER_SUCCESS;
         }
 
@@ -107,23 +121,27 @@ namespace Memoria.DefaultScripts
                 btl2d.StatusMessages.Remove(NumberHUD);
                 Singleton<HUDMessage>.Instance.ReleaseObject(NumberHUD);
             }
-            Target.PhysicalDefence = (Byte)BasicPhysicalDefence;
+            //Target.PhysicalDefence = (Byte)BasicPhysicalDefence;
             return true;
+        }
+
+        public void OnSHPShow(Boolean show)
+        {
+            ShowNumberHUD = show;
         }
 
         private Boolean UpdateMessageShow(BattleUnit unit)
         {
             if (!unit.IsUnderAnyStatus(BattleStatusId.CustomStatus3))
                 return false;
-            SHPEffect shp = HonoluluBattleMain.battleSPS.GetBtlSHPObj(unit, BattleStatusId.CustomStatus3);
-            if (btl2d.ShouldShowSPS && unit.Data.bi.disappear == 0)
+            if (btl2d.ShouldShowSPS && unit.Data.bi.disappear == 0 && ShowNumberHUD)
                 Refresh(true);
             else
                 Refresh(false);
             return true;
         }
 
-        private void Refresh(Boolean KeepText)
+        private void Refresh(Boolean ShowNumberHUD)
         {
             BattleStatusDataEntry statusData = FF9StateSystem.Battle.FF9Battle.status_data[BattleStatusId.CustomStatus3];
             if (NumberHUD != null)
@@ -132,7 +150,7 @@ namespace Memoria.DefaultScripts
                 btl2d.StatusMessages.Remove(NumberHUD);
                 Singleton<HUDMessage>.Instance.ReleaseObject(NumberHUD);
             }
-            if (Stack > 1)
+            if (Stack > 1 && ShowNumberHUD)
             {
                 btl2d.GetIconPosition(Target, btl2d.ICON_POS_DEFAULT, out Transform attachTransf, out Vector3 iconOff);
                 Vector3 OffSetPos = (statusData.SHPExtraPos + iconOff);
@@ -142,10 +160,6 @@ namespace Memoria.DefaultScripts
                 UILabelHUD.spacingY = -10;
                 NumberHUD.FontSize = 20;
                 NumberHUD.Follower.clampToScreen = false;
-                if (KeepText)
-                    NumberHUD.Label = $"[FFA500]   {Stack}";
-                else
-                    NumberHUD.Label = "";
                 btl2d.StatusMessages.Add(NumberHUD);
             }
         }

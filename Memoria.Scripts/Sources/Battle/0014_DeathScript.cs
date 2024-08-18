@@ -66,7 +66,7 @@ namespace Memoria.Scripts.Battle
                 }
                 else
                 {
-                    _v.MagicAccuracy();
+                    TranceSeekCustomAPI.MagicAccuracy(_v);
                     if (_v.TryMagicHit() || _v.Command.HitRate == 255)
                     {
                         TranceSeekCustomAPI.TryAlterCommandStatuses(_v);

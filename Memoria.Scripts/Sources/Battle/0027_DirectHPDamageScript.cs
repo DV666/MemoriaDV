@@ -90,7 +90,7 @@ namespace Memoria.Scripts.Battle
                 {
                     if (_v.Target.CheckUnsafetyOrMiss() && _v.Target.CanBeAttacked())
                     {
-                        _v.MagicAccuracy();
+                        TranceSeekCustomAPI.MagicAccuracy(_v);
                         _v.Target.PenaltyShellHitRate();
                         if (_v.TryMagicHit())
                         {
