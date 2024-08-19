@@ -466,9 +466,12 @@ namespace Memoria.Scripts.Battle
                 v.Context.Attack = (Int16)(v.Context.Attack * 3 >> 1);
 
             if (StackBreakOrUpStatus[v.Caster.Data][0] != 0)
-                v.Context.Attack += ((StackBreakOrUpStatus[v.Caster.Data][0] * 10 * v.Context.Attack) / 100);
+                v.Context.Attack += ((StackBreakOrUpStatus[v.Caster.Data][0] * v.Context.Attack) / 100);
             if (StackBreakOrUpStatus[v.Target.Data][2] != 0)
-                v.Context.Attack += ((StackBreakOrUpStatus[v.Target.Data][2] * 10 * v.Context.Attack) / 100);
+                v.Context.Attack -= ((StackBreakOrUpStatus[v.Target.Data][2] * v.Context.Attack) / 100);
+
+            if (v.Context.Attack < 1)
+                v.Context.Attack = 1;
         }
 
         public static void BonusBackstabAndPenaltyLongDistanceTranceSeek(this BattleCalculator v)
@@ -508,9 +511,9 @@ namespace Memoria.Scripts.Battle
             //    v.Context.HitRate = 100;
 
             if (StackBreakOrUpStatus[v.Caster.Data][1] != 0)
-                v.Context.HitRate += ((StackBreakOrUpStatus[v.Caster.Data][1] * 10 * v.Context.Attack) / 100);
+                v.Context.HitRate += ((StackBreakOrUpStatus[v.Caster.Data][1] * v.Context.Attack) / 100);
             if (StackBreakOrUpStatus[v.Target.Data][3] != 0)
-                v.Context.HitRate += -((StackBreakOrUpStatus[v.Target.Data][3] * 10 * v.Context.Attack) / 100);
+                v.Context.HitRate -= ((StackBreakOrUpStatus[v.Target.Data][3] * v.Context.Attack) / 100);
 
             if (v.Context.HitRate < 1)
                 v.Context.HitRate = 1;
@@ -529,11 +532,6 @@ namespace Memoria.Scripts.Battle
 
             if (v.Target.IsUnderAnyStatus(BattleStatus.Shell))
                 v.Context.Attack >>= 1;
-
-            if (StackBreakOrUpStatus[v.Caster.Data][1] != 0)
-                v.Context.Attack += ((StackBreakOrUpStatus[v.Caster.Data][1] * 10 * v.Context.Attack) / 100);
-            if (StackBreakOrUpStatus[v.Target.Data][3] != 0)
-                v.Context.Attack += ((StackBreakOrUpStatus[v.Target.Data][3] * 10 * v.Context.Attack) / 100);
 
             if (v.Caster.IsUnderAnyStatus(BattleStatus.CustomStatus18)) // Silence Easy Kill - 10% magic attack malus for bosses with Silence.
                 v.Context.Attack = (9 * v.Context.Attack) / 10;
@@ -570,6 +568,14 @@ namespace Memoria.Scripts.Battle
                 v.Context.Attack -= (ReduceWeaponDamage * v.Context.Attack) / 100;
 
             ViviFocus(v);
+
+            if (StackBreakOrUpStatus[v.Caster.Data][1] != 0)
+                v.Context.Attack += ((StackBreakOrUpStatus[v.Caster.Data][1] * v.Context.Attack) / 100);
+            if (StackBreakOrUpStatus[v.Target.Data][3] != 0)
+                v.Context.Attack -= ((StackBreakOrUpStatus[v.Target.Data][3] * v.Context.Attack) / 100);
+
+            if (v.Context.Attack < 1)
+                v.Context.Attack = 1;
         }
 
         public static void PrepareHpDraining(this BattleCalculator v)

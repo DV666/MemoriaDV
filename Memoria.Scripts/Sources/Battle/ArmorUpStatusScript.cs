@@ -66,14 +66,14 @@ namespace Memoria.DefaultScripts
                         btl_stat.AlterStatus(Target, BattleStatusId.CustomStatus3, parameters: "Remove");
                         Stack--;
                         if (Stack <= 0)
-                            return btl_stat.ALTER_INVALID;
+                            return btl_stat.ALTER_SUCCESS_NO_SET;
                     }
                 }
             }
             if (BasicPhysicalDefence == 0)
                 BasicPhysicalDefence = Target.PhysicalDefence;
 
-            StackBreakOrUpStatus[Target.Data][2] = Stack;
+            StackBreakOrUpStatus[Target.Data][2] = (Stack * 10);
 
             if (Stack > StackMaximum)
             {
@@ -132,24 +132,21 @@ namespace Memoria.DefaultScripts
         {
             if (!unit.IsUnderAnyStatus(BattleStatusId.CustomStatus7))
                 return false;
-            if (btl2d.ShouldShowSPS && unit.Data.bi.disappear == 0 && ShowNumberHUD)
-                Refresh(true);
-            else
-                Refresh(false);
-            return true;
-        }
-
-        private void Refresh(Boolean ShowNumberHUD)
-        {
-            BattleStatusDataEntry statusData = FF9StateSystem.Battle.FF9Battle.status_data[BattleStatusId.CustomStatus7];
-            if (NumberHUD != null)
+            if (unit.Data.bi.disappear != 0 || Stack <= 1)
             {
-                NumberHUD.FontSize = DefautSize;
-                btl2d.StatusMessages.Remove(NumberHUD);
-                Singleton<HUDMessage>.Instance.ReleaseObject(NumberHUD);
+                if (NumberHUD != null)
+                {
+                    NumberHUD.FontSize = DefautSize;
+                    btl2d.StatusMessages.Remove(NumberHUD);
+                    Singleton<HUDMessage>.Instance.ReleaseObject(NumberHUD);
+                    NumberHUD = null;
+                }
+                return true;
             }
-            if (Stack > 1 && ShowNumberHUD)
+
+            if (NumberHUD == null)
             {
+                BattleStatusDataEntry statusData = FF9StateSystem.Battle.FF9Battle.status_data[BattleStatusId.CustomStatus7];
                 btl2d.GetIconPosition(Target, btl2d.ICON_POS_DEFAULT, out Transform attachTransf, out Vector3 iconOff);
                 Vector3 OffSetPos = (statusData.SHPExtraPos + iconOff);
                 NumberHUD = Singleton<HUDMessage>.Instance.Show(attachTransf, $"[FFA500]   {Stack}", HUDMessage.MessageStyle.DEATH_SENTENCE, OffSetPos, 0);
@@ -160,6 +157,12 @@ namespace Memoria.DefaultScripts
                 NumberHUD.Follower.clampToScreen = false;
                 btl2d.StatusMessages.Add(NumberHUD);
             }
+
+            if (btl2d.ShouldShowSPS && ShowNumberHUD)
+                NumberHUD.Label = $"[FFA500]   {Stack}";
+            else
+                NumberHUD.Label = "";
+            return true;
         }
     }
 }

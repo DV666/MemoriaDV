@@ -73,7 +73,7 @@ namespace Memoria.DefaultScripts
             if (BasicMagic == 0)
                 BasicMagic = Target.Magic;
 
-            StackBreakOrUpStatus[Target.Data][1] = Stack;
+            StackBreakOrUpStatus[Target.Data][1] = (Stack * 10);
 
             if (Stack > StackMaximum)
             {
@@ -132,24 +132,21 @@ namespace Memoria.DefaultScripts
         {
             if (!unit.IsUnderAnyStatus(BattleStatusId.CustomStatus6))
                 return false;
-            if (btl2d.ShouldShowSPS && unit.Data.bi.disappear == 0 && ShowNumberHUD)
-                Refresh(true);
-            else
-                Refresh(false);
-            return true;
-        }
-
-        private void Refresh(Boolean ShowNumberHUD)
-        {
-            BattleStatusDataEntry statusData = FF9StateSystem.Battle.FF9Battle.status_data[BattleStatusId.CustomStatus6];
-            if (NumberHUD != null)
+            if (unit.Data.bi.disappear != 0 || Stack <= 1)
             {
-                NumberHUD.FontSize = DefautSize;
-                btl2d.StatusMessages.Remove(NumberHUD);
-                Singleton<HUDMessage>.Instance.ReleaseObject(NumberHUD);
+                if (NumberHUD != null)
+                {
+                    NumberHUD.FontSize = DefautSize;
+                    btl2d.StatusMessages.Remove(NumberHUD);
+                    Singleton<HUDMessage>.Instance.ReleaseObject(NumberHUD);
+                    NumberHUD = null;
+                }
+                return true;
             }
-            if (Stack > 1 && ShowNumberHUD)
+
+            if (NumberHUD == null)
             {
+                BattleStatusDataEntry statusData = FF9StateSystem.Battle.FF9Battle.status_data[BattleStatusId.CustomStatus6];
                 btl2d.GetIconPosition(Target, btl2d.ICON_POS_DEFAULT, out Transform attachTransf, out Vector3 iconOff);
                 Vector3 OffSetPos = (statusData.SHPExtraPos + iconOff);
                 NumberHUD = Singleton<HUDMessage>.Instance.Show(attachTransf, $"[FFA500]   {Stack}", HUDMessage.MessageStyle.DEATH_SENTENCE, OffSetPos, 0);
@@ -160,6 +157,12 @@ namespace Memoria.DefaultScripts
                 NumberHUD.Follower.clampToScreen = false;
                 btl2d.StatusMessages.Add(NumberHUD);
             }
+
+            if (btl2d.ShouldShowSPS && ShowNumberHUD)
+                NumberHUD.Label = $"[FFA500]   {Stack}";
+            else
+                NumberHUD.Label = "";
+            return true;
         }
     }
 }
