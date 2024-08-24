@@ -1089,7 +1089,7 @@ namespace Memoria.Scripts.Battle
             }
             if (v.Command.ScriptId != 88 && v.Command.Power != 99 & v.Command.HitRate != 99) // Prevent to trigger Last Stand on Game Over type attack.
             {
-                if (v.Target.HasSupportAbilityByIndex((SupportAbility)52) && SpecialSAEffect[v.Target.Data][1] > 0 && v.Target.HpDamage > v.Target.CurrentHp && v.Target.CurrentMp > 0) // Last Stand
+                if (v.Target.HasSupportAbilityByIndex((SupportAbility)52) && SpecialSAEffect[v.Target.Data][1] > 0 && v.Target.HpDamage > v.Target.CurrentHp && v.Target.CurrentMp > 0 && (v.Target.Flags & CalcFlag.HpRecovery) == 0) // Last Stand
                 {
                     SpecialSAEffect[v.Target.Data][1]--;
                     v.Target.HpDamage = (int)v.Target.CurrentHp - 1;
