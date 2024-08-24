@@ -33,7 +33,7 @@ namespace Memoria.Scripts.Battle
                 TranceSeekCustomAPI.CharacterBonusPassive(_v, "MagicAttack");
                 _v.Caster.PenaltyMini();
                 _v.Caster.EnemyTranceBonusAttack();
-                _v.PenaltyCommandDividedAttack();
+                TranceSeekCustomAPI.PenaltyCommandDividedAttack(_v);
                 if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)102))
                     TranceSeekCustomAPI.TryCriticalHit(_v);
                 _v.CalcHpMagicRecovery();

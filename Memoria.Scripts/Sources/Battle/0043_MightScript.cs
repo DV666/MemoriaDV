@@ -28,8 +28,8 @@ namespace Memoria.Scripts.Battle
                     _v.Context.Flags |= BattleCalcFlags.Miss;
                     return;
                 }
-                _v.Target.AlterStatus(CustomStatus.PowerUp, _v.Caster);
-                _v.Target.AlterStatus(CustomStatus.MagicUp, _v.Caster);
+                btl_stat.AlterStatus(_v.Target, CustomStatusId.PowerUp, parameters: "+2");
+                btl_stat.AlterStatus(_v.Target, CustomStatusId.ArmorUp, parameters: "+2");
                 _v.Target.AlterStatus(CustomStatus.Redemption, _v.Caster);
                 _v.Target.AlterStatus(CustomStatus.Redemption, _v.Caster);
                 if (_v.Caster.IsUnderAnyStatus(BattleStatus.Trance))

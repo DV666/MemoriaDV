@@ -40,7 +40,7 @@ namespace Memoria.Scripts.Battle
                     _v.SetCommandPower();
                     _v.Caster.PenaltyMini();
                     TranceSeekCustomAPI.PenaltyShellAttack(_v);
-                    _v.PenaltyCommandDividedAttack();
+                    TranceSeekCustomAPI.PenaltyCommandDividedAttack(_v);
                     _v.BonusElement();
                     if (TranceSeekCustomAPI.CanAttackMagic(_v))
                     {

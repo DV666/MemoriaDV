@@ -97,7 +97,7 @@ namespace Memoria.Scripts.Battle
                         TranceSeekCustomAPI.CharacterBonusPassive(_v, "MagicAttack");
                         _v.Caster.PenaltyMini();
                         TranceSeekCustomAPI.PenaltyShellAttack(_v);
-                        _v.PenaltyCommandDividedAttack();
+                        TranceSeekCustomAPI.PenaltyCommandDividedAttack(_v);
                         _v.BonusElement();
                         if (TranceSeekCustomAPI.CanAttackMagic(_v))
                         {

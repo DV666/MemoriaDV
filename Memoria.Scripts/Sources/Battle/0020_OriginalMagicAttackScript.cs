@@ -64,7 +64,7 @@ namespace Memoria.Scripts.Battle
                 }
                 _v.Caster.PenaltyMini();
                 TranceSeekCustomAPI.PenaltyShellAttack(_v);
-                _v.PenaltyCommandDividedAttack();
+                TranceSeekCustomAPI.PenaltyCommandDividedAttack(_v);
                 if ((_v.Command.AbilityId == BattleAbilityId.ScoopArt && GameRandom.Next8() % 4 == 0))
                 {
                     _v.Context.Attack *= 2;
@@ -85,7 +85,7 @@ namespace Memoria.Scripts.Battle
                     _v.Target.SetMagicDefense();
                     _v.Caster.PenaltyMini();
                     TranceSeekCustomAPI.PenaltyShellAttack(_v);
-                    _v.PenaltyCommandDividedAttack();
+                    TranceSeekCustomAPI.PenaltyCommandDividedAttack(_v);
                     if (_v.Command.HitRate == 99 && GameRandom.Next8() % 4 == 0)
                     {
                         _v.Context.Attack *= 2;

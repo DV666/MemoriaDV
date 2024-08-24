@@ -26,7 +26,7 @@ namespace Memoria.Scripts.Battle
 
         public static Dictionary<BTL_DATA, Int32[]> StackBreakOrUpStatus = new Dictionary<BTL_DATA, Int32[]>();  // [0] => StackStrength ; [1] => StackMagic ; [2] => StackArmor ; [3] => StackMental
 
-        public static Dictionary<BTL_DATA, Int32[]> MonsterMechanic = new Dictionary<BTL_DATA, Int32[]>(); // [0] => Trance Activated ; [1] => Special1 ; [2] => Special2 ; [3] => HPBoss10000? ; [4] => ResistStatusEasyKill ; [5] => Dragon
+        public static Dictionary<BTL_DATA, Int32[]> MonsterMechanic = new Dictionary<BTL_DATA, Int32[]>(); // [0] => Trance Activated ; [1] => Special1 ; [2] => Special2 ; [3] => HPBoss10000? ; [4] => ResistStatusEasyKill ; [5] => NerfGravity
 
         public static Dictionary<BTL_DATA, Int32[]> SpecialSAEffect = new Dictionary<BTL_DATA, Int32[]>(); // [0] => Millionaire (not used anymore) ; [1] => LastStand ; [2] => Instinct ; [3] => PreventTranceSFX ; [4] => Mode EX
 
@@ -510,11 +510,6 @@ namespace Memoria.Scripts.Battle
             //if (v.Context.HitRate > 100)
             //    v.Context.HitRate = 100;
 
-            if (StackBreakOrUpStatus[v.Caster.Data][1] != 0)
-                v.Context.HitRate += ((StackBreakOrUpStatus[v.Caster.Data][1] * v.Context.Attack) / 100);
-            if (StackBreakOrUpStatus[v.Target.Data][3] != 0)
-                v.Context.HitRate -= ((StackBreakOrUpStatus[v.Target.Data][3] * v.Context.Attack) / 100);
-
             if (v.Context.HitRate < 1)
                 v.Context.HitRate = 1;
 
@@ -576,6 +571,12 @@ namespace Memoria.Scripts.Battle
 
             if (v.Context.Attack < 1)
                 v.Context.Attack = 1;
+        }
+
+        public static void PenaltyCommandDividedAttack(this BattleCalculator v)
+        {
+            if (v.Command.IsDevided)
+                v.Context.Attack /= 2;
         }
 
         public static void PrepareHpDraining(this BattleCalculator v)
@@ -747,11 +748,11 @@ namespace Memoria.Scripts.Battle
                             }
                             ViviPreviousSpell[Vivi.Data] = v.Command.AbilityId;
                         }
-                        ViviPassive[v.Caster.Data][1]--;
-                        if (ViviPassive[v.Caster.Data][1] < 0)
-                            ViviPassive[v.Caster.Data][1] = 0;
                     }
-                }  
+                }
+                ViviPassive[v.Caster.Data][1]--;
+                if (ViviPassive[v.Caster.Data][1] < 0)
+                    ViviPassive[v.Caster.Data][1] = 0;
             }
         }
 
@@ -926,8 +927,6 @@ namespace Memoria.Scripts.Battle
 
         public static void SpecialSA(this BattleCalculator v)
         {
-            if (MonsterMechanic[v.Target.Data][5] > 0)
-                MonsterMechanic[v.Target.Data][5] = 0;
             if (v.Target.HpDamage > 0 && v.Target.IsUnderAnyStatus(CustomStatus.MechanicalArmor) && MonsterMechanic[v.Target.Data][1] > 0 && v.Target.Data != v.Caster.Data && (v.Target.Flags & CalcFlag.HpRecovery) == 0) // Armor Mechanical
             {
                 Int32 DamageReduction = MonsterMechanic[v.Target.Data][1] * 10;
@@ -942,9 +941,12 @@ namespace Memoria.Scripts.Battle
                 if (MonsterMechanic[v.Target.Data][1] < 4 && MonsterMechanic[v.Target.Data][2] == 0 && v.Target.Data.dms_geo_id == 446) // Refresh Garland stand animation
                     v.Target.Data.mot[2] = "ANH_MON_B3_185_003";
                 if (MonsterMechanic[v.Target.Data][1] < 0)
+                {
                     MonsterMechanic[v.Target.Data][1] = 0;
-
-                v.Target.TryAlterSingleStatus(CustomStatusId.MechanicalArmor, true, v.Caster, MonsterMechanic[v.Target.Data][1]);
+                    v.Target.RemoveStatus(CustomStatusId.MechanicalArmor);
+                }
+                else
+                    v.Target.TryAlterSingleStatus(CustomStatusId.MechanicalArmor, true, v.Caster, MonsterMechanic[v.Target.Data][1]);
             }
             if (v.Context.IsAbsorb)
             {
@@ -1047,7 +1049,7 @@ namespace Memoria.Scripts.Battle
             {
                 HealHPSAOrItem = v.Target.HpDamage / 2;
             }
-            if (v.Caster.HasSupportAbilityByIndex((SupportAbility)1061) && (v.Command.Id == BattleCommandId.Attack || v.Command.Id == BattleCommandId.Counter)) // Mug+
+            if (v.Caster.HasSupportAbilityByIndex((SupportAbility)1061) && (v.Command.Id == BattleCommandId.Attack || v.Command.Id == BattleCommandId.Counter) && v.Target.Data != v.Caster.Data) // Mug+
             {
                 HealHPSAOrItem += v.Target.HpDamage / 4;
             }
@@ -1085,13 +1087,14 @@ namespace Memoria.Scripts.Battle
                     }
                 );
             }
-
-            if (v.Target.HasSupportAbilityByIndex((SupportAbility)52) && SpecialSAEffect[v.Target.Data][1] > 0 && v.Target.HpDamage > v.Target.CurrentHp && v.Target.CurrentMp > 0) // Last Stand
+            if (v.Command.ScriptId != 88 && v.Command.Power != 99 & v.Command.HitRate != 99) // Prevent to trigger Last Stand on Game Over type attack.
             {
-                SpecialSAEffect[v.Target.Data][1]--;
-                v.Target.HpDamage = (int)v.Target.CurrentHp - 1;
-                v.Target.CurrentMp = v.Target.HasSupportAbilityByIndex((SupportAbility)1052) ? (v.Target.CurrentMp / 2) : 0;
-                Dictionary<String, String> localizedMessage = new Dictionary<String, String>
+                if (v.Target.HasSupportAbilityByIndex((SupportAbility)52) && SpecialSAEffect[v.Target.Data][1] > 0 && v.Target.HpDamage > v.Target.CurrentHp && v.Target.CurrentMp > 0) // Last Stand
+                {
+                    SpecialSAEffect[v.Target.Data][1]--;
+                    v.Target.HpDamage = (int)v.Target.CurrentHp - 1;
+                    v.Target.CurrentMp = v.Target.HasSupportAbilityByIndex((SupportAbility)1052) ? (v.Target.CurrentMp / 2) : 0;
+                    Dictionary<String, String> localizedMessage = new Dictionary<String, String>
                             {
                                 { "US", "Last Stand!" },
                                 { "UK", "Last Stand!" },
@@ -1101,7 +1104,8 @@ namespace Memoria.Scripts.Battle
                                 { "GR", "Last Stand!" },
                                 { "IT", "Last Stand!" },
                             };
-                btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[FDEE00]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 10);
+                    btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[FDEE00]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 10);
+                }
             }
 
             if (v.Caster.Weapon == (RegularItem)1100 && (v.Target.Flags & CalcFlag.HpRecovery) == 0)

@@ -115,17 +115,12 @@ namespace Memoria.Scripts.Battle
                             else
                                 _v.Target.HpDamage = (int)(_v.Target.MaximumHp / 3);
                         }
-                        else if (_v.Caster.Data.dms_geo_id == 347 && _v.Command.HitRate == 1) // Ponction - Blambourine
-                        {
-                            _v.Caster.AlterStatus(TranceSeekCustomAPI.CustomStatus.PowerUp, _v.Caster);
-                            _v.Caster.AlterStatus(TranceSeekCustomAPI.CustomStatus.MagicUp, _v.Caster);
-                        }
-                        else if (_v.Command.HitRate == 223) // Prison Cage CD4 - Super Vampire
+                        else if (_v.Command.HitRate == 223) // Prison Cage CD4 - Super Vampire / Plant Brain - Super Punction
                         {
                             if (_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill))
-                                _v.Target.HpDamage = (int)((_v.Target.MaximumHp - 10000) / 2);
+                                _v.Target.HpDamage = (int)((_v.Target.MaximumHp - 10000) / 2) - 1;
                             else
-                                _v.Target.HpDamage = (int)(_v.Target.MaximumHp / 2);
+                                _v.Target.HpDamage = (int)(_v.Target.MaximumHp / 2) - 1;
 
                             _v.Caster.AlterStatus(TranceSeekCustomAPI.CustomStatus.PowerUp, _v.Caster);
                             _v.Caster.AlterStatus(TranceSeekCustomAPI.CustomStatus.MagicUp, _v.Caster);

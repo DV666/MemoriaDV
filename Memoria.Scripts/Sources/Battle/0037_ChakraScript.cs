@@ -31,11 +31,9 @@ namespace Memoria.Scripts.Battle
                         _v.Target.Flags |= (CalcFlag.MpAlteration | CalcFlag.MpRecovery);
                         _v.Target.MpDamage = (int)(_v.Target.MaximumMp / 2U);
                     }
-                    _v.Target.Magic += (byte)(_v.Target.Magic / 10);
-                    _v.Target.Will += (byte)(_v.Target.Will / 10);
+                    _v.Target.TryAlterSingleStatus(BattleStatusId.ChangeStat, true, _v.Caster, "Magic", Math.Min(99, _v.Target.Magic + (_v.Target.Magic / 10)));
+                    _v.Target.TryAlterSingleStatus(BattleStatusId.ChangeStat, true, _v.Caster, "Will", Math.Min(99, _v.Target.Will + (_v.Target.Will / 10)));
                     TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
-                    _v.Target.AlterStatus(TranceSeekCustomAPI.CustomStatus.MagicUp, _v.Caster);
-                    _v.Target.AlterStatus(TranceSeekCustomAPI.CustomStatus.MentalUp, _v.Caster);
                 }
                 else // Ogre - Zenitude
                 {

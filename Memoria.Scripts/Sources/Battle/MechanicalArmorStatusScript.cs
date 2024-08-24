@@ -55,9 +55,12 @@ namespace Memoria.DefaultScripts
 
         public override Boolean Remove()
         {
-            NumberHUD.FontSize = DefautSize;
-            btl2d.StatusMessages.Remove(NumberHUD);
-            Singleton<HUDMessage>.Instance.ReleaseObject(NumberHUD);
+            if (NumberHUD != null)
+            {
+                NumberHUD.FontSize = DefautSize;
+                btl2d.StatusMessages.Remove(NumberHUD);
+                Singleton<HUDMessage>.Instance.ReleaseObject(NumberHUD);
+            }
             return true;
         }
 

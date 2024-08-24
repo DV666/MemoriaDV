@@ -32,6 +32,7 @@ namespace Memoria.Scripts.Battle
             _v.Target.SetMagicDefense();
             _v.Caster.EnemyTranceBonusAttack();
             TranceSeekCustomAPI.PenaltyShellAttack(_v);
+            TranceSeekCustomAPI.PenaltyCommandDividedAttack(_v);
             _v.BonusElement();
             if (TranceSeekCustomAPI.CanAttackMagic(_v))
             {

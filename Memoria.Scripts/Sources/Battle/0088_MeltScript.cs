@@ -27,8 +27,9 @@ namespace Memoria.Scripts.Battle
                 TranceSeekCustomAPI.SpecialSAEffect[_v.Target.Data][1] = 0;
             }
             _v.Target.Flags |= CalcFlag.HpAlteration;
-            if (_v.Command.Power == 99 & _v.Command.HitRate == 99)
+            if (_v.Command.Power == 99 & _v.Command.HitRate == 99) // Explosion to make a game over.
             {
+                _v.Target.RemoveStatus(BattleStatus.AutoLife);
                 _v.Target.HpDamage = 9999;
             }
             else

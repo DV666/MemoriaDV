@@ -92,6 +92,7 @@ namespace Memoria.Scripts.Battle
                 if (unit.IsUnderAnyStatus(BattleStatus.EasyKill))
                 {
                     MonsterMechanic[unit.Data][4] = 100; // Reduce time for Sleep/Freeze/Stop
+                    MonsterMechanic[unit.Data][5] = 4; // Reduce gravity damage
                 }
                 if (!unit.IsPlayer) // Check if boss have +10000 HP for scripts
                 {
@@ -124,21 +125,19 @@ namespace Memoria.Scripts.Battle
             { 295, 0 }, // Bach
 		    { 115, 1 },	// Kuja 1st (Ifa)
 		    { 920, 0 }, { 921, 0 }, // Friendly Belhamel
-            { 303, 0 }, // Bamblourine
             { 938, 0 }, // Necron
             { 251, 0 }, { 363, 0 }, { 364, 0 }, { 838, 0 }, // Friendly Eskuriax
             { 192, 0 }, { 193, 0 }, { 196, 0 }, { 197, 0 }, { 199, 0 }, // Friendly Fantôme
             { 300, 0 }, // Fourmillion
             { 2, 2 }, // Gardienne du feu
-            { 107, 0 }, // Gargantua
+            { 107, 0 }, // Gargantua (1st)
             { 890, 0 }, // Garland
             { 326, 0 }, // Gisamark
             { 723, 0 }, // Friendly Garuda
             { 57, 0 }, // Ozma
             { 211, 0 }, // Ozma
             { 365, 0 }, { 367, 0 }, { 368, 0 }, { 595, 0 }, { 605, 0 }, { 606, 0 }, // Friendly Jabah
-            { 891, 0 }, // Kuja 2nd
-            { 891, 1 }, // Trance Kuja 1st
+            { 891, 0 }, { 891, 1 },  // Kuja + Trance Kuja (fin CD3)
             { 937, 0 }, // Trance Kuja 2nd (Crystal World)
             { 330, 0 }, // Kwell
             { 75, 0 }, // Larvalar
@@ -164,7 +163,7 @@ namespace Memoria.Scripts.Battle
             { 296, 0 }, // Valseur 3
             { 930, 1 }, { 930, 2 }, { 930, 3 }, // Adds from Lovecraft fight
             { 668, 0 },  { 217, 0 }, { 670, 0 }, { 751, 0 }, { 652, 0 }, { 664, 0 }, { 216, 0 }, // Friendly Yeti
-            // CD4 Bosses
+            // ########### CD4 Bosses ##############
             { 93, 2 }, { 93, 3 }, { 93, 4 }, { 93, 5 } // Prison Cage + Little Girl
         };
     }

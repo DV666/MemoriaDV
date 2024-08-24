@@ -47,6 +47,10 @@ namespace Memoria.DefaultScripts
                     }
                 }
             }
+            else
+            {
+                Stack++;
+            }
 
             if (Stack > StackMaximum)
             {

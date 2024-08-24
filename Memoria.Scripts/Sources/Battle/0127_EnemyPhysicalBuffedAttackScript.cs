@@ -39,14 +39,14 @@ namespace Memoria.Scripts.Battle
                     _v.CalcPhysicalHpDamage();
                     TranceSeekCustomAPI.InfusedWeaponStatus(_v);
                     TranceSeekCustomAPI.RaiseTrouble(_v);
-                    if (_v.Command.HitRate == 222)
+                    if (_v.Command.HitRate == 222) // Motivation Gauche
                     {
-                        _v.Command.AbilityStatus |= (TranceSeekCustomAPI.CustomStatus.PowerUp | TranceSeekCustomAPI.CustomStatus.MagicUp);
+                        _v.Command.AbilityStatus |= TranceSeekCustomAPI.CustomStatus.PowerUp;
                         TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
                     }
-                    else if (_v.Command.HitRate == 223)
+                    else if (_v.Command.HitRate == 223) // Motivation droite
                     {
-                        _v.Command.AbilityStatus |= (TranceSeekCustomAPI.CustomStatus.ArmorUp | TranceSeekCustomAPI.CustomStatus.MentalUp);
+                        _v.Command.AbilityStatus |= TranceSeekCustomAPI.CustomStatus.ArmorUp;
                         TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
                     }
                     else

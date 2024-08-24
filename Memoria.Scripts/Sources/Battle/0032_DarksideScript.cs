@@ -21,15 +21,6 @@ namespace Memoria.Scripts.Battle
         public void Perform()
         {
             _v.PhysicalAccuracy();
-            if (_v.Command.AbilityId != BattleAbilityId.Darkside)
-            {
-                if (TranceSeekCustomAPI.TryPhysicalHit(_v))
-                {
-                    _v.Context.Flags |= BattleCalcFlags.Miss;
-                    return;
-                }
-            }
-
             if (_v.Caster.IsPlayer)
             {
                 _v.WeaponPhysicalParams();

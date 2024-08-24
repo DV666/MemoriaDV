@@ -53,7 +53,7 @@ namespace Memoria.Scripts.Battle
                         _v.Context.AttackPower = _v.Caster.GetWeaponPower(_v.Command);
                         _v.Target.SetMagicDefense();
                         _v.Context.Attack = _v.Caster.Magic + baseDamage;
-                        TranceSeekCustomAPI.BonusWeaponElement(_v);
+                        _v.Command.Element = _v.Caster.WeaponElement;
                     }
                     else
                         return;
@@ -65,7 +65,7 @@ namespace Memoria.Scripts.Battle
                 _v.Caster.PenaltyMini();
                 _v.Caster.EnemyTranceBonusAttack();
                 TranceSeekCustomAPI.PenaltyShellAttack(_v);
-                _v.PenaltyCommandDividedAttack();
+                TranceSeekCustomAPI.PenaltyCommandDividedAttack(_v);
                 if (_v.Caster.Data.dms_geo_id == 5 || _v.Caster.Data.dms_geo_id == 267) // Kuja (multiple target malus)
                 {
                     if (_v.Context.sfxThread.targetId != 1 && _v.Context.sfxThread.targetId != 2 && _v.Context.sfxThread.targetId != 4 && _v.Context.sfxThread.targetId != 8)
@@ -100,7 +100,7 @@ namespace Memoria.Scripts.Battle
             TranceSeekCustomAPI.CharacterBonusPassive(_v, "MagicAttack");
             _v.Caster.PenaltyMini();
             TranceSeekCustomAPI.PenaltyShellAttack(_v);
-            _v.PenaltyCommandDividedAttack();
+            TranceSeekCustomAPI.PenaltyCommandDividedAttack(_v);
             _v.BonusElement();
 
             if (!TranceSeekCustomAPI.CanAttackMagic(_v))
