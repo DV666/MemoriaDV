@@ -1,13 +1,9 @@
 ﻿using Ini;
-using SharpCompress.Archives;
-using SharpCompress.Common;
-using SharpCompress.Readers;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -18,26 +14,41 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Markup;
 using System.Windows.Media.Imaging;
-using static System.Windows.Forms.DataFormats;
 using Application = System.Windows.Application;
-using Color = System.Drawing.Color;
-using GridView = System.Windows.Controls.GridView;
 using GridViewColumnHeader = System.Windows.Controls.GridViewColumnHeader;
 using ListView = System.Windows.Controls.ListView;
 using MessageBox = System.Windows.Forms.MessageBox;
-using Point = System.Drawing.Point;
 
 namespace Memoria.Launcher
 {
     public partial class ModManagerWindow : Window, IComponentConnector
     {
+        public static readonly String[] OutdatedModsVersions = // "ModName_Version"
+        {
+            "Alternate Fantasy_6.0",
+            "Alternate Fantasy_6.1",
+            "Alternate Fantasy_6.2",
+            "Alternate Fantasy_6.3",
+            "Alternate Fantasy_6.4",
+            "Alternate Fantasy_6.5",
+            "Trance Seek_0.3.20",
+            "Trance Seek_0.3.21",
+            "Trance Seek_0.3.22",
+            "Trance Seek_0.3.23",
+            "Playable Character Pack_1.0",
+            "Playable Character Pack_1.1",
+        };
+
         public ObservableCollection<Mod> modListInstalled = new ObservableCollection<Mod>();
         public ObservableCollection<Mod> modListCatalog = new ObservableCollection<Mod>();
         public ObservableCollection<Mod> downloadList = new ObservableCollection<Mod>();
         public String StatusMessage = "";
+        public Boolean AreThereModIncompatibilies = false;
+        public Boolean AreThereModUpdates = false;
 
         public String[] supportedArchives = { "rar", "unrar", "zip", "bzip2", "gzip", "tar", "7z", "lzip", "gz" };
 
@@ -78,40 +89,118 @@ namespace Memoria.Launcher
             if (modListInstalled.Count == 0)
                 tabCtrlMain.SelectedIndex = 1;
             UpdateModDetails((Mod)null);
+            CheckIncompMods();
         }
 
         private void CheckOutdatedMods()
         {
-            Boolean allModsAreUpToDate = true;
+            AreThereModUpdates = false;
             foreach (Mod mod in modListInstalled)
             {
                 if (mod != null && ((mod.Name == "Moguri Mod" || mod.Name == "MoguriFiles") && mod.InstallationPath.Contains("MoguriFiles")) || (mod.Name == "Moguri - 3D textures" && mod.InstallationPath.Contains("Moguri_3Dtextures")))
                 {
-                    mod.Name = "⚠️ " + mod.Name + " (Outdated)";
+                    mod.UpdateIcon = "⏫";
+                    mod.CurrentVersion = Version.Parse("8.3");
+                    AreThereModUpdates = true;
                     mod.Description = "Please download the latest Moguri Mod from the catalog and disable/remove this one";
+                    mod.UpdateTooltip = "Please download the latest Moguri Mod from the catalog and disable/remove this one";
                 }
-                if (mod != null && mod.Name != null & mod.CurrentVersion != null)
+                if (mod != null && mod.Name != null)
                 {
                     foreach (Mod catalog_mod in modListCatalog)
                     {
-                        if (catalog_mod != null && catalog_mod.Name != null & catalog_mod.CurrentVersion != null && mod.Name == catalog_mod.Name)
+                        if (catalog_mod != null && catalog_mod.Name != null && mod.Name == catalog_mod.Name)
                         {
                             Boolean versionCorresponds = mod.CurrentVersion == catalog_mod.CurrentVersion;
                             mod.IsOutdated = catalog_mod.IsOutdated = !versionCorresponds;
                             if (mod.IsOutdated)
                             {
-                                mod.InfoIcon = "⏫";
-                                allModsAreUpToDate = false;
+                                mod.UpdateIcon = "⏫";
+                                mod.UpdateTooltip = Lang.ModEditor.UpdateTooltip + catalog_mod.CurrentVersion;
+                                AreThereModUpdates = true;
                             }
                             else
                             {
-                                mod.InfoIcon = "";
+                                mod.UpdateIcon = null;
+                                if (catalog_mod.IncompatibleWith != null)
+                                    mod.IncompatibleWith = catalog_mod.IncompatibleWith;
                             }
                         }
                     }
                 }
             }
-            colMyModsInfoIcon.Width = allModsAreUpToDate ? 0 : 28;
+            colMyModsUpdateIcon.Width = AreThereModUpdates ? 28 : 0;
+            lstMods.Items.Refresh();
+        }
+
+        private void CheckIncompMods()
+        {
+            AreThereModIncompatibilies = false;
+            foreach (Mod mod in modListInstalled) // reset state
+            {
+                mod.IncompIcon = null;
+                mod.ActiveIncompatibleMods = null;
+            }
+            foreach (Mod mod in modListInstalled)
+            {
+                if (mod != null && mod.Name != null && mod.IncompatibleWith != null && mod.IsActive)
+                {
+                    IEnumerable<String> Incomps = mod.IncompatibleWith.Split(',');
+                    foreach (String Incomp in Incomps)
+                    {
+                        String incompName = Incomp.Trim();
+                        foreach (Mod other_mod in modListInstalled)
+                        {
+                            if (other_mod != null && other_mod.Name != null && other_mod.Name == incompName && other_mod.IsActive)
+                            {
+                                mod.IncompIcon = "⚔️";
+                                other_mod.IncompIcon = "⚔️";
+
+                                if (mod.ActiveIncompatibleMods == null)
+                                    mod.ActiveIncompatibleMods = Lang.ModEditor.ActiveIncompatibleMods + other_mod.Name;
+                                else
+                                    mod.ActiveIncompatibleMods += ", " + other_mod.Name;
+
+                                if (other_mod.ActiveIncompatibleMods == null)
+                                    other_mod.ActiveIncompatibleMods = Lang.ModEditor.ActiveIncompatibleMods + mod.Name;
+                                else
+                                    other_mod.ActiveIncompatibleMods += ", " + mod.Name;
+
+                                AreThereModIncompatibilies = true;
+                            }
+                        }
+                    }
+                }
+                if (mod != null && mod.Name != null && mod.CurrentVersion != null)
+                {
+                    String ver = mod.CurrentVersion?.ToString() ?? "0";
+                    foreach (String outdated in OutdatedModsVersions)
+                    {
+                        if (outdated == mod.Name + "_" + ver)
+                        {
+                            mod.IncompIcon = "⚔️";
+                            if (mod.ActiveIncompatibleMods == null)
+                                mod.ActiveIncompatibleMods = Lang.ModEditor.IncompatibleWithMemoria;
+                            else
+                                mod.ActiveIncompatibleMods += "\n\n" + Lang.ModEditor.IncompatibleWithMemoria;
+                            AreThereModIncompatibilies = true;
+                        }
+                    }
+                }
+            }
+            colMyModsIncompIcon.Width = AreThereModIncompatibilies ? 28 : 0;
+            lstMods.Items.Refresh();
+        }
+
+        private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            lstMods.Items.Refresh();
+            lstCatalogMods.Items.Refresh();
+        }
+
+        private void CheckBox_Click(object sender, RoutedEventArgs e)
+        {
+            CheckIncompMods();
         }
 
         private void OnClosing(Object sender, CancelEventArgs e)
@@ -126,7 +215,8 @@ namespace Memoria.Launcher
                 downloadCatalogClient.CancelAsync();
             UpdateSettings();
             ((MainWindow)this.Owner).ModdingWindow = null;
-            ((MainWindow)this.Owner).MemoriaIniControl.ComeBackToLauncherFromModManager();
+            ((MainWindow)this.Owner).MemoriaIniControl.ComeBackToLauncherReloadSettings();
+            ((MainWindow)this.Owner).ComeBackToLauncherFromModManager(AreThereModUpdates, AreThereModIncompatibilies);
         }
 
         [DllImport("user32.dll")]
@@ -170,12 +260,10 @@ namespace Memoria.Launcher
             if (canDownload)
             {
                 btnDownload.IsEnabled = true;
-                btnDownload.Background = System.Windows.Media.Brushes.White;
             }
             else
             {
                 btnDownload.IsEnabled = false;
-                btnDownload.Background = System.Windows.Media.Brushes.Black;
             }
         }
         private void OnModListDoubleClick(Object sender, RoutedEventArgs e)
@@ -370,6 +458,7 @@ namespace Memoria.Launcher
                     mod.IsActive = !isFirstModActive;
                 lstMods.Items.Refresh();
             }
+            CheckIncompMods();
         }
 
         private void OnPreviewFileDownloaded(Object sender, EventArgs e)
@@ -568,7 +657,7 @@ namespace Memoria.Launcher
                         }
                         if (proceedNext)
                         {
-                            if (Directory.Exists(destPath))
+                            /*if (Directory.Exists(destPath))
                             {
                                 if (MessageBox.Show($"The current version of the mod folder, {destPath}, will be deleted before moving the new version.\nProceed?", "Updating", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes)
                                 {
@@ -579,7 +668,9 @@ namespace Memoria.Launcher
                                     Process.Start(Path.GetFullPath(path));
                                     proceedNext = false;
                                 }
-                            }
+                            }*/
+                            if (Directory.Exists(destPath))
+                                Directory.Delete(destPath, true);
                             if (proceedNext)
                             {
                                 Directory.Move(sourcePath, destPath);
@@ -745,6 +836,7 @@ namespace Memoria.Launcher
             }
             UpdateInstalledPriorityValue();
             CheckOutdatedMods();
+            CheckIncompMods();
         }
 
         private Boolean GenerateAutomaticDescriptionFile(String folderName)
@@ -833,6 +925,8 @@ namespace Memoria.Launcher
                 if (PreviewModRelease.Text == "" && PreviewModReleaseOriginal.Text != "") PreviewModRelease.Text = PreviewModReleaseOriginal.Text;
                 PreviewModAuthor.Text = mod.Author ?? "Unknown";
                 PreviewModDescription.Text = mod.Description != null && mod.Description != "" ? mod.Description : "No description.";
+                if (mod.IncompatibleWith != null && mod.IncompatibleWith != "" && !mod.Description.Contains("⚠️"))
+                    mod.Description = $"⚠️ The mod is incompatible with: {mod.IncompatibleWith}.\n\n{mod.Description}";
                 PreviewModReleaseNotes.Text = mod.PatchNotes ?? "";
                 PreviewModCategory.Text = mod.Category ?? "Unknown";
                 PreviewModWebsite.ToolTip = mod.Website ?? String.Empty;
@@ -1055,7 +1149,7 @@ namespace Memoria.Launcher
             tabMyMods.Text = Lang.ModEditor.TabMyMods;
             //colMyModsPriority.Header = Lang.ModEditor.Priority;
             colMyModsName.Header = Lang.ModEditor.Name;
-            colMyModsAuthor.Header = Lang.ModEditor.Author;
+            //colMyModsAuthor.Header = Lang.ModEditor.Author;
             colMyModsCategory.Header = Lang.ModEditor.Category;
             //colMyModsActive.Header = Lang.ModEditor.Active;
             btnMoveUp.ToolTip = Lang.ModEditor.TooltipMoveUp;
