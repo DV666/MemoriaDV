@@ -32,7 +32,29 @@ namespace Memoria.Scripts.Battle
                         _v.Target.MpDamage = (int)(_v.Target.MaximumMp / 2U);
                     }
                     _v.Target.TryAlterSingleStatus(BattleStatusId.ChangeStat, true, _v.Caster, "Magic", Math.Min(99, _v.Target.Magic + (_v.Target.Magic / 10)));
+                    Dictionary<String, String> localizedMessage = new Dictionary<String, String>
+                                {
+                                    { "US", "Magic ↑" },
+                                    { "UK", "Magic ↑" },
+                                    { "JP", "まりょく ↑" },
+                                    { "ES", "POT magico ↑" },
+                                    { "FR", "Magie ↑" },
+                                    { "GR", "Magia ↑" },
+                                    { "IT", "Zauber ↑" },
+                                };
+                    btl2d.Btl2dReqSymbolMessage(_v.Caster.Data, "[F9FF39]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 0);
                     _v.Target.TryAlterSingleStatus(BattleStatusId.ChangeStat, true, _v.Caster, "Will", Math.Min(99, _v.Target.Will + (_v.Target.Will / 10)));
+                    Dictionary<String, String> localizedMessage2 = new Dictionary<String, String>
+                                {
+                                    { "US", "Spirit ↑" },
+                                    { "UK", "Spirit ↑" },
+                                    { "JP", "きりょく ↑" },
+                                    { "ES", "POT spirito ↑" },
+                                    { "FR", "Esprit ↑" },
+                                    { "GR", "Espíritu ↑" },
+                                    { "IT", "Wille ↑" },
+                                };
+                    btl2d.Btl2dReqSymbolMessage(_v.Caster.Data, "[F9FF39]", localizedMessage2, HUDMessage.MessageStyle.DAMAGE, 5);
                     TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
                 }
                 else // Ogre - Zenitude

@@ -4,7 +4,7 @@ using Memoria.Data;
 namespace Memoria.Scripts.Battle
 {
     [BattleScript(Id)]
-    public sealed class PoisonMagicLancerScript : IBattleScript, IEstimateBattleScript
+    public sealed class PoisonMagicLancerScript : IBattleScript
     {
         public const Int32 Id = 0119;
 
@@ -51,33 +51,6 @@ namespace Memoria.Scripts.Battle
                 }
                 _v.TryAlterMagicStatuses();
             }
-        }
-
-        public Single RateTarget()
-        {
-            _v.NormalMagicParams();
-            TranceSeekCustomAPI.CharacterBonusPassive(_v, "MagicAttack");
-            _v.Caster.PenaltyMini();
-            TranceSeekCustomAPI.PenaltyShellAttack(_v);
-            TranceSeekCustomAPI.PenaltyCommandDividedAttack(_v);
-            _v.BonusElement();
-
-            if (!TranceSeekCustomAPI.CanAttackMagic(_v))
-                return 0;
-
-            if (_v.Target.IsUnderAnyStatus(BattleStatus.Reflect) && !_v.Command.IsReflectNull)
-                return 0;
-
-            _v.CalcHpDamage();
-
-            Single rate = Math.Min(_v.Target.HpDamage, _v.Target.CurrentHp);
-
-            if ((_v.Target.Flags & CalcFlag.HpRecovery) == CalcFlag.HpRecovery)
-                rate *= -1;
-            if (_v.Target.IsPlayer)
-                rate *= -1;
-
-            return rate;
         }
     }
 }
