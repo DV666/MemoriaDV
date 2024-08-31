@@ -98,7 +98,7 @@ namespace Memoria.Scripts.Battle
                         _v.Caster.PenaltyMini();
                         TranceSeekCustomAPI.PenaltyShellAttack(_v);
                         TranceSeekCustomAPI.PenaltyCommandDividedAttack(_v);
-                        _v.BonusElement();
+                        TranceSeekCustomAPI.BonusElement(_v);
                         if (TranceSeekCustomAPI.CanAttackMagic(_v))
                         {
                             if (_v.Target.IsLevitate)

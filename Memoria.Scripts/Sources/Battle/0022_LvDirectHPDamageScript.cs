@@ -40,7 +40,7 @@ namespace Memoria.Scripts.Battle
                     _v.Caster.PenaltyMini();
                     TranceSeekCustomAPI.PenaltyShellAttack(_v);
                     TranceSeekCustomAPI.PenaltyCommandDividedAttack(_v);
-                    _v.BonusElement();
+                    TranceSeekCustomAPI.BonusElement(_v);
                     if (TranceSeekCustomAPI.CanAttackMagic(_v))
                     {
                         _v.CalcHpDamage();
@@ -61,7 +61,7 @@ namespace Memoria.Scripts.Battle
                         {
                             _v.Context.Attack = _v.Context.Attack / 2;
                         }
-                        _v.BonusElement();
+                        TranceSeekCustomAPI.BonusElement(_v);
                         if (TranceSeekCustomAPI.CanAttackMagic(_v))
                         {
                             _v.CalcCannonProportionDamage();
@@ -90,7 +90,7 @@ namespace Memoria.Scripts.Battle
                                 _v.Caster.PenaltyMini();
                                 TranceSeekCustomAPI.PenaltyShellAttack(_v);
                                 TranceSeekCustomAPI.PenaltyCommandDividedAttack(_v);
-                                _v.BonusElement();
+                                TranceSeekCustomAPI.BonusElement(_v);
                                 if (TranceSeekCustomAPI.CanAttackMagic(_v))
                                 {
                                     _v.CalcHpDamage();

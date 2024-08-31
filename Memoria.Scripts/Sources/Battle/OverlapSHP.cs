@@ -1,42 +1,73 @@
 ﻿using System;
-using UnityEngine;
 using Memoria.Data;
-using Object = System.Object;
 using System.Collections.Generic;
-using Unity.IO.Compression;
-using Memoria.Scripts.Battle;
 
 namespace Memoria.DefaultScripts
 {
     public static class OverlapSHP
     {
-        // Here, write the list of statuses with SHP that should overlap, ie. only one SHP will be displayed at a time
-        private static List<BattleStatusId> OverlappingSHP = [BattleStatusId.CustomStatus1, BattleStatusId.CustomStatus2, BattleStatusId.CustomStatus3, BattleStatusId.CustomStatus4,
-            BattleStatusId.CustomStatus5, BattleStatusId.CustomStatus6, BattleStatusId.CustomStatus7, BattleStatusId.CustomStatus8];
-        private static Dictionary<BTL_DATA, Int32> OverlapIndex = new Dictionary<BTL_DATA, Int32>();
-
-        public static void SetupOverlappingSHP(BattleUnit unit)
+        public static class CustomStatusId
         {
-            if (OverlapIndex.ContainsKey(unit.Data))
+            public const BattleStatusId PowerBreak = BattleStatusId.CustomStatus1;
+            public const BattleStatusId MagicBreak = BattleStatusId.CustomStatus2;
+            public const BattleStatusId ArmorBreak = BattleStatusId.CustomStatus3;
+            public const BattleStatusId MentalBreak = BattleStatusId.CustomStatus4;
+            public const BattleStatusId PowerUp = BattleStatusId.CustomStatus5;
+            public const BattleStatusId MagicUp = BattleStatusId.CustomStatus6;
+            public const BattleStatusId ArmorUp = BattleStatusId.CustomStatus7;
+            public const BattleStatusId MentalUp = BattleStatusId.CustomStatus8;
+            public const BattleStatusId Dragon = BattleStatusId.CustomStatus9;
+            public const BattleStatusId ZombieArmor = BattleStatusId.CustomStatus10;
+            public const BattleStatusId MechanicalArmor = BattleStatusId.CustomStatus11;
+            public const BattleStatusId Redemption = BattleStatusId.CustomStatus12;
+            public const BattleStatusId Bulwark = BattleStatusId.CustomStatus13;
+            public const BattleStatusId PerfectDodge = BattleStatusId.CustomStatus14;
+            public const BattleStatusId PerfectCrit = BattleStatusId.CustomStatus15;
+            public const BattleStatusId Vieillissement = BattleStatusId.CustomStatus16;
+            public const BattleStatusId SleepEasyKill = BattleStatusId.CustomStatus17;
+            public const BattleStatusId SilenceEasyKill = BattleStatusId.CustomStatus18;
+            public const BattleStatusId Rage = BattleStatusId.CustomStatus19;
+            public const BattleStatusId Runic = BattleStatusId.CustomStatus20;
+        }
+
+        // Here, write the list of statuses with SHP that should overlap, ie. only one SHP will be displayed at a time
+        private static List<BattleStatusId> OverlappingSHP1 = [CustomStatusId.PowerBreak, CustomStatusId.MagicBreak, CustomStatusId.ArmorBreak, CustomStatusId.MentalBreak,
+            CustomStatusId.PowerUp, CustomStatusId.MagicUp, CustomStatusId.ArmorUp, CustomStatusId.MentalUp];
+        private static List<BattleStatusId> OverlappingSHP2 = [CustomStatusId.Redemption, CustomStatusId.MechanicalArmor, CustomStatusId.Bulwark, CustomStatusId.Rage];
+        private static Dictionary<BTL_DATA, Int32> OverlapIndex1 = new Dictionary<BTL_DATA, Int32>();
+        private static Dictionary<BTL_DATA, Int32> OverlapIndex2 = new Dictionary<BTL_DATA, Int32>();
+
+        public static void SetupOverlappingSHP1(BattleUnit unit)
+        {
+            if (OverlapIndex1.ContainsKey(unit.Data))
                 return;
-            OverlapIndex[unit.Data] = 0;
-            unit.AddDelayedModifier(UpdateOverlappingSHP, null);
+            OverlapIndex1[unit.Data] = 0;
+            unit.AddDelayedModifier(UpdateOverlappingSHP1, null);
+        }
+
+        public static void SetupOverlappingSHP2(BattleUnit unit)
+        {
+            if (OverlapIndex2.ContainsKey(unit.Data))
+                return;
+            OverlapIndex2[unit.Data] = 0;
+            unit.AddDelayedModifier(UpdateOverlappingSHP2, null);
         }
 
         // That method should better be called on battle initialisation (IOverloadOnBattleInitScript)
         public static void ClearInBattleInit()
         {
-            OverlapIndex.Clear();
+            OverlapIndex1.Clear();
+            OverlapIndex2.Clear();
         }
 
-        private static Boolean UpdateOverlappingSHP(BattleUnit unit)
+        private static Boolean UpdateOverlappingSHP1(BattleUnit unit)
         {
-            if (!OverlapIndex.TryGetValue(unit.Data, out Int32 currentIndex))
+            if (!OverlapIndex1.TryGetValue(unit.Data, out Int32 currentIndex))
                 return false;
             Boolean switchSHP = false;
-            for (Int32 i = 0; i < OverlappingSHP.Count; i++)
+            for (Int32 i = 0; i < OverlappingSHP1.Count; i++)
             {
-                BattleStatusId statusId = OverlappingSHP[currentIndex];
+                BattleStatusId statusId = OverlappingSHP1[currentIndex];
                 if (unit.IsUnderAnyStatus(statusId))
                 {
                     if (i != 0)
@@ -46,18 +77,18 @@ namespace Memoria.DefaultScripts
                         break;
                 }
                 currentIndex++;
-                currentIndex %= OverlappingSHP.Count;
-                switchSHP = i < OverlappingSHP.Count;
+                currentIndex %= OverlappingSHP1.Count;
+                switchSHP = i < OverlappingSHP1.Count;
             }
-            if (!unit.IsUnderAnyStatus(OverlappingSHP[currentIndex]))
+            if (!unit.IsUnderAnyStatus(OverlappingSHP1[currentIndex]))
             {
-                OverlapIndex.Remove(unit.Data);
+                OverlapIndex1.Remove(unit.Data);
                 return false;
             }
-            OverlapIndex[unit.Data] = currentIndex;
-            for (Int32 i = 0; i < OverlappingSHP.Count; i++)
+            OverlapIndex1[unit.Data] = currentIndex;
+            for (Int32 i = 0; i < OverlappingSHP1.Count; i++)
             {
-                BattleStatusId statusId = OverlappingSHP[i];
+                BattleStatusId statusId = OverlappingSHP1[i];
                 SHPEffect shp = HonoluluBattleMain.battleSPS.GetBtlSHPObj(unit, statusId);
                 if (shp == null)
                     continue;
@@ -155,6 +186,98 @@ namespace Memoria.DefaultScripts
                     {
                         MentalUpStatusScript MentalUpScript = effectScript as MentalUpStatusScript;
                         MentalUpScript.OnSHPShow(false);
+                    }
+                }
+            }
+            return true;
+        }
+
+        private static Boolean UpdateOverlappingSHP2(BattleUnit unit)
+        {
+            if (!OverlapIndex2.TryGetValue(unit.Data, out Int32 currentIndex))
+                return false;
+            Boolean switchSHP = false;
+            for (Int32 i = 0; i < OverlappingSHP2.Count; i++)
+            {
+                BattleStatusId statusId = OverlappingSHP2[currentIndex];
+                if (unit.IsUnderAnyStatus(statusId))
+                {
+                    if (i != 0)
+                        break;
+                    SHPEffect shp = HonoluluBattleMain.battleSPS.GetBtlSHPObj(unit, statusId);
+                    if (shp == null || !shp.IsCyclingFrame)
+                        break;
+                }
+                currentIndex++;
+                currentIndex %= OverlappingSHP2.Count;
+                switchSHP = i < OverlappingSHP2.Count;
+            }
+            if (!unit.IsUnderAnyStatus(OverlappingSHP2[currentIndex]))
+            {
+                OverlapIndex2.Remove(unit.Data);
+                return false;
+            }
+            OverlapIndex2[unit.Data] = currentIndex;
+            for (Int32 i = 0; i < OverlappingSHP2.Count; i++)
+            {
+                BattleStatusId statusId = OverlappingSHP2[i];
+                SHPEffect shp = HonoluluBattleMain.battleSPS.GetBtlSHPObj(unit, statusId);
+                if (shp == null)
+                    continue;
+                if (i == currentIndex)
+                {
+                    shp.attr &= unchecked((Byte)~SPSConst.ATTR_HIDDEN);
+                    if (switchSHP)
+                    {
+                        shp.frame = 0;
+                        StatusScriptBase effectScript = unit.Data.stat.effects[statusId];
+                        // There, optionally run a code when the SHP is displayed
+                        if (effectScript is RedemptionStatusScript)
+                        {
+                            RedemptionStatusScript RedemptionScript = effectScript as RedemptionStatusScript;
+                            RedemptionScript.OnSHPShow(true);
+                        }
+                        if (effectScript is MechanicalArmorStatusScript)
+                        {
+                            MechanicalArmorStatusScript MechanicalArmorScript = effectScript as MechanicalArmorStatusScript;
+                            MechanicalArmorScript.OnSHPShow(true);
+                        }
+                        if (effectScript is BulwarkStatusScript)
+                        {
+                            BulwarkStatusScript BulwarkScript = effectScript as BulwarkStatusScript;
+                            BulwarkScript.OnSHPShow(true);
+                        }
+                        if (effectScript is RageStatusScript)
+                        {
+                            RageStatusScript RageScript = effectScript as RageStatusScript;
+                            RageScript.OnSHPShow(true);
+                        }
+                    }
+                }
+                else if ((shp.attr & SPSConst.ATTR_HIDDEN) == 0)
+                {
+                    shp.attr |= SPSConst.ATTR_HIDDEN;
+                    StatusScriptBase effectScript = unit.Data.stat.effects[statusId];
+                    // There, optionally run a code when the SHP is hidden because of overlapping
+                    if (effectScript is RedemptionStatusScript)
+                    {
+                        RedemptionStatusScript RedemptionScript = effectScript as RedemptionStatusScript;
+                        RedemptionScript.OnSHPShow(false);
+                    }
+                    if (effectScript is MechanicalArmorStatusScript)
+                    {
+                        MechanicalArmorStatusScript MechanicalArmorScript = effectScript as MechanicalArmorStatusScript;
+                        MechanicalArmorScript.OnSHPShow(false);
+                    }
+                    if (effectScript is BulwarkStatusScript)
+                    {
+                        BulwarkStatusScript BulwarkScript = effectScript as BulwarkStatusScript;
+                        BulwarkScript.OnSHPShow(false);
+                    }
+                    if (effectScript is RageStatusScript)
+                    {
+                        RageStatusScript RageScript = effectScript as RageStatusScript;
+                        RageScript.OnSHPShow(false);
                     }
                 }
             }

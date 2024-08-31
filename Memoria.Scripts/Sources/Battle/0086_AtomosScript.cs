@@ -24,7 +24,7 @@ namespace Memoria.Scripts.Battle
                 return;
 
             _v.SetCommandAttack();
-            _v.BonusElement();
+            TranceSeekCustomAPI.BonusElement(_v);
             if (!TranceSeekCustomAPI.CanAttackMagic(_v))
                 return;
 

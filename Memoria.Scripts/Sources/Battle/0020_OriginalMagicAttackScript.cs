@@ -119,7 +119,7 @@ namespace Memoria.Scripts.Battle
                 }
             }
             _v.Caster.EnemyTranceBonusAttack();
-            _v.BonusElement();
+            TranceSeekCustomAPI.BonusElement(_v);
             if (TranceSeekCustomAPI.CanAttackMagic(_v))
             {
                 if (_v.Caster.PlayerIndex == CharacterId.Freya) // Dragon abilities

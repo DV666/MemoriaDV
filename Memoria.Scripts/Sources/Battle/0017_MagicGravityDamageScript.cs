@@ -30,7 +30,7 @@ namespace Memoria.Scripts.Battle
             {
                 _v.Context.Attack = _v.Context.Attack * 2;
             }
-            _v.BonusElement();
+            TranceSeekCustomAPI.BonusElement(_v);
             if (TranceSeekCustomAPI.CanAttackMagic(_v))
             {
                 if (_v.Command.HitRate == 255)

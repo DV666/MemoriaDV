@@ -47,7 +47,7 @@ namespace Memoria.Scripts.Battle
                 _v.Caster.EnemyTranceBonusAttack();
                 _v.Caster.PhysicalPenaltyAndBonusAttack();
                 TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
-                _v.BonusElement();
+                TranceSeekCustomAPI.BonusElement(_v);
                 _v.CalcHpDamage();
                 _v.Command.AbilityStatus |= TranceSeekCustomAPI.CustomStatus.PowerBreak;
                 _v.TryAlterMagicStatuses();
@@ -61,7 +61,7 @@ namespace Memoria.Scripts.Battle
             _v.Caster.PenaltyMini();
             TranceSeekCustomAPI.PenaltyShellAttack(_v);
             TranceSeekCustomAPI.PenaltyCommandDividedAttack(_v);
-            _v.BonusElement();
+            TranceSeekCustomAPI.BonusElement(_v);
 
             if (!TranceSeekCustomAPI.CanAttackMagic(_v))
                 return 0;

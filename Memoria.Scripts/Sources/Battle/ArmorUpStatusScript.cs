@@ -19,7 +19,7 @@ namespace Memoria.DefaultScripts
         public override UInt32 Apply(BattleUnit target, BattleUnit inflicter, params Object[] parameters)
         {
             base.Apply(target, inflicter, parameters);
-            OverlapSHP.SetupOverlappingSHP(target);
+            OverlapSHP.SetupOverlappingSHP1(target);
             Int32 StackMaximum = 5;
             if (parameters.Length > 0)
             {

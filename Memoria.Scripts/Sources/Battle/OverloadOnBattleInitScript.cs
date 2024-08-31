@@ -140,7 +140,6 @@ namespace Memoria.Scripts.Battle
             { 891, 0 }, { 891, 1 },  // Kuja + Trance Kuja (fin CD3)
             { 937, 0 }, // Trance Kuja 2nd (Crystal World)
             { 330, 0 }, // Kwell
-            { 75, 0 }, // Larvalar
             { 76, 0 }, // Larvalar Junior
             { 132, 0 }, // Amarant Enemy
             { 631, 0 }, { 632, 0 },  // Friendly Manta

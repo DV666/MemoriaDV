@@ -33,7 +33,7 @@ namespace Memoria.Scripts.Battle
             _v.Caster.EnemyTranceBonusAttack();
             TranceSeekCustomAPI.PenaltyShellAttack(_v);
             TranceSeekCustomAPI.PenaltyCommandDividedAttack(_v);
-            _v.BonusElement();
+            TranceSeekCustomAPI.BonusElement(_v);
             if (TranceSeekCustomAPI.CanAttackMagic(_v))
             {
                 if (_v.Target.HasCategory(EnemyCategory.Humanoid) && (_v.Command.AbilityId == BattleAbilityId.None5 || _v.Command.AbilityId == BattleAbilityId.BioSword)) // Poison and Bio Sword

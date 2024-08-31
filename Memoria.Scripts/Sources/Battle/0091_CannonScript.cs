@@ -32,7 +32,7 @@ namespace Memoria.Scripts.Battle
                 {
                     _v.Context.Attack = _v.Context.Attack * 3 >> 1;
                 }
-                _v.BonusElement();
+                TranceSeekCustomAPI.BonusElement(_v);
                 if (_v.CanAttackElementalCommand())
                 {
                     _v.CalcPhysicalHpDamage();

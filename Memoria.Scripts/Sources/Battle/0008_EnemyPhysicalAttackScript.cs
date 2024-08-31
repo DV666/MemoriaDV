@@ -42,7 +42,7 @@ namespace Memoria.Scripts.Battle
                         _v.SetCommandAttack();
                         _v.Caster.PhysicalPenaltyAndBonusAttack();
                         TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
-                        _v.BonusElement();
+                        TranceSeekCustomAPI.BonusElement(_v);
                         if (_v.CanAttackElementalCommand())
                         {
                             _v.CalcDamageCommon();
@@ -83,7 +83,7 @@ namespace Memoria.Scripts.Battle
                         {
                             TranceSeekCustomAPI.BonusBackstabAndPenaltyLongDistanceTranceSeek(_v);
                         }
-                        _v.BonusElement();
+                        TranceSeekCustomAPI.BonusElement(_v);
                         if (_v.CanAttackElementalCommand())
                         {
                             if (_v.Command.HitRate == 224) // Contre-attaque avec Critique

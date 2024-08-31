@@ -42,7 +42,7 @@ namespace Memoria.Scripts.Battle
             TranceSeekCustomAPI.PenaltyShellAttack(_v);
             TranceSeekCustomAPI.PenaltyCommandDividedAttack(_v);
             _v.Caster.EnemyTranceBonusAttack();
-            _v.BonusElement();
+            TranceSeekCustomAPI.BonusElement(_v);
             if (TranceSeekCustomAPI.CanAttackMagic(_v))
             {
                 _v.CalcHpDamage();

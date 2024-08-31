@@ -85,7 +85,7 @@ namespace Memoria.Scripts.Battle
                         }
                         else
                         {
-                            _v.BonusElement();
+                            TranceSeekCustomAPI.BonusElement(_v);
                         }
                         if (_v.CanAttackWeaponElementalCommand())
                         {

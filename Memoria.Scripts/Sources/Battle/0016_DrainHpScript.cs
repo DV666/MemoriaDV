@@ -81,7 +81,7 @@ namespace Memoria.Scripts.Battle
                 _v.NormalMagicParams();
                 TranceSeekCustomAPI.CharacterBonusPassive(_v, "MagicAttack");
                 _v.Caster.EnemyTranceBonusAttack();
-                _v.BonusElement();
+                TranceSeekCustomAPI.BonusElement(_v);
                 _v.Caster.PenaltyMini();
                 if (_v.Command.HitRate != 111)
                     TranceSeekCustomAPI.PenaltyShellAttack(_v);

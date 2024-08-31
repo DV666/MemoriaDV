@@ -21,7 +21,7 @@ namespace Memoria.DefaultScripts
             if (target.IsUnderAnyStatus(BattleStatus.EasyKill) && target.IsUnderAnyStatus(BattleStatus.CustomStatus3))
                 return btl_stat.ALTER_INVALID;
             base.Apply(target, inflicter, parameters);
-            OverlapSHP.SetupOverlappingSHP(target);
+            OverlapSHP.SetupOverlappingSHP1(target);
             Int32 StackMaximum = 5;
             if (parameters.Length > 0)
             {

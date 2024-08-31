@@ -45,7 +45,7 @@ namespace Memoria.Scripts.Battle
             _v.Caster.PhysicalPenaltyAndBonusAttack();
             TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
             _v.Caster.EnemyTranceBonusAttack();
-            _v.BonusElement();
+            TranceSeekCustomAPI.BonusElement(_v);
             if (_v.CanAttackElementalCommand())
             {
                 if (_v.Caster.PlayerIndex == CharacterId.Freya)

@@ -24,7 +24,7 @@ namespace Memoria.Scripts.Battle
             _v.NormalMagicParams();
             _v.Caster.PenaltyMini();
             TranceSeekCustomAPI.PenaltyShellAttack(_v);
-            _v.BonusElement();
+            TranceSeekCustomAPI.BonusElement(_v);
             if (TranceSeekCustomAPI.CanAttackMagic(_v))
             {
                 switch (_v.Command.AbilityId)

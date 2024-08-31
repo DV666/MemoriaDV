@@ -29,7 +29,7 @@ namespace Memoria.Scripts.Battle
             _v.Caster.EnemyTranceBonusAttack();
             _v.Caster.PhysicalPenaltyAndBonusAttack();
             TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
-            _v.BonusElement();
+            TranceSeekCustomAPI.BonusElement(_v);
             if (_v.CanAttackWeaponElementalCommand())
             {
                 _v.CalcHpDamage();

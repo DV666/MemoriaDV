@@ -27,7 +27,7 @@ namespace Memoria.Scripts.Battle
             _v.Target.GambleDefence();
             TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
             TranceSeekCustomAPI.BonusBackstabAndPenaltyLongDistanceTranceSeek(_v);
-            _v.BonusElement();
+            TranceSeekCustomAPI.BonusElement(_v);
             if (_v.CanAttackElementalCommand())
             {
                 _v.CalcHpDamage();

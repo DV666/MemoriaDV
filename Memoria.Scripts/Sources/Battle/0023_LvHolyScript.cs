@@ -26,7 +26,7 @@ namespace Memoria.Scripts.Battle
                 _v.Caster.EnemyTranceBonusAttack();
                 _v.Caster.PenaltyMini();
                 TranceSeekCustomAPI.PenaltyShellAttack(_v);
-                _v.BonusElement();
+                TranceSeekCustomAPI.BonusElement(_v);
 
                 if (_v.CanAttackElementalCommand())
                     _v.CalcHpDamage();

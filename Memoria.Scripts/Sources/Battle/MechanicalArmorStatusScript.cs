@@ -12,6 +12,7 @@ namespace Memoria.DefaultScripts
         public HUDMessageChild NumberHUD = null;
         public Int32 Stack;
         public Int32 DefautSize;
+        public Boolean ShowNumberHUD;
 
         public override UInt32 Apply(BattleUnit target, BattleUnit inflicter, params Object[] parameters)
         {
@@ -20,6 +21,7 @@ namespace Memoria.DefaultScripts
 
             Int32 level = (Int32)parameters[0];
             base.Apply(target, inflicter, parameters);
+            OverlapSHP.SetupOverlappingSHP2(target);
             BattleStatusDataEntry statusData = FF9StateSystem.Battle.FF9Battle.status_data[BattleStatusId.CustomStatus11];
 
             if (level > 0)
@@ -64,6 +66,11 @@ namespace Memoria.DefaultScripts
             return true;
         }
 
+        public void OnSHPShow(Boolean show)
+        {
+            ShowNumberHUD = show;
+        }
+
         private Boolean UpdateMessageShow(BattleUnit unit)
         {
             if (!unit.IsUnderAnyStatus(BattleStatusId.CustomStatus11))
@@ -94,7 +101,7 @@ namespace Memoria.DefaultScripts
                 btl2d.StatusMessages.Add(NumberHUD);
             }
 
-            if (btl2d.ShouldShowSPS)
+            if (btl2d.ShouldShowSPS && ShowNumberHUD)
                 NumberHUD.Label = $"[FFA500]   {Stack}";
             else
                 NumberHUD.Label = "";

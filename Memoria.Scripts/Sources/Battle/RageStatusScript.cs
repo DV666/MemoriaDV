@@ -2,8 +2,6 @@
 using UnityEngine;
 using Memoria.Data;
 using Object = System.Object;
-using static PSXTextureMgr;
-using FF9;
 
 namespace Memoria.DefaultScripts
 {
@@ -13,10 +11,12 @@ namespace Memoria.DefaultScripts
         public HUDMessageChild NumberHUD = null;
         public Int32 Stack;
         public Int32 DefautSize;
+        public Boolean ShowNumberHUD;
 
         public override UInt32 Apply(BattleUnit target, BattleUnit inflicter, params Object[] parameters)
         {
             base.Apply(target, inflicter, parameters);
+            OverlapSHP.SetupOverlappingSHP2(target);
             Int32 StackMaximum = 3;
             if (parameters.Length > 0)
             {
@@ -98,6 +98,11 @@ namespace Memoria.DefaultScripts
             return true;
         }
 
+        public void OnSHPShow(Boolean show)
+        {
+            ShowNumberHUD = show;
+        }
+
         private Boolean UpdateMessageShow(BattleUnit unit)
         {
             if (!unit.IsUnderAnyStatus(BattleStatusId.CustomStatus19))
@@ -128,7 +133,7 @@ namespace Memoria.DefaultScripts
                 btl2d.StatusMessages.Add(NumberHUD);
             }
 
-            if (btl2d.ShouldShowSPS)
+            if (btl2d.ShouldShowSPS && ShowNumberHUD)
                 NumberHUD.Label = $"[FFA500]   {Stack}";
             else
                 NumberHUD.Label = "";

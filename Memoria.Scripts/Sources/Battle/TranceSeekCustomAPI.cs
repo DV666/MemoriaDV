@@ -7,6 +7,7 @@ using Memoria.Assets;
 using Memoria.Data;
 using Memoria.Prime;
 using UnityEngine;
+using static TitleUI;
 
 namespace Memoria.Scripts.Battle
 {
@@ -387,8 +388,12 @@ namespace Memoria.Scripts.Battle
             if (v.Target.CanGuardElement(v.Command.Element))
                 return false;
 
-            v.Target.PenaltyHalfElement(v.Command.Element);
-            v.Target.BonusWeakElement(v.Command.Element);
+            if (v.Target.IsHalfElement(v.Command.Element))
+                v.Context.Attack >>= 1;
+
+            if (v.Target.IsWeakElement(v.Command.Element))
+                v.Context.Attack = (Int16)(v.Context.Attack * 3 >> 1);
+
             if (v.Target.CanAbsorbElement(v.Command.Element))
             {
                 // v.Context.DefensePower = 0;
@@ -595,12 +600,17 @@ namespace Memoria.Scripts.Battle
         public static void BonusWeaponElement(this BattleCalculator v)
         {
             if ((v.Caster.WeaponElement & v.Caster.BonusElement) != 0)
-                ++v.Context.DamageModifierCount;
+                v.Context.Attack = (Int16)(v.Context.Attack * 3 >> 1);
 
             if ((WeaponNewElement[v.Caster.Data] & v.Caster.BonusElement) != 0)
-                ++v.Context.DamageModifierCount;
+                v.Context.Attack = (Int16)(v.Context.Attack * 3 >> 1);
         }
 
+        public static void BonusElement(this BattleCalculator v)
+        {
+            if ((v.Command.ElementForBonus & v.Caster.BonusElement) != 0)
+                v.Context.Attack = (Int16)(v.Context.Attack * 3 >> 1);
+        }
 
         public static void InfusedWeaponStatus(this BattleCalculator v)
         {
