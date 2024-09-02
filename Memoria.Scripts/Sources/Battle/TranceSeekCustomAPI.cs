@@ -708,8 +708,11 @@ namespace Memoria.Scripts.Battle
                     if (ViviPassive[v.Caster.Data][1] < 0)
                         ViviPassive[v.Caster.Data][1] = 0;
 
-                    v.Context.Attack += (v.Context.Attack * ViviPassive[v.Caster.Data][0]) / 100;
-                    v.Command.HitRate += (v.Command.HitRate * ViviPassive[v.Caster.Data][0]) / 100;
+                    if (v.Command.ScriptId != 17) // Magic Gravity didn't get damage boost.
+                    {
+                        v.Context.Attack += (v.Context.Attack * ViviPassive[v.Caster.Data][0]) / 100;
+                        v.Command.HitRate += (v.Command.HitRate * ViviPassive[v.Caster.Data][0]) / 100;
+                    }
                 }
             }
             else if (v.Caster.PlayerIndex == CharacterId.Steiner && v.Command.Id == BattleCommandId.MagicSword)

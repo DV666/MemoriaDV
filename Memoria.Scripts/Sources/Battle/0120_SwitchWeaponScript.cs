@@ -1,6 +1,7 @@
 ﻿using System;
 using FF9;
 using Memoria.Data;
+using Memoria.Prime.PsdFile;
 using UnityEngine;
 
 namespace Memoria.Scripts.Battle
@@ -48,6 +49,7 @@ namespace Memoria.Scripts.Battle
                     ModelTranceZidane = "GEO_MAIN_B0_022";
                 }
 
+                Vector3 position = _v.Caster.Data.gameObject.transform.localPosition;
                 _v.Caster.Data.gameObject.SetActive(false);
                 _v.Caster.Data.weapon_geo.SetActive(false);
                 CharacterBattleParameter btlParam = btl_mot.BattleParameterList[ModelZidane == "GEO_MAIN_B0_001" ? CharacterSerialNumber.ZIDANE_SWORD : CharacterSerialNumber.ZIDANE_DAGGER];
@@ -95,9 +97,11 @@ namespace Memoria.Scripts.Battle
                 geo.geoAttach(_v.Caster.Data.weapon_geo, _v.Caster.Data.gameObject, 13);
                 for (Int32 i = 0; i < 34; i++)
                     _v.Caster.Data.mot[i] = btlParam.AnimationId[i];
+                _v.Caster.Data.gameObject.transform.localPosition = position;
+                _v.Caster.Data.dms_geo_id = btl_init.GetModelID(btl_util.getSerialNumber(_v.Caster.Data));
                 _v.Caster.Data.gameObject.SetActive(true);
                 _v.Caster.Data.weapon_geo.SetActive(true);
-                btl_mot.setMotion(_v.Caster.Data, BattlePlayerCharacter.PlayerMotionIndex.MP_MAGIC);
+                btl_mot.setMotion(_v.Caster.Data, BattlePlayerCharacter.PlayerMotionIndex.MP_WIN); //MP_MAGIC
                 _v.Caster.Data.evt.animFrame = 0;
                 geo.geoScaleUpdate(_v.Caster.Data, true);
                 _v.Caster.AddDelayedModifier(

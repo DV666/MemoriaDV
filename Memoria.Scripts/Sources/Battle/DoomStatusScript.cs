@@ -3,6 +3,7 @@ using UnityEngine;
 using Memoria.Data;
 using System.Collections.Generic;
 using Object = System.Object;
+using System.Collections;
 
 namespace Memoria.DefaultScripts
 {
@@ -11,6 +12,7 @@ namespace Memoria.DefaultScripts
     {
         public HUDMessageChild Message = null;
         public BattleUnit DoomInflicter = null;
+        public Int32 GeoID;
         public Int32 Counter;
 
         public override UInt32 Apply(BattleUnit target, BattleUnit inflicter, params Object[] parameters)
@@ -22,6 +24,8 @@ namespace Memoria.DefaultScripts
             Counter *= Target.HasSupportAbility(SupportAbility1.AutoRegen) ? 2 : 1;
             Message = Singleton<HUDMessage>.Instance.Show(attachTransf, $"{Counter}", HUDMessage.MessageStyle.DEATH_SENTENCE, new Vector3(0f, iconOff.y), 0);
             btl2d.StatusMessages.Add(Message);
+            target.AddDelayedModifier(UpdateMessageShow, null);
+            GeoID = target.Data.dms_geo_id;
             return btl_stat.ALTER_SUCCESS;
         }
 
@@ -60,29 +64,58 @@ namespace Memoria.DefaultScripts
 
         public Boolean OnOpr()
         {
-            Counter--;
-            if (Counter > 0)
+            if (Message != null)
             {
-                Message.Label = $"{Counter}";
-                return false;
-            }
-            if ((Target.Data.stat.permanent & BattleStatus.Doom) != 0)
-            {
-                Remove();
-                Target.AddDelayedModifier(
-                target => (target.IsUnderAnyStatus(BattleStatus.Death)),
-                target =>
+                Counter--;
+                if (Counter > 0)
                 {
-                    btl2d.GetIconPosition(target, btl2d.ICON_POS_NUMBER, out Transform attachTransf, out Vector3 iconOff);
-                    Counter = 10;
-                    Message = Singleton<HUDMessage>.Instance.Show(attachTransf, $"{Counter}", HUDMessage.MessageStyle.DEATH_SENTENCE, new Vector3(0f, iconOff.y), 0);
-                    btl2d.StatusMessages.Add(Message);
+                    Message.Label = $"{Counter}";
+                    return false;
                 }
-                );
+                if ((Target.Data.stat.permanent & BattleStatus.Doom) != 0)
+                {
+                    Remove();
+                    Target.AddDelayedModifier(
+                    target => (target.IsUnderAnyStatus(BattleStatus.Death)),
+                    target =>
+                    {
+                        btl2d.GetIconPosition(target, btl2d.ICON_POS_NUMBER, out Transform attachTransf, out Vector3 iconOff);
+                        Counter = 10;
+                        Message = Singleton<HUDMessage>.Instance.Show(attachTransf, $"{Counter}", HUDMessage.MessageStyle.DEATH_SENTENCE, new Vector3(0f, iconOff.y), 0);
+                        btl2d.StatusMessages.Add(Message);
+                    }
+                    );
+                }
+                if (btl_stat.AlterStatus(Target, BattleStatusId.Death, DoomInflicter) == btl_stat.ALTER_SUCCESS)
+                    BattleVoice.TriggerOnStatusChange(Target, "Used", BattleStatusId.Doom);
+                btl2d.Btl2dReq(Target);
+                return true;
             }
-            if (btl_stat.AlterStatus(Target, BattleStatusId.Death, DoomInflicter) == btl_stat.ALTER_SUCCESS)
-                BattleVoice.TriggerOnStatusChange(Target, "Used", BattleStatusId.Doom);
-            btl2d.Btl2dReq(Target);
+            return false;
+        }
+
+        private Boolean UpdateMessageShow(BattleUnit unit)
+        {
+            if (!unit.IsUnderAnyStatus(BattleStatusId.Doom))
+                return false;
+
+            if (unit.Data.bi.disappear != 0 || GeoID != unit.Data.dms_geo_id)
+            {
+                GeoID = unit.Data.dms_geo_id;
+                if (Message != null)
+                {
+                    btl2d.StatusMessages.Remove(Message);
+                    Singleton<HUDMessage>.Instance.ReleaseObject(Message);
+                    Message = null;
+                }
+                return true;
+            }
+            if (Message == null)
+            {
+                btl2d.GetIconPosition(unit, btl2d.ICON_POS_NUMBER, out Transform attachTransf, out Vector3 iconOff);
+                Message = Singleton<HUDMessage>.Instance.Show(attachTransf, $"{Counter}", HUDMessage.MessageStyle.DEATH_SENTENCE, new Vector3(0f, iconOff.y), 0);
+                btl2d.StatusMessages.Add(Message);
+            }
             return true;
         }
     }

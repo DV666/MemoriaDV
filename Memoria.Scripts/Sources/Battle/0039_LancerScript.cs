@@ -28,40 +28,37 @@ namespace Memoria.Scripts.Battle
                     _v.Caster.PhysicalPenaltyAndBonusAttack();
                     TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
                     _v.Caster.Flags |= CalcFlag.HpAlteration;
-                    if (_v.Context.PowerDifference > 0)
+                    TranceSeekCustomAPI.BonusBackstabAndPenaltyLongDistanceTranceSeek(_v);
+                    TranceSeekCustomAPI.BonusWeaponElement(_v);
+                    if (_v.CanAttackWeaponElementalCommand())
                     {
-                        TranceSeekCustomAPI.BonusBackstabAndPenaltyLongDistanceTranceSeek(_v);
-                        TranceSeekCustomAPI.BonusWeaponElement(_v);
-                        if (_v.CanAttackWeaponElementalCommand())
+                        TranceSeekCustomAPI.IpsenCastleMalus(_v);
+                        TranceSeekCustomAPI.RaiseTrouble(_v);
+                        if (_v.Caster.HasSupportAbility(SupportAbility1.AddStatus))
                         {
-                            TranceSeekCustomAPI.IpsenCastleMalus(_v);
-                            TranceSeekCustomAPI.RaiseTrouble(_v);
-                            if (_v.Caster.HasSupportAbility(SupportAbility1.AddStatus))
+                            _v.Context.StatusRate = _v.Caster.WeaponRate;
+                            if (_v.Context.StatusRate > GameRandom.Next16() % 100)
                             {
-                                _v.Context.StatusRate = _v.Caster.WeaponRate;
-                                if (_v.Context.StatusRate > GameRandom.Next16() % 100)
-                                {
-                                    _v.Context.Flags |= BattleCalcFlags.AddStat;
-                                }
+                                _v.Context.Flags |= BattleCalcFlags.AddStat;
                             }
                         }
-                        _v.CalcPhysicalHpDamage();
-                        int hpDamage = _v.Target.HpDamage;
-                        _v.Target.FaceTheEnemy();
-                        if (!_v.Context.IsAbsorb)
-                        {
-                            _v.Caster.Flags |= CalcFlag.HpRecovery;
-                            _v.Target.Flags |= (CalcFlag.HpAlteration | CalcFlag.MpAlteration);
-                            _v.Target.MpDamage = (hpDamage >> 5);
-                            _v.Caster.HpDamage = (hpDamage / 2);
-                            if (_v.Target.IsUnderAnyStatus(TranceSeekCustomAPI.CustomStatus.Dragon) || _v.Caster.IsUnderStatus(BattleStatus.Trance))
-                            {
-                                _v.Caster.Flags |= (CalcFlag.MpAlteration | CalcFlag.MpRecovery);
-                                _v.Caster.MpDamage = _v.Target.MpDamage / 2;
-                            }
-                        }
-                        _v.TryAlterMagicStatuses();
                     }
+                    _v.CalcPhysicalHpDamage();                     
+                    int hpDamage = _v.Target.HpDamage = Math.Max(1, _v.Target.HpDamage);
+                    _v.Target.FaceTheEnemy();
+                    if (!_v.Context.IsAbsorb)
+                    {
+                        _v.Caster.Flags |= CalcFlag.HpRecovery;
+                        _v.Target.Flags |= (CalcFlag.HpAlteration | CalcFlag.MpAlteration);
+                        _v.Target.MpDamage = Math.Max(1, hpDamage >> 5);
+                        _v.Caster.HpDamage = Math.Max(1, hpDamage / 2);
+                        if (_v.Target.IsUnderAnyStatus(TranceSeekCustomAPI.CustomStatus.Dragon) || _v.Caster.IsUnderStatus(BattleStatus.Trance))
+                        {
+                            _v.Caster.Flags |= (CalcFlag.MpAlteration | CalcFlag.MpRecovery);
+                            _v.Caster.MpDamage = _v.Target.MpDamage / 2;
+                        }
+                    }
+                    _v.TryAlterMagicStatuses();
                 }
             }
             else

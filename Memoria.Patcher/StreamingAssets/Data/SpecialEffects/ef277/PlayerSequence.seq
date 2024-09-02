@@ -1,3 +1,4 @@
+
 // Player sequence of SFX Throw_Disc
 
 StartThread: Condition=WeaponThrowShape == 43 && GetItemProperty(ItemUseId, 'Color') == 1
@@ -58,7 +59,7 @@ ElseThread: Condition=WeaponThrowShape == 43 && GetItemProperty(ItemUseId, 'Colo
 		WaitTurn: Char=Caster
 	EndThread
 	Wait: Time=6
-	StartThread: Target=AllEnemies ; Sync
+	StartThread: Target=MatchingCondition(IsTargeted && !CheckAnyStatus(CurrentStatus, BattleStatus_Death)); Sync
 		Wait: Time=2
 		StartThread: TargetLoop=True ; Chain=True ; Sync=True
 			LoadSFX: SFX=Lightning ; Reflect=True ; UseCamera=False

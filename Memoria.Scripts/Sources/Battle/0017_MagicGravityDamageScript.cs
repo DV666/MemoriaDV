@@ -30,6 +30,7 @@ namespace Memoria.Scripts.Battle
             {
                 _v.Context.Attack = _v.Context.Attack * 2;
             }
+            TranceSeekCustomAPI.ViviFocus(_v);
             TranceSeekCustomAPI.BonusElement(_v);
             if (TranceSeekCustomAPI.CanAttackMagic(_v))
             {
