@@ -157,9 +157,16 @@ namespace Memoria.Scripts.Battle
                     _v.CalcHpMagicRecovery();
                 }  
             }
-            if (_v.Target.Data.dms_geo_id == 416)
+            if (_v.Target.Data.dms_geo_id == 416) // Meltigemini
             {
-                TranceSeekCustomAPI.MonsterMechanic[_v.Target.Data][1] = _v.Target.HpDamage;
+                int PreviousHP = (int)_v.Target.CurrentHp;
+                _v.Caster.AddDelayedModifier(
+                    caster => caster.CurrentAtb >= caster.MaximumAtb,
+                    caster =>
+                    {
+                        TranceSeekCustomAPI.MonsterMechanic[_v.Target.Data][1] = Math.Min((int)(PreviousHP - _v.Target.CurrentHp), 9999);
+                    }
+                );
                 _v.Target.TryAlterSingleStatus(BattleStatusId.CustomStatus10, true, _v.Caster, _v.Target.HpDamage);
             }         
         }

@@ -50,19 +50,26 @@ namespace Memoria.Scripts.Battle
             {
                 if (_v.Caster.PlayerIndex == CharacterId.Freya)
                 {
-                    if (_v.Target.IsUnderAnyStatus(TranceSeekCustomAPI.CustomStatus.Dragon) || (_v.Caster.IsUnderStatus(BattleStatus.Trance) && _v.Command.AbilityId == BattleAbilityId.CherryBlossom))
+                    if (_v.Command.AbilityId == BattleAbilityId.CherryBlossom)
                     {
-                        if (_v.Caster.Will > Comn.random16() % 100)
+                        short CriticalBonus = _v.Caster.Data.critical_rate_deal_bonus;
+                        _v.Caster.Data.critical_rate_deal_bonus += 33;
+                        TranceSeekCustomAPI.TryCriticalHit(_v);
+                        if (_v.Target.IsUnderAnyStatus(TranceSeekCustomAPI.CustomStatus.Dragon) || (_v.Caster.IsUnderStatus(BattleStatus.Trance)))
                         {
-                            _v.Target.TryAlterStatuses(BattleStatus.Venom, false, _v.Caster);
-                            _v.Target.TryAlterStatuses(BattleStatus.Poison, false, _v.Caster);
+                            if (_v.Caster.Will > Comn.random16() % 100)
+                            {
+                                _v.Target.TryAlterStatuses(BattleStatus.Venom, false, _v.Caster);
+                                _v.Target.TryAlterStatuses(BattleStatus.Poison, false, _v.Caster);
+                            }
+                            else
+                            {
+                                _v.Target.TryAlterStatuses(BattleStatus.Poison, false, _v.Caster);
+                            }
                         }
-                        else
-                        {
-                            _v.Target.TryAlterStatuses(BattleStatus.Poison, false, _v.Caster);
-                        }
+                        _v.Caster.Data.critical_rate_deal_bonus = CriticalBonus;
+                        _v.CalcHpDamage();
                     }
-                    _v.CalcHpDamage();
                 }
                 else
                 {

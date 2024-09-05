@@ -36,8 +36,6 @@ namespace Memoria.Scripts.Battle
                         TranceSeekCustomAPI.MonsterMechanic[_v.Caster.Data][1] = 0;
                     }
                 );
-
-                //_v.Target.TryAlterSingleStatus(BattleStatusId.CustomStatus10, true, _v.Caster, _v.Target.HpDamage);
             }
         }
     }

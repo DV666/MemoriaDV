@@ -132,6 +132,7 @@ namespace Memoria.Scripts.Battle
             { 2, 2 }, // Gardienne du feu
             { 107, 0 }, // Gargantua (1st)
             { 890, 0 }, // Garland
+            { 2, 2 }, { 2, 3 }, // Wind Guardian + Fire Guardian
             { 326, 0 }, // Gisamark
             { 723, 0 }, // Friendly Garuda
             { 57, 0 }, // Ozma

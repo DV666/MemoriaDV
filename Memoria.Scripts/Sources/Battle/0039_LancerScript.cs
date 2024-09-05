@@ -43,6 +43,7 @@ namespace Memoria.Scripts.Battle
                             }
                         }
                     }
+                    TranceSeekCustomAPI.TryCriticalHit(_v);
                     _v.CalcPhysicalHpDamage();                     
                     int hpDamage = _v.Target.HpDamage = Math.Max(1, _v.Target.HpDamage);
                     _v.Target.FaceTheEnemy();

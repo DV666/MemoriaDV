@@ -726,7 +726,31 @@ namespace Memoria.Scripts.Battle
                         {
                             if (FF9TextTool.ActionAbilityName(ViviPreviousSpell[Vivi.Data]) != v.Command.AbilityName)
                             {
-                                if (ViviPassive[Vivi.Data][0] < 50)
+                                Int32 BonusFocusMax = 0;
+                                switch (Vivi.Weapon)
+                                {
+                                    case RegularItem.FlameStaff:
+                                    case RegularItem.IceStaff:
+                                    case RegularItem.LightningStaff:
+                                        BonusFocusMax += 5;
+                                        break;
+                                    case RegularItem.OakStaff:
+                                        BonusFocusMax += 10;
+                                        break;
+                                    case RegularItem.CypressPile:
+                                        BonusFocusMax += 10;
+                                        break;
+                                    case RegularItem.OctagonRod:
+                                        BonusFocusMax += 15;
+                                        break;
+                                    case RegularItem.HighMageStaff:
+                                        BonusFocusMax += 25;
+                                        break;
+                                    case RegularItem.MaceOfZeus:
+                                        BonusFocusMax += 50;
+                                        break;
+                                }
+                                if (ViviPassive[Vivi.Data][0] < (50 + BonusFocusMax))
                                 {
                                     ViviPassive[Vivi.Data][0] += 5;
                                 }

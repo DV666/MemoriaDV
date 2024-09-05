@@ -40,7 +40,7 @@ namespace Memoria.Scripts.Battle
                     _v.Target.AlterStatus(TranceSeekCustomAPI.CustomStatus.Dragon, _v.Caster);
                 }
                 byte PhysicalDefence = (byte)_v.Target.PhysicalDefence;
-                _v.Target.PhysicalDefence = (byte)(_v.Target.PhysicalDefence * 60 / 100);
+                _v.Target.PhysicalDefence = (byte)(_v.Target.PhysicalDefence / 2);
                 _v.Target.SetPhysicalDefense();
                 _v.BonusKillerAbilities();
                 _v.Caster.PenaltyMini();

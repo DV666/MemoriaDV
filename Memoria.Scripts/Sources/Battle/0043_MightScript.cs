@@ -29,7 +29,7 @@ namespace Memoria.Scripts.Battle
                     return;
                 }
                 btl_stat.AlterStatus(_v.Target, CustomStatusId.PowerUp, parameters: "+2");
-                btl_stat.AlterStatus(_v.Target, CustomStatusId.ArmorUp, parameters: "+2");
+                btl_stat.AlterStatus(_v.Target, CustomStatusId.MagicUp, parameters: "+2");
                 _v.Target.AlterStatus(CustomStatus.Redemption, _v.Caster);
                 _v.Target.AlterStatus(CustomStatus.Redemption, _v.Caster);
                 if (_v.Caster.IsUnderAnyStatus(BattleStatus.Trance))
