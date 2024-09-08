@@ -29,7 +29,7 @@ namespace Memoria.Scripts.Battle
                 _v.WeaponPhysicalParams();
                 TranceSeekCustomAPI.CharacterBonusPassive(_v, "MagicAttack");
                 TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
-                _v.Caster.PhysicalPenaltyAndBonusAttack();
+                TranceSeekCustomAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
                 TranceSeekCustomAPI.BonusElement(_v);
                 if (_v.CanAttackWeaponElementalCommand())
                 {
@@ -53,7 +53,7 @@ namespace Memoria.Scripts.Battle
                 _v.Target.RemoveStatus(BattleStatus.Reflect);
                 _v.NormalPhysicalParams();
                 TranceSeekCustomAPI.CharacterBonusPassive(_v, "PhysicalAttack");
-                _v.Caster.PhysicalPenaltyAndBonusAttack();
+                TranceSeekCustomAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
                 TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
                 TranceSeekCustomAPI.BonusElement(_v);
                 if (_v.CanAttackElementalCommand())

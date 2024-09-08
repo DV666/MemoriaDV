@@ -31,8 +31,8 @@ namespace Memoria.Scripts.Battle
             {
                 _v.NormalMagicParams();
                 TranceSeekCustomAPI.CharacterBonusPassive(_v, "MagicAttack");
-                _v.Caster.PenaltyMini();
-                _v.Caster.EnemyTranceBonusAttack();
+                TranceSeekCustomAPI.CasterPenaltyMini(_v);
+                TranceSeekCustomAPI.EnemyTranceBonusAttack(_v);
                 TranceSeekCustomAPI.PenaltyCommandDividedAttack(_v);
                 if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)102))
                     TranceSeekCustomAPI.TryCriticalHit(_v);

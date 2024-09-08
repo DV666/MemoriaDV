@@ -49,7 +49,7 @@ namespace Memoria.Scripts.Battle
                 }
 
                 if (!ZidanePassive.TryGetValue(unit.Data, out Int32[] zidanepassive))
-                    ZidanePassive[unit.Data] = new Int32[] { 0, 0, 0, 0, 0, 255, 255 };
+                    ZidanePassive[unit.Data] = new Int32[] { 0, 0, 0, 0, 0, 255, 255, 0, 0 };
                 if (!ViviPreviousSpell.TryGetValue(unit.Data, out BattleAbilityId e))
                     ViviPreviousSpell[unit.Data] = BattleAbilityId.Void;
                 if (!ViviPassive.TryGetValue(unit.Data, out Int32[] vivipassive))

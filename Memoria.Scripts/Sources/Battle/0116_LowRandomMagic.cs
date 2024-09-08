@@ -36,8 +36,8 @@ namespace Memoria.Scripts.Battle
             _v.Context.Attack = UnityEngine.Random.Range(((_v.Caster.Magic + _v.Caster.Level) / 3), (_v.Caster.Magic + _v.Caster.Level));
             _v.SetCommandPower();
             _v.Target.SetMagicDefense();
-            _v.Caster.PenaltyMini();
-            _v.Caster.EnemyTranceBonusAttack();
+            TranceSeekCustomAPI.CasterPenaltyMini(_v);
+            TranceSeekCustomAPI.EnemyTranceBonusAttack(_v);
             TranceSeekCustomAPI.PenaltyShellAttack(_v);
             TranceSeekCustomAPI.PenaltyCommandDividedAttack(_v);
             TranceSeekCustomAPI.BonusElement(_v);

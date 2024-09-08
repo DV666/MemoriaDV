@@ -22,7 +22,7 @@ namespace Memoria.Scripts.Battle
         public void Perform()
         {
             _v.NormalMagicParams();
-            _v.Caster.PenaltyMini();
+            TranceSeekCustomAPI.CasterPenaltyMini(_v);
             TranceSeekCustomAPI.PenaltyShellAttack(_v);
             TranceSeekCustomAPI.BonusElement(_v);
             if (TranceSeekCustomAPI.CanAttackMagic(_v))

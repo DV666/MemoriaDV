@@ -38,7 +38,7 @@ namespace Memoria.Scripts.Battle
                 {
                     _v.Context.Attack = (int)((short)(GameRandom.Next16() % (int)(_v.Caster.Magic + _v.Caster.Level)));
                     _v.SetCommandPower();
-                    _v.Caster.PenaltyMini();
+                    TranceSeekCustomAPI.CasterPenaltyMini(_v);
                     TranceSeekCustomAPI.PenaltyShellAttack(_v);
                     TranceSeekCustomAPI.PenaltyCommandDividedAttack(_v);
                     TranceSeekCustomAPI.BonusElement(_v);

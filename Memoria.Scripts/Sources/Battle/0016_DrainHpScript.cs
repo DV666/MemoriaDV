@@ -31,8 +31,8 @@ namespace Memoria.Scripts.Battle
                     Int32 damage = 0;
                     _v.NormalMagicParams();
                     TranceSeekCustomAPI.CharacterBonusPassive(_v, "MagicAttack");
-                    _v.Caster.PenaltyMini();
-                    _v.Caster.EnemyTranceBonusAttack();
+                    TranceSeekCustomAPI.CasterPenaltyMini(_v);
+                    TranceSeekCustomAPI.EnemyTranceBonusAttack(_v);
                     TranceSeekCustomAPI.PenaltyShellAttack(_v);
                     _v.Target.Flags |= CalcFlag.MpAlteration;
                     _v.Caster.Flags |= CalcFlag.MpAlteration;
@@ -80,9 +80,9 @@ namespace Memoria.Scripts.Battle
                 uint currentHp = _v.Target.CurrentHp;
                 _v.NormalMagicParams();
                 TranceSeekCustomAPI.CharacterBonusPassive(_v, "MagicAttack");
-                _v.Caster.EnemyTranceBonusAttack();
+                TranceSeekCustomAPI.EnemyTranceBonusAttack(_v);
                 TranceSeekCustomAPI.BonusElement(_v);
-                _v.Caster.PenaltyMini();
+                TranceSeekCustomAPI.CasterPenaltyMini(_v);
                 if (_v.Command.HitRate != 111)
                     TranceSeekCustomAPI.PenaltyShellAttack(_v);
                 if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)102))

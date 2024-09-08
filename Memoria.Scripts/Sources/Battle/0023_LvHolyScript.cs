@@ -23,8 +23,8 @@ namespace Memoria.Scripts.Battle
             {
                 _v.NormalMagicParams();
                 TranceSeekCustomAPI.CharacterBonusPassive(_v, "MagicAttack");
-                _v.Caster.EnemyTranceBonusAttack();
-                _v.Caster.PenaltyMini();
+                TranceSeekCustomAPI.EnemyTranceBonusAttack(_v);
+                TranceSeekCustomAPI.CasterPenaltyMini(_v);
                 TranceSeekCustomAPI.PenaltyShellAttack(_v);
                 TranceSeekCustomAPI.BonusElement(_v);
 

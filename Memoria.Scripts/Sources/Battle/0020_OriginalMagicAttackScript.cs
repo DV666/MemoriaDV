@@ -66,7 +66,7 @@ namespace Memoria.Scripts.Battle
                     BattleStatusId statusselected = statuschoosen[GameRandom.Next16() % statuschoosen.Count];
                     btl_stat.AlterStatus(_v.Target, statusselected, _v.Caster);
                 }
-                _v.Caster.PenaltyMini();
+                TranceSeekCustomAPI.CasterPenaltyMini(_v);
                 TranceSeekCustomAPI.PenaltyShellAttack(_v);
                 TranceSeekCustomAPI.PenaltyCommandDividedAttack(_v);
                 if ((_v.Command.AbilityId == BattleAbilityId.ScoopArt && GameRandom.Next8() % 4 == 0))
@@ -87,7 +87,7 @@ namespace Memoria.Scripts.Battle
                         _v.Context.DefensePower = _v.Context.DefensePower - (_v.Context.DefensePower / 4);
                     }
                     _v.Target.SetMagicDefense();
-                    _v.Caster.PenaltyMini();
+                    TranceSeekCustomAPI.CasterPenaltyMini(_v);
                     TranceSeekCustomAPI.PenaltyShellAttack(_v);
                     TranceSeekCustomAPI.PenaltyCommandDividedAttack(_v);
                     if (_v.Command.HitRate == 99 && GameRandom.Next8() % 4 == 0)
@@ -110,7 +110,7 @@ namespace Memoria.Scripts.Battle
                         _v.Caster.SetLowPhysicalAttack();
                         _v.Target.SetMagicDefense();
                     }
-                    _v.Caster.PenaltyMini();
+                    TranceSeekCustomAPI.CasterPenaltyMini(_v);
                     if (_v.Target.IsUnderStatus(BattleStatus.Defend))
                     {
                         _v.Context.Attack >>= 1;
@@ -122,7 +122,7 @@ namespace Memoria.Scripts.Battle
                     }
                 }
             }
-            _v.Caster.EnemyTranceBonusAttack();
+            TranceSeekCustomAPI.EnemyTranceBonusAttack(_v);
             TranceSeekCustomAPI.BonusElement(_v);
             if (TranceSeekCustomAPI.CanAttackMagic(_v))
             {

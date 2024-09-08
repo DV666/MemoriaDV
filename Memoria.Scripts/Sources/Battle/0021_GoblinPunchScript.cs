@@ -31,7 +31,7 @@ namespace Memoria.Scripts.Battle
                     {
                         _v.Context.Attack += (int)_v.Caster.Level;
                     }
-                    _v.Caster.PenaltyMini();
+                    TranceSeekCustomAPI.CasterPenaltyMini(_v);
                     TranceSeekCustomAPI.PenaltyShellAttack(_v);
                     _v.CalcHpDamage();
                     _v.TryAlterMagicStatuses();
@@ -43,7 +43,7 @@ namespace Memoria.Scripts.Battle
                         _v.Context.Attack += (int)_v.Caster.Level;
                         _v.Context.DefensePower = 0;
                     }
-                    _v.Caster.PenaltyMini();
+                    TranceSeekCustomAPI.CasterPenaltyMini(_v);
                     TranceSeekCustomAPI.PenaltyShellAttack(_v);
                     _v.CalcHpDamage();
                 }
@@ -56,14 +56,14 @@ namespace Memoria.Scripts.Battle
                     if (_v.Caster.IsPlayer)
                     {
                         TranceSeekCustomAPI.WeaponPhysicalParams(CalcAttackBonus.Simple, _v);
-                        _v.Caster.PhysicalPenaltyAndBonusAttack();
+                        TranceSeekCustomAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
                         _v.Target.GambleDefence();
                         TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
                     }
                     else
                     {
                         _v.NormalPhysicalParams();
-                        _v.Caster.PhysicalPenaltyAndBonusAttack();
+                        TranceSeekCustomAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
                         TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
                     }
                     if (GameRandom.Next8() % 3 != 0)

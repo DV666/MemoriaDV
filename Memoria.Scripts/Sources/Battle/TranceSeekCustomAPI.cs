@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Runtime.Remoting.Contexts;
 using Assets.Sources.Scripts.UI.Common;
 using FF9;
@@ -15,7 +16,8 @@ namespace Memoria.Scripts.Battle
     {
         public static Dictionary<BTL_DATA, Boolean> InitBTL = new Dictionary<BTL_DATA, Boolean>();
 
-        public static Dictionary<BTL_DATA, Int32[]> ZidanePassive = new Dictionary<BTL_DATA, Int32[]>(); // [0] => Dodge ; [1] => Critical ; [2] => Eye of the thief ; [3] => Master Thief ; [4] => Dagger Attack ; [5] => FirstItemMug ; [6] => SecondItemMug
+        public static Dictionary<BTL_DATA, Int32[]> ZidanePassive = new Dictionary<BTL_DATA, Int32[]>();
+        // [0] => Dodge ; [1] => Critical ; [2] => Eye of the thief ; [3] => Master Thief ; [4] => Dagger Attack ; [5] => FirstItemMug ; [6] => SecondItemMug ; [7] => Mug+ ; [8] => Steal Gil
 
         public static Dictionary<BTL_DATA, Int32[]> ViviPassive = new Dictionary<BTL_DATA, Int32[]>(); // [0] => Focus ; [1] => NumberTargets
         public static Dictionary<BTL_DATA, BattleAbilityId> ViviPreviousSpell = new Dictionary<BTL_DATA, BattleAbilityId>();
@@ -479,6 +481,20 @@ namespace Memoria.Scripts.Battle
                 v.Context.Attack = 1;
         }
 
+        public static void CasterPhysicalPenaltyAndBonusAttack(BattleCalculator v)
+        {
+            if (v.Caster.IsUnderAnyStatus(BattleStatus.Mini))
+                v.Context.DecreaseAttackDrastically();
+            if (v.Caster.IsUnderAnyStatus(BattleStatus.Berserk) || v.Caster.IsPlayer && v.Caster.IsUnderAnyStatus(BattleStatus.Trance))
+                v.Context.Attack = (Int16)(v.Context.Attack * 3 >> 1);
+        }
+
+        public static void EnemyTranceBonusAttack(BattleCalculator v)
+        {
+            if (!v.Caster.IsPlayer && v.Caster.IsUnderAnyStatus(BattleStatus.Trance))
+                v.Context.Attack = (Int16)(v.Context.Attack * 3 >> 1);
+        }
+
         public static void BonusBackstabAndPenaltyLongDistanceTranceSeek(this BattleCalculator v)
         {
             if ((Math.Abs(v.Caster.Data.evt.rotBattle.eulerAngles.y - v.Target.Data.evt.rotBattle.eulerAngles.y) < 0.1) || v.Target.IsRunningAway())
@@ -581,6 +597,12 @@ namespace Memoria.Scripts.Battle
         public static void PenaltyCommandDividedAttack(this BattleCalculator v)
         {
             if (v.Command.IsDevided)
+                v.Context.Attack /= 2;
+        }
+
+        public static void CasterPenaltyMini(this BattleCalculator v)
+        {
+            if (v.Caster.IsUnderAnyStatus(BattleStatus.Mini))
                 v.Context.Attack /= 2;
         }
 
@@ -1088,7 +1110,22 @@ namespace Memoria.Scripts.Battle
             }
             if (v.Caster.HasSupportAbilityByIndex((SupportAbility)1061) && (v.Command.Id == BattleCommandId.Attack || v.Command.Id == BattleCommandId.Counter) && v.Target.Data != v.Caster.Data) // Mug+
             {
-                HealHPSAOrItem += v.Target.HpDamage / 4;
+                if (ff9item._FF9Item_Data[FF9StateSystem.Common.FF9.player[(CharacterId)v.Caster.Data.bi.slot_no].equip[0]].shape == 1)
+                {
+                    if (v.Command.Data.info.effect_counter == 2)
+                    {
+                        HealHPSAOrItem += (v.Target.HpDamage / 4 + ZidanePassive[v.Caster.Data][7]);
+                        ZidanePassive[v.Caster.Data][7] = 0;
+                    }
+                    else
+                    {
+                        ZidanePassive[v.Caster.Data][7] = v.Target.HpDamage / 4;
+                    }
+                }
+                else
+                {
+                    HealHPSAOrItem += v.Target.HpDamage / 4;
+                }
             }
             if (v.Caster.Accessory == (RegularItem)1208 && (v.Target.Flags & CalcFlag.HpRecovery) == 0 && v.Target.Data != v.Caster.Data) // Materia Support
             {
@@ -1148,6 +1185,23 @@ namespace Memoria.Scripts.Battle
             if (v.Caster.Weapon == (RegularItem)1100 && (v.Target.Flags & CalcFlag.HpRecovery) == 0)
             {
                 v.Target.HpDamage = 1;
+            }
+
+            if (v.Target.IsUnderAnyStatus(BattleStatus.AutoLife) && (v.Target.Flags & CalcFlag.HpRecovery) == 0 && !v.Target.IsPlayer && v.Target.HpDamage >= v.Target.CurrentHp)
+            {
+                v.Target.HpDamage = (int)(v.Target.CurrentHp - 1);
+                Dictionary<String, String> localizedMessage = new Dictionary<String, String>
+                            {
+                                { "US", "Auto-Life!" },
+                                { "UK", "Auto-Life!" },
+                                { "JP", "リレイズ!" },
+                                { "ES", "¡AutoLázaro!" },
+                                { "FR", "Auréole !" },
+                                { "GR", "Reinkarnat!" },
+                                { "IT", "Risveglio!" },
+                            };
+                btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[FF99FD]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 20);
+                v.Target.RemoveStatus(BattleStatus.AutoLife);
             }
         }
     }

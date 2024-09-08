@@ -33,8 +33,8 @@ namespace Memoria.Scripts.Battle
                     {
                         _v.NormalPhysicalParams();
                     }
-                    _v.Caster.EnemyTranceBonusAttack();
-                    _v.Caster.PhysicalPenaltyAndBonusAttack();
+                    TranceSeekCustomAPI.EnemyTranceBonusAttack(_v);
+                    TranceSeekCustomAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
                     TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
                     if (_v.Caster.IsUnderStatus(BattleStatus.Trance) && _v.Caster.PlayerIndex == CharacterId.Steiner)
                     {

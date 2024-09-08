@@ -58,7 +58,7 @@ namespace Memoria.Scripts.Battle
                         }
                     }
 
-                    if (_v.Caster.HasSupportAbility(SupportAbility1.StealGil) || _v.Caster.HasSupportAbilityByIndex((SupportAbility)1023))
+                    if (_v.Caster.HasSupportAbility(SupportAbility1.StealGil))
                     {
                         StealGils();
                     }

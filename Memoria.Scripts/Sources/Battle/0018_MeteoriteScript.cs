@@ -20,8 +20,8 @@ namespace Memoria.Scripts.Battle
         public void Perform()
         {
             InitializeAttackParams();
-            _v.Caster.PenaltyMini();
-            _v.Caster.EnemyTranceBonusAttack();
+            TranceSeekCustomAPI.CasterPenaltyMini(_v);
+            TranceSeekCustomAPI.EnemyTranceBonusAttack(_v);
             TranceSeekCustomAPI.PenaltyShellAttack(_v);
             TranceSeekCustomAPI.PenaltyCommandDividedAttack(_v);
             TranceSeekCustomAPI.BonusElement(_v);

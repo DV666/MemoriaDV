@@ -39,7 +39,7 @@ namespace Memoria.Scripts.Battle
                         _v.Context.AttackPower = _v.Command.Weapon.Power << 1;
                         _v.Context.Attack = (Int16)(_v.Caster.Magic + Comn.random16() % (1 + (_v.Caster.Level + _v.Caster.Magic >> 3)));
                         _v.Target.SetMagicDefense();
-                        _v.Caster.PenaltyMini();
+                        TranceSeekCustomAPI.CasterPenaltyMini(_v);
                         TranceSeekCustomAPI.PenaltyShellAttack(_v);
                         if (_v.Target.IsUnderAnyStatus(BattleStatus.Vanish))
                             _v.Target.RemoveStatus(BattleStatus.Vanish);
@@ -56,7 +56,7 @@ namespace Memoria.Scripts.Battle
                             TranceSeekCustomAPI.CharacterBonusPassive(_v, "LowPhysicalAttack");
                             _v.Target.SetPhysicalDefense();
                             _v.Context.AttackPower = _v.Command.Weapon.Power << 1;
-                            _v.Caster.PhysicalPenaltyAndBonusAttack();
+                            TranceSeekCustomAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
                         }
                     }
                     if ((_v.Command.Weapon.Element & _v.Caster.WeakElement) != 0)
@@ -81,8 +81,8 @@ namespace Memoria.Scripts.Battle
                     else
                     {
                         _v.NormalPhysicalParams();
-                        _v.Caster.PhysicalPenaltyAndBonusAttack();
-                        _v.Caster.EnemyTranceBonusAttack();
+                        TranceSeekCustomAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
+                        TranceSeekCustomAPI.EnemyTranceBonusAttack(_v);
                         _v.Target.GambleDefence();
                         TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
                         TranceSeekCustomAPI.BonusBackstabAndPenaltyLongDistanceTranceSeek(_v);

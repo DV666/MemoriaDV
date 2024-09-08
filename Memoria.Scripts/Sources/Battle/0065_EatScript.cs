@@ -29,7 +29,7 @@ namespace Memoria.Scripts.Battle
             {
                 _v.WeaponPhysicalParams(CalcAttackBonus.Random);
                 _v.BonusKillerAbilities();
-                _v.Caster.PhysicalPenaltyAndBonusAttack();
+                TranceSeekCustomAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
                 TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
                 TranceSeekCustomAPI.BonusBackstabAndPenaltyLongDistanceTranceSeek(_v);
                 TranceSeekCustomAPI.BonusWeaponElement(_v);

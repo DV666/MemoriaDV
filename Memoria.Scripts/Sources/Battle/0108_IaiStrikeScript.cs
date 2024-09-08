@@ -26,8 +26,8 @@ namespace Memoria.Scripts.Battle
             }
             _v.WeaponPhysicalParams();
             _v.Context.DefensePower = _v.Context.DefensePower / _v.Command.Power;
-            _v.Caster.EnemyTranceBonusAttack();
-            _v.Caster.PhysicalPenaltyAndBonusAttack();
+            TranceSeekCustomAPI.EnemyTranceBonusAttack(_v);
+            TranceSeekCustomAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
             TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
             TranceSeekCustomAPI.BonusElement(_v);
             if (_v.CanAttackWeaponElementalCommand())

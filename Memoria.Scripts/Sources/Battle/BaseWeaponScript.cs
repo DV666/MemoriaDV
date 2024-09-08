@@ -48,7 +48,7 @@ namespace Memoria.Scripts.Battle
             if (TranceSeekCustomAPI.TryPhysicalHit(_v))
             {
                 TranceSeekCustomAPI.WeaponPhysicalParams(_bonus, _v);
-                _v.Caster.PhysicalPenaltyAndBonusAttack();
+                TranceSeekCustomAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
                 TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
                 if (_v.Caster.IsUnderStatus(BattleStatus.Trance) && _v.Caster.PlayerIndex == CharacterId.Steiner)
                 {
@@ -70,6 +70,10 @@ namespace Memoria.Scripts.Battle
                                 MugScript();
 
                             ShowMugMessage();
+                            if (_v.Caster.HasSupportAbility(SupportAbility1.StealGil))
+                            {
+                                StealGils();
+                            }
                         }                      
                     }
                     if (_v.Caster.PlayerIndex == CharacterId.Amarant)
@@ -137,8 +141,8 @@ namespace Memoria.Scripts.Battle
                     break;
             }
             TranceSeekCustomAPI.CharacterBonusPassive(_v, "MagicAttack");
-            _v.Caster.PenaltyMini();
-            _v.Caster.EnemyTranceBonusAttack();
+            TranceSeekCustomAPI.CasterPenaltyMini(_v);
+            TranceSeekCustomAPI.EnemyTranceBonusAttack(_v);
             --_v.Context.DamageModifierCount;
             if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)102))
                 TranceSeekCustomAPI.TryCriticalHit(_v);
@@ -440,6 +444,49 @@ namespace Memoria.Scripts.Battle
                         UiState.SetBattleFollowFormatMessage(BattleMesages.Stole, FF9TextTool.ItemName(SecondItemMugged));
                     TranceSeekCustomAPI.ZidanePassive[_v.Caster.Data][5] = 255;
                     TranceSeekCustomAPI.ZidanePassive[_v.Caster.Data][6] = 255;
+                }
+            }
+        }
+
+        public void StealGils()
+        {
+            if (btl_util.getEnemyPtr(_v.Target).bonus_gil > 0)
+            {
+                int bonusgil = 0;
+                byte delay = 16;
+                CharacterSerialNumber serialNumber = btl_util.getSerialNumber(_v.Caster.Data);
+                if (serialNumber == CharacterSerialNumber.ZIDANE_SWORD)
+                    delay = 8;
+
+                if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1023))
+                {
+                    bonusgil = (int)UnityEngine.Random.Range(btl_util.getEnemyPtr(_v.Target).bonus_gil / 12, btl_util.getEnemyPtr(_v.Target).bonus_gil / 6);
+                }
+                else
+                {
+                    bonusgil = (int)(GameRandom.Next16() % (btl_util.getEnemyPtr(_v.Target).bonus_gil / 8));
+                }
+
+                if (ff9item._FF9Item_Data[FF9StateSystem.Common.FF9.player[(CharacterId)_v.Caster.Data.bi.slot_no].equip[0]].shape == 1 && _v.Command.Data.info.effect_counter != 2)
+                {
+                    TranceSeekCustomAPI.ZidanePassive[_v.Caster.Data][8] = bonusgil;
+                }
+                else
+                {
+                    bonusgil = bonusgil + TranceSeekCustomAPI.ZidanePassive[_v.Caster.Data][8];
+                    TranceSeekCustomAPI.ZidanePassive[_v.Caster.Data][8] = 0;
+                    Dictionary<String, String> localizedMessage = new Dictionary<String, String>
+                        {
+                          { "US", $"+{bonusgil} gils!" },
+                          { "UK", $"+{bonusgil} gils!" },
+                          { "JP", $"+{bonusgil} ギル!" },
+                          { "ES", $"+{bonusgil} guiles!" },
+                          { "FR", $"+{bonusgil} gils !" },
+                          { "GR", $"+{bonusgil} Gil!" },
+                          { "IT", $"+{bonusgil} Guil!" },
+                        };
+                    btl2d.Btl2dReqSymbolMessage(_v.Caster.Data, NGUIText.FF9YellowColor, localizedMessage, HUDMessage.MessageStyle.DAMAGE, delay);
+                    GameState.Gil += (uint)bonusgil;
                 }
             }
         }

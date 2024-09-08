@@ -31,7 +31,7 @@ namespace Memoria.Scripts.Battle
                 _v.Context.AttackPower = _v.Caster.GetWeaponPower(_v.Command);
                 _v.Target.SetMagicDefense();
                 _v.Context.Attack = Comn.random16() % _v.Caster.Magic + baseDamage;
-                _v.Caster.PhysicalPenaltyAndBonusAttack();
+                TranceSeekCustomAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
                 TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
                 _v.BonusBackstabAndPenaltyLongDistance();
                 TranceSeekCustomAPI.BonusWeaponElement(_v);
@@ -56,8 +56,8 @@ namespace Memoria.Scripts.Battle
 
             _v.NormalMagicParams();
             TranceSeekCustomAPI.CharacterBonusPassive(_v, "MagicAttack");
-            _v.Caster.PenaltyMini();
-            _v.Caster.EnemyTranceBonusAttack();
+            TranceSeekCustomAPI.CasterPenaltyMini(_v);
+            TranceSeekCustomAPI.EnemyTranceBonusAttack(_v);
             TranceSeekCustomAPI.PenaltyShellAttack(_v);
             _v.Target.Flags |= CalcFlag.MpAlteration;
             _v.Caster.Flags |= CalcFlag.MpAlteration;
