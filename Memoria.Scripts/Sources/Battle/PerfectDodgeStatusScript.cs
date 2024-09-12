@@ -11,11 +11,13 @@ namespace Memoria.DefaultScripts
         public HUDMessageChild NumberHUD = null;
         public Int32 Stack;
         public Int32 DefautSize;
+        public Vector3 ModelScale;
 
         public override UInt32 Apply(BattleUnit target, BattleUnit inflicter, params Object[] parameters)
         {
             base.Apply(target, inflicter, parameters);
             Int32 StackMaximum = 9;
+            ModelScale = target.ModelStatusScale;
             if (parameters.Length > 0)
             {
                 String Parameter = parameters[0] as String;
@@ -100,8 +102,9 @@ namespace Memoria.DefaultScripts
         {
             if (!unit.IsUnderAnyStatus(BattleStatusId.CustomStatus14))
                 return false;
-            if (unit.Data.bi.disappear != 0 || Stack <= 1)
+            if (unit.Data.bi.disappear != 0 || Stack <= 1 || ModelScale != unit.ModelStatusScale)
             {
+                ModelScale = unit.ModelStatusScale;
                 if (NumberHUD != null)
                 {
                     NumberHUD.FontSize = DefautSize;

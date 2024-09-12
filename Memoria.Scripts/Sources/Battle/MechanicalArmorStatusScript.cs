@@ -13,6 +13,7 @@ namespace Memoria.DefaultScripts
         public Int32 Stack;
         public Int32 DefautSize;
         public Boolean ShowNumberHUD;
+        public Vector3 ModelScale;
 
         public override UInt32 Apply(BattleUnit target, BattleUnit inflicter, params Object[] parameters)
         {
@@ -22,6 +23,7 @@ namespace Memoria.DefaultScripts
             Int32 level = (Int32)parameters[0];
             base.Apply(target, inflicter, parameters);
             OverlapSHP.SetupOverlappingSHP2(target);
+            ModelScale = target.ModelStatusScale;
             BattleStatusDataEntry statusData = FF9StateSystem.Battle.FF9Battle.status_data[BattleStatusId.CustomStatus11];
 
             if (level > 0)
@@ -75,8 +77,9 @@ namespace Memoria.DefaultScripts
         {
             if (!unit.IsUnderAnyStatus(BattleStatusId.CustomStatus11))
                 return false;
-            if (unit.Data.bi.disappear != 0 || Stack <= 1)
+            if (unit.Data.bi.disappear != 0 || Stack <= 1 || ModelScale != unit.ModelStatusScale)
             {
+                ModelScale = unit.ModelStatusScale;
                 if (NumberHUD != null)
                 {
                     NumberHUD.FontSize = DefautSize;

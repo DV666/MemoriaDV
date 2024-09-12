@@ -25,8 +25,12 @@ namespace Memoria.Scripts.Battle
             {
                 if (_v.Command.ItemId == (RegularItem)1032) // Smoking Bomb
                 {
-                    btl_mot.HideMesh(_v.Target.Data, 65535, true);
-                    BattleState.EnqueueCommand(BattleState.EscapeCommand, BattleCommandId.SysEscape, 0U, 15, true);
+                    btl_sys.CheckEscape(false);
+                    if (_v.CanEscape())
+                    {
+                        btl_mot.HideMesh(_v.Target.Data, 65535, true);
+                        BattleState.EnqueueCommand(BattleState.EscapeCommand, BattleCommandId.SysEscape, 0U, 15, true);
+                    }
                 }
                 else if (_v.Command.ItemId == (RegularItem)1033) // Image
                 {

@@ -99,7 +99,7 @@ namespace Memoria.Scripts.Battle
                         }
                         if (_v.Target.Data.bi.player != 0)
                             UIManager.Battle.RemovePlayerFromAction(_v.Target.Data.btl_id, true);
-                        if (!btl_cmd.KillCommand2(_v.Target.Data))
+                        if (!btl_cmd.KillMainCommand(_v.Target.Data))
                             return;
                         _v.Target.Data.bi.atb = 0;
                         if (_v.Target.Data.bi.player != 0 && !FF9StateSystem.Settings.IsATBFull)

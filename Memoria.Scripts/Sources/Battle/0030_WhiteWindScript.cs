@@ -20,9 +20,14 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            if (_v.Command.Power == 1)
+            if (_v.Command.HitRate == 111)
             {
-                _v.Target.Flags |= (CalcFlag.HpAlteration | CalcFlag.HpRecovery);
+                _v.Target.Flags |= CalcFlag.MpDamageOrHeal;
+                _v.Target.MpDamage = (int)(_v.Caster.CurrentMp / 10);
+            }
+            else if (_v.Command.Power == 1)
+            {
+                _v.Target.Flags |= CalcFlag.HpDamageOrHeal;
                 _v.Target.HpDamage = (int)_v.Caster.CurrentHp;
             }
             else

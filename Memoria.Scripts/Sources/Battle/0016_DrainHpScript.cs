@@ -117,10 +117,10 @@ namespace Memoria.Scripts.Battle
                         }
                         else if (_v.Command.HitRate == 223) // Prison Cage CD4 - Super Vampire / Plant Brain - Super Punction
                         {
-                            if (_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill))
-                                _v.Target.HpDamage = (int)((_v.Target.MaximumHp - 10000) / 2) - 1;
+                            if (_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill) && _v.Target.MaximumHp > 10000)
+                                _v.Target.HpDamage = (int)((_v.Target.MaximumHp - 10000) / 2) + 1;
                             else
-                                _v.Target.HpDamage = (int)(_v.Target.MaximumHp / 2) - 1;
+                                _v.Target.HpDamage = (int)(_v.Target.MaximumHp / 2) + 1;
 
                             _v.Caster.AlterStatus(TranceSeekCustomAPI.CustomStatus.PowerUp, _v.Caster);
                             _v.Caster.AlterStatus(TranceSeekCustomAPI.CustomStatus.MagicUp, _v.Caster);

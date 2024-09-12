@@ -1,5 +1,6 @@
 ﻿using Memoria.Data;
 using System;
+using System.Collections.Generic;
 using static Memoria.Scripts.Battle.TranceSeekCustomAPI;
 
 namespace Memoria.Scripts.Battle
@@ -28,8 +29,8 @@ namespace Memoria.Scripts.Battle
                     _v.Context.Flags |= BattleCalcFlags.Miss;
                     return;
                 }
-                btl_stat.AlterStatus(_v.Target, CustomStatusId.PowerUp, parameters: "+2");
-                btl_stat.AlterStatus(_v.Target, CustomStatusId.MagicUp, parameters: "+2");
+                btl_stat.AlterStatus(_v.Target, CustomStatusId.PowerUp, parameters: $"+{_v.Command.Power}");
+                btl_stat.AlterStatus(_v.Target, CustomStatusId.MagicUp, parameters: $"+{_v.Command.Power}");
                 _v.Target.AlterStatus(CustomStatus.Redemption, _v.Caster);
                 _v.Target.AlterStatus(CustomStatus.Redemption, _v.Caster);
                 if (_v.Caster.IsUnderAnyStatus(BattleStatus.Trance))
@@ -44,22 +45,46 @@ namespace Memoria.Scripts.Battle
                 }
                 return;
             }
-            else if (_v.Caster.Data.dms_geo_id == 410 && _v.Command.Power == 2) // [Lani] Adrénaline
+            else if (_v.Caster.Data.dms_geo_id == 410 && _v.Command.Power == 2 || (_v.Caster.Data.dms_geo_id == 410 && _v.Command.Power == 4 || _v.Command.AbilityId == (BattleAbilityId)1081)) // [Lani] Adrénaline + Super Muscles
             {
-                btl_stat.AlterStatus(_v.Target, CustomStatusId.PowerUp, parameters: "+2");
-                btl_stat.AlterStatus(_v.Target, CustomStatusId.ArmorUp, parameters: "+2");
+                btl_stat.AlterStatus(_v.Target, CustomStatusId.PowerUp, parameters: $"+{_v.Command.Power}");
+                btl_stat.AlterStatus(_v.Target, CustomStatusId.ArmorUp, parameters: $"+{_v.Command.Power}");
                 return;
             }
-            else if (_v.Caster.Data.dms_geo_id == 410 && _v.Command.Power == 4 || _v.Command.AbilityId == (BattleAbilityId)1081) // [Lani] Super Muscles
+            else if (_v.Command.HitRate == 77) // [Divinorum] Knowledge of the Elders
             {
-                btl_stat.AlterStatus(_v.Target, CustomStatusId.PowerUp, parameters: "+4");
-                btl_stat.AlterStatus(_v.Target, CustomStatusId.ArmorUp, parameters: "+4");
+                _v.Target.Magic += 10;
+                _v.Target.Will += 10;
+                Dictionary<String, String> localizedMessage = new Dictionary<String, String>
+                                {
+                                    { "US", "Magic ↑" },
+                                    { "UK", "Magic ↑" },
+                                    { "JP", "まりょく ↑" },
+                                    { "ES", "POT magico ↑" },
+                                    { "FR", "Magie ↑" },
+                                    { "GR", "Magia ↑" },
+                                    { "IT", "Zauber ↑" },
+                                };
+                btl2d.Btl2dReqSymbolMessage(_v.Target.Data, "[F9FF39]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 0);
+                Dictionary<String, String> localizedMessage2 = new Dictionary<String, String>
+                                {
+                                    { "US", "Spirit ↑" },
+                                    { "UK", "Spirit ↑" },
+                                    { "JP", "きりょく ↑" },
+                                    { "ES", "POT spirito ↑" },
+                                    { "FR", "Esprit ↑" },
+                                    { "GR", "Espíritu ↑" },
+                                    { "IT", "Wille ↑" },
+                                };
+                btl2d.Btl2dReqSymbolMessage(_v.Target.Data, "[F9FF39]", localizedMessage2, HUDMessage.MessageStyle.DAMAGE, 5);
+                _v.Target.Flags |= CalcFlag.MpDamageOrHeal;
+                _v.Target.MpDamage = (int)(_v.Target.MaximumMp);
                 return;
             }
 
             _v.TryAlterMagicStatuses();
-            _v.Target.AlterStatus(CustomStatus.PowerUp, _v.Caster);
-            _v.Target.AlterStatus(CustomStatus.MagicUp, _v.Caster);
+            btl_stat.AlterStatus(_v.Target, CustomStatusId.PowerUp, parameters: $"+{_v.Command.Power}");
+            btl_stat.AlterStatus(_v.Target, CustomStatusId.MagicUp, parameters: $"+{_v.Command.Power}");
         }
     }
 }

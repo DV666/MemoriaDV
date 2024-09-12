@@ -14,6 +14,7 @@ namespace Memoria.DefaultScripts
         public Int32 BasicMagicDefence;
         public Int32 Stack;
         public Int32 DefautSize;
+        public Vector3 ModelScale;
 
         public override UInt32 Apply(BattleUnit target, BattleUnit inflicter, params Object[] parameters)
         {
@@ -22,6 +23,7 @@ namespace Memoria.DefaultScripts
 
             Int32 damage = (Int32)parameters[0];
             base.Apply(target, inflicter, parameters);
+            ModelScale = target.ModelStatusScale;
             BattleStatusDataEntry statusData = FF9StateSystem.Battle.FF9Battle.status_data[BattleStatusId.CustomStatus10];
             if (BasicPhysicalDefence == 0)
                 BasicPhysicalDefence = Target.PhysicalDefence;
@@ -129,8 +131,9 @@ namespace Memoria.DefaultScripts
         {
             if (!unit.IsUnderAnyStatus(BattleStatusId.CustomStatus10))
                 return false;
-            if (unit.Data.bi.disappear != 0 || Stack <= 1)
+            if (unit.Data.bi.disappear != 0 || Stack <= 1 || ModelScale != unit.ModelStatusScale)
             {
+                ModelScale = unit.ModelStatusScale;
                 if (NumberHUD != null)
                 {
                     NumberHUD.FontSize = DefautSize;
