@@ -339,9 +339,9 @@ namespace Memoria.Scripts.Battle
                 v.Context.Flags |= BattleCalcFlags.Guard;
                 return false;
             }
-            if (v.Target.Data == v.Caster.Data || (v.Context.Evade + (v.Target.PlayerIndex == CharacterId.Zidane ? ZidanePassive[v.Target.Data][0] : 0)) <= Comn.random16() % 100 || v.Context.Evade == 0)
+            if ((v.Target.Data == v.Caster.Data || (v.Context.Evade + (v.Target.PlayerIndex == CharacterId.Zidane ? ZidanePassive[v.Target.Data][0] : 0)) <= Comn.random16() % 100 || v.Context.Evade == 0))
             {
-                if (v.Target.PlayerIndex == CharacterId.Zidane && btl_util.getSerialNumber(v.Target.Data) == CharacterSerialNumber.ZIDANE_DAGGER && !v.Target.IsUnderAnyStatus(BattleStatusConst.BattleEndFull))
+                if (v.Target.PlayerIndex == CharacterId.Zidane && btl_util.getSerialNumber(v.Target.Data) == CharacterSerialNumber.ZIDANE_DAGGER && !v.Target.IsUnderAnyStatus(BattleStatusConst.BattleEndFull) && !v.Caster.HasSupportAbility(SupportAbility1.Healer))
                 {
                     ZidanePassive[v.Target.Data][0] += 5;
                     Dictionary<String, String> localizedMessage = new Dictionary<String, String>

@@ -45,16 +45,18 @@ namespace Memoria.Scripts.Battle
                 {
                     if (_v.Command.HitRate == 1)
                     {
-                        _v.Target.AlterStatus(BattleStatus.Stop, _v.Caster);
+                        btl_stat.MakeStatusesPermanent(_v.Target, BattleStatus.Stop, true);
                         _v.Target.Data.bi.target = 0;
+                        TranceSeekCustomAPI.MonsterMechanic[_v.Caster.Data][2] = _v.Target.Id;
                     }
                     else
                     {
                         foreach (BattleUnit unit in BattleState.EnumerateUnits())
                         {
-                            if (unit.IsPlayer && unit.Data.bi.target == 0 && !unit.IsUnderAnyStatus(BattleStatus.Jump))
+                            if (TranceSeekCustomAPI.MonsterMechanic[_v.Caster.Data][2] == unit.Id)
                             {
                                 unit.Data.bi.target = 1;
+                                btl_stat.MakeStatusesPermanent(unit, BattleStatus.Stop, false);
                                 unit.RemoveStatus(BattleStatus.Stop);
                             }
                         }
