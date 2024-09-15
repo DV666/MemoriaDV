@@ -1,5 +1,6 @@
 ﻿using System;
 using Memoria.Data;
+using Memoria.Scripts.Battle;
 using Object = System.Object;
 
 namespace Memoria.DefaultScripts
@@ -11,6 +12,25 @@ namespace Memoria.DefaultScripts
         {
             base.Apply(target, inflicter, parameters);
             target.UISpriteATB = BattleHUD.ATEGray;
+            if (Target.IsUnderAnyStatus(BattleStatus.EasyKill))
+            {
+                if (TranceSeekCustomAPI.MonsterMechanic[target.Data][4] > 0)
+                {
+                    BattleStatusDataEntry statusData = FF9StateSystem.Battle.FF9Battle.status_data[BattleStatusId.Poison];
+                    Int32 wait = (short)((200 + (inflicter.Will * 2) - target.Will) * statusData.ContiCnt);
+                    wait = (wait * TranceSeekCustomAPI.MonsterMechanic[target.Data][4]) / 100;
+                    Target.AddDelayedModifier(
+                    target => (wait -= target.Data.cur.at_coef * BattleState.ATBTickCount) > 0,
+                    target =>
+                    {
+                        target.RemoveStatus(BattleStatus.Stop);
+                    }
+                    );
+                    TranceSeekCustomAPI.MonsterMechanic[target.Data][4] -= 20;
+                }
+                else
+                    return btl_stat.ALTER_RESIST;
+            }
             return btl_stat.ALTER_SUCCESS;
         }
 

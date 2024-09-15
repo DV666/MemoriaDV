@@ -53,7 +53,7 @@ namespace Memoria.Scripts.Battle
                 if (!ViviPreviousSpell.TryGetValue(unit.Data, out BattleAbilityId e))
                     ViviPreviousSpell[unit.Data] = BattleAbilityId.Void;
                 if (!ViviPassive.TryGetValue(unit.Data, out Int32[] vivipassive))
-                    ViviPassive[unit.Data] = new Int32[] { 0, 0 };
+                    ViviPassive[unit.Data] = new Int32[] { 0, 0, 0 };
                 if (!BeatrixPassive.TryGetValue(unit.Data, out Int32[] beatrixpassive))
                     BeatrixPassive[unit.Data] = new Int32[] { 0, 0, 0, 0 };
                 if (!StackBreakOrUpStatus.TryGetValue(unit.Data, out Int32[] stackstatus))

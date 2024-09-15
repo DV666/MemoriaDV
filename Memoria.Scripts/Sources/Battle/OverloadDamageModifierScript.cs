@@ -35,6 +35,15 @@ namespace Memoria.Scripts.Battle
                 if (v.Target.PlayerIndex == (CharacterId)12 && (v.Target.Flags & CalcFlag.HpRecovery) == 0) // Lani's Rage Mechanic
                     v.Target.AlterStatus(CustomStatus.Rage, v.Caster);
             }
+            if (v.Target.IsUnderAnyStatus(BattleStatus.EasyKill) && ((v.Target.Flags & CalcFlag.HpRecovery) != 0 || v.Context.IsAbsorb || v.Command.ScriptId == 10 || v.Command.ScriptId == 69 ||
+                 v.Command.ScriptId == 79 || v.Command.ScriptId == 30 || v.Command.ScriptId == 37))
+            {
+                if (v.Target.IsUnderAnyStatus(BattleStatus.Zombie))
+                {
+                    v.Target.HpDamage = 0;
+                    v.Target.RemoveStatus(BattleStatus.Zombie);
+                }
+            }
             if ((v.Target.Flags & CalcFlag.MpAlteration) != 0)
                 v.Target.MpDamage = (Int32)Math.Round(modifier_factor * v.Target.MpDamage) * reflectMultiplier;
 

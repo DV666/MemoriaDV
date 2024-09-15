@@ -19,7 +19,7 @@ namespace Memoria.Scripts.Battle
         public static Dictionary<BTL_DATA, Int32[]> ZidanePassive = new Dictionary<BTL_DATA, Int32[]>();
         // [0] => Dodge ; [1] => Critical ; [2] => Eye of the thief ; [3] => Master Thief ; [4] => Dagger Attack ; [5] => FirstItemMug ; [6] => SecondItemMug ; [7] => Mug+ ; [8] => Steal Gil
 
-        public static Dictionary<BTL_DATA, Int32[]> ViviPassive = new Dictionary<BTL_DATA, Int32[]>(); // [0] => Focus ; [1] => NumberTargets
+        public static Dictionary<BTL_DATA, Int32[]> ViviPassive = new Dictionary<BTL_DATA, Int32[]>(); // [0] => Focus ; [1] => NumberTargets ; [2] => TriggerOneTime
         public static Dictionary<BTL_DATA, BattleAbilityId> ViviPreviousSpell = new Dictionary<BTL_DATA, BattleAbilityId>();
 
         public static Dictionary<BTL_DATA, Int32[]> BeatrixPassive = new Dictionary<BTL_DATA, Int32[]>(); // [0] => Strength ; [1] => Magic ; [2] => Bravoure ; [3] => TargetCount
@@ -660,96 +660,28 @@ namespace Memoria.Scripts.Battle
 
         public static void ViviFocus(this BattleCalculator v)
         {
-            if (v.Caster.PlayerIndex == CharacterId.Vivi)
+            if (ViviPassive[v.Caster.Data][2] == 0)
             {
-                if ((v.Command.Id == BattleCommandId.BlackMagic || v.Command.Id == BattleCommandId.DoubleBlackMagic))
-                {
-                    if (ViviPassive[v.Caster.Data][1] == 0)
+                ViviPassive[v.Caster.Data][2] = 1;
+                v.Caster.AddDelayedModifier(
+                    caster => caster.CurrentAtb >= caster.MaximumAtb,
+                    caster =>
                     {
-                        ViviPassive[v.Caster.Data][1] = (ushort)(v.Command.TargetCount);
-                        if (FF9TextTool.ActionAbilityName(ViviPreviousSpell[v.Caster.Data]) != v.Command.AbilityName)
-                        {
-                            Int32 BonusFocusMax = 0;
-                            switch (v.Caster.Weapon)
-                            {
-                                case RegularItem.FlameStaff:
-                                case RegularItem.IceStaff:
-                                case RegularItem.LightningStaff:
-                                    BonusFocusMax += 5;
-                                    break;
-                                case RegularItem.OakStaff:
-                                    BonusFocusMax += 10;
-                                    break;
-                                case RegularItem.CypressPile:
-                                    BonusFocusMax += 10;
-                                    break;
-                                case RegularItem.OctagonRod:
-                                    BonusFocusMax += 15;
-                                    break;
-                                case RegularItem.HighMageStaff:
-                                    BonusFocusMax += 25;
-                                    break;
-                                case RegularItem.MaceOfZeus:
-                                    BonusFocusMax += 50;
-                                    break;
-                            }
-                            if (ViviPassive[v.Caster.Data][0] < (50 + BonusFocusMax))
-                            {
-                                ViviPassive[v.Caster.Data][0] += 5;
-                            }
-                            Dictionary<String, String> localizedMessage = new Dictionary<String, String>
-                                {
-                                    { "US", $"Focus +{ViviPassive[v.Caster.Data][0]}%!" },
-                                    { "UK", $"Focus +{ViviPassive[v.Caster.Data][0]}%!" },
-                                    { "JP", $"フォーカス +{ViviPassive[v.Caster.Data][0]}%!" },
-                                    { "ES", $"¡Focus +{ViviPassive[v.Caster.Data][0]}%!" },
-                                    { "FR", $"Focus +{ViviPassive[v.Caster.Data][0]}% !" },
-                                    { "GR", $"Focus +{ViviPassive[v.Caster.Data][0]}%!" },
-                                    { "IT", $"Focus +{ViviPassive[v.Caster.Data][0]}%!" },
-                                };
-                            btl2d.Btl2dReqSymbolMessage(v.Caster.Data, "[BA55D3]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 40);
-                        }
-                        else
-                        {
-                            ViviPassive[v.Caster.Data][0] = 0;
-                            Dictionary<String, String> localizedMessage = new Dictionary<String, String>
-                            {
-                                { "US", "- Focus!" },
-                                { "UK", "- Focus!" },
-                                { "JP", "- フォーカス!" },
-                                { "ES", "¡- Focus!" },
-                                { "FR", "- Focus !" },
-                                { "GR", "- Focus!" },
-                                { "IT", "- Focus!" },
-                            };
-                            btl2d.Btl2dReqSymbolMessage(v.Caster.Data, "[DC143C]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 40);
-                        }
-                        ViviPreviousSpell[v.Caster.Data] = v.Command.AbilityId;
-                    }
-                    ViviPassive[v.Caster.Data][1]--;
-                    if (ViviPassive[v.Caster.Data][1] < 0)
                         ViviPassive[v.Caster.Data][1] = 0;
-
-                    if (v.Command.ScriptId != 17) // Magic Gravity didn't get damage boost.
-                    {
-                        v.Context.Attack += (v.Context.Attack * ViviPassive[v.Caster.Data][0]) / 100;
-                        v.Command.HitRate += (v.Command.HitRate * ViviPassive[v.Caster.Data][0]) / 100;
+                        ViviPassive[v.Caster.Data][2] = 0;
                     }
-                }
-            }
-            else if (v.Caster.PlayerIndex == CharacterId.Steiner && v.Command.Id == BattleCommandId.MagicSword)
-            {
-                if (ViviPassive[v.Caster.Data][1] == 0)
+                );
+                if (v.Caster.PlayerIndex == CharacterId.Vivi)
                 {
-                    ViviPassive[v.Caster.Data][1] = (ushort)(v.Command.TargetCount);
-                    foreach (BattleUnit Vivi in BattleState.EnumerateUnits())
+                    if ((v.Command.Id == BattleCommandId.BlackMagic || v.Command.Id == BattleCommandId.DoubleBlackMagic))
                     {
-                        if (Vivi.IsPlayer && Vivi.PlayerIndex == CharacterId.Vivi)
+                        if (ViviPassive[v.Caster.Data][1] == 0)
                         {
-                            if (FF9TextTool.ActionAbilityName(ViviPreviousSpell[Vivi.Data]) != v.Command.AbilityName)
+                            ViviPassive[v.Caster.Data][1] = (ushort)(v.Command.TargetCount);
+                            if (FF9TextTool.ActionAbilityName(ViviPreviousSpell[v.Caster.Data]) != v.Command.AbilityName)
                             {
                                 Int32 BonusFocusMax = 0;
-                                switch (Vivi.Weapon)
+                                switch (v.Caster.Weapon)
                                 {
                                     case RegularItem.FlameStaff:
                                     case RegularItem.IceStaff:
@@ -772,11 +704,90 @@ namespace Memoria.Scripts.Battle
                                         BonusFocusMax += 50;
                                         break;
                                 }
-                                if (ViviPassive[Vivi.Data][0] < (50 + BonusFocusMax))
+                                if (ViviPassive[v.Caster.Data][0] < (50 + BonusFocusMax))
                                 {
-                                    ViviPassive[Vivi.Data][0] += 5;
+                                    ViviPassive[v.Caster.Data][0] += 5;
                                 }
                                 Dictionary<String, String> localizedMessage = new Dictionary<String, String>
+                                {
+                                    { "US", $"Focus +{ViviPassive[v.Caster.Data][0]}%!" },
+                                    { "UK", $"Focus +{ViviPassive[v.Caster.Data][0]}%!" },
+                                    { "JP", $"フォーカス +{ViviPassive[v.Caster.Data][0]}%!" },
+                                    { "ES", $"¡Focus +{ViviPassive[v.Caster.Data][0]}%!" },
+                                    { "FR", $"Focus +{ViviPassive[v.Caster.Data][0]}% !" },
+                                    { "GR", $"Focus +{ViviPassive[v.Caster.Data][0]}%!" },
+                                    { "IT", $"Focus +{ViviPassive[v.Caster.Data][0]}%!" },
+                                };
+                                btl2d.Btl2dReqSymbolMessage(v.Caster.Data, "[BA55D3]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 40);
+                            }
+                            else
+                            {
+                                ViviPassive[v.Caster.Data][0] = 0;
+                                Dictionary<String, String> localizedMessage = new Dictionary<String, String>
+                            {
+                                { "US", "- Focus!" },
+                                { "UK", "- Focus!" },
+                                { "JP", "- フォーカス!" },
+                                { "ES", "¡- Focus!" },
+                                { "FR", "- Focus !" },
+                                { "GR", "- Focus!" },
+                                { "IT", "- Focus!" },
+                            };
+                                btl2d.Btl2dReqSymbolMessage(v.Caster.Data, "[DC143C]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 40);
+                            }
+                            ViviPreviousSpell[v.Caster.Data] = v.Command.AbilityId;
+                        }
+                        ViviPassive[v.Caster.Data][1]--;
+                        if (ViviPassive[v.Caster.Data][1] < 0)
+                            ViviPassive[v.Caster.Data][1] = 0;
+
+                        if (v.Command.ScriptId != 17) // Magic Gravity didn't get damage boost.
+                        {
+                            v.Context.Attack += (v.Context.Attack * ViviPassive[v.Caster.Data][0]) / 100;
+                            v.Command.HitRate += (v.Command.HitRate * ViviPassive[v.Caster.Data][0]) / 100;
+                        }
+                    }
+                }
+                else if (v.Caster.PlayerIndex == CharacterId.Steiner && v.Command.Id == BattleCommandId.MagicSword)
+                {
+                    if (ViviPassive[v.Caster.Data][1] == 0)
+                    {
+                        ViviPassive[v.Caster.Data][1] = (ushort)(v.Command.TargetCount);
+                        foreach (BattleUnit Vivi in BattleState.EnumerateUnits())
+                        {
+                            if (Vivi.IsPlayer && Vivi.PlayerIndex == CharacterId.Vivi)
+                            {
+                                if (FF9TextTool.ActionAbilityName(ViviPreviousSpell[Vivi.Data]) != v.Command.AbilityName)
+                                {
+                                    Int32 BonusFocusMax = 0;
+                                    switch (Vivi.Weapon)
+                                    {
+                                        case RegularItem.FlameStaff:
+                                        case RegularItem.IceStaff:
+                                        case RegularItem.LightningStaff:
+                                            BonusFocusMax += 5;
+                                            break;
+                                        case RegularItem.OakStaff:
+                                            BonusFocusMax += 10;
+                                            break;
+                                        case RegularItem.CypressPile:
+                                            BonusFocusMax += 10;
+                                            break;
+                                        case RegularItem.OctagonRod:
+                                            BonusFocusMax += 15;
+                                            break;
+                                        case RegularItem.HighMageStaff:
+                                            BonusFocusMax += 25;
+                                            break;
+                                        case RegularItem.MaceOfZeus:
+                                            BonusFocusMax += 50;
+                                            break;
+                                    }
+                                    if (ViviPassive[Vivi.Data][0] < (50 + BonusFocusMax))
+                                    {
+                                        ViviPassive[Vivi.Data][0] += 5;
+                                    }
+                                    Dictionary<String, String> localizedMessage = new Dictionary<String, String>
                                 {
                                 { "US", $"Focus +{ViviPassive[Vivi.Data][0]}%!" },
                                 { "UK", $"Focus +{ViviPassive[Vivi.Data][0]}%!" },
@@ -786,14 +797,14 @@ namespace Memoria.Scripts.Battle
                                 { "GR", $"Focus +{ViviPassive[Vivi.Data][0]}%!" },
                                 { "IT", $"Focus +{ViviPassive[Vivi.Data][0]}%!" },
                                 };
-                                btl2d.Btl2dReqSymbolMessage(Vivi.Data, "[BA55D3]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 40);
-                                v.Context.Attack += v.Context.Attack * (ViviPassive[Vivi.Data][0] / 100);
-                                v.Command.HitRate += v.Command.HitRate * (ViviPassive[Vivi.Data][0] / 100);
-                            }
-                            else
-                            {
-                                ViviPassive[Vivi.Data][0] = 0;
-                                Dictionary<String, String> localizedMessage = new Dictionary<String, String>
+                                    btl2d.Btl2dReqSymbolMessage(Vivi.Data, "[BA55D3]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 40);
+                                    v.Context.Attack += v.Context.Attack * (ViviPassive[Vivi.Data][0] / 100);
+                                    v.Command.HitRate += v.Command.HitRate * (ViviPassive[Vivi.Data][0] / 100);
+                                }
+                                else
+                                {
+                                    ViviPassive[Vivi.Data][0] = 0;
+                                    Dictionary<String, String> localizedMessage = new Dictionary<String, String>
                                 {
                                 { "US", "- Focus!" },
                                 { "UK", "- Focus!" },
@@ -803,15 +814,16 @@ namespace Memoria.Scripts.Battle
                                 { "GR", "- Focus!" },
                                 { "IT", "- Focus!" },
                                 };
-                                btl2d.Btl2dReqSymbolMessage(Vivi.Data, "[DC143C]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 40);
+                                    btl2d.Btl2dReqSymbolMessage(Vivi.Data, "[DC143C]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 40);
+                                }
+                                ViviPreviousSpell[Vivi.Data] = v.Command.AbilityId;
                             }
-                            ViviPreviousSpell[Vivi.Data] = v.Command.AbilityId;
                         }
                     }
+                    ViviPassive[v.Caster.Data][1]--;
+                    if (ViviPassive[v.Caster.Data][1] < 0)
+                        ViviPassive[v.Caster.Data][1] = 0;
                 }
-                ViviPassive[v.Caster.Data][1]--;
-                if (ViviPassive[v.Caster.Data][1] < 0)
-                    ViviPassive[v.Caster.Data][1] = 0;
             }
         }
 
