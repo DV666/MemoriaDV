@@ -20,6 +20,15 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
+            SB2_PATTERN sb2Pattern = FF9StateSystem.Battle.FF9Battle.btl_scene.PatAddr[FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum];
+            for (Int32 i = 0; i < ImmuneGravity.GetLength(0); i++)
+            {
+                if (FF9StateSystem.Battle.battleMapIndex == ImmuneGravity[i, 0] && sb2Pattern.Monster[_v.Target.Data.bi.slot_no].TypeNo == ImmuneGravity[i, 1])
+                {
+                    _v.Context.Flags = BattleCalcFlags.Guard;
+                    return;
+                }
+            }
             _v.SetCommandAttack();
             TranceSeekCustomAPI.PenaltyCommandDividedAttack(_v);
             if (_v.Target.IsUnderStatus(BattleStatus.Shell))
@@ -60,5 +69,10 @@ namespace Memoria.Scripts.Battle
             }
             _v.TryAlterMagicStatuses();
         }
+
+        public static Int32[,] ImmuneGravity = new Int32[,]
+        {
+            { 930, 0 } // Lovecraft
+        };
     }
 }

@@ -55,6 +55,15 @@ namespace Memoria.Scripts.Battle
             if (Configuration.TetraMaster.TripleTriad == 16389 && v.Caster.IsPlayer)
                 v.Target.HpDamage = 9999;
 
+            if (v.Target.HasTrance && v.Target.Data.cur.hp > 0 && !btl_stat.CheckStatus(v.Target.Data, BattleStatusConst.CannotTrance))
+            {
+                float ratio = (v.Target.HpDamage * 100) / v.Target.MaximumHp; // En %
+                if (ratio > 15)
+                    v.Context.TranceIncrease = (Int16)(Comn.random16() % v.Target.Will);
+                else
+                    v.Context.TranceIncrease = 0;
+            }
+
             TranceSeekCustomAPI.SpecialSA(v);          
         }
     }

@@ -41,6 +41,11 @@ namespace Memoria.Scripts.Battle
                 {
                     _v.Target.TryRemoveStatuses(_v.Command.AbilityStatus);
                 }
+                else if (_v.Command.HitRate == 111)
+                {
+                    _v.Command.AbilityStatus |= BattleStatus.Regen;
+                    _v.TryAlterMagicStatuses();
+                }
                 else
                 {
                     _v.TryAlterMagicStatuses();
