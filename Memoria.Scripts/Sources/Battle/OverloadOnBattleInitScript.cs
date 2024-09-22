@@ -61,7 +61,7 @@ namespace Memoria.Scripts.Battle
                 if (!MonsterMechanic.TryGetValue(unit.Data, out Int32[] monstermechanic))
                     MonsterMechanic[unit.Data] = new Int32[] { 0, 0, 0, 0, 100, 0 };
                 if (!SpecialSAEffect.TryGetValue(unit.Data, out Int32[] specialSAeffect))
-                    SpecialSAEffect[unit.Data] = new Int32[] { 0, 0, 2, 0, 0 };
+                    SpecialSAEffect[unit.Data] = new Int32[] { 0, 0, 2, 0, 0, 0, 0, 0 };
                 if (!RollBackStats.TryGetValue(unit.Data, out Int32[] rb))
                     RollBackStats[unit.Data] = new Int32[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
                 if (!RollBackBattleStatus.TryGetValue(unit.Data, out BattleStatus rs))

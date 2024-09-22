@@ -31,7 +31,7 @@ namespace Memoria.Scripts.Battle
 
         public static Dictionary<BTL_DATA, Int32[]> MonsterMechanic = new Dictionary<BTL_DATA, Int32[]>(); // [0] => Trance Activated ; [1] => Special1 ; [2] => Special2 ; [3] => HPBoss10000? ; [4] => ResistStatusEasyKill ; [5] => NerfGravity
 
-        public static Dictionary<BTL_DATA, Int32[]> SpecialSAEffect = new Dictionary<BTL_DATA, Int32[]>(); // [0] => Millionaire (not used anymore) ; [1] => LastStand ; [2] => Instinct ; [3] => PreventTranceSFX ; [4] => Mode EX
+        public static Dictionary<BTL_DATA, Int32[]> SpecialSAEffect = new Dictionary<BTL_DATA, Int32[]>(); // [0] => Sentinel/Duel ; [1] => LastStand ; [2] => Instinct ; [3] => PreventTranceSFX ; [4] => Mode EX ; [5] => HealHP ; [6] => HealMP ; [7] => TargetCount
 
         public static Dictionary<BTL_DATA, Int32[]> RollBackStats = new Dictionary<BTL_DATA, Int32[]>();
         public static Dictionary<BTL_DATA, BattleStatus> RollBackBattleStatus = new Dictionary<BTL_DATA, BattleStatus>();
@@ -1114,11 +1114,15 @@ namespace Memoria.Scripts.Battle
                 }
             }
 
-            int HealHPSAOrItem = 0;
-            int HealMPSAOrItem = 0;
+            int HealHP = SpecialSAEffect[v.Caster.Data][5];
+            int HealMP = SpecialSAEffect[v.Caster.Data][6];
+            if (SpecialSAEffect[v.Caster.Data][7] == 0)
+                SpecialSAEffect[v.Caster.Data][7] = v.Command.TargetCount;
+            SpecialSAEffect[v.Caster.Data][7]--;
+
             if (v.Command.AbilityId == BattleAbilityId.DemiShock2) // Tobigeri+
             {
-                HealHPSAOrItem = v.Target.HpDamage / 2;
+                HealHP = v.Target.HpDamage / 2;
             }
             if (v.Caster.HasSupportAbilityByIndex((SupportAbility)1061) && (v.Command.Id == BattleCommandId.Attack || v.Command.Id == BattleCommandId.Counter) && v.Target.Data != v.Caster.Data) // Mug+
             {
@@ -1126,7 +1130,7 @@ namespace Memoria.Scripts.Battle
                 {
                     if (v.Command.Data.info.effect_counter == 2)
                     {
-                        HealHPSAOrItem += (v.Target.HpDamage / 4 + ZidanePassive[v.Caster.Data][7]);
+                        HealHP += (v.Target.HpDamage / 4 + ZidanePassive[v.Caster.Data][7]);
                         ZidanePassive[v.Caster.Data][7] = 0;
                     }
                     else
@@ -1136,43 +1140,45 @@ namespace Memoria.Scripts.Battle
                 }
                 else
                 {
-                    HealHPSAOrItem += v.Target.HpDamage / 4;
+                    HealHP += v.Target.HpDamage / 4;
                 }
             }
             if (v.Caster.Accessory == (RegularItem)1208 && (v.Target.Flags & CalcFlag.HpRecovery) == 0 && v.Target.Data != v.Caster.Data) // Materia Support
             {
-                HealHPSAOrItem += v.Target.HpDamage / 10;
+                HealHP += v.Target.HpDamage / 10;
             }
             if (v.Caster.HasSupportAbilityByIndex((SupportAbility)115) && (v.Target.WeakElement & v.Command.Element) != 0) // Soul Drain
             {
-                HealHPSAOrItem += v.Target.HpDamage / (v.Caster.HasSupportAbilityByIndex((SupportAbility)1115) ? 2 : 4);
+                HealHP += v.Target.HpDamage / (v.Caster.HasSupportAbilityByIndex((SupportAbility)1115) ? 2 : 4);
             }
             if (WeaponNewStatus[v.Caster.Data] == BattleStatus.Protect && (v.Command.Id == BattleCommandId.Attack || v.Command.Id == BattleCommandId.Counter)) // Drain MagiLame
             {
-                HealHPSAOrItem += v.Target.HpDamage / 4;
+                HealHP += v.Target.HpDamage / 4;
             }
             if (WeaponNewStatus[v.Caster.Data] == BattleStatus.Shell && (v.Command.Id == BattleCommandId.Attack || v.Command.Id == BattleCommandId.Counter)) // Osmose MagiLame
             {
-                HealMPSAOrItem += v.Target.MpDamage / 80;
+                HealMP += v.Target.MpDamage / 80;
             }
-            if (HealHPSAOrItem > 0 || HealMPSAOrItem > 0)
+            if ((HealHP > 0 || HealMP > 0) && !v.Caster.IsUnderAnyStatus(BattleStatus.Death) && SpecialSAEffect[v.Caster.Data][7] <= 0)
             {
-                v.Caster.AddDelayedModifier(
-                    caster => caster.CurrentAtb >= caster.MaximumAtb,
-                    caster =>
-                    {
-                        if (HealHPSAOrItem > 0)
-                        {
-                            caster.CurrentHp = Math.Min(caster.CurrentHp + (uint)HealHPSAOrItem, caster.MaximumHp);
-                        }
-                        if (HealMPSAOrItem > 0)
-                        {
-                            caster.CurrentMp = Math.Min(caster.CurrentMp + (uint)HealMPSAOrItem, caster.MaximumMp);
-                        }
-                        btl2d.Btl2dStatReq(caster, -HealHPSAOrItem, -HealMPSAOrItem);
-                    }
-                );
+                if (HealHP > 0)
+                {
+                    v.Caster.CurrentHp = Math.Min(v.Caster.CurrentHp + (uint)HealHP, v.Caster.MaximumHp);
+                }
+                if (HealMP > 0)
+                {
+                    v.Caster.CurrentMp = Math.Min(v.Caster.CurrentMp + (uint)HealMP, v.Caster.MaximumMp);
+                }
+                btl2d.Btl2dStatReq(v.Caster, -HealHP, -HealMP);
+                SpecialSAEffect[v.Caster.Data][5] = 0;
+                SpecialSAEffect[v.Caster.Data][6] = 0;
             }
+            else
+            {
+                SpecialSAEffect[v.Caster.Data][5] += HealHP;
+                SpecialSAEffect[v.Caster.Data][6] += HealMP;
+            }
+
             if (v.Command.ScriptId != 88 && v.Command.Power != 99 & v.Command.HitRate != 99) // Prevent to trigger Last Stand on Game Over type attack.
             {
                 if (v.Target.HasSupportAbilityByIndex((SupportAbility)52) && SpecialSAEffect[v.Target.Data][1] > 0 && v.Target.HpDamage > v.Target.CurrentHp && v.Target.CurrentMp > 0 && (v.Target.Flags & CalcFlag.HpRecovery) == 0) // Last Stand
