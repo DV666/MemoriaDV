@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using Memoria.Data;
+using Memoria.Prime;
+using static UIRoot;
 
 namespace Memoria.Scripts.Battle
 {
@@ -88,35 +90,32 @@ namespace Memoria.Scripts.Battle
                     _v.Context.Attack = 1;
                     _v.Context.AttackPower = 1250;
                 }
+
+                if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1100)) // Medecin +
+                {
+                    _v.Context.AttackPower += _v.Context.AttackPower / 2;
+                }
+                else if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)100)) // Medecin
+                {
+                    _v.Context.AttackPower += _v.Context.AttackPower / 4;
+                }
                 if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1027) && (_v.Target.IsPlayer && BattleState.BattleUnitCount(true) > 1 || !_v.Target.IsPlayer && BattleState.BattleUnitCount(false) > 1))
-                { // Herboriste +
-                    Int32 Medecin = 0;
-                    if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)100)) // Medecin
-                    {
-                        Medecin = 1;
-                    }
-                    else if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1100)) // Medecin +
-                    {
-                        Medecin = 2;
-                    }
+                { // Herboriste +                    
                     foreach (BattleUnit unit in BattleState.EnumerateUnits())
                     {
-                        _v.Caster.Flags = CalcFlag.HpAlteration;
+                        int healing = 0;
                         if (_v.Target.IsPlayer)
                         {
                             if (!unit.IsPlayer || !unit.IsTargetable || unit.IsUnderAnyStatus(BattleStatus.Death | BattleStatus.Petrify | BattleStatus.Jump))
-                                continue;
-                          
-                            if (!unit.IsZombie)
-                                _v.Caster.Flags |= CalcFlag.HpRecovery;
+                                continue;                  
 
                             if (unit.Data == _v.Target.Data)
                             {
-                                _v.Caster.HpDamage = _v.Context.AttackPower * _v.Context.Attack * 2;
+                                healing = _v.Context.AttackPower * _v.Context.Attack * 2;
                             }
                             else
                             {
-                                _v.Caster.HpDamage = _v.Context.AttackPower * _v.Context.Attack;
+                                healing = _v.Context.AttackPower * _v.Context.Attack;
                             }
                         }
                         else
@@ -124,51 +123,37 @@ namespace Memoria.Scripts.Battle
                             if (unit.IsPlayer || !unit.IsTargetable || unit.IsUnderAnyStatus(BattleStatus.Death | BattleStatus.Petrify | BattleStatus.Jump))
                                 continue;
 
-                            if (!unit.IsZombie)
-                                _v.Caster.Flags |= CalcFlag.HpRecovery;
-
                             if (unit.Data == _v.Target.Data)
                             {
-                                _v.Caster.HpDamage = _v.Context.AttackPower * _v.Context.Attack * 2;
+                                healing = _v.Context.AttackPower * _v.Context.Attack * 2;
                             }
                             else
                             {
-                                _v.Caster.HpDamage = _v.Context.AttackPower * _v.Context.Attack;
+                                healing = _v.Context.AttackPower * _v.Context.Attack;
                             }
                         }
-                        if (Medecin == 1) // Medecin
+                        if (unit.IsZombie)
                         {
-                            _v.Caster.HpDamage += _v.Caster.HpDamage / 4;
+                            btl2d.Btl2dStatReq(unit, healing, 0);
+                            btl_para.SetDamage(unit, healing, 1, _v.Command.Data);
                         }
-                        else if (Medecin == 2) // Medecin +
+                        else
                         {
-                            _v.Caster.HpDamage += _v.Caster.HpDamage / 2;
+                            btl2d.Btl2dStatReq(unit, -healing, 0);
+                            btl_para.SetRecover(unit, (uint)healing);
                         }
-                        _v.Caster.Change(unit);
-                        SBattleCalculator.CalcResult(_v);
-                        BattleState.Unit2DReq(unit);
+                        if (unit.Data.dms_geo_id == 416) // Meltigemini
+                        {
+                            TranceSeekCustomAPI.MonsterMechanic[unit.Data][1] = Math.Min(healing, 9999);
+                            btl_stat.AlterStatus(unit, BattleStatusId.CustomStatus10, parameters: healing);
+                        }
                     }
-                    _v.Caster.Flags = 0;
-                    _v.Caster.HpDamage = 0;
-                    _v.PerformCalcResult = false;
                 }
                 else
                 {
                     _v.CalcHpMagicRecovery();
                 }  
-            }
-            if (_v.Target.Data.dms_geo_id == 416) // Meltigemini
-            {
-                int PreviousHP = (int)_v.Target.CurrentHp;
-                _v.Caster.AddDelayedModifier(
-                    caster => caster.CurrentAtb >= caster.MaximumAtb,
-                    caster =>
-                    {
-                        TranceSeekCustomAPI.MonsterMechanic[_v.Target.Data][1] = Math.Min((int)(PreviousHP - _v.Target.CurrentHp), 9999);
-                    }
-                );
-                _v.Target.TryAlterSingleStatus(BattleStatusId.CustomStatus10, true, _v.Caster, _v.Target.HpDamage);
-            }         
+            }      
         }
 
         public Single RateTarget()

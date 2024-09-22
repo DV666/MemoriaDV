@@ -23,26 +23,23 @@ namespace Memoria.Scripts.Battle
             _v.Context.Attack = 15;
             _v.Context.AttackPower = _v.Command.Item.Power;
             _v.Context.DefensePower = 0;
-            if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1027))
-            {
+            if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1027) && (_v.Target.IsPlayer && BattleState.BattleUnitCount(true) > 1 || !_v.Target.IsPlayer && BattleState.BattleUnitCount(false) > 1))
+            { // Herboriste +                    
                 foreach (BattleUnit unit in BattleState.EnumerateUnits())
                 {
-                    _v.Caster.Flags = CalcFlag.MpAlteration;
+                    int healing = 0;
                     if (_v.Target.IsPlayer)
                     {
                         if (!unit.IsPlayer || !unit.IsTargetable || unit.IsUnderAnyStatus(BattleStatus.Death | BattleStatus.Petrify | BattleStatus.Jump))
                             continue;
 
-                        if (!unit.IsZombie)
-                            _v.Caster.Flags |= CalcFlag.MpRecovery;
-
                         if (unit.Data == _v.Target.Data)
                         {
-                            _v.Caster.MpDamage = _v.Context.AttackPower * _v.Context.Attack * 2;
+                            healing = _v.Context.AttackPower * _v.Context.Attack * 2;
                         }
                         else
                         {
-                            _v.Caster.MpDamage = _v.Context.AttackPower * _v.Context.Attack;
+                            healing = _v.Context.AttackPower * _v.Context.Attack;
                         }
                     }
                     else
@@ -50,28 +47,29 @@ namespace Memoria.Scripts.Battle
                         if (unit.IsPlayer || !unit.IsTargetable || unit.IsUnderAnyStatus(BattleStatus.Death | BattleStatus.Petrify | BattleStatus.Jump))
                             continue;
 
-                        if (!unit.IsZombie)
-                            _v.Caster.Flags |= CalcFlag.MpRecovery;
-
                         if (unit.Data == _v.Target.Data)
                         {
-                            _v.Caster.MpDamage = _v.Context.AttackPower * _v.Context.Attack * 2;
+                            healing = _v.Context.AttackPower * _v.Context.Attack * 2;
                         }
                         else
                         {
-                            _v.Caster.MpDamage = _v.Context.AttackPower * _v.Context.Attack;
+                            healing = _v.Context.AttackPower * _v.Context.Attack;
                         }
                     }
-                    _v.Caster.Change(unit);
-                    SBattleCalculator.CalcResult(_v);
-                    BattleState.Unit2DReq(unit);
+                    if (unit.IsZombie)
+                    {
+                        btl2d.Btl2dStatReq(unit, 0, healing);
+                        btl_para.SetMpDamage(unit, (uint)healing);
+                    }
+                    else
+                    {
+                        btl2d.Btl2dStatReq(unit, 0, -healing);
+                        btl_para.SetMpRecover(unit, (uint)healing);
+                    }
                 }
-                _v.Caster.Flags = 0;
-                _v.Caster.MpDamage = 0;
-                _v.PerformCalcResult = false;
-                return;
             }
-            _v.CalcMpMagicRecovery();
+            else
+                _v.CalcMpMagicRecovery();
         }
 
         public Single RateTarget()
