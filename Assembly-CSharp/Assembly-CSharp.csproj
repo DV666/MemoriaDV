@@ -336,9 +336,12 @@
     <Compile Include="Global\Sound\SoLoud\WavStream.cs" />
     <Compile Include="Global\SPS\CommonSPSSystem.cs" />
     <Compile Include="Global\SPS\SHPEffect.cs" />
+    <Compile Include="Memoria\Assets\Export\TranslationExporter.cs" />
     <Compile Include="Memoria\Assets\FieldCreator\FieldCreatorScene.cs" />
     <Compile Include="Memoria\Assets\FieldCreator\PointScreenAnchor.cs" />
     <Compile Include="Memoria\Assets\FieldCreator\WavefrontObject.cs" />
+    <Compile Include="Memoria\Assets\Text\Dialogs\FFIXTextModifier.cs" />
+    <Compile Include="Memoria\Assets\Text\Strings\UnicodeBIDI.cs" />
     <Compile Include="Memoria\Assets\TIMUtils.cs" />
     <Compile Include="Memoria\Assets\Text\Strings\ITextReader.cs" />
     <Compile Include="Memoria\Assets\Text\Strings\ITextWriter.cs" />
@@ -351,8 +354,10 @@
     <Compile Include="Memoria\Battle\Calculator\EatResult.cs" />
     <Compile Include="Memoria\Battle\Scripts\IOverloadableMethod.cs" />
     <Compile Include="Memoria\Battle\Scripts\IStatusScript.cs" />
+    <Compile Include="Memoria\Configuration\Access\Worldmap.cs" />
     <Compile Include="Memoria\Configuration\Access\Interface.cs" />
     <Compile Include="Memoria\Configuration\Access\Shaders.cs" />
+    <Compile Include="Memoria\Configuration\Structure\WorldmapSection.cs" />
     <Compile Include="Memoria\Configuration\Structure\InterfaceSection.cs" />
     <Compile Include="Memoria\Configuration\Structure\ShadersSection.cs" />
     <Compile Include="Memoria\Data\Battle\BattleCommandHelper.cs" />
@@ -459,7 +464,6 @@
     <Compile Include="Memoria\Configuration\Access\Control.cs" />
     <Compile Include="Memoria\Configuration\Access\Debug.cs" />
     <Compile Include="Memoria\Configuration\Access\Export.cs" />
-    <Compile Include="Memoria\Configuration\Access\Fixes.cs" />
     <Compile Include="Memoria\Configuration\Access\Font.cs" />
     <Compile Include="Memoria\Configuration\Access\Graphics.cs" />
     <Compile Include="Memoria\Configuration\Access\Battle.cs" />
@@ -482,7 +486,6 @@
     <Compile Include="Memoria\Configuration\Structure\IconsSection.cs" />
     <Compile Include="Memoria\Configuration\Structure\ImportSection.cs" />
     <Compile Include="Memoria\Configuration\Structure\DebugSection.cs" />
-    <Compile Include="Memoria\Configuration\Structure\FixesSection.cs" />
     <Compile Include="Memoria\Configuration\Structure\HacksSection.cs" />
     <Compile Include="Memoria\Configuration\Structure\SaveFileSection.cs" />
     <Compile Include="Memoria\Configuration\Structure\TetraMasterSection.cs" />
