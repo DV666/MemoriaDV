@@ -54,7 +54,7 @@ namespace Memoria.Scripts.Battle
                 {
                     _v.Context.Attack += _v.Context.Attack / 4;
                 }
-                TranceSeekCustomAPI.BonusBackstabAndPenaltyLongDistanceTranceSeek(_v);
+                TranceSeekCustomAPI.BonusBackstabAndPenaltyLongDistance(_v);
                 TranceSeekCustomAPI.BonusWeaponElement(_v);
                 if (_v.CanAttackWeaponElementalCommand())
                 {

@@ -26,7 +26,7 @@ namespace Memoria.Scripts.Battle
             TranceSeekCustomAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
             TranceSeekCustomAPI.EnemyTranceBonusAttack(_v);
             TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
-            TranceSeekCustomAPI.BonusBackstabAndPenaltyLongDistanceTranceSeek(_v);
+            TranceSeekCustomAPI.BonusBackstabAndPenaltyLongDistance(_v);
             TranceSeekCustomAPI.InfusedWeaponStatus(_v);
             _v.CalcHpDamage();
             if ((_v.Caster.Data.dms_geo_id == 410 || _v.Caster.Data.dms_geo_id == 412) && !_v.Caster.IsPlayer) // Lamie et Bandit

@@ -2,6 +2,7 @@
 using Memoria.Data;
 using Memoria.Prime;
 using System;
+using System.Collections.Generic;
 using static Memoria.Scripts.Battle.TranceSeekCustomAPI;
 
 namespace Memoria.Scripts.Battle
@@ -75,6 +76,74 @@ namespace Memoria.Scripts.Battle
                         break;
                     }
                 }
+            }
+            if (v.Caster.PlayerIndex == CharacterId.Cinna) // Cinna's Mechanic
+            {
+                for (Int32 i = 0; i < 8; i++) // Pas terrible... à revoir la méthode je pense.
+                {
+                    int idAA = 1136 + i;
+                    if (FF9StateSystem.Battle.FF9Battle.aa_data[(BattleAbilityId)idAA].MP > 0)
+                        FF9StateSystem.Battle.FF9Battle.aa_data[(BattleAbilityId)idAA].MP--;
+                }
+
+                if (v.Command.AbilityId == (BattleAbilityId)1138)
+                {
+                    List<AA_DATA> AAlist = new List<AA_DATA>();
+
+                    for (Int32 i = 0; i < 8; i++)
+                    {
+                        int idAA = 1136 + i;
+                        if (FF9StateSystem.Battle.FF9Battle.aa_data[(BattleAbilityId)idAA].MP > 0)
+                            AAlist.Add(FF9StateSystem.Battle.FF9Battle.aa_data[(BattleAbilityId)idAA]);
+                    }
+                    AAlist[GameRandom.Next16() % AAlist.Count].MP--;
+                }
+
+                if (v.Command.Id == (BattleCommandId)10021)
+                {
+                    int mpCost = 0;
+                    switch (v.Command.AbilityId)
+                    {
+                        case (BattleAbilityId)1136: // Hammer throw
+                            mpCost = 2;
+                            break;
+                        case (BattleAbilityId)1137: // Spring boots
+                            mpCost = 3;
+                            break;
+                        case (BattleAbilityId)1138: // Accelerator hammer
+                            mpCost = 4;
+                            break;
+                        case (BattleAbilityId)1139: // Critical aim
+                            mpCost = 5;
+                            break;
+                        case (BattleAbilityId)1140: // Electroshock
+                            mpCost = 6;
+                            break;
+                        case (BattleAbilityId)1141: // Flurry of hammers
+                            mpCost = 7;
+                            break;
+                        case (BattleAbilityId)1142: // Adjustable Wrench
+                            mpCost = 8;
+                            break;
+                        case (BattleAbilityId)1143: // Hymn of the Tantalas
+                            mpCost = 9;
+                            break;
+                    }
+                    FF9StateSystem.Battle.FF9Battle.aa_data[v.Command.AbilityId].MP = mpCost;
+                }
+
+            }
+            if (SpecialSAEffect[v.Caster.Data][8] > 0)
+            {
+                v.Caster.AddDelayedModifier(
+                    caster => caster.CurrentAtb >= caster.MaximumAtb,
+                    caster =>
+                    {
+                        if (!caster.IsUnderAnyStatus(BattleStatusConst.StopAtb) && caster.CurrentAtb < (4 * caster.MaximumAtb / 5))
+                            caster.CurrentAtb += (Int16)(4 * caster.MaximumAtb / 5);
+                        SpecialSAEffect[v.Caster.Data][8]--;
+                    }
+                );
             }
             TranceSeekCustomAPI.SOS_SA(v);
             return false;

@@ -25,6 +25,13 @@ namespace Memoria.Scripts.Battle
                 InitHUDMessageChild = true;
             }
 
+            for (Int32 i = 0; i < 8; i++)
+            {
+                int idAA = 1136 + i;
+                if (FF9StateSystem.Battle.FF9Battle.aa_data[(BattleAbilityId)idAA].MP > 0)
+                    FF9StateSystem.Battle.FF9Battle.aa_data[(BattleAbilityId)idAA].MP--;
+            }
+
             foreach (BattleUnit unit in BattleState.EnumerateUnits())
             {
                 foreach (BattleUnit PlayerUnit in BattleState.EnumerateUnits())
@@ -61,7 +68,7 @@ namespace Memoria.Scripts.Battle
                 if (!MonsterMechanic.TryGetValue(unit.Data, out Int32[] monstermechanic))
                     MonsterMechanic[unit.Data] = new Int32[] { 0, 0, 0, 0, 100, 0 };
                 if (!SpecialSAEffect.TryGetValue(unit.Data, out Int32[] specialSAeffect))
-                    SpecialSAEffect[unit.Data] = new Int32[] { 0, 0, 2, 0, 0, 0, 0, 0 };
+                    SpecialSAEffect[unit.Data] = new Int32[] { 0, 0, 2, 0, 0, 0, 0, 0, 0, 0 };
                 if (!RollBackStats.TryGetValue(unit.Data, out Int32[] rb))
                     RollBackStats[unit.Data] = new Int32[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
                 if (!RollBackBattleStatus.TryGetValue(unit.Data, out BattleStatus rs))

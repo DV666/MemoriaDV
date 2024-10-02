@@ -26,7 +26,7 @@ namespace Memoria.DefaultScripts
         public Boolean OnDeath()
         {
             btl_stat.RemoveStatus(Target, BattleStatusId.AutoLife);
-            if (HPRestore > 0)
+            if (HPRestore > 0 && !Target.IsUnderAnyStatus(BattleStatusId.Zombie))
             {
                 Target.CurrentHp = Math.Min(HPRestore, Target.MaximumHp);
                 btl_stat.RemoveStatus(Target, BattleStatusId.Death);

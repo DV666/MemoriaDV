@@ -28,7 +28,7 @@ namespace Memoria.Scripts.Battle
                     TranceSeekCustomAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
                     TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
                     _v.Caster.Flags |= CalcFlag.HpAlteration;
-                    TranceSeekCustomAPI.BonusBackstabAndPenaltyLongDistanceTranceSeek(_v);
+                    TranceSeekCustomAPI.BonusBackstabAndPenaltyLongDistance(_v);
                     TranceSeekCustomAPI.BonusWeaponElement(_v);
                     if (_v.CanAttackWeaponElementalCommand())
                     {
@@ -84,7 +84,7 @@ namespace Memoria.Scripts.Battle
                             TranceSeekCustomAPI.CharacterBonusPassive(_v, "PhysicalAttack");
                             TranceSeekCustomAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
                             TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
-                            TranceSeekCustomAPI.BonusBackstabAndPenaltyLongDistanceTranceSeek(_v);
+                            TranceSeekCustomAPI.BonusBackstabAndPenaltyLongDistance(_v);
                             TranceSeekCustomAPI.BonusElement(_v);
                             if (_v.CanAttackElementalCommand())
                             {

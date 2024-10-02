@@ -54,7 +54,7 @@ namespace Memoria.Scripts.Battle
                         _v.Target.SetMagicDefense();
                         _v.Context.Attack = _v.Caster.Magic + baseDamage;
                         _v.Command.Element = _v.Caster.WeaponElement;
-                        TranceSeekCustomAPI.BonusBackstabAndPenaltyLongDistanceTranceSeek(_v);
+                        TranceSeekCustomAPI.BonusBackstabAndPenaltyLongDistance(_v);
                     }
                     else
                         return;

@@ -118,7 +118,7 @@ namespace Memoria.Scripts.Battle
                     TranceSeekCustomAPI.PenaltyShellAttack(_v);
                     if (!_v.Caster.IsPlayer)
                     {
-                        TranceSeekCustomAPI.BonusBackstabAndPenaltyLongDistanceTranceSeek(_v);
+                        TranceSeekCustomAPI.BonusBackstabAndPenaltyLongDistance(_v);
                     }
                 }
             }

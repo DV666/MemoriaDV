@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.Remoting.Contexts;
 using Memoria.Data;
 
 namespace Memoria.Scripts.Battle
@@ -79,6 +80,16 @@ namespace Memoria.Scripts.Battle
                 btl_stat.AlterStatus(_v.Target, TranceSeekCustomAPI.CustomStatusId.PowerUp, parameters: "4");
             }
             TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
+            if (_v.Command.AbilityId == (BattleAbilityId)1137) // Spring Boots
+            {
+                TranceSeekCustomAPI.SpecialSAEffect[_v.Target.Data][8] = 1;
+                _v.Context.Flags = 0;
+            }
+            if (_v.Command.AbilityId == (BattleAbilityId)1139) // Spring Boots
+            {
+                TranceSeekCustomAPI.SpecialSAEffect[_v.Target.Data][9] = 3;
+                _v.Context.Flags = 0;
+            }
         }
     }
 }

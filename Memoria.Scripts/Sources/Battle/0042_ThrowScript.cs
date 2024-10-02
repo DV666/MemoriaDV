@@ -59,7 +59,10 @@ namespace Memoria.Scripts.Battle
                             _v.Caster.SetLowPhysicalAttack();
                             TranceSeekCustomAPI.CharacterBonusPassive(_v, "LowPhysicalAttack");
                             _v.Target.SetPhysicalDefense();
-                            _v.Context.AttackPower = _v.Command.Weapon.Power << 1;
+                            if (_v.Command.AbilityId == (BattleAbilityId)1136 || _v.Command.AbilityId == (BattleAbilityId)1138)
+                                _v.Context.AttackPower = _v.Caster.WeaponPower << 1;
+                            else
+                                _v.Context.AttackPower = _v.Command.Weapon.Power << 1;
                             TranceSeekCustomAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
                         }
                     }
@@ -89,7 +92,7 @@ namespace Memoria.Scripts.Battle
                         TranceSeekCustomAPI.EnemyTranceBonusAttack(_v);
                         _v.Target.GambleDefence();
                         TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
-                        TranceSeekCustomAPI.BonusBackstabAndPenaltyLongDistanceTranceSeek(_v);
+                        TranceSeekCustomAPI.BonusBackstabAndPenaltyLongDistance(_v);
                         _v.CalcHpDamage();
                         TranceSeekCustomAPI.RaiseTrouble(_v);
                         _v.TryAlterMagicStatuses();

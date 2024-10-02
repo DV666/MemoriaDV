@@ -152,6 +152,11 @@ namespace Memoria.Scripts.Battle
                 else
                 {
                     _v.CalcHpMagicRecovery();
+                    if (_v.Target.Data.dms_geo_id == 416) // Meltigemini
+                    {
+                        TranceSeekCustomAPI.MonsterMechanic[_v.Target.Data][1] = Math.Min(_v.Target.HpDamage, 9999);
+                        btl_stat.AlterStatus(_v.Target, BattleStatusId.CustomStatus10, parameters: _v.Target.HpDamage);
+                    }
                 }  
             }      
         }

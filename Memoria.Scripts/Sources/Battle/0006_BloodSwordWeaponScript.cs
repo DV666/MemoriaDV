@@ -40,7 +40,7 @@ namespace Memoria.Scripts.Battle
                     {
                         _v.Context.Attack += _v.Context.Attack / 4;
                     }
-                    TranceSeekCustomAPI.BonusBackstabAndPenaltyLongDistanceTranceSeek(_v);
+                    TranceSeekCustomAPI.BonusBackstabAndPenaltyLongDistance(_v);
                     TranceSeekCustomAPI.TryCriticalHit(_v);
                     TranceSeekCustomAPI.IpsenCastleMalus(_v);
                     _v.Target.Flags |= CalcFlag.HpAlteration;

@@ -78,7 +78,7 @@ namespace Memoria.Scripts.Battle
                         }
                         context.Attack += context.Attack;
                         _v.Target.Flags |= CalcFlag.Critical;
-                        TranceSeekCustomAPI.BonusBackstabAndPenaltyLongDistanceTranceSeek(_v);
+                        TranceSeekCustomAPI.BonusBackstabAndPenaltyLongDistance(_v);
                         if (_v.Caster.IsPlayer)
                         {
                             TranceSeekCustomAPI.BonusWeaponElement(_v);

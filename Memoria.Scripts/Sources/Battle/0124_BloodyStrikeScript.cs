@@ -36,7 +36,7 @@ namespace Memoria.Scripts.Battle
                     TranceSeekCustomAPI.EnemyTranceBonusAttack(_v);
                     TranceSeekCustomAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
                     TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
-                    TranceSeekCustomAPI.BonusBackstabAndPenaltyLongDistanceTranceSeek(_v);
+                    TranceSeekCustomAPI.BonusBackstabAndPenaltyLongDistance(_v);
                     TranceSeekCustomAPI.TryCriticalHit(_v);
                     TranceSeekCustomAPI.IpsenCastleMalus(_v);
                     _v.Target.Flags |= CalcFlag.HpAlteration;

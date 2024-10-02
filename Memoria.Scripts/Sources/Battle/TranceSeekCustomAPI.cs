@@ -31,7 +31,8 @@ namespace Memoria.Scripts.Battle
 
         public static Dictionary<BTL_DATA, Int32[]> MonsterMechanic = new Dictionary<BTL_DATA, Int32[]>(); // [0] => Trance Activated ; [1] => Special1 ; [2] => Special2 ; [3] => HPBoss10000? ; [4] => ResistStatusEasyKill ; [5] => NerfGravity
 
-        public static Dictionary<BTL_DATA, Int32[]> SpecialSAEffect = new Dictionary<BTL_DATA, Int32[]>(); // [0] => Sentinel/Duel ; [1] => LastStand ; [2] => Instinct ; [3] => PreventTranceSFX ; [4] => Mode EX ; [5] => HealHP ; [6] => HealMP ; [7] => TargetCount
+        public static Dictionary<BTL_DATA, Int32[]> SpecialSAEffect = new Dictionary<BTL_DATA, Int32[]>();
+        // [0] => Sentinel/Duel ; [1] => LastStand ; [2] => Instinct ; [3] => PreventTranceSFX ; [4] => Mode EX ; [5] => HealHP ; [6] => HealMP ; [7] => TargetCount ; [8] => SpringBoots; [9] => CriticalHit100
 
         public static Dictionary<BTL_DATA, Int32[]> RollBackStats = new Dictionary<BTL_DATA, Int32[]>();
         public static Dictionary<BTL_DATA, BattleStatus> RollBackBattleStatus = new Dictionary<BTL_DATA, BattleStatus>();
@@ -161,8 +162,10 @@ namespace Memoria.Scripts.Battle
                 ZidanePassive[v.Caster.Data][1] = 40;
             Int32 quarterWill = (v.Caster.Data.elem.wpr + ZidanePassive[v.Caster.Data][1]) >> 2;
             BonusCriticalFromWeapon(v.Caster.Weapon, out Int32 BonusWeaponCritical);
-            if (quarterWill != 0 && ((Comn.random16() % quarterWill) + v.Caster.Data.critical_rate_deal_bonus + v.Target.Data.critical_rate_receive_resistance + BonusWeaponCritical > Comn.random16() % 100) || v.Target.IsUnderAnyStatus(CustomStatus.PerfectCrit))
+            if (quarterWill != 0 && ((Comn.random16() % quarterWill) + v.Caster.Data.critical_rate_deal_bonus + v.Target.Data.critical_rate_receive_resistance + BonusWeaponCritical > Comn.random16() % 100) || v.Target.IsUnderAnyStatus(CustomStatus.PerfectCrit) || SpecialSAEffect[v.Target.Data][9] > 0)
             {
+                if (SpecialSAEffect[v.Target.Data][9] > 0)
+                    SpecialSAEffect[v.Target.Data][9]--;
                 if (v.Target.IsUnderAnyStatus(CustomStatus.PerfectCrit)) // Perfect Crit
                     btl_stat.AlterStatus(v.Target, CustomStatusId.PerfectCrit, parameters: "-1");
                 else
@@ -495,7 +498,7 @@ namespace Memoria.Scripts.Battle
                 v.Context.Attack = (Int16)(v.Context.Attack * 3 >> 1);
         }
 
-        public static void BonusBackstabAndPenaltyLongDistanceTranceSeek(this BattleCalculator v)
+        public static void BonusBackstabAndPenaltyLongDistance(this BattleCalculator v)
         {
             if ((Math.Abs(v.Caster.Data.evt.rotBattle.eulerAngles.y - v.Target.Data.evt.rotBattle.eulerAngles.y) < 0.1) || v.Target.IsRunningAway())
                 v.Context.Attack = v.Context.Attack * 3 >> 1;

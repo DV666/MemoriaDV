@@ -81,7 +81,7 @@ namespace Memoria.Scripts.Battle
                         TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
                         if (_v.Command.HitRate != 101)
                         {
-                            TranceSeekCustomAPI.BonusBackstabAndPenaltyLongDistanceTranceSeek(_v);
+                            TranceSeekCustomAPI.BonusBackstabAndPenaltyLongDistance(_v);
                         }
                         TranceSeekCustomAPI.BonusElement(_v);
                         if (_v.CanAttackElementalCommand())
