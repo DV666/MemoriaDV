@@ -185,10 +185,10 @@ namespace Memoria.Scripts.Battle
                         { "US", "↑ Critical ↑" },
                         { "UK", "↑ Critical ↑" },
                         { "JP", "↑ Critical ↑" },
-                        { "ES", "↑ Letale ↑" },
+                        { "ES", "↑ Letal ↑" },
                         { "FR", "↑ Critique ↑" },
-                        { "GR", "↑ Letal ↑" },
-                        { "IT", "↑ KRITISCH ↑" },
+                        { "GR", "↑ KRITISCH ↑" },
+                        { "IT", "↑ Letale ↑" },
                     };
                 btl2d.Btl2dReqSymbolMessage(v.Caster.Data, "[FFFF00]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 15);
             }
