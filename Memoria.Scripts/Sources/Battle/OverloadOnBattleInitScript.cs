@@ -163,6 +163,7 @@ namespace Memoria.Scripts.Battle
             { 112, 2 }, // Lamie 2nd
             { 636, 0 }, { 637, 0 }, { 641, 0 }, { 268, 0 }, { 647, 0 }, { 188, 0 }, { 189, 0 }, // Friendly Nymphe
             { 525, 0 }, // Obélisk
+            { 74, 0 }, { 74, 1 }, // Pile et Face (CD2)
             { 191, 0 }, // Pluton
             { 338, 0 }, // Roi Lear
             { 931, 0 }, // Shinryu
