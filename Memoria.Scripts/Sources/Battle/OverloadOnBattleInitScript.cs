@@ -28,8 +28,7 @@ namespace Memoria.Scripts.Battle
             for (Int32 i = 0; i < 8; i++)
             {
                 int idAA = 1136 + i;
-                if (FF9StateSystem.Battle.FF9Battle.aa_data[(BattleAbilityId)idAA].MP > 0)
-                    FF9StateSystem.Battle.FF9Battle.aa_data[(BattleAbilityId)idAA].MP--;
+                FF9StateSystem.Battle.FF9Battle.aa_data[(BattleAbilityId)idAA].MP = 0;
             }
 
             foreach (BattleUnit unit in BattleState.EnumerateUnits())

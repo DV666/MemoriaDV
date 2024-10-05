@@ -86,7 +86,7 @@ namespace Memoria.Scripts.Battle
                         FF9StateSystem.Battle.FF9Battle.aa_data[(BattleAbilityId)idAA].MP--;
                 }
 
-                if (v.Command.AbilityId == (BattleAbilityId)1138)
+                if (v.Command.AbilityId == (BattleAbilityId)1138) // Accelerator hammer
                 {
                     List<AA_DATA> AAlist = new List<AA_DATA>();
 

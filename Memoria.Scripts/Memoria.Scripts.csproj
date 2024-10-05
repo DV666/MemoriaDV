@@ -79,6 +79,12 @@
     <Compile Include="Sources\Battle\0007_LevelWeaponScript.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
+    <Compile Include="Sources\Battle\0140_SummonMonsterScript.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
+    <Compile Include="Sources\Battle\0137_EngineerScript.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
     <Compile Include="Sources\Battle\0164_TranceSeekSpecial.cs" />
     <Compile Include="Sources\Battle\0136_MagicMagicBreakScript.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
