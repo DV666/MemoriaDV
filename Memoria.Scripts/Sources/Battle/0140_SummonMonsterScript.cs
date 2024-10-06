@@ -22,6 +22,7 @@ namespace Memoria.Scripts.Battle
 
         public static Dictionary<BTL_DATA, Int32> SummonStep = new Dictionary<BTL_DATA, Int32>();
         public static Dictionary<BTL_DATA, Vector3> InitPosition = new Dictionary<BTL_DATA, Vector3>();
+        public static Dictionary<BTL_DATA, Int32> NumberTargets = new Dictionary<BTL_DATA, Int32>();
 
         public SummonMonsterScript(BattleCalculator v)
         {
@@ -62,9 +63,10 @@ namespace Memoria.Scripts.Battle
                         _v.Caster.Data.mot[i] = "ANH_" + geoName + "_000";
                 }          
                 btl_mot.setMotion(_v.Caster.Data, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_NORMAL);
+                NumberTargets[_v.Caster.Data] = _v.Command.TargetCount;
                 SummonStep[_v.Caster.Data] = 1;
             }
-            else if (SummonStep[_v.Caster.Data] == 1) // Script for the damage (here Thundaga, based on 0009_MagicAttackScript)
+            else if (SummonStep[_v.Caster.Data] == 1) // Script for the damage
             {
                 switch (SFX.currentEffectID)
                 {
@@ -96,8 +98,29 @@ namespace Memoria.Scripts.Battle
                         _v.TryAlterMagicStatuses();
                         break;
                     }
+                    case SpecialEffect.Meteor__Success:
+                    {
+                        _v.Command.Power = 115;
+                        _v.Context.Attack = GameRandom.Next16() % (_v.Caster.Magic + 99);
+                        _v.SetCommandPower();
+                        _v.Context.DefensePower = 0;
+                        TranceSeekCustomAPI.CasterPenaltyMini(_v);
+                        TranceSeekCustomAPI.EnemyTranceBonusAttack(_v);
+                        TranceSeekCustomAPI.PenaltyShellAttack(_v);
+                        TranceSeekCustomAPI.PenaltyCommandDividedAttack(_v);
+                        TranceSeekCustomAPI.BonusElement(_v);
+                        if (TranceSeekCustomAPI.CanAttackMagic(_v))
+                        {
+                            _v.CalcHpDamage();
+                        }
+                        _v.TryAlterMagicStatuses();
+                        break;
+                    }
                 }
-                SummonStep[_v.Caster.Data] = 2;
+
+                NumberTargets[_v.Caster.Data]--;
+                if (NumberTargets[_v.Caster.Data] <= 0)
+                    SummonStep[_v.Caster.Data] = 2;
             }
             else if (SummonStep[_v.Caster.Data] == 2) // Turn back to the character
             {
@@ -144,6 +167,7 @@ namespace Memoria.Scripts.Battle
         {
             { 1171, 328 }, // Agares
             { 1243, 244 }, // Cactuar
+            { 1244, 1 }, // Ozma
         };
     }
 }
