@@ -28,6 +28,8 @@ namespace Memoria.Scripts.Battle
                 SummonStep[_v.Caster.Data] = 0;
             if (!InitPosition.TryGetValue(_v.Caster.Data, out Vector3 InitPos)) // Init
                 InitPosition[_v.Caster.Data] = Vector3.zero;
+            if (!NumberTargets.TryGetValue(_v.Caster.Data, out Int32 Targets)) // Init
+                NumberTargets[_v.Caster.Data] = 0;
 
             if (SummonStep[_v.Caster.Data] == 0) // Change into the monster
             {
@@ -61,16 +63,16 @@ namespace Memoria.Scripts.Battle
             }
             else if (SummonStep[_v.Caster.Data] == 1) // Script for the damage
             {
-                switch (SFX.currentEffectID)
+                switch (_v.Command.AbilityId)
                 {
-                    case SpecialEffect.Thousand_Needles:
+                    case (BattleAbilityId)1171: // Agares
                     {
                         _v.Caster.MaxDamageLimit = 10000;
                         _v.Target.Flags |= CalcFlag.HpAlteration;
                         _v.Target.HpDamage = 10000;                      
                         break;
                     }
-                    case SpecialEffect.Thundaga__Single:
+                    case (BattleAbilityId)1243: // Cactuar
                     {
                         _v.Command.Power = 72;
                         _v.Command.Element = EffectElement.Thunder;
@@ -91,7 +93,7 @@ namespace Memoria.Scripts.Battle
                         _v.TryAlterMagicStatuses();
                         break;
                     }
-                    case SpecialEffect.Meteor__Success:
+                    case (BattleAbilityId)1244: // Ozma
                     {
                         _v.Command.Power = 115;
                         _v.Context.Attack = GameRandom.Next16() % (_v.Caster.Magic + 99);
