@@ -2,17 +2,10 @@ using System;
 using System.Collections.Generic;
 using FF9;
 using Memoria.Data;
-using Memoria.Prime.PsdFile;
 using UnityEngine;
-using UnityEngine.Networking.Types;
-using static BTL_DATA;
-using static UIManager;
 
 namespace Memoria.Scripts.Battle
 {
-    /// <summary>
-    /// Mental Break
-    /// </summary>
     [BattleScript(Id)]
     public sealed class SummonMonsterScript : IBattleScript
     {
