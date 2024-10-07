@@ -445,23 +445,7 @@ namespace Memoria.Scripts.Battle
                 v.Context.DefensePower += BeatrixPassive[v.Caster.Data][0];
             }
 
-            if (v.Target.PlayerIndex == CharacterId.Steiner && v.Target.IsUnderAnyStatus(BattleStatus.Defend) && v.Target.IsCovering && v.Target.HasSupportAbilityByIndex((SupportAbility)118)) // Flawless Steiner
-            {
-                if (v.Target.HasSupportAbilityByIndex((SupportAbility)1118))
-                {
-                    v.Context.Flags |= BattleCalcFlags.Guard;
-                    return;
-                }
-                else if (GameRandom.Next8() % 2 != 0)
-                {
-                    v.Context.Flags |= BattleCalcFlags.Guard;
-                    return;
-                }
-            }
-
-            if (v.Target.PlayerIndex == CharacterId.Steiner && v.Target.IsUnderAnyStatus(BattleStatus.Defend)) // Gardien Steiner
-                v.Context.Attack >>= 2;
-            else if (v.Target.IsUnderAnyStatus(BattleStatus.Defend))
+            if (v.Target.IsUnderAnyStatus(BattleStatus.Defend))
                 v.Context.Attack >>= 1;
 
             if (v.Target.PlayerIndex == CharacterId.Steiner && v.Target.IsUnderAnyStatus(BattleStatus.Trance)) // Steiner Trance => 25% reduce physical damage
@@ -1161,6 +1145,10 @@ namespace Memoria.Scripts.Battle
             if (WeaponNewStatus[v.Caster.Data] == BattleStatus.Shell && (v.Command.Id == BattleCommandId.Attack || v.Command.Id == BattleCommandId.Counter)) // Osmose MagiLame
             {
                 HealMP += v.Target.MpDamage / 80;
+            }
+            if (v.Target.HasSupportAbilityByIndex((SupportAbility)118) && v.Target.IsCovering) // Flawless
+            {
+                HealMP += (int)((v.Target.MaximumMp * (v.Target.HasSupportAbilityByIndex((SupportAbility)1118) ? 4 : 2)) / 100);
             }
             if ((HealHP > 0 || HealMP > 0) && !v.Caster.IsUnderAnyStatus(BattleStatus.Death) && SpecialSAEffect[v.Caster.Data][7] <= 0)
             {

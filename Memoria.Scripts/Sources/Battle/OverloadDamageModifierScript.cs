@@ -24,13 +24,13 @@ namespace Memoria.Scripts.Battle
 
             if (!v.Caster.IsPlayer) // Difficulty
             {
-                Int32 factor = 0;
+                Int32 factor = 1;
                 if (FF9StateSystem.EventState.gEventGlobal[1403] == 1) // Vivi mode
                     factor = -2;
                 else if (FF9StateSystem.EventState.gEventGlobal[1403] == 2) // Eiko mode
-                    factor = -1;
+                    factor = -4;
                 else if (FF9StateSystem.EventState.gEventGlobal[1403] == 3) // Kuja mode
-                    factor = 1;
+                    factor = 4;
                 else if (FF9StateSystem.EventState.gEventGlobal[1403] == 4) // Necron mode
                     factor = 2;
 
