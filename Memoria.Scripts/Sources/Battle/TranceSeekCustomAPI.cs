@@ -1,14 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.Design;
-using System.Runtime.Remoting.Contexts;
 using Assets.Sources.Scripts.UI.Common;
 using FF9;
-using Memoria.Assets;
 using Memoria.Data;
-using Memoria.Prime;
 using UnityEngine;
-using static TitleUI;
 
 namespace Memoria.Scripts.Battle
 {
