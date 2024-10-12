@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using Memoria.Data;
 using Memoria.DefaultScripts;
@@ -63,6 +64,9 @@ namespace Memoria.Scripts.Battle
                     ViviPassive[unit.Data] = new Int32[] { 0, 0, 0 };
                 if (!BeatrixPassive.TryGetValue(unit.Data, out Int32[] beatrixpassive))
                     BeatrixPassive[unit.Data] = new Int32[] { 0, 0, 0, 0 };
+                Dictionary<BattleStatus, Int32> ImmuneStatus = new Dictionary<BattleStatus, Int32>();
+                if (!ProtectStatus.TryGetValue(unit.Data, out ImmuneStatus))
+                    ProtectStatus[unit.Data][0] = 0;
                 if (!StackBreakOrUpStatus.TryGetValue(unit.Data, out Int32[] stackstatus))
                     StackBreakOrUpStatus[unit.Data] = new Int32[] { 0, 0, 0, 0 };
                 if (!MonsterMechanic.TryGetValue(unit.Data, out Int32[] monstermechanic))

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.Remoting.Contexts;
 using FF9;
 using Memoria.Data;
 
@@ -90,7 +89,7 @@ namespace Memoria.Scripts.Battle
                 }
                 case (RegularItem)2011: // Goutte de vie
                 {
-                    TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
+                    _v.Target.TryAlterStatuses(_v.Command.Item.Status, false);
                     break;
                 }
                 case (RegularItem)2012: // Eau de vie
@@ -115,7 +114,7 @@ namespace Memoria.Scripts.Battle
                     if (!_v.Target.CheckIsPlayer())
                         return;
 
-                    if (_v.Command.ItemId == (RegularItem)2012) // Eau de vie
+                    if (_v.Command.ItemId == (RegularItem)2012 || _v.Command.ItemId == (RegularItem)2017) // Eau de vie + Bienfait de Phénix
                         HPHeal = (int)(_v.Target.MaximumHp / 2);
                     else if (_v.Command.ItemId == (RegularItem)2013) // Fontaine de vie
                         HPHeal = (int)(_v.Target.MaximumHp);
@@ -133,9 +132,9 @@ namespace Memoria.Scripts.Battle
                         _v.Target.AddDelayedModifier(
                         target => target.CurrentHp == 0,
                         target =>
-                            {
-                                target.AlterStatus(BattleStatus.Shell, target);
-                            }
+                        {
+                            target.AlterStatus(BattleStatus.Shell, target);
+                        }
                         );
                     }
                     else if (_v.Command.ItemId == (RegularItem)2015)  // Envol de Quetzalcoatl
@@ -150,7 +149,153 @@ namespace Memoria.Scripts.Battle
                         }
                         );
                     }
+                    break;
+                }
+                case (RegularItem)2016: // Larme de Phénix
+                {
+                    _v.Target.RemoveStatus(BattleStatus.Doom);
+                    _v.Target.AlterStatus(BattleStatus.Regen, _v.Target);
+                    break;
+                }
+                case (RegularItem)2017: // Bienfait de Phénix
+                case (RegularItem)2018: // Bénédiction de Phénix
+                {
+                    if (HitRateForZombie() && !_v.TryMagicHit())
+                        return;
 
+                    if (_v.Target.IsZombie && !_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill))
+                    {
+                        _v.Target.Kill();
+                        return;
+                    }
+
+                    _v.Target.RemoveStatus(BattleStatus.Doom);
+                    _v.Target.RemoveStatus(BattleStatus.Death);
+                    if (_v.Command.ItemId == (RegularItem)2017) // Bienfait de Phénix
+                        HPHeal = (int)(_v.Target.MaximumHp / 2);
+                    else // Bénédiction de Phénix
+                        HPHeal = (int)(_v.Target.MaximumHp);
+                    break;
+                }
+                case (RegularItem)2019: // Paume d'Ange
+                case (RegularItem)2020: // Toucher d'Ange
+                {
+                    if (!_v.Target.CanBeRevived())
+                    {
+                        _v.Context.Flags |= BattleCalcFlags.Miss;
+                        return;
+                    }
+                    if (HitRateForZombie() && !_v.TryMagicHit())
+                        return;
+
+                    if (_v.Target.IsZombie && !_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill))
+                    {
+                        _v.Target.Kill();
+                        return;
+                    }
+
+                    if (!_v.Target.CheckIsPlayer())
+                        return;
+
+                    if (_v.Command.ItemId == (RegularItem)2019) // Paume d'Ange
+                        MPHeal = (int)(_v.Target.MaximumMp / 2);
+                    else if (_v.Command.ItemId == (RegularItem)2020) // Toucher d'Ange
+                        MPHeal = (int)(_v.Target.MaximumMp);
+
+                    if (!_v.Target.TryRemoveStatuses(BattleStatus.Death))
+                    {
+                        _v.Context.Flags |= BattleCalcFlags.Miss;
+                        return;
+                    }
+                    break;
+                }
+                case (RegularItem)2021: // Méga Phénix
+                case (RegularItem)2022: // Méga Résurex
+                {
+                    if (!_v.Target.CanBeRevived())
+                        return;
+
+                    if (_v.Target.Accessory == (RegularItem)1213) // Anneau Maudit
+                    {
+                        if (_v.Command.ItemId == RegularItem.PhoenixPinion && (_v.Target.Data.stat.permanent & BattleStatus.Doom) != 0 && !_v.Target.IsUnderAnyStatus(BattleStatus.Death))
+                        {
+                            _v.Context.Flags |= BattleCalcFlags.Miss;
+                            return;
+                        }
+                    }
+
+                    if (_v.Target.IsZombie && !_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill))
+                    {
+                        if ((_v.Target.CurrentHp = (UInt32)(GameRandom.Next8() % 10)) == 0)
+                            _v.Target.Kill();
+                    }
+                    else if (_v.Target.CheckIsPlayer())
+                    {
+                        HPHeal = (1 + GameRandom.Next8() % 10);
+                        _v.TryRemoveItemStatuses();
+                    }
+                    break;
+                }
+                case (RegularItem)2023: // Super Elixir
+                case (RegularItem)2024: // Maxi Elixir
+                case (RegularItem)2025: // Ultra Elixir
+                case (RegularItem)2026: // Elixir raffiné
+                case (RegularItem)2027: // Elixir fabuleux
+                case (RegularItem)2030: // Super Megalixir
+                case (RegularItem)2031: // Maxi Megalixir
+                case (RegularItem)2032: // Ultra Megalixir
+                case (RegularItem)2033: // Megalixir raffiné
+                case (RegularItem)2034: // Megalixir fabuleux
+                {
+                    HPHeal = (int)(_v.Target.MaximumHp);
+                    MPHeal = (int)(_v.Target.MaximumMp);
+                    if (_v.Command.ItemId == (RegularItem)2025 || _v.Command.ItemId == (RegularItem)2032) // Ultra Elixir + Ultra Megalixir
+                        _v.Target.AlterStatus(TranceSeekCustomAPI.CustomStatus.ArmorUp, _v.Target);
+                    else if (_v.Command.ItemId == (RegularItem)2027 || _v.Command.ItemId == (RegularItem)2034) // Elixir fabuleux + Megalixir fabuleux
+                        _v.Target.AlterStatus(TranceSeekCustomAPI.CustomStatus.MentalUp, _v.Target);
+
+                    _v.Target.TryAlterStatuses(_v.Command.Item.Status, false);
+                    break;
+                }
+                case (RegularItem)2028: // Phénixir
+                case (RegularItem)2029: // Réselixir
+                case (RegularItem)2035: // Méga Phénixir
+                case (RegularItem)2036: // Méga Réselixir
+                case (RegularItem)2037: // Reviviscence
+                case (RegularItem)2038: // Megalixir des Tantalas
+                {
+                    if (HitRateForZombie() && !_v.TryMagicHit())
+                        return;
+
+                    if (_v.Target.IsZombie && !_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill))
+                    {
+                        _v.Target.Kill();
+                        return;
+                    }
+
+                    if (_v.Command.ItemId == (RegularItem)2037) // Reviviscence
+                    {
+                        BattleStatusId[] statuslist = { BattleStatusId.Protect, BattleStatusId.Shell, BattleStatusId.Regen, BattleStatusId.AutoLife,
+                            TranceSeekCustomAPI.CustomStatusId.ArmorUp, TranceSeekCustomAPI.CustomStatusId.MentalUp};
+
+                        BattleStatusId statusselected = statuslist[GameRandom.Next16() % statuslist.Length];
+                        btl_stat.AlterStatus(_v.Target, statusselected, _v.Caster);
+                    }
+                    else if (_v.Command.ItemId == (RegularItem)2038) // Megalixir des Tantalas
+                    {
+                        _v.Target.AlterStatus(BattleStatus.Protect, _v.Target);
+                        _v.Target.AlterStatus(BattleStatus.Shell, _v.Target);
+                        _v.Target.AlterStatus(BattleStatus.AutoLife, _v.Target);
+                        _v.Target.AlterStatus(BattleStatus.Regen, _v.Target);
+                        _v.Target.AlterStatus(TranceSeekCustomAPI.CustomStatus.ArmorUp, _v.Target);
+                        _v.Target.AlterStatus(TranceSeekCustomAPI.CustomStatus.MentalUp, _v.Target);
+                    }
+                    _v.Target.RemoveStatus(BattleStatus.Death);
+                    if (_v.Command.ItemId == (RegularItem)2019) // Réselixir
+                        _v.Target.RemoveStatus(BattleStatus.Doom);
+
+                    HPHeal = (int)(_v.Target.MaximumHp);
+                    MPHeal = (int)(_v.Target.MaximumMp);
                     break;
                 }
             }
@@ -167,7 +312,10 @@ namespace Memoria.Scripts.Battle
             if ((_v.Target.Flags & CalcFlag.MpAlteration) != 0)
                 _v.Target.MpDamage = MPHeal;
 
-            _v.CalcDamageCommon();
+            foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(_v.Caster))
+                saFeature.TriggerOnAbility(_v, "CalcDamage", false);
+            foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(_v.Target))
+                saFeature.TriggerOnAbility(_v, "CalcDamage", true);
         }
 
         private Boolean HitRateForZombie()
