@@ -2,7 +2,6 @@
 using System.Threading;
 using Memoria.Data;
 using Memoria.DefaultScripts;
-using Memoria.Prime;
 using static Memoria.Scripts.Battle.TranceSeekCustomAPI;
 
 namespace Memoria.Scripts.Battle
@@ -115,8 +114,6 @@ namespace Memoria.Scripts.Battle
                                 uint bonusHP = unit.MaximumHp - 10000;
                                 unit.MaximumHp += (bonusHP / 10);
                                 unit.CurrentHp += (bonusHP / 10);
-                                unit.Strength = (byte)Math.Min(unit.Strength + (unit.Strength / 4), byte.MaxValue);
-                                unit.Magic = (byte)Math.Min(unit.Magic + (unit.Magic / 4), byte.MaxValue);
                             }
                             else if (FF9StateSystem.EventState.gEventGlobal[1403] == 4) // Necron mode
                             {
@@ -124,8 +121,6 @@ namespace Memoria.Scripts.Battle
                                 uint bonusHP = unit.MaximumHp - 10000;
                                 unit.MaximumHp += (bonusHP / 4);
                                 unit.CurrentHp += (bonusHP / 4);
-                                unit.Strength = (byte)Math.Min(unit.Strength + (unit.Strength / 2), byte.MaxValue);
-                                unit.Magic = (byte)Math.Min(unit.Magic + (unit.Magic / 2), byte.MaxValue);
                             }
                             MonsterMechanic[unit.Data][3] = 1;
                             break;
@@ -139,16 +134,12 @@ namespace Memoria.Scripts.Battle
                             uint bonusHP = unit.MaximumHp;
                             unit.MaximumHp += (bonusHP / 10);
                             unit.CurrentHp += (bonusHP / 10);
-                            unit.Strength = (byte)Math.Min(unit.Strength + (unit.Strength / 4), byte.MaxValue);
-                            unit.Magic = (byte)Math.Min(unit.Magic + (unit.Magic / 4), byte.MaxValue);
                         }
                         else if (FF9StateSystem.EventState.gEventGlobal[1403] == 4) // Necron mode
                         {
                             uint bonusHP = unit.MaximumHp;
                             unit.MaximumHp += (bonusHP / 4);
-                            unit.CurrentHp += (bonusHP / 4);
-                            unit.Strength = (byte)Math.Min(unit.Strength + (unit.Strength / 2), byte.MaxValue);
-                            unit.Magic = (byte)Math.Min(unit.Magic + (unit.Magic / 2), byte.MaxValue);
+                            unit.CurrentHp += (bonusHP / 4);                          
                             battleEnemy.Data.bonus_exp /= 2;
                             battleEnemy.Data.bonus_gil /= 10;
                         }

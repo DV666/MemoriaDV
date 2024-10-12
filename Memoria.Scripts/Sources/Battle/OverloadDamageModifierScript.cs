@@ -29,6 +29,10 @@ namespace Memoria.Scripts.Battle
                     factor = -2;
                 else if (FF9StateSystem.EventState.gEventGlobal[1403] == 2) // Eiko mode
                     factor = -4;
+                else if (FF9StateSystem.EventState.gEventGlobal[1403] == 3) // Kuja mode
+                    factor = 4;
+                else if (FF9StateSystem.EventState.gEventGlobal[1403] == 4) // Necron mode
+                    factor = 2;
 
                 if ((v.Target.Flags & CalcFlag.HpAlteration) != 0)
                     v.Target.HpDamage = v.Target.HpDamage + (v.Target.HpDamage / factor);

@@ -1146,9 +1146,11 @@ namespace Memoria.Scripts.Battle
             {
                 HealMP += v.Target.MpDamage / 80;
             }
-            if (v.Target.HasSupportAbilityByIndex((SupportAbility)118) && v.Target.IsCovering) // Flawless
+            if (v.Target.HasSupportAbilityByIndex((SupportAbility)118) && v.Target.IsCovering) // Flawless (Steiner)
             {
-                HealMP += (int)((v.Target.MaximumMp * (v.Target.HasSupportAbilityByIndex((SupportAbility)1118) ? 4 : 2)) / 100);
+                int UnitCoveringHealMP = (int)((v.Target.MaximumMp * (v.Target.HasSupportAbilityByIndex((SupportAbility)1118) ? 4 : 2)) / 100);
+                v.Target.CurrentMp = Math.Min(v.Target.CurrentMp + (uint)UnitCoveringHealMP, v.Target.MaximumMp);
+                btl2d.Btl2dStatReq(v.Target, 0, -UnitCoveringHealMP);
             }
             if ((HealHP > 0 || HealMP > 0) && !v.Caster.IsUnderAnyStatus(BattleStatus.Death) && SpecialSAEffect[v.Caster.Data][7] <= 0)
             {
@@ -1212,6 +1214,9 @@ namespace Memoria.Scripts.Battle
                 btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[FF99FD]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 20);
                 v.Target.RemoveStatus(BattleStatus.AutoLife);
             }
+
+            if (v.Command.Id == (BattleCommandId)10020)
+                v.Caster.Trance = (byte)Math.Max(0, v.Caster.Trance - 128);
         }
     }
 }
