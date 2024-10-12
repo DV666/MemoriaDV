@@ -87,13 +87,12 @@ namespace Memoria.Scripts.Battle
             }
             else
             {
-                _v.Target.Flags |= (CalcFlag.HpDamageOrHeal);
+                _v.Target.Flags |= (CalcFlag.HpDamageOrHeal | CalcFlag.MpDamageOrHeal);
                 if (_v.Caster.HasSupportAbilityByIndex(SupportAbility.PowerUp)) // PowerUp
                 {
-                    _v.Target.HpDamage = (int)(_v.Target.MaximumHp * (uint)_v.Command.Power / 100U);
                     if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1029)) // PowerUp+
                     {
-                        _v.Target.Flags |= (CalcFlag.MpDamageOrHeal);
+                        _v.Target.HpDamage = (int)(_v.Target.MaximumHp * (uint)_v.Command.Power / 100U);
                         _v.Target.MpDamage = (int)(_v.Target.MaximumMp * (uint)_v.Command.Power / 100U);
                     }
                     _v.Target.Trance = (byte)(_v.Target.Trance + (Comn.random16() % _v.Caster.Will));

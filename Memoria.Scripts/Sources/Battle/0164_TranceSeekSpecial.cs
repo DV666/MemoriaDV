@@ -11,13 +11,13 @@ namespace Memoria.Scripts.Battle
     /// Special
     /// </summary>
     [BattleScript(Id)]
-    public sealed class TranceSeekSpecialScript : IBattleScript
+    public sealed class TranceSeekSpecial : IBattleScript
     {
         public const Int32 Id = 0164;
 
         private readonly BattleCalculator _v;
 
-        public TranceSeekSpecialScript(BattleCalculator v)
+        public TranceSeekSpecial(BattleCalculator v)
         {
             _v = v;
         }

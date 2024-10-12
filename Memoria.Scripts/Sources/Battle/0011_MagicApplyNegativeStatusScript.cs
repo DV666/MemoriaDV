@@ -106,6 +106,14 @@ namespace Memoria.Scripts.Battle
                 {
                     _v.Command.AbilityStatus |= (TranceSeekCustomAPI.CustomStatus.ArmorBreak);
                 }
+                else if (_v.Command.AbilityId == (BattleAbilityId)1108) // Nightmara
+                {
+                    _v.Command.AbilityStatus |= (BattleStatus.Confuse | BattleStatus.Slow);
+                }
+                else if (_v.Command.AbilityId == (BattleAbilityId)1109) // Nightmaga
+                {
+                    _v.Command.AbilityStatus |= (BattleStatus.Confuse | BattleStatus.Slow | BattleStatus.Trouble | BattleStatus.Mini);
+                }
                 else if (_v.Caster.Data.dms_geo_id == 142) // Cauchemard (from Dark Beatrix)
                 {
 

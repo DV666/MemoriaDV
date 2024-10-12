@@ -1,9 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
+using System.Runtime.Remoting.Contexts;
 using Assets.Sources.Scripts.UI.Common;
 using FF9;
+using Memoria.Assets;
 using Memoria.Data;
+using Memoria.Prime;
 using UnityEngine;
+using static TitleUI;
 
 namespace Memoria.Scripts.Battle
 {
@@ -18,8 +23,6 @@ namespace Memoria.Scripts.Battle
         public static Dictionary<BTL_DATA, BattleAbilityId> ViviPreviousSpell = new Dictionary<BTL_DATA, BattleAbilityId>();
 
         public static Dictionary<BTL_DATA, Int32[]> BeatrixPassive = new Dictionary<BTL_DATA, Int32[]>(); // [0] => Strength ; [1] => Magic ; [2] => Bravoure ; [3] => TargetCount
-
-        public static Dictionary<BTL_DATA, Dictionary<BattleStatus, Int32>> ProtectStatus = new Dictionary<BTL_DATA, Dictionary<BattleStatus, Int32>>();
 
         public static Dictionary<BTL_DATA, Int32> StateMoug = new Dictionary<BTL_DATA, Int32>();
         public static Dictionary<BTL_DATA, GameObject> ModelMoug = new Dictionary<BTL_DATA, GameObject>();
@@ -1143,11 +1146,9 @@ namespace Memoria.Scripts.Battle
             {
                 HealMP += v.Target.MpDamage / 80;
             }
-            if (v.Target.HasSupportAbilityByIndex((SupportAbility)118) && v.Target.IsCovering) // Flawless (Steiner)
+            if (v.Target.HasSupportAbilityByIndex((SupportAbility)118) && v.Target.IsCovering) // Flawless
             {
-                int UnitCoveringHealMP = (int)((v.Target.MaximumMp * (v.Target.HasSupportAbilityByIndex((SupportAbility)1118) ? 4 : 2)) / 100);
-                v.Target.CurrentMp = Math.Min(v.Target.CurrentMp + (uint)UnitCoveringHealMP, v.Target.MaximumMp);
-                btl2d.Btl2dStatReq(v.Target, 0, -UnitCoveringHealMP);
+                HealMP += (int)((v.Target.MaximumMp * (v.Target.HasSupportAbilityByIndex((SupportAbility)1118) ? 4 : 2)) / 100);
             }
             if ((HealHP > 0 || HealMP > 0) && !v.Caster.IsUnderAnyStatus(BattleStatus.Death) && SpecialSAEffect[v.Caster.Data][7] <= 0)
             {
@@ -1211,9 +1212,6 @@ namespace Memoria.Scripts.Battle
                 btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[FF99FD]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 20);
                 v.Target.RemoveStatus(BattleStatus.AutoLife);
             }
-
-            if (v.Command.Id == (BattleCommandId)10020)
-                v.Caster.Trance = (byte)Math.Max(0, v.Caster.Trance - 128);
         }
     }
 }

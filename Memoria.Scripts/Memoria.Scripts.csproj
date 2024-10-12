@@ -85,9 +85,7 @@
     <Compile Include="Sources\Battle\0137_EngineerScript.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Include="Sources\Battle\0201_MixRemedyScript.cs" />
-    <Compile Include="Sources\Battle\0200_MixPotionScript.cs" />
-    <Compile Include="Sources\Battle\0164_TranceSeekSpecialScript.cs" />
+    <Compile Include="Sources\Battle\0164_TranceSeekSpecial.cs" />
     <Compile Include="Sources\Battle\0136_MagicMagicBreakScript.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
