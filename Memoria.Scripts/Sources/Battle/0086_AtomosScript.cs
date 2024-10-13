@@ -20,7 +20,7 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            if (!_v.Target.CheckUnsafetyOrMiss())
+            if (!_v.Target.CheckUnsafetyOrGuard())
                 return;
 
             _v.SetCommandAttack();

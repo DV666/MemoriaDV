@@ -53,7 +53,7 @@ namespace Memoria.Scripts.Battle
             {
                 if (_v.Command.Power == 90 && _v.Command.HitRate == 4) // Nv. 4 Gravité X
                 {
-                    if (_v.Target.CheckUnsafetyOrMiss())
+                    if (_v.Target.CheckUnsafetyOrGuard())
                     {
                         _v.SetCommandAttack();
                         TranceSeekCustomAPI.PenaltyCommandDividedAttack(_v);

@@ -19,7 +19,7 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            if (_v.Target.CheckUnsafetyOrMiss() && _v.Target.CanBeAttacked())
+            if (_v.Target.CheckUnsafetyOrGuard() && _v.Target.CanBeAttacked())
             {
                 TranceSeekCustomAPI.MagicAccuracy(_v);
                 _v.Target.PenaltyShellHitRate();

@@ -19,7 +19,7 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            if (!_v.Target.CheckUnsafetyOrMiss() || !_v.Target.CanBeAttacked())
+            if (!_v.Target.CheckUnsafetyOrGuard() || !_v.Target.CanBeAttacked())
                 return;
 
             UInt32 hp = _v.Caster.CurrentHp;

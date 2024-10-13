@@ -183,7 +183,7 @@ namespace Memoria.Scripts.Battle
 
         public Single RateTarget()
         {
-            if (!_v.Target.CheckUnsafetyOrMiss() || !_v.Target.CanBeAttacked() || _v.Target.HasCategory(EnemyCategory.Humanoid))
+            if (!_v.Target.CheckUnsafetyOrGuard() || !_v.Target.CanBeAttacked() || _v.Target.HasCategory(EnemyCategory.Humanoid))
                 return 0;
 
             if (_v.Target.CurrentHp > _v.Target.MaximumHp / _v.Command.Power)

@@ -30,10 +30,13 @@ namespace Memoria.Scripts.Battle
                 else if (FF9StateSystem.EventState.gEventGlobal[1403] == 2) // Eiko mode
                     factor = -4;
 
-                if ((v.Target.Flags & CalcFlag.HpAlteration) != 0)
-                    v.Target.HpDamage = v.Target.HpDamage + (v.Target.HpDamage / factor);
-                if ((v.Target.Flags & CalcFlag.MpAlteration) != 0)
-                    v.Target.MpDamage = v.Target.MpDamage + (v.Target.MpDamage / factor);
+                if (factor != 1)
+                {
+                    if ((v.Target.Flags & CalcFlag.HpAlteration) != 0)
+                        v.Target.HpDamage = v.Target.HpDamage + (v.Target.HpDamage / factor);
+                    if ((v.Target.Flags & CalcFlag.MpAlteration) != 0)
+                        v.Target.MpDamage = v.Target.MpDamage + (v.Target.MpDamage / factor);
+                }
             }
 
             Single modifier_factor = 1f + v.Context.DamageModifierCount * 0.25f;
