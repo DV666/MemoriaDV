@@ -22,21 +22,26 @@ namespace Memoria.Scripts.Battle
             if (v.Target.Flags == 0)
                 return;
 
-            if (!v.Caster.IsPlayer) // Difficulty
+            if (!v.Caster.IsPlayer && (FF9StateSystem.EventState.gEventGlobal[1403] == 1 || FF9StateSystem.EventState.gEventGlobal[1403] == 2)) // Lower Difficulty
             {
-                Int32 factor = 1;
+                Int32 malusHPdamage = 0;
+                Int32 malusMPdamage = 0;
                 if (FF9StateSystem.EventState.gEventGlobal[1403] == 1) // Vivi mode
-                    factor = -2;
-                else if (FF9StateSystem.EventState.gEventGlobal[1403] == 2) // Eiko mode
-                    factor = -4;
-
-                if (factor != 1)
                 {
-                    if ((v.Target.Flags & CalcFlag.HpAlteration) != 0)
-                        v.Target.HpDamage = v.Target.HpDamage + (v.Target.HpDamage / factor);
-                    if ((v.Target.Flags & CalcFlag.MpAlteration) != 0)
-                        v.Target.MpDamage = v.Target.MpDamage + (v.Target.MpDamage / factor);
+                    malusHPdamage = v.Target.HpDamage / 2;
+                    malusMPdamage = v.Target.MpDamage / 2;
                 }
+                    
+                else if (FF9StateSystem.EventState.gEventGlobal[1403] == 2) // Eiko mode
+                {
+                    malusHPdamage = v.Target.HpDamage / 4;
+                    malusMPdamage = v.Target.MpDamage / 4;
+                }                   
+
+                if ((v.Target.Flags & CalcFlag.HpAlteration) != 0)
+                    v.Target.HpDamage = Math.Max(1, v.Target.HpDamage - malusHPdamage);
+                if ((v.Target.Flags & CalcFlag.MpAlteration) != 0)
+                    v.Target.MpDamage = Math.Max(1, v.Target.MpDamage - malusMPdamage);
             }
 
             Single modifier_factor = 1f + v.Context.DamageModifierCount * 0.25f;
@@ -81,7 +86,15 @@ namespace Memoria.Scripts.Battle
                     v.Context.TranceIncrease = 0;
             }
 
-            TranceSeekCustomAPI.SpecialSA(v);          
+            TranceSeekCustomAPI.SpecialSA(v);
+            if ((v.Caster.Flags & CalcFlag.HpAlteration) != 0)
+                v.Caster.HpDamage = Math.Min(v.Caster.HpDamage, 9999);
+            if ((v.Caster.Flags & CalcFlag.MpAlteration) != 0)
+                v.Caster.MpDamage = Math.Min(v.Caster.MpDamage, 9999);
+            if ((v.Target.Flags & CalcFlag.HpAlteration) != 0)
+                v.Target.HpDamage = Math.Min(v.Target.HpDamage, 9999);
+            if ((v.Target.Flags & CalcFlag.MpAlteration) != 0)
+                v.Target.MpDamage = Math.Min(v.Target.MpDamage, 9999);
         }
     }
 }

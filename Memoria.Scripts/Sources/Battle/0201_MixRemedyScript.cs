@@ -67,6 +67,36 @@ namespace Memoria.Scripts.Battle
                     TranceSeekCustomAPI.ProtectStatus[_v.Target.Data].Add(_v.Command.Item.Status, 2);
                     break;
                 }
+                case (RegularItem)2044: // Sérum réversible
+                case (RegularItem)2054: // Echo réversible
+                {
+                    if (_v.Target.IsUnderAnyStatus(_v.Command.Item.Status))
+                    {
+                        _v.TryRemoveItemStatuses();
+                        _v.Target.AlterStatus(BattleStatus.Regen, _v.Target);
+                    }
+                    break;
+                }
+                case (RegularItem)2045: // Sérum sacré
+                case (RegularItem)2055: // Echo sacré
+                {
+                    if (_v.Target.IsUnderAnyStatus(_v.Command.Item.Status))
+                    {
+                        _v.TryRemoveItemStatuses();
+                        _v.Target.AlterStatus(BattleStatus.AutoLife, _v.Target);
+                    }
+                    break;
+                }
+                case (RegularItem)2046: // Sérum complet
+                case (RegularItem)2047: // Sérum total
+                case (RegularItem)2056: // Echo complet            
+                case (RegularItem)2057: // Echo total
+                {
+                    HPHeal = (int)(_v.Target.MaximumHp);
+                    MPHeal = (int)(_v.Target.MaximumMp);
+                    _v.TryRemoveItemStatuses();
+                    break;
+                }
             }
 
             if (HPHeal > 0)
