@@ -27,13 +27,13 @@ namespace Memoria.Scripts.Battle
                 {
                     _v.Target.Libra(BattleHUD.LibraInformation.NameLevel | BattleHUD.LibraInformation.Category | BattleHUD.LibraInformation.ElementalAffinities);
                 }
-                else if (!_v.Target.IsUnderStatus(BattleStatus.EasyKill))
+                else if (_v.Target.IsUnderStatus(BattleStatus.EasyKill) && (btl_util.getEnemyPtr(_v.Target).info.flags & 128) == 0)
                 {
-                    _v.Target.Libra(BattleHUD.LibraInformation.Default | BattleHUD.LibraInformation.ItemSteal);
+                    _v.Target.Libra(BattleHUD.LibraInformation.Name | BattleHUD.LibraInformation.Level | BattleHUD.LibraInformation.Category | BattleHUD.LibraInformation.ItemSteal);
                 }
                 else
                 {
-                    _v.Target.Libra(BattleHUD.LibraInformation.Name | BattleHUD.LibraInformation.Level | BattleHUD.LibraInformation.Category | BattleHUD.LibraInformation.ItemSteal);
+                    _v.Target.Libra(BattleHUD.LibraInformation.Default | BattleHUD.LibraInformation.ItemSteal);
                 }
             }
             else
