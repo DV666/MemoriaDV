@@ -146,6 +146,36 @@ namespace Memoria.Scripts.Battle
                 );
             }
 
+            if (v.Command.AbilityStatus > 0 && ProtectStatus.TryGetValue(v.Target.Data, out Dictionary<BattleStatus, Int32> statusprotect))
+            {
+                if (statusprotect.Count > 1)
+                {
+                    foreach (BattleStatusId statusID in v.Command.AbilityStatus.ToStatusList())
+                    {
+                        BattleStatus status = statusID.ToBattleStatus();
+                        if (statusprotect.ContainsKey(status))
+                        {
+                            if (statusprotect[status] > 0)
+                            {
+                                statusprotect[status]--;
+                                v.Command.AbilityStatus &= ~status;
+                                Dictionary<String, String> localizedStatusProtect = new Dictionary<String, String>
+                                {
+                                    { "US", $"+{status}" },
+                                    { "UK", $"+{status}" },
+                                    { "JP", $"+{status}" },
+                                    { "ES", $"+{status}" },
+                                    { "FR", $"+{status}" },
+                                    { "GR", $"+{status}" },
+                                    { "IT", $"+{status}" },
+                                };
+                                btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[38FF1F]", localizedStatusProtect, HUDMessage.MessageStyle.DAMAGE, 10);
+                            }
+                        }
+                    }
+                }
+            }
+
             TranceSeekCustomAPI.SOS_SA(v);
             return false;
         }
