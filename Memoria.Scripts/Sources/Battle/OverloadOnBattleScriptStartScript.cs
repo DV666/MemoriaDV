@@ -157,19 +157,22 @@ namespace Memoria.Scripts.Battle
                         {
                             if (statusprotect[status] > 0)
                             {
-                                statusprotect[status]--;
                                 v.Command.AbilityStatus &= ~status;
-                                Dictionary<String, String> localizedStatusProtect = new Dictionary<String, String>
+                                if (statusprotect[status] != 255)
                                 {
-                                    { "US", $"+{status}" },
-                                    { "UK", $"+{status}" },
-                                    { "JP", $"+{status}" },
-                                    { "ES", $"+{status}" },
-                                    { "FR", $"+{status}" },
-                                    { "GR", $"+{status}" },
-                                    { "IT", $"+{status}" },
-                                };
-                                btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[38FF1F]", localizedStatusProtect, HUDMessage.MessageStyle.DAMAGE, 10);
+                                    statusprotect[status]--;
+                                    Dictionary<String, String> localizedStatusProtect = new Dictionary<String, String>
+                                    {
+                                        { "US", $"-{status}" },
+                                        { "UK", $"-{status}" },
+                                        { "JP", $"-{status}" },
+                                        { "ES", $"-{status}" },
+                                        { "FR", $"-{status}" },
+                                        { "GR", $"-{status}" },
+                                        { "IT", $"-{status}" },
+                                    };
+                                    btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[38FF1F]", localizedStatusProtect, HUDMessage.MessageStyle.DAMAGE, 5);
+                                }
                             }
                         }
                     }
