@@ -57,14 +57,28 @@ namespace Memoria.Scripts.Battle
                 case (RegularItem)2052: // Echo amélioré
                 {
                     _v.TryRemoveItemStatuses();
-                    TranceSeekCustomAPI.ProtectStatus[_v.Target.Data].Add(_v.Command.Item.Status, 1);
+                    if (TranceSeekCustomAPI.ProtectStatus.TryGetValue(_v.Target.Data, out Dictionary<BattleStatus, Int32> statusprotect))
+                    {
+                        foreach (BattleStatusId statusID in _v.Command.Item.Status.ToStatusList())
+                        {
+                            BattleStatus status = statusID.ToBattleStatus();
+                            statusprotect.Add(status, 1);
+                        }
+                    }            
                     break;
                 }
                 case (RegularItem)2043: // Puissant sérum
                 case (RegularItem)2053: // Puissant echo
                 {
                     _v.TryRemoveItemStatuses();
-                    TranceSeekCustomAPI.ProtectStatus[_v.Target.Data].Add(_v.Command.Item.Status, 2);
+                    if (TranceSeekCustomAPI.ProtectStatus.TryGetValue(_v.Target.Data, out Dictionary<BattleStatus, Int32> statusprotect))
+                    {
+                        foreach (BattleStatusId statusID in _v.Command.Item.Status.ToStatusList())
+                        {
+                            BattleStatus status = statusID.ToBattleStatus();
+                            statusprotect.Add(status, 2);
+                        }
+                    }
                     break;
                 }
                 case (RegularItem)2044: // Sérum réversible
