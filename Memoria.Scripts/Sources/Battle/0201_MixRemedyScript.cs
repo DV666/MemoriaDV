@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using Assets.Sources.Scripts.UI.Common;
 using FF9;
 using Memoria.Data;
+using static Memoria.Assets.DataResources;
 using static SiliconStudio.Social.ResponseData;
 
 namespace Memoria.Scripts.Battle
@@ -128,10 +130,12 @@ namespace Memoria.Scripts.Battle
                 }
                 case (RegularItem)2108: // Remontant
                 case (RegularItem)2109: // Remontant +
+                case (RegularItem)2110: // Secondie Vie
+                case (RegularItem)2117: // Troisième Vie
                 {
-                    if (_v.Command.ItemId == (RegularItem)2108)
+                    if (_v.Command.ItemId == (RegularItem)2108 || _v.Command.ItemId == (RegularItem)2109 || _v.Command.ItemId == (RegularItem)2110 || _v.Command.ItemId == (RegularItem)2117)
                     {
-                        if (!_v.Target.CanBeRevived())
+                        if (!_v.Target.CanBeRevived() || !_v.Target.IsUnderAnyStatus(BattleStatus.Death))
                         {
                             _v.Context.Flags |= BattleCalcFlags.Miss;
                             return;
@@ -149,39 +153,45 @@ namespace Memoria.Scripts.Battle
                             return;
 
                         _v.Target.RemoveStatus(BattleStatus.Death);
-                        if (_v.Command.ItemId == (RegularItem)2108) // Remontant
+                        if (_v.Command.ItemId == (RegularItem)2108 || _v.Command.ItemId == (RegularItem)2110) // Remontant
                             HPHeal = (int)(_v.Target.MaximumHp / 2);
-                        else if (_v.Command.ItemId == (RegularItem)2109) // Remontant +
+                        else if (_v.Command.ItemId == (RegularItem)2109 || _v.Command.ItemId == (RegularItem)2117) // Remontant +
                             HPHeal = (int)(_v.Target.MaximumHp);
                     }
 
                     _v.TryRemoveItemStatuses();
                     if (TranceSeekCustomAPI.ProtectStatus.TryGetValue(_v.Target.Data, out Dictionary<BattleStatus, Int32> statusprotect))
                     {
+                        Boolean Message = false;
+                        string ItemName = FF9TextTool.ItemName(_v.Command.ItemId);
                         foreach (BattleStatusId statusID in _v.Command.Item.Status.ToStatusList())
                         {
                             BattleStatus status = statusID.ToBattleStatus();
                             statusprotect.Add(status, 255);
 
-                            Int32 wait = 400 + (_v.Caster.Will * 3);
+                            Int32 wait = (short)((400 + (_v.Caster.Will * 3)) * 30);
                             _v.Target.AddDelayedModifier(
                             target => (wait -= target.Data.cur.at_coef * BattleState.ATBTickCount) > 0,
                             target =>
                             {
                                 statusprotect.Remove(status);
-                                Dictionary<String, String> localizedStatusProtect = new Dictionary<String, String>
+                                if (!Message)
+                                {
+                                    Dictionary<String, String> localizedStatusProtect = new Dictionary<String, String>
                                     {
-                                        { "US", "- Traitement" },
-                                        { "UK", "- Traitement" },
-                                        { "JP", "- Traitement" },
-                                        { "ES", "- Traitement" },
-                                        { "FR", "- Traitement" },
-                                        { "GR", "- Traitement" },
-                                        { "IT", "- Traitement" },
+                                    { "US", $"- {ItemName}" },
+                                    { "UK", $"- {ItemName}" },
+                                    { "JP", $"- {ItemName}" },
+                                    { "ES", $"- {ItemName}" },
+                                    { "FR", $"- {ItemName}" },
+                                    { "GR", $"- {ItemName}" },
+                                    { "IT", $"- {ItemName}" },
                                     };
-                                btl2d.Btl2dReqSymbolMessage(target.Data, "[38FF1F]", localizedStatusProtect, HUDMessage.MessageStyle.DAMAGE, 5);
+                                    btl2d.Btl2dReqSymbolMessage(target.Data, "[38FF1F]", localizedStatusProtect, HUDMessage.MessageStyle.DAMAGE, 5);
+                                    Message = true;
+                                }
                             }
-                            );
+                            );                         
                         }
                     }
                     break;
@@ -198,6 +208,58 @@ namespace Memoria.Scripts.Battle
                     {
                         _v.TryRemoveItemStatuses();
                         _v.Target.AlterStatus(BattleStatus.Regen, _v.Target);
+                    }
+                    break;
+                }
+                case (RegularItem)2146: // Remède P
+                case (RegularItem)2147: // Remède P +
+                case (RegularItem)2148: // Remède M
+                case (RegularItem)2149: // Remède M +
+                case (RegularItem)2150: // Remède C
+                case (RegularItem)2151: // Remède C +
+                case (RegularItem)2152: // Remède F
+                case (RegularItem)2153: // Remède F +
+                case (RegularItem)2154: // Remède S
+                case (RegularItem)2155: // Remède S +
+                case (RegularItem)2156: // Remède Z
+                case (RegularItem)2157: // Remède Z +
+                case (RegularItem)2158: // Remède V
+                case (RegularItem)2159: // Remède V +
+                {
+                    _v.TryRemoveItemStatuses();
+                    if (TranceSeekCustomAPI.ProtectStatus.TryGetValue(_v.Target.Data, out Dictionary<BattleStatus, Int32> statusprotect))
+                    {
+                        Boolean Message = false;
+                        string ItemName = FF9TextTool.ItemName(_v.Command.ItemId);
+                        foreach (BattleStatusId statusID in _v.Command.Item.Status.ToStatusList())
+                        {
+                            BattleStatus status = statusID.ToBattleStatus();
+                            statusprotect.Add(status, 255);
+
+                            Int32 wait = (short)((400 + (_v.Caster.Will * 3)) * 30);
+                            _v.Target.AddDelayedModifier(
+                            target => (wait -= target.Data.cur.at_coef * BattleState.ATBTickCount) > 0,
+                            target =>
+                            {
+                                statusprotect.Remove(status);
+                                if (!Message)
+                                {
+                                    Dictionary<String, String> localizedStatusProtect = new Dictionary<String, String>
+                                    {
+                                    { "US", $"- {ItemName}" },
+                                    { "UK", $"- {ItemName}" },
+                                    { "JP", $"- {ItemName}" },
+                                    { "ES", $"- {ItemName}" },
+                                    { "FR", $"- {ItemName}" },
+                                    { "GR", $"- {ItemName}" },
+                                    { "IT", $"- {ItemName}" },
+                                    };
+                                    btl2d.Btl2dReqSymbolMessage(target.Data, "[38FF1F]", localizedStatusProtect, HUDMessage.MessageStyle.DAMAGE, 5);
+                                    Message = true;
+                                }
+                            }
+                            );
+                        }
                     }
                     break;
                 }
@@ -230,11 +292,63 @@ namespace Memoria.Scripts.Battle
                 case (RegularItem)2093: // Eau bénite totale
                 case (RegularItem)2101: // Anticorps complet
                 case (RegularItem)2102: // Anticorps total
+                case (RegularItem)2111: // Régénération
+                case (RegularItem)2112: // Régénération totale
+                case (RegularItem)2118: // Regénération puissante
+                case (RegularItem)2119: // Regénération parfaite
                 {
                     HPHeal = (int)(_v.Target.MaximumHp);
                     MPHeal = (int)(_v.Target.MaximumMp);
                     _v.TryRemoveItemStatuses();
                     break;
+                }
+                case (RegularItem)2120: // Boccidote
+                case (RegularItem)2121: // Lasidote
+                case (RegularItem)2122: // Défidote          
+                case (RegularItem)2123: // Antidrouil
+                case (RegularItem)2124: // Cachidote
+                case (RegularItem)2125: // Vaccidote
+                case (RegularItem)2126: // Boccik
+                case (RegularItem)2127: // Déficca
+                case (RegularItem)2128: // Bobrouil
+                case (RegularItem)2129: // Vacca
+                case (RegularItem)2130: // Lasijeur
+                case (RegularItem)2131: // Désembrik
+                case (RegularItem)2132: // Casik
+                case (RegularItem)2133: // Vaccik
+                case (RegularItem)2134: // Désemjeur
+                case (RegularItem)2135: // Cafijeur
+                case (RegularItem)2136: // Déficcin
+                case (RegularItem)2137: // Cachembrouil
+                case (RegularItem)2138: // Caccin
+                {
+                    Int32 statuspresent = 0;
+                    foreach (BattleStatusId statusID in _v.Command.Item.Status.ToStatusList())
+                    {
+                        BattleStatus status = statusID.ToBattleStatus();
+                        if ((_v.Target.CurrentStatus & status) != 0)
+                            statuspresent++;
+                    }
+                    _v.TryRemoveItemStatuses();
+                    if (statuspresent > 1)
+                    {
+                        HPHeal = (int)(_v.Target.MaximumHp) / 4;
+                        MPHeal = (int)(_v.Target.MaximumMp) / 4;
+                    }
+                    break;
+                }
+                case (RegularItem)2139: // Mega Antidote
+                case (RegularItem)2140: // Mega Bocca
+                case (RegularItem)2141: // Mega Lasik          
+                case (RegularItem)2142: // Mega Défijeur
+                case (RegularItem)2143: // Mega Désembrouil
+                case (RegularItem)2144: // Mega Cachet
+                case (RegularItem)2145: // Mega Vaccin
+                case (RegularItem)2160: // Remède X
+                case (RegularItem)2161: // Mega Remède
+                {
+                    _v.TryRemoveItemStatuses();
+                    return;
                 }
             }
             _v.Context.Flags = 0;
