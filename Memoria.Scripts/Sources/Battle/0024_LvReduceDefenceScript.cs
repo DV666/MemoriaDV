@@ -1,6 +1,5 @@
-using System;
-using System.Collections.Generic;
 using Memoria.Data;
+using System;
 
 namespace Memoria.Scripts.Battle
 {
@@ -21,21 +20,38 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            if (_v.IsTargetLevelMultipleOfCommandRate() && _v.Target.CanBeAttacked())
+            if (_v.Command.Power == 0)
             {
-                List<Object> parameters = new List<Object>();
-                if (_v.Target.PhysicalDefence != 0)
+                if (_v.IsTargetLevelMultipleOfCommandRate() && _v.Target.CanBeAttacked())
                 {
-                    parameters.Add("PhysicalDefence");
-                    parameters.Add(GameRandom.Next16() % _v.Target.PhysicalDefence);
+                    _v.Target.AlterStatus(TranceSeekCustomAPI.CustomStatus.Vieillissement);
                 }
-                if (_v.Target.PhysicalDefence != 0)
+                else
                 {
-                    parameters.Add("MagicDefence");
-                    parameters.Add(GameRandom.Next16() % _v.Target.MagicDefence);
+                    _v.Context.Flags |= BattleCalcFlags.Miss;
                 }
-                if (parameters.Count > 0)
-                    _v.Target.TryAlterSingleStatus(BattleStatusId.ChangeStat, true, _v.Caster, parameters.ToArray());
+            }
+            else
+            {
+                if (_v.Caster.IsPlayer)
+                {
+                    _v.OriginalMagicParams();
+                }
+                else
+                {
+                    _v.NormalMagicParams();
+                }
+                TranceSeekCustomAPI.CasterPenaltyMini(_v);
+                _v.Target.PenaltyShellAttack();
+                TranceSeekCustomAPI.PenaltyCommandDividedAttack(_v);
+                TranceSeekCustomAPI.BonusElement(_v);
+                if (TranceSeekCustomAPI.CanAttackMagic(_v))
+                {
+                    _v.CalcHpDamage();
+                }
+                _v.TryAlterMagicStatuses();
+                _v.Target.PhysicalDefence = _v.Target.PhysicalDefence / 2;
+                _v.Target.MagicDefence = _v.Target.MagicDefence / 2;
             }
         }
     }

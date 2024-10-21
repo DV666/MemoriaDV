@@ -1,5 +1,5 @@
-using Memoria.Data;
 using System;
+using Memoria.Data;
 
 namespace Memoria.Scripts.Battle
 {
@@ -21,14 +21,55 @@ namespace Memoria.Scripts.Battle
         public void Perform()
         {
             if (!_v.Target.CanBeRevived())
+            {
+                _v.Context.Flags |= BattleCalcFlags.Miss;
                 return;
+            }
+
+            if (_v.Command.Id == BattleCommandId.SysLastPhoenix)
+            {
+                FF9StateSystem.Common.FF9.GetPlayer(CharacterId.Eiko).equip.Accessory = RegularItem.NoItem;
+            }
+            if (_v.Caster.PlayerIndex == CharacterId.Quina && _v.Command.AbilityId == BattleAbilityId.AutoLife)
+            {
+                if (_v.Target.CurrentHp == _v.Target.MaximumHp)
+                {
+                    _v.Target.AlterStatus(BattleStatus.AutoLife, _v.Caster);
+                }
+                else
+                {
+                    _v.Target.Flags |= CalcFlag.HpAlteration;
+                    if (!_v.Target.IsZombie)
+                    {
+                        _v.Target.Flags |= CalcFlag.HpRecovery;
+                    }
+                    if ((_v.Target.CanBeRevived() || _v.Target.Accessory != (RegularItem)1213) && _v.Target.CheckIsPlayer() && _v.Target.CurrentHp == 0U)
+                    {
+                        _v.Target.HpDamage = (int)(_v.Target.MaximumHp * 3UL / 4UL);
+                        _v.TryRemoveAbilityStatuses();
+                    }
+                    else
+                    {
+                        _v.Target.HpDamage = (int)(_v.Target.MaximumHp * 3UL / 4UL);
+                    }
+                    if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)100)) // Medecin
+                    {
+                        _v.Target.HpDamage += _v.Caster.HpDamage / 4;
+                    }
+                    else if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1100)) // Medecin +
+                    {
+                        _v.Target.HpDamage += _v.Caster.HpDamage / 2;
+                    }
+                }
+                return;
+            }
 
             if (HitRateForZombie() && !_v.TryMagicHit())
                 return;
 
-            if (_v.Target.IsZombie)
+            if (_v.Target.IsZombie && !_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill))
             {
-                _v.Target.Kill(_v.Caster);
+                _v.Target.Kill();
                 return;
             }
 
@@ -36,7 +77,24 @@ namespace Memoria.Scripts.Battle
                 return;
 
             _v.Target.Flags |= CalcFlag.HpAlteration | CalcFlag.HpRecovery;
-            _v.Target.HpDamage = (Int32)(_v.Target.MaximumHp * (_v.Target.Will + _v.Command.Power) / 100);
+            if (_v.Target.HasSupportAbilityByIndex((SupportAbility)1004)) // Invincible+
+            {
+                _v.Target.Flags |= CalcFlag.MpAlteration | CalcFlag.MpRecovery;
+                _v.Target.HpDamage = (int)_v.Target.MaximumHp;
+                _v.Target.MpDamage = (int)_v.Target.MaximumMp;
+            }
+            else
+            {
+                _v.Target.HpDamage = (Int32)(_v.Target.MaximumHp * (_v.Target.Will + _v.Command.Power) / 100);
+                if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)100)) // Medecin
+                {
+                    _v.Target.HpDamage += _v.Caster.HpDamage / 4;
+                }
+                else if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1100)) // Medecin +
+                {
+                    _v.Target.HpDamage += _v.Caster.HpDamage / 2;
+                }
+            }
             _v.TryRemoveAbilityStatuses();
         }
 
@@ -44,7 +102,7 @@ namespace Memoria.Scripts.Battle
         {
             if (_v.Target.IsZombie)
             {
-                _v.MagicAccuracy();
+                TranceSeekCustomAPI.MagicAccuracy(_v);
                 return true;
             }
             return false;
@@ -57,7 +115,7 @@ namespace Memoria.Scripts.Battle
 
             if (_v.Target.IsZombie)
             {
-                _v.MagicAccuracy();
+                TranceSeekCustomAPI.MagicAccuracy(_v);
 
                 Single hitRate = BattleScriptAccuracyEstimate.RatePlayerAttackHit(_v.Context.HitRate);
                 Single evaRate = BattleScriptAccuracyEstimate.RatePlayerAttackEvade(_v.Context.Evade);

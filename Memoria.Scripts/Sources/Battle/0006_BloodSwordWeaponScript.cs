@@ -20,22 +20,59 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            if (!_v.IsCasterNotTarget() || !_v.Target.CanBeAttacked() || _v.Target.TryKillFrozen())
-                return;
-
-            _v.PhysicalAccuracy();
-            if (!_v.TryPhysicalHit())
-                return;
-
-            _v.WeaponPhysicalParams(CalcAttackBonus.Simple);
-            _v.Caster.PhysicalPenaltyAndBonusAttack();
-            _v.Target.PhysicalPenaltyAndBonusAttack();
-            _v.BonusBackstabAndPenaltyLongDistance();
-            _v.TryCriticalHit();
-            _v.PenaltyReverseAttack();
-            _v.PrepareHpDraining();
-            _v.CalcPhysicalHpDamage();
-            _v.Caster.HpDamage = _v.Target.HpDamage;
+            if (_v.Target.CanBeAttacked() && !_v.Target.TryKillFrozen())
+            {
+                _v.PhysicalAccuracy();
+                if (TranceSeekCustomAPI.TryPhysicalHit(_v))
+                {
+                    if (_v.Caster.IsPlayer)
+                    {
+                        TranceSeekCustomAPI.WeaponPhysicalParams(CalcAttackBonus.Simple, _v);
+                    }
+                    else
+                    {
+                        _v.NormalPhysicalParams();
+                    }
+                    TranceSeekCustomAPI.EnemyTranceBonusAttack(_v);
+                    TranceSeekCustomAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
+                    TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
+                    if (_v.Caster.IsUnderStatus(BattleStatus.Trance) && _v.Caster.PlayerIndex == CharacterId.Steiner)
+                    {
+                        _v.Context.Attack += _v.Context.Attack / 4;
+                    }
+                    TranceSeekCustomAPI.BonusBackstabAndPenaltyLongDistance(_v);
+                    TranceSeekCustomAPI.TryCriticalHit(_v);
+                    TranceSeekCustomAPI.IpsenCastleMalus(_v);
+                    _v.Target.Flags |= CalcFlag.HpAlteration;
+                    _v.Caster.Flags |= CalcFlag.HpAlteration;
+                    if (_v.Target.IsZombie)
+                    {
+                        _v.Target.Flags |= CalcFlag.HpRecovery;
+                    }
+                    else
+                    {
+                        _v.Caster.Flags |= CalcFlag.HpRecovery;
+                    }
+                    uint currentHp = _v.Target.CurrentHp;
+                    _v.CalcPhysicalHpDamage();
+                    if (_v.Caster.IsPlayer)
+                    {
+                        _v.Caster.HpDamage = _v.Target.HpDamage / 4;
+                    }
+                    else
+                    {
+                        _v.TryAlterMagicStatuses();
+                        if (_v.Target.HpDamage < currentHp)
+                        {
+                            _v.Caster.HpDamage = _v.Target.HpDamage;
+                        }
+                        else
+                        {
+                            _v.Caster.HpDamage = (int)currentHp;
+                        }
+                    }
+                }
+            }
         }
     }
 }

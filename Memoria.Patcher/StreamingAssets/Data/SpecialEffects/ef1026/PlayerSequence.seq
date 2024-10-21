@@ -1,0 +1,23 @@
+// Player sequence of Magic Weapon (strong)
+
+SetupReflect: Delay=SFXLoaded
+StartThread: Condition=CasterWeaponId == 1028
+	LoadSFX: SFX=Demi_Shock__Multi
+	WaitSFXLoaded: SFX=Demi_Shock__Multi
+	PlaySFX: SFX=Demi_Shock__Multi
+	WaitSFXDone: SFX=Demi_Shock__Multi
+EndThread
+StartThread: Condition=CasterWeaponId == 1029
+	LoadSFX: SFX=Bio__Multi
+	WaitSFXLoaded: SFX=Bio__Multi
+	PlaySFX: SFX=Bio__Multi
+	WaitSFXDone: SFX=Bio__Multi
+EndThread
+StartThread: Condition=CasterWeaponId == 1031
+	LoadSFX: SFX=Meteor__Success
+	WaitSFXLoaded: SFX=Meteor__Success
+	PlaySFX: SFX=Meteor__Success
+	WaitSFXDone: SFX=Meteor__Success
+EndThread
+ActivateReflect
+WaitReflect

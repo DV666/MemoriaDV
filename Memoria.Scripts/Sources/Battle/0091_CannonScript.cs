@@ -1,5 +1,5 @@
-using FF9;
 using System;
+using UnityEngine;
 
 namespace Memoria.Scripts.Battle
 {
@@ -20,21 +20,26 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            if (!_v.Target.CheckUnsafetyOrMiss())
-                return;
-
-            _v.MagicAccuracy();
-            _v.Target.PenaltyShellHitRate();
-            _v.PenaltyCommandDividedHitRate();
-            if (!_v.TryMagicHit())
-                return;
-
-            _v.SetCommandAttack();
-            _v.BonusElement();
-            if (!_v.CanAttackMagic())
-                return;
-
-            _v.CalcCannonProportionDamage();
+            _v.PhysicalAccuracy();
+            if (TranceSeekCustomAPI.TryPhysicalHit(_v))
+            {
+                _v.NormalPhysicalParams();
+                TranceSeekCustomAPI.CharacterBonusPassive(_v, "PhysicalAttack");
+                TranceSeekCustomAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
+                TranceSeekCustomAPI.EnemyTranceBonusAttack(_v);
+                TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
+                if (Mathf.Abs((_v.Caster.Row - _v.Target.Row)) > 1)
+                {
+                    _v.Context.Attack = _v.Context.Attack * 3 >> 1;
+                }
+                TranceSeekCustomAPI.BonusElement(_v);
+                if (_v.CanAttackElementalCommand())
+                {
+                    _v.CalcPhysicalHpDamage();
+                    TranceSeekCustomAPI.RaiseTrouble(_v);
+                    _v.TryAlterMagicStatuses();
+                }
+            }
         }
     }
 }

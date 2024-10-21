@@ -28,7 +28,13 @@ StartThread: Condition=IsSingleTarget ; Sync=True
 		WaitAnimation: Char=Caster
 		WaitSFXLoaded: SFX=Life ; Reflect=True
 	EndThread
+	StartThread: Condition=ItemUseId == 240 ; Sync
+	PlaySFX: SFX=Life ; Reflect=True ; MeshColors=(0.688, 0.306, 0.006)
+	ElseThread: Condition=ItemUseId == 249 ; Sync
+	PlaySFX: SFX=Life ; Reflect=True ; MeshColors=(2.0, 2.0, 0.0)
+	ElseThread: Sync
 	PlaySFX: SFX=Life ; Reflect=True
+	EndThread
 	WaitSFXDone: SFX=Life ; Reflect=True
 EndThread
 StartThread: Condition=!IsSingleTarget ; Sync=True

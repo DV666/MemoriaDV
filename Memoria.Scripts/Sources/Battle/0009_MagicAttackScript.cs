@@ -1,5 +1,8 @@
-using Memoria.Data;
 using System;
+using System.Runtime.Remoting.Contexts;
+using FF9;
+using Memoria.Data;
+using Memoria.Prime;
 
 namespace Memoria.Scripts.Battle
 {
@@ -17,32 +20,94 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            _v.NormalMagicParams();
-            _v.Caster.EnemyTranceBonusAttack();
-            _v.Caster.PenaltyMini();
-            _v.Target.PenaltyShellAttack();
-            _v.PenaltyCommandDividedAttack();
-            _v.BonusElement();
-
-            if (_v.CanAttackMagic())
+            if (_v.Caster.Data.dms_geo_id == 404 && _v.Command.Power == 57 && SFX.currentEffectID == SpecialEffect.Aerial_Slash_Garuda) // [!!!TODO!!!] Kjata's Dance - Friendly Garuda
             {
-                _v.CalcHpDamage();
-                _v.TryAlterMagicStatuses();
+                if (_v.Caster.SummonCount == 0)
+                {
+                    _v.Caster.SummonCount = 1;
+                    _v.Command.Element = EffectElement.Thunder;
+                }
+                else if (_v.Caster.SummonCount == 1)
+                {
+                    _v.Caster.SummonCount = 2;
+                    _v.Command.Element = EffectElement.Cold;
+                }
+                else if (_v.Caster.SummonCount == 2)
+                {
+                    _v.Caster.SummonCount = 0;
+                    _v.Command.Element = EffectElement.Fire;
+                }
             }
+            if (_v.Target.MagicDefence == 255)
+            {
+                _v.Context.Flags |= BattleCalcFlags.Guard;
+            }
+            else
+            {
+                if (_v.Command.AbilityId == BattleAbilityId.Attack) // Racket
+                {
+                    _v.PhysicalAccuracy();
+                    if (TranceSeekCustomAPI.TryPhysicalHit(_v))
+                    {
+                        Int32 baseDamage = Comn.random16() % (1 + (_v.Caster.Level + _v.Caster.Magic >> 3));
+                        _v.Context.AttackPower = _v.Caster.GetWeaponPower(_v.Command);
+                        _v.Target.SetMagicDefense();
+                        _v.Context.Attack = _v.Caster.Magic + baseDamage;
+                        _v.Command.Element = _v.Caster.WeaponElement;
+                        TranceSeekCustomAPI.BonusBackstabAndPenaltyLongDistance(_v);
+                    }
+                    else
+                        return;
+                }
+                else
+                    _v.NormalMagicParams();
+
+                TranceSeekCustomAPI.CharacterBonusPassive(_v, "MagicAttack");
+                TranceSeekCustomAPI.CasterPenaltyMini(_v);
+                TranceSeekCustomAPI.EnemyTranceBonusAttack(_v);
+                TranceSeekCustomAPI.PenaltyShellAttack(_v);
+                TranceSeekCustomAPI.PenaltyCommandDividedAttack(_v);
+                if (_v.Caster.Data.dms_geo_id == 5 || _v.Caster.Data.dms_geo_id == 267) // Kuja (multiple target malus)
+                {
+                    if (_v.Context.sfxThread.targetId != 1 && _v.Context.sfxThread.targetId != 2 && _v.Context.sfxThread.targetId != 4 && _v.Context.sfxThread.targetId != 8)
+                    {
+                        _v.Context.Attack /= 2;
+                        _v.Context.HitRate /= 2;
+                    }
+                }
+                TranceSeekCustomAPI.BonusElement(_v);
+                if (TranceSeekCustomAPI.CanAttackMagic(_v))
+                {
+                    if (_v.Target.HasCategory(EnemyCategory.Humanoid) && (_v.Command.AbilityId == BattleAbilityId.Poison || _v.Command.AbilityId == BattleAbilityId.Bio))
+                    {
+                        _v.Context.Attack = _v.Context.Attack * 2;
+                    }
+                    if (_v.Target.IsZombie && (_v.Command.AbilityId == BattleAbilityId.Poison || _v.Command.AbilityId == BattleAbilityId.Bio || _v.Command.AbilityId == (BattleAbilityId)1036 || _v.Command.AbilityId == (BattleAbilityId)1037))
+                    {
+                        _v.Target.Flags |= CalcFlag.HpRecovery;
+                    }
+                    if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)102))
+                        TranceSeekCustomAPI.TryCriticalHit(_v);
+                    _v.CalcHpDamage();
+                    TranceSeekCustomAPI.RaiseTrouble(_v);
+                }
+                _v.TryAlterMagicStatuses();
+            }            
         }
 
         public Single RateTarget()
         {
             _v.NormalMagicParams();
-            _v.Caster.PenaltyMini();
-            _v.Target.PenaltyShellAttack();
-            _v.PenaltyCommandDividedAttack();
-            _v.BonusElement();
+            TranceSeekCustomAPI.CharacterBonusPassive(_v, "MagicAttack");
+            TranceSeekCustomAPI.CasterPenaltyMini(_v);
+            TranceSeekCustomAPI.PenaltyShellAttack(_v);
+            TranceSeekCustomAPI.PenaltyCommandDividedAttack(_v);
+            TranceSeekCustomAPI.BonusElement(_v);
 
-            if (!_v.CanAttackMagic())
+            if (!TranceSeekCustomAPI.CanAttackMagic(_v))
                 return 0;
 
-            if (_v.Target.IsUnderAnyStatus(BattleStatusConst.ApplyReflect) && !_v.Command.IsReflectNull)
+            if (_v.Target.IsUnderAnyStatus(BattleStatus.Reflect) && !_v.Command.IsReflectNull)
                 return 0;
 
             _v.CalcHpDamage();

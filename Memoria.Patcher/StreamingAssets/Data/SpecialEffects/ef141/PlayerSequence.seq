@@ -10,50 +10,66 @@ StartThread: Condition=IsSingleSelectedTarget
 EndThread
 Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
 SetupReflect: Delay=SFXLoaded
-StartThread: Condition=IsSingleTarget ; Sync=True
-	LoadSFX: SFX=Cura__Single ; Reflect=True
-	StartThread: Condition=ItemUseId == 255 ; Sync=True
-		PlayAnimation: Char=Caster ; Anim=MP_IDLE_TO_CHANT
-		WaitAnimation: Char=Caster
-		PlayAnimation: Char=Caster ; Anim=MP_CHANT ; Loop=True
-		Channel
-		WaitSFXLoaded: SFX=Cura__Single ; Reflect=True
-		WaitAnimation: Char=Caster
-		StopChannel
-		PlayAnimation: Char=Caster ; Anim=MP_MAGIC
-		WaitAnimation: Char=Caster
-	EndThread
-	StartThread: Condition=ItemUseId != 255 ; Sync=True
+StartThread: Condition=CasterHasSA(1027) && ItemUseId == 237 && TargetIsPlayer ; Sync
+		LoadSFX: SFX=Cura__Multi ; Reflect=True ; Target = AllPlayers
 		PlayAnimation: Char=Caster ; Anim=MP_ITEM1
 		WaitAnimation: Char=Caster
-		WaitSFXLoaded: SFX=Cura__Single ; Reflect=True
-	EndThread
-	PlaySFX: SFX=Cura__Single ; Reflect=True
-	WaitSFXDone: SFX=Cura__Single ; Reflect=True
-EndThread
-StartThread: Condition=!IsSingleTarget ; Sync=True
-	StartThread: Condition=ItemUseId == 255 ; Sync=True
-		PlayAnimation: Char=Caster ; Anim=MP_IDLE_TO_CHANT
-		WaitAnimation: Char=Caster
-		PlayAnimation: Char=Caster ; Anim=MP_CHANT ; Loop=True
-		Channel
-		WaitAnimation: Char=Caster
-		WaitAnimation: Char=Caster
-		StopChannel
-		PlayAnimation: Char=Caster ; Anim=MP_MAGIC
-		WaitAnimation: Char=Caster
-	EndThread
-	StartThread: Condition=ItemUseId != 255 ; Sync=True
-		PlayAnimation: Char=Caster ; Anim=MP_ITEM1
-		WaitAnimation: Char=Caster
-	EndThread
-	StartThread: TargetLoop=True ; Chain=True ; Sync=True
-		LoadSFX: SFX=Cura__Single ; Reflect=True ; UseCamera=False
-		WaitSFXLoaded: SFX=Cura__Single ; Reflect=True
+		WaitSFXLoaded: SFX=Cura__Multi ; Reflect=True
+		PlaySFX: SFX=Cura__Multi ; Reflect=True
+		WaitSFXDone: SFX=Cura__Multi ; Reflect=True
+ElseThread: Condition=CasterHasSA(1027) && ItemUseId == 237 && !TargetIsPlayer ; Sync
+	LoadSFX: SFX=Cura__Multi ; Reflect=True ; Target = AllEnemies
+	PlayAnimation: Char=Caster ; Anim=MP_ITEM1
+	WaitAnimation: Char=Caster
+	WaitSFXLoaded: SFX=Cura__Multi ; Reflect=True
+	PlaySFX: SFX=Cura__Multi ; Reflect=True
+	WaitSFXDone: SFX=Cura__Multi ; Reflect=True
+ElseThread: Sync
+	StartThread: Condition=IsSingleTarget ; Sync=True
+		LoadSFX: SFX=Cura__Single ; Reflect=True
+		StartThread: Condition=ItemUseId == 255 ; Sync=True
+			PlayAnimation: Char=Caster ; Anim=MP_IDLE_TO_CHANT
+			WaitAnimation: Char=Caster
+			PlayAnimation: Char=Caster ; Anim=MP_CHANT ; Loop=True
+			Channel
+			WaitSFXLoaded: SFX=Cura__Single ; Reflect=True
+			WaitAnimation: Char=Caster
+			StopChannel
+			PlayAnimation: Char=Caster ; Anim=MP_MAGIC
+			WaitAnimation: Char=Caster
+		EndThread
+		StartThread: Condition=ItemUseId != 255 ; Sync=True
+			PlayAnimation: Char=Caster ; Anim=MP_ITEM1
+			WaitAnimation: Char=Caster
+			WaitSFXLoaded: SFX=Cura__Single ; Reflect=True
+		EndThread
 		PlaySFX: SFX=Cura__Single ; Reflect=True
-		Wait: Time=10
+		WaitSFXDone: SFX=Cura__Single ; Reflect=True
 	EndThread
-	WaitSFXDone: SFX=Cura__Single ; Reflect=True
+	StartThread: Condition=!IsSingleTarget ; Sync=True
+		StartThread: Condition=ItemUseId == 255 ; Sync=True
+			PlayAnimation: Char=Caster ; Anim=MP_IDLE_TO_CHANT
+			WaitAnimation: Char=Caster
+			PlayAnimation: Char=Caster ; Anim=MP_CHANT ; Loop=True
+			Channel
+			WaitAnimation: Char=Caster
+			WaitAnimation: Char=Caster
+			StopChannel
+			PlayAnimation: Char=Caster ; Anim=MP_MAGIC
+			WaitAnimation: Char=Caster
+		EndThread
+		StartThread: Condition=ItemUseId != 255 ; Sync=True
+			PlayAnimation: Char=Caster ; Anim=MP_ITEM1
+			WaitAnimation: Char=Caster
+		EndThread
+		StartThread: TargetLoop=True ; Chain=True ; Sync=True
+			LoadSFX: SFX=Cura__Single ; Reflect=True ; UseCamera=False
+			WaitSFXLoaded: SFX=Cura__Single ; Reflect=True
+			PlaySFX: SFX=Cura__Single ; Reflect=True
+			Wait: Time=10
+		EndThread
+		WaitSFXDone: SFX=Cura__Single ; Reflect=True
+	EndThread
 EndThread
 ActivateReflect
 WaitReflect

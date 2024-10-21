@@ -25,13 +25,39 @@ namespace Memoria.Scripts.Battle
 
             if (_v.Target.IsZombie)
             {
+                if (_v.Target.Data.dms_geo_id == 416)
+                {
+                    TranceSeekCustomAPI.MonsterMechanic[_v.Target.Data][1] = 9999;
+                    _v.Target.CurrentHp = 1;
+                    return;
+                }
+                if (_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill))
+                {
+                    _v.Target.Flags |= (CalcFlag.HpAlteration | CalcFlag.MpAlteration);
+                    _v.Target.HpDamage = 9999;
+                    _v.Target.MpDamage = 999;
+                    return;
+                }
                 _v.Target.CurrentMp = 0;
-                _v.Target.Kill(_v.Caster);
+                _v.Target.Kill();
             }
             else
             {
-                _v.Target.CurrentHp = _v.Target.MaximumHp;
-                _v.Target.CurrentMp = _v.Target.MaximumMp;
+                if (_v.Target.IsPlayer || _v.Command.Power == 250)
+                {
+                    _v.Target.Flags |= (CalcFlag.HpAlteration | CalcFlag.HpRecovery | CalcFlag.MpAlteration | CalcFlag.MpRecovery);
+                    _v.Target.HpDamage = (int)_v.Target.MaximumHp;
+                    _v.Target.MpDamage = (int)_v.Target.MaximumMp;
+                }
+                else
+                {
+                    _v.Target.CurrentHp = _v.Target.MaximumHp;
+                    _v.Target.CurrentMp = _v.Target.MaximumMp;
+                }
+                if (!_v.Caster.IsPlayer)
+                {
+                    _v.TryAlterMagicStatuses();
+                }
             }
         }
 

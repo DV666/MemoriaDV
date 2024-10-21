@@ -7,6 +7,7 @@ StartThread: Condition=CasterRow == 0 ; Sync=True
 EndThread
 SetupReflect: Delay=SFXLoaded
 LoadSFX: SFX=Focus ; Reflect=True
+Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
 StartThread: Condition=IsSingleSelectedTarget
 	Turn: Char=Caster ; BaseAngle=AllTargets ; Time=5
 EndThread

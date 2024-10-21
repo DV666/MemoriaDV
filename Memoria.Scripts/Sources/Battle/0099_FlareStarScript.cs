@@ -19,7 +19,8 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            _v.MagicAccuracy();
+            TranceSeekCustomAPI.MagicAccuracy(_v);
+            TranceSeekCustomAPI.EnemyTranceBonusAttack(_v);
             _v.Target.PenaltyShellHitRate();
             _v.PenaltyCommandDividedHitRate();
             if (_v.TryMagicHit())

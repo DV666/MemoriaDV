@@ -22,15 +22,15 @@ namespace Memoria.Scripts.Battle
         {
             if (_v.Target.IsUnderAnyStatus(BattleStatus.Mini))
             {
-                _v.TryAlterCommandStatuses();
+                TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
                 return;
             }
 
-            _v.MagicAccuracy();
+            TranceSeekCustomAPI.MagicAccuracy(_v);
             _v.Target.PenaltyShellHitRate();
             _v.PenaltyCommandDividedHitRate();
             if (_v.TryMagicHit())
-                _v.TryAlterCommandStatuses();
+                TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
         }
     }
 }

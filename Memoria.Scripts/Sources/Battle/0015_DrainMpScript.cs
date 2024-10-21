@@ -1,3 +1,5 @@
+using FF9;
+using Memoria.Data;
 using System;
 
 namespace Memoria.Scripts.Battle
@@ -19,13 +21,44 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
+            if (_v.Command.Id == BattleCommandId.Attack && _v.Caster.PlayerIndex == CharacterId.Quina)
+            {
+                _v.PhysicalAccuracy();
+                if (!TranceSeekCustomAPI.TryPhysicalHit(_v))
+                    return;
+
+                Int32 baseDamage = Comn.random16() % (1 + (_v.Caster.Level + _v.Caster.Magic >> 3));
+                _v.Context.AttackPower = _v.Caster.GetWeaponPower(_v.Command);
+                _v.Target.SetMagicDefense();
+                _v.Context.Attack = Comn.random16() % _v.Caster.Magic + baseDamage;
+                TranceSeekCustomAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
+                TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
+                _v.BonusBackstabAndPenaltyLongDistance();
+                TranceSeekCustomAPI.BonusWeaponElement(_v);
+                if (_v.CanAttackWeaponElementalCommand())
+                {
+                    if (_v.Context.IsAbsorb)
+                    {
+                        _v.Context.Flags |= BattleCalcFlags.Guard;
+                    }
+                    else
+                    {
+                        _v.TryCriticalHit();
+                        _v.PenaltyReverseAttack();
+                        _v.CalcMpDamage();
+                        TranceSeekCustomAPI.RaiseTrouble(_v);
+                    }
+                }
+                return;
+            }
             if (!_v.IsCasterNotTarget() || !_v.Target.CanBeAttacked())
                 return;
 
             _v.NormalMagicParams();
-            _v.Caster.EnemyTranceBonusAttack();
-            _v.Caster.PenaltyMini();
-            _v.Target.PenaltyShellAttack();
+            TranceSeekCustomAPI.CharacterBonusPassive(_v, "MagicAttack");
+            TranceSeekCustomAPI.CasterPenaltyMini(_v);
+            TranceSeekCustomAPI.EnemyTranceBonusAttack(_v);
+            TranceSeekCustomAPI.PenaltyShellAttack(_v);
             _v.Target.Flags |= CalcFlag.MpAlteration;
             _v.Caster.Flags |= CalcFlag.MpAlteration;
             _v.Context.IsDrain = true;
@@ -35,9 +68,7 @@ namespace Memoria.Scripts.Battle
 
             if (_v.Target.IsZombie)
             {
-                _v.Target.Flags |= CalcFlag.MpRecovery;
-                if (damage > _v.Caster.CurrentMp)
-                    damage = (Int32)_v.Caster.CurrentMp;
+                damage = 0;
             }
             else
             {

@@ -20,12 +20,12 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            if (!_v.Target.CheckUnsafetyOrMiss())
+            if (!_v.Target.CheckUnsafetyOrGuard())
                 return;
 
             _v.SetCommandAttack();
-            _v.BonusElement();
-            if (!_v.CanAttackMagic())
+            TranceSeekCustomAPI.BonusElement(_v);
+            if (!TranceSeekCustomAPI.CanAttackMagic(_v))
                 return;
 
             _v.Context.Attack += ff9item.FF9Item_GetCount(RegularItem.Amethyst);
