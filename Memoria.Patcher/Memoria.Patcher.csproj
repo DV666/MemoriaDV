@@ -968,18 +968,53 @@
     <None Include="StreamingAssets\Data\SpecialEffects\ef099\Sequence.seq">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="StreamingAssets\Data\SpecialEffects\ef1002\PlayerSequence.seq" />
+    <None Include="StreamingAssets\Data\SpecialEffects\ef1003\PlayerSequence.seq" />
+    <None Include="StreamingAssets\Data\SpecialEffects\ef1004\PlayerSequence.seq" />
+    <None Include="StreamingAssets\Data\SpecialEffects\ef1004\Sequence.seq" />
+    <None Include="StreamingAssets\Data\SpecialEffects\ef1005\PlayerSequence.seq" />
+    <None Include="StreamingAssets\Data\SpecialEffects\ef1006\PlayerSequence.seq" />
+    <None Include="StreamingAssets\Data\SpecialEffects\ef1007\PlayerSequence.seq" />
+    <None Include="StreamingAssets\Data\SpecialEffects\ef1008\PlayerSequence.seq" />
+    <None Include="StreamingAssets\Data\SpecialEffects\ef1009\PlayerSequence.seq" />
     <None Include="StreamingAssets\Data\SpecialEffects\ef100\PlayerSequence.seq">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="StreamingAssets\Data\SpecialEffects\ef1010\PlayerSequence.seq" />
+    <None Include="StreamingAssets\Data\SpecialEffects\ef1011\PlayerSequence.seq" />
+    <None Include="StreamingAssets\Data\SpecialEffects\ef1012\PlayerSequence.seq" />
+    <None Include="StreamingAssets\Data\SpecialEffects\ef1013\PlayerSequence.seq" />
+    <None Include="StreamingAssets\Data\SpecialEffects\ef1014\PlayerSequence.seq" />
+    <None Include="StreamingAssets\Data\SpecialEffects\ef1015\PlayerSequence.seq" />
+    <None Include="StreamingAssets\Data\SpecialEffects\ef1016\PlayerSequence.seq" />
+    <None Include="StreamingAssets\Data\SpecialEffects\ef1017\PlayerSequence.seq" />
+    <None Include="StreamingAssets\Data\SpecialEffects\ef1018\PlayerSequence.seq" />
+    <None Include="StreamingAssets\Data\SpecialEffects\ef1019\PlayerSequence.seq" />
     <None Include="StreamingAssets\Data\SpecialEffects\ef101\PlayerSequence.seq">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="StreamingAssets\Data\SpecialEffects\ef1020\PlayerSequence.seq" />
+    <None Include="StreamingAssets\Data\SpecialEffects\ef1021\PlayerSequence.seq" />
+    <None Include="StreamingAssets\Data\SpecialEffects\ef1022\PlayerSequence.seq" />
+    <None Include="StreamingAssets\Data\SpecialEffects\ef1023\PlayerSequence.seq" />
+    <None Include="StreamingAssets\Data\SpecialEffects\ef1024\PlayerSequence.seq" />
+    <None Include="StreamingAssets\Data\SpecialEffects\ef1025\PlayerSequence.seq" />
+    <None Include="StreamingAssets\Data\SpecialEffects\ef1026\PlayerSequence.seq" />
+    <None Include="StreamingAssets\Data\SpecialEffects\ef1027\PlayerSequence.seq" />
     <None Include="StreamingAssets\Data\SpecialEffects\ef102\PlayerSequence.seq">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="StreamingAssets\Data\SpecialEffects\ef103\PlayerSequence.seq">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="StreamingAssets\Data\SpecialEffects\ef1045\PlayerSequence.seq" />
+    <None Include="StreamingAssets\Data\SpecialEffects\ef1045\Sequence.seq" />
+    <None Include="StreamingAssets\Data\SpecialEffects\ef1046\PlayerSequence.seq" />
+    <None Include="StreamingAssets\Data\SpecialEffects\ef1046\Sequence.seq" />
+    <None Include="StreamingAssets\Data\SpecialEffects\ef1047\PlayerSequence.seq" />
+    <None Include="StreamingAssets\Data\SpecialEffects\ef1047\Sequence.seq" />
+    <None Include="StreamingAssets\Data\SpecialEffects\ef1048\PlayerSequence.seq" />
+    <None Include="StreamingAssets\Data\SpecialEffects\ef1048\Sequence.seq" />
     <None Include="StreamingAssets\Data\SpecialEffects\ef104\PlayerSequence.seq">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -995,9 +1030,14 @@
     <None Include="StreamingAssets\Data\SpecialEffects\ef108\PlayerSequence.seq">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="StreamingAssets\Data\SpecialEffects\ef1099\PlayerSequence.seq" />
     <None Include="StreamingAssets\Data\SpecialEffects\ef109\PlayerSequence.seq">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="StreamingAssets\Data\SpecialEffects\ef1100\PlayerSequence.seq" />
+    <None Include="StreamingAssets\Data\SpecialEffects\ef1101\PlayerSequence.seq" />
+    <None Include="StreamingAssets\Data\SpecialEffects\ef1102\PlayerSequence.seq" />
+    <None Include="StreamingAssets\Data\SpecialEffects\ef1103\PlayerSequence.seq" />
     <None Include="StreamingAssets\Data\SpecialEffects\ef110\PlayerSequence.seq">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -1007,6 +1047,9 @@
     <None Include="StreamingAssets\Data\SpecialEffects\ef112\PlayerSequence.seq">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="StreamingAssets\Data\SpecialEffects\ef1131\PlayerSequence.seq" />
+    <None Include="StreamingAssets\Data\SpecialEffects\ef1132\PlayerSequence.seq" />
+    <None Include="StreamingAssets\Data\SpecialEffects\ef1133\PlayerSequence.seq" />
     <None Include="StreamingAssets\Data\SpecialEffects\ef113\PlayerSequence.seq">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -1508,9 +1551,26 @@
     <None Include="StreamingAssets\Data\SpecialEffects\ef199\Sequence.seq">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="StreamingAssets\Data\SpecialEffects\ef2000\PlayerSequence.seq" />
+    <None Include="StreamingAssets\Data\SpecialEffects\ef2001\PlayerSequence.seq" />
+    <None Include="StreamingAssets\Data\SpecialEffects\ef2002\PlayerSequence.seq" />
+    <None Include="StreamingAssets\Data\SpecialEffects\ef2003\PlayerSequence.seq" />
+    <None Include="StreamingAssets\Data\SpecialEffects\ef2004\PlayerSequence.seq" />
+    <None Include="StreamingAssets\Data\SpecialEffects\ef2005\PlayerSequence.seq" />
+    <None Include="StreamingAssets\Data\SpecialEffects\ef2006\PlayerSequence.seq" />
+    <None Include="StreamingAssets\Data\SpecialEffects\ef2007\PlayerSequence.seq" />
+    <None Include="StreamingAssets\Data\SpecialEffects\ef2008\PlayerSequence.seq" />
+    <None Include="StreamingAssets\Data\SpecialEffects\ef2009\PlayerSequence.seq" />
     <None Include="StreamingAssets\Data\SpecialEffects\ef200\PlayerSequence.seq">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="StreamingAssets\Data\SpecialEffects\ef2010\PlayerSequence.seq" />
+    <None Include="StreamingAssets\Data\SpecialEffects\ef2011\PlayerSequence.seq" />
+    <None Include="StreamingAssets\Data\SpecialEffects\ef2012\PlayerSequence.seq" />
+    <None Include="StreamingAssets\Data\SpecialEffects\ef2013\PlayerSequence.seq" />
+    <None Include="StreamingAssets\Data\SpecialEffects\ef2014\PlayerSequence.seq" />
+    <None Include="StreamingAssets\Data\SpecialEffects\ef2015\PlayerSequence.seq" />
+    <None Include="StreamingAssets\Data\SpecialEffects\ef2016\PlayerSequence.seq" />
     <None Include="StreamingAssets\Data\SpecialEffects\ef201\PlayerSequence.seq">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -2090,6 +2150,11 @@
     <None Include="StreamingAssets\Data\SpecialEffects\ef299\Sequence.seq">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="StreamingAssets\Data\SpecialEffects\ef3000\PlayerSequence.seq" />
+    <None Include="StreamingAssets\Data\SpecialEffects\ef3001\PlayerSequence.seq" />
+    <None Include="StreamingAssets\Data\SpecialEffects\ef3002\PlayerSequence.seq" />
+    <None Include="StreamingAssets\Data\SpecialEffects\ef3003\PlayerSequence.seq" />
+    <None Include="StreamingAssets\Data\SpecialEffects\ef3004\PlayerSequence.seq" />
     <None Include="StreamingAssets\Data\SpecialEffects\ef300\PlayerSequence.seq">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -2150,6 +2215,7 @@
     <None Include="StreamingAssets\Data\SpecialEffects\ef309\Sequence.seq">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="StreamingAssets\Data\SpecialEffects\ef3100\PlayerSequence.seq" />
     <None Include="StreamingAssets\Data\SpecialEffects\ef310\PlayerSequence.seq">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
