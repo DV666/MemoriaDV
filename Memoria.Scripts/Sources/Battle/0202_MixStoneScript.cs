@@ -1,6 +1,7 @@
 ﻿using System;
 using FF9;
 using Memoria.Data;
+using Memoria.Prime;
 
 namespace Memoria.Scripts.Battle
 {
@@ -61,7 +62,7 @@ namespace Memoria.Scripts.Battle
                     _v.Command.HitRate = _v.Caster.Will;
                     _v.Command.AbilityStatus = _v.Command.ItemStatus;
                     _v.TryAlterMagicStatuses();
-                    break;
+                    return;
                 }
                 case (RegularItem)2169: // Ultra Bombe G
                 case (RegularItem)2170: // Mega Bombe G
@@ -104,7 +105,7 @@ namespace Memoria.Scripts.Battle
                     }
                     if ((_v.Target.WeakElement & EffectElement.Thunder) != 0)
                         _v.Target.TryAlterStatuses(_v.Command.ItemStatus, false, _v.Caster);
-                    break;
+                    return;
                 }
                 case (RegularItem)2189: // Bombe toxique MK.F
                 case (RegularItem)2190: // Bombe silence MK.F
@@ -135,7 +136,7 @@ namespace Memoria.Scripts.Battle
                     }
                     if ((_v.Target.WeakElement & EffectElement.Fire) != 0)
                         _v.Target.TryAlterStatuses(_v.Command.ItemStatus, false, _v.Caster);
-                    break;
+                    return;
                 }
                 case (RegularItem)2198: // Bombe toxique MK.I
                 case (RegularItem)2199: // Bombe silence MK.I
@@ -166,7 +167,7 @@ namespace Memoria.Scripts.Battle
                     }
                     if ((_v.Target.WeakElement & EffectElement.Cold) != 0)
                         _v.Target.TryAlterStatuses(_v.Command.ItemStatus, false, _v.Caster);
-                    break;
+                    return;
                 }
                 case (RegularItem)2207: // Bombe toxique MK.G
                 case (RegularItem)2208: // Bombe silence MK.G
@@ -191,7 +192,7 @@ namespace Memoria.Scripts.Battle
                     }
                     if ((btl_util.getEnemyTypePtr(_v.Target.Data).category & (Int16)EnemyCategory.Stone) != 0) // TODO : Need to create an Gravity element
                         _v.Target.TryAlterStatuses(_v.Command.ItemStatus, false, _v.Caster);
-                    break;
+                    return;
                 }            
                 case (RegularItem)2216: // Bombe toxique MK.E
                 case (RegularItem)2217: // Bombe silence MK.E
@@ -222,7 +223,7 @@ namespace Memoria.Scripts.Battle
                     }
                     if ((_v.Target.WeakElement & EffectElement.Aqua) != 0)
                         _v.Target.TryAlterStatuses(_v.Command.ItemStatus, false, _v.Caster);
-                    break;
+                    return;
                 }
                 case (RegularItem)2225: // Bombe toxique MK.A
                 case (RegularItem)2226: // Bombe silence MK.A
@@ -247,7 +248,7 @@ namespace Memoria.Scripts.Battle
                     }
                     if (_v.Target.WeakElement == 0)
                         _v.Target.TryAlterStatuses(_v.Command.ItemStatus, false, _v.Caster);
-                    break;
+                    return;
                 }
                 case (RegularItem)2234: // Bombe toxique MK.Q
                 case (RegularItem)2235: // Bombe silence MK.Q
@@ -278,7 +279,7 @@ namespace Memoria.Scripts.Battle
                     }
                     if ((_v.Target.WeakElement & EffectElement.Earth) != 0)
                         _v.Target.TryAlterStatuses(_v.Command.ItemStatus, false, _v.Caster);
-                    break;
+                    return;
                 }
                 case (RegularItem)2243: // Bombe toxique MK.R
                 case (RegularItem)2244: // Bombe silence MK.R
@@ -303,7 +304,7 @@ namespace Memoria.Scripts.Battle
                     }
                     if (_v.Target.IsUnderStatus(BattleStatus.Reflect))
                         _v.Target.TryAlterStatuses(_v.Command.ItemStatus, false, _v.Caster);
-                    break;
+                    return;
                 }
                 case (RegularItem)2252: // Bombe toxique MK.W
                 case (RegularItem)2253: // Bombe silence MK.W
@@ -334,7 +335,7 @@ namespace Memoria.Scripts.Battle
                     }
                     if ((_v.Target.WeakElement & EffectElement.Wind) != 0)
                         _v.Target.TryAlterStatuses(_v.Command.ItemStatus, false, _v.Caster);
-                    break;
+                    return;
                 }
                 case (RegularItem)2261: // Bombe toxique MK.D
                 case (RegularItem)2262: // Bombe silence MK.D
@@ -365,7 +366,7 @@ namespace Memoria.Scripts.Battle
                     }
                     if ((_v.Target.WeakElement & EffectElement.Darkness) != 0)
                         _v.Target.TryAlterStatuses(_v.Command.ItemStatus, false, _v.Caster);
-                    break;
+                    return;
                 }
                 case (RegularItem)2270: // Bombe toxique MK.L
                 case (RegularItem)2271: // Bombe silence MK.L
@@ -396,7 +397,7 @@ namespace Memoria.Scripts.Battle
                     }
                     if ((_v.Target.WeakElement & EffectElement.Holy) != 0)
                         _v.Target.TryAlterStatuses(_v.Command.ItemStatus, false, _v.Caster);
-                    break;
+                    return;
                 }
             }
 

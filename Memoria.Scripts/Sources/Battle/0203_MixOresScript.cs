@@ -10,13 +10,13 @@ namespace Memoria.Scripts.Battle
     /// Special
     /// </summary>
     [BattleScript(Id)]
-    public sealed class MixGemScript : IBattleScript
+    public sealed class MixOresScript : IBattleScript
     {
         public const Int32 Id = 0203;
 
         private readonly BattleCalculator _v;
 
-        public MixGemScript(BattleCalculator v)
+        public MixOresScript(BattleCalculator v)
         {
             _v = v;
         }
@@ -147,6 +147,33 @@ namespace Memoria.Scripts.Battle
                     HPHeal = PowerGemVanilla;
                     break;
                 }
+                case (RegularItem)2446: // Globe brilliant de foudre
+                case (RegularItem)2447: // Globe brilliant de feu
+                case (RegularItem)2448: // Globe brilliant de glace
+                case (RegularItem)2449: // Globe brilliant de gravité
+                case (RegularItem)2450: // Globe brilliant d'eau
+                case (RegularItem)2451: // Globe brilliant flambloyant
+                case (RegularItem)2452: // Globe brilliant de terre
+                case (RegularItem)2453: // Globe brilliant de vent
+                case (RegularItem)2454: // Globe brilliant de ténèbres
+                case (RegularItem)2455: // Globe brilliant de lumière
+                {
+                    _v.Command.Power = _v.Command.Item.Power;
+                    _v.NormalMagicParams();
+                    if (ElementItem.ContainsKey(_v.Command.ItemId))
+                        _v.Command.Element = ElementItem[_v.Command.ItemId];
+                    TranceSeekCustomAPI.CasterPenaltyMini(_v);
+                    TranceSeekCustomAPI.EnemyTranceBonusAttack(_v);
+                    TranceSeekCustomAPI.PenaltyShellAttack(_v);
+                    TranceSeekCustomAPI.PenaltyCommandDividedAttack(_v);
+                    TranceSeekCustomAPI.BonusElement(_v);
+                    if (TranceSeekCustomAPI.CanAttackMagic(_v))
+                    {
+                        _v.CalcHpDamage();
+                        TranceSeekCustomAPI.RaiseTrouble(_v);
+                    }
+                    return;
+                }
             }
 
             if (HPHeal > 0)
@@ -177,7 +204,14 @@ namespace Memoria.Scripts.Battle
             { RegularItem.Garnet, EffectElement.None },
             { RegularItem.Emerald, EffectElement.Wind },
             { RegularItem.LapisLazuli, EffectElement.Darkness },
-            { RegularItem.Moonstone, EffectElement.Holy }
+            { (RegularItem)2446, EffectElement.Thunder },
+            { (RegularItem)2447, EffectElement.Fire },
+            { (RegularItem)2448, EffectElement.Cold },
+            { (RegularItem)2450, EffectElement.Aqua },
+            { (RegularItem)2452, EffectElement.Earth },
+            { (RegularItem)2453, EffectElement.Wind },
+            { (RegularItem)2454, EffectElement.Darkness },
+            { (RegularItem)2455, EffectElement.Holy }
         };
 
         private Boolean HitRateForZombie()

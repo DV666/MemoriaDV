@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
+using FF9;
 using Memoria.Data;
 using Memoria.DefaultScripts;
 using Memoria.Prime;
+using UnityEngine;
+using UnityXInput;
 using static Memoria.Scripts.Battle.TranceSeekCustomAPI;
 
 namespace Memoria.Scripts.Battle
@@ -173,6 +176,29 @@ namespace Memoria.Scripts.Battle
                     {
                         unit.AlterStatus(BattleStatus.Death, unit);
                         unit.CurrentHp = 0;
+                    }
+                }
+
+                if (unit.Data.dms_geo_id == 5414)
+                {                 
+                    ModelMoug[unit.Data] = ModelFactory.CreateModel(unit.Data.weapon.ModelName, true);
+                    geo.geoAttach(ModelMoug[unit.Data], unit.Data.gameObject, 6);
+                    ModelMoug[unit.Data].SetActive(true);
+                    ModelFactory.ChangeModelTexture(unit.Data.gameObject, new string[] { "CustomTextures/ZidaneDaggerHidden/98_0.png", "CustomTextures/ZidaneDaggerHidden/98_1.png"});
+                    if (unit.Data.weapon.Id > 1000)
+                    {
+                        string[] CustomTexture = { $"{unit.Data.weapon.CustomTexture[0]}" };
+                        MeshRenderer[] componentsInChildren = ModelMoug[unit.Data].GetComponentsInChildren<MeshRenderer>();
+                        int weaponMeshCount = componentsInChildren.Length;
+                        Renderer[] weaponRenderer = new Renderer[weaponMeshCount];
+                        for (Int32 i = 0; i < weaponMeshCount; i++)
+                        {
+                            weaponRenderer[i] = componentsInChildren[i].GetComponent<Renderer>();
+                            if (CustomTexture.Length > i && !String.IsNullOrEmpty(CustomTexture[i]))
+                            {
+                                weaponRenderer[i].material.mainTexture = AssetManager.Load<Texture2D>(CustomTexture[i], false);
+                            }
+                        }
                     }
                 }
             }

@@ -25,6 +25,9 @@ namespace Memoria.Scripts.Battle
         {
             if (_v.Caster.PlayerIndex == CharacterId.Zidane)
             {
+                if (TranceSeekCustomAPI.ModelMoug[_v.Caster.Data] != null)
+                    TranceSeekCustomAPI.ModelMoug[_v.Caster.Data].SetActive(false);
+
                 switch (_v.Caster.Weapon)
                 {
                     case RegularItem.Dagger:
@@ -104,6 +107,30 @@ namespace Memoria.Scripts.Battle
                 btl_mot.setMotion(_v.Caster.Data, BattlePlayerCharacter.PlayerMotionIndex.MP_WIN); //MP_MAGIC
                 _v.Caster.Data.evt.animFrame = 0;
                 geo.geoScaleUpdate(_v.Caster.Data, true);
+
+                if (_v.Caster.Data.dms_geo_id == 5414)
+                {
+                    TranceSeekCustomAPI.ModelMoug[_v.Caster.Data] = ModelFactory.CreateModel(_v.Caster.Data.weapon.ModelName, true);
+                    geo.geoAttach(TranceSeekCustomAPI.ModelMoug[_v.Caster.Data], _v.Caster.Data.gameObject, 6);
+                    TranceSeekCustomAPI.ModelMoug[_v.Caster.Data].SetActive(true);
+                    ModelFactory.ChangeModelTexture(_v.Caster.Data.gameObject, new string[] { "CustomTextures/ZidaneDaggerHidden/98_0.png", "CustomTextures/ZidaneDaggerHidden/98_1.png" });
+                    if (_v.Caster.Data.weapon.Id > 1000)
+                    {
+                        string[] CustomTexture = { $"{_v.Caster.Data.weapon.CustomTexture[0]}" };
+                        MeshRenderer[] componentswepInChildren = TranceSeekCustomAPI.ModelMoug[_v.Caster.Data].GetComponentsInChildren<MeshRenderer>();
+                        int weaponMeshCount = componentswepInChildren.Length;
+                        Renderer[] weaponRenderer = new Renderer[weaponMeshCount];
+                        for (Int32 i = 0; i < weaponMeshCount; i++)
+                        {
+                            weaponRenderer[i] = componentswepInChildren[i].GetComponent<Renderer>();
+                            if (CustomTexture.Length > i && !String.IsNullOrEmpty(CustomTexture[i]))
+                            {
+                                weaponRenderer[i].material.mainTexture = AssetManager.Load<Texture2D>(CustomTexture[i], false);
+                            }
+                        }
+                    }
+                }                  
+
                 _v.Caster.AddDelayedModifier(
                     caster => caster.CurrentAtb >= caster.MaximumAtb,
                     caster =>
