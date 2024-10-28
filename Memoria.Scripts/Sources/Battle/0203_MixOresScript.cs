@@ -35,6 +35,13 @@ namespace Memoria.Scripts.Battle
             _v.Command.Power = _v.Command.Item.Power;
             switch (_v.Command.ItemId)
             {
+                case (RegularItem)2349: // Mother G
+                case (RegularItem)2360: // Super Mother G
+                {
+                    _v.Command.AbilityStatus = _v.Command.ItemStatus;
+                    TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
+                    break;
+                }
                 case (RegularItem)2364: // Super Péridot
                 case (RegularItem)2365: // Super Topaze
                 case (RegularItem)2366: // Super Opale
@@ -162,6 +169,10 @@ namespace Memoria.Scripts.Battle
                     _v.NormalMagicParams();
                     if (ElementItem.ContainsKey(_v.Command.ItemId))
                         _v.Command.Element = ElementItem[_v.Command.ItemId];
+
+                    if (_v.Target.IsUnderAnyStatus(BattleStatus.Reflect))
+                        _v.Command.Power *= 2;
+
                     TranceSeekCustomAPI.CasterPenaltyMini(_v);
                     TranceSeekCustomAPI.EnemyTranceBonusAttack(_v);
                     TranceSeekCustomAPI.PenaltyShellAttack(_v);

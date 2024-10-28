@@ -185,7 +185,7 @@ namespace Memoria.Scripts.Battle
                     geo.geoAttach(ModelMoug[unit.Data], unit.Data.gameObject, 6);
                     ModelMoug[unit.Data].SetActive(true);
                     ModelFactory.ChangeModelTexture(unit.Data.gameObject, new string[] { "CustomTextures/ZidaneDaggerHidden/98_0.png", "CustomTextures/ZidaneDaggerHidden/98_1.png"});
-                    if (unit.Data.weapon.Id > 1000)
+                    if (unit.Data.weapon.CustomTexture.Length > 0)
                     {
                         string[] CustomTexture = { $"{unit.Data.weapon.CustomTexture[0]}" };
                         MeshRenderer[] componentsInChildren = ModelMoug[unit.Data].GetComponentsInChildren<MeshRenderer>();
