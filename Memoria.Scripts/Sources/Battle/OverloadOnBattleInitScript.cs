@@ -70,6 +70,8 @@ namespace Memoria.Scripts.Battle
                     BeatrixPassive[unit.Data] = new Int32[] { 0, 0, 0, 0 };
                 if (!ProtectStatus.TryGetValue(unit.Data, out Dictionary<BattleStatus, Int32> statusprotect))
                     ProtectStatus[unit.Data] = new Dictionary<BattleStatus, Int32> { { 0, 0 } };
+                if (!AbsorbElement.TryGetValue(unit.Data, out Int32 elementprotect))
+                    AbsorbElement[unit.Data] = -1;
                 if (!StackBreakOrUpStatus.TryGetValue(unit.Data, out Int32[] stackstatus))
                     StackBreakOrUpStatus[unit.Data] = new Int32[] { 0, 0, 0, 0 };
                 if (!MonsterMechanic.TryGetValue(unit.Data, out Int32[] monstermechanic))

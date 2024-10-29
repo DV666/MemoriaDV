@@ -25,6 +25,7 @@ namespace Memoria.Scripts.Battle
         public static Dictionary<BTL_DATA, Int32[]> BeatrixPassive = new Dictionary<BTL_DATA, Int32[]>(); // [0] => Strength ; [1] => Magic ; [2] => Bravoure ; [3] => TargetCount
 
         public static Dictionary<BTL_DATA, Dictionary<BattleStatus, Int32>> ProtectStatus = new Dictionary<BTL_DATA, Dictionary<BattleStatus, Int32>>();
+        public static Dictionary<BTL_DATA, Int32> AbsorbElement = new Dictionary<BTL_DATA, Int32>();
 
         public static Dictionary<BTL_DATA, Int32> StateMoug = new Dictionary<BTL_DATA, Int32>();
         public static Dictionary<BTL_DATA, GameObject> ModelMoug = new Dictionary<BTL_DATA, GameObject>();
@@ -405,6 +406,10 @@ namespace Memoria.Scripts.Battle
             {
                 // v.Context.DefensePower = 0;
             }
+            if (AbsorbElement.TryGetValue(v.Target.Data, out Int32 elementprotect))
+                if ((v.Command.Element & (EffectElement)elementprotect) != 0)
+                    v.Context.Flags |= BattleCalcFlags.Absorb;
+
             v.Target.AlterStatuses(v.Command.Element);
 
             if (v.Target.PlayerIndex == CharacterId.Beatrix)

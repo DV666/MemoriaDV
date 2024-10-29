@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using FF9;
 using Memoria.Data;
 
@@ -298,6 +299,30 @@ namespace Memoria.Scripts.Battle
                     MPHeal = (int)(_v.Target.MaximumMp);
                     break;
                 }
+                case (RegularItem)2342: // Elixir Jaune
+                case (RegularItem)2343: // Elixir Rouge
+                case (RegularItem)2344: // Elixir Cyan
+                case (RegularItem)2345: // Elixir Violet
+                case (RegularItem)2346: // Elixir Bleu
+                case (RegularItem)2347: // Elixir Cristallin
+                case (RegularItem)2348: // Elixir Marron
+                case (RegularItem)2350: // Elixir Vert
+                case (RegularItem)2351: // Elixir Noir
+                case (RegularItem)2352: // Elixir Blanc
+                case (RegularItem)2353: // Megalixir Jaune
+                case (RegularItem)2354: // Megalixir Rouge
+                case (RegularItem)2355: // Megalixir Cyan
+                case (RegularItem)2356: // Megalixir Violet
+                case (RegularItem)2357: // Megalixir Bleu
+                case (RegularItem)2358: // Megalixir Cristallin
+                case (RegularItem)2359: // Megalixir Marron
+                case (RegularItem)2361: // Megalixir Vert
+                case (RegularItem)2362: // Megalixir Noir
+                case (RegularItem)2363: // Megalixir Blanc
+                {
+
+                    break;
+                }
             }
 
             if (HPHeal > 0)
@@ -317,6 +342,30 @@ namespace Memoria.Scripts.Battle
             foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(_v.Target))
                 saFeature.TriggerOnAbility(_v, "CalcDamage", true);
         }
+
+        public static Dictionary<RegularItem, EffectElement> ElementItem = new Dictionary<RegularItem, EffectElement>
+        {
+            { (RegularItem)2342, EffectElement.Thunder },
+            { (RegularItem)2343, EffectElement.Fire },
+            { (RegularItem)2344, EffectElement.Cold },
+            { (RegularItem)2345, EffectElement.None }, // Gravity
+            { (RegularItem)2346, EffectElement.Aqua },
+            { (RegularItem)2347, EffectElement.None },
+            { (RegularItem)2348, EffectElement.Earth },
+            { (RegularItem)2350, EffectElement.Wind },
+            { (RegularItem)2351, EffectElement.Darkness },
+            { (RegularItem)2352, EffectElement.Holy },
+            { (RegularItem)2353, EffectElement.Thunder },
+            { (RegularItem)2354, EffectElement.Fire },
+            { (RegularItem)2355, EffectElement.Cold },
+            { (RegularItem)2356, EffectElement.None }, // Gravity
+            { (RegularItem)2357, EffectElement.Aqua },
+            { (RegularItem)2358, EffectElement.None },
+            { (RegularItem)2359, EffectElement.Earth },
+            { (RegularItem)2361, EffectElement.Wind },
+            { (RegularItem)2362, EffectElement.Darkness },
+            { (RegularItem)2363, EffectElement.Holy },
+        };
 
         private Boolean HitRateForZombie()
         {

@@ -1,4 +1,5 @@
 using Memoria.Data;
+using Memoria.Prime;
 using System;
 
 namespace Memoria.Scripts.Battle
@@ -29,6 +30,7 @@ namespace Memoria.Scripts.Battle
                     return;
                 }
             }
+
             _v.SetCommandAttack();
             TranceSeekCustomAPI.PenaltyCommandDividedAttack(_v);
             if (_v.Target.IsUnderStatus(BattleStatus.Shell))
@@ -68,6 +70,10 @@ namespace Memoria.Scripts.Battle
                 TranceSeekCustomAPI.MonsterMechanic[_v.Target.Data][5] = TranceSeekCustomAPI.MonsterMechanic[_v.Target.Data][5] * 2;
             }
             _v.TryAlterMagicStatuses();
+
+            if (TranceSeekCustomAPI.AbsorbElement.TryGetValue(_v.Target.Data, out Int32 elementprotect))
+                if (elementprotect == 256)
+                    _v.Target.Flags |= CalcFlag.HpRecovery;
         }
 
         public static Int32[,] ImmuneGravity = new Int32[,]
