@@ -87,14 +87,17 @@ namespace Memoria.Scripts.Battle
             }
 
             TranceSeekCustomAPI.SpecialSA(v);
-            if ((v.Caster.Flags & CalcFlag.HpAlteration) != 0)
-                v.Caster.HpDamage = Math.Min(v.Caster.HpDamage, 9999);
-            if ((v.Caster.Flags & CalcFlag.MpAlteration) != 0)
-                v.Caster.MpDamage = Math.Min(v.Caster.MpDamage, 9999);
-            if ((v.Target.Flags & CalcFlag.HpAlteration) != 0)
-                v.Target.HpDamage = Math.Min(v.Target.HpDamage, 9999);
-            if ((v.Target.Flags & CalcFlag.MpAlteration) != 0)
-                v.Target.MpDamage = Math.Min(v.Target.MpDamage, 9999);
+            //if (v.Command.ItemId != (RegularItem)2487 && v.Command.ItemId != (RegularItem)2488 && v.Command.ItemId != (RegularItem)2489)
+            //{
+            //    if ((v.Caster.Flags & CalcFlag.HpAlteration) != 0)
+            //        v.Caster.HpDamage = Math.Min(v.Caster.HpDamage, 9999);
+            //    if ((v.Caster.Flags & CalcFlag.MpAlteration) != 0)
+            //        v.Caster.MpDamage = Math.Min(v.Caster.MpDamage, 9999);
+            //    if ((v.Target.Flags & CalcFlag.HpAlteration) != 0)
+            //        v.Target.HpDamage = Math.Min(v.Target.HpDamage, 9999);
+            //    if ((v.Target.Flags & CalcFlag.MpAlteration) != 0)
+            //        v.Target.MpDamage = Math.Min(v.Target.MpDamage, 9999);
+            //}
         }
     }
 }

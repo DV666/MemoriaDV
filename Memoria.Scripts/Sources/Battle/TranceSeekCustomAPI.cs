@@ -407,7 +407,7 @@ namespace Memoria.Scripts.Battle
                 // v.Context.DefensePower = 0;
             }
             if (AbsorbElement.TryGetValue(v.Target.Data, out Int32 elementprotect))
-                if ((v.Command.Element & (EffectElement)elementprotect) != 0)
+                if ((v.Command.Element & (EffectElement)elementprotect) != 0 && elementprotect != -1)
                     v.Context.Flags |= BattleCalcFlags.Absorb;
 
             v.Target.AlterStatuses(v.Command.Element);

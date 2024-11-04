@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using FF9;
 using Memoria.Data;
 using Memoria.Prime;
+using static SiliconStudio.Social.ResponseData;
 
 namespace Memoria.Scripts.Battle
 {
@@ -28,8 +30,8 @@ namespace Memoria.Scripts.Battle
                 return;
             }
 
-            int HPHeal = 0;
-            int MPHeal = 0;
+            int HPDamage = 0;
+            int MPDamage = 0;
             _v.Command.Power = _v.Command.Item.Power;
             switch (_v.Command.ItemId)
             {
@@ -399,19 +401,85 @@ namespace Memoria.Scripts.Battle
                         _v.Target.TryAlterStatuses(_v.Command.ItemStatus, false, _v.Caster);
                     return;
                 }
+                case (RegularItem)2466: // Bombe toxique MK.W
+                case (RegularItem)2467: // Bombe silence MK.W
+                case (RegularItem)2468: // Bombe aveuglante MK.W
+                case (RegularItem)2469: // Bombe pétrifiante MK.W
+                case (RegularItem)2470: // Bombe troublante MK.W
+                case (RegularItem)2471: // Bombe infectée MK.W
+                case (RegularItem)2472: // Bombe Virus MK.W
+                case (RegularItem)2473: // Bombe chaotique MK.W
+                case (RegularItem)2474: // Bombe Anima MK.W
+                {
+                    _v.NormalMagicParams();
+                    TranceSeekCustomAPI.CasterPenaltyMini(_v);
+                    TranceSeekCustomAPI.EnemyTranceBonusAttack(_v);
+                    TranceSeekCustomAPI.PenaltyShellAttack(_v);
+                    TranceSeekCustomAPI.PenaltyCommandDividedAttack(_v);
+                    TranceSeekCustomAPI.BonusElement(_v);
+                    if (TranceSeekCustomAPI.CanAttackMagic(_v))
+                    {
+                        _v.CalcHpDamage();
+                        TranceSeekCustomAPI.RaiseTrouble(_v);
+                    }
+
+                    int statusrate = 0;
+
+                    BattleStatusId[] statuslist = { BattleStatusId.Protect, BattleStatusId.Shell, BattleStatusId.Regen, BattleStatusId.AutoLife, BattleStatusId.Trance,
+                    BattleStatusId.Reflect, BattleStatusId.Haste, BattleStatusId.Vanish, BattleStatusId.Float, TranceSeekCustomAPI.CustomStatusId.ArmorUp,
+                    TranceSeekCustomAPI.CustomStatusId.MagicUp, TranceSeekCustomAPI.CustomStatusId.MentalUp, TranceSeekCustomAPI.CustomStatusId.PowerUp};
+
+                    for (Int32 i = 0; i < statuslist.Length; i++)
+                    {
+                        if ((statuslist[i].ToBattleStatus() & _v.Target.CurrentStatus) == 0)
+                        {
+                            statusrate += 25;
+                        }
+                    }
+                    if ((GameRandom.Next8() % 100) < statusrate)
+                        _v.Target.TryAlterStatuses(_v.Command.ItemStatus, false, _v.Caster);
+                        
+                    return;
+                }
+                case (RegularItem)2487: // Big Bang
+                case (RegularItem)2489: // Super Nova
+                {
+                    _v.Caster.MaxDamageLimit = 99999;
+                    _v.NormalMagicParams();
+                    TranceSeekCustomAPI.CasterPenaltyMini(_v);
+                    TranceSeekCustomAPI.EnemyTranceBonusAttack(_v);
+                    TranceSeekCustomAPI.PenaltyShellAttack(_v);
+                    TranceSeekCustomAPI.PenaltyCommandDividedAttack(_v);
+                    TranceSeekCustomAPI.BonusElement(_v);
+                    if (TranceSeekCustomAPI.CanAttackMagic(_v))
+                    {
+                        _v.CalcHpDamage();
+                    }
+                    _v.Caster.MaxDamageLimit = 9999;
+                    return;
+                }
+                case (RegularItem)2488: // Bombe à Proton
+                {
+                    _v.NormalMagicParams();
+                    if (TranceSeekCustomAPI.CanAttackMagic(_v))
+                    {
+                        HPDamage = 19998;
+                    }
+                    break;
+                }
             }
 
-            if (HPHeal > 0)
+            if (HPDamage > 0)
                 _v.Target.Flags |= CalcFlag.HpAlteration;
 
-            if (MPHeal > 0)
+            if (MPDamage > 0)
                 _v.Target.Flags |= CalcFlag.MpAlteration;
 
             if ((_v.Target.Flags & CalcFlag.HpAlteration) != 0)
-                _v.Target.HpDamage = HPHeal;
+                _v.Target.HpDamage = HPDamage;
 
             if ((_v.Target.Flags & CalcFlag.MpAlteration) != 0)
-                _v.Target.MpDamage = MPHeal;
+                _v.Target.MpDamage = MPDamage;
 
             foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(_v.Caster))
                 saFeature.TriggerOnAbility(_v, "CalcDamage", false);

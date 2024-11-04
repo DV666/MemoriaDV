@@ -55,6 +55,7 @@ namespace Memoria.Scripts.Battle
                 case (RegularItem)2372: // Super Emeraude
                 case (RegularItem)2373: // Super Lapis Lazuli
                 case (RegularItem)2374: // Super Lunalithe
+                case (RegularItem)2456: // Super Diamant
                 {
                     HPHeal = PowerGemVanilla * 2;
                     break;
@@ -104,6 +105,17 @@ namespace Memoria.Scripts.Battle
                 case (RegularItem)2417: // Lazeraude
                 case (RegularItem)2418: // Luneraude
                 case (RegularItem)2419: // Lapis Lunazuli
+                case (RegularItem)2475: // Péridiamant
+                case (RegularItem)2476: // Diamaze
+                case (RegularItem)2477: // Diapale
+                case (RegularItem)2478: // Diaméthyst
+                case (RegularItem)2479: // Diameryl
+                case (RegularItem)2480: // Greniamant
+                case (RegularItem)2481: // Diaphir
+                case (RegularItem)2482: // Diamubis
+                case (RegularItem)2483: // Diameraude
+                case (RegularItem)2484: // Diazuli
+                case (RegularItem)2485: // Diamalithe
                 {
                     RegularItem[] ingredients = new RegularItem[2];
                     EffectElement element1 = EffectElement.None;
@@ -152,6 +164,7 @@ namespace Memoria.Scripts.Battle
                 case (RegularItem)2429: // Pluie d'Emeraude
                 case (RegularItem)2430: // Pluie de Lapis Lazuli
                 case (RegularItem)2431: // Pluie de Lunalithe
+                case (RegularItem)2486: // Pluie de Diamant
                 {
                     HPHeal = PowerGemVanilla;
                     break;
@@ -242,6 +255,50 @@ namespace Memoria.Scripts.Battle
                     HPHeal = (int)(_v.Target.MaximumHp);
                     MPHeal = (int)(_v.Target.MaximumMp);
                     break;
+                }
+                case (RegularItem)2457: // Roc de fer
+                {
+                    btl_stat.AlterStatus(_v.Target, TranceSeekCustomAPI.CustomStatusId.ArmorUp, parameters: 1);
+                    return;
+                }
+                case (RegularItem)2458: // Roc de titane
+                {
+                    btl_stat.AlterStatus(_v.Target, TranceSeekCustomAPI.CustomStatusId.ArmorUp, parameters: 2);
+                    return;
+                }
+                case (RegularItem)2459: // Roc d'adamantium
+                {
+                    btl_stat.AlterStatus(_v.Target, TranceSeekCustomAPI.CustomStatusId.ArmorUp, parameters: 3);
+                    return;
+                }
+                case (RegularItem)2460: // Roc violâtre
+                {
+                    btl_stat.AlterStatus(_v.Target, TranceSeekCustomAPI.CustomStatusId.MentalUp, parameters: 2);
+                    return;
+                }
+                case (RegularItem)2461: // Roc spirituel
+                {
+                    btl_stat.AlterStatus(_v.Target, TranceSeekCustomAPI.CustomStatusId.MentalUp, parameters: 4);
+                    return;
+                }
+                case (RegularItem)2462: // Roc fabuleux
+                {
+                    btl_stat.AlterStatus(_v.Target, TranceSeekCustomAPI.CustomStatusId.ArmorUp, parameters: 1);
+                    btl_stat.AlterStatus(_v.Target, TranceSeekCustomAPI.CustomStatusId.MentalUp, parameters: 1);
+                    return;
+                }
+                case (RegularItem)2463: // Roc mystique
+                {
+                    btl_stat.AlterStatus(_v.Target, TranceSeekCustomAPI.CustomStatusId.ArmorUp, parameters: 2);
+                    btl_stat.AlterStatus(_v.Target, TranceSeekCustomAPI.CustomStatusId.MentalUp, parameters: 2);
+                    return;
+                }
+                case (RegularItem)2464: // Roc en mythril
+                case (RegularItem)2465: // Megakoroc en mythril
+                {
+                    btl_stat.AlterStatus(_v.Target, TranceSeekCustomAPI.CustomStatusId.ArmorUp, parameters: 5);
+                    btl_stat.AlterStatus(_v.Target, TranceSeekCustomAPI.CustomStatusId.MentalUp, parameters: 5);
+                    return;
                 }
             }
 
