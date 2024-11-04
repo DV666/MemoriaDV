@@ -444,6 +444,7 @@ namespace Memoria.Scripts.Battle
                 case (RegularItem)2487: // Big Bang
                 case (RegularItem)2489: // Super Nova
                 {
+                    uint CasterMaxDamageLimit = _v.Caster.MaxDamageLimit;
                     _v.Caster.MaxDamageLimit = 99999;
                     _v.NormalMagicParams();
                     TranceSeekCustomAPI.CasterPenaltyMini(_v);
@@ -455,16 +456,31 @@ namespace Memoria.Scripts.Battle
                     {
                         _v.CalcHpDamage();
                     }
-                    _v.Caster.MaxDamageLimit = 9999;
+                    _v.Caster.AddDelayedModifier(
+                        caster => caster.CurrentAtb >= caster.MaximumAtb,
+                        caster =>
+                        {
+                            _v.Caster.MaxDamageLimit = CasterMaxDamageLimit;
+                        }
+                    );
                     return;
                 }
                 case (RegularItem)2488: // Bombe à Proton
                 {
+                    uint CasterMaxDamageLimit = _v.Caster.MaxDamageLimit;
+                    _v.Caster.MaxDamageLimit = 99999;
                     _v.NormalMagicParams();
                     if (TranceSeekCustomAPI.CanAttackMagic(_v))
                     {
                         HPDamage = 19998;
                     }
+                    _v.Caster.AddDelayedModifier(
+                        caster => caster.CurrentAtb >= caster.MaximumAtb,
+                        caster =>
+                        {
+                            _v.Caster.MaxDamageLimit = CasterMaxDamageLimit;
+                        }
+                    );
                     break;
                 }
             }
