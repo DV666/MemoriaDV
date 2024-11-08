@@ -82,25 +82,7 @@ namespace Memoria.Scripts.Battle
                     FF9StateSystem.Common.FF9.player[(CharacterId)_v.Caster.Data.bi.slot_no].equip[0] = weaponchoose;
                 }
                 _v.Caster.Data.weapon = ff9item.GetItemWeapon(weaponchoose);
-                String modelName = _v.Caster.Data.weapon.ModelName;
-                SFX.InitBattleParty();
-                _v.Caster.Data.weapon_geo = ModelFactory.CreateModel("BattleMap/BattleModel/battle_weapon/" + modelName + "/" + modelName, true);
-                MeshRenderer[] componentsInChildren = _v.Caster.Data.weapon_geo.GetComponentsInChildren<MeshRenderer>();
-                _v.Caster.Data.weaponMeshCount = componentsInChildren.Length;
-                _v.Caster.Data.weaponRenderer = new Renderer[_v.Caster.Data.weaponMeshCount];
-                for (Int32 i = 0; i < _v.Caster.Data.weaponMeshCount; i++)
-                {
-                    _v.Caster.Data.weaponRenderer[i] = componentsInChildren[i].GetComponent<Renderer>();
-                    if (_v.Caster.Data.weapon.CustomTexture.Length > 0)
-                    {
-                        if (!String.IsNullOrEmpty(_v.Caster.Data.weapon.CustomTexture[i]))
-                        {
-                            _v.Caster.Data.weaponRenderer[i].material.mainTexture = AssetManager.Load<Texture2D>(_v.Caster.Data.weapon.CustomTexture[i], false);
-                        }
-                    }
-                }
-                btl_util.SetBBGColor(_v.Caster.Data.weapon_geo);
-                geo.geoAttach(_v.Caster.Data.weapon_geo, _v.Caster.Data.gameObject, 13);
+                btl_eqp.InitWeapon(FF9StateSystem.Common.FF9.player[CharacterId.Zidane], _v.Caster.Data);
                 for (Int32 i = 0; i < 34; i++)
                     _v.Caster.Data.mot[i] = btlParam.AnimationId[i];
                 _v.Caster.Data.gameObject.transform.localPosition = position;
@@ -110,29 +92,6 @@ namespace Memoria.Scripts.Battle
                 btl_mot.setMotion(_v.Caster.Data, BattlePlayerCharacter.PlayerMotionIndex.MP_WIN); //MP_MAGIC
                 _v.Caster.Data.evt.animFrame = 0;
                 geo.geoScaleUpdate(_v.Caster.Data, true);
-
-                //if (_v.Caster.Data.dms_geo_id == 5414)
-                //{
-                //    TranceSeekCustomAPI.ModelMoug[_v.Caster.Data] = ModelFactory.CreateModel(_v.Caster.Data.weapon.ModelName, true);
-                //    geo.geoAttach(TranceSeekCustomAPI.ModelMoug[_v.Caster.Data], _v.Caster.Data.gameObject, 6);
-                //    TranceSeekCustomAPI.ModelMoug[_v.Caster.Data].SetActive(true);
-                //    ModelFactory.ChangeModelTexture(_v.Caster.Data.gameObject, new string[] { "CustomTextures/ZidaneDaggerHidden/98_0.png", "CustomTextures/ZidaneDaggerHidden/98_1.png" });
-                //    if (_v.Caster.Data.weapon.CustomTexture.Length > 0)
-                //    {
-                //        string[] CustomTexture = { $"{_v.Caster.Data.weapon.CustomTexture[0]}" };
-                //        MeshRenderer[] componentswepInChildren = TranceSeekCustomAPI.ModelMoug[_v.Caster.Data].GetComponentsInChildren<MeshRenderer>();
-                //        int weaponMeshCount = componentswepInChildren.Length;
-                //        Renderer[] weaponRenderer = new Renderer[weaponMeshCount];
-                //        for (Int32 i = 0; i < weaponMeshCount; i++)
-                //        {
-                //            weaponRenderer[i] = componentswepInChildren[i].GetComponent<Renderer>();
-                //            if (CustomTexture.Length > i && !String.IsNullOrEmpty(CustomTexture[i]))
-                //            {
-                //                weaponRenderer[i].material.mainTexture = AssetManager.Load<Texture2D>(CustomTexture[i], false);
-                //            }
-                //        }
-                //    }
-                //}                  
 
                 _v.Caster.AddDelayedModifier(
                     caster => caster.CurrentAtb >= caster.MaximumAtb,

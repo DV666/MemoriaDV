@@ -180,29 +180,6 @@ namespace Memoria.Scripts.Battle
                         unit.CurrentHp = 0;
                     }
                 }
-
-                //if (unit.Data.dms_geo_id == 5414)
-                //{                 
-                //    ModelMoug[unit.Data] = ModelFactory.CreateModel(unit.Data.weapon.ModelName, true);
-                //    geo.geoAttach(ModelMoug[unit.Data], unit.Data.gameObject, 6);
-                //    ModelMoug[unit.Data].SetActive(true);
-                //    ModelFactory.ChangeModelTexture(unit.Data.gameObject, new string[] { "CustomTextures/ZidaneDaggerHidden/98_0.png", "CustomTextures/ZidaneDaggerHidden/98_1.png"});
-                //    if (unit.Data.weapon.CustomTexture.Length > 0)
-                //    {
-                //        string[] CustomTexture = { $"{unit.Data.weapon.CustomTexture[0]}" };
-                //        MeshRenderer[] componentsInChildren = ModelMoug[unit.Data].GetComponentsInChildren<MeshRenderer>();
-                //        int weaponMeshCount = componentsInChildren.Length;
-                //        Renderer[] weaponRenderer = new Renderer[weaponMeshCount];
-                //        for (Int32 i = 0; i < weaponMeshCount; i++)
-                //        {
-                //            weaponRenderer[i] = componentsInChildren[i].GetComponent<Renderer>();
-                //            if (CustomTexture.Length > i && !String.IsNullOrEmpty(CustomTexture[i]))
-                //            {
-                //                weaponRenderer[i].material.mainTexture = AssetManager.Load<Texture2D>(CustomTexture[i], false);
-                //            }
-                //        }
-                //    }
-                //}
             }
         }
 
