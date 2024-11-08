@@ -395,6 +395,7 @@
     <Compile Include="Sources\Battle\0135_MagicMentalBreakScript.cs" />
     <Compile Include="Sources\Battle\0136_MagicMagicBreakScript.cs" />
     <Compile Include="Sources\Battle\0137_EngineerScript.cs" />
+    <Compile Include="Sources\Battle\0138_AlchemyScript.cs" />
     <Compile Include="Sources\Battle\0140_SummonMonsterScript.cs" />
     <Compile Include="Sources\Battle\0164_TranceSeekSpecial.cs" />
     <Compile Include="Sources\Battle\0200_MixPotionScript.cs" />
@@ -415,6 +416,7 @@
     <Compile Include="Sources\Battle\DragonStatusScript.cs" />
     <Compile Include="Sources\Battle\FreezeStatusScript.cs" />
     <Compile Include="Sources\Battle\GradualPetrifyStatusScript.cs" />
+    <Compile Include="Sources\Battle\SpecialStatusScript.cs" />
     <Compile Include="Sources\Battle\HeatStatusScript.cs" />
     <Compile Include="Sources\Battle\JumpStatusScript.cs" />
     <Compile Include="Sources\Battle\MagicBreakStatusScript.cs" />

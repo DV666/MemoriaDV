@@ -64,6 +64,7 @@ namespace Memoria.Scripts.Battle
             public const BattleStatus SilenceEasyKill = BattleStatus.CustomStatus18;
             public const BattleStatus Rage = BattleStatus.CustomStatus19;
             public const BattleStatus Runic = BattleStatus.CustomStatus20;
+            public const BattleStatus Special = BattleStatus.CustomStatus21;
         }
 
         public static class CustomStatusId
@@ -88,6 +89,7 @@ namespace Memoria.Scripts.Battle
             public const BattleStatusId SilenceEasyKill = BattleStatusId.CustomStatus18;
             public const BattleStatusId Rage = BattleStatusId.CustomStatus19;
             public const BattleStatusId Runic = BattleStatusId.CustomStatus20;
+            public const BattleStatusId Special = BattleStatusId.CustomStatus21;
         }
 
         public static void WeaponPhysicalParams(CalcAttackBonus bonus, BattleCalculator v)

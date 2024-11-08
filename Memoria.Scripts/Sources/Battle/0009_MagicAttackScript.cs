@@ -92,7 +92,23 @@ namespace Memoria.Scripts.Battle
                     TranceSeekCustomAPI.RaiseTrouble(_v);
                 }
                 _v.TryAlterMagicStatuses();
-            }            
+            }
+            if (FF9StateSystem.Battle.battleMapIndex == 303)
+            {
+                SB2_PATTERN sb2Pattern = FF9StateSystem.Battle.FF9Battle.btl_scene.PatAddr[FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum];
+                if (sb2Pattern.Monster[_v.Caster.Data.bi.slot_no].TypeNo == 0 && (_v.Command.AbilityStatus & BattleStatus.Heat) != 0) // Buzz - Blambourine
+                {
+                    BattleStatusDataEntry statusData = FF9StateSystem.Battle.FF9Battle.status_data[BattleStatusId.Heat];
+                    Int32 wait = (short)(((400 + (_v.Caster.Will * 2) - _v.Target.Will) * statusData.ContiCnt) / 4);
+                    _v.Target.AddDelayedModifier(
+                    target => (wait -= target.Data.cur.at_coef * BattleState.ATBTickCount) > 0,
+                    target =>
+                    {
+                        target.RemoveStatus(BattleStatus.Heat);
+                    }
+                    );
+                }
+            }
         }
 
         public Single RateTarget()

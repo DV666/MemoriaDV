@@ -86,6 +86,15 @@ namespace Memoria.Scripts.Battle
                     v.Context.TranceIncrease = 0;
             }
 
+            if (v.Caster.IsUnderAnyStatus(CustomStatus.Special) && v.Command.Id == BattleCommandId.Item && (v.Target.Flags & CalcFlag.HpRecovery) != 0) // Secret ingredient
+            {
+                object Secretingredient = v.Caster.GetPropertyByName("StatusProperty CustomStatus21 Secretingredient");
+                if ((int)Secretingredient > 0)
+                {
+                    v.Target.HpDamage *= 2;
+                    btl_stat.AlterStatus(v.Caster, CustomStatusId.Special, parameters: "Secretingredient--");
+                }
+            }
             TranceSeekCustomAPI.SpecialSA(v);
             if (v.Command.ItemId != (RegularItem)2487 && v.Command.ItemId != (RegularItem)2488 && v.Command.ItemId != (RegularItem)2489)
             {
