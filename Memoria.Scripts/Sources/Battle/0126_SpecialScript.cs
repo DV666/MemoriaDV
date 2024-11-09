@@ -8,20 +8,24 @@ namespace Memoria.Scripts.Battle
     /// Regen, Shell, Protect, Haste, Reflect, Float, Carbuncle, Mighty Guard, Vanish, Auto-Life, Reis’s Wind, Luna, Aura, Defend
     /// </summary>
     [BattleScript(Id)]
-    public sealed class SpecialStatusScript : IBattleScript
+    public sealed class SpecialScript : IBattleScript
     {
         public const Int32 Id = 0126;
 
         private readonly BattleCalculator _v;
 
-        public SpecialStatusScript(BattleCalculator v)
+        public SpecialScript(BattleCalculator v)
         {
             _v = v;
         }
 
         public void Perform()
         {
-            if (_v.Caster.Data.dms_geo_id == 349 && _v.Command.Power == 10 && _v.Command.HitRate == 10) // Gisamark - Plongée
+            if (_v.Caster.PlayerIndex == CharacterId.Marcus && _v.Command.AbilityId == (BattleAbilityId)1102) // Sang Maudit
+            {
+                btl_stat.AlterStatus(_v.Target, CustomStatusId.Special, _v.Caster, true, "CursedBlood");
+            }
+            else if (_v.Caster.Data.dms_geo_id == 349 && _v.Command.Power == 10 && _v.Command.HitRate == 10) // Gisamark - Plongée
             {
                 foreach (BattleStatusId statusid in (_v.Caster.Data.stat.cur).ToStatusList())
                 {
@@ -34,7 +38,7 @@ namespace Memoria.Scripts.Battle
                 _v.Caster.Data.mot[0] = "ANH_MON_B3_185_011";
                 _v.Caster.Data.mot[1] = "ANH_MON_B3_185_000";
                 _v.Caster.Data.mot[2] = "ANH_MON_B3_185_011";
-                TranceSeekCustomAPI.MonsterMechanic[_v.Caster.Data][2] = 1;
+                MonsterMechanic[_v.Caster.Data][2] = 1;
                 return;
             }
             else if (_v.Caster.Data.dms_geo_id == 410 && _v.Command.Power == 10 && _v.Command.HitRate == 10) // Runic Lamie

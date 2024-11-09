@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using Memoria.Data;
 using Memoria.Prime;
-using Memoria.Scripts.Battle;
-using UnityEngine;
 using Object = System.Object;
 
 namespace Memoria.DefaultScripts
@@ -13,6 +11,8 @@ namespace Memoria.DefaultScripts
     {
         public Int32 Secretingredient;
         public Int32 MasterofAlchemy;
+        public Int32 SoakedBlade;
+        public Int32 CursedBlood;
 
         public override UInt32 Apply(BattleUnit target, BattleUnit inflicter, params Object[] parameters)
         {
@@ -39,6 +39,14 @@ namespace Memoria.DefaultScripts
                 {
                     if (Secretingredient > 0)
                     Secretingredient--;
+                }
+                else if (Parameter == "CursedBlood")
+                {
+                    CursedBlood = 1;
+                }
+                else if (Parameter == "SoakedBlade" && parameters[1] != null)
+                {
+                    SoakedBlade = (Int32)parameters[1];
                 }
                 else if (Parameter == "MasterofAlchemy")
                 {

@@ -158,7 +158,9 @@ namespace Memoria.Scripts.Battle
                         btl_stat.AlterStatus(_v.Target, BattleStatusId.CustomStatus10, parameters: _v.Target.HpDamage);
                     }
                 }  
-            }      
+            }
+            if (_v.Caster.PlayerIndex == CharacterId.Blank && _v.Command.Id == BattleCommandId.Item)
+                btl_stat.AlterStatus(_v.Caster, TranceSeekCustomAPI.CustomStatusId.Special, _v.Caster, true, "SoakedBlade", (Int32)_v.Command.ItemId);
         }
 
         public Single RateTarget()

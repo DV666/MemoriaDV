@@ -95,6 +95,11 @@ namespace Memoria.Scripts.Battle
                     btl_stat.AlterStatus(v.Caster, CustomStatusId.Special, parameters: "Secretingredient--");
                 }
             }
+            if (v.Context.IsDrain && (Int32)v.Target.GetPropertyByName("StatusProperty CustomStatus21 CursedBlood") != 0 && !v.Target.IsUnderAnyStatus(BattleStatus.Zombie))
+            {
+                v.Caster.Flags = CalcFlag.HpAlteration;
+                v.Target.Flags = CalcFlag.HpDamageOrHeal;
+            }
             TranceSeekCustomAPI.SpecialSA(v);
             if (v.Command.ItemId != (RegularItem)2487 && v.Command.ItemId != (RegularItem)2488 && v.Command.ItemId != (RegularItem)2489)
             {

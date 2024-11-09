@@ -21,6 +21,7 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
+            _v.Context.IsDrain = true;
             if (_v.Command.Id == BattleCommandId.Attack && _v.Caster.PlayerIndex == CharacterId.Quina)
             {
                 _v.PhysicalAccuracy();

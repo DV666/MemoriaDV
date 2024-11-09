@@ -21,11 +21,13 @@ namespace Memoria.Scripts.Battle
         public void Perform()
         {
             _v.TryRemoveItemStatuses();
-            if (_v.Command.ItemId == RegularItem.Remedy || _v.Command.ItemId == RegularItem.Annoyntment || _v.Command.ItemId == (RegularItem)1003)
+            if ((_v.Command.ItemId == RegularItem.Remedy || _v.Command.ItemId == RegularItem.Annoyntment || _v.Command.ItemId == (RegularItem)1003) && _v.Target.IsUnderAnyStatus(TranceSeekCustomAPI.CustomStatus.Vieillissement))
             {
                 _v.Target.RemoveStatus(TranceSeekCustomAPI.CustomStatus.Vieillissement);
                 _v.Context.Flags = 0;
             }
+            if (_v.Caster.PlayerIndex == CharacterId.Blank && _v.Command.Id == BattleCommandId.Item)
+                btl_stat.AlterStatus(_v.Caster, TranceSeekCustomAPI.CustomStatusId.Special, _v.Caster, true, "SoakedBlade", _v.Command.ItemId);
         }
 
         public Single RateTarget()

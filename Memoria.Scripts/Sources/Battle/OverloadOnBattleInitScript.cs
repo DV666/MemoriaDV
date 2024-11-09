@@ -86,6 +86,8 @@ namespace Memoria.Scripts.Battle
                     WeaponNewElement[unit.Data] = EffectElement.None;
                 if (!WeaponNewStatus.TryGetValue(unit.Data, out BattleStatus wpstatus))
                     WeaponNewStatus[unit.Data] = 0;
+                //if (!AlchemyScript.SoakedBlade.TryGetValue(unit.Data, out BattleStatus soakedbladestatus))
+                //    AlchemyScript.SoakedBlade[unit.Data] = 0;
 
                 if (unit.HasSupportAbilityByIndex((SupportAbility)1041)) // Alert+
                 {

@@ -59,6 +59,9 @@ namespace Memoria.Scripts.Battle
                     _v.TryAlterMagicStatuses();
                 }
             }
+
+            if (_v.Caster.PlayerIndex == CharacterId.Blank && _v.Command.Id == BattleCommandId.Item)
+                btl_stat.AlterStatus(_v.Caster, TranceSeekCustomAPI.CustomStatusId.Special, _v.Caster, true, "SoakedBlade", _v.Command.ItemId);
         }
 
         public Single RateTarget()

@@ -388,7 +388,7 @@
     <Compile Include="Sources\Battle\0123_InfuseWeaponScript.cs" />
     <Compile Include="Sources\Battle\0124_BloodyStrikeScript.cs" />
     <Compile Include="Sources\Battle\0125_ShockMagicalScript.cs" />
-    <Compile Include="Sources\Battle\0126_SpecialStatusScript.cs" />
+    <Compile Include="Sources\Battle\0126_SpecialScript.cs" />
     <Compile Include="Sources\Battle\0127_EnemyPhysicalBuffedAttackScript.cs" />
     <Compile Include="Sources\Battle\0133_MagicArmourBreakScript.cs" />
     <Compile Include="Sources\Battle\0134_MagicPowerBreakScript.cs" />

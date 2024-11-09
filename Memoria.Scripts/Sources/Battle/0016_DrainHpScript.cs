@@ -21,6 +21,7 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
+            _v.Context.IsDrain = true;
             if (_v.Caster.Data.dms_geo_id == 105 && _v.Command.HitRate == 222) // Soul Dance - Zombance
             {
                 if (_v.Caster.SummonCount == 1)
@@ -36,7 +37,6 @@ namespace Memoria.Scripts.Battle
                     TranceSeekCustomAPI.PenaltyShellAttack(_v);
                     _v.Target.Flags |= CalcFlag.MpAlteration;
                     _v.Caster.Flags |= CalcFlag.MpAlteration;
-                    _v.Context.IsDrain = true;
 
                     _v.CalcMpDamage();
                     damage = _v.Target.MpDamage / 3;
