@@ -72,7 +72,7 @@ namespace Memoria.DefaultScripts
                     Message.Label = $"{Counter}";
                     return false;
                 }
-                if ((Target.Data.stat.permanent & BattleStatus.Doom) != 0)
+                if ((Target.Data.stat.permanent & BattleStatus.Doom) != 0 && (Int32)Target.GetPropertyByName("StatusProperty CustomStatus21 LifeorDeath") == 0)
                 {
                     Remove();
                     Target.AddDelayedModifier(

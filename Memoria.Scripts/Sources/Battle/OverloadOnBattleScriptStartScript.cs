@@ -179,6 +179,17 @@ namespace Memoria.Scripts.Battle
                 }
             }
 
+            if (v.Caster.PlayerIndex == CharacterId.Marcus && v.Caster.InTrance)
+            {
+                v.Caster.AddDelayedModifier(
+                    caster => caster.CurrentAtb >= caster.MaximumAtb,
+                    caster =>
+                    {
+                        caster.Player.trance = caster.Trance;
+                    }
+                );                
+            }
+
             TranceSeekCustomAPI.SOS_SA(v);
             return false;
         }

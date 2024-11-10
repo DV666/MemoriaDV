@@ -28,6 +28,26 @@ namespace Memoria.Scripts.Battle
                     _v.Caster.AlterStatus(TranceSeekCustomAPI.CustomStatus.Redemption);
             }
 
+            if ( _v.Command.AbilityId == (BattleAbilityId)1104 && (_v.Caster.ResistStatus & BattleStatus.Doom) == 0) // Sang Maudit
+            {
+                btl_stat.AlterStatus(_v.Target, TranceSeekCustomAPI.CustomStatusId.PowerUp, parameters: $"+{_v.Command.Power}");
+                btl_stat.AlterStatus(_v.Target, TranceSeekCustomAPI.CustomStatusId.MagicUp, parameters: $"+{_v.Command.Power}");
+                btl_stat.AlterStatus(_v.Target, TranceSeekCustomAPI.CustomStatusId.ArmorUp, parameters: $"+{_v.Command.Power}");
+                btl_stat.AlterStatus(_v.Target, TranceSeekCustomAPI.CustomStatusId.MentalUp, parameters: $"+{_v.Command.Power}");
+                btl_stat.AlterStatus(_v.Target, TranceSeekCustomAPI.CustomStatusId.Special, parameters: "LifeorDeath++");
+                btl_stat.MakeStatusesPermanent(_v.Target, BattleStatus.Doom, true);
+                _v.Target.AddDelayedModifier(
+                    target => !target.IsUnderAnyStatus(BattleStatus.Death),
+                    target =>
+                    {
+                        btl_stat.MakeStatusesPermanent(target, BattleStatus.Doom, false);
+                        btl_stat.AlterStatus(target, TranceSeekCustomAPI.CustomStatusId.Special, parameters: "LifeorDeath--");
+                        btl_stat.RemoveStatus(target, BattleStatusId.Doom);
+                    }
+                );
+                return;
+            }
+
             if (_v.Command.AbilityId == (BattleAbilityId)1099) // Iron Clast
             {
                 _v.Command.AbilityStatus |= TranceSeekCustomAPI.CustomStatus.ArmorUp;

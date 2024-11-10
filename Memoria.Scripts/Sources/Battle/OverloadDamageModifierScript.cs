@@ -80,9 +80,7 @@ namespace Memoria.Scripts.Battle
             if (v.Target.HasTrance && v.Target.Data.cur.hp > 0 && !btl_stat.CheckStatus(v.Target.Data, BattleStatusConst.CannotTrance))
             {
                 float ratio = (v.Target.HpDamage * 100) / v.Target.MaximumHp; // En %
-                if (ratio > 15)
-                    v.Context.TranceIncrease = (Int16)(Comn.random16() % v.Target.Will);
-                else
+                if (ratio <= 15)
                     v.Context.TranceIncrease = 0;
             }
 
@@ -95,12 +93,17 @@ namespace Memoria.Scripts.Battle
                     btl_stat.AlterStatus(v.Caster, CustomStatusId.Special, parameters: "Secretingredient--");
                 }
             }
-            if (v.Context.IsDrain && (Int32)v.Target.GetPropertyByName("StatusProperty CustomStatus21 CursedBlood") != 0 && !v.Target.IsUnderAnyStatus(BattleStatus.Zombie))
-            {
-                v.Caster.Flags = CalcFlag.HpAlteration;
-                v.Target.Flags = CalcFlag.HpDamageOrHeal;
-            }
+
             TranceSeekCustomAPI.SpecialSA(v);
+
+            if (v.Target.PlayerIndex == CharacterId.Marcus && (v.Command.Element & EffectElement.Darkness) != 0
+                && (v.Target.Flags & CalcFlag.HpAlteration) != 0 && (v.Target.Flags & CalcFlag.MpAlteration) == 0) // Marcus mechanic
+            {
+                int HealMP = ((v.Target.HpDamage * (1 + Comn.random16() % 9)) / 1000);
+                v.Target.CurrentMp = Math.Min(v.Caster.CurrentMp + (uint)HealMP, v.Caster.MaximumMp);
+                btl2d.Btl2dStatReq(v.Target, 0, -HealMP);
+            }
+
             if (v.Command.ItemId != (RegularItem)2487 && v.Command.ItemId != (RegularItem)2488 && v.Command.ItemId != (RegularItem)2489)
             {
                 if ((v.Caster.Flags & CalcFlag.HpAlteration) != 0)

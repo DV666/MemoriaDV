@@ -21,7 +21,7 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            if (_v.Caster.PlayerIndex == CharacterId.Marcus && _v.Command.AbilityId == (BattleAbilityId)1102) // Sang Maudit
+            if (_v.Command.AbilityId == (BattleAbilityId)1102) // Sang Maudit
             {
                 btl_stat.AlterStatus(_v.Target, CustomStatusId.Special, _v.Caster, true, "CursedBlood");
             }

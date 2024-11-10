@@ -602,7 +602,7 @@ namespace Memoria.Scripts.Battle
             v.Target.Flags |= CalcFlag.HpAlteration;
             v.Caster.Flags |= CalcFlag.HpAlteration;
 
-            if (v.Target.IsZombie || v.Context.IsAbsorb)
+            if (v.Target.IsZombie || v.Context.IsAbsorb || (Int32)v.Target.GetPropertyByName("StatusProperty CustomStatus21 CursedBlood") != 0)
                 v.Target.Flags |= CalcFlag.HpRecovery;
             else
                 v.Caster.Flags |= CalcFlag.HpRecovery;
@@ -1154,6 +1154,7 @@ namespace Memoria.Scripts.Battle
             {
                 HealMP += (int)((v.Target.MaximumMp * (v.Target.HasSupportAbilityByIndex((SupportAbility)1118) ? 4 : 2)) / 100);
             }
+
             if ((HealHP > 0 || HealMP > 0) && !v.Caster.IsUnderAnyStatus(BattleStatus.Death) && SpecialSAEffect[v.Caster.Data][7] <= 0)
             {
                 if (HealHP > 0)

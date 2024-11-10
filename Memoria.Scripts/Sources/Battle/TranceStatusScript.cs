@@ -17,6 +17,8 @@ namespace Memoria.DefaultScripts
         public BattleAbilityId PhantomAbility = BattleAbilityId.Void;
         public Boolean PhantomCommandSent = false;
         public Int32 PhantomCountdown = 0;
+        public Boolean MarcusAbsorbDarkness = false;
+        public Boolean MarcusWeakLight = false;
 
         public static Int32 GetPhantomCount(BattleUnit btl)
         {
@@ -53,6 +55,30 @@ namespace Memoria.DefaultScripts
             }
             if (target.PlayerIndex == CharacterId.Garnet)
                 target.AddDelayedModifier(ProcessPhantomRecast, ClearPhantomRecast);
+
+            if (target.PlayerIndex == CharacterId.Marcus)
+                target.AddDelayedModifier(
+                    target => !target.IsDisappear,
+                    target =>
+                    {
+                        target.Data.weapon_geo.SetActive(false);
+                        target.Player.trance = target.Trance;
+                        target.MaximumMp *= 2;
+                        target.CurrentMp = target.MaximumMp;
+                        if ((target.AbsorbElement & EffectElement.Darkness) == 0)
+                        {
+                            MarcusAbsorbDarkness = true;
+                            target.AbsorbElement |= EffectElement.Darkness;
+                        }
+                        if ((target.WeakElement & EffectElement.Holy) == 0)
+                        {
+                            MarcusWeakLight = true;
+                            target.WeakElement |= EffectElement.Holy;
+                        }
+
+                    }
+                );
+
             return btl_stat.ALTER_SUCCESS;
         }
 
@@ -69,7 +95,28 @@ namespace Memoria.DefaultScripts
             }
 
             if (!Target.IsMonsterTransform && SpecialSAEffect[Target][3] == 0)
-                btl_cmd.SetCommand(Target.Data.cmd[4], BattleCommandId.SysTrans, 0, Target.Id, 0u);         
+                btl_cmd.SetCommand(Target.Data.cmd[4], BattleCommandId.SysTrans, 0, Target.Id, 0u);
+
+            if (Target.PlayerIndex == CharacterId.Marcus)
+                Target.AddDelayedModifier(
+                    target => !target.IsDisappear,
+                    target =>
+                    {
+                        target.Data.weapon_geo.SetActive(true);
+                        target.MaximumMp /= 2;
+                        if (MarcusAbsorbDarkness)
+                        {
+                            MarcusAbsorbDarkness = false;
+                            target.AbsorbElement &= ~EffectElement.Darkness;
+                        }
+                        if (MarcusWeakLight)
+                        {
+                            MarcusWeakLight = false;
+                            target.WeakElement &= ~EffectElement.Holy;
+                        }
+                    }
+                );
+
             return true;
         }
 
