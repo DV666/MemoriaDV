@@ -28,7 +28,7 @@ namespace Memoria.Scripts.Battle
                     _v.Target.HpDamage = 9999;
                 else
                     _v.Target.HpDamage = TranceSeekCustomAPI.MonsterMechanic[_v.Caster.Data][1];
-                Int32 wait = 200;
+                Int32 wait = 20;
                 _v.Caster.AddDelayedModifier(
                     caster => (wait -= BattleState.ATBTickCount) > 0,
                     caster =>

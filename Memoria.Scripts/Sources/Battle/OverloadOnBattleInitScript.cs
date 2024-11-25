@@ -18,6 +18,8 @@ namespace Memoria.Scripts.Battle
 
         public void OnBattleInit()
         {
+            // FF9StateSystem.EventState.gEventGlobal[1403] = 4; // Debug difficulty mode
+
             SB2_PATTERN sb2Pattern = FF9StateSystem.Battle.FF9Battle.btl_scene.PatAddr[FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum];
 
             if (FF9StateSystem.Battle.battleMapIndex == 93 && FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum == 3) // Prison Cage + Little Girl
@@ -115,50 +117,89 @@ namespace Memoria.Scripts.Battle
                 if (!unit.IsPlayer) // Check if boss have +10000 HP for scripts
                 {
                     Boolean ChangeHP = false;
+                    BattleEnemy battleEnemy = BattleEnemy.Find(unit);
                     for (Int32 i = 0; i < BossBattleBonusHP.GetLength(0); i++)
                     {
                         if (FF9StateSystem.Battle.battleMapIndex == BossBattleBonusHP[i, 0] && sb2Pattern.Monster[unit.Data.bi.slot_no].TypeNo == BossBattleBonusHP[i, 1])
                         {
+                            ChangeHP = true;
+                            uint bonusHP = unit.MaximumHp - 10000;
                             if (FF9StateSystem.EventState.gEventGlobal[1403] == 3) // Kuja mode
                             {
-                                ChangeHP = true;
-                                uint bonusHP = unit.MaximumHp - 10000;
+                                if (FF9StateSystem.EventState.ScenarioCounter > 2250) // After Zidane/Vivi/Steiner get together in Evil Forest
+                                {
+                                    unit.MaximumHp += (bonusHP / 10);
+                                    unit.CurrentHp += (bonusHP / 10);
+                                    unit.Strength = (byte)Math.Min(unit.Strength + (unit.Strength / 4), byte.MaxValue);
+                                    unit.Magic = (byte)Math.Min(unit.Magic + (unit.Magic / 4), byte.MaxValue);
+                                }
+                                else
+                                {
+                                    unit.MaximumHp += (bonusHP / 20);
+                                    unit.CurrentHp += (bonusHP / 20);
+                                    unit.Strength = (byte)Math.Min(unit.Strength + 1, byte.MaxValue);
+                                    unit.Magic = (byte)Math.Min(unit.Magic + 1, byte.MaxValue);
+                                }
+                            }
+                            else if (FF9StateSystem.EventState.gEventGlobal[1403] == 4) // Necron mode
+                            {
+                                if (FF9StateSystem.EventState.ScenarioCounter > 2250) // After Zidane/Vivi/Steiner get together in Evil Forest
+                                {
+                                    unit.MaximumHp += (bonusHP / 4);
+                                    unit.CurrentHp += (bonusHP / 4);
+                                    unit.Strength = (byte)Math.Min(unit.Strength + (unit.Strength / 2), byte.MaxValue);
+                                    unit.Magic = (byte)Math.Min(unit.Magic + (unit.Magic / 2), byte.MaxValue);
+                                }
+                                else
+                                {
+                                    unit.MaximumHp += (bonusHP / 8);
+                                    unit.CurrentHp += (bonusHP / 8);
+                                    unit.Strength = (byte)Math.Min(unit.Strength + 2, byte.MaxValue);
+                                    unit.Magic = (byte)Math.Min(unit.Magic + 2, byte.MaxValue);
+                                }
+                                battleEnemy.Data.bonus_exp /= 2;
+                                battleEnemy.Data.bonus_gil /= 10;
+                            }
+                            MonsterMechanic[unit.Data][3] = 1;
+                            break;
+                        }
+                    }                
+                    if (!ChangeHP)
+                    {
+                        uint bonusHP = unit.MaximumHp;
+                        if (FF9StateSystem.EventState.gEventGlobal[1403] == 3) // Kuja mode
+                        {
+                            if (FF9StateSystem.EventState.ScenarioCounter > 2250) // After Zidane/Vivi/Steiner get together in Evil Forest
+                            {
                                 unit.MaximumHp += (bonusHP / 10);
                                 unit.CurrentHp += (bonusHP / 10);
                                 unit.Strength = (byte)Math.Min(unit.Strength + (unit.Strength / 4), byte.MaxValue);
                                 unit.Magic = (byte)Math.Min(unit.Magic + (unit.Magic / 4), byte.MaxValue);
                             }
-                            else if (FF9StateSystem.EventState.gEventGlobal[1403] == 4) // Necron mode
+                            else
                             {
-                                ChangeHP = true;
-                                uint bonusHP = unit.MaximumHp - 10000;
+                                unit.MaximumHp += (bonusHP / 20);
+                                unit.CurrentHp += (bonusHP / 20);
+                                unit.Strength = (byte)Math.Min(unit.Strength + 1, byte.MaxValue);
+
+                            }
+                        }
+                        else if (FF9StateSystem.EventState.gEventGlobal[1403] == 4) // Necron mode
+                        {
+                            if (FF9StateSystem.EventState.ScenarioCounter > 2250) // After Zidane/Vivi/Steiner get together in Evil Forest
+                            {
                                 unit.MaximumHp += (bonusHP / 4);
                                 unit.CurrentHp += (bonusHP / 4);
                                 unit.Strength = (byte)Math.Min(unit.Strength + (unit.Strength / 2), byte.MaxValue);
                                 unit.Magic = (byte)Math.Min(unit.Magic + (unit.Magic / 2), byte.MaxValue);
                             }
-                            MonsterMechanic[unit.Data][3] = 1;
-                            break;
-                        }
-                    }
-                    BattleEnemy battleEnemy = BattleEnemy.Find(unit);
-                    if (!ChangeHP)
-                    {
-                        if (FF9StateSystem.EventState.gEventGlobal[1403] == 3) // Kuja mode
-                        {
-                            uint bonusHP = unit.MaximumHp;
-                            unit.MaximumHp += (bonusHP / 10);
-                            unit.CurrentHp += (bonusHP / 10);
-                            unit.Strength = (byte)Math.Min(unit.Strength + (unit.Strength / 4), byte.MaxValue);
-                            unit.Magic = (byte)Math.Min(unit.Magic + (unit.Magic / 4), byte.MaxValue);
-                        }
-                        else if (FF9StateSystem.EventState.gEventGlobal[1403] == 4) // Necron mode
-                        {
-                            uint bonusHP = unit.MaximumHp;
-                            unit.MaximumHp += (bonusHP / 4);
-                            unit.CurrentHp += (bonusHP / 4);
-                            unit.Strength = (byte)Math.Min(unit.Strength + (unit.Strength / 2), byte.MaxValue);
-                            unit.Magic = (byte)Math.Min(unit.Magic + (unit.Magic / 2), byte.MaxValue);
+                            else
+                            {
+                                unit.MaximumHp += (bonusHP / 8);
+                                unit.CurrentHp += (bonusHP / 8);
+                                unit.Strength = (byte)Math.Min(unit.Strength + 2, byte.MaxValue);
+                                unit.Magic = (byte)Math.Min(unit.Magic + 2, byte.MaxValue);
+                            }
                             battleEnemy.Data.bonus_exp /= 2;
                             battleEnemy.Data.bonus_gil /= 10;
                         }
@@ -225,7 +266,7 @@ namespace Memoria.Scripts.Battle
             { 931, 0 }, // Shinryu
             { 889, 0 }, // Silver Dragon
             { 337, 0 }, // Steiner 1st
-            { 335, 0 }, // Steiner 2nd
+            { 335, 0 }, { 335, 1 }, { 335, 2 }, // Steiner 2nd
             { 337, 0 }, { 337, 1 }, // Steiner 3rd + Bombo
             { 936, 0 }, // Sulfura
             { 294, 0 }, // Valseur 2
