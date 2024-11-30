@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading;
-using FF9;
 using Memoria.Data;
+using Memoria.Database;
 using Memoria.DefaultScripts;
-using Memoria.Prime;
-using UnityEngine;
-using UnityXInput;
 using static Memoria.Scripts.Battle.TranceSeekCustomAPI;
 
 namespace Memoria.Scripts.Battle
@@ -91,6 +87,15 @@ namespace Memoria.Scripts.Battle
                 //if (!AlchemyScript.SoakedBlade.TryGetValue(unit.Data, out BattleStatus soakedbladestatus))
                 //    AlchemyScript.SoakedBlade[unit.Data] = 0;
 
+                if ((FF9StateSystem.Battle.battleMapIndex == 334 || FF9StateSystem.Battle.battleMapIndex == 335) && unit.IsPlayer) // Add Steal command for Zidane/Marcus against Steiner 2nd
+                {
+                    if (unit.PlayerIndex == CharacterId.Zidane || unit.PlayerIndex == CharacterId.Marcus)
+                    {
+                        CharacterPresetId presetId = unit.Player.PresetId;
+                        CharacterCommands.CommandSets[presetId].Regular[2] = BattleCommandId.Steal;
+                        CharacterCommands.CommandSets[presetId].Regular[3] = unit.PlayerIndex == CharacterId.Zidane ? BattleCommandId.StageMagicZidane : BattleCommandId.StageMagicMarcus;
+                    }
+                }
                 if (unit.HasSupportAbilityByIndex((SupportAbility)1041)) // Alert+
                 {
                     btl_stat.AlterStatus(unit, CustomStatusId.PerfectDodge, parameters: "+2");
