@@ -4,6 +4,9 @@ using System.Collections.Generic;
 
 namespace Memoria.DefaultScripts
 {
+    /// <summary>
+    /// Overlap System for "identical" SHP : idea by DV and code made by Tirlititi (thanks !)
+    /// </summary>
     public static class OverlapSHP
     {
         public static class CustomStatusId

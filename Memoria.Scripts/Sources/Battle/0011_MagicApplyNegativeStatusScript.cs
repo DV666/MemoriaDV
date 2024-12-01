@@ -66,7 +66,7 @@ namespace Memoria.Scripts.Battle
                 {
                     _v.Command.AbilityStatus |= (BattleStatus.Zombie | BattleStatus.Virus);
                 }
-                else if (_v.Command.Power == 7)
+                else if (_v.Command.Power == 7) // Ahriman - Blaster
                 {
                     if (_v.TryMagicHit())
                     {

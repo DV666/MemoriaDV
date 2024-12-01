@@ -28,7 +28,7 @@ namespace Memoria.Scripts.Battle
             {
                 if (!_v.Target.TryKillFrozen())
                 {
-                    if (_v.Command.HitRate == 111)
+                    if (_v.Command.HitRate == 111) // Ignore physical defense
                     {
                         _v.SetCommandPower();
                         _v.Caster.SetPhysicalAttack();
