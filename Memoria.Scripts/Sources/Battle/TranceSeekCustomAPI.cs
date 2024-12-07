@@ -330,7 +330,7 @@ namespace Memoria.Scripts.Battle
             foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(v.Target.Data.saExtended))
                 saFeature.TriggerOnAbility(v, "HitRateSetup", true);
 
-            if ((v.Context.HitRate <= Comn.random16() % 100) || v.Target.PhysicalEvade == 255)
+            if ((v.Context.HitRate <= Comn.random16() % 100) || v.Target.PhysicalEvade == 255 || v.Target.IsUnderAnyStatus(BattleStatus.Vanish))
             {
                 v.Context.Flags |= BattleCalcFlags.Miss;
                 return false;
