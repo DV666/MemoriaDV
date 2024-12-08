@@ -1,4 +1,5 @@
 ﻿using System;
+using FF9;
 using Memoria.Data;
 using Memoria.Prime;
 using Memoria.Scripts.Battle;
@@ -7,7 +8,7 @@ using Object = System.Object;
 namespace Memoria.DefaultScripts
 {
     [StatusScript(BattleStatusId.Heat)]
-    public class HeatStatusScript : StatusScriptBase, IFinishCommandScript
+    public class HeatStatusScript : StatusScriptBase, IFinishCommandScript, IOverloadOnCommandRunScript
     {
         public BattleUnit HeatInflicter = null;
 
@@ -49,5 +50,26 @@ namespace Memoria.DefaultScripts
                 }
             }
         }
+
+        public Boolean OnCommandRun(BattleCommand cmd)
+        {
+            if (cmd.Data.regist != null && (cmd.Data.cmd_no < BattleCommandId.EnemyReaction || cmd.Data.cmd_no > BattleCommandId.BoundaryUpperCheck))
+            {
+                BTL_DATA btl = cmd.Data.regist;
+
+                if (!btl_stat.CheckStatus(btl, BattleStatus.EasyKill))
+                {
+                    if (btl_stat.CheckStatus(btl, BattleStatus.Heat))
+                    {
+                        if (btl_stat.AlterStatus(new BattleUnit(btl), BattleStatusId.Death) == btl_stat.ALTER_SUCCESS)
+                        {
+                            BattleVoice.TriggerOnStatusChange(btl, "Used", BattleStatusId.Heat);
+                            btl_cmd.KillCommand(cmd);
+                        }
+                    }
+                }
+            }
+            return false;
+        }       
     }
 }
