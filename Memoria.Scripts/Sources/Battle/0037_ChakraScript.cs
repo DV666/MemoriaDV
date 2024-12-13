@@ -43,7 +43,7 @@ namespace Memoria.Scripts.Battle
                                     { "IT", "Zauber ↑" },
                                 };
                     btl2d.Btl2dReqSymbolMessage(_v.Caster.Data, "[F9FF39]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 0);
-                    _v.Target.TryAlterSingleStatus(BattleStatusId.ChangeStat, true, _v.Caster, "Will", Math.Min(99, _v.Target.Will + (_v.Target.Will / 10)));
+                    _v.Target.TryAlterSingleStatus(BattleStatusId.ChangeStat, true, _v.Caster, "Will", Math.Min(50, _v.Target.Will + (_v.Target.Will / 10)));
                     Dictionary<String, String> localizedMessage2 = new Dictionary<String, String>
                                 {
                                     { "US", "Spirit ↑" },

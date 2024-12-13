@@ -1,3 +1,4 @@
+using FF9;
 using Memoria.Data;
 using System;
 
@@ -20,16 +21,21 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            if (!_v.Target.CheckUnsafetyOrGuard())
-                return;
-
             _v.SetCommandAttack();
             TranceSeekCustomAPI.BonusElement(_v);
             if (!TranceSeekCustomAPI.CanAttackMagic(_v))
                 return;
 
-            _v.Context.Attack += ff9item.FF9Item_GetCount(RegularItem.Amethyst);
             _v.CalcProportionDamage();
+            if (_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill))
+            {
+                _v.Target.HpDamage = Math.Max(1, (_v.Target.HpDamage / TranceSeekCustomAPI.MonsterMechanic[_v.Target.Data][5]));
+                TranceSeekCustomAPI.MonsterMechanic[_v.Target.Data][5] = TranceSeekCustomAPI.MonsterMechanic[_v.Target.Data][5] * 2;
+            }
+            if ((ff9item.FF9Item_GetCount(RegularItem.Amethyst)) > Comn.random16() % 100)
+            {
+                _v.Target.AlterStatus(BattleStatus.Mini, _v.Caster);
+            }
         }
     }
 }
