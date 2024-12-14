@@ -39,31 +39,6 @@ namespace Memoria.Scripts.Battle
                     _v.Caster.Data.mot[2] = "ANH_MON_B3_182_003";
                 }
             }
-            else if (_v.Caster.Data.dms_geo_id == 146)
-            {
-                if (_v.Command.Power == 10)
-                {
-                    if (_v.Command.HitRate == 1)
-                    {
-                        btl_stat.MakeStatusesPermanent(_v.Target, BattleStatus.Stop, true);
-                        _v.Target.Data.bi.target = 0;
-                        TranceSeekCustomAPI.MonsterMechanic[_v.Caster.Data][2] = _v.Target.Id;
-                    }
-                    else
-                    {
-                        foreach (BattleUnit unit in BattleState.EnumerateUnits())
-                        {
-                            if (TranceSeekCustomAPI.MonsterMechanic[_v.Caster.Data][2] == unit.Id)
-                            {
-                                unit.Data.bi.target = 1;
-                                btl_stat.MakeStatusesPermanent(unit, BattleStatus.Stop, false);
-                                unit.RemoveStatus(BattleStatus.Stop);
-                            }
-                        }
-                    }
-                }
-   
-            }
             else if (_v.Caster.Data.dms_geo_id == 5 || _v.Caster.Data.dms_geo_id == 267) // Kuja (Double & Triple)
             {
                 if (_v.Command.Power == 1)
