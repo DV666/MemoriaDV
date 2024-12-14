@@ -45,6 +45,7 @@ DeletePresetText = "Impossibile annullare questa operazione. Vuoi davvero elimin
 DeletePresetCaption = "Eliminare la preimpostazione?"
 OK = "OK"
 Cancel = "Annulla"
+Auto = "Auto"
 />
 
 <Settings
@@ -179,7 +180,7 @@ WorldmapBoost_Tooltip = "Aggiunge un leggero incremento al campo visivo in base 
 WorldmapShipTilt = "Inclinazione della telecamera"
 WorldmapShipTilt_Tooltip = "Inclina la telecamera quando si gira in volo (vanilla: attivato)"
 ExcaliburIINoTimeLimit = "Excalibur II: rimuovi limite di tempo"
-ExcaliburIINoTimeLimit_Tooltip = "Rimuove il limite di tempo di 10 ore per ottenere Excalibur II"
+ExcaliburIINoTimeLimit_Tooltip = "Rimuove il limite di tempo di 12 ore per ottenere Excalibur II"
 ViviAutoAttack = "Vivi attacca con la magia"
 ViviAutoAttack_Tooltip = "Invece di un attacco fisico normale, Vivi usa un incantesimo base gratuito (il più efficace)"
 AccessBattleMenuToggle = "Accesso al menu in battaglia"
