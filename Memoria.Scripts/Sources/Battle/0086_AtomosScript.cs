@@ -26,7 +26,7 @@ namespace Memoria.Scripts.Battle
             if (!TranceSeekCustomAPI.CanAttackMagic(_v))
                 return;
 
-            _v.CalcProportionDamage();
+            _v.CalcCannonProportionDamage();
             if (_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill))
             {
                 _v.Target.HpDamage = Math.Max(1, (_v.Target.HpDamage / TranceSeekCustomAPI.MonsterMechanic[_v.Target.Data][5]));

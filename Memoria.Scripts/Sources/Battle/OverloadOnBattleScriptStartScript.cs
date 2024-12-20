@@ -179,7 +179,7 @@ namespace Memoria.Scripts.Battle
                 }
             }
 
-            if (v.Caster.PlayerIndex == CharacterId.Marcus && v.Caster.InTrance)
+            if (v.Caster.PlayerIndex == CharacterId.Marcus && v.Caster.InTrance) // Refresh Trance data in Player for Marcus, for AbilityFeatures.txt purpose.
             {
                 v.Caster.AddDelayedModifier(
                     caster => caster.CurrentAtb >= caster.MaximumAtb,
