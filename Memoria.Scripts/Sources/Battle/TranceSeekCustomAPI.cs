@@ -989,7 +989,7 @@ namespace Memoria.Scripts.Battle
 
         public static void SpecialSA(this BattleCalculator v)
         {
-            if (v.Target.HpDamage > 0 && v.Target.IsUnderAnyStatus(CustomStatus.MechanicalArmor) && MonsterMechanic[v.Target.Data][1] > 0 && v.Target.Data != v.Caster.Data && (v.Target.Flags & CalcFlag.HpRecovery) == 0) // Armor Mechanical
+            if (v.Target.HpDamage > 0 && v.Target.IsUnderAnyStatus(CustomStatus.MechanicalArmor) && MonsterMechanic[v.Target.Data][1] > 0 && (v.Target.Flags & CalcFlag.HpRecovery) == 0) // Armor Mechanical
             {
                 Int32 DamageReduction = MonsterMechanic[v.Target.Data][1] * 10;
                 if (DamageReduction < 100)
