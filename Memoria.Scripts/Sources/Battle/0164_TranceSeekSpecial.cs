@@ -1,9 +1,5 @@
 ﻿using System;
-using FF9;
 using Memoria.Data;
-using UnityEngine;
-using System.Collections.Generic;
-using Memoria.Assets;
 
 namespace Memoria.Scripts.Battle
 {

@@ -36,6 +36,8 @@ namespace Memoria.Scripts.Battle
             {
                 _v.Target.AlterStatus(BattleStatus.Mini, _v.Caster);
             }
+            if (_v.Command.IsShortSummon)
+                _v.Target.HpDamage = _v.Target.HpDamage * 2 / 3;
         }
     }
 }
