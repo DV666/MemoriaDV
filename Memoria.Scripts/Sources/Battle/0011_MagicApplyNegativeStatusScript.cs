@@ -229,8 +229,12 @@ namespace Memoria.Scripts.Battle
                     }
                     return;
                 }
-                if (_v.TryMagicHit() || _v.Command.HitRate == 255 || (_v.Caster.PlayerIndex == CharacterId.Amarant && _v.Caster.IsUnderStatus(BattleStatus.Trance) && _v.Command.AbilityId == BattleAbilityId.Revive2))
+                if (_v.Command.HitRate == 255 || (_v.Caster.PlayerIndex == CharacterId.Amarant && _v.Caster.IsUnderStatus(BattleStatus.Trance) && _v.Command.AbilityId == BattleAbilityId.Revive2))
                 { // 3 Plaies+
+                    TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
+                }
+                else if (_v.TryMagicHit())
+                {
                     TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
                 }
             }
