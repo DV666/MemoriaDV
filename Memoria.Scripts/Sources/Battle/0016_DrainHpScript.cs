@@ -125,6 +125,16 @@ namespace Memoria.Scripts.Battle
                             _v.Caster.AlterStatus(TranceSeekCustomAPI.CustomStatus.PowerUp, _v.Caster);
                             _v.Caster.AlterStatus(TranceSeekCustomAPI.CustomStatus.MagicUp, _v.Caster);
                         }
+                        else if (_v.Command.HitRate == 224) // Plant Brain CD1
+                        {
+                            if (_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill))
+                                _v.Target.HpDamage = (int)((_v.Target.MaximumHp - 10000) / 3) + 1;
+                            else
+                                _v.Target.HpDamage = (int)(_v.Target.MaximumHp / 3) + 1;
+
+                            _v.Caster.AlterStatus(TranceSeekCustomAPI.CustomStatus.PowerUp, _v.Caster);
+                            _v.Caster.AlterStatus(TranceSeekCustomAPI.CustomStatus.MagicUp, _v.Caster);
+                        }
                         else if (_v.Command.HitRate == 255) // Crowler - Deadly Drain
                         {
                             _v.Target.HpDamage = (int)(_v.Target.CurrentHp - 1U);

@@ -119,16 +119,74 @@ namespace Memoria.Scripts.Battle
                     MonsterMechanic[unit.Data][4] = 100; // Reduce time for Sleep/Freeze/Stop
                     MonsterMechanic[unit.Data][5] = 4; // Reduce gravity damage
                 }
-                if (!unit.IsPlayer) // Check if boss have +10000 HP for scripts
+
+                if (!unit.IsPlayer)
                 {
-                    Boolean ChangeHP = false;
-                    BattleEnemy battleEnemy = BattleEnemy.Find(unit);
-                    for (Int32 i = 0; i < BossBattleBonusHP.GetLength(0); i++)
+                    Boolean ChangeStats = true;
+                    if (FF9StateSystem.EventState.gEventGlobal[1403] >= 3)
                     {
-                        if (FF9StateSystem.Battle.battleMapIndex == BossBattleBonusHP[i, 0] && sb2Pattern.Monster[unit.Data.bi.slot_no].TypeNo == BossBattleBonusHP[i, 1])
+                        for (Int32 i = 0; i < PreventBossModificationDifficulty.GetLength(0); i++) // Prevent stats modification for specific ennemy.
                         {
-                            ChangeHP = true;
-                            uint bonusHP = unit.MaximumHp - 10000;
+                            if (FF9StateSystem.Battle.battleMapIndex == PreventBossModificationDifficulty[i, 0] && sb2Pattern.Monster[unit.Data.bi.slot_no].TypeNo == PreventBossModificationDifficulty[i, 1])
+                            {
+                                ChangeStats = false;
+                            }
+                        }
+                    }
+
+                    if (ChangeStats)
+                    {
+                        Boolean ChangeHP = false;
+                        BattleEnemy battleEnemy = BattleEnemy.Find(unit);
+                        for (Int32 i = 0; i < BossBattleBonusHP.GetLength(0); i++) // Check if boss have +10000 HP for scripts
+                        {
+                            if (FF9StateSystem.Battle.battleMapIndex == BossBattleBonusHP[i, 0] && sb2Pattern.Monster[unit.Data.bi.slot_no].TypeNo == BossBattleBonusHP[i, 1])
+                            {
+                                ChangeHP = true;
+                                uint bonusHP = unit.MaximumHp - 10000;
+                                if (FF9StateSystem.EventState.gEventGlobal[1403] == 3) // Kuja mode
+                                {
+                                    if (FF9StateSystem.EventState.ScenarioCounter > 2250) // After Zidane/Vivi/Steiner get together in Evil Forest
+                                    {
+                                        unit.MaximumHp += (bonusHP / 10);
+                                        unit.CurrentHp += (bonusHP / 10);
+                                        unit.Strength = (byte)Math.Min(unit.Strength + (unit.Strength / 4), byte.MaxValue);
+                                        unit.Magic = (byte)Math.Min(unit.Magic + (unit.Magic / 4), byte.MaxValue);
+                                    }
+                                    else
+                                    {
+                                        unit.MaximumHp += (bonusHP / 20);
+                                        unit.CurrentHp += (bonusHP / 20);
+                                        unit.Strength = (byte)Math.Min(unit.Strength + 1, byte.MaxValue);
+                                        unit.Magic = (byte)Math.Min(unit.Magic + 1, byte.MaxValue);
+                                    }
+                                }
+                                else if (FF9StateSystem.EventState.gEventGlobal[1403] == 4) // Necron mode
+                                {
+                                    if (FF9StateSystem.EventState.ScenarioCounter > 2250) // After Zidane/Vivi/Steiner get together in Evil Forest
+                                    {
+                                        unit.MaximumHp += (bonusHP / 4);
+                                        unit.CurrentHp += (bonusHP / 4);
+                                        unit.Strength = (byte)Math.Min(unit.Strength + (unit.Strength / 2), byte.MaxValue);
+                                        unit.Magic = (byte)Math.Min(unit.Magic + (unit.Magic / 2), byte.MaxValue);
+                                    }
+                                    else
+                                    {
+                                        unit.MaximumHp += (bonusHP / 8);
+                                        unit.CurrentHp += (bonusHP / 8);
+                                        unit.Strength = (byte)Math.Min(unit.Strength + 2, byte.MaxValue);
+                                        unit.Magic = (byte)Math.Min(unit.Magic + 2, byte.MaxValue);
+                                    }
+                                    battleEnemy.Data.bonus_exp /= 2;
+                                    battleEnemy.Data.bonus_gil /= 10;
+                                }
+                                MonsterMechanic[unit.Data][3] = 1;
+                                break;
+                            }
+                        }
+                        if (!ChangeHP)
+                        {
+                            uint bonusHP = unit.MaximumHp;
                             if (FF9StateSystem.EventState.gEventGlobal[1403] == 3) // Kuja mode
                             {
                                 if (FF9StateSystem.EventState.ScenarioCounter > 2250) // After Zidane/Vivi/Steiner get together in Evil Forest
@@ -143,7 +201,7 @@ namespace Memoria.Scripts.Battle
                                     unit.MaximumHp += (bonusHP / 20);
                                     unit.CurrentHp += (bonusHP / 20);
                                     unit.Strength = (byte)Math.Min(unit.Strength + 1, byte.MaxValue);
-                                    unit.Magic = (byte)Math.Min(unit.Magic + 1, byte.MaxValue);
+
                                 }
                             }
                             else if (FF9StateSystem.EventState.gEventGlobal[1403] == 4) // Necron mode
@@ -165,55 +223,13 @@ namespace Memoria.Scripts.Battle
                                 battleEnemy.Data.bonus_exp /= 2;
                                 battleEnemy.Data.bonus_gil /= 10;
                             }
-                            MonsterMechanic[unit.Data][3] = 1;
-                            break;
                         }
-                    }                
-                    if (!ChangeHP)
-                    {
-                        uint bonusHP = unit.MaximumHp;
-                        if (FF9StateSystem.EventState.gEventGlobal[1403] == 3) // Kuja mode
+                        if (FF9StateSystem.EventState.gEventGlobal[1403] == 1) // Vivi mode
                         {
-                            if (FF9StateSystem.EventState.ScenarioCounter > 2250) // After Zidane/Vivi/Steiner get together in Evil Forest
-                            {
-                                unit.MaximumHp += (bonusHP / 10);
-                                unit.CurrentHp += (bonusHP / 10);
-                                unit.Strength = (byte)Math.Min(unit.Strength + (unit.Strength / 4), byte.MaxValue);
-                                unit.Magic = (byte)Math.Min(unit.Magic + (unit.Magic / 4), byte.MaxValue);
-                            }
-                            else
-                            {
-                                unit.MaximumHp += (bonusHP / 20);
-                                unit.CurrentHp += (bonusHP / 20);
-                                unit.Strength = (byte)Math.Min(unit.Strength + 1, byte.MaxValue);
-
-                            }
+                            battleEnemy.Data.bonus_exp += (battleEnemy.Data.bonus_exp / 4);
+                            battleEnemy.Data.bonus_gil += (battleEnemy.Data.bonus_gil / 4);
                         }
-                        else if (FF9StateSystem.EventState.gEventGlobal[1403] == 4) // Necron mode
-                        {
-                            if (FF9StateSystem.EventState.ScenarioCounter > 2250) // After Zidane/Vivi/Steiner get together in Evil Forest
-                            {
-                                unit.MaximumHp += (bonusHP / 4);
-                                unit.CurrentHp += (bonusHP / 4);
-                                unit.Strength = (byte)Math.Min(unit.Strength + (unit.Strength / 2), byte.MaxValue);
-                                unit.Magic = (byte)Math.Min(unit.Magic + (unit.Magic / 2), byte.MaxValue);
-                            }
-                            else
-                            {
-                                unit.MaximumHp += (bonusHP / 8);
-                                unit.CurrentHp += (bonusHP / 8);
-                                unit.Strength = (byte)Math.Min(unit.Strength + 2, byte.MaxValue);
-                                unit.Magic = (byte)Math.Min(unit.Magic + 2, byte.MaxValue);
-                            }
-                            battleEnemy.Data.bonus_exp /= 2;
-                            battleEnemy.Data.bonus_gil /= 10;
-                        }
-                    }
-                    if (FF9StateSystem.EventState.gEventGlobal[1403] == 1) // Vivi mode
-                    {
-                        battleEnemy.Data.bonus_exp += (battleEnemy.Data.bonus_exp / 4);
-                        battleEnemy.Data.bonus_gil += (battleEnemy.Data.bonus_gil / 4);
-                    }
+                    }                  
                 }
                 else
                 {
@@ -280,6 +296,11 @@ namespace Memoria.Scripts.Battle
             { 668, 0 },  { 217, 0 }, { 670, 0 }, { 751, 0 }, { 652, 0 }, { 664, 0 }, { 216, 0 }, // Friendly Yeti
             // ########### CD4 Bosses ##############
             { 93, 2 }, { 93, 3 }, { 93, 4 }, { 93, 5 } // Prison Cage + Little Girl
+        };
+
+        public static Int32[,] PreventBossModificationDifficulty = new Int32[,]
+{
+            { 303, 1 } // Dagga (Plant Brain CD1)
         };
     }
 }
