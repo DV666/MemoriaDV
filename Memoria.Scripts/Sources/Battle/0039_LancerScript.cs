@@ -30,7 +30,7 @@ namespace Memoria.Scripts.Battle
                     _v.Caster.Flags |= CalcFlag.HpAlteration;
                     TranceSeekCustomAPI.BonusBackstabAndPenaltyLongDistance(_v);
                     TranceSeekCustomAPI.BonusWeaponElement(_v);
-                    if (_v.CanAttackWeaponElementalCommand())
+                    if (TranceSeekCustomAPI.CanAttackWeaponElementalCommand(_v))
                     {
                         TranceSeekCustomAPI.IpsenCastleMalus(_v);
                         TranceSeekCustomAPI.RaiseTrouble(_v);

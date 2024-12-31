@@ -299,7 +299,9 @@ namespace Memoria.Scripts.Battle
         };
 
         public static Int32[,] PreventBossModificationDifficulty = new Int32[,]
-{
+        {
+            { 301, 1 }, // Prison Cage + Vivi
+            { 302, 1 }, // Prison Cage + Dagga
             { 303, 1 } // Dagga (Plant Brain CD1)
         };
     }

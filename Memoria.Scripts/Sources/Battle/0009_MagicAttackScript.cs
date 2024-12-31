@@ -91,6 +91,10 @@ namespace Memoria.Scripts.Battle
                     _v.CalcHpDamage();
                     TranceSeekCustomAPI.RaiseTrouble(_v);
                 }
+                if (_v.Command.AbilityId == BattleAbilityId.Fire)
+                {
+                    _v.Target.AlterStatus(TranceSeekCustomAPI.CustomStatus.Vieillissement);
+                }
                 _v.TryAlterMagicStatuses();
             }
             if (FF9StateSystem.Battle.battleMapIndex == 303)

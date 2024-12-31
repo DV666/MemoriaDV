@@ -110,7 +110,7 @@ namespace Memoria.Scripts.Battle
                         TranceSeekCustomAPI.PrepareHpDraining(_v);
                         if (_v.Command.HitRate == 222) // Prison Cage CD4 - Vampire
                         {
-                            if (_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill))
+                            if (_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill) || _v.Target.Data.dms_geo_id == 557 || _v.Target.Data.dms_geo_id == 558) // Vivi & Dagga from CD1.
                                 _v.Target.HpDamage = (int)((_v.Target.MaximumHp - 10000) / 3);
                             else
                                 _v.Target.HpDamage = (int)(_v.Target.MaximumHp / 3);

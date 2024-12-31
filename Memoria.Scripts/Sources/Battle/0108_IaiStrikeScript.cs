@@ -30,7 +30,7 @@ namespace Memoria.Scripts.Battle
             TranceSeekCustomAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
             TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
             TranceSeekCustomAPI.BonusElement(_v);
-            if (_v.CanAttackWeaponElementalCommand())
+            if (TranceSeekCustomAPI.CanAttackWeaponElementalCommand(_v))
             {
                 _v.CalcHpDamage();
                 _v.TryAlterMagicStatuses();

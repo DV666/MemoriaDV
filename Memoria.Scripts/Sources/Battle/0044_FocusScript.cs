@@ -41,15 +41,15 @@ namespace Memoria.Scripts.Battle
                     _v.Target.Flags |= (CalcFlag.HpAlteration | CalcFlag.MpAlteration | CalcFlag.MpRecovery); ;
                     short num;
                     short num2;
-                    if (_v.Caster.HasSupportAbility(SupportAbility2.MagElemNull))
-                    {
-                        num = (short)(_v.Target.MaximumHp / 3);
-                        num2 = (short)(_v.Target.MaximumMp / 3);
-                    }
-                    else if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1032))
+                    if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1032))
                     {
                         num = (short)(_v.Target.MaximumHp / 2);
                         num2 = (short)(_v.Target.MaximumMp / 2);
+                    }
+                    else if (_v.Caster.HasSupportAbility(SupportAbility2.MagElemNull))
+                    {
+                        num = (short)(_v.Target.MaximumHp / 3);
+                        num2 = (short)(_v.Target.MaximumMp / 3);
                     }
                     else
                     {

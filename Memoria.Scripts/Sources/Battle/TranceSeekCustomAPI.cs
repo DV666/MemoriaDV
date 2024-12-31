@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Assets.Sources.Scripts.UI.Common;
 using FF9;
 using Memoria.Data;
+using Memoria.Prime;
 using UnityEngine;
 
 namespace Memoria.Scripts.Battle
@@ -623,6 +624,16 @@ namespace Memoria.Scripts.Battle
         {
             if ((v.Command.ElementForBonus & v.Caster.BonusElement) != 0)
                 v.Context.Attack = (Int16)(v.Context.Attack * 3 >> 1);
+        }
+
+        public static Boolean CanAttackWeaponElementalCommand(this BattleCalculator v)
+        {
+            EffectElement WeaponElement = v.Caster.WeaponElement;
+
+            if (WeaponNewElement[v.Caster.Data] != 0)
+                WeaponElement |= WeaponNewElement[v.Caster.Data];
+
+            return v.Target.CanAttackElement(WeaponElement);
         }
 
         public static void InfusedWeaponStatus(this BattleCalculator v)

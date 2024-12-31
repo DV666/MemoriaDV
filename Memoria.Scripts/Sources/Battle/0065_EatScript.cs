@@ -33,7 +33,7 @@ namespace Memoria.Scripts.Battle
                 TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
                 TranceSeekCustomAPI.BonusBackstabAndPenaltyLongDistance(_v);
                 TranceSeekCustomAPI.BonusWeaponElement(_v);
-                if (_v.CanAttackWeaponElementalCommand())
+                if (TranceSeekCustomAPI.CanAttackWeaponElementalCommand(_v))
                 {
                     TranceSeekCustomAPI.TryCriticalHit(_v);
                     TranceSeekCustomAPI.IpsenCastleMalus(_v);

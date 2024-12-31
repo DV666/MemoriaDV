@@ -87,7 +87,7 @@ namespace Memoria.Scripts.Battle
                         {
                             TranceSeekCustomAPI.BonusElement(_v);
                         }
-                        if (_v.CanAttackWeaponElementalCommand())
+                        if (TranceSeekCustomAPI.CanAttackWeaponElementalCommand(_v))
                         {
                             TranceSeekCustomAPI.IpsenCastleMalus(_v);
                             _v.CalcPhysicalHpDamage();
