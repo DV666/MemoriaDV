@@ -2,7 +2,6 @@
 using Memoria.Data;
 using FF9;
 using Object = System.Object;
-using System.IO;
 
 namespace Memoria.DefaultScripts
 {
@@ -43,7 +42,7 @@ namespace Memoria.DefaultScripts
             Int32 dmg = fig >> 1;
             foreach (BattleUnit unit in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
             {
-                if (unit.IsPlayer == Target.IsPlayer && unit.Id != Target.Id && unit.IsTargetable)
+                if (unit.IsPlayer == Target.IsPlayer && unit.Id != Target.Id && unit.IsTargetable && !unit.IsUnderAnyStatus(BattleStatus.Death))
                 {
                     btl_para.SetDamage(unit, dmg, 0, requestFigureNow: true);
                     BattleVoice.TriggerOnStatusChange(Target, "Used", BattleStatusId.Trouble);

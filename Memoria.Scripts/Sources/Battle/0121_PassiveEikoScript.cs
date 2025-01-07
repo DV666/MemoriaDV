@@ -78,11 +78,15 @@ namespace Memoria.Scripts.Battle
                     switch (_v.Command.AbilityId)
                     {
                         case (BattleAbilityId)1017: // Soin Moug
-                            _v.Target.Flags |= (CalcFlag.HpDamageOrHeal);
+                            _v.Target.Flags = (CalcFlag.HpAlteration);
+                            if (!_v.Target.IsZombie)
+                                _v.Target.Flags |= CalcFlag.HpRecovery;
                             _v.Target.HpDamage = (int)(_v.Target.MaximumHp / 2);
                         break;
                         case (BattleAbilityId)1018: // Calin Moug
-                            _v.Target.Flags |= (CalcFlag.MpDamageOrHeal);
+                            _v.Target.Flags = (CalcFlag.MpAlteration);
+                            if (!_v.Target.IsZombie)
+                                _v.Target.Flags |= CalcFlag.MpRecovery;
                             _v.Target.MpDamage = (int)(_v.Target.MaximumMp / 4);
                             _v.Target.RemoveStatus(BattleStatus.Poison | BattleStatus.Venom | BattleStatus.Silence | BattleStatus.Blind | BattleStatus.Trouble | BattleStatus.Mini | BattleStatus.Berserk | TranceSeekCustomAPI.CustomStatus.Vieillissement);
                             break;

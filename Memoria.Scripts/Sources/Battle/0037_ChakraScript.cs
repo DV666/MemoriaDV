@@ -108,6 +108,7 @@ namespace Memoria.Scripts.Battle
                     _v.Target.RemoveStatus(BattleStatus.Silence);
                     _v.Target.RemoveStatus(BattleStatus.Blind);
                 }
+                _v.TryAlterMagicStatuses();
             }
         }
     }
