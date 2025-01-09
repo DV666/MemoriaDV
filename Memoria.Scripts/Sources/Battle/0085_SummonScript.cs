@@ -1,6 +1,8 @@
 using System;
+using System.Runtime.Remoting.Contexts;
 using FF9;
 using Memoria.Data;
+using Memoria.Prime;
 
 namespace Memoria.Scripts.Battle
 {
@@ -33,40 +35,28 @@ namespace Memoria.Scripts.Battle
                     case BattleAbilityId.DiamondDust:
                     {
                         _v.Context.AttackPower += _v.Caster.Level;
-                        if ((ff9item.FF9Item_GetCount(RegularItem.Opal)) > Comn.random16() % 100)
-                        {
-                            _v.Target.AlterStatus(BattleStatus.Freeze, _v.Caster);
-                        }
+                        _v.Context.HitRate = ((ff9item.FF9Item_GetCount(RegularItem.Opal) + 1) * 3) / 4;
                         break;
                     }
                     case BattleAbilityId.Ifrit:
                     case BattleAbilityId.FlamesofHell:
                     {
                         _v.Context.AttackPower += _v.Caster.Level;
-                        if ((ff9item.FF9Item_GetCount(RegularItem.Topaz)) > Comn.random16() % 100)
-                        {
-                            _v.Target.AlterStatus(BattleStatus.Heat, _v.Caster);
-                        }
+                        _v.Context.HitRate = ((ff9item.FF9Item_GetCount(RegularItem.Topaz) + 1) * 3) / 4;
                         break;
                     }
                     case BattleAbilityId.Ramuh:
                     case BattleAbilityId.JudgementBolt:
                     {
                         _v.Context.AttackPower += _v.Caster.Level;
-                        if ((ff9item.FF9Item_GetCount(RegularItem.Peridot)) > Comn.random16() % 100)
-                        {
-                            _v.Target.AlterStatus(BattleStatus.Slow, _v.Caster);
-                        }
+                        _v.Context.HitRate = ((ff9item.FF9Item_GetCount(RegularItem.Peridot) + 1) * 3) / 4;
                         break;
                     }
                     case BattleAbilityId.Leviathan:
                     case BattleAbilityId.Tsunami:
                     {
                         _v.Context.AttackPower += _v.Caster.Level;
-                        if ((ff9item.FF9Item_GetCount(RegularItem.Aquamarine)) > Comn.random16() % 100)
-                        {
-                            _v.Target.AlterStatus(BattleStatus.Silence);
-                        }
+                        _v.Context.HitRate = ((ff9item.FF9Item_GetCount(RegularItem.Aquamarine) + 1) * 3) / 4;
                         break;
                     }
                     case BattleAbilityId.Bahamut:
@@ -85,10 +75,7 @@ namespace Memoria.Scripts.Battle
                     case BattleAbilityId.EternalDarkness:
                     {
                         _v.Context.AttackPower += _v.Caster.Level;
-                        if ((ff9item.FF9Item_GetCount(RegularItem.LapisLazuli)) > Comn.random16() % 100)
-                        {
-                            _v.Target.AlterStatus(BattleStatus.Death, _v.Caster);
-                        }
+                        _v.Context.HitRate = ((ff9item.FF9Item_GetCount(RegularItem.LapisLazuli) + 1) * 3) / 4;
                         break;
                     }
                     case BattleAbilityId.Carbuncle1:
@@ -96,35 +83,24 @@ namespace Memoria.Scripts.Battle
                     case BattleAbilityId.Carbuncle3:
                     case BattleAbilityId.Carbuncle4:
                     {  
-                        byte will = _v.Target.Will;
+                        byte will = _v.Caster.Will; // TODO - To improve ?
                         if (ff9item.FF9Item_GetCount(RegularItem.Ruby) > 0)
                         {
-                            _v.Target.Will = (byte)(_v.Target.Will + _v.Target.Will * ff9item.FF9Item_GetCount(RegularItem.Ruby) / 100L);
+                            _v.Caster.Will = (byte)(_v.Caster.Will + _v.Caster.Will * ff9item.FF9Item_GetCount(RegularItem.Ruby) / 100L);
                         }
                         if (!_v.Command.IsShortSummon && _v.Command.Id == BattleCommandId.SummonEiko)
                         {
-                            _v.Target.Will = (byte)(_v.Target.Will * 2);
+                            _v.Caster.Will = (byte)(_v.Caster.Will * 2);
                         }
                         TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
-                        _v.Target.Will = will;
+                        _v.Caster.Will = will;
                         return;
                     }
                     case BattleAbilityId.Fenrir1:
-                    {
-                        _v.Context.AttackPower += _v.Caster.Level;
-                        if ((ff9item.FF9Item_GetCount(RegularItem.Sapphire)) > Comn.random16() % 100)
-                        {
-                            _v.Target.AlterStatus(BattleStatus.Confuse, _v.Caster);
-                        }
-                        break;
-                    }
                     case BattleAbilityId.Fenrir2:
                     {
                         _v.Context.AttackPower += _v.Caster.Level;
-                        if ((ff9item.FF9Item_GetCount(RegularItem.Sapphire)) > Comn.random16() % 100)
-                        {
-                            _v.Target.AlterStatus(BattleStatus.Float, _v.Caster);
-                        }
+                        _v.Context.HitRate = ((ff9item.FF9Item_GetCount(RegularItem.Sapphire) + 1) * 3) / 4;
                         break;
                     }
                     case BattleAbilityId.Madeen:
@@ -132,6 +108,22 @@ namespace Memoria.Scripts.Battle
                         break;
                 }
                 _v.CalcHpDamage();
+
+                // TODO - Create a new function for that ? Make it for MagicScript like for example ?
+                TranceSeekCustomAPI.MagicAccuracy(_v);
+                _v.Target.PenaltyShellHitRate();
+                foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(_v.Caster))
+                    saFeature.TriggerOnAbility(_v, "HitRateSetup", false);
+                foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(_v.Target))
+                    saFeature.TriggerOnAbility(_v, "HitRateSetup", true);
+
+                if (_v.Context.HitRate <= Comn.random16() % 100)
+                    return;
+
+                if (_v.Context.Evade > Comn.random16() % 100)
+                    return;
+
+                _v.Target.TryAlterStatuses(_v.Command.AbilityStatus, true, _v.Caster);
             }
         }
     }

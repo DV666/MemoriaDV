@@ -26,6 +26,8 @@ namespace Memoria.Scripts.Battle
                 {
                     if (_v.Command.HitRate == 1)
                     {
+                        _v.Target.RemoveStatus(BattleStatus.Slow);
+                        _v.Target.RemoveStatus(BattleStatus.Haste);
                         if (!_v.Target.IsUnderAnyStatus(BattleStatus.Death))
                         {
                             if (_v.Target.Data.bi.player != 0)
