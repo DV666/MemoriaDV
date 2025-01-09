@@ -25,8 +25,6 @@ namespace Memoria.Scripts.Battle
             {
                 _v.Target.RemoveStatus(BattleStatus.Mini);
                 _v.Target.Data.geo_scale_default = 16384;
-                geo.geoScaleReset(_v.Target.Data, true);
-                geo.geoScaleSet(_v.Target.Data, _v.Target.Data.geo_scale_default, true, true);
             }
             else if (_v.Caster.Data.dms_geo_id == 146)
             {
