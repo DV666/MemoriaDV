@@ -1,0 +1,27 @@
+// Player sequence of SFX Hymn of the Tantalas
+
+WaitAnimation: Char=Caster
+StartThread: Condition=CasterRow == 0 && AreCasterAndSelectedTargetsEnemies ; Sync=True
+	MoveToPosition: Char=Caster ; RelativePosition=(0, 0, 400) ; Anim=MP_STEP_FORWARD
+	WaitMove: Char=Caster
+EndThread
+StartThread: Condition=IsSingleSelectedTarget
+	Turn: Char=Caster ; BaseAngle=AllTargets ; Time=5
+EndThread
+Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
+SetupReflect: Delay=SFXLoaded
+StartThread: TargetLoop=True ; Chain=True ; Sync=True
+	LoadSFX: SFX=Hypnotize ; Reflect=True ; UseCamera=False
+	WaitSFXLoaded: SFX=Hypnotize ; Reflect=True
+	PlaySFX: SFX=Hypnotize ; Reflect=True ; MeshColors=(0.441, 0.449, 0.11)
+	Wait: Time=4
+EndThread
+ActivateReflect
+WaitReflect
+StartThread: Condition=CasterRow == 0 && AreCasterAndSelectedTargetsEnemies ; Sync=True
+	MoveToPosition: Char=Caster ; RelativePosition=(0, 0, -400) ; Anim=MP_STEP_BACK
+	WaitMove: Char=Caster
+EndThread
+PlayAnimation: Char=Caster ; Anim=Idle
+Turn: Char=Caster ; BaseAngle=Default ; Time=5
+WaitTurn: Char=Caster

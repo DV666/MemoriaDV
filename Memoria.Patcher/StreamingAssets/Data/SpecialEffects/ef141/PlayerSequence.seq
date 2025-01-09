@@ -11,12 +11,12 @@ EndThread
 Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
 SetupReflect: Delay=SFXLoaded
 StartThread: Condition=CasterHasSA(1027) && ItemUseId == 237 && TargetIsPlayer ; Sync
-		LoadSFX: SFX=Cura__Multi ; Reflect=True ; Target = AllPlayers
-		PlayAnimation: Char=Caster ; Anim=MP_ITEM1
-		WaitAnimation: Char=Caster
-		WaitSFXLoaded: SFX=Cura__Multi ; Reflect=True
-		PlaySFX: SFX=Cura__Multi ; Reflect=True
-		WaitSFXDone: SFX=Cura__Multi ; Reflect=True
+	LoadSFX: SFX=Cura__Multi ; Reflect=True ; Target = AllPlayers
+	PlayAnimation: Char=Caster ; Anim=MP_ITEM1
+	WaitAnimation: Char=Caster
+	WaitSFXLoaded: SFX=Cura__Multi ; Reflect=True
+	PlaySFX: SFX=Cura__Multi ; Reflect=True
+	WaitSFXDone: SFX=Cura__Multi ; Reflect=True
 ElseThread: Condition=CasterHasSA(1027) && ItemUseId == 237 && !TargetIsPlayer ; Sync
 	LoadSFX: SFX=Cura__Multi ; Reflect=True ; Target = AllEnemies
 	PlayAnimation: Char=Caster ; Anim=MP_ITEM1

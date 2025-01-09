@@ -1,0 +1,79 @@
+// Player sequence of SFX Summon_Ozma
+
+WaitAnimation: Char=Caster
+SetVariable: Variable=cmd_status ; Value=&65533 ; Reflect=True
+StartThread: Condition=CasterRow == 0 && AreCasterAndSelectedTargetsEnemies ; Sync=True
+	MoveToPosition: Char=Caster ; RelativePosition=(0, 0, 400) ; Anim=MP_STEP_FORWARD
+	WaitMove: Char=Caster
+EndThread
+StartThread: Condition=IsSingleSelectedTarget
+	Turn: Char=Caster ; BaseAngle=AllTargets ; Time=5
+EndThread
+Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
+SetupReflect: Delay=SFXLoaded
+PlayAnimation: Char=Caster ; Anim=MP_IDLE_TO_CHANT
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=MP_CHANT ; Loop=True
+Channel: Type=Summon
+ShowMesh: Enable=False ; Time=16 ; Char=AllNonTargets
+WaitAnimation: Char=Caster
+StopChannel
+PlayAnimation: Char=Caster ; Anim=MP_MAGIC
+WaitAnimation: Char=Caster
+ShowMesh: Char=AllNonTargets ; Enable=False ; IsDisappear=True
+Wait: Time=2
+EffectPoint: Char=Caster ; Type=Both
+Wait: Time=2
+ShowMesh: Char=Caster ; Enable=True ; IsDisappear=True
+ShowMesh: Char=Caster ; Enable=True ; Time=12
+Wait: Time=2
+LoadSFX: SFX=Meteor__Success ; Reflect=True
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_186_040
+WaitAnimation: Char=Caster
+Message: Priority=1 ; Title=True ; Reflect=True ; TextUS=[STRT=40,1]Meteor ; TextUK=[STRT=40,1]Meteor ; TextJP=[STRT=40,1]Meteor ; TextES=[STRT=40,1]Meteor ; TextFR=[STRT=47,1]Météore ; TextGR=[STRT=40,1]Meteor ; TextIT=[STRT=40,1]Meteor
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_186_041
+WaitSFXLoaded: SFX=Meteor__Success ; Reflect=True
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_186_042
+Wait: Time=18
+PlaySFX: SFX=Meteor__Success ; Reflect=True ; SkipSequence
+SetBackgroundIntensity: Intensity=0 ; Time=4 ; HoldDuration=50
+PlaySound: Sound=216
+PlaySound: Sound=230
+PlaySound: Sound=235
+ShowMesh: Char=AllTargets ; Enable=False ; IsDisappear=True
+Wait: Time=49
+ShowMesh: Char=AllTargets ; Enable=True ; IsDisappear=True
+PlaySound: Sound=438
+PlaySound: Sound=431
+PlaySound: Sound=477
+Wait: Time=1
+SetBackgroundIntensity: Intensity=1 ; Time=0
+Wait: Time=10
+SetBackgroundIntensity: Intensity=0 ; Time=3 ; HoldDuration=39
+Wait: Time=31
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=8
+SetBackgroundIntensity: Intensity=1 ; Time=16
+Wait: Time=11
+EffectPoint: Char=AllTargets ; Type=Figure
+Wait: Time=8
+WaitSFXDone
+ShowMesh: Enable=False ; Time=16 ; Char=Caster
+Wait: Time=16
+ShowMesh: Char=Caster ; Enable=False ; IsDisappear=True
+Wait: Time=16
+EffectPoint: Char=Caster ; Type=Both
+Wait: Time=16
+ShowMesh: Char=AllNonTargets ; Enable=True ; IsDisappear=True
+ShowMesh: Char=AllNonTargets ; Enable=True ; Time=12	
+ActivateReflect
+WaitReflect
+StartThread: Condition=CasterRow == 0 && AreCasterAndSelectedTargetsEnemies ; Sync=True
+	MoveToPosition: Char=Caster ; RelativePosition=(0, 0, -400) ; Anim=MP_STEP_BACK
+	WaitMove: Char=Caster
+EndThread
+PlayAnimation: Char=Caster ; Anim=Idle
+Turn: Char=Caster ; BaseAngle=Default ; Time=5
+WaitTurn: Char=Caster
+SetVariable: Variable=cmd_status ; Value=|2 ; Reflect=True
