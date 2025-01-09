@@ -8,13 +8,13 @@ namespace Memoria.Scripts.Battle
     /// ???
     /// </summary>
     [BattleScript(Id)]
-    public sealed class PreciseEnemyPhysicalAttackAndChangeRowScript : IBattleScript
+    public sealed class EnemyPhysicalAttackAndChangeRowScript : IBattleScript
     {
-        public const Int32 Id = 0107;
+        public const Int32 Id = 0207;
 
         private readonly BattleCalculator _v;
 
-        public PreciseEnemyPhysicalAttackAndChangeRowScript(BattleCalculator v)
+        public EnemyPhysicalAttackAndChangeRowScript(BattleCalculator v)
         {
             _v = v;
         }
@@ -27,7 +27,7 @@ namespace Memoria.Scripts.Battle
             TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
             TranceSeekCustomAPI.BonusBackstabAndPenaltyLongDistance(_v);
             TranceSeekCustomAPI.BonusElement(_v);
-            if (_v.CanAttackElementalCommand())
+            if (_v.CanAttackElementalCommand() && TranceSeekCustomAPI.TryPhysicalHit(_v))
             {
                 _v.CalcHpDamage();
                 TranceSeekCustomAPI.InfusedWeaponStatus(_v);

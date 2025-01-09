@@ -64,12 +64,7 @@ namespace Memoria.Scripts.Battle
                     case BattleAbilityId.MegaFlare:
                     {
                         _v.Context.AttackPower += _v.Caster.Level;
-                        if ((ff9item.FF9Item_GetCount(RegularItem.Garnet)) > Comn.random16() % 100)
-                        {
-                            _v.Target.RemoveStatus(BattleStatus.Protect);
-                            _v.Target.RemoveStatus(BattleStatus.Shell);
-                            _v.Target.RemoveStatus(BattleStatus.Reflect);
-                        }
+                        _v.Context.HitRate += ((ff9item.FF9Item_GetCount(RegularItem.Garnet) + 1)) / 2;
                         break;
                     }
                     case BattleAbilityId.Ark:
@@ -112,13 +107,27 @@ namespace Memoria.Scripts.Battle
 
                 // TODO - Create a new function for that ? Make it for MagicScript like for example ?                
                 _v.Target.PenaltyShellHitRate();
+                if (_v.Command.IsShortSummon)
+                    _v.Context.HitRate = _v.Context.HitRate * 2 / 3;
+
                 foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(_v.Caster))
                     saFeature.TriggerOnAbility(_v, "HitRateSetup", false);
                 foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(_v.Target))
                     saFeature.TriggerOnAbility(_v, "HitRateSetup", true);
 
                 if (_v.Context.HitRate > Comn.random16() % 100 && _v.Context.Evade <= Comn.random16() % 100)
-                    _v.Target.TryAlterStatuses(_v.Command.AbilityStatus, true, _v.Caster);
+                {
+                    if (_v.Command.AbilityId == BattleAbilityId.Bahamut || _v.Command.AbilityId == BattleAbilityId.MegaFlare)
+                    {
+                        _v.Target.RemoveStatus(BattleStatus.Protect);
+                        _v.Target.RemoveStatus(BattleStatus.Shell);
+                        _v.Target.RemoveStatus(BattleStatus.Reflect);
+                    }
+                    else
+                    {
+                        _v.Target.TryAlterStatuses(_v.Command.AbilityStatus, false, _v.Caster);
+                    }
+                }
             }
         }
     }

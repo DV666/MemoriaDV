@@ -1,4 +1,5 @@
 ﻿using System;
+using FF9;
 using Memoria.Data;
 
 namespace Memoria.Scripts.Battle
@@ -20,7 +21,14 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            if (_v.Caster.Data.dms_geo_id == 146)
+            if (_v.Command.Power == 77 && _v.Command.HitRate == 77) // Giant Drink (Mad Alchemist)
+            {
+                _v.Target.RemoveStatus(BattleStatus.Mini);
+                _v.Target.Data.geo_scale_default = 16384;
+                geo.geoScaleReset(_v.Target.Data, true);
+                geo.geoScaleSet(_v.Target.Data, _v.Target.Data.geo_scale_default, true, true);
+            }
+            else if (_v.Caster.Data.dms_geo_id == 146)
             {
                 if (_v.Command.Power == 10)
                 {

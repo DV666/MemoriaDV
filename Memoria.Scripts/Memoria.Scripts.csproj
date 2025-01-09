@@ -366,6 +366,9 @@
     <Compile Include="Sources\Battle\0107_PreciseEnemyPhysicalAttackAndChangeRowScript.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
+    <Compile Include="Sources\Battle\0207_EnemyPhysicalAttackAndChangeRowScript.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
     <Compile Include="Sources\Battle\0108_IaiStrikeScript.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
@@ -416,6 +419,7 @@
     <Compile Include="Sources\Battle\DragonStatusScript.cs" />
     <Compile Include="Sources\Battle\FreezeStatusScript.cs" />
     <Compile Include="Sources\Battle\GradualPetrifyStatusScript.cs" />
+    <Compile Include="Sources\Battle\MiniStatusScript.cs" />
     <Compile Include="Sources\Battle\SpecialStatusScript.cs" />
     <Compile Include="Sources\Battle\HeatStatusScript.cs" />
     <Compile Include="Sources\Battle\JumpStatusScript.cs" />
