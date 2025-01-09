@@ -1,5 +1,6 @@
 using Memoria.Data;
 using System;
+using static Memoria.Scripts.Battle.TranceSeekCustomAPI;
 
 namespace Memoria.Scripts.Battle
 {
@@ -25,17 +26,15 @@ namespace Memoria.Scripts.Battle
 
             if (_v.Target.IsZombie)
             {
-                if (_v.Target.Data.dms_geo_id == 416)
-                {
-                    TranceSeekCustomAPI.MonsterMechanic[_v.Target.Data][1] = 9999;
-                    _v.Target.CurrentHp = 1;
-                    return;
-                }
                 if (_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill))
                 {
+                    _v.Target.RemoveStatus(BattleStatusConst.AnyNegative);                 
                     _v.Target.Flags |= (CalcFlag.HpAlteration | CalcFlag.MpAlteration);
                     _v.Target.HpDamage = 9999;
                     _v.Target.MpDamage = 999;
+                    if (_v.Target.Data.dms_geo_id == 416)
+                        MonsterMechanic[_v.Target.Data][1] = 9999;
+
                     return;
                 }
                 _v.Target.CurrentMp = 0;

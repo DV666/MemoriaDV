@@ -1,6 +1,7 @@
 using FF9;
 using System;
 using Memoria.Data;
+using static Memoria.Scripts.Battle.TranceSeekCustomAPI;
 
 namespace Memoria.Scripts.Battle
 {
@@ -29,7 +30,7 @@ namespace Memoria.Scripts.Battle
             _v.Target.Flags |= CalcFlag.HpAlteration;
             if (_v.Command.Power == 99 & _v.Command.HitRate == 99) // Explosion to make a game over.
             {
-                _v.Target.RemoveStatus(BattleStatus.AutoLife);
+                _v.Target.RemoveStatus(BattleStatus.AutoLife | CustomStatus.MechanicalArmor);
                 _v.Target.HpDamage = 9999;
             }
             else

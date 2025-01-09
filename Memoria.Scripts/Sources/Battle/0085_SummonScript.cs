@@ -27,6 +27,7 @@ namespace Memoria.Scripts.Battle
             TranceSeekCustomAPI.CasterPenaltyMini(_v);
             TranceSeekCustomAPI.PenaltyShellAttack(_v);
             TranceSeekCustomAPI.BonusElement(_v);
+            TranceSeekCustomAPI.MagicAccuracy(_v);
             if (TranceSeekCustomAPI.CanAttackMagic(_v))
             {
                 switch (_v.Command.AbilityId)
@@ -35,28 +36,28 @@ namespace Memoria.Scripts.Battle
                     case BattleAbilityId.DiamondDust:
                     {
                         _v.Context.AttackPower += _v.Caster.Level;
-                        _v.Context.HitRate = ((ff9item.FF9Item_GetCount(RegularItem.Opal) + 1) * 3) / 4;
+                        _v.Context.HitRate += ((ff9item.FF9Item_GetCount(RegularItem.Opal) + 1)) / 2;
                         break;
                     }
                     case BattleAbilityId.Ifrit:
                     case BattleAbilityId.FlamesofHell:
                     {
                         _v.Context.AttackPower += _v.Caster.Level;
-                        _v.Context.HitRate = ((ff9item.FF9Item_GetCount(RegularItem.Topaz) + 1) * 3) / 4;
+                        _v.Context.HitRate += ((ff9item.FF9Item_GetCount(RegularItem.Topaz) + 1)) / 2;
                         break;
                     }
                     case BattleAbilityId.Ramuh:
                     case BattleAbilityId.JudgementBolt:
                     {
                         _v.Context.AttackPower += _v.Caster.Level;
-                        _v.Context.HitRate = ((ff9item.FF9Item_GetCount(RegularItem.Peridot) + 1) * 3) / 4;
+                        _v.Context.HitRate += ((ff9item.FF9Item_GetCount(RegularItem.Peridot) + 1)) / 2;
                         break;
                     }
                     case BattleAbilityId.Leviathan:
                     case BattleAbilityId.Tsunami:
                     {
                         _v.Context.AttackPower += _v.Caster.Level;
-                        _v.Context.HitRate = ((ff9item.FF9Item_GetCount(RegularItem.Aquamarine) + 1) * 3) / 4;
+                        _v.Context.HitRate += ((ff9item.FF9Item_GetCount(RegularItem.Aquamarine) + 1)) / 2;
                         break;
                     }
                     case BattleAbilityId.Bahamut:
@@ -75,7 +76,7 @@ namespace Memoria.Scripts.Battle
                     case BattleAbilityId.EternalDarkness:
                     {
                         _v.Context.AttackPower += _v.Caster.Level;
-                        _v.Context.HitRate = ((ff9item.FF9Item_GetCount(RegularItem.LapisLazuli) + 1) * 3) / 4;
+                        _v.Context.HitRate = ((ff9item.FF9Item_GetCount(RegularItem.LapisLazuli) + 1)) / 2;
                         break;
                     }
                     case BattleAbilityId.Carbuncle1:
@@ -100,7 +101,7 @@ namespace Memoria.Scripts.Battle
                     case BattleAbilityId.Fenrir2:
                     {
                         _v.Context.AttackPower += _v.Caster.Level;
-                        _v.Context.HitRate = ((ff9item.FF9Item_GetCount(RegularItem.Sapphire) + 1) * 3) / 4;
+                        _v.Context.HitRate += ((ff9item.FF9Item_GetCount(RegularItem.Sapphire) + 1)) / 2;
                         break;
                     }
                     case BattleAbilityId.Madeen:
@@ -109,21 +110,15 @@ namespace Memoria.Scripts.Battle
                 }
                 _v.CalcHpDamage();
 
-                // TODO - Create a new function for that ? Make it for MagicScript like for example ?
-                TranceSeekCustomAPI.MagicAccuracy(_v);
+                // TODO - Create a new function for that ? Make it for MagicScript like for example ?                
                 _v.Target.PenaltyShellHitRate();
                 foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(_v.Caster))
                     saFeature.TriggerOnAbility(_v, "HitRateSetup", false);
                 foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(_v.Target))
                     saFeature.TriggerOnAbility(_v, "HitRateSetup", true);
 
-                if (_v.Context.HitRate <= Comn.random16() % 100)
-                    return;
-
-                if (_v.Context.Evade > Comn.random16() % 100)
-                    return;
-
-                _v.Target.TryAlterStatuses(_v.Command.AbilityStatus, true, _v.Caster);
+                if (_v.Context.HitRate > Comn.random16() % 100 && _v.Context.Evade <= Comn.random16() % 100)
+                    _v.Target.TryAlterStatuses(_v.Command.AbilityStatus, true, _v.Caster);
             }
         }
     }
