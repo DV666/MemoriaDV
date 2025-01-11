@@ -190,6 +190,27 @@ namespace Memoria.Scripts.Battle
                 );                
             }
 
+            if (v.Command.IsManyTarget && v.Command.AbilityId >= (BattleAbilityId)1500 && v.Command.AbilityId <= (BattleAbilityId)1526) 
+            {
+                if (v.Caster.HasSupportAbilityByIndex((SupportAbility)1126))
+                    v.Command.HitRate = (v.Command.HitRate * 3) / 4;
+                else
+                    v.Command.HitRate /= 2;
+
+                if (v.Caster.HasSupportAbilityByIndex((SupportAbility)1126))
+                    btl_stat.AlterStatus(v.Caster, CustomStatusId.Special, parameters: "Propagation2"); // SA Propagation+
+                else
+                    btl_stat.AlterStatus(v.Caster, CustomStatusId.Special, parameters: "Propagation1"); // SA Propagation
+
+                v.Caster.AddDelayedModifier(
+                    caster => caster.CurrentAtb >= caster.MaximumAtb,
+                    caster =>
+                    {
+                        btl_stat.AlterStatus(caster, CustomStatusId.Special, parameters: "Propagation--");
+                    }
+                );
+            }
+
             TranceSeekCustomAPI.SOS_SA(v);
             return false;
         }

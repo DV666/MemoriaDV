@@ -14,6 +14,7 @@ namespace Memoria.DefaultScripts
         public Int32 SoakedBlade;
         public Int32 CursedBlood;
         public Int32 LifeorDeath;
+        public Int32 Propagation;
 
         public override UInt32 Apply(BattleUnit target, BattleUnit inflicter, params Object[] parameters)
         {
@@ -60,6 +61,18 @@ namespace Memoria.DefaultScripts
                 else if (Parameter == "LifeorDeath--")
                 {
                     LifeorDeath = 0;
+                }
+                else if (Parameter == "Propagation2")
+                {
+                    Propagation = 2;
+                }
+                else if (Parameter == "Propagation1")
+                {
+                    Propagation = 1;
+                }
+                else if (Parameter == "Propagation--")
+                {
+                    Propagation = 0;
                 }
             }
             return btl_stat.ALTER_SUCCESS;

@@ -30,7 +30,7 @@ namespace Memoria.Scripts.Battle
             {
                 FF9StateSystem.Common.FF9.GetPlayer(CharacterId.Eiko).equip.Accessory = RegularItem.NoItem;
             }
-            if (_v.Caster.PlayerIndex == CharacterId.Quina && _v.Command.AbilityId == BattleAbilityId.AutoLife)
+            if (_v.Caster.PlayerIndex == CharacterId.Quina && (_v.Command.AbilityId == BattleAbilityId.AutoLife || _v.Command.AbilityId == (BattleAbilityId)1526))
             {
                 if (_v.Target.CurrentHp == _v.Target.MaximumHp)
                 {
@@ -59,6 +59,14 @@ namespace Memoria.Scripts.Battle
                     else if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1100)) // Medecin +
                     {
                         _v.Target.HpDamage += _v.Caster.HpDamage / 2;
+                    }
+
+                    if (_v.Command.IsManyTarget)
+                    {
+                        if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1126))
+                            _v.Target.HpDamage = (_v.Target.HpDamage * 3) / 4;
+                        else
+                            _v.Target.HpDamage /= 2;
                     }
                 }
                 return;
@@ -93,6 +101,14 @@ namespace Memoria.Scripts.Battle
                 else if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1100)) // Medecin +
                 {
                     _v.Target.HpDamage += _v.Caster.HpDamage / 2;
+                }
+
+                if (_v.Command.IsManyTarget)
+                {
+                    if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1126))
+                        _v.Target.HpDamage = (_v.Target.HpDamage * 3) / 4;
+                    else
+                        _v.Target.HpDamage /= 2;
                 }
             }
             _v.TryRemoveAbilityStatuses();

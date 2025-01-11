@@ -77,11 +77,19 @@ namespace Memoria.Scripts.Battle
             if (Configuration.TetraMaster.TripleTriad == 16389 && v.Caster.IsPlayer)
                 v.Target.HpDamage = 9999;
 
-            if (v.Target.HasTrance && v.Target.Data.cur.hp > 0 && !btl_stat.CheckStatus(v.Target.Data, BattleStatusConst.CannotTrance))
+            if (v.Target.HasTrance && v.Target.Data.cur.hp > 0 && !btl_stat.CheckStatus(v.Target.Data, BattleStatusConst.CannotTrance)) // Prevent to earn easy Trance.
             {
                 float ratio = (v.Target.HpDamage * 100) / v.Target.MaximumHp; // En %
                 if (ratio <= 15)
                     v.Context.TranceIncrease = 0;
+            }
+
+            if (v.Command.IsManyTarget && v.Command.AbilityId >= (BattleAbilityId)1500 && v.Command.AbilityId <= (BattleAbilityId)1526)
+            {
+                if (v.Caster.HasSupportAbilityByIndex((SupportAbility)1126))
+                    v.Target.HpDamage = (v.Target.HpDamage * 3) / 4;
+                else
+                    v.Target.HpDamage /= 2;
             }
 
             if (v.Caster.IsUnderAnyStatus(CustomStatus.Special) && v.Command.Id == BattleCommandId.Item && (v.Target.Flags & CalcFlag.HpRecovery) != 0) // Secret ingredient
@@ -104,7 +112,7 @@ namespace Memoria.Scripts.Battle
                 btl2d.Btl2dStatReq(v.Target, 0, -HealMP);
             }
 
-            if (v.Command.ItemId != (RegularItem)2487 && v.Command.ItemId != (RegularItem)2488 && v.Command.ItemId != (RegularItem)2489)
+            if (v.Command.ItemId != (RegularItem)2487 && v.Command.ItemId != (RegularItem)2488 && v.Command.ItemId != (RegularItem)2489) // Blank mix
             {
                 if ((v.Caster.Flags & CalcFlag.HpAlteration) != 0)
                     v.Caster.HpDamage = Math.Min(v.Caster.HpDamage, 9999);
@@ -114,6 +122,12 @@ namespace Memoria.Scripts.Battle
                     v.Target.HpDamage = Math.Min(v.Target.HpDamage, 9999);
                 if ((v.Target.Flags & CalcFlag.MpAlteration) != 0)
                     v.Target.MpDamage = Math.Min(v.Target.MpDamage, 9999);
+            }
+
+            if ((v.Target.Flags & CalcFlag.HpRecovery) != 0 && v.Caster.HasSupportAbilityByIndex((SupportAbility)127) && !v.Target.IsZombie && v.Target.HpDamage > (v.Target.MaximumHp - v.Target.CurrentHp)) // SA Invigorating
+            {
+                v.Target.MaximumHp += Math.Min((v.Target.MaximumHp * 25) / 100, (uint)(v.Target.HpDamage - (v.Target.MaximumHp - v.Target.CurrentHp)));
+                v.Target.CurrentHp = v.Target.MaximumHp;
             }
         }
     }

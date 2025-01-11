@@ -14,7 +14,7 @@ namespace Memoria.DefaultScripts
             base.Apply(target, inflicter, parameters);
             if (TranceSeekCustomAPI.MonsterMechanic[target.Data][4] > 0)
             {                                     
-                Target.Data.stat.duration_factor[BattleStatusId.CustomStatus17] = (Target.Data.stat.duration_factor[BattleStatusId.CustomStatus17] * TranceSeekCustomAPI.MonsterMechanic[target.Data][4]) / 100f;
+                Target.Data.stat.duration_factor[BattleStatusId.CustomStatus17] = (Target.Data.stat.duration_factor[BattleStatusId.CustomStatus17] * (TranceSeekCustomAPI.MonsterMechanic[target.Data][4]) / 100);
                 TranceSeekCustomAPI.MonsterMechanic[target.Data][4] -= 20;
             }
             else

@@ -5,6 +5,7 @@ using FF9;
 using Memoria.Data;
 using Memoria.Prime;
 using UnityEngine;
+using static SFX;
 
 namespace Memoria.Scripts.Battle
 {
@@ -909,54 +910,20 @@ namespace Memoria.Scripts.Battle
         }
         public static void SOS_SA(this BattleCalculator v)
         {
-            if (v.Target.HasSupportAbilityByIndex((SupportAbility)103)) // SOS Carapace
+            if (v.Target.HasSupportAbilityByIndex((SupportAbility)1103)) // SOS Carapace+
             {
                 v.Target.AddDelayedModifier(
-                    target => !target.IsUnderAnyStatus(BattleStatus.LowHP),
+                    target => target.CurrentHp > (target.MaximumHp / 2),
                     target =>
                     {
                         target.AlterStatus(BattleStatus.Protect, target);
                     }
                 );
             }
-
-            if (v.Target.HasSupportAbilityByIndex((SupportAbility)104)) // SOS Blindage
+            else if (v.Target.HasSupportAbilityByIndex((SupportAbility)103)) // SOS Carapace
             {
                 v.Target.AddDelayedModifier(
                     target => !target.IsUnderAnyStatus(BattleStatus.LowHP),
-                    target =>
-                    {
-                        target.AlterStatus(BattleStatus.Shell, target);
-                    }
-                );
-            }
-
-            if (v.Target.HasSupportAbilityByIndex((SupportAbility)105)) // SOS Regen
-            {
-                v.Target.AddDelayedModifier(
-                    target => !target.IsUnderAnyStatus(BattleStatus.LowHP),
-                    target =>
-                    {
-                        target.AlterStatus(BattleStatus.Regen, target);
-                    }
-                );
-            }
-
-            if (v.Target.HasSupportAbilityByIndex((SupportAbility)106)) // SOS Booster
-            {
-                v.Target.AddDelayedModifier(
-                    target => !target.IsUnderAnyStatus(BattleStatus.LowHP),
-                    target =>
-                    {
-                        target.AlterStatus(BattleStatus.Haste, target);
-                    }
-                );
-            }
-
-            if (v.Target.HasSupportAbilityByIndex((SupportAbility)1103)) // SOS Carapace+
-            {
-                v.Target.AddDelayedModifier(
-                    target => target.CurrentHp > (target.MaximumHp / 2),
                     target =>
                     {
                         target.AlterStatus(BattleStatus.Protect, target);
@@ -974,6 +941,16 @@ namespace Memoria.Scripts.Battle
                     }
                 );
             }
+            else if (v.Target.HasSupportAbilityByIndex((SupportAbility)104)) // SOS Blindage
+            {
+                v.Target.AddDelayedModifier(
+                    target => !target.IsUnderAnyStatus(BattleStatus.LowHP),
+                    target =>
+                    {
+                        target.AlterStatus(BattleStatus.Shell, target);
+                    }
+                );
+            }
 
             if (v.Target.HasSupportAbilityByIndex((SupportAbility)1105)) // SOS Regen+
             {
@@ -985,11 +962,31 @@ namespace Memoria.Scripts.Battle
                     }
                 );
             }
+            else if (v.Target.HasSupportAbilityByIndex((SupportAbility)105)) // SOS Regen
+            {
+                v.Target.AddDelayedModifier(
+                    target => !target.IsUnderAnyStatus(BattleStatus.LowHP),
+                    target =>
+                    {
+                        target.AlterStatus(BattleStatus.Regen, target);
+                    }
+                );
+            }
 
             if (v.Target.HasSupportAbilityByIndex((SupportAbility)1106)) // SOS Booster+
             {
                 v.Target.AddDelayedModifier(
                     target => target.CurrentHp > (target.MaximumHp / 2),
+                    target =>
+                    {
+                        target.AlterStatus(BattleStatus.Haste, target);
+                    }
+                );
+            }
+            else if (v.Target.HasSupportAbilityByIndex((SupportAbility)106)) // SOS Booster
+            {
+                v.Target.AddDelayedModifier(
+                    target => !target.IsUnderAnyStatus(BattleStatus.LowHP),
                     target =>
                     {
                         target.AlterStatus(BattleStatus.Haste, target);
@@ -1210,6 +1207,39 @@ namespace Memoria.Scripts.Battle
             if (v.Caster.Weapon == (RegularItem)1100 && (v.Target.Flags & CalcFlag.HpRecovery) == 0)
             {
                 v.Target.HpDamage = 1;
+            }
+
+            if (v.Target.HasSupportAbilityByIndex((SupportAbility)123) && (v.Command.AbilityCategory & 8) != 0 && v.Command.TargetCount == 1) // Assistance
+            {
+                int HPAssistanceDamage = 0;
+                int MPAssistanceDamage = 0;
+
+                if ((v.Target.Flags & CalcFlag.HpAlteration) != 0)
+                {
+                    v.Target.HpDamage = Math.Max((v.Target.HpDamage * (v.Target.HasSupportAbilityByIndex((SupportAbility)1123) ? 70 : 85)) / 100, 1);
+                    HPAssistanceDamage = Math.Max((v.Target.HpDamage * (v.Target.HasSupportAbilityByIndex((SupportAbility)1123) ? 30 : 15)) / 100, 1);
+                }
+                if ((v.Target.Flags & CalcFlag.MpAlteration) != 0)
+                {
+                    v.Target.MpDamage = Math.Max((v.Target.MpDamage * (v.Target.HasSupportAbilityByIndex((SupportAbility)1123) ? 70 : 85)) / 100, 1);
+                    MPAssistanceDamage = Math.Max((v.Target.MpDamage * (v.Target.HasSupportAbilityByIndex((SupportAbility)1123) ? 30 : 15)) / 100, 1);
+                }
+
+                foreach (BattleUnit unit in BattleState.EnumerateUnits())
+                {
+                    if (!unit.IsPlayer || !unit.IsTargetable || unit.Data == v.Target.Data || unit.IsUnderAnyStatus(BattleStatus.Death | BattleStatus.Petrify))
+                        continue;
+
+                    if (HPAssistanceDamage > 0)
+                    {
+                        unit.CurrentHp = Math.Max(unit.CurrentHp - (uint)HPAssistanceDamage, 0);
+                    }
+                    if (MPAssistanceDamage > 0)
+                    {
+                        unit.CurrentMp = Math.Max(unit.CurrentMp - (uint)MPAssistanceDamage, 0);
+                    }
+                    btl2d.Btl2dStatReq(unit.Data, HPAssistanceDamage, MPAssistanceDamage);
+                }
             }
 
             if (v.Target.IsUnderAnyStatus(BattleStatus.AutoLife) && (v.Target.Flags & CalcFlag.HpRecovery) == 0 && !v.Target.IsPlayer && v.Target.HpDamage >= v.Target.CurrentHp)

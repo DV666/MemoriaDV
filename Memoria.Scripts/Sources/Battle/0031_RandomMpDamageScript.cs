@@ -21,7 +21,7 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            if (_v.Command.AbilityId == BattleAbilityId.MagicHammer || _v.Command.HitRate == 20)
+            if (_v.Command.AbilityId == BattleAbilityId.MagicHammer || _v.Command.AbilityId == (BattleAbilityId)1525 || _v.Command.HitRate == 20)
             {
                 if (_v.Target.IsZombie)
                 {
@@ -35,14 +35,22 @@ namespace Memoria.Scripts.Battle
                 }
                 if (_v.Target.CurrentMp > 0U)
                 {
-                    short num = (short)(_v.Caster.Magic + Comn.random16() % (1 + (_v.Caster.Level + _v.Caster.Magic) / 3));
+                    int num = (_v.Caster.Magic + Comn.random16() % (1 + (_v.Caster.Level + _v.Caster.Magic) / 3));
                     if (num > _v.Target.CurrentMp)
                     {
-                        num = (short)_v.Target.CurrentMp;
+                        num = (int)_v.Target.CurrentMp;
                     }
 
                     if (_v.Target.IsUnderStatus(BattleStatus.Shell))
                         num /= 2;
+
+                    if (_v.Command.IsManyTarget)
+                    {
+                        if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1126))
+                            num = (num * 3) / 4;
+                        else
+                            num /= 2;
+                    }
 
                     _v.Target.MpDamage = num;
                     _v.Caster.MpDamage = num;
