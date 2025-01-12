@@ -71,8 +71,6 @@ namespace Memoria.Scripts.Battle
                             }
                             else
                             {
-                                Log.Message("_v.Target.Trance = " + _v.Target.Trance);
-                                Log.Message("num = " + num);
                                 _v.Target.Trance -= (byte)num;
                                 _v.Target.MpDamage = (int)num2;
                             }
