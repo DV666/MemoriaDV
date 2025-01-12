@@ -890,23 +890,7 @@ namespace Memoria.Scripts.Battle
 
         public static void TryAlterCommandStatuses(this BattleCalculator v)
         {
-            byte CasterWill = v.Caster.Will;
-            byte CasterNewWill = v.Caster.Will;
-            if (v.Target.HasSupportAbilityByIndex((SupportAbility)1000))  // Bénédiction+
-            {
-                CasterNewWill += CasterNewWill;
-            }
-            else if (v.Target.HasSupportAbilityByIndex(SupportAbility.AutoReflect)) // Bénédiction
-            {
-                CasterNewWill += (byte)(CasterNewWill / 2);
-            }
-            if (v.Caster.PlayerIndex == CharacterId.Garnet && (v.Caster.Accessory == RegularItem.Ruby || v.Caster.IsUnderAnyStatus(BattleStatus.Trance)))  // Bonus Ruby Dagga
-            {
-                CasterNewWill += (byte)(CasterNewWill * ff9item.FF9Item_GetCount(RegularItem.Ruby) / 200);
-            }
-            v.Caster.Will = (byte)(CasterNewWill < 100 ? CasterNewWill : 99);
             v.Target.TryAlterStatuses(v.Command.AbilityStatus, true, v.Caster);
-            v.Caster.Will = CasterWill;
         }
 
         public static void RaiseTrouble(this BattleCalculator v)
