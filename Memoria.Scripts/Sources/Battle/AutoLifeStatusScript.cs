@@ -16,7 +16,7 @@ namespace Memoria.DefaultScripts
             base.Apply(target, inflicter, parameters);
             HPRestore = Math.Max(HPRestore, parameters.Length > 0 ? (UInt32)parameters[0] : 1);
             target.AddDelayedModifier(UpdateSPS, null);
-            TranceSeekCustomAPI.SA_Strategist(inflicter);
+            TranceSeekCustomAPI.SA_StatusApply(inflicter, true);
             return btl_stat.ALTER_SUCCESS;
         }
 

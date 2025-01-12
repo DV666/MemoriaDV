@@ -16,7 +16,7 @@ namespace Memoria.DefaultScripts
             base.Apply(target, inflicter, parameters);
             btl_mot.HideMesh(target, target.Data.mesh_banish, true);
             target.AddDelayedModifier(KeepVanishHidden, null);
-            TranceSeekCustomAPI.SA_Strategist(inflicter);
+            TranceSeekCustomAPI.SA_StatusApply(inflicter, true);
             return btl_stat.ALTER_SUCCESS;
         }
 

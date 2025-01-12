@@ -17,7 +17,7 @@ namespace Memoria.DefaultScripts
             base.Apply(target, inflicter, parameters);
             target.AddDelayedModifier(HideSHP, null);
             VirusInflicter = inflicter;
-            TranceSeekCustomAPI.SA_Strategist(inflicter);
+            TranceSeekCustomAPI.SA_StatusApply(inflicter, false);
             return btl_stat.ALTER_SUCCESS;
         }
 

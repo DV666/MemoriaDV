@@ -133,7 +133,7 @@ namespace Memoria.Scripts.Battle
                 }
 
             }
-            if (SpecialSAEffect[v.Caster.Data][8] > 0)
+            if (SpecialSAEffect[v.Caster.Data][8] > 0) // AA SpringBoots
             {
                 v.Caster.AddDelayedModifier(
                     caster => caster.CurrentAtb >= caster.MaximumAtb,
@@ -144,6 +144,26 @@ namespace Memoria.Scripts.Battle
                         SpecialSAEffect[v.Caster.Data][8]--;
                     }
                 );
+            }
+
+            if (v.Caster.HasSupportAbilityByIndex((SupportAbility)203) && v.Caster.PlayerIndex == CharacterId.Zidane && ZidanePassive[v.Caster.Data][4] == 0
+                && v.Command.Id != BattleCommandId.Counter && v.Command.Id != BattleCommandId.RushAttack) // SA Flexible
+            {
+                ZidanePassive[v.Caster.Data][9]++;
+                btl_stat.AlterStatus(v.Caster, CustomStatusId.Special, parameters: "Flexible0");
+                if (ZidanePassive[v.Caster.Data][9] >= 4)
+                {
+                    ZidanePassive[v.Caster.Data][9] = 0;
+                    if (btl_util.getSerialNumber(v.Caster.Data) == CharacterSerialNumber.ZIDANE_SWORD)
+                        BattleState.EnqueueCounter(v.Caster, BattleCommandId.RushAttack, (BattleAbilityId)1000, v.Caster.Id);
+                    else
+                        BattleState.EnqueueCounter(v.Caster, BattleCommandId.RushAttack, (BattleAbilityId)1001, v.Caster.Id);
+
+                    if (v.Caster.HasSupportAbilityByIndex((SupportAbility)1203))
+                        btl_stat.AlterStatus(v.Caster, CustomStatusId.Special, parameters: "Flexible2"); // SA Flexible+
+                    else
+                        btl_stat.AlterStatus(v.Caster, CustomStatusId.Special, parameters: "Flexible1"); // SA Flexible
+                }
             }
 
             if (v.Command.AbilityStatus > 0 && ProtectStatus.TryGetValue(v.Target.Data, out Dictionary<BattleStatus, Int32> statusprotect))

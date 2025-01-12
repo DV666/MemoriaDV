@@ -84,7 +84,7 @@ namespace Memoria.DefaultScripts
                 if (NumberHUD != null)
                     NumberHUD.Label = "";
             }
-            TranceSeekCustomAPI.SA_Strategist(inflicter);
+            TranceSeekCustomAPI.SA_StatusApply(inflicter, true);
             return btl_stat.ALTER_SUCCESS;
         }
 

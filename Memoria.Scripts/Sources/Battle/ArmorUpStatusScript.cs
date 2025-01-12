@@ -3,6 +3,7 @@ using UnityEngine;
 using Memoria.Data;
 using static Memoria.Scripts.Battle.TranceSeekCustomAPI;
 using Object = System.Object;
+using Memoria.Scripts.Battle;
 
 namespace Memoria.DefaultScripts
 {
@@ -109,6 +110,7 @@ namespace Memoria.DefaultScripts
                 }
             }
             target.PhysicalDefence = (byte)Math.Min(BasicPhysicalDefence + ((BasicPhysicalDefence * Stack) / 10), 255);
+            TranceSeekCustomAPI.SA_StatusApply(inflicter, true);
             return btl_stat.ALTER_SUCCESS;
         }
 

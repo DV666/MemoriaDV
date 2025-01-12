@@ -23,7 +23,7 @@ namespace Memoria.DefaultScripts
                 }
                 );
             }
-            TranceSeekCustomAPI.SA_Strategist(inflicter);
+            TranceSeekCustomAPI.SA_StatusApply(inflicter, false);
             return btl_stat.ALTER_SUCCESS;
         }
 

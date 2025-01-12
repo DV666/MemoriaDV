@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Memoria.Data;
 using Memoria.Database;
 using Memoria.DefaultScripts;
+using Memoria.Prime;
 using static Memoria.Scripts.Battle.TranceSeekCustomAPI;
 
 namespace Memoria.Scripts.Battle
@@ -59,7 +60,7 @@ namespace Memoria.Scripts.Battle
                 }
 
                 if (!ZidanePassive.TryGetValue(unit.Data, out Int32[] zidanepassive))
-                    ZidanePassive[unit.Data] = new Int32[] { 0, 0, 0, 0, 0, 255, 255, 0, 0 };
+                    ZidanePassive[unit.Data] = new Int32[] { 0, 0, 0, 0, 0, 255, 255, 0, 0, 0 };
                 if (!ViviPreviousSpell.TryGetValue(unit.Data, out BattleAbilityId e))
                     ViviPreviousSpell[unit.Data] = BattleAbilityId.Void;
                 if (!ViviPassive.TryGetValue(unit.Data, out Int32[] vivipassive))
@@ -242,6 +243,16 @@ namespace Memoria.Scripts.Battle
                     {
                         unit.AlterStatus(BattleStatus.Death, unit);
                         unit.CurrentHp = 0;
+                    }
+                    if (unit.HasSupportAbilityByIndex((SupportAbility)132)) // SA Anastrophe
+                    {
+                        int factor = unit.HasSupportAbilityByIndex((SupportAbility)1132) ? 1 : 2;
+                        uint UnitOldMaximumHP = unit.MaximumHp;
+                        uint UnitOldMaximumMP = unit.MaximumMp;
+                        unit.MaximumHp = (uint)(UnitOldMaximumMP / factor);
+                        unit.MaximumMp = (uint)(UnitOldMaximumHP / factor);
+                        unit.CurrentHp = unit.MaximumHp;
+                        unit.CurrentMp = unit.MaximumMp;
                     }
                 }
             }

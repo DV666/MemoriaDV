@@ -1,7 +1,6 @@
 ﻿using System;
 using FF9;
 using Memoria.Data;
-using Memoria.Prime.PsdFile;
 using UnityEngine;
 
 namespace Memoria.Scripts.Battle
@@ -92,6 +91,8 @@ namespace Memoria.Scripts.Battle
                 btl_mot.setMotion(_v.Caster.Data, BattlePlayerCharacter.PlayerMotionIndex.MP_WIN); //MP_MAGIC
                 _v.Caster.Data.evt.animFrame = 0;
                 geo.geoScaleUpdate(_v.Caster.Data, true);
+                TranceSeekCustomAPI.ZidanePassive[_v.Caster.Data][4] = 0;
+                TranceSeekCustomAPI.ZidanePassive[_v.Caster.Data][9] = 0;
 
                 _v.Caster.AddDelayedModifier(
                     caster => caster.CurrentAtb >= caster.MaximumAtb,

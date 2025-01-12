@@ -109,7 +109,7 @@ namespace Memoria.DefaultScripts
                     Singleton<HUDMessage>.Instance.ReleaseObject(NumberHUD);
                 }
             }
-            TranceSeekCustomAPI.SA_Strategist(inflicter);
+            TranceSeekCustomAPI.SA_StatusApply(inflicter, false);
             return btl_stat.ALTER_SUCCESS;
         }
 

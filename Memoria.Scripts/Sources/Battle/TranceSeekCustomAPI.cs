@@ -14,7 +14,7 @@ namespace Memoria.Scripts.Battle
         public static Dictionary<BTL_DATA, Boolean> InitBTL = new Dictionary<BTL_DATA, Boolean>();
 
         public static Dictionary<BTL_DATA, Int32[]> ZidanePassive = new Dictionary<BTL_DATA, Int32[]>();
-        // [0] => Dodge ; [1] => Critical ; [2] => Eye of the thief ; [3] => Master Thief ; [4] => Dagger Attack ; [5] => FirstItemMug ; [6] => SecondItemMug ; [7] => Mug+ ; [8] => Steal Gil
+        // [0] => Dodge ; [1] => Critical ; [2] => Eye of the thief ; [3] => Master Thief ; [4] => Dagger Attack ; [5] => FirstItemMug ; [6] => SecondItemMug ; [7] => Mug+ ; [8] => Steal Gil ; [9] => Flexible
 
         public static Dictionary<BTL_DATA, Int32[]> ViviPassive = new Dictionary<BTL_DATA, Int32[]>(); // [0] => Focus ; [1] => NumberTargets ; [2] => TriggerOneTime
         public static Dictionary<BTL_DATA, BattleAbilityId> ViviPreviousSpell = new Dictionary<BTL_DATA, BattleAbilityId>();
@@ -291,6 +291,9 @@ namespace Memoria.Scripts.Battle
             if (BeatrixPassive[v.Caster.Data][2] == 2) // Héroïsme de Beatrix
                 v.Context.HitRate += 25;
 
+            if (v.Caster.HasSupportAbilityByIndex((SupportAbility)201) && v.Caster.PlayerIndex == CharacterId.Zidane) // SA Gorilla
+                v.Context.HitRate += ZidanePassive[v.Caster.Data][1];
+
             if (v.Target.PlayerIndex == CharacterId.Zidane)
                 v.Context.Evade += ZidanePassive[v.Target.Data][0];
 
@@ -528,6 +531,9 @@ namespace Memoria.Scripts.Battle
                 v.Context.HitRate = 1;
 
             v.Context.Evade = v.Target.MagicEvade;
+
+            if (v.Caster.HasSupportAbilityByIndex((SupportAbility)1200) && v.Caster.PlayerIndex == CharacterId.Zidane) // SA Knavery+
+                v.Context.Evade += ZidanePassive[v.Caster.Data][0];
         }
 
         public static void PenaltyShellAttack(this BattleCalculator v)
@@ -909,14 +915,24 @@ namespace Memoria.Scripts.Battle
                 v.RaiseTrouble();
         }
 
-        public static void SA_Strategist(BattleUnit inflicter)
+        public static void SA_StatusApply(BattleUnit inflicter, Boolean Positive)
         {
-            if (inflicter.HasSupportAbilityByIndex((SupportAbility)128) && inflicter.CurrentMp < inflicter.MaximumMp)
+            if (inflicter != null)
             {
-                int factor = inflicter.HasSupportAbilityByIndex((SupportAbility)1128) ? 2 : 1;
-                inflicter.CurrentMp = (uint)Math.Min(inflicter.CurrentMp + factor * (inflicter.MaximumMp / 100), inflicter.MaximumMp);
+                if (inflicter.HasSupportAbilityByIndex((SupportAbility)128) && inflicter.CurrentMp < inflicter.MaximumMp) // SA Strategist
+                {
+                    int factor = inflicter.HasSupportAbilityByIndex((SupportAbility)1128) ? 2 : 1;
+                    inflicter.CurrentMp = (uint)Math.Min(inflicter.CurrentMp + factor * (inflicter.MaximumMp / 100), inflicter.MaximumMp);
+                }
+                if (inflicter.HasSupportAbilityByIndex((SupportAbility)131) && !inflicter.InTrance && inflicter.Trance < byte.MaxValue && Positive) // SA Altruistic
+                {
+                    byte bonusTrance = (byte)(inflicter.Will / 10);
+                    if (inflicter.Trance + bonusTrance < Byte.MaxValue)
+                        inflicter.Trance += bonusTrance;
+                    else
+                        inflicter.Trance = Byte.MaxValue;
+                }
             }
-
         }
 
         public static void SOS_SA(this BattleCalculator v)
@@ -1171,7 +1187,11 @@ namespace Memoria.Scripts.Battle
             }
             if (v.Target.HasSupportAbilityByIndex((SupportAbility)118) && v.Target.IsCovering) // Flawless
             {
-                HealMP += (int)((v.Target.MaximumMp * (v.Target.HasSupportAbilityByIndex((SupportAbility)1118) ? 4 : 2)) / 100);
+                HealMP += (int)(v.Target.HasSupportAbilityByIndex((SupportAbility)1118) ? (v.Target.MaximumMp / 25) : (v.Target.MaximumMp / 50));
+            }
+            if (v.Caster.HasSupportAbilityByIndex((SupportAbility)202) && (v.Command.AbilityId == BattleAbilityId.Steal || v.Command.AbilityId == BattleAbilityId.Attack && v.Caster.HasSupportAbility(SupportAbility2.Bandit))) // SA Phantom hand
+            {
+                HealMP += (int)(v.Target.HasSupportAbilityByIndex((SupportAbility)1202) ? (v.Target.MaximumMp / 25) : (v.Target.MaximumMp / 50));
             }
 
             if ((HealHP > 0 || HealMP > 0) && !v.Caster.IsUnderAnyStatus(BattleStatus.Death) && SpecialSAEffect[v.Caster.Data][7] <= 0)
@@ -1252,6 +1272,18 @@ namespace Memoria.Scripts.Battle
                     btl2d.Btl2dStatReq(unit.Data, HPAssistanceDamage, MPAssistanceDamage);
                 }
             }
+
+            if (v.Caster.HasSupportAbilityByIndex((SupportAbility)1131) && !v.Caster.InTrance && v.Caster.Trance < byte.MaxValue && (v.Target.Flags & CalcFlag.HpRecovery) != 0) // SA Altruistic+
+            {
+                byte bonusTrance = (byte)(v.Caster.Will / 10);
+                if (v.Caster.Trance + bonusTrance < Byte.MaxValue)
+                    v.Caster.Trance += bonusTrance;
+                else
+                    v.Caster.Trance = Byte.MaxValue;
+            }
+
+            if (v.Target.HasSupportAbilityByIndex((SupportAbility)1201) && (v.Command.AbilityCategory & 8) != 0 && ZidanePassive[v.Target.Data][1] > Comn.random16() % 100) // SA Gorilla+
+                BattleState.EnqueueCounter(v.Target, BattleCommandId.Counter, BattleAbilityId.Attack, v.Caster.Id);
 
             if (v.Target.IsUnderAnyStatus(BattleStatus.AutoLife) && (v.Target.Flags & CalcFlag.HpRecovery) == 0 && !v.Target.IsPlayer && v.Target.HpDamage >= v.Target.CurrentHp)
             {

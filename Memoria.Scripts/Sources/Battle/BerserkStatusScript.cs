@@ -14,7 +14,7 @@ namespace Memoria.DefaultScripts
             base.Apply(target, inflicter, parameters);
             if (!target.CanUseTheAttackCommand)
                 return btl_stat.ALTER_RESIST;
-            TranceSeekCustomAPI.SA_Strategist(inflicter);
+            TranceSeekCustomAPI.SA_StatusApply(inflicter, false);
             return btl_stat.ALTER_SUCCESS;
         }
 

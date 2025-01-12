@@ -49,7 +49,7 @@ namespace Memoria.DefaultScripts
             target.PhysicalEvade = (byte)Math.Max(1, BasicPhysicalEvade - (BasicPhysicalEvade * 9) / 10);
             target.MagicDefence = (byte)Math.Max(1, BasicMagicDefence - (BasicMagicDefence * 9) / 10);
             target.MagicEvade = (byte)Math.Max(1, BasicMagicEvade - (BasicMagicEvade * 9) / 10);
-            TranceSeekCustomAPI.SA_Strategist(inflicter);
+            TranceSeekCustomAPI.SA_StatusApply(inflicter, false);
             return btl_stat.ALTER_SUCCESS;            
         }
 

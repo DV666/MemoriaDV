@@ -19,7 +19,7 @@ namespace Memoria.DefaultScripts
             }
             btl_para.SetupATBCoef(target, btl_para.GetATBCoef() * 3 / 2);
             target.UISpriteATB = Target.IsUnderAnyStatus(BattleStatus.Stop) ? BattleHUD.ATEGray : BattleHUD.ATEOrange;
-            TranceSeekCustomAPI.SA_Strategist(inflicter);
+            TranceSeekCustomAPI.SA_StatusApply(inflicter, true);
             return btl_stat.ALTER_SUCCESS;
         }
 

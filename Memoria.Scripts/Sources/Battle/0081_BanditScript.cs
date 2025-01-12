@@ -38,19 +38,19 @@ namespace Memoria.Scripts.Battle
                 else
                     BonusRatioHP = 100 - ((_v.Target.CurrentHp * 100)/ _v.Target.MaximumHp);
 
-                if (GameRandom.Next8() < StealScript.NewStealableItemRates(battleEnemy.StealableItemRates[3], _v.Caster.Weapon) + (BonusRatioHP / 4) && battleEnemy.StealableItems[3] != RegularItem.NoItem)
+                if (GameRandom.Next8() < StealScript.NewStealableItemRates(battleEnemy.StealableItemRates[3], _v.Caster) + (BonusRatioHP / 4) && battleEnemy.StealableItems[3] != RegularItem.NoItem)
                 {
                     _v.StealItem(battleEnemy, 3);
                 }
-                else if (GameRandom.Next8() < StealScript.NewStealableItemRates(battleEnemy.StealableItemRates[2], _v.Caster.Weapon) + (BonusRatioHP / 2) && battleEnemy.StealableItems[2] != RegularItem.NoItem)
+                else if (GameRandom.Next8() < StealScript.NewStealableItemRates(battleEnemy.StealableItemRates[2], _v.Caster) + (BonusRatioHP / 2) && battleEnemy.StealableItems[2] != RegularItem.NoItem)
                 {
                     _v.StealItem(battleEnemy, 2);
                 }
-                else if (GameRandom.Next8() < StealScript.NewStealableItemRates(battleEnemy.StealableItemRates[1], _v.Caster.Weapon) + BonusRatioHP && battleEnemy.StealableItems[1] != RegularItem.NoItem)
+                else if (GameRandom.Next8() < StealScript.NewStealableItemRates(battleEnemy.StealableItemRates[1], _v.Caster) + BonusRatioHP && battleEnemy.StealableItems[1] != RegularItem.NoItem)
                 {
                     _v.StealItem(battleEnemy, 1);
                 }
-                else if (GameRandom.Next8() < StealScript.NewStealableItemRates(battleEnemy.StealableItemRates[0], _v.Caster.Weapon) + BonusRatioHP && battleEnemy.StealableItems[0] != RegularItem.NoItem)
+                else if (GameRandom.Next8() < StealScript.NewStealableItemRates(battleEnemy.StealableItemRates[0], _v.Caster) + BonusRatioHP && battleEnemy.StealableItems[0] != RegularItem.NoItem)
                 {
                     _v.StealItem(battleEnemy, 0);
                 }
@@ -77,19 +77,19 @@ namespace Memoria.Scripts.Battle
                     if (battleEnemy.StealableItems[i] != RegularItem.NoItem)
                         ++_v.Context.DamageModifierCount;
                 }
-                if (GameRandom.Next8() < StealScript.NewStealableItemRates(battleEnemy.StealableItemRates[3], _v.Caster.Weapon) && battleEnemy.StealableItems[3] != RegularItem.NoItem)
+                if (GameRandom.Next8() < StealScript.NewStealableItemRates(battleEnemy.StealableItemRates[3], _v.Caster) && battleEnemy.StealableItems[3] != RegularItem.NoItem)
                 {
                     _v.StealItem(battleEnemy, 3);
                 }
-                else if (GameRandom.Next8() < StealScript.NewStealableItemRates(battleEnemy.StealableItemRates[2], _v.Caster.Weapon) && battleEnemy.StealableItems[2] != RegularItem.NoItem)
+                else if (GameRandom.Next8() < StealScript.NewStealableItemRates(battleEnemy.StealableItemRates[2], _v.Caster) && battleEnemy.StealableItems[2] != RegularItem.NoItem)
                 {
                     _v.StealItem(battleEnemy, 2);
                 }
-                else if (GameRandom.Next8() < StealScript.NewStealableItemRates(battleEnemy.StealableItemRates[1], _v.Caster.Weapon) && battleEnemy.StealableItems[1] != RegularItem.NoItem)
+                else if (GameRandom.Next8() < StealScript.NewStealableItemRates(battleEnemy.StealableItemRates[1], _v.Caster) && battleEnemy.StealableItems[1] != RegularItem.NoItem)
                 {
                     _v.StealItem(battleEnemy, 1);
                 }
-                else if (GameRandom.Next8() < StealScript.NewStealableItemRates(battleEnemy.StealableItemRates[0], _v.Caster.Weapon) && battleEnemy.StealableItems[0] != RegularItem.NoItem)
+                else if (GameRandom.Next8() < StealScript.NewStealableItemRates(battleEnemy.StealableItemRates[0], _v.Caster) && battleEnemy.StealableItems[0] != RegularItem.NoItem)
                 {
                     _v.StealItem(battleEnemy, 0);
                 }

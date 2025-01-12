@@ -15,6 +15,7 @@ namespace Memoria.DefaultScripts
         public Int32 CursedBlood;
         public Int32 LifeorDeath;
         public Int32 Propagation;
+        public Int32 Flexible;
 
         public override UInt32 Apply(BattleUnit target, BattleUnit inflicter, params Object[] parameters)
         {
@@ -73,6 +74,18 @@ namespace Memoria.DefaultScripts
                 else if (Parameter == "Propagation--")
                 {
                     Propagation = 0;
+                }
+                else if (Parameter == "Flexible2")
+                {
+                    Flexible = 2;
+                }
+                else if (Parameter == "Flexible1")
+                {
+                    Flexible = 1;
+                }
+                else if (Parameter == "Flexible0")
+                {
+                    Flexible = 0;
                 }
             }
             return btl_stat.ALTER_SUCCESS;

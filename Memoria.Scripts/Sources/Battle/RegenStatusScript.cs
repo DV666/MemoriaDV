@@ -1,6 +1,5 @@
 ﻿using System;
 using Memoria.Data;
-using FF9;
 using Object = System.Object;
 using Memoria.Scripts.Battle;
 
@@ -15,7 +14,7 @@ namespace Memoria.DefaultScripts
         {
             base.Apply(target, inflicter, parameters);
             RegenInflicter = inflicter;
-            TranceSeekCustomAPI.SA_Strategist(inflicter);
+            TranceSeekCustomAPI.SA_StatusApply(inflicter, true);
             return btl_stat.ALTER_SUCCESS;
         }
 
@@ -33,21 +32,45 @@ namespace Memoria.DefaultScripts
         {
             if (Target.IsUnderAnyStatus(BattleStatus.Petrify))
                 return false;
-            UInt32 heal = Target.MaximumHp >> (Target.IsUnderAnyStatus(BattleStatus.EasyKill) ? 7 : 5);
+
             Boolean isDmg = false;
-            if (Target.IsZombie)
+            if (Target.HasSupportAbilityByIndex((SupportAbility)130)) // SA Harmony
             {
-                isDmg = true;
-                if (Target.CurrentHp > heal)
-                    Target.CurrentHp -= heal;
+                UInt32 healMP = Target.HasSupportAbilityByIndex((SupportAbility)1130) ? (Target.MaximumMp / 50) : (Target.MaximumMp / 100);
+                if (Target.IsZombie)
+                {
+                    isDmg = true;
+                    if (Target.CurrentMp > healMP)
+                        Target.CurrentMp -= healMP;
+                    else
+                        Target.Kill(RegenInflicter);
+                }
                 else
-                    Target.Kill(RegenInflicter);
+                {
+                    Target.CurrentMp = Math.Min(Target.CurrentMp + healMP, Target.MaximumMp);
+                }
+                btl2d.Btl2dStatReq(Target, 0, isDmg ? (Int32)healMP : -(Int32)healMP);
             }
             else
             {
-                Target.CurrentHp = Math.Min(Target.CurrentHp + heal, Target.MaximumHp);
+                UInt32 healHP = Target.MaximumHp >> (Target.IsUnderAnyStatus(BattleStatus.EasyKill) ? 7 : 5);
+                if (Target.HasSupportAbilityByIndex((SupportAbility)129)) // SA Rejuvenate
+                    healHP += Target.HasSupportAbilityByIndex((SupportAbility)1129) ? (healHP / 2) : (healHP / 4);
+
+                if (Target.IsZombie)
+                {
+                    isDmg = true;
+                    if (Target.CurrentHp > healHP)
+                        Target.CurrentHp -= healHP;
+                    else
+                        Target.Kill(RegenInflicter);
+                }
+                else
+                {
+                    Target.CurrentHp = Math.Min(Target.CurrentHp + healHP, Target.MaximumHp);
+                }
+                btl2d.Btl2dStatReq(Target, isDmg ? (Int32)healHP : -(Int32)healHP, 0);
             }
-            btl2d.Btl2dStatReq(Target, isDmg ? (Int32)heal : -(Int32)heal, 0);
             BattleVoice.TriggerOnStatusChange(Target, "Used", BattleStatusId.Regen);
             return false;
         }
