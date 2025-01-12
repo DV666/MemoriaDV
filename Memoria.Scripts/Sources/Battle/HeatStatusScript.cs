@@ -16,6 +16,7 @@ namespace Memoria.DefaultScripts
         {
             base.Apply(target, inflicter, parameters);
             HeatInflicter = inflicter;
+            TranceSeekCustomAPI.SA_Strategist(inflicter);
             return btl_stat.ALTER_SUCCESS;
         }
 

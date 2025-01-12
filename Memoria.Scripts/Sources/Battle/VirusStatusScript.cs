@@ -1,5 +1,6 @@
 ﻿using System;
 using Memoria.Data;
+using Memoria.Scripts.Battle;
 using UnityEngine;
 using static SiliconStudio.Social.ResponseData;
 using Object = System.Object;
@@ -16,6 +17,7 @@ namespace Memoria.DefaultScripts
             base.Apply(target, inflicter, parameters);
             target.AddDelayedModifier(HideSHP, null);
             VirusInflicter = inflicter;
+            TranceSeekCustomAPI.SA_Strategist(inflicter);
             return btl_stat.ALTER_SUCCESS;
         }
 

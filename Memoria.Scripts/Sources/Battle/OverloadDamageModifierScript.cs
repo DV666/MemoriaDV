@@ -126,7 +126,8 @@ namespace Memoria.Scripts.Battle
 
             if ((v.Target.Flags & CalcFlag.HpRecovery) != 0 && v.Caster.HasSupportAbilityByIndex((SupportAbility)127) && !v.Target.IsZombie && v.Target.HpDamage > (v.Target.MaximumHp - v.Target.CurrentHp)) // SA Invigorating
             {
-                v.Target.MaximumHp += Math.Min((v.Target.MaximumHp * 25) / 100, (uint)(v.Target.HpDamage - (v.Target.MaximumHp - v.Target.CurrentHp)));
+                uint factor = (uint)(v.Caster.HasSupportAbilityByIndex((SupportAbility)1127) ? 20 : 10);
+                v.Target.MaximumHp += Math.Min((v.Target.MaximumHp * factor) / 100, (uint)(v.Target.HpDamage - (v.Target.MaximumHp - v.Target.CurrentHp)));
                 v.Target.CurrentHp = v.Target.MaximumHp;
             }
         }

@@ -1,5 +1,6 @@
 ﻿using System;
 using Memoria.Data;
+using Memoria.Scripts.Battle;
 using Object = System.Object;
 
 namespace Memoria.DefaultScripts
@@ -24,7 +25,8 @@ namespace Memoria.DefaultScripts
                     target.RemoveStatus(BattleStatus.Venom);
                 }
                 );
-            }    
+            }
+            TranceSeekCustomAPI.SA_Strategist(inflicter);
             return btl_stat.ALTER_SUCCESS;
         }
 

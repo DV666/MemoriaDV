@@ -2,6 +2,7 @@
 using Memoria.Data;
 using FF9;
 using Object = System.Object;
+using Memoria.Scripts.Battle;
 
 namespace Memoria.DefaultScripts
 {
@@ -23,6 +24,7 @@ namespace Memoria.DefaultScripts
 
             target.ModelStatusScale *= 0.5f;
             geo.geoScaleUpdate(target, true);
+            TranceSeekCustomAPI.SA_Strategist(inflicter);
             return btl_stat.ALTER_SUCCESS;
         }
 

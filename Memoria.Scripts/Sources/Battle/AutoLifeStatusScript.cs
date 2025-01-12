@@ -1,5 +1,6 @@
 ﻿using System;
 using Memoria.Data;
+using Memoria.Scripts.Battle;
 using UnityEngine;
 using Object = System.Object;
 
@@ -15,6 +16,7 @@ namespace Memoria.DefaultScripts
             base.Apply(target, inflicter, parameters);
             HPRestore = Math.Max(HPRestore, parameters.Length > 0 ? (UInt32)parameters[0] : 1);
             target.AddDelayedModifier(UpdateSPS, null);
+            TranceSeekCustomAPI.SA_Strategist(inflicter);
             return btl_stat.ALTER_SUCCESS;
         }
 

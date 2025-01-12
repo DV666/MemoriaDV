@@ -1,31 +1,21 @@
 ﻿using System;
 using Memoria.Data;
-using Memoria.Scripts.Battle;
 using Object = System.Object;
 
 namespace Memoria.DefaultScripts
 {
-    [StatusScript(BattleStatusId.CustomStatus13)] // Bulwark
-    public class BulwarkStatusScript : StatusScriptBase
+    [StatusScript(BattleStatusId.Protect)]
+    public class ProtectStatusScript : StatusScriptBase
     {
-        public Boolean ShowNumberHUD;
-
         public override UInt32 Apply(BattleUnit target, BattleUnit inflicter, params Object[] parameters)
         {
             base.Apply(target, inflicter, parameters);
-            OverlapSHP.SetupOverlappingSHP2(target);
-            TranceSeekCustomAPI.SA_Strategist(inflicter);
             return btl_stat.ALTER_SUCCESS;
         }
 
         public override Boolean Remove()
         {
             return true;
-        }
-
-        public void OnSHPShow(Boolean show)
-        {
-            ShowNumberHUD = show;
         }
     }
 }

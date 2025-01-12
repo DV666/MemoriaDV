@@ -5,16 +5,11 @@ using Object = System.Object;
 
 namespace Memoria.DefaultScripts
 {
-    [StatusScript(BattleStatusId.Silence)]
-    public class SilenceStatusScript : StatusScriptBase
+    [StatusScript(BattleStatusId.Reflect)]
+    public class ReflectStatusScript : StatusScriptBase
     {
         public override UInt32 Apply(BattleUnit target, BattleUnit inflicter, params Object[] parameters)
         {
-            if (target.IsUnderAnyStatus(BattleStatus.EasyKill))
-            {
-                target.AlterStatus(BattleStatus.CustomStatus18, inflicter); // Silence Easy Kill
-                return btl_stat.ALTER_SUCCESS_NO_SET;
-            }
             base.Apply(target, inflicter, parameters);
             TranceSeekCustomAPI.SA_Strategist(inflicter);
             return btl_stat.ALTER_SUCCESS;

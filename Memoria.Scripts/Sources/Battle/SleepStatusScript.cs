@@ -1,6 +1,5 @@
 ﻿using System;
 using Memoria.Data;
-using Memoria.Prime;
 using Memoria.Scripts.Battle;
 using Object = System.Object;
 
@@ -17,6 +16,7 @@ namespace Memoria.DefaultScripts
                 return btl_stat.ALTER_SUCCESS_NO_SET;
             }
             base.Apply(target, inflicter, parameters);
+            TranceSeekCustomAPI.SA_Strategist(inflicter);
             return btl_stat.ALTER_SUCCESS;
         }
 

@@ -4,6 +4,7 @@ using Memoria.Data;
 using FF9;
 using Object = System.Object;
 using System.Security.Cryptography;
+using Memoria.Scripts.Battle;
 
 namespace Memoria.DefaultScripts
 {
@@ -26,6 +27,7 @@ namespace Memoria.DefaultScripts
             UpdateLabel();
             target.AddDelayedModifier(UpdateMessageShow, null);
             GeoID = target.Data.dms_geo_id;
+            TranceSeekCustomAPI.SA_Strategist(inflicter);
             return btl_stat.ALTER_SUCCESS;
         }
 

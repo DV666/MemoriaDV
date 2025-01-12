@@ -3,6 +3,7 @@ using UnityEngine;
 using Memoria.Data;
 using static Memoria.Scripts.Battle.TranceSeekCustomAPI;
 using Object = System.Object;
+using Memoria.Scripts.Battle;
 
 namespace Memoria.DefaultScripts
 {
@@ -108,7 +109,7 @@ namespace Memoria.DefaultScripts
                     Singleton<HUDMessage>.Instance.ReleaseObject(NumberHUD);
                 }
             }
-            //target.MagicDefence = (byte)Math.Min(BasicMagicDefence + ((BasicMagicDefence * Stack) / 10), 255);
+            TranceSeekCustomAPI.SA_Strategist(inflicter);
             return btl_stat.ALTER_SUCCESS;
         }
 

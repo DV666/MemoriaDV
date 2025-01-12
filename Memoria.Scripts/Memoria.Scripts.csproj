@@ -411,15 +411,24 @@
     <Compile Include="Sources\Battle\BaseWeaponScript.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
+    <Compile Include="Sources\Battle\BerserkStatusScript.cs" />
     <Compile Include="Sources\Battle\BlindStatusScript.cs" />
     <Compile Include="Sources\Battle\BulwarkStatusScript.cs" />
+    <Compile Include="Sources\Battle\ConfuseStatusScript.cs" />
     <Compile Include="Sources\Battle\DeathStatusScript.cs" />
     <Compile Include="Sources\Battle\DefendStatusScript.cs" />
     <Compile Include="Sources\Battle\DoomStatusScript.cs" />
     <Compile Include="Sources\Battle\DragonStatusScript.cs" />
+    <Compile Include="Sources\Battle\FloatStatusScript.cs" />
     <Compile Include="Sources\Battle\FreezeStatusScript.cs" />
     <Compile Include="Sources\Battle\GradualPetrifyStatusScript.cs" />
+    <Compile Include="Sources\Battle\HasteStatusScript.cs" />
     <Compile Include="Sources\Battle\MiniStatusScript.cs" />
+    <Compile Include="Sources\Battle\PetrifyStatusScript.cs" />
+    <Compile Include="Sources\Battle\ProtectStatusScript.cs" />
+    <Compile Include="Sources\Battle\ReflectStatusScript.cs" />
+    <Compile Include="Sources\Battle\ShellStatusScript.cs" />
+    <Compile Include="Sources\Battle\SlowStatusScript.cs" />
     <Compile Include="Sources\Battle\SpecialStatusScript.cs" />
     <Compile Include="Sources\Battle\HeatStatusScript.cs" />
     <Compile Include="Sources\Battle\JumpStatusScript.cs" />
@@ -450,6 +459,7 @@
     <Compile Include="Sources\Battle\TranceSeekCustomAPI.cs" />
     <Compile Include="Sources\Battle\TranceStatusScript.cs" />
     <Compile Include="Sources\Battle\TroubleStatusScript.cs" />
+    <Compile Include="Sources\Battle\VanishStatusScript.cs" />
     <Compile Include="Sources\Battle\VenomStatusScript.cs" />
     <Compile Include="Sources\Battle\VieillissementStatusScript.cs" />
     <Compile Include="Sources\Battle\VirusStatusScript.cs" />

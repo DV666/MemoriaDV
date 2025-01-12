@@ -4,6 +4,7 @@ using Memoria.Data;
 using System.Collections.Generic;
 using Object = System.Object;
 using System.Collections;
+using Memoria.Scripts.Battle;
 
 namespace Memoria.DefaultScripts
 {
@@ -26,6 +27,7 @@ namespace Memoria.DefaultScripts
             btl2d.StatusMessages.Add(Message);
             target.AddDelayedModifier(UpdateMessageShow, null);
             GeoID = target.Data.dms_geo_id;
+            TranceSeekCustomAPI.SA_Strategist(inflicter);
             return btl_stat.ALTER_SUCCESS;
         }
 

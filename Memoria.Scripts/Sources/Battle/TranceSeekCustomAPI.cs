@@ -908,6 +908,17 @@ namespace Memoria.Scripts.Battle
             if (v.Target.PhysicalDefence != 255 || v.Target.PhysicalDefence != 255 || v.Target.MagicDefence != 255 || v.Target.MagicEvade != 255 && !v.Command.IsManyTarget)
                 v.RaiseTrouble();
         }
+
+        public static void SA_Strategist(BattleUnit inflicter)
+        {
+            if (inflicter.HasSupportAbilityByIndex((SupportAbility)128) && inflicter.CurrentMp < inflicter.MaximumMp)
+            {
+                int factor = inflicter.HasSupportAbilityByIndex((SupportAbility)1128) ? 2 : 1;
+                inflicter.CurrentMp = (uint)Math.Min(inflicter.CurrentMp + factor * (inflicter.MaximumMp / 100), inflicter.MaximumMp);
+            }
+
+        }
+
         public static void SOS_SA(this BattleCalculator v)
         {
             if (v.Target.HasSupportAbilityByIndex((SupportAbility)1103)) // SOS Carapace+

@@ -1,5 +1,6 @@
 ﻿using System;
 using Memoria.Data;
+using Memoria.Scripts.Battle;
 using Object = System.Object;
 
 namespace Memoria.DefaultScripts
@@ -12,6 +13,7 @@ namespace Memoria.DefaultScripts
             base.Apply(target, inflicter, parameters);
             if (target.IsPlayer && !target.IsUnderAnyStatus(BattleStatus.Trance))
                 target.Trance = 0;
+            TranceSeekCustomAPI.SA_Strategist(inflicter);
             return btl_stat.ALTER_SUCCESS;
         }
 

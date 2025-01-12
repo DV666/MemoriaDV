@@ -21,6 +21,7 @@ namespace Memoria.DefaultScripts
                 else
                     return btl_stat.ALTER_RESIST;
             }
+            TranceSeekCustomAPI.SA_Strategist(inflicter);
             return btl_stat.ALTER_SUCCESS;
         }
 
