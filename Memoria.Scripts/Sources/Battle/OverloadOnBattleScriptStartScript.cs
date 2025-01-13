@@ -210,6 +210,11 @@ namespace Memoria.Scripts.Battle
                 );                
             }
 
+            if (v.Command.Id == (BattleCommandId)10032 && !v.Caster.HasSupportAbilityByIndex((SupportAbility)1205)) // Witchcraft (Vivi's SA)
+            {
+                v.Command.HitRate /= 2;
+            }
+
             if (v.Command.IsManyTarget && v.Command.AbilityId >= (BattleAbilityId)1500 && v.Command.AbilityId <= (BattleAbilityId)1526) 
             {
                 if (v.Caster.HasSupportAbilityByIndex((SupportAbility)1126))

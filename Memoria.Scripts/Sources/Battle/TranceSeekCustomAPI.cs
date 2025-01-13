@@ -715,7 +715,7 @@ namespace Memoria.Scripts.Battle
                                 }
                                 if (ViviPassive[v.Caster.Data][0] < (50 + BonusFocusMax))
                                 {
-                                    ViviPassive[v.Caster.Data][0] += 5;
+                                    ViviPassive[v.Caster.Data][0] += v.Caster.HasSupportAbilityByIndex((SupportAbility)207) ? 10 : 5; // SA Bobbin
                                 }
                                 Dictionary<String, String> localizedMessage = new Dictionary<String, String>
                                 {
@@ -731,18 +731,39 @@ namespace Memoria.Scripts.Battle
                             }
                             else
                             {
-                                ViviPassive[v.Caster.Data][0] = 0;
-                                Dictionary<String, String> localizedMessage = new Dictionary<String, String>
-                            {
-                                { "US", "- Focus!" },
-                                { "UK", "- Focus!" },
-                                { "JP", "- フォーカス!" },
-                                { "ES", "¡- Focus!" },
-                                { "FR", "- Focus !" },
-                                { "GR", "- Focus!" },
-                                { "IT", "- Focus!" },
-                            };
-                                btl2d.Btl2dReqSymbolMessage(v.Caster.Data, "[DC143C]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 40);
+                                if (v.Caster.HasSupportAbilityByIndex((SupportAbility)1207)) // SA Bobbin+
+                                {
+                                    ViviPassive[v.Caster.Data][0] /= 2;
+                                    if (ViviPassive[v.Caster.Data][0] % 10U == 5)
+                                        ViviPassive[v.Caster.Data][0] += 5;
+
+                                    Dictionary<String, String> localizedMessage = new Dictionary<String, String>
+                                    {
+                                        { "US", $"Focus +{ViviPassive[v.Caster.Data][0]}%!" },
+                                        { "UK", $"Focus +{ViviPassive[v.Caster.Data][0]}%!" },
+                                        { "JP", $"フォーカス +{ViviPassive[v.Caster.Data][0]}%!" },
+                                        { "ES", $"¡Focus +{ViviPassive[v.Caster.Data][0]}%!" },
+                                        { "FR", $"Focus +{ViviPassive[v.Caster.Data][0]}% !" },
+                                        { "GR", $"Focus +{ViviPassive[v.Caster.Data][0]}%!" },
+                                        { "IT", $"Focus +{ViviPassive[v.Caster.Data][0]}%!" },
+                                    };
+                                    btl2d.Btl2dReqSymbolMessage(v.Caster.Data, "[BA55D3]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 40);
+                                }
+                                else
+                                {
+                                    ViviPassive[v.Caster.Data][0] = 0;
+                                    Dictionary<String, String> localizedMessage = new Dictionary<String, String>
+                                    {
+                                        { "US", "- Focus!" },
+                                        { "UK", "- Focus!" },
+                                        { "JP", "- フォーカス!" },
+                                        { "ES", "¡- Focus!" },
+                                        { "FR", "- Focus !" },
+                                        { "GR", "- Focus!" },
+                                        { "IT", "- Focus!" },
+                                    };
+                                    btl2d.Btl2dReqSymbolMessage(v.Caster.Data, "[DC143C]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 40);
+                                }
                             }
                             ViviPreviousSpell[v.Caster.Data] = v.Command.AbilityId;
                         }
@@ -794,36 +815,57 @@ namespace Memoria.Scripts.Battle
                                     }
                                     if (ViviPassive[Vivi.Data][0] < (50 + BonusFocusMax))
                                     {
-                                        ViviPassive[Vivi.Data][0] += 5;
+                                        ViviPassive[Vivi.Data][0] += Vivi.HasSupportAbilityByIndex((SupportAbility)207) ? 10 : 5; // SA Bobbin;
                                     }
                                     Dictionary<String, String> localizedMessage = new Dictionary<String, String>
-                                {
-                                { "US", $"Focus +{ViviPassive[Vivi.Data][0]}%!" },
-                                { "UK", $"Focus +{ViviPassive[Vivi.Data][0]}%!" },
-                                { "JP", $"フォーカス +{ViviPassive[Vivi.Data][0]}%!" },
-                                { "ES", $"¡Focus +{ViviPassive[Vivi.Data][0]}%!" },
-                                { "FR", $"Focus +{ViviPassive[Vivi.Data][0]}% !" },
-                                { "GR", $"Focus +{ViviPassive[Vivi.Data][0]}%!" },
-                                { "IT", $"Focus +{ViviPassive[Vivi.Data][0]}%!" },
-                                };
+                                    {
+                                        { "US", $"Focus +{ViviPassive[Vivi.Data][0]}%!" },
+                                        { "UK", $"Focus +{ViviPassive[Vivi.Data][0]}%!" },
+                                        { "JP", $"フォーカス +{ViviPassive[Vivi.Data][0]}%!" },
+                                        { "ES", $"¡Focus +{ViviPassive[Vivi.Data][0]}%!" },
+                                        { "FR", $"Focus +{ViviPassive[Vivi.Data][0]}% !" },
+                                        { "GR", $"Focus +{ViviPassive[Vivi.Data][0]}%!" },
+                                        { "IT", $"Focus +{ViviPassive[Vivi.Data][0]}%!" },
+                                    };
                                     btl2d.Btl2dReqSymbolMessage(Vivi.Data, "[BA55D3]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 40);
                                     v.Context.Attack += v.Context.Attack * (ViviPassive[Vivi.Data][0] / 100);
                                     v.Command.HitRate += v.Command.HitRate * (ViviPassive[Vivi.Data][0] / 100);
                                 }
                                 else
                                 {
-                                    ViviPassive[Vivi.Data][0] = 0;
-                                    Dictionary<String, String> localizedMessage = new Dictionary<String, String>
-                                {
-                                { "US", "- Focus!" },
-                                { "UK", "- Focus!" },
-                                { "JP", "- フォーカス!" },
-                                { "ES", "¡- Focus!" },
-                                { "FR", "- Focus !" },
-                                { "GR", "- Focus!" },
-                                { "IT", "- Focus!" },
-                                };
-                                    btl2d.Btl2dReqSymbolMessage(Vivi.Data, "[DC143C]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 40);
+                                    if (v.Caster.HasSupportAbilityByIndex((SupportAbility)1207)) // SA Bobbin+
+                                    {
+                                        ViviPassive[Vivi.Data][0] /= 2;
+                                        if (ViviPassive[Vivi.Data][0] % 10U == 5)
+                                            ViviPassive[Vivi.Data][0] += 5;
+
+                                        Dictionary<String, String> localizedMessage = new Dictionary<String, String>
+                                        {
+                                            { "US", $"Focus +{ViviPassive[Vivi.Data][0]}%!" },
+                                            { "UK", $"Focus +{ViviPassive[Vivi.Data][0]}%!" },
+                                            { "JP", $"フォーカス +{ViviPassive[Vivi.Data][0]}%!" },
+                                            { "ES", $"¡Focus +{ViviPassive[Vivi.Data][0]}%!" },
+                                            { "FR", $"Focus +{ViviPassive[Vivi.Data][0]}% !" },
+                                            { "GR", $"Focus +{ViviPassive[Vivi.Data][0]}%!" },
+                                            { "IT", $"Focus +{ViviPassive[Vivi.Data][0]}%!" },
+                                        };
+                                        btl2d.Btl2dReqSymbolMessage(Vivi.Data, "[BA55D3]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 40);
+                                    }
+                                    else
+                                    {
+                                        ViviPassive[Vivi.Data][0] = 0;
+                                        Dictionary<String, String> localizedMessage = new Dictionary<String, String>
+                                        {
+                                            { "US", "- Focus!" },
+                                            { "UK", "- Focus!" },
+                                            { "JP", "- フォーカス!" },
+                                            { "ES", "¡- Focus!" },
+                                            { "FR", "- Focus !" },
+                                            { "GR", "- Focus!" },
+                                            { "IT", "- Focus!" },
+                                        };
+                                        btl2d.Btl2dReqSymbolMessage(Vivi.Data, "[DC143C]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 40);
+                                    }
                                 }
                                 ViviPreviousSpell[Vivi.Data] = v.Command.AbilityId;
                             }
@@ -1111,6 +1153,12 @@ namespace Memoria.Scripts.Battle
 
                 if (DragonRemove < Comn.random16() % 100)
                     v.Target.RemoveStatus(CustomStatus.Dragon);
+            }
+
+            if (v.Command.Id == (BattleCommandId)10032) // SA Witchcraft
+            {
+                v.Target.HpDamage /= 2;
+                v.Target.MpDamage /= 2;
             }
 
             if (v.Caster.PlayerIndex == CharacterId.Zidane && (v.Command.Id == BattleCommandId.Attack || v.Command.Id == BattleCommandId.Counter) && ff9item._FF9Item_Data[FF9StateSystem.Common.FF9.player[(CharacterId)v.Caster.Data.bi.slot_no].equip[0]].shape == 1)

@@ -24,7 +24,7 @@ namespace Memoria.Scripts.Battle
         {
             if (_v.Caster.PlayerIndex == CharacterId.Vivi)
             {
-                if (_v.Caster.IsUnderStatus(BattleStatus.Trance)) // AA Mana Well
+                if (_v.Command.Id == (BattleCommandId)10000) // AA Mana Well
                 {
                     _v.Target.Flags |= (CalcFlag.MpAlteration | CalcFlag.MpRecovery);
                     short mpDamage = (short)(_v.Target.MaximumMp / 2U);
@@ -37,7 +37,7 @@ namespace Memoria.Scripts.Battle
                         _v.Target.MpDamage = mpDamage;
                     }
                 }
-                else
+                else if (_v.Command.Id == BattleCommandId.Accumulate)
                 {
                     if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)204)) // SA Transcendent
                         _v.Target.Flags |= CalcFlag.MpDamageOrHeal;
@@ -66,8 +66,8 @@ namespace Memoria.Scripts.Battle
                         {
                             if (num3 <= 0)
                             {
-                                _v.Target.Trance = 0;
                                 _v.Target.MpDamage = (int)(num2 * _v.Target.Trance / num);
+                                _v.Target.Trance = 0;
                             }
                             else
                             {
@@ -98,6 +98,36 @@ namespace Memoria.Scripts.Battle
                                 _v.Target.HpDamage = (int)num;
                                 _v.Target.MpDamage = (int)num2;
                             }
+                        }
+                    }
+                }
+                else if (_v.Command.Id == (BattleCommandId)10033) // SA Absorb
+                {
+                    _v.Target.Flags |= CalcFlag.HpAlteration;
+                    _v.Caster.Flags |= CalcFlag.MpDamageOrHeal;
+
+                    uint num;
+                    uint num2;
+
+                    num = (uint)(_v.Target.MaximumHp / _v.Command.Power);
+                    num2 = (uint)(_v.Target.MaximumMp / _v.Command.Power);
+                    uint num3 = _v.Target.CurrentHp - num;
+
+                    if (_v.Caster.CurrentHp == 1U)
+                    {
+                        _v.Context.Flags |= BattleCalcFlags.Miss;
+                    }
+                    else
+                    {
+                        if (num3 <= 0)
+                        {
+                            _v.Target.HpDamage = (int)(_v.Target.CurrentHp);
+                            _v.Caster.MpDamage = (int)(num2 * _v.Target.CurrentHp / num);
+                        }
+                        else
+                        {
+                            _v.Target.HpDamage = (int)num;
+                            _v.Caster.MpDamage = (int)num2;
                         }
                     }
                 }
