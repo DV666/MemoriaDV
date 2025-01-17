@@ -60,25 +60,25 @@ namespace Memoria.Scripts.Battle
                 }
 
                 if (!ZidanePassive.TryGetValue(unit.Data, out Int32[] zidanepassive))
-                    ZidanePassive[unit.Data] = new Int32[] { 0, 0, 0, 0, 0, 255, 255, 0, 0, 0 };
+                    ZidanePassive[unit.Data] = [0, 0, 0, 0, 0, 255, 255, 0, 0, 0 ];
                 if (!ViviPreviousSpell.TryGetValue(unit.Data, out BattleAbilityId e))
                     ViviPreviousSpell[unit.Data] = BattleAbilityId.Void;
                 if (!ViviPassive.TryGetValue(unit.Data, out Int32[] vivipassive))
-                    ViviPassive[unit.Data] = new Int32[] { 0, 0, 0 };
+                    ViviPassive[unit.Data] = [0, 0, 0];
                 if (!BeatrixPassive.TryGetValue(unit.Data, out Int32[] beatrixpassive))
-                    BeatrixPassive[unit.Data] = new Int32[] { 0, 0, 0, 0 };
+                    BeatrixPassive[unit.Data] = [0, 0, 0, 0];
                 if (!ProtectStatus.TryGetValue(unit.Data, out Dictionary<BattleStatus, Int32> statusprotect))
                     ProtectStatus[unit.Data] = new Dictionary<BattleStatus, Int32> { { 0, 0 } };
                 if (!AbsorbElement.TryGetValue(unit.Data, out Int32 elementprotect))
                     AbsorbElement[unit.Data] = -1;
                 if (!StackBreakOrUpStatus.TryGetValue(unit.Data, out Int32[] stackstatus))
-                    StackBreakOrUpStatus[unit.Data] = new Int32[] { 0, 0, 0, 0 };
+                    StackBreakOrUpStatus[unit.Data] = [0, 0, 0, 0];
                 if (!MonsterMechanic.TryGetValue(unit.Data, out Int32[] monstermechanic))
-                    MonsterMechanic[unit.Data] = new Int32[] { 0, 0, 0, 0, 100, 0 };
+                    MonsterMechanic[unit.Data] = [ 0, 0, 0, 0, 100, 0 ];
                 if (!SpecialSAEffect.TryGetValue(unit.Data, out Int32[] specialSAeffect))
-                    SpecialSAEffect[unit.Data] = new Int32[] { 0, 0, 2, 0, 0, 0, 0, 0, 0, 0 };
+                    SpecialSAEffect[unit.Data] = [ 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0 ];
                 if (!RollBackStats.TryGetValue(unit.Data, out Int32[] rb))
-                    RollBackStats[unit.Data] = new Int32[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+                    RollBackStats[unit.Data] = [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ];
                 if (!RollBackBattleStatus.TryGetValue(unit.Data, out BattleStatus rs))
                     RollBackBattleStatus[unit.Data] = 0;
                 if (!WeaponNewElement.TryGetValue(unit.Data, out EffectElement wpelem))
@@ -253,6 +253,17 @@ namespace Memoria.Scripts.Battle
                         unit.MaximumMp = (uint)(UnitOldMaximumHP / factor);
                         unit.CurrentHp = unit.MaximumHp;
                         unit.CurrentMp = unit.MaximumMp;
+                    }
+
+                    if (unit.HasSupportAbilityByIndex((SupportAbility)1212)) // SA Protector+
+                    {
+                        btl_stat.AlterStatus(unit, CustomStatusId.PowerBreak, parameters: "+2");
+                        btl_stat.AlterStatus(unit, CustomStatusId.ArmorUp, parameters: "+2");
+                    }
+                    else if (unit.HasSupportAbilityByIndex((SupportAbility)212)) // SA Protector
+                    {
+                        btl_stat.AlterStatus(unit, CustomStatusId.PowerBreak, parameters: "+1");
+                        btl_stat.AlterStatus(unit, CustomStatusId.ArmorUp, parameters: "+1");
                     }
                 }
             }

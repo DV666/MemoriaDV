@@ -236,6 +236,23 @@ namespace Memoria.Scripts.Battle
                 );
             }
 
+            if (v.Caster.HasSupportAbilityByIndex((SupportAbility)214)) // SA Enchanted blade
+            {
+                if (v.Command.Id == BattleCommandId.MagicSword)
+                {
+                    WeaponNewElement[v.Caster.Data] = v.Command.Element;
+                    SpecialSAEffect[v.Caster.Data][10] = v.Caster.HasSupportAbilityByIndex((SupportAbility)1214) ? 3 : 2;
+                }
+                else if (SpecialSAEffect[v.Caster.Data][10] > 0)
+                {
+                    SpecialSAEffect[v.Caster.Data][10]--;
+                    if (SpecialSAEffect[v.Caster.Data][10] <= 0)
+                    {
+                        WeaponNewElement[v.Caster.Data] = EffectElement.None;
+                    }
+                }
+            }
+
             TranceSeekCustomAPI.SOS_SA(v);
             return false;
         }

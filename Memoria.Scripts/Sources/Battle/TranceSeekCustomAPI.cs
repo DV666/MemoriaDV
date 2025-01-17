@@ -5,6 +5,7 @@ using FF9;
 using Memoria.Data;
 using Memoria.Prime;
 using UnityEngine;
+using static Memoria.Assets.DataResources;
 using static SFX;
 
 namespace Memoria.Scripts.Battle
@@ -32,7 +33,7 @@ namespace Memoria.Scripts.Battle
         public static Dictionary<BTL_DATA, Int32[]> MonsterMechanic = new Dictionary<BTL_DATA, Int32[]>(); // [0] => Trance Activated ; [1] => Special1 ; [2] => Special2 ; [3] => HPBoss10000? ; [4] => ResistStatusEasyKill ; [5] => NerfGravity
 
         public static Dictionary<BTL_DATA, Int32[]> SpecialSAEffect = new Dictionary<BTL_DATA, Int32[]>();
-        // [0] => Sentinel/Duel ; [1] => LastStand ; [2] => Instinct ; [3] => PreventTranceSFX ; [4] => Mode EX ; [5] => HealHP ; [6] => HealMP ; [7] => TargetCount ; [8] => SpringBoots; [9] => CriticalHit100
+        // [0] => Sentinel/Duel ; [1] => LastStand ; [2] => Instinct ; [3] => PreventTranceSFX ; [4] => Mode EX ; [5] => HealHP ; [6] => HealMP ; [7] => TargetCount ; [8] => SpringBoots ; [9] => CriticalHit100 ; [10] => SteinerEnchantedBlade
 
         public static Dictionary<BTL_DATA, Int32[]> RollBackStats = new Dictionary<BTL_DATA, Int32[]>();
         public static Dictionary<BTL_DATA, BattleStatus> RollBackBattleStatus = new Dictionary<BTL_DATA, BattleStatus>();
@@ -640,6 +641,7 @@ namespace Memoria.Scripts.Battle
             if (WeaponNewElement[v.Caster.Data] != 0)
                 WeaponElement |= WeaponNewElement[v.Caster.Data];
 
+            Log.Message("WeaponElement = " + WeaponElement);
             return v.Target.CanAttackElement(WeaponElement);
         }
 
@@ -1316,6 +1318,25 @@ namespace Memoria.Scripts.Battle
 
             if (v.Target.HasSupportAbilityByIndex((SupportAbility)1201) && (v.Command.AbilityCategory & 8) != 0 && ZidanePassive[v.Target.Data][1] > Comn.random16() % 100) // SA Gorilla+
                 BattleState.EnqueueCounter(v.Target, BattleCommandId.Counter, BattleAbilityId.Attack, v.Caster.Id);
+
+            if (v.Target.HasSupportAbilityByIndex((SupportAbility)211) && (v.Target.Flags & CalcFlag.HpRecovery) == 0 && !v.Target.IsUnderAnyStatus(BattleStatus.Heat) && v.Target.CurrentHp < (v.Target.MaximumHp / (v.Target.HasSupportAbilityByIndex((SupportAbility)1211) ? 1 : 2)) && !v.Caster.IsPlayer) // SA Auto Gem
+            {
+                List <RegularItem> GemList = new List<RegularItem>{ RegularItem.Garnet, RegularItem.Amethyst, RegularItem.Aquamarine, RegularItem.Diamond, RegularItem.Emerald, RegularItem.Moonstone,
+                    RegularItem.Ruby, RegularItem.Peridot, RegularItem.Sapphire, RegularItem.Opal, RegularItem.Topaz, RegularItem.LapisLazuli};
+
+                List<BattleStatusId> statuschoosen = new List<BattleStatusId>();
+
+                for (Int32 i = 0; i < GemList.Count; i++)
+                {
+                    if (ff9item.FF9Item_GetCount(GemList[i]) <= 0)
+                    {
+                        GemList.Remove(GemList[i]);
+                    }
+                }
+                RegularItem GemSelected = GemList[GameRandom.Next16() % GemList.Count];
+                UIManager.Battle.ItemRequest(GemSelected);
+                btl_cmd.SetCounter(v.Target, BattleCommandId.AutoPotion, (Int32)GemSelected, v.Target.Id);
+            }
 
             if (v.Target.IsUnderAnyStatus(BattleStatus.AutoLife) && (v.Target.Flags & CalcFlag.HpRecovery) == 0 && !v.Target.IsPlayer && v.Target.HpDamage >= v.Target.CurrentHp)
             {

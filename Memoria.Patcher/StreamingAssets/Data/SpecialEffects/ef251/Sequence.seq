@@ -1,6 +1,6 @@
 // Shared sequence of SFX Madeen__Full
 
-ShowMesh: Char=MatchingCondition(IsTargetable) ; Enable=False ; IsDisappear=True
+ShowMesh: ShowMesh: Char=MatchingCondition(!IsTargeted && IsTargetable) ; Enable=False ; IsDisappear=True
 StartThread: Condition=SFXUseCamera && AreTargetsPlayers
 	ShiftWorld: Angle=(0, 180, 0)
 EndThread
