@@ -20,23 +20,16 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            if (_v.Caster.PlayerIndex == CharacterId.Freya && _v.Command.AbilityId == BattleAbilityId.Luna)
+            if (_v.Command.AbilityId == BattleAbilityId.Luna)
             {
-                if (_v.Target.IsUnderAnyStatus(TranceSeekCustomAPI.CustomStatus.Dragon))
-                {
-                    _v.Context.Flags |= BattleCalcFlags.Miss;
-                }
-                else
-                {
-                    _v.Target.AlterStatus(TranceSeekCustomAPI.CustomStatus.Dragon);
-                }
+                btl_stat.AlterStatus(_v.Target, TranceSeekCustomAPI.CustomStatusId.Dragon, _v.Caster);
                 return;
             }
             else
             {
                 if (_v.Command.AbilityId == BattleAbilityId.MatraMagic || _v.Command.AbilityId == (BattleAbilityId)1030 || _v.Command.HitRate == 255) // Matra Magic
                 {
-                    _v.Context.Attack = (int)((short)(GameRandom.Next16() % (int)(_v.Caster.Magic + _v.Caster.Level)));
+                    _v.Context.Attack = (short)(GameRandom.Next16() % (_v.Caster.Magic + _v.Caster.Level));
                     _v.SetCommandPower();
                     TranceSeekCustomAPI.CasterPenaltyMini(_v);
                     TranceSeekCustomAPI.PenaltyShellAttack(_v);

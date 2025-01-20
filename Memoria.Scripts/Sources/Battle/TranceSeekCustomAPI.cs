@@ -641,7 +641,6 @@ namespace Memoria.Scripts.Battle
             if (WeaponNewElement[v.Caster.Data] != 0)
                 WeaponElement |= WeaponNewElement[v.Caster.Data];
 
-            Log.Message("WeaponElement = " + WeaponElement);
             return v.Target.CanAttackElement(WeaponElement);
         }
 
@@ -1154,7 +1153,7 @@ namespace Memoria.Scripts.Battle
                 float DragonRemove = v.Caster.HasSupportAbilityByIndex((SupportAbility)1122) ? 25 : (v.Caster.HasSupportAbilityByIndex((SupportAbility)122) ? 12.5f : 0); // Eye of the dragon
 
                 if (DragonRemove < Comn.random16() % 100)
-                    v.Target.RemoveStatus(CustomStatus.Dragon);
+                    btl_stat.AlterStatus(v.Target, CustomStatusId.Dragon, v.Caster, parameters: "Remove");
             }
 
             if (v.Command.Id == (BattleCommandId)10032) // SA Witchcraft

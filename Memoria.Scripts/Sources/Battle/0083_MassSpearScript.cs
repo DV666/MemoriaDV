@@ -39,9 +39,18 @@ namespace Memoria.Scripts.Battle
                 {
                     _v.Target.AlterStatus(TranceSeekCustomAPI.CustomStatus.Dragon, _v.Caster);
                 }
-                byte PhysicalDefence = (byte)_v.Target.PhysicalDefence;
-                _v.Target.PhysicalDefence = (byte)(_v.Target.PhysicalDefence / 2);
-                _v.Target.SetPhysicalDefense();
+                byte OldDefenceValue = _v.Caster.HasSupportAbilityByIndex((SupportAbility)217) ? (byte)_v.Target.MagicDefence : (byte)_v.Target.PhysicalDefence;
+                if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)217)) // SA Skydive
+                {
+                    _v.Target.MagicDefence = (byte)(_v.Target.MagicDefence / (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1217) ? 2 : 1));
+                    _v.Context.DefensePower = _v.Target.MagicDefence;
+                }
+                else
+                {
+                    _v.Target.PhysicalDefence = (byte)(_v.Target.PhysicalDefence / 2);
+                    _v.Context.DefensePower = _v.Target.PhysicalDefence;
+                }
+
                 _v.BonusKillerAbilities();
                 TranceSeekCustomAPI.CasterPenaltyMini(_v);
                 TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
@@ -51,8 +60,16 @@ namespace Memoria.Scripts.Battle
                     TranceSeekCustomAPI.IpsenCastleMalus(_v);
                     TranceSeekCustomAPI.RaiseTrouble(_v);
                     _v.CalcPhysicalHpDamage();
+                    if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)216)) // SA Sky Attack 
+                    {
+                        _v.Caster.Flags |= CalcFlag.HpDamageOrHeal;
+                        _v.Caster.HpDamage = _v.Target.HpDamage / (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1216) ? 2 : 4);
+                    }
                 }
-                _v.Target.PhysicalDefence = PhysicalDefence;
+                if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)217)) // SA Skydive
+                    _v.Target.MagicDefence = OldDefenceValue;
+                else
+                    _v.Target.PhysicalDefence = OldDefenceValue;
             }
         }
     }
