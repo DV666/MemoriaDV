@@ -25,9 +25,22 @@ namespace Memoria.Scripts.Battle
         {
             BattleEnemyPrototype enemyPrototype = BattleEnemyPrototype.Find(_v.Target);
             Int32 blueMagicId = enemyPrototype.BlueMagicId;
-            if (_v.Caster.IsUnderAnyStatus(BattleStatus.Trance))
+            if (_v.Caster.IsUnderAnyStatus(BattleStatus.Trance) || _v.Caster.HasSupportAbilityByIndex((SupportAbility)220) || _v.Caster.HasSupportAbilityByIndex((SupportAbility)221))
             {
-                _v.WeaponPhysicalParams(CalcAttackBonus.Random);
+                if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)221)) // SA Gourmandise
+                {
+                    Int32 baseDamage = Comn.random16() % (1 + (_v.Caster.Level + _v.Caster.Magic >> 3));
+                    _v.Context.AttackPower = _v.Caster.GetWeaponPower(_v.Command);
+                    _v.Target.SetMagicDefense();
+                    _v.Context.Attack = Comn.random16() % _v.Caster.Magic + baseDamage;
+                }
+                else
+                {
+                    Int32 baseDamage = Comn.random16() % (1 + (_v.Caster.Level + _v.Caster.Strength >> 3));
+                    _v.Context.AttackPower = _v.Caster.GetWeaponPower(_v.Command);
+                    _v.Target.SetPhysicalDefense();
+                    _v.Context.Attack = Comn.random16() % _v.Caster.Strength + baseDamage;
+                }
                 _v.BonusKillerAbilities();
                 TranceSeekCustomAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
                 TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
@@ -37,8 +50,20 @@ namespace Memoria.Scripts.Battle
                 {
                     TranceSeekCustomAPI.TryCriticalHit(_v);
                     TranceSeekCustomAPI.IpsenCastleMalus(_v);
-                    _v.Target.Flags |= (CalcFlag.HpAlteration | CalcFlag.MpAlteration);
-                    _v.Caster.Flags |= (CalcFlag.HpAlteration | CalcFlag.HpRecovery | CalcFlag.MpAlteration | CalcFlag.MpRecovery);
+                    if (_v.Caster.IsUnderAnyStatus(BattleStatus.Trance))
+                    {
+                        _v.Target.Flags |= (CalcFlag.HpAlteration | CalcFlag.MpAlteration);
+                        _v.Caster.Flags |= (CalcFlag.HpDamageOrHeal | CalcFlag.MpDamageOrHeal);
+                    }
+                    else if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)220))
+                    {
+                        _v.Target.Flags |= CalcFlag.HpAlteration;
+                        _v.Caster.Flags |= CalcFlag.HpDamageOrHeal;
+                    }
+                    else
+                    {
+                        _v.Target.Flags |= CalcFlag.HpAlteration;
+                    }
                     int hpDamage = Math.Max(1, _v.Context.PowerDifference * _v.Context.EnsureAttack);
                     int mpDamage = Math.Max(1, _v.Context.PowerDifference * _v.Context.EnsureAttack >> 4);
                     if (_v.Target.CurrentHp < hpDamage && !_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill) && !_v.Target.HasCategory(EnemyCategory.Humanoid))
@@ -49,6 +74,10 @@ namespace Memoria.Scripts.Battle
                     _v.Target.MpDamage = mpDamage;
                     _v.Caster.HpDamage = hpDamage;
                     _v.Caster.MpDamage = mpDamage;
+                    if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1220))
+                        _v.Caster.AlterStatus(TranceSeekCustomAPI.CustomStatus.PowerUp, _v.Caster);
+                    if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1221))
+                        _v.Caster.AlterStatus(TranceSeekCustomAPI.CustomStatus.MagicUp, _v.Caster);
                 }
             }
             if ((blueMagicId == 0 || !_v.Target.CanBeAttacked() || btl_util.getEnemyTypePtr(_v.Target.Data).category == 1))
@@ -83,22 +112,40 @@ namespace Memoria.Scripts.Battle
                             BonusHealFork += 100;
                             break;
                     }
-                    if (blueMagicId == 0 || ff9abil.FF9Abil_IsMaster(_v.Caster.Player, blueMagicId))
+                    if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)223))
                     {
-                        _v.Caster.Flags |= (CalcFlag.HpAlteration | CalcFlag.HpRecovery | CalcFlag.MpAlteration | CalcFlag.MpRecovery);
-                        _v.Caster.HpDamage = (int)(_v.Caster.MaximumHp / (_v.Command.Power / 2));
-                        _v.Caster.MpDamage = (int)(_v.Caster.MaximumMp / (_v.Command.Power / 2));
-                        _v.Caster.HpDamage += (_v.Caster.HpDamage * BonusHealFork) / 100;                        
-                        _v.Caster.MpDamage += (_v.Caster.MpDamage * BonusHealFork) / 100;
-                        UiState.SetBattleFollowFormatMessage(BattleMesages.TasteBad);
+                        Int32 HPDigest = (int)(_v.Caster.MaximumHp / (_v.Command.Power / 2));
+                        Int32 MPDigest = (int)(_v.Caster.MaximumMp / (_v.Command.Power / 2));
+                        HPDigest += (FF9StateSystem.EventState.gEventGlobal[1320] * 256) + FF9StateSystem.EventState.gEventGlobal[1321];
+                        MPDigest += (FF9StateSystem.EventState.gEventGlobal[1322] * 256) + FF9StateSystem.EventState.gEventGlobal[1323];
+                        FF9StateSystem.EventState.gEventGlobal[1320] = (byte)(HPDigest / 256);
+                        FF9StateSystem.EventState.gEventGlobal[1321] = (byte)(HPDigest % 256);
+                        FF9StateSystem.EventState.gEventGlobal[1322] = (byte)(MPDigest / 256);
+                        FF9StateSystem.EventState.gEventGlobal[1323] = (byte)(MPDigest % 256);
                     }
                     else
                     {
                         _v.Caster.Flags |= (CalcFlag.HpAlteration | CalcFlag.HpRecovery | CalcFlag.MpAlteration | CalcFlag.MpRecovery);
-                        _v.Caster.HpDamage = (int)(_v.Caster.MaximumHp / _v.Command.Power);
-                        _v.Caster.MpDamage = (int)(_v.Caster.MaximumMp / _v.Command.Power);
+                        if (blueMagicId == 0 || ff9abil.FF9Abil_IsMaster(_v.Caster.Player, blueMagicId))
+                        {
+                            _v.Caster.HpDamage = (int)(_v.Caster.MaximumHp / (_v.Command.Power / 2));
+                            _v.Caster.MpDamage = (int)(_v.Caster.MaximumMp / (_v.Command.Power / 2));
+                        }
+                        else
+                        {
+                            _v.Caster.HpDamage = (int)(_v.Caster.MaximumHp / _v.Command.Power);
+                            _v.Caster.MpDamage = (int)(_v.Caster.MaximumMp / _v.Command.Power);
+                        }
                         _v.Caster.HpDamage += (_v.Caster.HpDamage * BonusHealFork) / 100;
                         _v.Caster.MpDamage += (_v.Caster.MpDamage * BonusHealFork) / 100;
+                    }
+                    if (blueMagicId == 0 || ff9abil.FF9Abil_IsMaster(_v.Caster.Player, blueMagicId))
+                    {
+
+                        UiState.SetBattleFollowFormatMessage(BattleMesages.TasteBad);
+                    }
+                    else
+                    {
                         ff9abil.FF9Abil_SetMaster(_v.Caster.Player, blueMagicId);
                         BattleState.RaiseAbilitiesAchievement(blueMagicId);
                         if (ff9abil.IsAbilityActive(blueMagicId))

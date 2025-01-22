@@ -366,6 +366,9 @@
     <Compile Include="Sources\Battle\0107_PreciseEnemyPhysicalAttackAndChangeRowScript.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
+    <Compile Include="Sources\Battle\0208_DigestScript.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
     <Compile Include="Sources\Battle\0207_EnemyPhysicalAttackAndChangeRowScript.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>

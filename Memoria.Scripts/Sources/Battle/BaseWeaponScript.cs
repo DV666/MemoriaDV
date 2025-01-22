@@ -79,16 +79,15 @@ namespace Memoria.Scripts.Battle
                     if (_v.Caster.PlayerIndex == CharacterId.Amarant)
                     {
                         TranceSeekCustomAPI.AmarantPassive(_v);
-                        if (_v.Caster.IsUnderAnyStatus(BattleStatus.Defend) && _v.Command.Id == BattleCommandId.Counter) // Duel Amarant
+                        if (_v.Caster.IsUnderAnyStatus(BattleStatus.Defend) && _v.Command.Id == BattleCommandId.Counter && TranceSeekCustomAPI.SpecialSAEffect[_v.Caster.Data][0] == 1) // Duel Amarant
                         {
-                            TranceSeekCustomAPI.SpecialSAEffect[_v.Caster.Data][0] = 0;
                             short criticalbonus = _v.Caster.Data.critical_rate_deal_bonus;
                             _v.Caster.Data.critical_rate_deal_bonus += _v.Caster.Will;
                             BattleStatus status = _v.Caster.WeaponStatus;
                             int statusrate = (50 + _v.Caster.WeaponRate + (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1025) ? (_v.Target.Will / 2) : 0));
                             if (!_v.Target.IsPlayer && status != 0)
                             {
-                                if (((status & BattleStatus.Death) != 0 && !_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill)) || (status & BattleStatus.Death) == 0)
+                                if (((status & BattleStatus.Death) != 0 && !_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill)) || (status & BattleStatus.Death) == 0) // Don't force Death status.
                                 {
                                     if ((GameRandom.Next8() % 100) < statusrate)
                                         _v.Target.TryAlterStatuses(status, false, _v.Caster);
@@ -96,6 +95,10 @@ namespace Memoria.Scripts.Battle
                             }
                             TranceSeekCustomAPI.TryCriticalHit(_v);
                             _v.Caster.Data.critical_rate_deal_bonus = criticalbonus;
+                        }
+                        else
+                        {
+                            TranceSeekCustomAPI.TryCriticalHit(_v);
                         }
                     }
                     else

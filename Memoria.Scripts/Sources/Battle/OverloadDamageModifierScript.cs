@@ -2,6 +2,7 @@
 using Memoria.Data;
 using Memoria.Prime;
 using System;
+using System.Collections.Generic;
 using static Memoria.Scripts.Battle.TranceSeekCustomAPI;
 
 namespace Memoria.Scripts.Battle
@@ -103,6 +104,28 @@ namespace Memoria.Scripts.Battle
             }
 
             TranceSeekCustomAPI.SpecialSA(v);
+
+            if (v.Target.PlayerIndex == CharacterId.Amarant && SpecialSAEffect[v.Target.Data][0] == 1 && (v.Command.AbilityCategory & 8) != 0 && v.Target.IsUnderAnyStatus(BattleStatus.Defend)) // Dual Amarant
+            {
+                if (v.Target.HasSupportAbilityByIndex((SupportAbility)231) && (v.Target.HasSupportAbilityByIndex((SupportAbility)1231) ? 50 : 25) > Comn.random16() % 100) // SA Ferocity
+                {
+                    Dictionary<String, String> localizedMessage = new Dictionary<String, String>
+                    {
+                        { "US", "Ferocity !" },
+                        { "UK", "Ferocity !" },
+                        { "JP", "Ferocity !" },
+                        { "ES", "Ferocity !" },
+                        { "FR", "Férocité !" },
+                        { "GR", "Ferocity !" },
+                        { "IT", "Ferocity !" },
+                    };
+                    btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[FF2716]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 10);
+                }
+                else
+                {
+                    SpecialSAEffect[v.Target.Data][0] = 0;
+                }
+            }
 
             if (v.Target.PlayerIndex == CharacterId.Marcus && (v.Command.Element & EffectElement.Darkness) != 0
                 && (v.Target.Flags & CalcFlag.HpAlteration) != 0 && (v.Target.Flags & CalcFlag.MpAlteration) == 0) // Marcus mechanic

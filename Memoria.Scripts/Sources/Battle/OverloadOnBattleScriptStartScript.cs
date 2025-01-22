@@ -253,6 +253,24 @@ namespace Memoria.Scripts.Battle
                 }
             }
 
+            if (v.Caster.HasSupportAbilityByIndex((SupportAbility)227) && v.Command.Data.info.effect_counter == 1) // SA Enchanted blade
+            {
+                if ((v.Command.AbilityId == BattleAbilityId.Regen || v.Command.AbilityId == (BattleAbilityId)1500) && v.Caster.Weapon == RegularItem.Hamelin ||
+                    (v.Command.AbilityId == BattleAbilityId.Life || v.Command.AbilityId == (BattleAbilityId)1501) && v.Caster.Weapon == RegularItem.SirenFlute ||
+                    v.Command.AbilityId == BattleAbilityId.Berserk && v.Caster.Weapon == RegularItem.LamiaFlute ||
+                    (v.Command.AbilityId == BattleAbilityId.Protect || v.Command.AbilityId == (BattleAbilityId)1504) && v.Caster.Weapon == RegularItem.GolemFlute ||
+                    (v.Command.AbilityId == BattleAbilityId.Haste || v.Command.AbilityId == (BattleAbilityId)1505) && v.Caster.Weapon == RegularItem.FairyFlute)
+                {
+                    v.Caster.Flags |= CalcFlag.HpDamageOrHeal;
+                    v.Caster.HpDamage = v.Command.Data.aa.MP * 10;
+                    if (v.Caster.HasSupportAbilityByIndex((SupportAbility)1227)) // SA Enchanted blade
+                    {
+                        v.Caster.Flags |= CalcFlag.MpDamageOrHeal;
+                        v.Caster.MpDamage = v.Command.Data.aa.MP;
+                    }
+                }
+            }
+
             TranceSeekCustomAPI.SOS_SA(v);
             return false;
         }

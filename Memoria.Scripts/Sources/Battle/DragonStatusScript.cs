@@ -2,6 +2,7 @@
 using UnityEngine;
 using Memoria.Data;
 using Object = System.Object;
+using Memoria.Scripts.Battle;
 
 namespace Memoria.DefaultScripts
 {
@@ -11,6 +12,8 @@ namespace Memoria.DefaultScripts
         public HUDMessageChild NumberHUD = null;
         public Int32 Stack;
         public Int32 DefautSize;
+        public Int32 DiffPhysicalEvade;
+        public Int32 DiffMagicalEvade;
         public Boolean ShowNumberHUD;
         public Vector3 ModelScale;
 
@@ -86,6 +89,19 @@ namespace Memoria.DefaultScripts
                 if (NumberHUD != null)
                     NumberHUD.Label = "";
             }
+            if (inflicter != null)
+            {
+                if (inflicter.HasSupportAbilityByIndex((SupportAbility)219)) // SA Embrace
+                {
+                    DiffPhysicalEvade = target.PhysicalEvade / 4;
+                    target.PhysicalEvade = Math.Min(0, target.PhysicalEvade - DiffPhysicalEvade);
+                    if (inflicter.HasSupportAbilityByIndex((SupportAbility)1219))
+                    {
+                        DiffMagicalEvade = target.MagicEvade / 4;
+                        target.MagicEvade = Math.Min(0, target.MagicEvade - DiffMagicalEvade);
+                    }
+                }
+            }
             return btl_stat.ALTER_SUCCESS;
         }
 
@@ -97,6 +113,14 @@ namespace Memoria.DefaultScripts
                 NumberHUD.FontSize = DefautSize;
                 btl2d.StatusMessages.Remove(NumberHUD);
                 Singleton<HUDMessage>.Instance.ReleaseObject(NumberHUD);
+            }
+            if (DiffPhysicalEvade > 0)
+            {
+                Target.PhysicalEvade = Math.Max(255, Target.PhysicalEvade + DiffPhysicalEvade);
+            }
+            if (DiffMagicalEvade > 0)
+            {
+                Target.MagicEvade = Math.Max(255, Target.MagicEvade + DiffMagicalEvade);
             }
             return true;
         }

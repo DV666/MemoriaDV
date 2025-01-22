@@ -3,6 +3,7 @@ using Memoria.Data;
 using FF9;
 using Object = System.Object;
 using static Memoria.Scripts.Battle.TranceSeekCustomAPI;
+using Memoria.Scripts.Battle;
 
 namespace Memoria.DefaultScripts
 {
@@ -45,6 +46,8 @@ namespace Memoria.DefaultScripts
             }          
             if (target.PlayerIndex == CharacterId.Beatrix)
                 BeatrixPassive[target.Data][2] = 0;
+            if (!target.HasSupportAbilityByIndex((SupportAbility)1232)) // SA Expiation+
+                btl_stat.RemoveStatus(target, CustomStatusId.Redemption);
             return btl_stat.ALTER_SUCCESS;
         }
 

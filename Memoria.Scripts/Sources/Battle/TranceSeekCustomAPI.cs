@@ -3,10 +3,7 @@ using System.Collections.Generic;
 using Assets.Sources.Scripts.UI.Common;
 using FF9;
 using Memoria.Data;
-using Memoria.Prime;
 using UnityEngine;
-using static Memoria.Assets.DataResources;
-using static SFX;
 
 namespace Memoria.Scripts.Battle
 {
@@ -95,27 +92,37 @@ namespace Memoria.Scripts.Battle
             Int32 baseDamage = Comn.random16() % (1 + (v.Caster.Level + v.Caster.Strength >> 3));
             v.Context.AttackPower = v.Caster.GetWeaponPower(v.Command);
             v.Target.SetPhysicalDefense();
-            switch (bonus)
+            if (v.Caster.HasSupportAbilityByIndex((SupportAbility)222) & bonus == CalcAttackBonus.Random) // SA Sharpening
             {
-                case CalcAttackBonus.Simple:
+                if (v.Caster.HasSupportAbilityByIndex((SupportAbility)1222)) // SA Sharpening +
                     v.Context.Attack = v.Caster.Strength + BeatrixPassive[v.Caster.Data][0] + baseDamage;
-                    break;
-                case CalcAttackBonus.WillPower:
-                    v.Context.Attack = (v.Caster.Strength + BeatrixPassive[v.Caster.Data][0] + v.Caster.Will >> 1) + baseDamage;
-                    break;
-                case CalcAttackBonus.Dexterity:
-                    v.Context.Attack = (v.Caster.Strength + BeatrixPassive[v.Caster.Data][0] + v.Caster.Data.elem.dex >> 1) + baseDamage;
-                    break;
-                case CalcAttackBonus.Magic:
-                    v.Context.Attack = (v.Caster.Strength + BeatrixPassive[v.Caster.Data][0] + v.Caster.Data.elem.mgc + BeatrixPassive[v.Caster.Data][1] >> 1) + baseDamage;
-                    break;
-                case CalcAttackBonus.Random:
-                    v.Context.Attack = Comn.random16() % v.Caster.Strength + BeatrixPassive[v.Caster.Data][0] + baseDamage;
-                    break;
-                case CalcAttackBonus.Level:
-                    v.Context.AttackPower += v.Caster.Data.level;
-                    v.Context.Attack = v.Caster.Strength + BeatrixPassive[v.Caster.Data][0] + baseDamage;
-                    break;
+                else
+                    v.Context.Attack = UnityEngine.Random.Range(v.Caster.Strength / 2, v.Caster.Strength) + BeatrixPassive[v.Caster.Data][0] + baseDamage;
+            }
+            else
+            {
+                switch (bonus)
+                {
+                    case CalcAttackBonus.Simple:
+                        v.Context.Attack = v.Caster.Strength + BeatrixPassive[v.Caster.Data][0] + baseDamage;
+                        break;
+                    case CalcAttackBonus.WillPower:
+                        v.Context.Attack = (v.Caster.Strength + BeatrixPassive[v.Caster.Data][0] + v.Caster.Will >> 1) + baseDamage;
+                        break;
+                    case CalcAttackBonus.Dexterity:
+                        v.Context.Attack = (v.Caster.Strength + BeatrixPassive[v.Caster.Data][0] + v.Caster.Data.elem.dex >> 1) + baseDamage;
+                        break;
+                    case CalcAttackBonus.Magic:
+                        v.Context.Attack = (v.Caster.Strength + BeatrixPassive[v.Caster.Data][0] + v.Caster.Data.elem.mgc + BeatrixPassive[v.Caster.Data][1] >> 1) + baseDamage;
+                        break;
+                    case CalcAttackBonus.Random:
+                        v.Context.Attack = Comn.random16() % v.Caster.Strength + BeatrixPassive[v.Caster.Data][0] + baseDamage;
+                        break;
+                    case CalcAttackBonus.Level:
+                        v.Context.AttackPower += v.Caster.Data.level;
+                        v.Context.Attack = v.Caster.Strength + BeatrixPassive[v.Caster.Data][0] + baseDamage;
+                        break;
+                }
             }
         }
 
@@ -528,6 +535,9 @@ namespace Memoria.Scripts.Battle
             //if (v.Context.HitRate > 100)
             //    v.Context.HitRate = 100;
 
+            if (v.Caster.HasSupportAbilityByIndex((SupportAbility)230))
+                AmarantPassive(v);
+
             if (v.Context.HitRate < 1)
                 v.Context.HitRate = 1;
 
@@ -895,8 +905,20 @@ namespace Memoria.Scripts.Battle
                 }
             }
 
+            int bonus = v.Caster.HasSupportAbilityByIndex((SupportAbility)1228) ? 12 : (v.Caster.HasSupportAbilityByIndex((SupportAbility)228) ? 10 : 8);
+
             if (factor > 0)
-                v.Context.Attack += (v.Context.Attack * factor * 8) / 100;
+            {
+                if (v.Caster.HasSupportAbilityByIndex((SupportAbility)230))
+                {
+                    if (v.Caster.HasSupportAbilityByIndex((SupportAbility)1230))
+                        v.Context.Attack += (v.Context.Attack * factor * bonus) / 100;
+
+                    v.Context.HitRate += (v.Context.HitRate * factor * bonus) / 100;
+                }
+                else
+                    v.Context.Attack += (v.Context.Attack * factor * bonus) / 100;
+            }
         }
 
         public static void CharacterBonusPassive(this BattleCalculator v, string mode = "")
@@ -1335,6 +1357,25 @@ namespace Memoria.Scripts.Battle
                 RegularItem GemSelected = GemList[GameRandom.Next16() % GemList.Count];
                 UIManager.Battle.ItemRequest(GemSelected);
                 btl_cmd.SetCounter(v.Target, BattleCommandId.AutoPotion, (Int32)GemSelected, v.Target.Id);
+            }
+
+            if (v.Target.HasSupportAbilityByIndex((SupportAbility)225) && (v.Target.Flags & CalcFlag.HpRecovery) == 0 && v.Target.HpDamage > 0 && Comn.random16() % 100 < 10) // SA Bodyguard (10%)
+            {
+                if (v.Target.HasSupportAbilityByIndex((SupportAbility)1225))
+                {
+                    v.Target.HpDamage = 0;
+                }
+                else
+                {
+                    v.Target.HpDamage /= 2;
+                }
+            }
+
+            if (v.Caster.HasSupportAbilityByIndex((SupportAbility)229) && (v.Target.Flags & CalcFlag.Critical) != 0) // SA Lethality
+            {
+                v.Target.AlterStatus(v.Caster.WeaponStatus, v.Caster);
+                if (v.Caster.HasSupportAbilityByIndex((SupportAbility)1229))
+                    v.Target.AlterStatus(BattleStatus.Doom, v.Caster);
             }
 
             if (v.Target.IsUnderAnyStatus(BattleStatus.AutoLife) && (v.Target.Flags & CalcFlag.HpRecovery) == 0 && !v.Target.IsPlayer && v.Target.HpDamage >= v.Target.CurrentHp)

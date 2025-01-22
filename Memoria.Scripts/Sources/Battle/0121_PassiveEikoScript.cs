@@ -138,6 +138,8 @@ namespace Memoria.Scripts.Battle
                             break;
                     }
                     TranceSeekCustomAPI.StateMoug[_v.Caster.Data]++;
+                    if (!ff9abil.FF9Abil_IsMaster(_v.Caster.Player, (int)_v.Command.AbilityId))
+                        ff9abil.FF9Abil_SetMaster(_v.Caster.Player, (int)_v.Command.AbilityId);
                 }
                 else if (TranceSeekCustomAPI.StateMoug[_v.Caster.Data] == 3) // Moug dissapear.
                 {

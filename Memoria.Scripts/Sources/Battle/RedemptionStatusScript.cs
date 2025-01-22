@@ -18,7 +18,7 @@ namespace Memoria.DefaultScripts
         {
             base.Apply(target, inflicter, parameters);
             OverlapSHP.SetupOverlappingSHP2(target);
-            Int32 StackMaximum = 2;
+            Int32 StackMaximum = target.HasSupportAbilityByIndex((SupportAbility)232) ? 3 : 2; // SA Expiation
             ModelScale = target.ModelStatusScale;
             if (parameters.Length > 0)
             {
@@ -109,7 +109,7 @@ namespace Memoria.DefaultScripts
         {
             if (!unit.IsUnderAnyStatus(BattleStatusId.CustomStatus12))
                 return false;
-            if (unit.Data.bi.disappear != 0 || Stack <= 1 || ModelScale != unit.ModelStatusScale)
+            if (unit.Data.bi.disappear != 0 || Stack <= 1 || ModelScale != unit.ModelStatusScale || unit.IsUnderAnyStatus(BattleStatus.Death))
             {
                 ModelScale = unit.ModelStatusScale;
                 if (NumberHUD != null)
