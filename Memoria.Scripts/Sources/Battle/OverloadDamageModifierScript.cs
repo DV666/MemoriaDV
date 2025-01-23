@@ -56,7 +56,18 @@ namespace Memoria.Scripts.Battle
             {
                 v.Target.HpDamage = (Int32)Math.Round(modifier_factor * v.Target.HpDamage) * reflectMultiplier;
                 if (v.Target.PlayerIndex == (CharacterId)12 && (v.Target.Flags & CalcFlag.HpRecovery) == 0) // Lani's Rage Mechanic
+                {
                     v.Target.AlterStatus(CustomStatus.Rage, v.Caster);
+                    if (v.Target.HasSupportAbilityByIndex((SupportAbility)236) && (v.Target.HasSupportAbilityByIndex((SupportAbility)1236) ? 50 : 25) < Comn.random16() % 100) // SA Enraged
+                    {
+                        v.Target.AlterStatus(CustomStatus.Rage, v.Caster);
+                    }
+                    if (v.Target.HasSupportAbilityByIndex((SupportAbility)238)) // SA Crisis level
+                    {
+                        float RatioCrisisLevel = (v.Target.CurrentHp * 100) / v.Target.MaximumHp;
+                        v.Context.TranceIncrease += (short)((v.Context.TranceIncrease * (100 - RatioCrisisLevel)) / 100);
+                    }
+                }
             }
             if (v.Target.IsUnderAnyStatus(BattleStatus.EasyKill) && ((v.Target.Flags & CalcFlag.HpRecovery) != 0 || v.Context.IsAbsorb || v.Command.ScriptId == 10 || v.Command.ScriptId == 69 ||
                  v.Command.ScriptId == 79 || v.Command.ScriptId == 30 || v.Command.ScriptId == 37))
@@ -81,7 +92,7 @@ namespace Memoria.Scripts.Battle
             if (v.Target.HasTrance && v.Target.Data.cur.hp > 0 && !btl_stat.CheckStatus(v.Target.Data, BattleStatusConst.CannotTrance)) // Prevent to earn easy Trance.
             {
                 float ratio = (v.Target.HpDamage * 100) / v.Target.MaximumHp; // En %
-                if (ratio <= 15)
+                if (ratio <= 10)
                     v.Context.TranceIncrease = 0;
             }
 
@@ -131,8 +142,11 @@ namespace Memoria.Scripts.Battle
                 && (v.Target.Flags & CalcFlag.HpAlteration) != 0 && (v.Target.Flags & CalcFlag.MpAlteration) == 0) // Marcus mechanic
             {
                 int HealMP = ((v.Target.HpDamage * (1 + Comn.random16() % 9)) / 1000);
-                v.Target.CurrentMp = Math.Min(v.Caster.CurrentMp + (uint)HealMP, v.Caster.MaximumMp);
-                btl2d.Btl2dStatReq(v.Target, 0, -HealMP);
+                if (HealMP > 0)
+                {
+                    v.Target.CurrentMp = (uint)Math.Min(v.Target.CurrentMp + HealMP, v.Target.MaximumMp);
+                    btl2d.Btl2dStatReq(v.Target, 0, -HealMP);
+                }
             }
 
             if (v.Command.ItemId != (RegularItem)2487 && v.Command.ItemId != (RegularItem)2488 && v.Command.ItemId != (RegularItem)2489) // Blank mix
@@ -152,7 +166,7 @@ namespace Memoria.Scripts.Battle
                 uint factor = (uint)(v.Caster.HasSupportAbilityByIndex((SupportAbility)1127) ? 20 : 10);
                 v.Target.MaximumHp += Math.Min((v.Target.MaximumHp * factor) / 100, (uint)(v.Target.HpDamage - (v.Target.MaximumHp - v.Target.CurrentHp)));
                 v.Target.CurrentHp = v.Target.MaximumHp;
-            }
+            }           
         }
     }
 }

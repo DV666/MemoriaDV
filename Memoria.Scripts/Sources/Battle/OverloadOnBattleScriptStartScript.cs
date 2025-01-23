@@ -271,6 +271,52 @@ namespace Memoria.Scripts.Battle
                 }
             }
 
+            if (v.Caster.PlayerIndex == CharacterId.Beatrix || v.Target.PlayerIndex == CharacterId.Beatrix && v.Command.Data.info.cover == 1) // Redemption mechanic
+            {
+                if (v.Command.Data.info.effect_counter == 1)
+                {
+                    if (v.Command.Id == BattleCommandId.Attack || v.Command.Id == BattleCommandId.Defend || v.Command.Id == BattleCommandId.Counter && v.Command.AbilityId == BattleAbilityId.Attack ||
+                        v.Command.Id == BattleCommandId.HolyWhiteMagic || v.Caster.IsUnderAnyStatus(BattleStatus.Trance) || v.Command.Data.info.cover == 1 && v.Target.HasSupportAbility(SupportAbility2.Cover))
+                    {
+                        v.Caster.AlterStatus(CustomStatus.Redemption, v.Caster);
+                    }
+                    else if (v.Command.Id == BattleCommandId.HolySword1 || v.Command.Id == BattleCommandId.Counter && !v.Caster.HasSupportAbilityByIndex((SupportAbility)1234) &&
+                        (v.Command.AbilityId == BattleAbilityId.ThunderSlash || v.Command.AbilityId == BattleAbilityId.StockBreak || v.Command.AbilityId == BattleAbilityId.Climhazzard || v.Command.AbilityId == BattleAbilityId.Shock
+                        | v.Command.AbilityId == (BattleAbilityId)1011 || v.Command.AbilityId == (BattleAbilityId)1012 || v.Command.AbilityId == (BattleAbilityId)1013 || v.Command.AbilityId == (BattleAbilityId)1014)) // SA Dominance+
+                    {
+                        if (v.Caster.HasSupportAbilityByIndex((SupportAbility)233) && (v.Caster.HasSupportAbilityByIndex((SupportAbility)1233) ? 50 : 25) < Comn.random16() % 100)
+                        {
+                            btl_stat.AlterStatus(v.Caster, CustomStatusId.Redemption, v.Caster, parameters: "Remove");
+                        }
+                        else
+                        {
+                            v.Caster.RemoveStatus(CustomStatus.Redemption);
+                        }
+                    }
+                }
+            }
+
+            if (v.Caster.HasSupportAbilityByIndex((SupportAbility)240) && v.Command.Data.info.effect_counter == 1 && v.Command.Id != BattleCommandId.Counter && v.Caster.CurrentMp < v.Caster.MaximumMp) // SA Offering
+            {
+                v.Caster.AddDelayedModifier(
+                    caster => caster.CurrentAtb < (9 * caster.MaximumAtb) / 10 || caster.CurrentAtb >= caster.MaximumAtb,
+                    caster =>
+                    {
+                        int HPDamage = (int)(caster.MaximumHp / 10);
+                        int MPRecover = (int)(caster.MaximumMp / (v.Caster.HasSupportAbilityByIndex((SupportAbility)1240) ? 10 : 20));
+                        if (HPDamage > 0)
+                        {
+                            caster.CurrentHp = Math.Max(caster.CurrentHp - (uint)HPDamage, 0);
+                        }
+                        if (MPRecover > 0)
+                        {
+                            caster.CurrentMp = Math.Min(caster.CurrentMp + (uint)MPRecover, caster.MaximumMp);
+                        }
+                        btl2d.Btl2dStatReq(caster.Data, HPDamage, -MPRecover);
+                    }
+                );
+            }
+
             TranceSeekCustomAPI.SOS_SA(v);
             return false;
         }

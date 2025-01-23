@@ -4,6 +4,7 @@ using Assets.Sources.Scripts.UI.Common;
 using FF9;
 using Memoria.Data;
 using UnityEngine;
+using static TitleUI;
 
 namespace Memoria.Scripts.Battle
 {
@@ -296,8 +297,11 @@ namespace Memoria.Scripts.Battle
                     v.Command.AbilityCategory -= 64;
             }
 
-            if (BeatrixPassive[v.Caster.Data][2] == 2) // Héroïsme de Beatrix
+            if (BeatrixPassive[v.Caster.Data][2] == 2) // Héroïsme de Beatrix => [TODO] Change to Context.Evade ?
                 v.Context.HitRate += 25;
+
+            if (v.Caster.HasSupportAbilityByIndex((SupportAbility)235) && v.Command.Id == BattleCommandId.Attack) // SA Fencing
+                v.Context.Evade = Math.Min(0, v.Context.Evade - (v.Caster.HasSupportAbilityByIndex((SupportAbility)1235) ? v.Context.Evade / 4 : v.Context.Evade / 8));
 
             if (v.Caster.HasSupportAbilityByIndex((SupportAbility)201) && v.Caster.PlayerIndex == CharacterId.Zidane) // SA Gorilla
                 v.Context.HitRate += ZidanePassive[v.Caster.Data][1];
@@ -383,51 +387,6 @@ namespace Memoria.Scripts.Battle
                 v.Context.Flags |= BattleCalcFlags.Dodge;
 
             return false;
-        }
-
-        public static Boolean CanAttackMagic(this BattleCalculator v)
-        {
-            if (v.Target.IsUnderAnyStatus(CustomStatus.Runic))
-            {
-                v.CalcHpDamage();
-                v.Target.Flags = (CalcFlag.HpDamageOrHeal | CalcFlag.MpDamageOrHeal);
-                v.Target.MpDamage = Math.Max(1, v.Target.HpDamage / 40);
-                v.Target.HpDamage = Math.Max(1, v.Target.HpDamage / 2);
-                v.Command.AbilityStatus = 0;
-                return false;
-            }
-
-            if (v.Target.IsLevitate && v.Command.IsGround)
-            {
-                v.Context.Flags |= BattleCalcFlags.Miss;
-                return false;
-            }
-
-            if (v.Target.CanGuardElement(v.Command.Element))
-                return false;
-
-            if (v.Target.IsHalfElement(v.Command.Element))
-                v.Context.Attack >>= 1;
-
-            if (v.Target.IsWeakElement(v.Command.Element))
-                v.Context.Attack = (Int16)(v.Context.Attack * 3 >> 1);
-
-            if (v.Target.CanAbsorbElement(v.Command.Element))
-            {
-                // v.Context.DefensePower = 0;
-            }
-            if (AbsorbElement.TryGetValue(v.Target.Data, out Int32 elementprotect))
-                if ((v.Command.Element & (EffectElement)elementprotect) != 0 && elementprotect != -1)
-                    v.Context.Flags |= BattleCalcFlags.Absorb;
-
-            v.Target.AlterStatuses(v.Command.Element);
-
-            if (v.Target.PlayerIndex == CharacterId.Beatrix)
-            {
-                v.Context.DefensePower += BeatrixPassive[v.Caster.Data][1];
-            }
-
-            return true;
         }
 
         public static Boolean TryMagicHitWithoutBattleCalcFlag(this BattleCalculator v)
@@ -651,7 +610,85 @@ namespace Memoria.Scripts.Battle
             if (WeaponNewElement[v.Caster.Data] != 0)
                 WeaponElement |= WeaponNewElement[v.Caster.Data];
 
-            return v.Target.CanAttackElement(WeaponElement);
+            if (v.Target.CanGuardElement(WeaponElement))
+                return false;
+
+            v.Target.PenaltyHalfElement(WeaponElement);
+            v.Target.PenaltyAbsorbElement(WeaponElement);
+            v.Target.BonusWeakElement(WeaponElement);
+            v.Target.AlterStatuses(WeaponElement);
+
+            if (WeaponNewElement[v.Caster.Data] != 0 & v.Target.IsWeakElement(WeaponElement))
+            {
+                if (v.Caster.PlayerIndex == (CharacterId)12) // SA Maximum infusion
+                {
+                    BattleAbilityId InfusedAA = ViviPreviousSpell[v.Caster.Data];
+                    if (InfusedAA == (BattleAbilityId)1095 || InfusedAA == (BattleAbilityId)1096 || InfusedAA == (BattleAbilityId)1097 || InfusedAA == (BattleAbilityId)1098)
+                    {
+                        v.Context.Attack = (Int16)(v.Context.Attack * 3 >> 1);
+                    }
+                    else if (InfusedAA == (BattleAbilityId)1091 || InfusedAA == (BattleAbilityId)1092 || InfusedAA == (BattleAbilityId)1093 || InfusedAA == (BattleAbilityId)1094)
+                    {
+                        ++v.Context.DamageModifierCount;
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        public static Boolean CanAttackMagic(this BattleCalculator v)
+        {
+            if (v.Target.IsUnderAnyStatus(CustomStatus.Runic))
+            {
+                v.CalcHpDamage();
+                v.Target.Flags = (CalcFlag.HpDamageOrHeal | CalcFlag.MpDamageOrHeal);
+                v.Target.MpDamage = Math.Max(1, v.Target.HpDamage / 40);
+                v.Target.HpDamage = Math.Max(1, v.Target.HpDamage / 2);
+                v.Command.AbilityStatus = 0;
+                return false;
+            }
+
+            if (v.Target.IsLevitate && v.Command.IsGround)
+            {
+                v.Context.Flags |= BattleCalcFlags.Miss;
+                return false;
+            }
+
+            if (v.Target.CanGuardElement(v.Command.Element))
+                return false;
+
+            if (v.Target.IsHalfElement(v.Command.Element))
+                v.Context.Attack >>= 1;
+
+            if (v.Target.IsWeakElement(v.Command.Element))
+                v.Context.Attack = (Int16)(v.Context.Attack * 3 >> 1);
+
+            if (v.Target.CanAbsorbElement(v.Command.Element))
+            {
+                if (v.Target.HasSupportAbilityByIndex((SupportAbility)241) && (v.Command.Element & EffectElement.Darkness) != 0) // SA Dark side
+                {
+                    v.Context.DefensePower = 0;
+                    if (v.Target.HasSupportAbilityByIndex((SupportAbility)1241))
+                    {
+                        v.Target.Trance = (byte)Math.Min(v.Target.Trance + (Comn.random16() % v.Target.Will), Byte.MaxValue);
+                        if (v.Target.Trance >= Byte.MaxValue)
+                            v.Target.AlterStatus(BattleStatus.Trance);
+                    }
+                }
+            }
+            if (AbsorbElement.TryGetValue(v.Target.Data, out Int32 elementprotect))
+                if ((v.Command.Element & (EffectElement)elementprotect) != 0 && elementprotect != -1)
+                    v.Context.Flags |= BattleCalcFlags.Absorb;
+
+            v.Target.AlterStatuses(v.Command.Element);
+
+            if (v.Target.PlayerIndex == CharacterId.Beatrix)
+            {
+                v.Context.DefensePower += BeatrixPassive[v.Caster.Data][1];
+            }
+
+            return true;
         }
 
         public static void InfusedWeaponStatus(this BattleCalculator v)
@@ -1099,28 +1136,28 @@ namespace Memoria.Scripts.Battle
                 v.Target.Flags |= CalcFlag.HpDamageOrHeal;
 
             }
-            if (v.Caster.PlayerIndex == CharacterId.Beatrix || v.Target.PlayerIndex == CharacterId.Beatrix && v.Command.Data.info.cover == 1) // Redemption mechanic
+            if (v.Target.HasSupportAbilityByIndex((SupportAbility)234) && (int)v.Target.GetPropertyByName("StatusProperty CustomStatus12 Stack") >= 2 && v.Target.Will < Comn.random16() % 100) // SA Dominance
             {
-                if (BeatrixPassive[v.Caster.Data][3] == 0)
+                List<BattleAbilityId> Counter_AA = new List<BattleAbilityId>{ BattleAbilityId.ThunderSlash, BattleAbilityId.StockBreak, BattleAbilityId.Climhazzard, BattleAbilityId.Shock,
+                BattleAbilityId.Protect, BattleAbilityId.Shell, BattleAbilityId.Cura, BattleAbilityId.Berserk, BattleAbilityId.Reflect, BattleAbilityId.Regen, BattleAbilityId.Holy};
+
+                for (Int32 i = 0; i < Counter_AA.Count; i++)
                 {
-                    BeatrixPassive[v.Caster.Data][3] = (ushort)(v.Command.TargetCount);
-                    if (v.Command.Id == BattleCommandId.Attack || v.Command.Id == BattleCommandId.Defend || v.Command.Id == BattleCommandId.Counter ||
-                        v.Command.Id == BattleCommandId.HolyWhiteMagic || v.Caster.IsUnderAnyStatus(BattleStatus.Trance))
+                    if (!ff9abil.FF9Abil_IsMaster(v.Target.Player, (int)Counter_AA[i]))
                     {
-                        v.Caster.AlterStatus(CustomStatus.Redemption, v.Caster);
-                    }
-                    else if (v.Command.Data.info.cover == 1 && v.Target.HasSupportAbility(SupportAbility2.Cover))
-                    {
-                        v.Target.AlterStatus(CustomStatus.Redemption, v.Caster);
-                    }
-                    else if (v.Command.Id == BattleCommandId.HolySword1)
-                    {
-                        v.Caster.RemoveStatus(CustomStatus.Redemption);
+                        Counter_AA.Remove(Counter_AA[i]);
                     }
                 }
-                BeatrixPassive[v.Caster.Data][3]--;
-                if (BeatrixPassive[v.Caster.Data][3] < 0)
-                    BeatrixPassive[v.Caster.Data][3] = 0;
+
+                BattleAbilityId Counter_AA_Selected = Counter_AA[GameRandom.Next16() % Counter_AA.Count];
+                if (Counter_AA_Selected == BattleAbilityId.Protect || Counter_AA_Selected == BattleAbilityId.Shell || Counter_AA_Selected == BattleAbilityId.Reflect || Counter_AA_Selected == BattleAbilityId.Cura || Counter_AA_Selected == BattleAbilityId.Regen)
+                {
+                    btl_cmd.SetCounter(v.Target, BattleCommandId.Counter, (Int32)Counter_AA_Selected, v.Target.Id);
+                }
+                else
+                {
+                    btl_cmd.SetCounter(v.Target, BattleCommandId.Counter, (Int32)Counter_AA_Selected, v.Caster.Id);
+                }
             }
             if (v.Caster.HasSupportAbilityByIndex((SupportAbility)110) && !v.Command.IsManyTarget && v.Command.Id != BattleCommandId.Attack && v.Target.HpDamage > 0 && 
                 (v.Command.ScriptId == 9 || v.Command.ScriptId == 10 || v.Command.ScriptId == 17 || v.Command.ScriptId == 18 || v.Command.ScriptId == 116 || v.Command.ScriptId == 118
@@ -1378,6 +1415,12 @@ namespace Memoria.Scripts.Battle
                     v.Target.AlterStatus(BattleStatus.Doom, v.Caster);
             }
 
+            if (v.Caster.HasSupportAbilityByIndex((SupportAbility)1238) && (v.Target.Flags & CalcFlag.HpRecovery) == 0 && v.Target.HpDamage > 0) // SA Crisis level+
+            {
+                float RatioCrisisLevel = (v.Caster.CurrentHp * 100) / v.Caster.MaximumHp;
+                v.Target.HpDamage += (short)((v.Target.HpDamage * (100 - RatioCrisisLevel)) / 200);
+            }
+
             if (v.Target.IsUnderAnyStatus(BattleStatus.AutoLife) && (v.Target.Flags & CalcFlag.HpRecovery) == 0 && !v.Target.IsPlayer && v.Target.HpDamage >= v.Target.CurrentHp)
             {
                 v.Target.HpDamage = (int)(v.Target.CurrentHp - 1);
@@ -1394,6 +1437,9 @@ namespace Memoria.Scripts.Battle
                 btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[FF99FD]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 20);
                 v.Target.RemoveStatus(BattleStatus.AutoLife);
             }
+
+            if (v.Caster.HasSupportAbilityByIndex((SupportAbility)235) && v.Command.Id == BattleCommandId.Attack) // SA Fencing
+                v.Target.HpDamage += v.Caster.HasSupportAbilityByIndex((SupportAbility)1235) ? v.Target.HpDamage / 4 : v.Target.HpDamage / 8;
         }
     }
 }

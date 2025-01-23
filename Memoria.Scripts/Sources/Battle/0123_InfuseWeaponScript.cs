@@ -21,6 +21,7 @@ namespace Memoria.Scripts.Battle
         {
             TranceSeekCustomAPI.WeaponNewElement[_v.Target.Data] = _v.Command.Element;
             TranceSeekCustomAPI.WeaponNewStatus[_v.Target.Data] = _v.Command.AbilityStatus;
+            TranceSeekCustomAPI.ViviPreviousSpell[_v.Target.Data] = _v.Command.AbilityId;
         }
     }
 }

@@ -22,12 +22,6 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            if (_v.Command.AbilityId == BattleAbilityId.Defend) // Defense
-            {
-                if (_v.Caster.PlayerIndex == CharacterId.Beatrix)
-                    _v.Caster.AlterStatus(TranceSeekCustomAPI.CustomStatus.Redemption);
-            }
-
             if ( _v.Command.AbilityId == (BattleAbilityId)1104 && (_v.Caster.ResistStatus & BattleStatus.Doom) == 0) // Sang Maudit
             {
                 btl_stat.AlterStatus(_v.Target, TranceSeekCustomAPI.CustomStatusId.PowerUp, parameters: $"+{_v.Command.Power}");

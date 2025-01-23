@@ -5,6 +5,8 @@ using Object = System.Object;
 using static Memoria.Scripts.Battle.TranceSeekCustomAPI;
 using Memoria.Prime;
 using UnityEngine;
+using static SiliconStudio.Social.ResponseData;
+using System.Collections.Generic;
 
 namespace Memoria.DefaultScripts
 {
@@ -19,6 +21,7 @@ namespace Memoria.DefaultScripts
         public Int32 PhantomCountdown = 0;
         public Boolean MarcusAbsorbDarkness = false;
         public Boolean MarcusWeakLight = false;
+        public List<BattleStatusId> StatusResistOni = new List<BattleStatusId>();
 
         public static Int32 GetPhantomCount(BattleUnit btl)
         {
@@ -75,7 +78,17 @@ namespace Memoria.DefaultScripts
                             MarcusWeakLight = true;
                             target.WeakElement |= EffectElement.Holy;
                         }
-
+                        if (target.HasSupportAbilityByIndex((SupportAbility)242))
+                        {
+                            foreach (BattleStatusId statusId in FF9BattleDB.StatusData.Keys)
+                            {
+                                if (target.PartialResistStatus[statusId] == 0f && (statusId.ToBattleStatus() & BattleStatusConst.AnyNegative) != 0 && statusId != BattleStatusId.Death)
+                                {
+                                    target.PartialResistStatus[statusId] = 0.50f;
+                                    StatusResistOni.Add(statusId);
+                                }
+                            }
+                        }
                     }
                 );
 
@@ -113,6 +126,13 @@ namespace Memoria.DefaultScripts
                         {
                             MarcusWeakLight = false;
                             target.WeakElement &= ~EffectElement.Holy;
+                        }
+                        if (target.HasSupportAbilityByIndex((SupportAbility)242))
+                        {
+                            foreach (BattleStatusId statusId in StatusResistOni)
+                            {
+                                target.PartialResistStatus[statusId] = 0f;
+                            }
                         }
                     }
                 );
