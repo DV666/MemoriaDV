@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.Remoting.Contexts;
 using Assets.Sources.Scripts.UI.Common;
 using FF9;
 using Memoria.Data;
@@ -995,6 +996,42 @@ namespace Memoria.Scripts.Battle
             v.Target.TryAlterStatuses(v.Command.AbilityStatus, true, v.Caster);
         }
 
+        public static void TryRemoveAbilityStatuses(this BattleCalculator v)
+        {
+            if (v.Caster.HasSupportAbilityByIndex((SupportAbility)249) && v.Command.AbilityStatus > 0) // SA Assistance
+            {
+                foreach (BattleStatusId status in v.Command.AbilityStatus.ToStatusList())
+                {
+                    if (status == BattleStatusId.Death && !v.Caster.HasSupportAbilityByIndex((SupportAbility)1249))
+                        continue;
+
+                    if (v.Target.IsUnderAnyStatus(status))
+                        v.Caster.Trance = (byte)Math.Min(v.Caster.Trance + (Comn.random16() % v.Caster.Will), Byte.MaxValue);
+                }
+            }
+
+            if (!v.Target.TryRemoveStatuses(v.Command.AbilityStatus))
+                v.Context.Flags |= BattleCalcFlags.Miss;
+        }
+
+        public static void TryRemoveItemStatuses(this BattleCalculator v)
+        {
+            if (v.Caster.HasSupportAbilityByIndex((SupportAbility)249) && v.Command.Item.Status > 0) // SA Assistance
+            {
+                foreach (BattleStatusId status in v.Command.Item.Status.ToStatusList())
+                {
+                    if (status == BattleStatusId.Death && !v.Caster.HasSupportAbilityByIndex((SupportAbility)1249))
+                        continue;
+
+                    if (v.Target.IsUnderAnyStatus(status))
+                        v.Caster.Trance = (byte)Math.Min(v.Caster.Trance + (Comn.random16() % v.Caster.Will), Byte.MaxValue);
+                }
+            }
+
+            if (!v.Target.TryRemoveStatuses(v.Command.ItemStatus))
+                v.Context.Flags |= BattleCalcFlags.Miss;
+        }
+
         public static void RaiseTrouble(this BattleCalculator v)
         {
             if (v.Target.PhysicalDefence != 255 || v.Target.PhysicalDefence != 255 || v.Target.MagicDefence != 255 || v.Target.MagicEvade != 255 && !v.Command.IsManyTarget)
@@ -1136,7 +1173,7 @@ namespace Memoria.Scripts.Battle
                 v.Target.Flags |= CalcFlag.HpDamageOrHeal;
 
             }
-            if (v.Target.HasSupportAbilityByIndex((SupportAbility)234) && (int)v.Target.GetPropertyByName("StatusProperty CustomStatus12 Stack") >= 2 && v.Target.Will < Comn.random16() % 100) // SA Dominance
+            if (v.Target.HasSupportAbilityByIndex((SupportAbility)234) && (int)v.Target.GetPropertyByName("StatusProperty CustomStatus12 Stack") >= 2 && v.Target.Will < Comn.random16() % 100 && !v.Caster.IsPlayer) // SA Dominance
             {
                 List<BattleAbilityId> Counter_AA = new List<BattleAbilityId>{ BattleAbilityId.ThunderSlash, BattleAbilityId.StockBreak, BattleAbilityId.Climhazzard, BattleAbilityId.Shock,
                 BattleAbilityId.Protect, BattleAbilityId.Shell, BattleAbilityId.Cura, BattleAbilityId.Berserk, BattleAbilityId.Reflect, BattleAbilityId.Regen, BattleAbilityId.Holy};
@@ -1156,7 +1193,10 @@ namespace Memoria.Scripts.Battle
                 }
                 else
                 {
-                    btl_cmd.SetCounter(v.Target, BattleCommandId.Counter, (Int32)Counter_AA_Selected, v.Caster.Id);
+                    if (Counter_AA_Selected == BattleAbilityId.StockBreak || Counter_AA_Selected == BattleAbilityId.Climhazzard)
+                        btl_cmd.SetCounter(v.Target, BattleCommandId.Counter, (Int32)Counter_AA_Selected, 240);
+                    else
+                        btl_cmd.SetCounter(v.Target, BattleCommandId.Counter, (Int32)Counter_AA_Selected, v.Caster.Id);
                 }
             }
             if (v.Caster.HasSupportAbilityByIndex((SupportAbility)110) && !v.Command.IsManyTarget && v.Command.Id != BattleCommandId.Attack && v.Target.HpDamage > 0 && 

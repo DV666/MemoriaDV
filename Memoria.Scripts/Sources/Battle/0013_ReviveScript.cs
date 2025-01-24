@@ -46,7 +46,7 @@ namespace Memoria.Scripts.Battle
                     if ((_v.Target.CanBeRevived() || _v.Target.Accessory != (RegularItem)1213) && _v.Target.CheckIsPlayer() && _v.Target.CurrentHp == 0U)
                     {
                         _v.Target.HpDamage = (int)(_v.Target.MaximumHp * 3UL / 4UL);
-                        _v.TryRemoveAbilityStatuses();
+                        TranceSeekCustomAPI.TryRemoveAbilityStatuses(_v);
                     }
                     else
                     {
@@ -111,7 +111,7 @@ namespace Memoria.Scripts.Battle
                         _v.Target.HpDamage /= 2;
                 }
             }
-            _v.TryRemoveAbilityStatuses();
+            TranceSeekCustomAPI.TryRemoveAbilityStatuses(_v);
         }
 
         private Boolean HitRateForZombie()

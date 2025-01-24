@@ -30,7 +30,7 @@ namespace Memoria.Scripts.Battle
                 _v.Command.AbilityStatus |= (TranceSeekCustomAPI.CustomStatus.PowerUp | TranceSeekCustomAPI.CustomStatus.MagicUp | TranceSeekCustomAPI.CustomStatus.ArmorUp
                     | TranceSeekCustomAPI.CustomStatus.MentalUp | TranceSeekCustomAPI.CustomStatus.Bulwark | TranceSeekCustomAPI.CustomStatus.PerfectCrit | TranceSeekCustomAPI.CustomStatus.PerfectDodge);
             }
-            _v.TryRemoveAbilityStatuses();
+            TranceSeekCustomAPI.TryRemoveAbilityStatuses(_v);
             if (_v.Command.Power == 111)
             {
                 Boolean easykill = false;

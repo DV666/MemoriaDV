@@ -35,7 +35,7 @@ namespace Memoria.Scripts.Battle
             }
             else
             {
-                _v.TryRemoveItemStatuses();
+                TranceSeekCustomAPI.TryRemoveItemStatuses(_v);
             }
 
             if (_v.Caster.PlayerIndex == CharacterId.Blank && _v.Command.Id == BattleCommandId.Item)

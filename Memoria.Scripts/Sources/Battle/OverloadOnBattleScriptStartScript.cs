@@ -79,14 +79,24 @@ namespace Memoria.Scripts.Battle
             }
             if (v.Caster.PlayerIndex == CharacterId.Cinna) // Cinna's Mechanic
             {
-                for (Int32 i = 0; i < 8; i++) // Pas terrible... à revoir la méthode je pense.
+                int InventionsCD = 0; // For Genie/Eureka mechanic.
+
+                List<BattleAbilityId> InventionAA = new List<BattleAbilityId>{ (BattleAbilityId)1136, (BattleAbilityId)1137, (BattleAbilityId)1138, (BattleAbilityId)1139,
+                    (BattleAbilityId)1140, (BattleAbilityId)1141, (BattleAbilityId)1142, (BattleAbilityId)1143, (BattleAbilityId)1538, (BattleAbilityId)1539};
+
+                foreach (BattleAbilityId AA in InventionAA)
                 {
-                    int idAA = 1136 + i;
-                    if (FF9StateSystem.Battle.FF9Battle.aa_data[(BattleAbilityId)idAA].MP > 0)
-                        FF9StateSystem.Battle.FF9Battle.aa_data[(BattleAbilityId)idAA].MP--;
+                    if (FF9StateSystem.Battle.FF9Battle.aa_data[AA].MP > 0)
+                    {
+                        FF9StateSystem.Battle.FF9Battle.aa_data[AA].MP--;
+                        if (AA != (BattleAbilityId)1538 && AA != (BattleAbilityId)1539) // Genie & Eureka
+                            InventionsCD++;
+                    }
                 }
 
-                if (v.Command.AbilityId == (BattleAbilityId)1138) // Accelerator hammer
+                ViviPassive[v.Caster.Data][0] = InventionsCD;
+
+                if (v.Command.AbilityId == (BattleAbilityId)1138 || v.Command.Id == BattleCommandId.Attack && v.Caster.HasSupportAbilityByIndex((SupportAbility)244)) // Accelerator hammer / SA Mecano
                 {
                     List<AA_DATA> AAlist = new List<AA_DATA>();
 
@@ -96,10 +106,36 @@ namespace Memoria.Scripts.Battle
                         if (FF9StateSystem.Battle.FF9Battle.aa_data[(BattleAbilityId)idAA].MP > 0)
                             AAlist.Add(FF9StateSystem.Battle.FF9Battle.aa_data[(BattleAbilityId)idAA]);
                     }
-                    AAlist[GameRandom.Next16() % AAlist.Count].MP--;
+                    if (AAlist.Count > 0)
+                    {
+                        AA_DATA AAChoosen = AAlist[GameRandom.Next16() % AAlist.Count];
+                        AAChoosen.MP--;
+                        if (v.Caster.HasSupportAbilityByIndex((SupportAbility)1244) && AAlist.Count > 0) // SA Mecano++
+                        {
+                            AAlist.Remove(AAChoosen);
+                            if (AAlist.Count > 0)
+                                AAlist[GameRandom.Next16() % AAlist.Count].MP--;
+                        }
+                    }
                 }
 
-                if (v.Command.Id == (BattleCommandId)10021)
+                if (FF9StateSystem.Battle.FF9Battle.aa_data[v.Command.AbilityId].MP > 0 && v.Caster.HasSupportAbilityByIndex((SupportAbility)246))
+                {
+                    v.Caster.CurrentMp = 0;
+                    Dictionary<String, String> localizedMessage = new Dictionary<String, String>
+                    {
+                        { "US", "Emergency Plan!" },
+                        { "UK", "Emergency Plan!" },
+                        { "JP", "緊急時対策!" },
+                        { "ES", "¡Plan de emergencia!" },
+                        { "FR", "Plan d'urgence !" },
+                        { "GR", "Notfallplan!" },
+                        { "IT", "Piano di emergenza!" },
+                    };
+                    btl2d.Btl2dReqSymbolMessage(v.Caster.Data, "[FFFF00]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 10);
+                }
+
+                if (v.Command.Id == (BattleCommandId)10021 || v.Command.Id == (BattleCommandId)10036 || v.Command.Id == (BattleCommandId)10037)  // CMD Invention
                 {
                     int mpCost = 0;
                     switch (v.Command.AbilityId)
@@ -127,6 +163,12 @@ namespace Memoria.Scripts.Battle
                             break;
                         case (BattleAbilityId)1143: // Hymn of the Tantalas
                             mpCost = 9;
+                            break;
+                        case (BattleAbilityId)1538: // Idea
+                            mpCost = 10;
+                            break;
+                        case (BattleAbilityId)1539: // Eureka
+                            mpCost = 6;
                             break;
                     }
                     FF9StateSystem.Battle.FF9Battle.aa_data[v.Command.AbilityId].MP = mpCost;
@@ -197,6 +239,12 @@ namespace Memoria.Scripts.Battle
                         }
                     }
                 }
+            }
+
+            if (v.Command.Id == (BattleCommandId)10020) // CMD Mixing
+            {
+                int TranceDelta = v.Caster.HasSupportAbilityByIndex((SupportAbility)1251) ? 42 : v.Caster.HasSupportAbilityByIndex((SupportAbility)251) ? 64 : 128;
+                v.Caster.Trance = (byte)Math.Max(0, v.Caster.Trance - TranceDelta);
             }
 
             if (v.Caster.PlayerIndex == CharacterId.Marcus && v.Caster.InTrance) // Refresh Trance data in Player for Marcus, for AbilityFeatures.txt purpose.
@@ -316,6 +364,15 @@ namespace Memoria.Scripts.Battle
                     }
                 );
             }
+
+            if (v.Caster.HasSupportAbilityByIndex((SupportAbility)248) && v.Command.Id == BattleCommandId.Item) // SA Econome
+            {
+                if ((v.Caster.HasSupportAbilityByIndex((SupportAbility)1248) ? 50 : 25) < Comn.random16() % 100)
+                    ff9item.FF9Item_Add(v.Command.ItemId, 1);
+            }
+
+            if (v.Caster.HasSupportAbilityByIndex((SupportAbility)253) && v.Caster.PlayerIndex == (CharacterId)14) // SA Take that!
+                v.Caster.SummonCount++;
 
             TranceSeekCustomAPI.SOS_SA(v);
             return false;

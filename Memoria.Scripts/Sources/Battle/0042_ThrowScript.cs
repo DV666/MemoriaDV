@@ -23,6 +23,31 @@ namespace Memoria.Scripts.Battle
         {
             if (_v.Caster.IsPlayer)
             {
+                if (_v.Command.AbilityId == (BattleAbilityId)1136 || _v.Command.AbilityId == (BattleAbilityId)1138) // Accelerator hammer
+                {
+                    if (!_v.Target.TryKillFrozen())
+                    {
+                        if (_v.Target.IsUnderAnyStatus(BattleStatus.Vanish))
+                        {
+                            _v.Context.Flags |= BattleCalcFlags.Miss;
+                        }
+                        _v.Caster.SetLowPhysicalAttack();
+                        TranceSeekCustomAPI.CharacterBonusPassive(_v, "LowPhysicalAttack");
+                        _v.Target.SetPhysicalDefense();
+                        _v.Context.AttackPower = _v.Caster.WeaponPower << 1;
+                        TranceSeekCustomAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
+                    }
+                    if ((_v.Caster.WeaponElement & _v.Caster.WeakElement) != 0)
+                        _v.Context.Attack = (Int16)(_v.Context.Attack * 3 >> 1);
+                    TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
+                    if (TranceSeekCustomAPI.CanAttackMagic(_v))
+                    {
+                        _v.CalcPhysicalHpDamage();
+                    }
+                    if (_v.Caster.WeaponRate > Comn.random16() % 100)
+                        _v.Target.TryAlterStatuses(_v.Caster.WeaponStatus, false);
+                    return;
+                }
                 if (_v.Command.ItemId == (RegularItem)1032) // Smoking Bomb
                 {
                     btl_sys.CheckEscape(false);
@@ -59,17 +84,14 @@ namespace Memoria.Scripts.Battle
                             _v.Caster.SetLowPhysicalAttack();
                             TranceSeekCustomAPI.CharacterBonusPassive(_v, "LowPhysicalAttack");
                             _v.Target.SetPhysicalDefense();
-                            if (_v.Command.AbilityId == (BattleAbilityId)1136 || _v.Command.AbilityId == (BattleAbilityId)1138)
-                                _v.Context.AttackPower = _v.Caster.WeaponPower << 1;
-                            else
-                                _v.Context.AttackPower = _v.Command.Weapon.Power << 1;
+                            _v.Context.AttackPower = _v.Command.Weapon.Power << 1;
                             TranceSeekCustomAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
                         }
                     }
                     if ((_v.Command.Weapon.Element & _v.Caster.WeakElement) != 0)
                         _v.Context.Attack = (Int16)(_v.Context.Attack * 3 >> 1);
                     TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
-                    if (CanAttackMagic(_v))
+                    if (TranceSeekCustomAPI.CanAttackMagic(_v))
                     {
                         _v.CalcPhysicalHpDamage();
                     }
@@ -90,7 +112,6 @@ namespace Memoria.Scripts.Battle
                         _v.NormalPhysicalParams();
                         TranceSeekCustomAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
                         TranceSeekCustomAPI.EnemyTranceBonusAttack(_v);
-                        _v.Target.GambleDefence();
                         TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
                         TranceSeekCustomAPI.BonusBackstabAndPenaltyLongDistance(_v);
                         _v.CalcHpDamage();

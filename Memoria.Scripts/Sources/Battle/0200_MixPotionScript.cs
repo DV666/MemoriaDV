@@ -22,7 +22,7 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            if (_v.Command.ItemId == RegularItem.NoItem)
+            if (_v.Command.ItemId == RegularItem.NoItem || _v.Caster.HasSupportAbilityByIndex((SupportAbility)251)) // SA Artificer
             {
                 _v.Context.Flags = BattleCalcFlags.Miss;
                 return;
@@ -233,7 +233,7 @@ namespace Memoria.Scripts.Battle
                     else if (_v.Target.CheckIsPlayer())
                     {
                         HPHeal = (1 + GameRandom.Next8() % 10);
-                        _v.TryRemoveItemStatuses();
+                        TranceSeekCustomAPI.TryRemoveItemStatuses(_v);
                     }
                     break;
                 }

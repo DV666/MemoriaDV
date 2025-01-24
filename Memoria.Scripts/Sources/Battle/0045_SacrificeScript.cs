@@ -85,7 +85,7 @@ namespace Memoria.Scripts.Battle
                     {
                         _v.Target.CurrentHp = _v.Target.MaximumHp;
                         _v.Target.CurrentMp = _v.Target.MaximumMp;
-                        _v.TryRemoveAbilityStatuses();
+                        TranceSeekCustomAPI.TryRemoveAbilityStatuses(_v);
                         _v.Caster.CurrentMp = 0;
                         _v.Caster.Kill(_v.Caster);
                     }

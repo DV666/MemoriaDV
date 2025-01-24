@@ -14,8 +14,6 @@ namespace Memoria.Scripts.Battle
 
         private readonly BattleCalculator _v;
 
-        //public static Dictionary<BTL_DATA, RegularItem> SoakedBlade = new Dictionary<BTL_DATA, RegularItem>();
-
         public AlchemyScript(BattleCalculator v)
         {
             _v = v;
@@ -25,6 +23,11 @@ namespace Memoria.Scripts.Battle
         {
             switch (_v.Command.AbilityId)
             {
+                case (BattleAbilityId)1144: // Concoction
+                {
+                    TranceSeekCustomAPI.TryRemoveAbilityStatuses(_v);
+                    break;
+                }
                 case (BattleAbilityId)1145: // Bandage
                 case (BattleAbilityId)1149: // Premiers soins
                 {
@@ -67,7 +70,7 @@ namespace Memoria.Scripts.Battle
                 case (BattleAbilityId)1148: // Traitement urgent
                 case (BattleAbilityId)1150: // Traitement collectif
                 {
-                    RegularItem ItemChoosen = (RegularItem)_v.Caster.GetPropertyByName("StatusProperty CustomStatus21 SoakedBlade");
+                    RegularItem ItemChoosen = (RegularItem)_v.Caster.GetPropertyByName("StatusProperty CustomStatus21 SoakedBlade"); // Last item used
 
                     if (ItemChoosen == 0 || GameState.ItemCount(ItemChoosen) <= 0)
                         _v.Context.Flags = BattleCalcFlags.Miss;
@@ -193,7 +196,7 @@ namespace Memoria.Scripts.Battle
                                     {
                                         _v.Target.CurrentHp = (UInt32)(1 + GameRandom.Next8() % 10);
                                     }
-                                _v.TryRemoveItemStatuses();
+                                TranceSeekCustomAPI.TryRemoveItemStatuses(_v);
                             }
                             break;
                         }
@@ -204,6 +207,7 @@ namespace Memoria.Scripts.Battle
                         case RegularItem.MagicTag:
                         case RegularItem.Vaccine:
                         case RegularItem.Remedy:
+                        case RegularItem.Annoyntment:
                         case (RegularItem)1003:
                         {
                             _v.Command.AbilityStatus = ff9item.GetItemEffect(ItemChoosen).status;
@@ -211,7 +215,7 @@ namespace Memoria.Scripts.Battle
                             {
                                 _v.Command.AbilityStatus |= TranceSeekCustomAPI.CustomStatus.Vieillissement;
                             }
-                            _v.TryRemoveAbilityStatuses();
+                            TranceSeekCustomAPI.TryRemoveAbilityStatuses(_v);
                             break;
                         }
                         case RegularItem.Garnet:

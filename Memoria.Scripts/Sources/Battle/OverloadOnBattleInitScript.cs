@@ -105,6 +105,11 @@ namespace Memoria.Scripts.Battle
                 {
                     SpecialSAEffect[unit.Data][1] = unit.HasSupportAbilityByIndex((SupportAbility)1052) ? 2 : 1;
                 }
+                if (unit.HasSupportAbilityByIndex((SupportAbility)1252)) // SA I'm all set
+                {
+                    unit.AlterStatus(CustomStatus.ArmorUp, unit);
+                    unit.AlterStatus(CustomStatus.MentalUp, unit);
+                }
                 if (unit.Weapon == RegularItem.Defender)
                 {
                     unit.AlterStatus(CustomStatus.ArmorUp, unit);
@@ -120,6 +125,8 @@ namespace Memoria.Scripts.Battle
                     MonsterMechanic[unit.Data][4] = 100; // Reduce time for Sleep/Freeze/Stop
                     MonsterMechanic[unit.Data][5] = 4; // Reduce gravity damage
                 }
+                if (unit.PlayerIndex == (CharacterId)14)
+                    unit.SummonCount = 0; // Used for SA Take that!
 
                 if (!unit.IsPlayer)
                 {

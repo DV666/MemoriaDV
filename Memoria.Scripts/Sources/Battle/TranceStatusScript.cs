@@ -84,10 +84,12 @@ namespace Memoria.DefaultScripts
                             {
                                 if (target.PartialResistStatus[statusId] == 0f && (statusId.ToBattleStatus() & BattleStatusConst.AnyNegative) != 0 && statusId != BattleStatusId.Death)
                                 {
-                                    target.PartialResistStatus[statusId] = 0.50f;
+                                    target.PartialResistStatus[statusId] = target.HasSupportAbilityByIndex((SupportAbility)1242) ? 0.75f : 0.50f;
                                     StatusResistOni.Add(statusId);
                                 }
                             }
+                            if (target.HasSupportAbilityByIndex((SupportAbility)1242))
+                                target.AlterStatus(BattleStatus.EasyKill);
                         }
                     }
                 );
@@ -133,6 +135,8 @@ namespace Memoria.DefaultScripts
                             {
                                 target.PartialResistStatus[statusId] = 0f;
                             }
+                            if (target.HasSupportAbilityByIndex((SupportAbility)1242))
+                                target.RemoveStatus(BattleStatus.EasyKill);
                         }
                     }
                 );

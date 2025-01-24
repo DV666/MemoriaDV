@@ -133,7 +133,7 @@ namespace Memoria.Scripts.Battle
                 {
                     if (_v.Command.HitRate == 255)
                     {
-                        _v.TryRemoveAbilityStatuses();
+                        TranceSeekCustomAPI.TryRemoveAbilityStatuses(_v);
                     }
                     else
                     {

@@ -69,7 +69,7 @@ namespace Memoria.Scripts.Battle
                         {
                             _v.Target.CurrentHp = (UInt32)(1 + GameRandom.Next8() % 10);
                         }
-                    _v.TryRemoveItemStatuses();
+                    TranceSeekCustomAPI.TryRemoveItemStatuses(_v);
                 }
             }
 

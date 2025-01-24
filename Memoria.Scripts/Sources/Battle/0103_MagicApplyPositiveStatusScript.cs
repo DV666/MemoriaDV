@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Runtime.Remoting.Contexts;
 using Memoria.Data;
+using Memoria.Prime;
 
 namespace Memoria.Scripts.Battle
 {
@@ -22,6 +23,29 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
+            if (_v.Command.AbilityId == (BattleAbilityId)1538 || _v.Command.AbilityId == (BattleAbilityId)1539) // AA Idea + Eureka
+            {
+                if (TranceSeekCustomAPI.ViviPassive[_v.Caster.Data][0] == 0)
+                {
+                    _v.Context.Flags |= BattleCalcFlags.Miss;
+                    return;
+                }
+
+                List<BattleStatusId> statuslist = new List<BattleStatusId>{ BattleStatusId.Protect, BattleStatusId.Shell, BattleStatusId.Haste, BattleStatusId.Reflect, BattleStatusId.Regen,
+                    BattleStatusId.AutoLife, BattleStatusId.Float, BattleStatusId.Vanish, TranceSeekCustomAPI.CustomStatusId.ArmorUp,
+                    TranceSeekCustomAPI.CustomStatusId.MagicUp, TranceSeekCustomAPI.CustomStatusId.MentalUp, TranceSeekCustomAPI.CustomStatusId.PowerUp};
+
+                BattleStatusId statusselected;
+                while (TranceSeekCustomAPI.ViviPassive[_v.Caster.Data][0] > 0)
+                {
+                    statusselected = statuslist[GameRandom.Next16() % statuslist.Count];
+                    btl_stat.AlterStatus(_v.Target, statusselected, _v.Caster);
+                    statuslist.Remove(statusselected);
+                    TranceSeekCustomAPI.ViviPassive[_v.Caster.Data][0]--;
+                }
+                return;
+            }
+
             if ( _v.Command.AbilityId == (BattleAbilityId)1104 && (_v.Caster.ResistStatus & BattleStatus.Doom) == 0) // Sang Maudit
             {
                 btl_stat.AlterStatus(_v.Target, TranceSeekCustomAPI.CustomStatusId.PowerUp, parameters: $"+{_v.Command.Power}");
