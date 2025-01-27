@@ -76,7 +76,7 @@ namespace Memoria.Scripts.Battle
                 if (!MonsterMechanic.TryGetValue(unit.Data, out Int32[] monstermechanic))
                     MonsterMechanic[unit.Data] = [ 0, 0, 0, 0, 100, 0 ];
                 if (!SpecialSAEffect.TryGetValue(unit.Data, out Int32[] specialSAeffect))
-                    SpecialSAEffect[unit.Data] = [ 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0 ];
+                    SpecialSAEffect[unit.Data] = [ 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ];
                 if (!RollBackStats.TryGetValue(unit.Data, out Int32[] rb))
                     RollBackStats[unit.Data] = [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ];
                 if (!RollBackBattleStatus.TryGetValue(unit.Data, out BattleStatus rs))
@@ -126,7 +126,10 @@ namespace Memoria.Scripts.Battle
                     MonsterMechanic[unit.Data][5] = 4; // Reduce gravity damage
                 }
                 if (unit.PlayerIndex == (CharacterId)14)
-                    unit.SummonCount = 0; // Used for SA Take that!
+                {
+                    unit.SummonCount = 1; // Used for SA Take that!
+                    SpecialSAEffect[unit.Data][13] = unit.PhysicalDefence; // In top form!
+                }
 
                 if (!unit.IsPlayer)
                 {

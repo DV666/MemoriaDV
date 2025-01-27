@@ -1,5 +1,6 @@
 ﻿using FF9;
 using Memoria.Data;
+using Memoria.Database;
 using Memoria.Prime;
 using System;
 using System.Collections.Generic;
@@ -371,8 +372,28 @@ namespace Memoria.Scripts.Battle
                     ff9item.FF9Item_Add(v.Command.ItemId, 1);
             }
 
-            if (v.Caster.HasSupportAbilityByIndex((SupportAbility)253) && v.Caster.PlayerIndex == (CharacterId)14) // SA Take that!
+            if (v.Target.HasSupportAbilityByIndex((SupportAbility)254)) // SA In top form!
+            {
+                v.Caster.AddDelayedModifier(
+                    caster => caster.CurrentAtb >= caster.MaximumAtb,
+                    caster =>
+                    {
+                        int RatioHP = (int)((v.Target.CurrentHp * 100) / v.Target.MaximumHp);
+                        v.Target.PhysicalDefence = (SpecialSAEffect[v.Target.Data][13] * ((v.Target.HasSupportAbilityByIndex((SupportAbility)1254) ? 50 : 25) + RatioHP)) / 100;
+                    }
+                );
+            }
+
+            if (v.Caster.PlayerIndex == (CharacterId)14) 
+            {
+                CharacterPresetId presetId = v.Caster.Player.PresetId;
                 v.Caster.SummonCount++;
+                if (v.Caster.HasSupportAbilityByIndex((SupportAbility)1253) || v.Caster.HasSupportAbilityByIndex((SupportAbility)253) && v.Caster.SummonCount % 2 == 0) // SA Take that!
+                    CharacterCommands.CommandSets[presetId].Regular[0] = (BattleCommandId)(UnityEngine.Random.Range(10042, 10045));
+                else
+                    CharacterCommands.CommandSets[presetId].Regular[0] = (BattleCommandId)(UnityEngine.Random.Range(10038, 10041));
+
+            }
 
             TranceSeekCustomAPI.SOS_SA(v);
             return false;

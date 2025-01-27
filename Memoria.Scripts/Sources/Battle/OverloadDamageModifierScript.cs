@@ -166,6 +166,31 @@ namespace Memoria.Scripts.Battle
                 uint factor = (uint)(v.Caster.HasSupportAbilityByIndex((SupportAbility)1127) ? 20 : 10);
                 v.Target.MaximumHp += Math.Min((v.Target.MaximumHp * factor) / 100, (uint)(v.Target.HpDamage - (v.Target.MaximumHp - v.Target.CurrentHp)));
                 v.Target.CurrentHp = v.Target.MaximumHp;
+            }
+
+            if (SpecialSAEffect[v.Target.Data][11] == 1 && v.Target.HpDamage < v.Target.CurrentHp && (v.Command.AbilityCategory & 8) != 0 && (v.Target.Flags & CalcFlag.HpRecovery) == 0) // Peuh!
+            {
+                SpecialSAEffect[v.Target.Data][11] = 0;
+                v.Context.Flags |= BattleCalcFlags.Guard;
+                v.Target.HpDamage = 0;
+                Dictionary<String, String> localizedMessage = new Dictionary<String, String>
+                    {
+                        { "US", "--Peuh !" },
+                        { "UK", "--Peuh !" },
+                        { "JP", "--Peuh !" },
+                        { "ES", "--Peuh !" },
+                        { "FR", "--Peuh !" },
+                        { "GR", "--Peuh !" },
+                        { "IT", "--Peuh !" },
+                    };
+                btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[FF0000]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 10);
+            }
+
+            if ((v.Target.Flags & CalcFlag.HpRecovery) != 0 && v.Caster.HasSupportAbilityByIndex((SupportAbility)127) && !v.Target.IsZombie && v.Target.HpDamage > (v.Target.MaximumHp - v.Target.CurrentHp)) // SA Invigorating
+            {
+                uint factor = (uint)(v.Caster.HasSupportAbilityByIndex((SupportAbility)1127) ? 20 : 10);
+                v.Target.MaximumHp += Math.Min((v.Target.MaximumHp * factor) / 100, (uint)(v.Target.HpDamage - (v.Target.MaximumHp - v.Target.CurrentHp)));
+                v.Target.CurrentHp = v.Target.MaximumHp;
             }           
         }
     }

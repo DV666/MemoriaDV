@@ -429,6 +429,7 @@
     <Compile Include="Sources\Battle\MiniStatusScript.cs" />
     <Compile Include="Sources\Battle\PetrifyStatusScript.cs" />
     <Compile Include="Sources\Battle\ProtectStatusScript.cs" />
+    <Compile Include="Sources\Battle\ProvokStatusScript.cs" />
     <Compile Include="Sources\Battle\ReflectStatusScript.cs" />
     <Compile Include="Sources\Battle\ShellStatusScript.cs" />
     <Compile Include="Sources\Battle\SlowStatusScript.cs" />
