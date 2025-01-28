@@ -1,5 +1,6 @@
 using System;
 using Memoria.Data;
+using Memoria.Prime;
 
 namespace Memoria.Scripts.Battle
 {
@@ -66,7 +67,7 @@ namespace Memoria.Scripts.Battle
                         TranceSeekCustomAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
                         TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
                     }
-                    if (GameRandom.Next8() % 3 != 0)
+                    if ((GameRandom.Next8() % (_v.Command.AbilityId == (BattleAbilityId)1550 ? 2 : 3) != 0) && _v.Command.AbilityId != (BattleAbilityId)1551)
                     {
                         _v.Context.Flags |= BattleCalcFlags.Miss;
                     }
@@ -91,7 +92,13 @@ namespace Memoria.Scripts.Battle
                         {
                             TranceSeekCustomAPI.IpsenCastleMalus(_v);
                             _v.CalcPhysicalHpDamage();
+                            if (_v.Command.AbilityId == (BattleAbilityId)1551)
+                            {
+                                _v.Caster.Flags |= CalcFlag.HpDamageOrHeal;
+                                _v.Caster.HpDamage = _v.Target.HpDamage / 2;
+                            }
                             TranceSeekCustomAPI.RaiseTrouble(_v);
+                            btl_stat.AlterStatus(_v.Caster, TranceSeekCustomAPI.CustomStatusId.Special, parameters: "Duelist--");
                         }
                     }
                 }

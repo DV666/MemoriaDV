@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using FF9;
 using Memoria.Data;
 using Memoria.Database;
 using Memoria.DefaultScripts;
 using Memoria.Prime;
+using NCalc;
 using static Memoria.Scripts.Battle.TranceSeekCustomAPI;
 
 namespace Memoria.Scripts.Battle
@@ -129,6 +131,14 @@ namespace Memoria.Scripts.Battle
                 {
                     unit.SummonCount = 1; // Used for SA Take that!
                     SpecialSAEffect[unit.Data][13] = unit.PhysicalDefence; // In top form!
+                }
+
+                if (unit.PlayerIndex == (CharacterId)15) // Reset CMD Komrade
+                {
+                    for (Int32 i = 0; i < 205; i++)
+                    {
+                        FF9StateSystem.EventState.gAbilityUsage[(BattleAbilityId)(1172 + i)] = 1;
+                    }
                 }
 
                 if (!unit.IsPlayer)

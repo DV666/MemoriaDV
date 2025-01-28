@@ -16,6 +16,7 @@ namespace Memoria.DefaultScripts
         public Int32 LifeorDeath;
         public Int32 Propagation;
         public Int32 Flexible;
+        public Int32 Duelist;
 
         public override UInt32 Apply(BattleUnit target, BattleUnit inflicter, params Object[] parameters)
         {
@@ -86,6 +87,14 @@ namespace Memoria.DefaultScripts
                 else if (Parameter == "Flexible0")
                 {
                     Flexible = 0;
+                }
+                else if (Parameter == "Duelist++")
+                {
+                    Duelist++;
+                }
+                else if (Parameter == "Duelist--")
+                {
+                    Duelist = 0;
                 }
             }
             return btl_stat.ALTER_SUCCESS;

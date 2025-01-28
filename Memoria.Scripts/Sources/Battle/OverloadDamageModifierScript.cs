@@ -186,6 +186,11 @@ namespace Memoria.Scripts.Battle
                 btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[FF0000]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 10);
             }
 
+            if (v.Target.IsCovering && v.Target.HasSupportAbilityByIndex((SupportAbility)213)) // SA Duelist
+            {
+                btl_stat.AlterStatus(v.Target, CustomStatusId.Special, parameters: "Duelist++");
+            }
+
             if ((v.Target.Flags & CalcFlag.HpRecovery) != 0 && v.Caster.HasSupportAbilityByIndex((SupportAbility)127) && !v.Target.IsZombie && v.Target.HpDamage > (v.Target.MaximumHp - v.Target.CurrentHp)) // SA Invigorating
             {
                 uint factor = (uint)(v.Caster.HasSupportAbilityByIndex((SupportAbility)1127) ? 20 : 10);

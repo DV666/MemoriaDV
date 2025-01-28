@@ -45,7 +45,7 @@ namespace Memoria.Scripts.Battle
                     _v.Context.Evade = 0;
                 }
             }
-            if (TranceSeekCustomAPI.TryPhysicalHit(_v))
+            if (TranceSeekCustomAPI.TryPhysicalHit(_v) || _v.Command.AbilityId == (BattleAbilityId)1161) // Attack from King Leo
             {
                 TranceSeekCustomAPI.WeaponPhysicalParams(_bonus, _v);
                 TranceSeekCustomAPI.CasterPhysicalPenaltyAndBonusAttack(_v);

@@ -1,7 +1,8 @@
 using Memoria.Data;
 using System;
 using System.Collections.Generic;
-using static SiliconStudio.Social.ResponseData;
+using Assets.Sources.Scripts.UI.Common;
+using FF9;
 
 namespace Memoria.Scripts.Battle
 {
@@ -119,6 +120,113 @@ namespace Memoria.Scripts.Battle
                         _v.Context.Flags |= BattleCalcFlags.Miss;
                         return;
                     }
+                    break;
+                }
+                case (BattleAbilityId)1045: // Praise
+                {
+                    List<BattleStatus> PraiseStatus = new List<BattleStatus>{ TranceSeekCustomAPI.CustomStatus.PowerUp, TranceSeekCustomAPI.CustomStatus.MagicUp,
+                    TranceSeekCustomAPI.CustomStatus.ArmorUp, TranceSeekCustomAPI.CustomStatus.MentalUp};
+
+                    _v.Target.AlterStatus(PraiseStatus[Comn.random16() % PraiseStatus.Count]);
+                    break;
+                }
+                case (BattleAbilityId)1164: // Cens
+                {
+                    Boolean FirstItem = false;
+                    Boolean SecondItem = false;
+                    Boolean ThirdItem = false;
+                    Boolean FourthItem = false;
+                    string CensText = null;
+
+                    BattleEnemy battleEnemy = BattleEnemy.Find(_v.Target);
+                    if (battleEnemy.StealableItems[0] != RegularItem.NoItem)
+                    {
+                        if (CensText == null)
+                            CensText += $"{FF9TextTool.ItemName(battleEnemy.StealableItems[0])}";
+
+                        _v.StealItem(battleEnemy, 0);
+                        FirstItem = true;
+                    }
+                    if (battleEnemy.StealableItems[1] != RegularItem.NoItem)
+                    {
+                        if (CensText == null)
+                            CensText += $"{FF9TextTool.ItemName(battleEnemy.StealableItems[1])}";
+                        else
+                            CensText += $" / {FF9TextTool.ItemName(battleEnemy.StealableItems[1])}";
+
+                        _v.StealItem(battleEnemy, 1);
+                        SecondItem = true;
+                    }
+                    if (battleEnemy.StealableItems[2] != RegularItem.NoItem)
+                    {
+                        if (CensText == null)
+                            CensText += $"{FF9TextTool.ItemName(battleEnemy.StealableItems[2])}";
+                        else
+                            CensText += $" / {FF9TextTool.ItemName(battleEnemy.StealableItems[2])}";
+
+                        _v.StealItem(battleEnemy, 2);
+                        ThirdItem = true;
+                    }
+                    if (battleEnemy.StealableItems[3] != RegularItem.NoItem)
+                    {
+                        if (CensText == null)
+                            CensText += $"{FF9TextTool.ItemName(battleEnemy.StealableItems[3])}";
+                        else
+                            CensText += $" / {FF9TextTool.ItemName(battleEnemy.StealableItems[3])}";
+
+                        _v.StealItem(battleEnemy, 3);
+                        FourthItem = true;
+                    }
+                    if (!FirstItem && !SecondItem && !ThirdItem && !FourthItem)
+                    {
+                        UiState.SetBattleFollowFormatMessage(BattleMesages.CouldNotStealAnything);
+                    }
+
+                    UiState.SetBattleFollowFormatMessage(BattleMesages.Stole, CensText);
+                    break;
+                }
+                case (BattleAbilityId)1165: // Chosen
+                {
+                    BattleStatus GoodStatus = (BattleStatus.AutoLife | BattleStatus.Protect | BattleStatus.Shell | BattleStatus.Regen | BattleStatus.Float | BattleStatus.AutoLife |
+                    BattleStatus.Haste | BattleStatus.Vanish | BattleStatus.Reflect | TranceSeekCustomAPI.CustomStatus.PowerUp | TranceSeekCustomAPI.CustomStatus.MagicUp | TranceSeekCustomAPI.CustomStatus.ArmorUp | TranceSeekCustomAPI.CustomStatus.MentalUp);
+                    _v.Target.AlterStatus(GoodStatus);
+                    _v.Caster.AddDelayedModifier(
+                        caster => caster.IsUnderAnyStatus(BattleStatus.Trance),
+                        caster =>
+                        {
+                            caster.RemoveStatus(GoodStatus);
+                        }
+                    );
+                    break;
+                }
+                case (BattleAbilityId)1166: // Sanction
+                case (BattleAbilityId)1168: // Retribution
+                {
+                    _v.SetWeaponPower();
+                    _v.Caster.SetMagicAttack();
+                    _v.Target.SetMagicDefense();
+                    TranceSeekCustomAPI.CasterPenaltyMini(_v);
+                    TranceSeekCustomAPI.PenaltyShellAttack(_v);
+                    TranceSeekCustomAPI.EnemyTranceBonusAttack(_v);
+                    TranceSeekCustomAPI.BonusElement(_v);
+                    if (TranceSeekCustomAPI.CanAttackMagic(_v))
+                    {
+                        _v.CalcHpDamage();
+                    }
+                    _v.TryAlterMagicStatuses();
+                    break;
+                }
+                case (BattleAbilityId)1167: // Divine hand
+                {
+                    _v.Target.RemoveStatus(BattleStatusConst.AnyNegative);
+                    _v.Target.Flags |= CalcFlag.HpDamageOrHeal;
+                    _v.Target.HpDamage = (int)_v.Target.MaximumHp;
+                    break;
+                }
+                case (BattleAbilityId)1169: // Sacred fire
+                {
+                    _v.Target.RemoveStatus(BattleStatus.Poison | BattleStatus.Venom | BattleStatus.Zombie);
+                    _v.Target.AlterStatus(BattleStatus.AutoLife | BattleStatus.Regen);
                     break;
                 }
             }
