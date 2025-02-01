@@ -384,7 +384,7 @@ namespace Memoria.Scripts.Battle
                 );
             }
 
-            if (v.Caster.PlayerIndex == (CharacterId)14) 
+            if (v.Caster.PlayerIndex == (CharacterId)14 && false) 
             {
                 CharacterPresetId presetId = v.Caster.Player.PresetId;
                 v.Caster.SummonCount++;

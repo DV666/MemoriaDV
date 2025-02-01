@@ -135,7 +135,7 @@ namespace Memoria.Scripts.Battle
 
                 if (unit.PlayerIndex == (CharacterId)15) // Reset CMD Komrade
                 {
-                    for (Int32 i = 0; i < 205; i++)
+                    for (Int32 i = 0; i < 206; i++)
                     {
                         FF9StateSystem.EventState.gAbilityUsage[(BattleAbilityId)(1172 + i)] = 1;
                     }

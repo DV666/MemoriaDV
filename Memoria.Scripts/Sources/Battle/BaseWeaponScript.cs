@@ -198,6 +198,17 @@ namespace Memoria.Scripts.Battle
             }
             else if (TranceSeekCustomAPI.ZidanePassive[_v.Target.Data][2] > 0) // Oeil de voleur activé
             {
+                AddBonusSteal();
+                Dictionary<String, String> localizedMessage = new Dictionary<String, String>
+                {
+                    { "US", "Eye of the thief!" },
+                    { "UK", "Eye of the thief!" },
+                    { "JP", "Eye of the thief!" },
+                    { "ES", "Eye of the thief!" },
+                    { "FR", "Œil du voleur !" },
+                    { "GR", "Eye of the thief!" },
+                    { "IT", "Eye of the thief!" },
+                };
                 if (GameRandom.Next8() < StealScript.NewStealableItemRates(battleEnemy.StealableItemRates[3], _v.Caster) && battleEnemy.StealableItems[3] != RegularItem.NoItem)
                 {
                     TranceSeekCustomAPI.ZidanePassive[_v.Caster.Data][SlotMugSteal] = (Int32)battleEnemy.StealableItems[3];
@@ -240,24 +251,19 @@ namespace Memoria.Scripts.Battle
                         TranceSeekCustomAPI.ZidanePassive[_v.Caster.Data][SlotMugSteal] = (Int32)battleEnemy.StealableItems[3];
                         MugItem(battleEnemy, 3);
                     }
+                    else
+                    {
+                        AddBonusSteal();
+                        return;
+                    }
+                    btl2d.Btl2dReqSymbolMessage(_v.Target.Data, "[FDEE00]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 10);
                 }
                 else
                 {
-                    if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1062)) // Lupin+ (sous Oeil de voleur)
-                    {
-                        var slot = new List<int>();
-                        for (Int32 i = 1; i < 4; i++)
-                        {
-                            if (battleEnemy.StealableItems[i] != RegularItem.NoItem)
-                            {
-                                slot.Add(i);
-                            }
-
-                        }
-                        int slotchoosen = UnityEngine.Random.Range(0, slot.Count);
-                        battleEnemy.Data.steal_item_rate[slot[slotchoosen]] += 8;
-                    }
+                    AddBonusSteal();
+                    return;
                 }
+                btl2d.Btl2dReqSymbolMessage(_v.Target.Data, "[FDEE00]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 10);
             }
             else if (_v.Caster.IsUnderAnyStatus(BattleStatus.Trance) && _v.Caster.PlayerIndex == CharacterId.Zidane)
             {
@@ -281,23 +287,12 @@ namespace Memoria.Scripts.Battle
                     TranceSeekCustomAPI.ZidanePassive[_v.Caster.Data][SlotMugSteal] = (Int32)battleEnemy.StealableItems[3];
                     MugItem(battleEnemy, 3);
                 }
+                else
+                    AddBonusSteal();
             }
             else
             {
-                if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1062)) // Lupin+
-                {
-                    var slot = new List<int>();
-                    for (Int32 i = 1; i < 4; i++)
-                    {
-                        if (battleEnemy.StealableItems[i] != RegularItem.NoItem)
-                        {
-                            slot.Add(i);
-                        }
-
-                    }
-                    int slotchoosen = UnityEngine.Random.Range(0, slot.Count);
-                    battleEnemy.Data.steal_item_rate[slot[slotchoosen]] += 8;
-                }
+                AddBonusSteal();
             }
         }
 
@@ -381,22 +376,7 @@ namespace Memoria.Scripts.Battle
                         MugItem(battleEnemy, 3);
                     }
                 else
-                {
-                    if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1062)) // Lupin+
-                    {
-                        var slot = new List<int>();
-                        for (Int32 i = 1; i < 4; i++)
-                        {
-                            if (battleEnemy.StealableItems[i] != RegularItem.NoItem)
-                            {
-                                slot.Add(i);
-                            }
-
-                        }
-                        int slotchoosen = UnityEngine.Random.Range(0, slot.Count);
-                        battleEnemy.Data.steal_item_rate[slot[slotchoosen]] += 8;
-                    }
-                }
+                    AddBonusSteal();
             }
         }
 
@@ -406,6 +386,22 @@ namespace Memoria.Scripts.Battle
                 if (enemy.StealableItems[slot] != RegularItem.NoItem)
                     return true;
             return false;
+        }
+
+        public void AddBonusSteal()
+        {
+            BattleEnemy battleEnemy = BattleEnemy.Find(_v.Target);
+            var slot = new List<int>();
+            for (Int32 i = 1; i < 4; i++)
+            {
+                if (battleEnemy.StealableItems[i] != RegularItem.NoItem)
+                {
+                    slot.Add(i);
+                }
+
+            }
+            int slotchoosen = UnityEngine.Random.Range(0, slot.Count);
+            battleEnemy.Data.steal_item_rate[slot[slotchoosen]] += 8;
         }
 
         public void MugItem(BattleEnemy enemy, Int32 slot)

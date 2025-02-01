@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using FF9;
 using static Memoria.Scripts.Battle.TranceSeekCustomAPI;
-using Memoria.Prime;
 
 namespace Memoria.Scripts.Battle
 {
@@ -67,7 +66,10 @@ namespace Memoria.Scripts.Battle
                         MasterThief();
                         return;
                     }
-                    ClassicSteal();
+                    if (_v.Caster.IsUnderAnyStatus(BattleStatus.Trance) && _v.Caster.PlayerIndex == CharacterId.Zidane)
+                        StealWhenTrance();
+                    else
+                        ClassicSteal();
                 }
             }
         }
@@ -132,13 +134,18 @@ namespace Memoria.Scripts.Battle
             {
                 _v.StealItem(battleEnemy, 3);
             }
+            else if (ZidanePassive[_v.Target.Data][2] > 0) // Oeil de voleur activé
+            {
+                EyeOfThief();
+            }
             else
             {
+                AddBonusSteal();
                 UiState.SetBattleFollowFormatMessage(BattleMesages.CouldNotStealAnything);
             }
         }
 
-        public void MasterThief() 
+        public void MasterThief()
         {
             short PreviousGameStateThefts = GameState.Thefts;
             BattleEnemy battleEnemy = BattleEnemy.Find(_v.Target);
@@ -187,22 +194,9 @@ namespace Memoria.Scripts.Battle
                     StealWhenTrance();
                 else
                 {
-                    if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1062)) // Lupin+
-                    {
-                        var slot = new List<int>();
-                        for (Int32 i = 1; i < 4; i++)
-                        {
-                            if (battleEnemy.StealableItems[i] != RegularItem.NoItem)
-                            {
-                                slot.Add(i);
-                            }
-
-                        }
-                        int slotchoosen = UnityEngine.Random.Range(0, slot.Count);
-                        battleEnemy.Data.steal_item_rate[slot[slotchoosen]] += 8;
-                    }
+                    AddBonusSteal();
                     UiState.SetBattleFollowFormatMessage(BattleMesages.CouldNotStealAnything);
-                }             
+                }
             }
         }
 
@@ -226,68 +220,80 @@ namespace Memoria.Scripts.Battle
                 _v.StealItem(battleEnemy, 0);
             }
             else if (ZidanePassive[_v.Target.Data][2] > 0) // Oeil de voleur activé
-            {  
-                if (GameRandom.Next8() < NewStealableItemRates(battleEnemy.StealableItemRates[3], _v.Caster) && battleEnemy.StealableItems[3] != RegularItem.NoItem)
-                {
-                    _v.StealItem(battleEnemy, 3);
-                }
-                else if (GameRandom.Next8() < NewStealableItemRates(battleEnemy.StealableItemRates[2], _v.Caster) && battleEnemy.StealableItems[2] != RegularItem.NoItem)
-                {
-                    _v.StealItem(battleEnemy, 2);
-                }
-                else if (GameRandom.Next8() < NewStealableItemRates(battleEnemy.StealableItemRates[1], _v.Caster) && battleEnemy.StealableItems[1] != RegularItem.NoItem)
-                {
-                    _v.StealItem(battleEnemy, 1);
-                }
-                else if (GameRandom.Next8() < NewStealableItemRates(battleEnemy.StealableItemRates[0], _v.Caster) && battleEnemy.StealableItems[0] != RegularItem.NoItem)
-                {
-                    _v.StealItem(battleEnemy, 0);
-                }
-                else if (_v.Caster.IsUnderAnyStatus(BattleStatus.Trance) && _v.Caster.PlayerIndex == CharacterId.Zidane)
-                {
-                    StealWhenTrance();
-                }
-                else
-                {
-                    if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1062)) // Lupin+ (sous Oeil de voleur)
-                    {
-                        var slot = new List<int>();
-                        for (Int32 i = 1; i < 4; i++)
-                        {
-                            if (battleEnemy.StealableItems[i] != RegularItem.NoItem)
-                            {
-                                slot.Add(i);
-                            }
-
-                        }
-                        int slotchoosen = UnityEngine.Random.Range(0, slot.Count);
-                        battleEnemy.Data.steal_item_rate[slot[slotchoosen]] += 8;
-                    }
-                    UiState.SetBattleFollowFormatMessage(BattleMesages.CouldNotStealAnything);
-                }
-            }
-            else if (_v.Caster.IsUnderAnyStatus(BattleStatus.Trance) && _v.Caster.PlayerIndex == CharacterId.Zidane)
             {
-                StealWhenTrance();
+                EyeOfThief();
             }
             else
             {
-                if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1062)) // Lupin+
-                {
-                    var slot = new List<int>();
-                    for (Int32 i = 1; i < 4; i++)
-                    {
-                        if (battleEnemy.StealableItems[i] != RegularItem.NoItem)
-                        {
-                            slot.Add(i);
-                        }
-
-                    }
-                    int slotchoosen = UnityEngine.Random.Range(0, slot.Count);
-                    battleEnemy.Data.steal_item_rate[slot[slotchoosen]] += 8;
-                }
+                AddBonusSteal();
                 UiState.SetBattleFollowFormatMessage(BattleMesages.CouldNotStealAnything);
             }
+        }
+
+        public void EyeOfThief()
+        {
+            BattleEnemy battleEnemy = BattleEnemy.Find(_v.Target);
+            AddBonusSteal();
+            Dictionary<String, String> localizedMessage = new Dictionary<String, String>
+            {
+                { "US", "Eye of the thief!" },
+                { "UK", "Eye of the thief!" },
+                { "JP", "Eye of the thief!" },
+                { "ES", "Eye of the thief!" },
+                { "FR", "Œil du voleur !" },
+                { "GR", "Eye of the thief!" },
+                { "IT", "Eye of the thief!" },
+            };
+            if (_v.Caster.IsUnderAnyStatus(BattleStatus.Trance) && _v.Caster.PlayerIndex == CharacterId.Zidane)
+            {
+                if (battleEnemy.StealableItems[0] != RegularItem.NoItem)
+                {
+                    _v.StealItem(battleEnemy, 0);
+                }
+                else if (battleEnemy.StealableItems[1] != RegularItem.NoItem)
+                {
+                    _v.StealItem(battleEnemy, 1);
+                }
+                else if (battleEnemy.StealableItems[2] != RegularItem.NoItem)
+                {
+                    _v.StealItem(battleEnemy, 2);
+                }
+                else if (battleEnemy.StealableItems[3] != RegularItem.NoItem && GameRandom.Next8() < (127 + battleEnemy.StealableItemRates[3]))
+                {
+                    _v.StealItem(battleEnemy, 3);
+                }
+                else
+                {
+                    AddBonusSteal();
+                    UiState.SetBattleFollowFormatMessage(BattleMesages.CouldNotStealAnything);
+                    return;
+                }
+                btl2d.Btl2dReqSymbolMessage(_v.Target.Data, "[FDEE00]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 5);
+                return;
+            }
+            else if (GameRandom.Next8() < NewStealableItemRates(battleEnemy.StealableItemRates[3], _v.Caster) && battleEnemy.StealableItems[3] != RegularItem.NoItem)
+            {
+                _v.StealItem(battleEnemy, 3);
+            }
+            else if (GameRandom.Next8() < NewStealableItemRates(battleEnemy.StealableItemRates[2], _v.Caster) && battleEnemy.StealableItems[2] != RegularItem.NoItem)
+            {
+                _v.StealItem(battleEnemy, 2);
+            }
+            else if (GameRandom.Next8() < NewStealableItemRates(battleEnemy.StealableItemRates[1], _v.Caster) && battleEnemy.StealableItems[1] != RegularItem.NoItem)
+            {
+                _v.StealItem(battleEnemy, 1);
+            }
+            else if (GameRandom.Next8() < NewStealableItemRates(battleEnemy.StealableItemRates[0], _v.Caster) && battleEnemy.StealableItems[0] != RegularItem.NoItem)
+            {
+                _v.StealItem(battleEnemy, 0);
+            }
+            else
+            {
+                AddBonusSteal();
+                UiState.SetBattleFollowFormatMessage(BattleMesages.CouldNotStealAnything);
+                return;
+            }
+            btl2d.Btl2dReqSymbolMessage(_v.Target.Data, "[FDEE00]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 5);
         }
 
         public static float NewStealableItemRates(ushort StealableItemRates, BattleCaster Caster)
@@ -343,6 +349,22 @@ namespace Memoria.Scripts.Battle
                 BonusWeaponSteal += ZidanePassive[Caster.Data][0];
 
             return (StealableItemRates + ((float)(StealableItemRates * BonusWeaponSteal) / 100));
+        }
+
+        public void AddBonusSteal()
+        {
+            BattleEnemy battleEnemy = BattleEnemy.Find(_v.Target);
+            var slot = new List<int>();
+            for (Int32 i = 1; i < 4; i++)
+            {
+                if (battleEnemy.StealableItems[i] != RegularItem.NoItem)
+                {
+                    slot.Add(i);
+                }
+
+            }
+            int slotchoosen = UnityEngine.Random.Range(0, slot.Count);
+            battleEnemy.Data.steal_item_rate[slot[slotchoosen]] += 8;
         }
     }
 }

@@ -1356,15 +1356,15 @@ namespace Memoria.Scripts.Battle
                     v.Target.HpDamage = (int)v.Target.CurrentHp - 1;
                     v.Target.CurrentMp = v.Target.HasSupportAbilityByIndex((SupportAbility)1052) ? (v.Target.CurrentMp / 2) : 0;
                     Dictionary<String, String> localizedMessage = new Dictionary<String, String>
-                            {
-                                { "US", "Last Stand!" },
-                                { "UK", "Last Stand!" },
-                                { "JP", "Last Stand!" },
-                                { "ES", "Last Stand!" },
-                                { "FR", "Echapée belle !" },
-                                { "GR", "Last Stand!" },
-                                { "IT", "Last Stand!" },
-                            };
+                    {
+                        { "US", "Last Stand!" },
+                        { "UK", "Last Stand!" },
+                        { "JP", "Last Stand!" },
+                        { "ES", "Last Stand!" },
+                        { "FR", "Echapée belle !" },
+                        { "GR", "Last Stand!" },
+                        { "IT", "Last Stand!" },
+                    };
                     btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[FDEE00]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 10);
                 }
             }
