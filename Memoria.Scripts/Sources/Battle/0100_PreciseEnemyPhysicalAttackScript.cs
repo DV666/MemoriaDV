@@ -20,7 +20,7 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            if (_v.Target.IsUnderStatus(Data.BattleStatus.Mini) && _v.Command.HitRate == 1) // Yeti Friendly - Nom nom nom
+            if (_v.Target.IsUnderStatus(BattleStatus.Mini) && _v.Command.HitRate == 1) // Yeti Friendly - Nom nom nom
             {
                 _v.Target.Remove();
             }

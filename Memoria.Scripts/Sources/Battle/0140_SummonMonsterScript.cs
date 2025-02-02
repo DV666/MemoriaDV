@@ -66,8 +66,8 @@ namespace Memoria.Scripts.Battle
                         _v.Caster.Data.mot[i] = "ANH_" + geoName + "_000";
                 }          
                 btl_mot.setMotion(_v.Caster.Data, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_NORMAL);
-                // No M-Sword => Multiple (ennemy) / Short => Multiple (ally)
-                NumberTargets[_v.Caster.Data] = (_v.Command.AbilityCategory & 4) != 0 ? BattleState.TargetCount(false) : (_v.Command.AbilityCategory & 32) != 0 ? BattleState.TargetCount(true) : 1;
+                // No M-Sword => Multiple (ennemy) / Short => Multiple (ally) / No M-Sword + Short => Everyone
+                NumberTargets[_v.Caster.Data] = (_v.Command.AbilityCategory & 4) != 0 && (_v.Command.AbilityCategory & 32) != 0 ? (BattleState.TargetCount(true) + BattleState.TargetCount(false)) : ((_v.Command.AbilityCategory & 4) != 0 ? BattleState.TargetCount(false) : (_v.Command.AbilityCategory & 32) != 0 ? BattleState.TargetCount(true) : 1);
                 SummonStep[_v.Caster.Data] = 1;
             }
             else if (SummonStep[_v.Caster.Data] == 1) // Script for the damage
@@ -79,6 +79,7 @@ namespace Memoria.Scripts.Battle
                     case (BattleAbilityId)1186: // Plant Spider
                     case (BattleAbilityId)1188: // Carve Spider
                     case (BattleAbilityId)1193: // Blazer Beetle
+                    case (BattleAbilityId)1206: // Grand Dragon - Poison Claw
                     {
                         if (!_v.Target.TryKillFrozen())
                         {
@@ -123,6 +124,11 @@ namespace Memoria.Scripts.Battle
                     case (BattleAbilityId)1187: // Plant Spider
                     case (BattleAbilityId)1192: // Blazer Beetle
                     case (BattleAbilityId)1194: // Axolotl
+                    case (BattleAbilityId)1197: // Bandersnatch
+                    case (BattleAbilityId)1200: // Mistodon
+                    case (BattleAbilityId)1201: // Mistodon
+                    case (BattleAbilityId)1205: // Armstrong - Tsunami
+                    case (BattleAbilityId)1207: // Grand Dragon - Dragon Breath
                     {
                         _v.NormalMagicParams();
                         TranceSeekCustomAPI.CharacterBonusPassive(_v, "MagicAttack");
@@ -146,6 +152,9 @@ namespace Memoria.Scripts.Battle
                     case (BattleAbilityId)1183: // Anemone
                     case (BattleAbilityId)1189: // Carve Spider
                     case (BattleAbilityId)1195: // Axolotl
+                    case (BattleAbilityId)1196: // Bandersnatch
+                    case (BattleAbilityId)1198: // Basilisk
+                    case (BattleAbilityId)1199: // Basilisk
                     {
                         TranceSeekCustomAPI.MagicAccuracy(_v);
                         TranceSeekCustomAPI.ViviFocus(_v);
@@ -258,6 +267,31 @@ namespace Memoria.Scripts.Battle
                         }
                         break;
                     }
+                    // CANNON - Script 91
+                    case (BattleAbilityId)1204: // Armstrong - Cannon
+                    {
+                        _v.PhysicalAccuracy();
+                        if (TranceSeekCustomAPI.TryPhysicalHit(_v))
+                        {
+                            _v.NormalPhysicalParams();
+                            TranceSeekCustomAPI.CharacterBonusPassive(_v, "PhysicalAttack");
+                            TranceSeekCustomAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
+                            TranceSeekCustomAPI.EnemyTranceBonusAttack(_v);
+                            TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
+                            if (Mathf.Abs((_v.Caster.Row - _v.Target.Row)) > 1)
+                            {
+                                _v.Context.Attack = _v.Context.Attack * 3 >> 1;
+                            }
+                            TranceSeekCustomAPI.BonusElement(_v);
+                            if (_v.CanAttackElementalCommand())
+                            {
+                                _v.CalcPhysicalHpDamage();
+                                TranceSeekCustomAPI.RaiseTrouble(_v);
+                                _v.TryAlterMagicStatuses();
+                            }
+                        }
+                        break;
+                    }
                     // MAELSTORM - Script 93
                     case (BattleAbilityId)1181: // Amduscias
                     {
@@ -297,22 +331,36 @@ namespace Memoria.Scripts.Battle
                         }
                         break;
                     }
-                    // PHYSICAL ATTACK (IGNORE DEF) - Script 100
+                    // PRECISE PHYSICAL ATTACK - Script 100
                     case (BattleAbilityId)1173: // Agares
                     {
-                        _v.SetCommandPower();
-                        _v.Caster.SetPhysicalAttack();
-                        TranceSeekCustomAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
-                        TranceSeekCustomAPI.EnemyTranceBonusAttack(_v);
-                        TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
-                        TranceSeekCustomAPI.BonusBackstabAndPenaltyLongDistance(_v);
-                        TranceSeekCustomAPI.BonusElement(_v);
-                        if (_v.CanAttackElementalCommand())
+                        if (!_v.Target.TryKillFrozen())
                         {
-                            TranceSeekCustomAPI.RaiseTrouble(_v);
-                            _v.CalcHpDamage();
-                            TranceSeekCustomAPI.InfusedWeaponStatus(_v);
-                            _v.TryAlterMagicStatuses();
+                            if (_v.Command.HitRate == 111) // Ignore physical defense
+                            {
+                                _v.SetCommandPower();
+                                _v.Caster.SetPhysicalAttack();
+                            }
+                            else
+                            {
+                                _v.NormalPhysicalParams();
+                                TranceSeekCustomAPI.CharacterBonusPassive(_v, "PhysicalAttack");
+                            }
+                            TranceSeekCustomAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
+                            TranceSeekCustomAPI.EnemyTranceBonusAttack(_v);
+                            TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
+                            if (_v.Command.HitRate != 255)
+                            {
+                                TranceSeekCustomAPI.BonusBackstabAndPenaltyLongDistance(_v);
+                            }
+                            TranceSeekCustomAPI.BonusElement(_v);
+                            if (_v.CanAttackElementalCommand())
+                            {
+                                TranceSeekCustomAPI.RaiseTrouble(_v);
+                                _v.CalcHpDamage();
+                                TranceSeekCustomAPI.InfusedWeaponStatus(_v);
+                                _v.TryAlterMagicStatuses();
+                            }
                         }
                         break;
                     }
