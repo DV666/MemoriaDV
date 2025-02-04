@@ -74,12 +74,60 @@ namespace Memoria.Scripts.Battle
             {
                 switch (_v.Command.AbilityId)
                 {
+                    // BLOOD SWORD WEAPON - Script 6
+                    case (BattleAbilityId)1212: // Seeker Bat - Absorb even more
+                    {
+                        if (_v.Target.CanBeAttacked() && !_v.Target.TryKillFrozen())
+                        {
+                            _v.PhysicalAccuracy();
+                            if (TranceSeekCustomAPI.TryPhysicalHit(_v))
+                            {
+                                _v.NormalPhysicalParams();
+                                TranceSeekCustomAPI.EnemyTranceBonusAttack(_v);
+                                TranceSeekCustomAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
+                                TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
+                                TranceSeekCustomAPI.BonusBackstabAndPenaltyLongDistance(_v);
+                                TranceSeekCustomAPI.TryCriticalHit(_v);
+                                TranceSeekCustomAPI.IpsenCastleMalus(_v);
+                                _v.Target.Flags |= CalcFlag.HpAlteration;
+                                _v.Caster.Flags |= CalcFlag.HpAlteration;
+                                if (_v.Target.IsZombie)
+                                {
+                                    _v.Target.Flags |= CalcFlag.HpRecovery;
+                                }
+                                else
+                                {
+                                    _v.Caster.Flags |= CalcFlag.HpRecovery;
+                                }
+                                uint currentHp = _v.Target.CurrentHp;
+                                _v.CalcPhysicalHpDamage();
+                                if (_v.Caster.IsPlayer)
+                                {
+                                    _v.Caster.HpDamage = _v.Target.HpDamage / 4;
+                                }
+                                else
+                                {
+                                    _v.TryAlterMagicStatuses();
+                                    if (_v.Target.HpDamage < currentHp)
+                                    {
+                                        _v.Caster.HpDamage = _v.Target.HpDamage;
+                                    }
+                                    else
+                                    {
+                                        _v.Caster.HpDamage = (int)currentHp;
+                                    }
+                                }
+                            }
+                        }
+                        break;
+                    }
                     // ENEMY PHYSICAL ATTACK - Script 8
                     case (BattleAbilityId)1184: // Ao
                     case (BattleAbilityId)1186: // Plant Spider
                     case (BattleAbilityId)1188: // Carve Spider
                     case (BattleAbilityId)1193: // Blazer Beetle
                     case (BattleAbilityId)1206: // Grand Dragon - Poison Claw
+                    case (BattleAbilityId)1210: // Cerberus - Incandescent Claws
                     {
                         if (!_v.Target.TryKillFrozen())
                         {
@@ -129,6 +177,9 @@ namespace Memoria.Scripts.Battle
                     case (BattleAbilityId)1201: // Mistodon
                     case (BattleAbilityId)1205: // Armstrong - Tsunami
                     case (BattleAbilityId)1207: // Grand Dragon - Dragon Breath
+                    case (BattleAbilityId)1209: // Shell Dragon - Disaster
+                    case (BattleAbilityId)1211: // Cerberus - Flame
+                    case (BattleAbilityId)1216: // Zuu - Aera
                     {
                         _v.NormalMagicParams();
                         TranceSeekCustomAPI.CharacterBonusPassive(_v, "MagicAttack");
@@ -155,6 +206,7 @@ namespace Memoria.Scripts.Battle
                     case (BattleAbilityId)1196: // Bandersnatch
                     case (BattleAbilityId)1198: // Basilisk
                     case (BattleAbilityId)1199: // Basilisk
+                    case (BattleAbilityId)1213: // Seeker Bat - Darkness
                     {
                         TranceSeekCustomAPI.MagicAccuracy(_v);
                         TranceSeekCustomAPI.ViviFocus(_v);
@@ -194,6 +246,41 @@ namespace Memoria.Scripts.Battle
                         if (_v.TryMagicHit() || _v.Command.HitRate == 255)
                             TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
                         break;
+                    }
+                    // WHITE WIND - Script 30
+                    case (BattleAbilityId)1217: // Zuu - White Wind
+                    {
+                        if (_v.Target.Data == _v.Caster.Data)
+                        {
+                            _v.Caster.HpDamage = (int)_v.Caster.CurrentHp;
+                            if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)100)) // Medecin
+                            {
+                                _v.Caster.HpDamage += _v.Caster.HpDamage / 4;
+                            }
+                            else if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1100)) // Medecin +
+                            {
+                                _v.Caster.HpDamage += _v.Caster.HpDamage / 2;
+                            }
+                            foreach (BattleUnit unit in BattleState.EnumerateUnits())
+                            {
+                                if (!unit.IsPlayer || !unit.IsTargetable || unit.IsUnderAnyStatus(BattleStatus.Death | BattleStatus.Petrify | BattleStatus.Jump))
+                                    continue;
+
+                                _v.Caster.Flags = CalcFlag.HpAlteration;
+                                if (!unit.IsUnderAnyStatus(BattleStatus.Zombie))
+                                    _v.Caster.Flags = CalcFlag.HpDamageOrHeal;
+
+                                _v.Caster.Change(unit);
+                                SBattleCalculator.CalcResult(_v);
+                                BattleState.Unit2DReq(unit);
+                                if (unit.Data == _v.Caster.Data)
+                                    SummonStep[_v.Caster.Data] = 2;
+                            }
+                            _v.Caster.Flags = 0;
+                            _v.Caster.HpDamage = 0;
+                            _v.PerformCalcResult = false;
+                        }
+                        return;
                     }
                     // ARMOR BREAK - Script 33
                     case (BattleAbilityId)1178: // Amazone
@@ -333,6 +420,7 @@ namespace Memoria.Scripts.Battle
                     }
                     // PRECISE PHYSICAL ATTACK - Script 100
                     case (BattleAbilityId)1173: // Agares
+                    case (BattleAbilityId)1208: // Shell Dragon - Charge
                     {
                         if (!_v.Target.TryKillFrozen())
                         {
@@ -467,7 +555,7 @@ namespace Memoria.Scripts.Battle
                 if (motion == BattlePlayerCharacter.PlayerMotionIndex.MP_MAX)
                     motion = BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_NORMAL;
                 BattlePlayerCharacter.CreatePlayer(_v.Caster, player);
-                btl_mot.SetPlayerDefMotion(_v.Caster, player.info.serial_no, (UInt32)_v.Caster.GetIndex());
+                btl_mot.SetPlayerDefMotion(_v.Caster, player.info.serial_no);
                 BattlePlayerCharacter.InitAnimation(_v.Caster);
                 if (_v.Caster.IsUnderAnyStatus(BattleStatus.Trance))
                     _v.Caster.Data.ChangeModel(_v.Caster.Data.tranceGo, btl_init.GetModelID(player.info.serial_no, true));
@@ -524,172 +612,172 @@ namespace Memoria.Scripts.Battle
             { 1207, 355 },
             { 1208, 338 }, // Shell Dragon
             { 1209, 338 },
-            { 1210, 261 }, // Cerberus
-            { 1211, 261 },
-            { 1212, 143 }, // Seeker Bat
-            { 1213, 143 },
-            { 1214, 591 }, // Chimera
-            { 1215, 591 },
-            { 1216, 325 }, // Zuu
-            { 1217, 325 },
-            { 1218, 77 }, // Crawler
-            { 1219, 77 },
-            { 1220, 324 }, // Ironite
-            { 1221, 324 },
-            { 1222, 345 }, // Ironite
-            { 1223, 345 },
-            { 1224, 5460 }, // Dragonfly
-            { 1225, 5460 },
-            { 1226, 147 }, // Iron Man
-            { 1227, 147 },
-            { 1228, 84 }, // Mu
-            { 1229, 84 },
-            { 1230, 86 }, // Catoblepas
-            { 1231, 86 },
-            { 1232, 145 }, // Whale Zombie
-            { 1233, 145 },
-            { 1234, 5458 }, // Ghost
-            { 1235, 5458 },
-            { 1236, 556 }, // Flan
-            { 1237, 556 },
-            { 1238, 57 }, // Antlion
-            { 1239, 57 },
-            { 1240, 334 }, // Gargoyle
-            { 1241, 334 },
-            { 1242, 355 }, // Garuda
-            { 1243, 355 },
-            { 1244, 355 }, // Land Worm
-            { 1245, 355 },
-            { 1246, 328 }, // Gimme cat
-            { 1247, 328 },
-            { 1248, 261 }, // Goblin Mage
-            { 1249, 261 },
-            { 1250, 143 }, // Goblin
-            { 1251, 143 },
-            { 1252, 591 }, // Sand Golem
-            { 1253, 591 },
-            { 1254, 325 }, // Grenade
-            { 1255, 325 },
-            { 1256, 77 }, // Griffin
-            { 1257, 77 },
-            { 1258, 324 }, // Grimlock
-            { 1259, 324 },
-            { 1260, 345 }, // Gigan Toad
-            { 1261, 345 },
-            { 1262, 5460 }, // Hecteyes
-            { 1263, 5460 },
-            { 1264, 147 }, // Abadon
-            { 1265, 147 },
-            { 1266, 84 }, // Jabberwock
-            { 1267, 84 },
-            { 1268, 86 }, // Vice
-            { 1269, 86 },
-            { 1270, 145 }, // Lizard Man
-            { 1271, 145 },
-            { 1272, 5458 }, // Lich?
-            { 1273, 5458 },
-            { 1274, 556 }, // Behemoth
-            { 1275, 556 },
-            { 1276, 57 }, // Core
-            { 1277, 57 },
-            { 1278, 334 }, // Kraken?
-            { 1279, 334 },
-            { 1280, 355 }, // Clipper
-            { 1281, 355 },
-            { 1282, 355 }, // Magic Vice
-            { 1283, 355 },
-            { 1284, 328 }, // Serpion
-            { 1285, 328 },
-            { 1286, 261 }, // Wyerd
-            { 1287, 261 },
-            { 1288, 143 }, // Mandragora
-            { 1289, 143 },
-            { 1290, 591 }, // Feather Circle
-            { 1291, 591 },
-            { 1292, 325 }, // Torama
-            { 1293, 325 },
-            { 1294, 77 }, // Fang
-            { 1295, 77 },
-            { 1296, 324 }, // Maliris?
-            { 1297, 324 },
-            { 1298, 345 }, // Mimic
-            { 1299, 345 },
-            { 1300, 5460 }, // Ladybug
-            { 1301, 5460 },
-            { 1302, 147 }, // Trick Sparrow
-            { 1303, 147 },
-            { 1304, 84 }, // Hornet
-            { 1305, 84 },
-            { 1306, 86 }, // Drakan
-            { 1307, 86 },
-            { 1308, 145 }, // Dendrobium
-            { 1309, 145 },
-            { 1310, 5458 }, // Gnoll
-            { 1311, 5458 },
-            { 1312, 556 }, // Nymph
-            { 1313, 556 },
-            { 1314, 57 }, // Ogre
-            { 1315, 57 },
-            { 1316, 334 }, // Cactuar
-            { 1317, 334 },
-            { 1318, 355 }, // Abomination
-            { 1319, 355 },
-            { 1320, 355 }, // Axe Beak
-            { 1321, 355 },
+            { 1210, 89 }, // Cerberus
+            { 1211, 89 },
+            { 1212, 153 }, // Seeker Bat
+            { 1213, 153 },
+            { 1214, 337 }, // Chimera
+            { 1215, 337 },
+            { 1216, 87 }, // Zuu
+            { 1217, 87 },
+            { 1218, 451 }, // Crawler
+            { 1219, 451 },
+            { 1220, 159 }, // Ironite
+            { 1221, 159 },
+            { 1222, 165 }, // Dracozombie
+            { 1223, 165 },
+            { 1224, 330 }, // Dragonfly
+            { 1225, 330 },
+            { 1226, 343 }, // Iron Man
+            { 1227, 343 },
+            { 1228, 158 }, // Mu
+            { 1229, 158 },
+            { 1230, 93 }, // Catoblepas
+            { 1231, 93 },
+            { 1232, 78 }, // Whale Zombie
+            { 1233, 78 },
+            { 1234, 400 }, // Ghost
+            { 1235, 400 },
+            { 1236, 154 }, // Flan
+            { 1237, 154 },
+            { 1238, 350 }, // Antlion
+            { 1239, 350 },
+            { 1240, 83 }, // Gargoyle
+            { 1241, 83 },
+            { 1242, 82 }, // Garuda
+            { 1243, 82 },
+            { 1244, 146 }, // Land Worm
+            { 1245, 146 },
+            { 1246, 369 }, // Gimme cat
+            { 1247, 369 },
+            { 1248, 46 }, // Goblin Mage
+            { 1249, 46 },
+            { 1250, 152 }, // Goblin
+            { 1251, 152 },
+            { 1252, 339 }, // Sand Golem
+            { 1253, 339 },
+            { 1254, 333 }, // Grenade
+            { 1255, 333 },
+            { 1256, 90 }, // Griffin
+            { 1257, 90 },
+            { 1258, 379 }, // Grimlock
+            { 1259, 379 },
+            { 1260, 137 }, // Gigan Toad
+            { 1261, 137 },
+            { 1262, 166 }, // Hecteyes
+            { 1263, 166 },
+            { 1264, 341 }, // Abadon
+            { 1265, 341 },
+            { 1266, 332 }, // Jabberwock
+            { 1267, 332 },
+            { 1268, 135 }, // Vice
+            { 1269, 135 },
+            { 1270, 5459 }, // Lizard Man
+            { 1271, 5459 },
+            { 1272, 620 }, // Lich?
+            { 1273, 620 },
+            { 1274, 336 }, // Behemoth
+            { 1275, 336 },
+            { 1276, 339 }, // Core
+            { 1277, 339 },
+            { 1278, 618 }, // Kraken?
+            { 1279, 618 },
+            { 1280, 150 }, // Clipper
+            { 1281, 150 },
+            { 1282, 265 }, // Magic Vice
+            { 1283, 265 },
+            { 1284, 88 }, // Serpion
+            { 1285, 88 },
+            { 1286, 157 }, // Wyerd
+            { 1287, 157 },
+            { 1288, 161 }, // Mandragora
+            { 1289, 161 },
+            { 1290, 144 }, // Feather Circle
+            { 1291, 144 },
+            { 1292, 164 }, // Torama
+            { 1293, 164 },
+            { 1294, 151 }, // Fang
+            { 1295, 151 },
+            { 1296, 619 }, // Maliris?
+            { 1297, 619 },
+            { 1298, 266 }, // Mimic
+            { 1299, 266 },
+            { 1300, 136 }, // Ladybug
+            { 1301, 136 },
+            { 1302, 9 }, // Trick Sparrow
+            { 1303, 9 },
+            { 1304, 28 }, // Hornet
+            { 1305, 28 },
+            { 1306, 148 }, // Drakan
+            { 1307, 148 },
+            { 1308, 58 }, // Dendrobium
+            { 1309, 58 },
+            { 1310, 92 }, // Gnoll
+            { 1311, 92 },
+            { 1312, 548 }, // Nymph
+            { 1313, 548 },
+            { 1314, 327 }, // Ogre
+            { 1315, 327 },
+            { 1316, 244 }, // Cactuar
+            { 1317, 244 },
+            { 1318, 141 }, // Abomination
+            { 1319, 141 },
+            { 1320, 97 }, // Axe Beak
+            { 1321, 97 },
             { 1322, 149 }, // Wraith (blue)
             { 1323, 149 },
             { 1324, 399 }, // Wraith (red)
             { 1325, 399 },
-            { 1326, 84 }, // Zaghnol
-            { 1327, 84 },
-            { 1328, 86 }, // Gigan Octopus
-            { 1329, 86 },
-            { 1330, 145 }, // Carrion Worm
-            { 1331, 145 },
-            { 1332, 5458 }, // Python
-            { 1333, 5458 },
-            { 1334, 556 }, // Lamia
-            { 1335, 556 },
-            { 1336, 57 }, // Red Dragon
-            { 1337, 57 },
-            { 1338, 334 }, // Sahagin
-            { 1339, 334 },
-            { 1340, 355 }, // Sand Scorpion
-            { 1341, 355 },
-            { 1342, 355 }, // Ring Leader
-            { 1343, 355 },
-            { 1344, 5460 }, // Cave Imp
-            { 1345, 5460 },
-            { 1346, 147 }, // Skeleton
-            { 1347, 147 },
-            { 1348, 84 }, // Stilva
-            { 1349, 84 },
-            { 1350, 86 }, // Stroper
-            { 1351, 86 },
-            { 1352, 145 }, // Bomb
-            { 1353, 145 },
-            { 1354, 5458 }, // Zemzelett
-            { 1355, 5458 },
-            { 1356, 556 }, // Hedgehog Pie
-            { 1357, 556 },
-            { 1358, 57 }, // Tiamat?
-            { 1359, 57 },
-            { 1360, 334 }, // Tonberry
-            { 1361, 334 },
-            { 1362, 355 }, // Ochu
-            { 1363, 355 },
-            { 1364, 355 }, // Troll
-            { 1365, 355 },
-            { 1366, 556 }, // Vepal (ice)
-            { 1367, 556 },
-            { 1368, 57 }, // Vepal (fire)
-            { 1369, 57 },
-            { 1370, 334 }, // Worm Hydra
-            { 1371, 334 },
-            { 1372, 355 }, // Malboro
-            { 1373, 355 },
-            { 1374, 355 }, // Yeti
-            { 1375, 355 },
+            { 1326, 163 }, // Zaghnol
+            { 1327, 163 },
+            { 1328, 79 }, // Gigan Octopus
+            { 1329, 79 },
+            { 1330, 160 }, // Carrion Worm
+            { 1331, 160 },
+            { 1332, 60 }, // Python
+            { 1333, 60 },
+            { 1334, 85 }, // Lamia
+            { 1335, 85 },
+            { 1336, 610 }, // Red Dragon
+            { 1337, 610 },
+            { 1338, 138 }, // Sahagin
+            { 1339, 138 },
+            { 1340, 81 }, // Sand Scorpion
+            { 1341, 81 },
+            { 1342, 94 }, // Ring Leader
+            { 1343, 94 },
+            { 1344, 546 }, // Cave Imp
+            { 1345, 546 },
+            { 1346, 162 }, // Skeleton
+            { 1347, 162 },
+            { 1348, 342 }, // Stilva
+            { 1349, 342 },
+            { 1350, 142 }, // Stroper
+            { 1351, 142 },
+            { 1352, 155 }, // Bomb
+            { 1353, 155 },
+            { 1354, 80 }, // Zemzelett
+            { 1355, 80 },
+            { 1356, 59 }, // Hedgehog Pie
+            { 1357, 59 },
+            { 1358, 621 }, // Tiamat?
+            { 1359, 621 },
+            { 1360, 184 }, // Tonberry
+            { 1361, 184 },
+            { 1362, 95 }, // Ochu
+            { 1363, 95 },
+            { 1364, 326 }, // Troll
+            { 1365, 326 },
+            { 1366, 331 }, // Vepal (ice)
+            { 1367, 331 },
+            { 1368, 676 }, // Vepal (fire)
+            { 1369, 676 },
+            { 1370, 340 }, // Worm Hydra
+            { 1371, 340 },
+            { 1372, 96 }, // Malboro
+            { 1373, 96 },
+            { 1374, 329 }, // Yeti
+            { 1375, 329 },
         };
     }
 }
