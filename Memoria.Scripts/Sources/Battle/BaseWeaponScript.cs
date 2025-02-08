@@ -60,19 +60,24 @@ namespace Memoria.Scripts.Battle
                 {
                     if (_v.Caster.HasSupportAbility(SupportAbility2.Mug) && !_v.Target.IsPlayer)
                     {
-                        _v.Context.HitRate = (short)(_v.Caster.Level + _v.Caster.Will);
-                        _v.Context.Evade = _v.Target.Level;
-                        if (GameRandom.Next16() % _v.Context.HitRate >= GameRandom.Next16() % _v.Context.Evade || _v.Caster.HasSupportAbility(SupportAbility2.Bandit))
+                        BattleEnemy battleEnemy = BattleEnemy.Find(_v.Target);
+                        if (HasStealableItems(battleEnemy))
                         {
-                            if (_v.Caster.HasSupportAbility(SupportAbility1.MasterThief) || _v.Caster.HasSupportAbilityByIndex((SupportAbility)1022))
-                                MugMasterThief();
-                            else
-                                MugScript();
-
-                            ShowMugMessage();
-                            if (_v.Caster.HasSupportAbility(SupportAbility1.StealGil))
+                            _v.Context.HitRate = (short)(_v.Caster.Level + _v.Caster.Will);
+                            _v.Context.Evade = _v.Target.Level;
+                            if (GameRandom.Next16() % _v.Context.HitRate >= GameRandom.Next16() % _v.Context.Evade || _v.Caster.HasSupportAbility(SupportAbility2.Bandit))
                             {
-                                StealGils();
+                                if (_v.Caster.HasSupportAbility(SupportAbility1.MasterThief) || _v.Caster.HasSupportAbilityByIndex((SupportAbility)1022))
+                                    MugMasterThief();
+                                else
+                                    MugScript();
+
+                                ShowMugMessage();
+                                if (_v.Caster.HasSupportAbility(SupportAbility1.StealGil))
+                                {
+                                    StealGils();
+
+                                }
                             }
                         }                      
                     }

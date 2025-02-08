@@ -35,6 +35,8 @@ namespace Memoria.Scripts.Battle
                     TranceSeekCustomAPI.ModelMoug[_v.Caster.Data] = ModelFactory.CreateModel("GEO_NPC_F4_MOG", true);
                     // ANH_NPC_F4_MOG_INTO_EIK_PASSIVE_1
                     // ANH_NPC_F4_MOG_INTO_EIK_PASSIVE_2
+                    if (FF9StateSystem.EventState.ScenarioCounter > 9990) // Moug has a "phantom" effect after Mont Gulug.
+                        btl_util.GeoSetABR(TranceSeekCustomAPI.ModelMoug[_v.Caster.Data], "GEO_POLYFLAGS_TRANS_100_PLUS_25");
                     TranceSeekCustomAPI.ModelMoug[_v.Caster.Data].transform.localPosition = _v.Caster.Data.gameObject.transform.localPosition;
                     TranceSeekCustomAPI.ModelMoug[_v.Caster.Data].transform.localRotation = _v.Caster.Data.gameObject.transform.localRotation;
                     TranceSeekCustomAPI.ModelMoug[_v.Caster.Data].transform.localScale = _v.Caster.Data.gameObject.transform.localScale;
