@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using FF9;
 using Memoria.Data;
@@ -128,6 +128,11 @@ namespace Memoria.Scripts.Battle
                     case (BattleAbilityId)1193: // Blazer Beetle
                     case (BattleAbilityId)1206: // Grand Dragon - Poison Claw
                     case (BattleAbilityId)1210: // Cerberus - Incandescent Claws
+                    case (BattleAbilityId)1218: // Crawler - Claws
+                    case (BattleAbilityId)1219: // Crawler - Stomach
+                    case (BattleAbilityId)1222: // DracoZombie - Putrids claws
+                    case (BattleAbilityId)1228: // Mu - Tail
+                    case (BattleAbilityId)1230: // Catoblepas - Heave
                     {
                         if (!_v.Target.TryKillFrozen())
                         {
@@ -180,6 +185,9 @@ namespace Memoria.Scripts.Battle
                     case (BattleAbilityId)1209: // Shell Dragon - Disaster
                     case (BattleAbilityId)1211: // Cerberus - Flame
                     case (BattleAbilityId)1216: // Zuu - Aera
+                    case (BattleAbilityId)1220: // Ironite - Fira (Multi)
+                    case (BattleAbilityId)1224: // Dragonfly - Charge
+                    case (BattleAbilityId)1231: // Catoblepas - Thundaga (Multi)
                     {
                         _v.NormalMagicParams();
                         TranceSeekCustomAPI.CharacterBonusPassive(_v, "MagicAttack");
@@ -207,6 +215,7 @@ namespace Memoria.Scripts.Battle
                     case (BattleAbilityId)1198: // Basilisk
                     case (BattleAbilityId)1199: // Basilisk
                     case (BattleAbilityId)1213: // Seeker Bat - Darkness
+                    case (BattleAbilityId)1225: // Dragonfly - Buzz
                     {
                         TranceSeekCustomAPI.MagicAccuracy(_v);
                         TranceSeekCustomAPI.ViviFocus(_v);
@@ -252,35 +261,32 @@ namespace Memoria.Scripts.Battle
                     {
                         if (_v.Target.Data == _v.Caster.Data)
                         {
-                            _v.Caster.HpDamage = (int)_v.Caster.CurrentHp;
+                            int Heal = (int)_v.Caster.CurrentHp;
                             if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)100)) // Medecin
                             {
-                                _v.Caster.HpDamage += _v.Caster.HpDamage / 4;
+                                Heal += Heal / 4;
                             }
                             else if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1100)) // Medecin +
                             {
-                                _v.Caster.HpDamage += _v.Caster.HpDamage / 2;
+                                Heal += Heal / 2;
                             }
                             foreach (BattleUnit unit in BattleState.EnumerateUnits())
                             {
                                 if (!unit.IsPlayer || !unit.IsTargetable || unit.IsUnderAnyStatus(BattleStatus.Death | BattleStatus.Petrify | BattleStatus.Jump))
                                     continue;
 
-                                _v.Caster.Flags = CalcFlag.HpAlteration;
-                                if (!unit.IsUnderAnyStatus(BattleStatus.Zombie))
-                                    _v.Caster.Flags = CalcFlag.HpDamageOrHeal;
+                                if (unit.IsUnderAnyStatus(BattleStatus.Zombie))
+                                    Heal = -Heal;
 
-                                _v.Caster.Change(unit);
-                                SBattleCalculator.CalcResult(_v);
-                                BattleState.Unit2DReq(unit);
-                                if (unit.Data == _v.Caster.Data)
-                                    SummonStep[_v.Caster.Data] = 2;
+                                if (Heal > 0)
+                                    unit.CurrentHp = (uint)Math.Min(unit.CurrentHp + Heal, unit.MaximumHp);
+                                else
+                                    unit.CurrentHp = (uint)Math.Max(unit.CurrentHp + Heal, 0);
+
+                                btl2d.Btl2dStatReq(unit.Data, -Heal, 0);
                             }
-                            _v.Caster.Flags = 0;
-                            _v.Caster.HpDamage = 0;
-                            _v.PerformCalcResult = false;
                         }
-                        return;
+                        break;
                     }
                     // ARMOR BREAK - Script 33
                     case (BattleAbilityId)1178: // Amazone
@@ -351,6 +357,56 @@ namespace Memoria.Scripts.Battle
                             _v.CalcHpDamage();
                             _v.Command.AbilityStatus |= TranceSeekCustomAPI.CustomStatus.MentalBreak;
                             _v.TryAlterMagicStatuses();
+                        }
+                        break;
+                    }
+                    // LANCER - Script 39
+                    case (BattleAbilityId)2223: // DracoZombie - Zombie Breath
+                    {
+                        if (_v.Command.Power == 1)
+                        {
+                            if (_v.Target.CanBeAttacked())
+                            {
+                                _v.Target.CurrentHp = 1U;
+                                _v.Target.CurrentMp = 1U;
+                                _v.TryAlterMagicStatuses();
+                            }
+                        }
+                        else
+                        {
+                            if (_v.IsCasterNotTarget() && _v.Target.CanBeAttacked() && !_v.Target.TryKillFrozen())
+                            {
+                                _v.PhysicalAccuracy();
+                                if (TranceSeekCustomAPI.TryPhysicalHit(_v))
+                                {
+                                    _v.NormalPhysicalParams();
+                                    TranceSeekCustomAPI.CharacterBonusPassive(_v, "PhysicalAttack");
+                                    TranceSeekCustomAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
+                                    TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
+                                    TranceSeekCustomAPI.BonusBackstabAndPenaltyLongDistance(_v);
+                                    TranceSeekCustomAPI.BonusElement(_v);
+                                    if (_v.CanAttackElementalCommand())
+                                    {
+                                        TranceSeekCustomAPI.IpsenCastleMalus(_v);
+                                        _v.Target.Flags |= (CalcFlag.HpAlteration | CalcFlag.MpAlteration);
+                                        _v.CalcPhysicalHpDamage();
+                                        int hpDamage3 = _v.Target.HpDamage;
+                                        if ((_v.Target.Flags & CalcFlag.HpRecovery) != 0)
+                                        {
+                                            _v.Target.FaceTheEnemy();
+                                        }
+                                        _v.Target.MpDamage = hpDamage3 >> 4;
+                                        BTL_DATA data = _v.Caster.Data;
+                                        if (data.dms_geo_id == 297)
+                                        {
+                                            _v.Caster.Flags |= (CalcFlag.HpAlteration | CalcFlag.HpRecovery);
+                                            _v.Caster.HpDamage = hpDamage3 / 2;
+                                        }
+                                        TranceSeekCustomAPI.RaiseTrouble(_v);
+                                        _v.TryAlterMagicStatuses();
+                                    }
+                                }
+                            }
                         }
                         break;
                     }
@@ -454,6 +510,7 @@ namespace Memoria.Scripts.Battle
                     }
                     // MAGIC APPLY POSITIVE - Script 103
                     case (BattleAbilityId)1185: // Ao
+                    case (BattleAbilityId)1229: // Mu - Haste
                     {
                         TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
                         break;
@@ -478,6 +535,7 @@ namespace Memoria.Scripts.Battle
                     }
                     // POISON MAGIC - Script 118
                     case (BattleAbilityId)1177: // Amanite
+                    case (BattleAbilityId)1223: // DracoZombie - Zombie Breath
                     {
                         _v.NormalMagicParams();
                         TranceSeekCustomAPI.CharacterBonusPassive(_v, "MagicAttack");
@@ -503,43 +561,33 @@ namespace Memoria.Scripts.Battle
                         _v.TryAlterMagicStatuses();
                         break;
                     }
-                    case (BattleAbilityId)1243: // Cactuar
+                    // TRANCE SEEK SPECIAL - Script 164
+                    case (BattleAbilityId)1221: // Ironite - Dragon Force
                     {
-                        _v.Command.Power = 72;
-                        _v.Command.Element = EffectElement.Thunder;
-                        _v.NormalMagicParams();
-                        TranceSeekCustomAPI.CharacterBonusPassive(_v, "MagicAttack");
-                        TranceSeekCustomAPI.CasterPenaltyMini(_v);
-                        TranceSeekCustomAPI.EnemyTranceBonusAttack(_v);
-                        TranceSeekCustomAPI.PenaltyShellAttack(_v);
-                        TranceSeekCustomAPI.PenaltyCommandDividedAttack(_v);
-                        TranceSeekCustomAPI.BonusElement(_v);
-                        if (TranceSeekCustomAPI.CanAttackMagic(_v))
-                        {
-                            if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)102))
-                                TranceSeekCustomAPI.TryCriticalHit(_v);
-                            _v.CalcHpDamage();
-                            TranceSeekCustomAPI.RaiseTrouble(_v);
-                        }
-                        _v.TryAlterMagicStatuses();
-                        break;
-                    }
-                    case (BattleAbilityId)1244: // Ozma
-                    {
-                        _v.Command.Power = 115;
-                        _v.Context.Attack = GameRandom.Next16() % (_v.Caster.Magic + 99);
-                        _v.SetCommandPower();
-                        _v.Context.DefensePower = 0;
-                        TranceSeekCustomAPI.CasterPenaltyMini(_v);
-                        TranceSeekCustomAPI.EnemyTranceBonusAttack(_v);
-                        TranceSeekCustomAPI.PenaltyShellAttack(_v);
-                        TranceSeekCustomAPI.PenaltyCommandDividedAttack(_v);
-                        TranceSeekCustomAPI.BonusElement(_v);
-                        if (TranceSeekCustomAPI.CanAttackMagic(_v))
-                        {
-                            _v.CalcHpDamage();
-                        }
-                        _v.TryAlterMagicStatuses();
+                        _v.Target.TryAlterSingleStatus(BattleStatusId.ChangeStat, true, _v.Caster, "PhysicalDefence", Math.Min(255, _v.Target.PhysicalDefence + 2));
+                        Dictionary<String, String> localizedMessage = new Dictionary<String, String>
+                                {
+                                    { "US", "Defence ↑" },
+                                    { "UK", "Defence ↑" },
+                                    { "JP", "ぼうぎょりょく↑" },
+                                    { "ES", "DIF fisica ↑" },
+                                    { "FR", "Défense ↑" },
+                                    { "GR", "Defensa F ↑" },
+                                    { "IT", "Abwehr ↑" },
+                                };
+                        btl2d.Btl2dReqSymbolMessage(_v.Target.Data, "[F9FF39]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 0);
+                        _v.Target.TryAlterSingleStatus(BattleStatusId.ChangeStat, true, _v.Caster, "MagicDefence", Math.Min(255, _v.Target.MagicDefence + 2));
+                        Dictionary<String, String> localizedMessage2 = new Dictionary<String, String>
+                                {
+                                    { "US", "Magic Def ↑" },
+                                    { "UK", "Magic Def ↑" },
+                                    { "JP", "まほうぼうぎょ ↑" },
+                                    { "ES", "DIF magica ↑" },
+                                    { "FR", "Protection ↑" },
+                                    { "GR", "Defensa M ↑" },
+                                    { "IT", "Z-Abwehr ↑" },
+                                };
+                        btl2d.Btl2dReqSymbolMessage(_v.Target.Data, "[F9FF39]", localizedMessage2, HUDMessage.MessageStyle.DAMAGE, 5);
                         break;
                     }
                 }
