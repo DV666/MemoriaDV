@@ -71,7 +71,7 @@ namespace Memoria.Scripts.Battle
                     {
                         TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
                     }
-            }
+                }
             }
         }
     }

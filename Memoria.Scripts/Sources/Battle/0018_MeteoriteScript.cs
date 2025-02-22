@@ -19,7 +19,9 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            InitializeAttackParams();
+            _v.Context.Attack = GameRandom.Next16() % (_v.Caster.Magic + _v.Caster.Level);
+            _v.SetCommandPower();
+            _v.Context.DefensePower = 0;
             TranceSeekCustomAPI.CasterPenaltyMini(_v);
             TranceSeekCustomAPI.EnemyTranceBonusAttack(_v);
             TranceSeekCustomAPI.PenaltyShellAttack(_v);
@@ -30,13 +32,6 @@ namespace Memoria.Scripts.Battle
                 _v.CalcHpDamage();
             }
             _v.TryAlterMagicStatuses();
-        }
-
-        private void InitializeAttackParams()
-        {
-            _v.Context.Attack = GameRandom.Next16() % (_v.Caster.Magic + _v.Caster.Level);
-            _v.SetCommandPower();
-            _v.Context.DefensePower = 0;
         }
     }
 }

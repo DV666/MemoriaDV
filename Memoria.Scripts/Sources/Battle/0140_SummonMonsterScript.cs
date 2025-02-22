@@ -69,6 +69,9 @@ namespace Memoria.Scripts.Battle
                 // No M-Sword => Multiple (ennemy) / Short => Multiple (ally) / No M-Sword + Short => Everyone
                 NumberTargets[_v.Caster.Data] = (_v.Command.AbilityCategory & 4) != 0 && (_v.Command.AbilityCategory & 32) != 0 ? (BattleState.TargetCount(true) + BattleState.TargetCount(false)) : ((_v.Command.AbilityCategory & 4) != 0 ? BattleState.TargetCount(false) : (_v.Command.AbilityCategory & 32) != 0 ? BattleState.TargetCount(true) : 1);
                 SummonStep[_v.Caster.Data] = 1;
+
+                if (_v.Command.AbilityId == (BattleAbilityId)1255) // Grenada - Fire balls
+                    NumberTargets[_v.Caster.Data] = 6;
             }
             else if (SummonStep[_v.Caster.Data] == 1) // Script for the damage
             {
@@ -133,6 +136,21 @@ namespace Memoria.Scripts.Battle
                     case (BattleAbilityId)1222: // DracoZombie - Putrids claws
                     case (BattleAbilityId)1228: // Mu - Tail
                     case (BattleAbilityId)1230: // Catoblepas - Heave
+                    case (BattleAbilityId)1236: // Flan - Head Attack
+                    case (BattleAbilityId)1240: // Gargoyle - Charge
+                    case (BattleAbilityId)1248: // Goblin Mage - Axe
+                    case (BattleAbilityId)1250: // Goblin - Knife
+                    case (BattleAbilityId)1252: // Golem - Counter
+                    case (BattleAbilityId)1258: // Grimlock - The Drop
+                    case (BattleAbilityId)1268: // Vice - Slice
+                    case (BattleAbilityId)1274: // Behemoth - Heave
+                    case (BattleAbilityId)1280: // Clipper - Crush
+                    case (BattleAbilityId)1284: // Serpion - Stab
+                    case (BattleAbilityId)1287: // Wyerd - Strike
+                    case (BattleAbilityId)1290: // Feather Circle - Trouble Tail
+                    case (BattleAbilityId)1294: // Fang - Rush
+                    case (BattleAbilityId)1295: // Fang - Fang
+
                     {
                         if (!_v.Target.TryKillFrozen())
                         {
@@ -188,6 +206,17 @@ namespace Memoria.Scripts.Battle
                     case (BattleAbilityId)1220: // Ironite - Fira (Multi)
                     case (BattleAbilityId)1224: // Dragonfly - Charge
                     case (BattleAbilityId)1231: // Catoblepas - Thundaga (Multi)
+                    case (BattleAbilityId)1237: // Flan - Blizzard
+                    case (BattleAbilityId)1242: // Garuda - Firaga
+                    case (BattleAbilityId)1244: // Land Worm - Earthquake
+                    case (BattleAbilityId)1254: // Grenada - Molotov
+                    case (BattleAbilityId)1256: // Griffon - Aera
+                    case (BattleAbilityId)1257: // Griffon - Tempest
+                    case (BattleAbilityId)1260: // Gigan Toad - Watera
+                    case (BattleAbilityId)1265: // Abadon - High Wind
+                    case (BattleAbilityId)1286: // Wyerd - Blizzard
+                    case (BattleAbilityId)1288: // Mandragora - Blizzara
+                    case (BattleAbilityId)1292: // Torama - Thundara
                     {
                         _v.NormalMagicParams();
                         TranceSeekCustomAPI.CharacterBonusPassive(_v, "MagicAttack");
@@ -206,6 +235,22 @@ namespace Memoria.Scripts.Battle
                         _v.TryAlterMagicStatuses();
                         break;
                     }
+                    // MAGIC RECOVERY - Script 10
+                    case (BattleAbilityId)1246: // Gimme cat - Curaga
+                    case (BattleAbilityId)1277: // Core - Cura
+                    case (BattleAbilityId)1281: // Clipper - Armor
+                    {
+                        _v.NormalMagicParams();
+                        TranceSeekCustomAPI.CharacterBonusPassive(_v, "MagicAttack");
+                        TranceSeekCustomAPI.CasterPenaltyMini(_v);
+                        TranceSeekCustomAPI.EnemyTranceBonusAttack(_v);
+                        TranceSeekCustomAPI.PenaltyCommandDividedAttack(_v);
+                        if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)102))
+                            TranceSeekCustomAPI.TryCriticalHit(_v);
+                        _v.CalcHpMagicRecovery();
+                        _v.TryAlterMagicStatuses();
+                        break;
+                    }
                     // BAD STATUS - Script 11
                     case (BattleAbilityId)1175: // Ahriman
                     case (BattleAbilityId)1183: // Anemone
@@ -216,6 +261,10 @@ namespace Memoria.Scripts.Battle
                     case (BattleAbilityId)1199: // Basilisk
                     case (BattleAbilityId)1213: // Seeker Bat - Darkness
                     case (BattleAbilityId)1225: // Dragonfly - Buzz
+                    case (BattleAbilityId)1233: // Whale Zombie - Ultra Sound Wave
+                    case (BattleAbilityId)1243: // Garuda - Stop
+                    case (BattleAbilityId)1259: // Grimlock - Stop
+                    case (BattleAbilityId)1261: // Gigan Toad - Glowing Eyes
                     {
                         TranceSeekCustomAPI.MagicAccuracy(_v);
                         TranceSeekCustomAPI.ViviFocus(_v);
@@ -256,35 +305,336 @@ namespace Memoria.Scripts.Battle
                             TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
                         break;
                     }
+                    // DEATH STATUS - Script 14
+                    case (BattleAbilityId)1299: // Mimic - Death
+                    {
+                        if (_v.Target.CheckUnsafetyOrGuard())
+                        {
+                            if (_v.Target.IsZombie)
+                            {
+                                if (_v.Target.CanBeAttacked())
+                                {
+                                    _v.Target.CurrentHp = _v.Target.MaximumHp;
+                                }
+                            }
+                            else
+                            {
+                                TranceSeekCustomAPI.MagicAccuracy(_v);
+                                if (_v.TryMagicHit() || _v.Command.HitRate == 255)
+                                {
+                                    TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
+                                }
+                            }
+                        }
+                        break;
+                    }
+                    // DRAIN MP - Script 15
+                    case (BattleAbilityId)1235: // Ghost - Osmose
+                    {
+                        _v.Context.IsDrain = true;
+                        if (!_v.IsCasterNotTarget() || !_v.Target.CanBeAttacked())
+                            return;
+
+                        _v.NormalMagicParams();
+                        TranceSeekCustomAPI.CharacterBonusPassive(_v, "MagicAttack");
+                        TranceSeekCustomAPI.CasterPenaltyMini(_v);
+                        TranceSeekCustomAPI.EnemyTranceBonusAttack(_v);
+                        TranceSeekCustomAPI.PenaltyShellAttack(_v);
+                        _v.Target.Flags |= CalcFlag.MpAlteration;
+                        _v.Caster.Flags |= CalcFlag.MpAlteration;
+                        _v.Context.IsDrain = true;
+
+                        _v.CalcMpDamage();
+                        Int32 damage = _v.Target.MpDamage;
+
+                        if (_v.Target.IsZombie)
+                        {
+                            damage = 0;
+                        }
+                        else
+                        {
+                            _v.Caster.Flags |= CalcFlag.MpRecovery;
+                            if (damage > _v.Target.CurrentMp)
+                                damage = (Int32)_v.Target.CurrentMp;
+                        }
+
+                        _v.Target.MpDamage = damage;
+                        _v.Caster.MpDamage = damage;
+                        break;
+                    }
+                    // DRAIN HP - Script 16
+                    case (BattleAbilityId)1234: // Ghost - Drain
+                    {
+                        if (_v.IsCasterNotTarget() && _v.Target.CanBeAttacked())
+                        {
+                            uint currentHp = _v.Target.CurrentHp;
+                            _v.NormalMagicParams();
+                            TranceSeekCustomAPI.CharacterBonusPassive(_v, "MagicAttack");
+                            TranceSeekCustomAPI.EnemyTranceBonusAttack(_v);
+                            TranceSeekCustomAPI.BonusElement(_v);
+                            TranceSeekCustomAPI.CasterPenaltyMini(_v);
+                            if (_v.Command.HitRate != 111)
+                                TranceSeekCustomAPI.PenaltyShellAttack(_v);
+                            if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)102))
+                                TranceSeekCustomAPI.TryCriticalHit(_v);
+                            if (_v.Command.HitRate == 254)
+                            {
+                                _v.Caster.Flags |= CalcFlag.HpDamageOrHeal | CalcFlag.MpDamageOrHeal;
+                                _v.Target.Flags |= CalcFlag.HpAlteration | CalcFlag.MpAlteration;
+                                _v.CalcMpDamage();
+                                _v.CalcHpDamage();
+                                int num = _v.Target.MpDamage / 2;
+                                _v.Caster.HpDamage = _v.Target.HpDamage;
+                                if (num > _v.Target.CurrentMp)
+                                {
+                                    num = (int)_v.Target.CurrentMp;
+                                }
+                                _v.Target.MpDamage = num;
+                                _v.Caster.MpDamage = num;
+                                _v.TryAlterMagicStatuses();
+                            }
+                            else
+                            {
+                                if (TranceSeekCustomAPI.CanAttackMagic(_v))
+                                {
+                                    TranceSeekCustomAPI.PrepareHpDraining(_v);
+                                    if (_v.Context.PowerDifference >= 1 && TranceSeekCustomAPI.CanAttackMagic(_v))
+                                    {
+                                        _v.CalcHpDamage();
+
+                                        if (_v.Target.HpDamage > currentHp)
+                                        {
+                                            _v.Caster.HpDamage = (int)currentHp;
+                                        }
+                                        else
+                                        {
+                                            _v.Caster.HpDamage = _v.Target.HpDamage;
+                                        }
+                                    }
+                                    _v.TryAlterMagicStatuses();                                
+                                }
+                            }
+                        }
+                        break;
+                    }
+                    // MAGIC GRAVITY - Script 17
+                    case (BattleAbilityId)1239: // Antlion - Sandstorm
+                    case (BattleAbilityId)1291: // Feather Circle - Trouble Tail
+                    {
+                        SB2_PATTERN sb2Pattern = FF9StateSystem.Battle.FF9Battle.btl_scene.PatAddr[FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum];
+                        for (Int32 i = 0; i < MagicGravityDamageScript.ImmuneGravity.GetLength(0); i++)
+                        {
+                            if (FF9StateSystem.Battle.battleMapIndex == MagicGravityDamageScript.ImmuneGravity[i, 0] && sb2Pattern.Monster[_v.Target.Data.bi.slot_no].TypeNo == MagicGravityDamageScript.ImmuneGravity[i, 1])
+                            {
+                                _v.Context.Flags = BattleCalcFlags.Guard;
+                                return;
+                            }
+                        }
+
+                        _v.SetCommandAttack();
+                        TranceSeekCustomAPI.PenaltyCommandDividedAttack(_v);
+                        if (_v.Target.IsUnderStatus(BattleStatus.Shell))
+                        {
+                            _v.Context.Attack = _v.Context.Attack / 2;
+                        }
+                        if (_v.Target.HasCategory(EnemyCategory.Stone) && !_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill))
+                        {
+                            _v.Context.Attack = _v.Context.Attack * 2;
+                        }
+                        TranceSeekCustomAPI.ViviFocus(_v);
+                        TranceSeekCustomAPI.BonusElement(_v);
+                        if (TranceSeekCustomAPI.CanAttackMagic(_v))
+                        {
+                            if (_v.Command.HitRate == 255)
+                            {
+                                _v.CalcDamageCommon();
+                                if (_v.Context.Attack > 100)
+                                {
+                                    _v.Context.Attack = 100;
+                                }
+                                int num = (int)(_v.Target.MaximumHp * _v.Context.Attack / 100U);
+                                if (_v.Command.IsShortSummon)
+                                {
+                                    num = num * 2 / 3;
+                                }
+                                _v.Target.HpDamage = num;
+                            }
+                            else
+                            {
+                                _v.CalcCannonProportionDamage();
+                            }
+                        }
+                        if (_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill))
+                        {
+                            _v.Target.HpDamage = Math.Max(1, (_v.Target.HpDamage / TranceSeekCustomAPI.MonsterMechanic[_v.Target.Data][5]));
+                            TranceSeekCustomAPI.MonsterMechanic[_v.Target.Data][5] = TranceSeekCustomAPI.MonsterMechanic[_v.Target.Data][5] * 2;
+                        }
+                        _v.TryAlterMagicStatuses();
+
+                        if (TranceSeekCustomAPI.AbsorbElement.TryGetValue(_v.Target.Data, out Int32 elementprotect))
+                            if (elementprotect == 256)
+                                _v.Target.Flags |= CalcFlag.HpRecovery;
+                        break;
+                    }
+                    // METEORITE (RANDOM MAGIC) - Script 18
+                    case (BattleAbilityId)1255: // Grenada - Fire balls
+                    case (BattleAbilityId)1275: // Behemoth - Meteor
+                    {
+                        _v.Context.Attack = GameRandom.Next16() % (_v.Caster.Magic + _v.Caster.Level);
+                        _v.SetCommandPower();
+                        _v.Context.DefensePower = 0;
+                        TranceSeekCustomAPI.CasterPenaltyMini(_v);
+                        TranceSeekCustomAPI.EnemyTranceBonusAttack(_v);
+                        TranceSeekCustomAPI.PenaltyShellAttack(_v);
+                        TranceSeekCustomAPI.PenaltyCommandDividedAttack(_v);
+                        TranceSeekCustomAPI.BonusElement(_v);
+                        if (TranceSeekCustomAPI.CanAttackMagic(_v))
+                        {
+                            _v.CalcHpDamage();
+                        }
+                        _v.TryAlterMagicStatuses();
+                        break;
+                    }
+                    // GOBLIN PUNCH - Script 21
+                    case (BattleAbilityId)1251: // Goblin - Goblin Punch
+                    {
+                        if (_v.Target.Level == _v.Caster.Level)
+                        {
+                            _v.Context.Attack += (int)_v.Caster.Level;
+                            _v.Context.DefensePower = 0;
+                        }
+                        TranceSeekCustomAPI.CasterPenaltyMini(_v);
+                        TranceSeekCustomAPI.PenaltyShellAttack(_v);
+                        _v.CalcHpDamage();
+                        break;
+                    }
+                    // LVL DIRECT HP DAMAGE - Script 22
+                    case (BattleAbilityId)1262: // Hecteyes - LV5 Death
+                    {
+                        if (_v.IsTargetLevelMultipleOfCommandRate() && _v.Target.CanBeAttacked())
+                        {
+                            if (_v.Command.Power == 1 && _v.Command.HitRate == 1)
+                            {
+                                _v.TryDirectHPDamage();
+                            }
+                            else
+                            {
+                                if (_v.Command.Power > 0)
+                                {
+                                    if (_v.Target.MagicDefence == 255)
+                                    {
+                                        _v.Context.Flags |= BattleCalcFlags.Guard;
+                                    }
+                                    else
+                                    {
+                                        _v.NormalMagicParams();
+                                        TranceSeekCustomAPI.CharacterBonusPassive(_v, "MagicAttack");
+                                        TranceSeekCustomAPI.CasterPenaltyMini(_v);
+                                        TranceSeekCustomAPI.PenaltyShellAttack(_v);
+                                        TranceSeekCustomAPI.PenaltyCommandDividedAttack(_v);
+                                        TranceSeekCustomAPI.BonusElement(_v);
+                                        if (TranceSeekCustomAPI.CanAttackMagic(_v))
+                                        {
+                                            _v.CalcHpDamage();
+                                        }
+                                        _v.TryAlterMagicStatuses();
+                                    }
+                                }
+                                else
+                                {
+                                    _v.TryDirectHPDamage();
+                                }
+                            }                       
+                        }
+                        break;
+                    }
+                    // PRECISE DIRECT HP DAMAGE - Script 25
+                    case (BattleAbilityId)1263: // Hecteyes - Roulette
+                    {
+                        if (_v.Target.CheckUnsafetyOrGuard() && _v.Target.CanBeAttacked())
+                            _v.TryDirectHPDamage();
+                        break;
+                    }
+                    // MINUS STRIKE - Script 29
+                    case (BattleAbilityId)1289: // Mandragora - Chestnut
+                    {
+                        _v.Target.Flags |= CalcFlag.HpAlteration;
+                        _v.Target.HpDamage = (Int32)(_v.Caster.MaximumHp - _v.Caster.CurrentHp);
+                        break;
+                    }
                     // WHITE WIND - Script 30
                     case (BattleAbilityId)1217: // Zuu - White Wind
+                    case (BattleAbilityId)1267: // Jabberwock - Psychokinesis
                     {
-                        if (_v.Target.Data == _v.Caster.Data)
+                        if (_v.Command.Power == 0)
                         {
-                            int Heal = (int)_v.Caster.CurrentHp;
-                            if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)100)) // Medecin
+                            if (_v.Target.Data == _v.Caster.Data)
                             {
-                                Heal += Heal / 4;
+                                int Heal = (int)_v.Caster.CurrentHp;
+                                if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)100)) // Medecin
+                                {
+                                    Heal += Heal / 4;
+                                }
+                                else if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1100)) // Medecin +
+                                {
+                                    Heal += Heal / 2;
+                                }
+                                foreach (BattleUnit unit in BattleState.EnumerateUnits())
+                                {
+                                    if (!unit.IsPlayer || !unit.IsTargetable || unit.IsUnderAnyStatus(BattleStatus.Death | BattleStatus.Petrify | BattleStatus.Jump))
+                                        continue;
+
+                                    if (unit.IsUnderAnyStatus(BattleStatus.Zombie))
+                                        Heal = -Heal;
+
+                                    if (Heal > 0)
+                                        unit.CurrentHp = (uint)Math.Min(unit.CurrentHp + Heal, unit.MaximumHp);
+                                    else
+                                        unit.CurrentHp = (uint)Math.Max(unit.CurrentHp + Heal, 0);
+
+                                    btl2d.Btl2dStatReq(unit.Data, -Heal, 0);
+                                }
                             }
-                            else if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1100)) // Medecin +
+                        }
+                        else
+                        {
+                            if (_v.Target.MagicDefence == 255)
                             {
-                                Heal += Heal / 2;
+                                _v.Context.Flags |= BattleCalcFlags.Guard;
                             }
-                            foreach (BattleUnit unit in BattleState.EnumerateUnits())
+                            else
                             {
-                                if (!unit.IsPlayer || !unit.IsTargetable || unit.IsUnderAnyStatus(BattleStatus.Death | BattleStatus.Petrify | BattleStatus.Jump))
-                                    continue;
-
-                                if (unit.IsUnderAnyStatus(BattleStatus.Zombie))
-                                    Heal = -Heal;
-
-                                if (Heal > 0)
-                                    unit.CurrentHp = (uint)Math.Min(unit.CurrentHp + Heal, unit.MaximumHp);
-                                else
-                                    unit.CurrentHp = (uint)Math.Max(unit.CurrentHp + Heal, 0);
-
-                                btl2d.Btl2dStatReq(unit.Data, -Heal, 0);
+                                _v.NormalMagicParams();
+                                TranceSeekCustomAPI.CharacterBonusPassive(_v, "MagicAttack");
+                                TranceSeekCustomAPI.CasterPenaltyMini(_v);
+                                TranceSeekCustomAPI.PenaltyShellAttack(_v);
+                                TranceSeekCustomAPI.PenaltyCommandDividedAttack(_v);
+                                TranceSeekCustomAPI.BonusElement(_v);
+                                if (TranceSeekCustomAPI.CanAttackMagic(_v))
+                                {
+                                    if (_v.Target.IsLevitate)
+                                    {
+                                        _v.Context.Attack = _v.Context.Attack * 3;
+                                    }
+                                    _v.CalcHpDamage();
+                                }
+                                _v.TryAlterMagicStatuses();
                             }
+                        }
+                        break;
+                    }
+                    // RANDOM MP DAMAGE - Script 31
+                    case (BattleAbilityId)1283: // Magic Vice - Magic Hammer
+                    {
+                        _v.Target.Flags |= (CalcFlag.MpAlteration);
+
+                        if (_v.Target.IsUnderStatus(BattleStatus.Shell))
+                        {
+                            _v.Target.MpDamage = (int)(Math.Min(9999, GameRandom.Next16() % (_v.Target.CurrentMp / 2U)));
+                        }
+                        else
+                        {
+                            _v.Target.MpDamage = (int)(Math.Min(9999, GameRandom.Next16() % _v.Target.CurrentMp));
                         }
                         break;
                     }
@@ -410,6 +760,32 @@ namespace Memoria.Scripts.Battle
                         }
                         break;
                     }
+                    // STEAL SCRIPT - Script 58
+                    case (BattleAbilityId)1282: // Magic Vice - Mug
+                    {
+                        BattleScriptFactory factorymug = SBattleCalculator.FindScriptFactory(58); // Script 0058_StealScript
+                        BattleScriptFactory factoryattack = SBattleCalculator.FindScriptFactory(8); // Script 0008_EnemyPhysicalAttackScript
+                        if (factorymug != null)
+                        {
+                            IBattleScript script = factorymug(_v);
+                            script.Perform();
+                        }
+                        if (factoryattack != null)
+                        {
+                            IBattleScript script = factoryattack(_v);
+                            script.Perform();
+                        }
+                        break;
+                    }
+                    // ITEM ETHER - Script 70
+                    case (BattleAbilityId)1247: // Gimme cat - Ether
+                    {
+                        _v.Context.Attack = 15;
+                        _v.Context.AttackPower = _v.Command.Item.Power;
+                        _v.Context.DefensePower = 0;
+                        _v.CalcMpMagicRecovery();
+                        break;
+                    }
                     // CANNON - Script 91
                     case (BattleAbilityId)1204: // Armstrong - Cannon
                     {
@@ -437,6 +813,7 @@ namespace Memoria.Scripts.Battle
                     }
                     // MAELSTORM - Script 93
                     case (BattleAbilityId)1181: // Amduscias
+                    case (BattleAbilityId)1293: // Torama - Blaster
                     {
                         if (_v.Target.CheckUnsafetyOrGuard() && _v.Target.CanBeAttacked())
                         {
@@ -477,6 +854,13 @@ namespace Memoria.Scripts.Battle
                     // PRECISE PHYSICAL ATTACK - Script 100
                     case (BattleAbilityId)1173: // Agares
                     case (BattleAbilityId)1208: // Shell Dragon - Charge
+                    case (BattleAbilityId)1232: // Whale Zombie - Fin
+                    case (BattleAbilityId)1238: // Antlion - Counter Horn
+                    case (BattleAbilityId)1245: // Land Worm - Sandstorm
+                    case (BattleAbilityId)1253: // Golem - Sandstorm
+                    case (BattleAbilityId)1264: // Abadon - Mantis Reaper
+                    case (BattleAbilityId)1270: // Lizard Man - Cleave
+
                     {
                         if (!_v.Target.TryKillFrozen())
                         {
@@ -511,6 +895,14 @@ namespace Memoria.Scripts.Battle
                     // MAGIC APPLY POSITIVE - Script 103
                     case (BattleAbilityId)1185: // Ao
                     case (BattleAbilityId)1229: // Mu - Haste
+                    case (BattleAbilityId)1241: // Gargoyle - Protect
+                    case (BattleAbilityId)1249: // Goblin Mage - Vanish
+                    case (BattleAbilityId)1266: // Jabberwock - Shell
+                    case (BattleAbilityId)1269: // Vice - Trickery
+                    case (BattleAbilityId)1271: // Lizard Man - Protect
+                    case (BattleAbilityId)1276: // Core - Regen
+                    case (BattleAbilityId)1285: // Serpion - Shell
+                    case (BattleAbilityId)1298: // Mimic - Reflect
                     {
                         TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
                         break;

@@ -58,7 +58,8 @@ namespace Memoria.DefaultScripts
             if (Stack > StackMaximum)
             {
                 Stack = StackMaximum;
-                NumberHUD.Label = $"[FFA500]   {Stack}";
+                if (NumberHUD != null)
+                    NumberHUD.Label = $"[FFA500]   {Stack}";
                 return btl_stat.ALTER_INVALID;
             }
             else if (Stack > 1)

@@ -127,6 +127,11 @@ namespace Memoria.Scripts.Battle
                     MonsterMechanic[unit.Data][4] = 100; // Reduce time for Sleep/Freeze/Stop
                     MonsterMechanic[unit.Data][5] = 4; // Reduce gravity damage
                 }
+
+                if (unit.Row == 1)
+                    btl_stat.AlterStatus(unit, CustomStatusId.Special, parameters: "CanCover1");
+
+
                 if (unit.PlayerIndex == (CharacterId)14)
                 {
                     unit.SummonCount = 1; // Used for SA Take that!

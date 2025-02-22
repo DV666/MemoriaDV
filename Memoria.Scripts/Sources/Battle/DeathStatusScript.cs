@@ -45,7 +45,11 @@ namespace Memoria.DefaultScripts
                 target.Trance = 254;
             }          
             if (target.PlayerIndex == CharacterId.Beatrix)
+            {
+                if (!BeatrixPassive.TryGetValue(target.Data, out Int32[] beatrixpassive))
+                    BeatrixPassive[target.Data] = [0, 0, 0, 0];
                 BeatrixPassive[target.Data][2] = 0;
+            }
             if (!target.HasSupportAbilityByIndex((SupportAbility)1232)) // SA Expiation+
                 btl_stat.RemoveStatus(target, CustomStatusId.Redemption);
             return btl_stat.ALTER_SUCCESS;

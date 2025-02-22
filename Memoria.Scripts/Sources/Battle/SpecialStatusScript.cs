@@ -17,6 +17,8 @@ namespace Memoria.DefaultScripts
         public Int32 Propagation;
         public Int32 Flexible;
         public Int32 Duelist;
+        public Int32 CanCover;
+        
 
         public override UInt32 Apply(BattleUnit target, BattleUnit inflicter, params Object[] parameters)
         {
@@ -95,6 +97,18 @@ namespace Memoria.DefaultScripts
                 else if (Parameter == "Duelist--")
                 {
                     Duelist = 0;
+                }
+                else if (Parameter == "Duelist--")
+                {
+                    Duelist = 0;
+                }
+                else if (Parameter == "CanCover0")
+                {
+                    CanCover = 0;
+                }
+                else if (Parameter == "CanCover1")
+                {
+                    CanCover = 1;
                 }
             }
             return btl_stat.ALTER_SUCCESS;

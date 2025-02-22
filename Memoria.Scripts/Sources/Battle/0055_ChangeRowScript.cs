@@ -20,8 +20,14 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            if (!_v.Target.HasSupportAbilityByIndex((SupportAbility)1026))
-                _v.Target.ChangeRow();
+            if (_v.Target.HasSupportAbilityByIndex((SupportAbility)1026) && !_v.Caster.IsPlayer)
+                return;
+
+            _v.Target.ChangeRow();
+            if (_v.Target.Row == 1)
+                btl_stat.AlterStatus(_v.Target, TranceSeekCustomAPI.CustomStatusId.Special, parameters: "CanCover1"); 
+            else
+                btl_stat.AlterStatus(_v.Target, TranceSeekCustomAPI.CustomStatusId.Special, parameters: "CanCover0");           
         }
     }
 }

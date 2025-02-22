@@ -46,6 +46,11 @@ namespace Memoria.Scripts.Battle
                     _v.Command.AbilityStatus |= BattleStatus.Regen;
                     _v.TryAlterMagicStatuses();
                 }
+                else if (_v.Command.HitRate == 99)
+                {
+                    _v.Command.AbilityStatus |= (TranceSeekCustomAPI.CustomStatus.ArmorUp | TranceSeekCustomAPI.CustomStatus.MentalUp);
+                    _v.TryAlterMagicStatuses();
+                }
                 else
                 {
                     _v.TryAlterMagicStatuses();
