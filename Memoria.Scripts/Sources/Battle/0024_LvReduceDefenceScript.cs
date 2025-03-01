@@ -50,8 +50,8 @@ namespace Memoria.Scripts.Battle
                     _v.CalcHpDamage();
                 }
                 _v.TryAlterMagicStatuses();
-                _v.Target.PhysicalDefence = _v.Target.PhysicalDefence / 2;
-                _v.Target.MagicDefence = _v.Target.MagicDefence / 2;
+                btl_stat.AlterStatus(_v.Target, TranceSeekCustomAPI.CustomStatusId.ArmorBreak, parameters: "+2");
+                btl_stat.AlterStatus(_v.Target, TranceSeekCustomAPI.CustomStatusId.MentalBreak, parameters: "+2");
             }
         }
     }
