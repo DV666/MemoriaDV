@@ -322,7 +322,7 @@ namespace Memoria.Scripts.Battle
 
             if (v.Caster.PlayerIndex == CharacterId.Beatrix || v.Target.PlayerIndex == CharacterId.Beatrix && v.Command.Data.info.cover == 1) // Redemption mechanic
             {
-                if (v.Command.Data.info.effect_counter == 1)
+                if (BeatrixPassive[v.Caster.Data][3] == 0)
                 {
                     if (v.Command.Id == BattleCommandId.Attack || v.Command.Id == BattleCommandId.Defend || v.Command.Id == BattleCommandId.Counter && v.Command.AbilityId == BattleAbilityId.Attack ||
                         v.Command.Id == BattleCommandId.HolyWhiteMagic || v.Caster.IsUnderAnyStatus(BattleStatus.Trance) || v.Command.Data.info.cover == 1 && v.Target.HasSupportAbility(SupportAbility2.Cover))
@@ -342,6 +342,14 @@ namespace Memoria.Scripts.Battle
                             v.Caster.RemoveStatus(CustomStatus.Redemption);
                         }
                     }
+                    BeatrixPassive[v.Caster.Data][3] = 1;
+                    v.Caster.AddDelayedModifier(
+                        caster => caster.CurrentAtb >= caster.MaximumAtb,
+                        caster =>
+                        {
+                            BeatrixPassive[v.Caster.Data][3] = 0;
+                        }
+                    );
                 }
             }
 

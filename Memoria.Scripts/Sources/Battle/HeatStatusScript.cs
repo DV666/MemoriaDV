@@ -27,7 +27,7 @@ namespace Memoria.DefaultScripts
 
         public void OnFinishCommand(CMD_DATA cmd, Int32 tranceDecrease)
         {
-            if (Target.IsUnderAnyStatus(BattleStatus.Heat) && Target.IsUnderAnyStatus(BattleStatus.EasyKill)) // Heat Damage
+            if (Target.IsUnderAnyStatus(BattleStatus.Heat) && Target.IsUnderAnyStatus(BattleStatus.EasyKill) && Target.CurrentHp > 1) // Heat Damage
             {
                 UInt32 heat_damage = Target.MaximumHp / 64;
                 if (TranceSeekCustomAPI.MonsterMechanic[Target.Data][3] > 0)

@@ -20,7 +20,12 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            if (_v.Command.Power == 0 && _v.Command.HitRate == 255)
+            if (_v.Command.AbilityId == BattleAbilityId.FrogDrop || _v.Command.Power == 18) // Flash
+            {
+                if (_v.Target.Data != _v.Caster.Data)
+                    TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
+            }
+            else if (_v.Command.Power == 0 && _v.Command.HitRate == 255)
             {
                 bool casterunderstatus = false;
                 if (_v.Caster.IsUnderAnyStatus(_v.Command.AbilityStatus))

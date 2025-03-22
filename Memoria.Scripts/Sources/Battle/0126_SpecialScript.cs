@@ -29,7 +29,8 @@ namespace Memoria.Scripts.Battle
             {
                 foreach (BattleStatusId statusid in (_v.Caster.Data.stat.cur).ToStatusList())
                 {
-                    _v.Caster.RemoveStatus(statusid);
+                    if (statusid != BattleStatusId.EasyKill)
+                        _v.Caster.RemoveStatus(statusid);
                 }              
                 return;
             }

@@ -74,8 +74,8 @@ namespace Memoria.Scripts.Battle
                 geoName = geoName.Substring(4);
                 Animation animation = _v.Caster.Data.gameObject.GetComponent<Animation>();
 
-                if (IDMonster == 244) // Cactuar (need to use idle_alternate)
-                {
+                if (IDMonster == 244 || _v.Command.AbilityId == (BattleAbilityId)1259 || _v.Command.AbilityId == (BattleAbilityId)1284)
+                { // Cactuar, Grimlock (Blue for Stop), Serpion (Stab) (idle_alternate)
                     if (animation.GetClip("ANH_" + geoName + "_001") == null)
                         AnimationFactory.AddAnimWithAnimatioName(_v.Caster.Data.gameObject, "ANH_" + geoName + "_001");
                     for (Int32 i = 0; i < 34; i++)
@@ -95,6 +95,10 @@ namespace Memoria.Scripts.Battle
 
                 if (_v.Command.AbilityId == (BattleAbilityId)1255) // Grenada - Fire balls
                     NumberTargets[_v.Caster.Data] = 6;
+                else if (_v.Command.AbilityId == (BattleAbilityId)1263 || _v.Command.AbilityId == (BattleAbilityId)1377) // Hecteyes and Zombie - Roulette
+                    NumberTargets[_v.Caster.Data] = 1;
+                else if (_v.Command.AbilityId == (BattleAbilityId)1315) // Ogre - Double Knife
+                    NumberTargets[_v.Caster.Data] = 2;
             }
             else if (SummonStep[_v.Caster.Data] == 1) // Script for the damage
             {
@@ -669,6 +673,7 @@ namespace Memoria.Scripts.Battle
                     }
                     // DIRECT HP DAMAGE - Script 25
                     case (BattleAbilityId)1263: // Hecteyes - Roulette
+                    case (BattleAbilityId)1377: // Zombie - Roulette
                     {
                         if (_v.Target.CheckUnsafetyOrGuard() && _v.Target.CanBeAttacked())
                             _v.TryDirectHPDamage();
@@ -1336,8 +1341,8 @@ namespace Memoria.Scripts.Battle
             { 1231, 93 },
             { 1232, 78 }, // Whale Zombie
             { 1233, 78 },
-            { 1234, 400 }, // Ghost
-            { 1235, 400 },
+            { 1234, 156 }, // Ghost
+            { 1235, 156 },
             { 1236, 154 }, // Flan
             { 1237, 154 },
             { 1238, 350 }, // Antlion
@@ -1478,6 +1483,8 @@ namespace Memoria.Scripts.Battle
             { 1373, 96 },
             { 1374, 329 }, // Yeti
             { 1375, 329 },
+            { 1376, 105 }, // Zombie
+            { 1377, 105 },
         };
     }
 }
