@@ -662,7 +662,7 @@ namespace Memoria.Scripts.Battle
                 return false;
 
             if (v.Target.IsHalfElement(v.Command.Element))
-                v.Context.Attack >>= 1;
+                v.Context.Attack /= 2;
 
             if (v.Target.IsWeakElement(v.Command.Element))
                 v.Context.Attack = (Int16)(v.Context.Attack * 3 >> 1);
@@ -1208,6 +1208,7 @@ namespace Memoria.Scripts.Battle
             {
                 int basedamage = v.Target.HpDamage;
                 BTL_DATA targetdefault = v.Target.Data;
+                Boolean Healing = (v.Target.Flags & CalcFlag.HpRecovery) != 0;
                 foreach (BattleUnit unit in BattleState.EnumerateUnits())
                 {
                     if ((unit.IsPlayer && !v.Target.IsPlayer || !unit.IsPlayer && v.Target.IsPlayer) || unit.MagicDefence == 255 || unit.PhysicalEvade == 255 || unit.Data == targetdefault)
@@ -1223,7 +1224,18 @@ namespace Memoria.Scripts.Battle
                         {
                             basedamage = v.Target.HpDamage / 4;
                         }
-                        btl2d.Btl2dStatReq(unit, basedamage, 0);
+                        btl2d.Btl2dStatReq(unit, Healing ? -basedamage : basedamage, 0);
+                        if (Healing)
+                        {
+                            unit.CurrentHp = (uint)Math.Min(unit.CurrentHp + basedamage, unit.MaximumHp);
+                        }
+                        else
+                        {
+                            if (unit.CurrentHp > basedamage)
+                                unit.CurrentHp -= (uint)basedamage;
+                            else
+                                unit.Kill(v.Caster);
+                        }
                     }                   
                 }
             }

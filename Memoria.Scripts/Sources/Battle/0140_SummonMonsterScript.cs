@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using Assets.Sources.Scripts.UI.Common;
 using FF9;
 using Memoria.Data;
 using Memoria.Prime;
+using Memoria.Prime.PsdFile;
 using UnityEngine;
 
 namespace Memoria.Scripts.Battle
@@ -25,6 +28,24 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
+            if (_v.Command.Id == (BattleCommandId)10029) // Kutrol
+            {
+                if (_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill))
+                {
+                    _v.Context.Flags |= BattleCalcFlags.Miss;
+                }
+                else
+                {
+                    int AbilityId = GeoMonsterWithAA.FirstOrDefault(x => x.Value == _v.Target.Data.dms_geo_id).Key;
+                    AbilityId = ff9abil.GetAbilityIdFromActiveAbility((BattleAbilityId)AbilityId);
+                    if (!ff9abil.FF9Abil_IsMaster(_v.Caster.Player, AbilityId))
+                        ff9abil.FF9Abil_SetMaster(_v.Caster.Player, AbilityId);
+
+                    _v.Target.Kill(_v.Caster);
+                }
+                return;
+            }
+
             if (!SummonStep.TryGetValue(_v.Caster.Data, out Int32 IDStep)) // Init
                 SummonStep[_v.Caster.Data] = 0;
             if (!InitPosition.TryGetValue(_v.Caster.Data, out Vector3 InitPos)) // Init

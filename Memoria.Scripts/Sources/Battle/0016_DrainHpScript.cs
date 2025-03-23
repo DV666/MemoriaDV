@@ -141,7 +141,7 @@ namespace Memoria.Scripts.Battle
                         }
                         else
                         {
-                            if (_v.Context.PowerDifference >= 1 && TranceSeekCustomAPI.CanAttackMagic(_v))
+                            if (_v.Context.PowerDifference >= 1)
                             {
                                 _v.CalcHpDamage();
 

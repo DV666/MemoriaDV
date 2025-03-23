@@ -300,6 +300,7 @@ namespace Memoria.Scripts.Battle
 		    { 299, 0 }, // Beatrix 2nd
 		    { 4, 0 }, // Beatrix 1st
             { 4, 1 }, // Dark Beatrix
+            { 14, 0 }, // Zaghnol
             { 295, 0 }, // Bach
 		    { 115, 1 },	// Kuja 1st (Ifa)
 		    { 920, 0 }, { 921, 0 }, // Friendly Belhamel
@@ -337,6 +338,7 @@ namespace Memoria.Scripts.Battle
             { 335, 0 }, { 335, 1 }, { 335, 2 }, // Steiner 2nd
             { 337, 0 }, { 337, 1 }, // Steiner 3rd + Bombo
             { 936, 0 }, // Sulfura
+            { 21, 1 }, // Valseur 1
             { 294, 0 }, // Valseur 2
             { 296, 0 }, // Valseur 3
             { 930, 1 }, { 930, 2 }, { 930, 3 }, // Adds from Lovecraft fight
