@@ -5,8 +5,9 @@ using Object = System.Object;
 using static Memoria.Scripts.Battle.TranceSeekCustomAPI;
 using Memoria.Prime;
 using UnityEngine;
-using static SiliconStudio.Social.ResponseData;
+using System.IO;
 using System.Collections.Generic;
+using Memoria.Scripts.Battle;
 
 namespace Memoria.DefaultScripts
 {
@@ -93,6 +94,52 @@ namespace Memoria.DefaultScripts
                         }
                     }
                 );
+
+            if (target.PlayerIndex == CharacterId.Beatrix)
+            {
+                if (!TranceSeekCustomAPI.ModelMoug.TryGetValue(target.Data, out GameObject ModelMoug))
+                    TranceSeekCustomAPI.ModelMoug[target.Data] = null;
+
+                target.AddDelayedModifier(
+                    target => !target.Data.tranceGo.activeSelf,
+                    target =>
+                    {
+                        if (TranceSeekCustomAPI.ModelMoug[target.Data] == null)
+                        {
+                            TranceSeekCustomAPI.ModelMoug[target.Data] = ModelFactory.CreateModel("GEO_MON_B3_115", true);
+                            TranceSeekCustomAPI.ModelMoug[target.Data].SetActive(true);
+                            GeoAttach(TranceSeekCustomAPI.ModelMoug[target.Data], target.Data.gameObject, 11);
+                            TranceSeekCustomAPI.ModelMoug[target.Data].transform.localPosition -= new Vector3(5f, -100f, 275f);
+                            TranceSeekCustomAPI.ModelMoug[target.Data].transform.localRotation = Quaternion.Euler(new Vector3(296f, 0, 0));
+                            //TranceSeekCustomAPI.ModelMoug[target.Data].transform.localScale = (new Vector3(0.85f, 0.85f, 0.85f));
+                            ModelFactory.ChangeModelTexture(TranceSeekCustomAPI.ModelMoug[target.Data], new string[] { "CustomTextures/BeatrixTranceWings/Wings_0.png", "CustomTextures/BeatrixTranceWings/Wings_1.png", "CustomTextures/BeatrixTranceWings/Wings_2.png" });
+                        }
+                    }
+                    );
+            }
+            else if (target.Data.dms_geo_id == 427 && !target.IsPlayer)
+            {
+                if (!TranceSeekCustomAPI.ModelMoug.TryGetValue(target.Data, out GameObject ModelMoug))
+                    TranceSeekCustomAPI.ModelMoug[target.Data] = null;
+
+                //target.AddDelayedModifier(
+                    //target => !target.Data.tranceGo.activeSelf,
+                    //target =>
+                    //{
+                        if (TranceSeekCustomAPI.ModelMoug[target.Data] == null)
+                        {
+                            ModelFactory.ChangeModelTexture(target.Data.gameObject, new string[] { "CustomTextures/BeatrixTranceWings/427_0_trance.png", "CustomTextures/BeatrixTranceWings/427_1_trance.png" });
+                            TranceSeekCustomAPI.ModelMoug[target.Data] = ModelFactory.CreateModel("GEO_MON_B3_115", true);
+                            TranceSeekCustomAPI.ModelMoug[target.Data].SetActive(true);
+                            GeoAttach(TranceSeekCustomAPI.ModelMoug[target.Data], target.Data.gameObject, 11);
+                            TranceSeekCustomAPI.ModelMoug[target.Data].transform.localPosition -= new Vector3(5f, -100f, 275f);
+                            TranceSeekCustomAPI.ModelMoug[target.Data].transform.localRotation = Quaternion.Euler(new Vector3(296f, 0, 0));
+                            //TranceSeekCustomAPI.ModelMoug[target.Data].transform.localScale = (new Vector3(0.85f, 0.85f, 0.85f));
+                            ModelFactory.ChangeModelTexture(TranceSeekCustomAPI.ModelMoug[target.Data], new string[] { "CustomTextures/BeatrixTranceWings/Wings_0.png", "CustomTextures/BeatrixTranceWings/Wings_1.png", "CustomTextures/BeatrixTranceWings/Wings_2.png" });
+                        }
+                    //}
+                    //);
+            }
 
             return btl_stat.ALTER_SUCCESS;
         }
@@ -202,6 +249,22 @@ namespace Memoria.DefaultScripts
             PhantomAbility = BattleAbilityId.Void;
             PhantomCommandSent = false;
             btl_cmd.KillSpecificCommand(garnet, BattleCommandId.SysPhantom);
+        }
+
+        private static void GeoAttach(GameObject sourceObject, GameObject targetObject, Int32 bone_index)
+        {
+            if (sourceObject == null || targetObject == null)
+                return;
+            Transform attachedTransform = targetObject.transform;
+            Transform rootTransform = attachedTransform.GetChildByName("bone000").transform;
+            Transform childByName = targetObject.transform.GetChildByName("bone" + bone_index.ToString("D3"));
+            sourceObject.transform.parent = childByName;
+            sourceObject.transform.localPosition = Vector3.zero;
+            sourceObject.transform.localRotation = Quaternion.identity;
+            sourceObject.transform.localScale = Vector3.one;
+            rootTransform.localPosition = Vector3.zero;
+            rootTransform.localRotation = Quaternion.identity;
+            rootTransform.localScale = Vector3.one;
         }
     }
 }

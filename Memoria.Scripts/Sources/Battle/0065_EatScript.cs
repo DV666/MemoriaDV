@@ -80,7 +80,7 @@ namespace Memoria.Scripts.Battle
                         _v.Caster.AlterStatus(TranceSeekCustomAPI.CustomStatus.MagicUp, _v.Caster);
                 }
             }
-            if ((blueMagicId == 0 || !_v.Target.CanBeAttacked() || btl_util.getEnemyTypePtr(_v.Target.Data).category == 1))
+            if ((blueMagicId == 0 || !_v.Target.CanBeAttacked() || btl_util.getEnemyTypePtr(_v.Target.Data).category == 1)) // TODO - Remplacer BlueMagicId == 0
             {
                 if (!_v.Caster.IsUnderAnyStatus(BattleStatus.Trance))
                 {

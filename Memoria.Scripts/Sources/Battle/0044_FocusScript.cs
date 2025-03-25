@@ -80,7 +80,7 @@ namespace Memoria.Scripts.Battle
                     {
                         num = _v.Target.MaximumHp / factor;
                         num2 = _v.Target.MaximumMp / factor;
-                        uint num3 = _v.Target.CurrentHp - num;
+                        int num3 = (int)(_v.Target.CurrentHp - num);
 
                         if (_v.Caster.CurrentHp == 1U)
                         {

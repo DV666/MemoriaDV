@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Assets.Sources.Scripts.UI.Common;
 using FF9;
+using Memoria.Assets;
 using Memoria.Data;
 using Memoria.Prime;
 using Memoria.Prime.PsdFile;
@@ -30,18 +31,41 @@ namespace Memoria.Scripts.Battle
         {
             if (_v.Command.Id == (BattleCommandId)10029) // Kutrol
             {
-                if (_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill))
+                int AbilityId = GeoMonsterWithAA.FirstOrDefault(x => x.Value == _v.Target.Data.dms_geo_id).Key;
+                AbilityId = ff9abil.GetAbilityIdFromActiveAbility((BattleAbilityId)AbilityId);
+
+                if (_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill) || ff9abil.FF9Abil_IsMaster(_v.Caster.Player, AbilityId))
                 {
                     _v.Context.Flags |= BattleCalcFlags.Miss;
                 }
                 else
                 {
-                    int AbilityId = GeoMonsterWithAA.FirstOrDefault(x => x.Value == _v.Target.Data.dms_geo_id).Key;
-                    AbilityId = ff9abil.GetAbilityIdFromActiveAbility((BattleAbilityId)AbilityId);
-                    if (!ff9abil.FF9Abil_IsMaster(_v.Caster.Player, AbilityId))
-                        ff9abil.FF9Abil_SetMaster(_v.Caster.Player, AbilityId);
 
-                    _v.Target.Kill(_v.Caster);
+                    int RatioHP = (int)(100 - ((_v.Target.CurrentHp * 100) / _v.Target.MaximumHp));
+                    int BonusStatus = 100;
+                    foreach (BattleStatusId statusId in (_v.Target.Data.stat.cur & BattleStatusConst.AnyNegative).ToStatusList())
+                    {
+                        BonusStatus += 10;
+                    }
+                    RatioHP = (RatioHP * BonusStatus) / 100;
+                    int CaptureRate = Math.Max(0, RatioHP - _v.Target.Level) / BattleState.TargetCount(false);
+                    if (CaptureRate > Comn.random16() % 100)
+                    {
+                        ff9abil.FF9Abil_SetMaster(_v.Caster.Player, AbilityId);
+                        if ((EmbadedTextResources.CurrentSymbol ?? Localization.GetSymbol()) == "FR")
+                        {
+                            UIManager.Battle.SetBattleMessage("Coubo ! Bienvenue dans l'équipe !", 3);
+                        }
+                        else
+                        {
+                            UIManager.Battle.SetBattleMessage("Another friend in the team, kupo !", 3);
+                        }
+                        _v.Target.Kill(_v.Caster);
+                    }
+                    else
+                    {
+                        _v.Context.Flags |= BattleCalcFlags.Miss;
+                    }
                 }
                 return;
             }
@@ -120,6 +144,12 @@ namespace Memoria.Scripts.Battle
                     NumberTargets[_v.Caster.Data] = 1;
                 else if (_v.Command.AbilityId == (BattleAbilityId)1315) // Ogre - Double Knife
                     NumberTargets[_v.Caster.Data] = 2;
+
+                // Custom Textures
+                if (_v.Command.AbilityId == (BattleAbilityId)1378 || _v.Command.AbilityId == (BattleAbilityId)1379)
+                {
+                    //ModelFactory.ChangeModelTexture(_v.Caster.Data.gameObject, new string[] {"CustomTextures/OeilvertGuardian/342_0.png", "CustomTextures/OeilvertGuardian/342_1.png", "CustomTextures/OeilvertGuardian/342_2.png", "CustomTextures/OeilvertGuardian/342_3.png", "CustomTextures/ OeilvertGuardian/342_4.png", "CustomTextures/OeilvertGuardian/342_5.png"});
+                }
             }
             else if (SummonStep[_v.Caster.Data] == 1) // Script for the damage
             {
@@ -217,6 +247,7 @@ namespace Memoria.Scripts.Battle
                     case (BattleAbilityId)1356: // Hedgehog Pie - Ram
                     case (BattleAbilityId)1362: // Ochu - Thorn Whip
                     case (BattleAbilityId)1375: // Yeti - Blind Tail
+                    case (BattleAbilityId)1378: // TEST
                     {
                         if (!_v.Target.TryKillFrozen())
                         {
@@ -1506,6 +1537,8 @@ namespace Memoria.Scripts.Battle
             { 1375, 329 },
             { 1376, 105 }, // Zombie
             { 1377, 105 },
+            { 1378, 342 }, // TEST
+            { 1379, 342 },
         };
     }
 }

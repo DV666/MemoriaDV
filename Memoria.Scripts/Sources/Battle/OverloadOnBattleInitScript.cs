@@ -341,6 +341,7 @@ namespace Memoria.Scripts.Battle
             { 21, 1 }, // Valseur 1
             { 294, 0 }, // Valseur 2
             { 296, 0 }, // Valseur 3
+            { 74, 0 }, // Zorn & Thorn
             { 930, 1 }, { 930, 2 }, { 930, 3 }, // Adds from Lovecraft fight
             { 668, 0 },  { 217, 0 }, { 670, 0 }, { 751, 0 }, { 652, 0 }, { 664, 0 }, { 216, 0 }, // Friendly Yeti
             // ########### CD4 Bosses ##############
