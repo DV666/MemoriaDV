@@ -122,10 +122,10 @@ namespace Memoria.DefaultScripts
                 if (!TranceSeekCustomAPI.ModelMoug.TryGetValue(target.Data, out GameObject ModelMoug))
                     TranceSeekCustomAPI.ModelMoug[target.Data] = null;
 
-                //target.AddDelayedModifier(
-                    //target => !target.Data.tranceGo.activeSelf,
-                    //target =>
-                    //{
+                target.AddDelayedModifier(
+                    target => target.Data.bi.def_idle == 1,
+                    target =>
+                    {
                         if (TranceSeekCustomAPI.ModelMoug[target.Data] == null)
                         {
                             ModelFactory.ChangeModelTexture(target.Data.gameObject, new string[] { "CustomTextures/BeatrixTranceWings/427_0_trance.png", "CustomTextures/BeatrixTranceWings/427_1_trance.png" });
@@ -137,8 +137,8 @@ namespace Memoria.DefaultScripts
                             //TranceSeekCustomAPI.ModelMoug[target.Data].transform.localScale = (new Vector3(0.85f, 0.85f, 0.85f));
                             ModelFactory.ChangeModelTexture(TranceSeekCustomAPI.ModelMoug[target.Data], new string[] { "CustomTextures/BeatrixTranceWings/Wings_0.png", "CustomTextures/BeatrixTranceWings/Wings_1.png", "CustomTextures/BeatrixTranceWings/Wings_2.png" });
                         }
-                    //}
-                    //);
+                    }
+                    );
             }
 
             return btl_stat.ALTER_SUCCESS;
