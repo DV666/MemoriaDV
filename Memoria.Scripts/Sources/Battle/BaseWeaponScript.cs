@@ -67,19 +67,16 @@ namespace Memoria.Scripts.Battle
                             _v.Context.Evade = _v.Target.Level;
                             if (GameRandom.Next16() % _v.Context.HitRate >= GameRandom.Next16() % _v.Context.Evade || _v.Caster.HasSupportAbility(SupportAbility2.Bandit))
                             {
-                                if (_v.Caster.HasSupportAbility(SupportAbility1.MasterThief) || _v.Caster.HasSupportAbilityByIndex((SupportAbility)1022))
+                                if (_v.Caster.HasSupportAbility(SupportAbility1.MasterThief))
                                     MugMasterThief();
                                 else
-                                    MugScript();
+                                    MugScript();                             
 
-                                ShowMugMessage();
                                 if (_v.Caster.HasSupportAbility(SupportAbility1.StealGil))
-                                {
                                     StealGils();
-
-                                }
                             }
-                        }                      
+                        }
+                        ShowMugMessage();
                     }
                     if (_v.Caster.PlayerIndex == CharacterId.Amarant)
                     {
@@ -119,7 +116,7 @@ namespace Memoria.Scripts.Battle
             }
             else
             {
-                if (_v.Caster.HasSupportAbility(SupportAbility2.Bandit))
+                if (_v.Caster.HasSupportAbility(SupportAbility2.Mug))
                 {
                     ShowMugMessage();
                 }
@@ -427,13 +424,13 @@ namespace Memoria.Scripts.Battle
                 saFeature.TriggerOnAbility(_v, "Steal", true);
 
             BattleItem.AddToInventory(_v.Context.ItemSteal);
-            if (_v.Caster.PlayerIndex == CharacterId.Zidane && ff9item._FF9Item_Data[FF9StateSystem.Common.FF9.player[(CharacterId)_v.Caster.Data.bi.slot_no].equip[0]].shape != 1)
+            if (_v.Caster.PlayerIndex == CharacterId.Zidane && ff9item._FF9Item_Data[FF9StateSystem.Common.FF9.player[(CharacterId)_v.Caster.Data.bi.slot_no].equip[0]].shape != 1) // Thief Sword
                 UiState.SetBattleFollowFormatMessage(BattleMesages.Stole, FF9TextTool.ItemName(_v.Context.ItemSteal));         
         }
 
         public void ShowMugMessage()
         {
-            if (_v.Caster.PlayerIndex == CharacterId.Zidane && ff9item._FF9Item_Data[FF9StateSystem.Common.FF9.player[(CharacterId)_v.Caster.Data.bi.slot_no].equip[0]].shape == 1)
+            if (_v.Caster.PlayerIndex == CharacterId.Zidane && ff9item._FF9Item_Data[FF9StateSystem.Common.FF9.player[(CharacterId)_v.Caster.Data.bi.slot_no].equip[0]].shape == 1) // Dagger
             {
                 RegularItem FirstItemMugged = (RegularItem)TranceSeekCustomAPI.ZidanePassive[_v.Caster.Data][5];
                 RegularItem SecondItemMugged = (RegularItem)TranceSeekCustomAPI.ZidanePassive[_v.Caster.Data][6];

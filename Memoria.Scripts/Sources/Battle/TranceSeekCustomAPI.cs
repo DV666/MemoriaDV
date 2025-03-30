@@ -315,22 +315,15 @@ namespace Memoria.Scripts.Battle
             if (v.Caster.IsUnderAnyStatus(BattleStatus.Blind))
                 v.Context.HitRate /= v.Caster.IsUnderAnyStatus(BattleStatus.EasyKill) ? (4 / 3) : 2;
 
-            if (v.Caster.IsUnderAnyStatus(BattleStatus.Trance | BattleStatus.Vanish))
-                v.Context.Evade = 0;
-
-            if (v.Target.IsUnderAnyStatus(BattleStatusConst.PenaltyEvade))
+            if (v.Caster.IsUnderAnyStatus(BattleStatus.Trance | BattleStatus.Vanish) || v.Target.IsUnderAnyStatus(BattleStatusConst.PenaltyEvade))
                 v.Context.Evade = 0;
 
             if (v.Target.IsUnderAnyStatus(BattleStatus.Defend))
             {
                 if (v.Target.HasSupportAbilityByIndex(SupportAbility.AutoFloat)) // Pas Léger
-                {
-                    v.Context.Evade /= 2;
-                }
-                else if (!v.Target.HasSupportAbilityByIndex((SupportAbility)1001))
-                {
+                    v.Context.Evade /= v.Target.HasSupportAbilityByIndex((SupportAbility)1001) ? 1 : 2;
+                else
                     v.Context.Evade = 0;
-                }
             }
 
             v.Target.PenaltyBanishHitRate();
@@ -350,6 +343,9 @@ namespace Memoria.Scripts.Battle
             foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(v.Target.Data.saExtended))
                 saFeature.TriggerOnAbility(v, "HitRateSetup", true);
 
+            if (v.Caster.HasSupportAbility(SupportAbility1.Healer) && v.Target.IsPlayer) // SA Healer never miss on Player.
+                v.Context.Evade = 0;
+
             if ((v.Context.HitRate <= Comn.random16() % 100) || v.Target.PhysicalEvade == 255 || v.Target.IsUnderAnyStatus(BattleStatus.Vanish))
             {
                 v.Context.Flags |= BattleCalcFlags.Miss;
@@ -364,7 +360,7 @@ namespace Memoria.Scripts.Battle
             }
             if ((v.Target.Data == v.Caster.Data || (v.Context.Evade + (v.Target.PlayerIndex == CharacterId.Zidane ? ZidanePassive[v.Target.Data][0] : 0)) <= Comn.random16() % 100 || v.Context.Evade == 0))
             {
-                if (v.Target.PlayerIndex == CharacterId.Zidane && btl_util.getSerialNumber(v.Target.Data) == CharacterSerialNumber.ZIDANE_DAGGER && !v.Target.IsUnderAnyStatus(BattleStatusConst.BattleEndFull) && !v.Caster.HasSupportAbility(SupportAbility1.Healer))
+                if (v.Target.PlayerIndex == CharacterId.Zidane && v.Target.Data != v.Caster.Data && btl_util.getSerialNumber(v.Target.Data) == CharacterSerialNumber.ZIDANE_DAGGER && !v.Target.IsUnderAnyStatus(BattleStatusConst.BattleEndFull) && !v.Caster.HasSupportAbility(SupportAbility1.Healer))
                 {
                     ZidanePassive[v.Target.Data][0] += 5;
                     Dictionary<String, String> localizedMessage = new Dictionary<String, String>
