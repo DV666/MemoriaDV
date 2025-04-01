@@ -338,7 +338,6 @@ namespace Memoria.Scripts.Battle
             { 335, 0 }, { 335, 1 }, { 335, 2 }, // Steiner 2nd
             { 337, 0 }, { 337, 1 }, // Steiner 3rd + Bombo
             { 936, 0 }, // Sulfura
-            { 21, 1 }, // Valseur 1
             { 294, 0 }, // Valseur 2
             { 296, 0 }, // Valseur 3
             { 74, 0 }, // Zorn & Thorn
