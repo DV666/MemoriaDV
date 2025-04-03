@@ -44,7 +44,7 @@ namespace Memoria.Scripts.Battle
                         return;
                     }   
                     _v.Target.Flags |= (CalcFlag.HpAlteration | CalcFlag.HpRecovery); // Full Life Frimoire
-                    _v.Target.HpDamage = 2500;
+                    _v.Target.HpDamage = (int)(_v.Target.MaximumHp - 10000);
                     return;
                 }
                 _v.Context.AttackPower = _v.Command.Power;

@@ -88,8 +88,8 @@ namespace Memoria.Scripts.Battle
                             TranceSeekCustomAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
                         }
                     }
-                    if ((_v.Command.Weapon.Element & _v.Caster.WeakElement) != 0)
-                        _v.Context.Attack = (Int16)(_v.Context.Attack * 3 >> 1);
+                    _v.Command.Element = _v.Command.Weapon.Element;
+                    TranceSeekCustomAPI.BonusWeaponElement(_v);
                     TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
                     if (TranceSeekCustomAPI.CanAttackMagic(_v))
                     {
