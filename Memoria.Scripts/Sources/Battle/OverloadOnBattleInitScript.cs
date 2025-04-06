@@ -264,7 +264,7 @@ namespace Memoria.Scripts.Battle
                         unit.MagicDefence = 254;
                         unit.PhysicalDefence = 254;
                     }
-                    if (FF9StateSystem.EventState.ScenarioCounter >= 11100 && FF9StateSystem.EventState.gEventGlobal[1500] == 0)
+                    if (FF9StateSystem.EventState.ScenarioCounter >= 11100 && FF9StateSystem.EventState.gEventGlobal[1500] == 0 && false)
                     {
                         unit.AlterStatus(BattleStatus.Death, unit);
                         unit.CurrentHp = 0;

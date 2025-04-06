@@ -34,9 +34,7 @@ namespace Memoria.Scripts.Battle
             _v.SetCommandAttack();
             TranceSeekCustomAPI.PenaltyCommandDividedAttack(_v);
             if (_v.Target.IsUnderStatus(BattleStatus.Shell))
-            {
                 _v.Context.Attack = _v.Context.Attack / 2;
-            }
             if (_v.Target.HasCategory(EnemyCategory.Stone) && !_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill))
             {
                 _v.Context.Attack = _v.Context.Attack * 2;
