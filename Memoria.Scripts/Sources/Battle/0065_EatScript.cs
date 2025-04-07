@@ -80,7 +80,8 @@ namespace Memoria.Scripts.Battle
                         _v.Caster.AlterStatus(TranceSeekCustomAPI.CustomStatus.MagicUp, _v.Caster);
                 }
             }
-            if ((blueMagicId == 0 || !_v.Target.CanBeAttacked() || btl_util.getEnemyTypePtr(_v.Target.Data).category == 1)) // TODO - Remplacer BlueMagicId == 0
+
+            if (blueMagicId == 0 && _v.Target.IsUnderAnyStatus(BattleStatus.EasyKill) || !_v.Target.CanBeAttacked() || btl_util.getEnemyTypePtr(_v.Target.Data).category == 1) // TODO - Remplacer BlueMagicId == 0
             {
                 if (!_v.Caster.IsUnderAnyStatus(BattleStatus.Trance))
                 {
@@ -157,7 +158,7 @@ namespace Memoria.Scripts.Battle
                 }
                 else
                 {
-                    if (!_v.Caster.IsUnderAnyStatus(BattleStatus.Trance) && blueMagicId != 0)
+                    if (!_v.Caster.IsUnderAnyStatus(BattleStatus.Trance))
                     {
                         if (_v.Target.CurrentHp <= _v.Target.MaximumHp / 4U)
                         {

@@ -21,40 +21,6 @@ namespace Memoria.Scripts.Battle
 
         public void OnDamageFinalChanges(BattleCalculator v)
         {
-            if (FF9StateSystem.Battle.battleMapIndex == 52 && FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum == 0 && FF9StateSystem.EventState.gEventGlobal[1305] > 0 && v.Caster.IsPlayer) // Black Waltz 3 Broken (Polarity Mechanic)
-            {
-                if (!TranceSeekSpecial.PolaritySPS.TryGetValue(v.Target.Data, out SPSEffect spsc))
-                    TranceSeekSpecial.PolaritySPS[v.Caster.Data] = null;
-
-                if (!TranceSeekSpecial.PolaritySPS.TryGetValue(v.Target.Data, out SPSEffect spst)) 
-                    TranceSeekSpecial.PolaritySPS[v.Target.Data] = null;
-
-                if (TranceSeekSpecial.PolaritySPS[v.Target.Data] != null && TranceSeekSpecial.PolaritySPS[v.Caster.Data] != null)
-                {
-                    TranceSeekSpecial.PolaritySPS[v.Target.Data].attr = 0;
-                    TranceSeekSpecial.PolaritySPS[v.Target.Data].meshRenderer.enabled = false;
-                    TranceSeekSpecial.PolaritySPS[v.Target.Data] = null;
-                    v.Target.HpDamage /= 5;
-                    btl_stat.RemoveStatus(v.Target, BattleStatusId.Haste);
-                    FF9StateSystem.EventState.gEventGlobal[1305] = 0;
-                    if ((EmbadedTextResources.CurrentSymbol ?? Localization.GetSymbol()) == "FR")
-                    {
-                        UIManager.Battle.SetBattleMessage("La barrière électrique disparaît.", 3);
-                    }
-                    else
-                    {
-                        UIManager.Battle.SetBattleMessage("The electrical barrier disappears.", 3);
-                    }
-                    foreach (BattleUnit unit in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
-                    {
-                        if (unit.Data.dms_geo_id == 331) // Electric Shield Mob
-                        {
-                            unit.KillStandardCommands();
-                        }
-                    }
-                }
-            }
-
             if (!v.Caster.IsPlayer && (FF9StateSystem.EventState.gEventGlobal[1403] == 1 || FF9StateSystem.EventState.gEventGlobal[1403] == 2)) // Lower Difficulty
             {
                 Int32 malusHPdamage = 0;

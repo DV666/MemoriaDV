@@ -38,29 +38,29 @@ namespace Memoria.Scripts.Battle
                 FF9StateSystem.Battle.FF9Battle.aa_data[(BattleAbilityId)idAA].MP = 0;
             }
 
+            foreach (BattleUnit PlayerUnit in BattleState.EnumerateUnits())
+            {
+                if (!PlayerUnit.IsPlayer)
+                    continue;
+
+                if (PlayerUnit.HasSupportAbilityByIndex((SupportAbility)1045)) // Pluriche+
+                {
+                    foreach (BattleUnit monster in BattleState.EnumerateUnits())
+                    {
+                        if (!monster.IsPlayer)
+                        {
+                            BattleEnemy battleEnemy = BattleEnemy.Find(monster);
+                            battleEnemy.Data.bonus_item_rate[3] = 16;
+                            battleEnemy.Data.bonus_item_rate[2] = 96;
+                            battleEnemy.Data.bonus_item_rate[1] = 192;
+                        }
+                    }
+                    break;
+                }
+            }
+
             foreach (BattleUnit unit in BattleState.EnumerateUnits())
             {
-                foreach (BattleUnit PlayerUnit in BattleState.EnumerateUnits())
-                {
-                    if (!PlayerUnit.IsPlayer)
-                        continue;
-
-                    if (PlayerUnit.HasSupportAbilityByIndex((SupportAbility)1045)) // Pluriche+
-                    {
-                        foreach (BattleUnit monster in BattleState.EnumerateUnits())
-                        {
-                            if (!monster.IsPlayer)
-                            {
-                                BattleEnemy battleEnemy = BattleEnemy.Find(monster);
-                                battleEnemy.Data.bonus_item_rate[3] = 16;
-                                battleEnemy.Data.bonus_item_rate[2] = 96;
-                                battleEnemy.Data.bonus_item_rate[1] = 192;
-                            }
-                        }
-                        break;
-                    }
-                }
-
                 if (!ZidanePassive.TryGetValue(unit.Data, out Int32[] zidanepassive))
                     ZidanePassive[unit.Data] = [0, 0, 0, 0, 0, 255, 255, 0, 0, 0 ];
                 if (!ViviPreviousSpell.TryGetValue(unit.Data, out BattleAbilityId e))
@@ -76,7 +76,7 @@ namespace Memoria.Scripts.Battle
                 if (!StackBreakOrUpStatus.TryGetValue(unit.Data, out Int32[] stackstatus))
                     StackBreakOrUpStatus[unit.Data] = [0, 0, 0, 0];
                 if (!MonsterMechanic.TryGetValue(unit.Data, out Int32[] monstermechanic))
-                    MonsterMechanic[unit.Data] = [ 0, 0, 0, 0, 100, 0 ];
+                    MonsterMechanic[unit.Data] = [ 0, 0, 0, 0, 100, 0, 0 ];
                 if (!SpecialSAEffect.TryGetValue(unit.Data, out Int32[] specialSAeffect))
                     SpecialSAEffect[unit.Data] = [ 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ];
                 if (!RollBackStats.TryGetValue(unit.Data, out Int32[] rb))

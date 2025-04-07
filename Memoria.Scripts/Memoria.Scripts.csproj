@@ -373,7 +373,7 @@
     <Compile Include="Sources\Battle\0207_EnemyPhysicalAttackAndChangeRowScript.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Include="Sources\Battle\0108_IaiStrikeScript.cs">
+    <Compile Include="Sources\Battle\0108_AuthorityScript.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
     <Compile Include="Sources\Battle\0109_MiniScript.cs">

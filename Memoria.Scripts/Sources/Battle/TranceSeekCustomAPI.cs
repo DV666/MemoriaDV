@@ -29,7 +29,7 @@ namespace Memoria.Scripts.Battle
 
         public static Dictionary<BTL_DATA, Int32[]> StackBreakOrUpStatus = new Dictionary<BTL_DATA, Int32[]>();  // [0] => StackStrength ; [1] => StackMagic ; [2] => StackArmor ; [3] => StackMental
 
-        public static Dictionary<BTL_DATA, Int32[]> MonsterMechanic = new Dictionary<BTL_DATA, Int32[]>(); // [0] => Trance Activated ; [1] => Special1 ; [2] => Special2 ; [3] => HPBoss10000? ; [4] => ResistStatusEasyKill ; [5] => NerfGravity
+        public static Dictionary<BTL_DATA, Int32[]> MonsterMechanic = new Dictionary<BTL_DATA, Int32[]>(); // [0] => Trance Activated ; [1] => Special1 ; [2] => Special2 ; [3] => HPBoss10000? ; [4] => ResistStatusEasyKill ; [5] => NerfGravity ; [6] => NoDodge
 
         public static Dictionary<BTL_DATA, Int32[]> SpecialSAEffect = new Dictionary<BTL_DATA, Int32[]>();
         // [0] => Sentinel/Duel ; [1] => LastStand ; [2] => Instinct ; [3] => PreventTranceSFX ; [4] => Mode EX ; [5] => HealHP ; [6] => HealMP ; [7] => TargetCount ; [8] => SpringBoots ; [9] => CriticalHit100 ;
@@ -264,6 +264,11 @@ namespace Memoria.Scripts.Battle
 
         public static Boolean TryPhysicalHit(this BattleCalculator v)
         {
+            if (MonsterMechanic[v.Caster.Data][6] == 1)
+            {
+                MonsterMechanic[v.Caster.Data][6] = 0;
+                return true;
+            }
             if (v.Target.Data != v.Caster.Data) {
                 foreach (BattleUnit unit in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
                 {

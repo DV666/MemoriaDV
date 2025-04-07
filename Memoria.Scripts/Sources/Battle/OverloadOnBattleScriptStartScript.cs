@@ -1,4 +1,5 @@
 ﻿using FF9;
+using Memoria.Assets;
 using Memoria.Data;
 using Memoria.Database;
 using Memoria.Prime;
@@ -15,6 +16,40 @@ namespace Memoria.Scripts.Battle
             if (MonsterMechanic[v.Target.Data][3] == 1 && v.Target.CurrentHp <= 10000) // Prevent boss to die => Maybe use CustomBattleFlagsMeaning ?
             {
                 v.Target.CurrentHp = 10000;
+            }
+            if (FF9StateSystem.Battle.battleMapIndex == 52 && FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum == 0 && FF9StateSystem.EventState.gEventGlobal[1305] > 0 && v.Caster.IsPlayer && v.Command.Id == BattleCommandId.Attack && v.Caster.Data != v.Target.Data) // Black Waltz 3 Broken (Polarity Mechanic)
+            {
+                if (!TranceSeekSpecial.PolaritySPS.TryGetValue(v.Target.Data, out SPSEffect spsc))
+                    TranceSeekSpecial.PolaritySPS[v.Caster.Data] = null;
+
+                if (!TranceSeekSpecial.PolaritySPS.TryGetValue(v.Target.Data, out SPSEffect spst))
+                    TranceSeekSpecial.PolaritySPS[v.Target.Data] = null;
+
+                if (TranceSeekSpecial.PolaritySPS[v.Target.Data] != null && TranceSeekSpecial.PolaritySPS[v.Caster.Data] != null)
+                {
+                    TranceSeekSpecial.PolaritySPS[v.Target.Data].attr = 0;
+                    TranceSeekSpecial.PolaritySPS[v.Target.Data].meshRenderer.enabled = false;
+                    TranceSeekSpecial.PolaritySPS[v.Target.Data] = null;
+                    v.Context.Flags |= BattleCalcFlags.Guard;
+                    MonsterMechanic[v.Caster.Data][6] = 1; // Don't miss the attack.
+                    btl_stat.RemoveStatus(v.Target, BattleStatusId.Haste);
+                    FF9StateSystem.EventState.gEventGlobal[1305] = 0;
+                    if ((EmbadedTextResources.CurrentSymbol ?? Localization.GetSymbol()) == "FR")
+                    {
+                        UIManager.Battle.SetBattleMessage("La barrière électrique disparaît.", 3);
+                    }
+                    else
+                    {
+                        UIManager.Battle.SetBattleMessage("The electrical barrier disappears.", 3);
+                    }
+                    foreach (BattleUnit unit in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
+                    {
+                        if (unit.Data.dms_geo_id == 331) // Electric Shield Mob
+                        {
+                            unit.KillStandardCommands();
+                        }
+                    }
+                }
             }
             if (v.Caster.HasSupportAbilityByIndex((SupportAbility)117) && SpecialSAEffect[v.Caster][4] == 0 && v.Caster.IsUnderAnyStatus(BattleStatus.Trance)) // Mode EX
             {
