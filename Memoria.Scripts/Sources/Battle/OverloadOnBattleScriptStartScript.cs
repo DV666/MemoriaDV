@@ -17,6 +17,7 @@ namespace Memoria.Scripts.Battle
             {
                 v.Target.CurrentHp = 10000;
             }
+
             if (FF9StateSystem.Battle.battleMapIndex == 52 && FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum == 0 && FF9StateSystem.EventState.gEventGlobal[1305] > 0 && v.Caster.IsPlayer && v.Command.Id == BattleCommandId.Attack && v.Caster.Data != v.Target.Data) // Black Waltz 3 Broken (Polarity Mechanic)
             {
                 if (!TranceSeekSpecial.PolaritySPS.TryGetValue(v.Target.Data, out SPSEffect spsc))

@@ -107,6 +107,7 @@ namespace Memoria.Scripts.Battle
                 sps.boneTran = attachTransf;
                 sps.posOffset = Vector3.zero;
                 PolaritySPS[_v.Target.Data] = sps;
+                FF9StateSystem.EventState.gEventGlobal[1305] = (byte)_v.Target.Id;
                 return;
             }
             else if (_v.Command.Power == 25 && _v.Command.HitRate == 222 && (_v.Caster.Data.dms_geo_id == 278 || _v.Caster.Data.dms_geo_id == 593)) // Polarized staff (-) with SPS effect (Black Waltz 3)

@@ -22,7 +22,6 @@ namespace Memoria.Scripts.Battle
         public void Perform()
         {
             float RatioDamage = (float)(_v.Command.Power + _v.Caster.Level - _v.Target.PhysicalDefence - _v.Target.Level) / 5;
-            Log.Message("RatioDamage = " + RatioDamage);
             TranceSeekCustomAPI.WeaponPhysicalParams(CalcAttackBonus.Simple, _v);
             _v.Caster.SetLowPhysicalAttack();
             if (RatioDamage < 0)
