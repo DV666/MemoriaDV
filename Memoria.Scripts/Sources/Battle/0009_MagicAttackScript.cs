@@ -91,7 +91,7 @@ namespace Memoria.Scripts.Battle
                     _v.CalcHpDamage();
                     TranceSeekCustomAPI.RaiseTrouble(_v);
                 }
-                _v.TryAlterMagicStatuses();
+                TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
             }
             if (FF9StateSystem.Battle.battleMapIndex == 303)
             {

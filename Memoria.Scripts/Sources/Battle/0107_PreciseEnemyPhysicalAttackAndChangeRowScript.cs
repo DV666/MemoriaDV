@@ -49,7 +49,7 @@ namespace Memoria.Scripts.Battle
                             btl_stat.AlterStatus(_v.Target, TranceSeekCustomAPI.CustomStatusId.Special, parameters: "CanCover0");
                     }
                 }
-                _v.TryAlterMagicStatuses();
+                TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
             }
         }
     }

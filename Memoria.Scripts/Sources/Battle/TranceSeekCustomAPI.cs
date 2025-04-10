@@ -4,6 +4,7 @@ using System.Runtime.Remoting.Contexts;
 using Assets.Sources.Scripts.UI.Common;
 using FF9;
 using Memoria.Data;
+using Memoria.Prime;
 using UnityEngine;
 using static TitleUI;
 
@@ -35,6 +36,7 @@ namespace Memoria.Scripts.Battle
         // [0] => Sentinel/Duel ; [1] => LastStand ; [2] => Instinct ; [3] => PreventTranceSFX ; [4] => Mode EX ; [5] => HealHP ; [6] => HealMP ; [7] => TargetCount ; [8] => SpringBoots ; [9] => CriticalHit100 ;
         // [10] => SteinerEnchantedBlade ; [11] => Peuh! ; [12] => That's all ; [13] => In top form!
         public static Dictionary<BTL_DATA, Int32[]> RollBackStats = new Dictionary<BTL_DATA, Int32[]>();
+        public static Dictionary<BTL_DATA, Boolean> TriggerSPSResistStatus = new Dictionary<BTL_DATA, Boolean>();
         public static Dictionary<BTL_DATA, BattleStatus> RollBackBattleStatus = new Dictionary<BTL_DATA, BattleStatus>();
         public static Dictionary<BTL_DATA, EffectElement> WeaponNewElement = new Dictionary<BTL_DATA, EffectElement>();
         public static Dictionary<BTL_DATA, BattleStatus> WeaponNewStatus = new Dictionary<BTL_DATA, BattleStatus>();
@@ -393,6 +395,30 @@ namespace Memoria.Scripts.Battle
             return false;
         }
 
+        public static Boolean TryMagicHit(this BattleCalculator v)
+        {
+            foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(v.Caster))
+                saFeature.TriggerOnAbility(v, "HitRateSetup", false);
+            foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(v.Target))
+                saFeature.TriggerOnAbility(v, "HitRateSetup", true);
+
+            if (v.Context.HitRate <= Comn.random16() % 100)
+            {
+                SPS_GuardStatus(v);
+                v.Context.Flags |= BattleCalcFlags.Miss;
+                return false;
+            }
+
+            if (v.Context.Evade > Comn.random16() % 100)
+            {
+                SPS_GuardStatus(v);
+                v.Context.Flags |= BattleCalcFlags.Miss;
+                return false;
+            }
+
+            return true;
+        }
+
         public static Boolean TryMagicHitWithoutBattleCalcFlag(this BattleCalculator v)
         {
             foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(v.Caster))
@@ -402,15 +428,29 @@ namespace Memoria.Scripts.Battle
 
             if (v.Context.HitRate <= Comn.random16() % 100)
             {
+                SPS_GuardStatus(v);
                 return false;
             }
 
             if (v.Context.Evade > Comn.random16() % 100)
             {
+                SPS_GuardStatus(v);
                 return false;
             }
 
             return true;
+        }
+
+        public static void TryAlterMagicStatuses(this BattleCalculator v)
+        {
+            foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(v.Caster))
+                saFeature.TriggerOnAbility(v, "HitRateSetup", false);
+            foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(v.Target))
+                saFeature.TriggerOnAbility(v, "HitRateSetup", true);
+
+            SPS_GuardStatus(v);
+            if (v.Command.HitRate > Comn.random16() % 100)
+                v.Target.TryAlterStatuses(v.Command.AbilityStatus, false, v.Caster);
         }
 
         public static void TargetPhysicalPenaltyAndBonusAttack(this BattleCalculator v)
@@ -705,17 +745,14 @@ namespace Memoria.Scripts.Battle
                     saFeature.TriggerOnAbility(v, "HitRateSetup", true);
 
                 if (v.Caster.IsPlayer)
-                {
                     if (v.Caster.WeaponRate > Comn.random16() % 100)
-                        v.Target.TryAlterStatuses(WeaponNewStatus[v.Caster.Data], false, v.Caster);
-                }
+                        v.Command.AbilityStatus |= WeaponNewStatus[v.Caster.Data];
                 else
-                {
                     if (v.Command.HitRate > Comn.random16() % 100)
-                    {
-                        v.Target.TryAlterStatuses(WeaponNewStatus[v.Caster.Data], false, v.Caster);
-                    }
-                }
+                        v.Command.AbilityStatus |= WeaponNewStatus[v.Caster.Data];
+
+                if ((v.Target.ResistStatus & WeaponNewStatus[v.Caster.Data]) != 0 && !v.Target.IsPlayer)
+                    TriggerSPSResistStatus[v.Target] = true;
             }
         }
 
@@ -994,9 +1031,10 @@ namespace Memoria.Scripts.Battle
             }
         }
 
-        public static void TryAlterCommandStatuses(this BattleCalculator v)
+        public static void TryAlterCommandStatuses(this BattleCalculator v, Boolean ChangeContext = true)
         {
-            v.Target.TryAlterStatuses(v.Command.AbilityStatus, true, v.Caster);
+            SPS_GuardStatus(v);
+            v.Target.TryAlterStatuses(v.Command.AbilityStatus, ChangeContext, v.Caster);
         }
 
         public static void TryRemoveAbilityStatuses(this BattleCalculator v)
@@ -1063,9 +1101,10 @@ namespace Memoria.Scripts.Battle
 
         public static void SPS_GuardStatus(this BattleCalculator v)
         {
-            if (((v.Target.ResistStatus & v.Command.AbilityStatus) != 0 || (v.Target.ResistStatus & v.Caster.WeaponStatus) != 0 && v.Caster.HasSupportAbility(SupportAbility1.AddStatus) && v.Command.Id == BattleCommandId.Attack) && !v.Target.IsPlayer) // SPS immune status.
+            if ((((v.Target.ResistStatus & v.Command.AbilityStatus) != 0 || (v.Target.ResistStatus & v.Caster.WeaponStatus) != 0 && v.Caster.HasSupportAbility(SupportAbility1.AddStatus) && v.Command.Id == BattleCommandId.Attack) && !v.Target.IsPlayer) || TriggerSPSResistStatus[v.Target]) // SPS immune status.
             {
                 SPSEffect sps = HonoluluBattleMain.battleSPS.AddSequenceSPS(13, -1, 1);
+                TriggerSPSResistStatus[v.Target] = false;
                 if (sps == null)
                     return;
                 btl2d.GetIconPosition(v.Target, btl2d.ICON_POS_DEFAULT, out Transform attachTransf, out Vector3 iconOff);
@@ -1478,13 +1517,6 @@ namespace Memoria.Scripts.Battle
                 {
                     v.Target.HpDamage /= 2;
                 }
-            }
-
-            if (v.Caster.HasSupportAbilityByIndex((SupportAbility)229) && (v.Target.Flags & CalcFlag.Critical) != 0) // SA Lethality
-            {
-                v.Target.AlterStatus(v.Caster.WeaponStatus, v.Caster);
-                if (v.Caster.HasSupportAbilityByIndex((SupportAbility)1229))
-                    v.Target.AlterStatus(BattleStatus.Doom, v.Caster);
             }
 
             if (v.Caster.HasSupportAbilityByIndex((SupportAbility)1238) && (v.Target.Flags & CalcFlag.HpRecovery) == 0 && v.Target.HpDamage > 0) // SA Crisis level+

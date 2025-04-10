@@ -49,7 +49,7 @@ namespace Memoria.Scripts.Battle
                     if (!_v.Target.IsZombie && !_v.Context.IsAbsorb)
                         _v.Target.MpDamage = hpDamage2 >> 4;
                 }
-                _v.TryAlterMagicStatuses();
+                TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
             }
         }
     }

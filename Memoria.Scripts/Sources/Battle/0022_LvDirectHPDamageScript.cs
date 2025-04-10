@@ -45,7 +45,7 @@ namespace Memoria.Scripts.Battle
                     {
                         _v.CalcHpDamage();
                     }
-                    _v.TryAlterMagicStatuses();
+                    TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
                     return;
                 }
             }
@@ -66,7 +66,7 @@ namespace Memoria.Scripts.Battle
                         {
                             _v.CalcCannonProportionDamage();
                         }
-                        _v.TryAlterMagicStatuses();
+                        TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
                     }
                 }
                 else
@@ -95,7 +95,7 @@ namespace Memoria.Scripts.Battle
                                 {
                                     _v.CalcHpDamage();
                                 }
-                                _v.TryAlterMagicStatuses();
+                                TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
                             }
                         }
                         else

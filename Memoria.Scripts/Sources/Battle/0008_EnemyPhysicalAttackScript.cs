@@ -52,7 +52,7 @@ namespace Memoria.Scripts.Battle
                             }
                             int hpDamage = (int)(_v.Target.MaximumHp * (uint)_v.Context.Attack / 100U);
                             _v.Target.HpDamage = hpDamage;
-                            _v.TryAlterMagicStatuses();
+                            TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
                         }
                     }
                     else
@@ -98,7 +98,7 @@ namespace Memoria.Scripts.Battle
                             _v.CalcPhysicalHpDamage();
                             TranceSeekCustomAPI.InfusedWeaponStatus(_v);
                             TranceSeekCustomAPI.RaiseTrouble(_v);
-                            _v.TryAlterMagicStatuses();
+                            TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
                         }
                     }
                 }

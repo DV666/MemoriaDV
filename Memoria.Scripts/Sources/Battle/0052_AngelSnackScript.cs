@@ -75,23 +75,23 @@ namespace Memoria.Scripts.Battle
                 {
                     _v.Target.RemoveStatus(BattleStatus.Slow);
                 }
-                if (_v.Target.IsUnderAnyStatus(BattleStatus.Berserk) & _v.Target.HasSupportAbilityByIndex((SupportAbility)111)) // Pasteurized
+                if (_v.Target.IsUnderAnyStatus(BattleStatus.Virus) & _v.Target.HasSupportAbilityByIndex((SupportAbility)111)) // Pasteurized
                 {
                     _v.Target.RemoveStatus(BattleStatus.Virus);
                 }
-                if (_v.Target.IsUnderAnyStatus(BattleStatus.Berserk) & _v.Target.HasSupportAbilityByIndex((SupportAbility)112)) // United
+                if (_v.Target.IsUnderAnyStatus(BattleStatus.Trouble) & _v.Target.HasSupportAbilityByIndex((SupportAbility)112)) // United
                 {
                     _v.Target.RemoveStatus(BattleStatus.Trouble);
                 }
-                if (_v.Target.IsUnderAnyStatus(BattleStatus.Berserk) & _v.Target.HasSupportAbilityByIndex((SupportAbility)113)) // Abundance
+                if (_v.Target.IsUnderAnyStatus(BattleStatus.Mini) & _v.Target.HasSupportAbilityByIndex((SupportAbility)113)) // Abundance
                 {
                     _v.Target.RemoveStatus(BattleStatus.Mini);
                 }
-                if (_v.Target.IsUnderAnyStatus(BattleStatus.Berserk) & _v.Target.HasSupportAbilityByIndex((SupportAbility)114)) // Purity
+                if (_v.Target.IsUnderAnyStatus(BattleStatus.Zombie) & _v.Target.HasSupportAbilityByIndex((SupportAbility)114)) // Purity
                 {
                     _v.Target.RemoveStatus(BattleStatus.Zombie);
                 }
-                if (_v.Target.IsUnderAnyStatus(BattleStatus.Berserk) & _v.Target.HasSupportAbility(SupportAbility1.AutoRegen)) // Resilience
+                if (_v.Target.IsUnderAnyStatus(BattleStatus.Doom) & _v.Target.HasSupportAbility(SupportAbility1.AutoRegen)) // Resilience
                 {
                     _v.Target.RemoveStatus(BattleStatus.Doom);
                 }

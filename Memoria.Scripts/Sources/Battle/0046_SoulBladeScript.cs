@@ -20,8 +20,8 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            BattleStatus status = _v.Caster.WeaponStatus;
-            if (ff9item._FF9Item_Data[_v.Caster.Weapon].shape != 2 || status == 0) // Shape 1 => Dagger, Shape 2 => Thief Sword
+            _v.Command.AbilityStatus |= _v.Caster.WeaponStatus;
+            if (ff9item._FF9Item_Data[_v.Caster.Weapon].shape != 2 || _v.Command.AbilityStatus == 0) // Shape 1 => Dagger, Shape 2 => Thief Sword
             {
                 _v.Context.Flags |= BattleCalcFlags.Miss;
                 return;
@@ -29,19 +29,13 @@ namespace Memoria.Scripts.Battle
 
             if (!_v.Target.IsPlayer)
             {
-                if ((status & BattleStatus.Death) == 0 || _v.Target.CheckUnsafetyOrGuard())
-                    _v.Target.TryAlterStatuses(status, true, _v.Caster);
-            }
+                if ((_v.Command.AbilityStatus & BattleStatus.Death) == 0 || _v.Target.CheckUnsafetyOrGuard())
+                    TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
             else
-            {
-                if (_v.Target.IsUnderStatus(status))
-                {
-                    _v.Target.RemoveStatus(status);
-                }
+                if (_v.Target.IsUnderStatus(_v.Command.AbilityStatus))
+                    _v.Target.RemoveStatus(_v.Command.AbilityStatus);
                 else
-                {
                     _v.Context.Flags |= BattleCalcFlags.Miss;
-                }
             }
         }
     }

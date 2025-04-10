@@ -37,7 +37,7 @@ namespace Memoria.Scripts.Battle
                 {
                     _v.CalcPhysicalHpDamage();
                     TranceSeekCustomAPI.RaiseTrouble(_v);
-                    _v.TryAlterMagicStatuses();
+                    TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
                 }
             }
         }

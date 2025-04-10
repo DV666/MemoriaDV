@@ -77,7 +77,7 @@ namespace Memoria.Scripts.Battle
                         }
                         _v.CalcHpDamage();
                     }
-                    _v.TryAlterMagicStatuses();
+                    TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
                 }
                 else
                 {
@@ -85,7 +85,7 @@ namespace Memoria.Scripts.Battle
                     {
                         TranceSeekCustomAPI.MagicAccuracy(_v);
                         _v.Target.PenaltyShellHitRate();
-                        if (_v.TryMagicHit())
+                        if (TranceSeekCustomAPI.TryMagicHit(_v))
                         {
                             _v.TryDirectHPDamage();
                         }

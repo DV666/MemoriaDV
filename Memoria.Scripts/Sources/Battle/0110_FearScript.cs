@@ -39,14 +39,14 @@ namespace Memoria.Scripts.Battle
                 {
                     _v.CalcHpDamage();
                 }
-                _v.TryAlterMagicStatuses();
+                TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
             }
             else if (_v.Command.HitRate > 0 && _v.Command.Power == 0)
             {
                 TranceSeekCustomAPI.MagicAccuracy(_v);
                 _v.Target.PenaltyShellHitRate();
                 _v.PenaltyCommandDividedHitRate();
-                if (_v.TryMagicHit())
+                if (TranceSeekCustomAPI.TryMagicHit(_v))
                 {
                     TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
                 }

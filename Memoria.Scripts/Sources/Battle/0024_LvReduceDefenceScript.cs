@@ -24,7 +24,8 @@ namespace Memoria.Scripts.Battle
             {
                 if (_v.IsTargetLevelMultipleOfCommandRate() && _v.Target.CanBeAttacked())
                 {
-                    _v.Target.AlterStatus(TranceSeekCustomAPI.CustomStatus.Vieillissement);
+                    _v.Command.AbilityStatus |= TranceSeekCustomAPI.CustomStatus.Vieillissement;
+                    TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
                 }
                 else
                 {
@@ -49,7 +50,7 @@ namespace Memoria.Scripts.Battle
                 {
                     _v.CalcHpDamage();
                 }
-                _v.TryAlterMagicStatuses();
+                TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
                 btl_stat.AlterStatus(_v.Target, TranceSeekCustomAPI.CustomStatusId.ArmorBreak, parameters: "+2");
                 btl_stat.AlterStatus(_v.Target, TranceSeekCustomAPI.CustomStatusId.MentalBreak, parameters: "+2");
             }

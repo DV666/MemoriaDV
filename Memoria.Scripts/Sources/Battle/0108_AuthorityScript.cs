@@ -42,7 +42,7 @@ namespace Memoria.Scripts.Battle
             if (TranceSeekCustomAPI.CanAttackWeaponElementalCommand(_v))
             {
                 _v.CalcHpDamage();
-                _v.TryAlterMagicStatuses();
+                TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
             }
         }
     }

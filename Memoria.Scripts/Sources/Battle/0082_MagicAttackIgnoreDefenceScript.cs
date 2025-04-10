@@ -30,7 +30,7 @@ namespace Memoria.Scripts.Battle
             TranceSeekCustomAPI.PenaltyCommandDividedAttack(_v);
             TranceSeekCustomAPI.BonusElement(_v);
             _v.CalcHpDamage();
-            _v.TryAlterMagicStatuses();
+            TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
         }
 
         public Single RateTarget()

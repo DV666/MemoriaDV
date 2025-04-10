@@ -37,41 +37,41 @@ namespace Memoria.Scripts.Battle
                     if (_v.Target.IsUnderAnyStatus(BattleStatus.Poison))
                     {
                         _v.Target.RemoveStatus(BattleStatus.Poison);
-                        _v.Target.AlterStatus(BattleStatus.Poison, _v.Caster);
+                        _v.Command.AbilityStatus |= BattleStatus.Poison;
                     }
                     if (_v.Target.IsUnderAnyStatus(BattleStatus.Blind))
                     {
                         _v.Target.RemoveStatus(BattleStatus.Blind);
-                        _v.Target.AlterStatus(BattleStatus.Blind, _v.Caster);
+                        _v.Command.AbilityStatus |= BattleStatus.Blind;
                     }
                     if (_v.Target.IsUnderAnyStatus(BattleStatus.Trouble))
                     {
                         _v.Target.RemoveStatus(BattleStatus.Trouble);
-                        _v.Target.AlterStatus(BattleStatus.Trouble, _v.Caster);
+                        _v.Command.AbilityStatus |= BattleStatus.Trouble;
                     }
                     if (_v.Target.IsUnderAnyStatus(BattleStatus.Venom))
                     {
                         _v.Target.RemoveStatus(BattleStatus.Venom);
-                        _v.Target.AlterStatus(BattleStatus.Venom, _v.Caster);
+                        _v.Command.AbilityStatus |= BattleStatus.Venom;
                     }
                     if (_v.Target.IsUnderAnyStatus(BattleStatus.Zombie))
                     {
                         _v.Target.RemoveStatus(BattleStatus.Zombie);
-                        _v.Target.AlterStatus(BattleStatus.Zombie, _v.Caster);
+                        _v.Command.AbilityStatus |= BattleStatus.Zombie;
                     }
                     if (_v.Target.IsUnderAnyStatus(TranceSeekCustomAPI.CustomStatus.SilenceEasyKill))
                     {
                         _v.Target.RemoveStatus(TranceSeekCustomAPI.CustomStatus.SilenceEasyKill);
-                        _v.Target.AlterStatus(TranceSeekCustomAPI.CustomStatus.SilenceEasyKill, _v.Caster);
+                        _v.Command.AbilityStatus |= TranceSeekCustomAPI.CustomStatus.SilenceEasyKill;
                     }
+                    TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
                 }
                 if (_v.Command.AbilityId == BattleAbilityId.NoMercy2)
                 {
                     _v.Command.AbilityStatus |= (BattleStatus.Poison | BattleStatus.Venom);
                 }
-                if (_v.TryMagicHit())
+                if (TranceSeekCustomAPI.TryMagicHit(_v))
                     TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
-                _v.Context.Flags = 0;
                 return;
             }               
             
@@ -88,7 +88,7 @@ namespace Memoria.Scripts.Battle
                 TranceSeekCustomAPI.PenaltyShellAttack(_v);
                 TranceSeekCustomAPI.PenaltyCommandDividedAttack(_v);
                 _v.CalcHpDamage();
-                _v.TryAlterMagicStatuses();
+                TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
             }
             if (_v.Caster.Data.dms_geo_id == 328) // Fandalf Curse
             {
@@ -137,7 +137,7 @@ namespace Memoria.Scripts.Battle
                     }
                     else
                     {
-                        _v.TryAlterMagicStatuses();
+                        TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
                     }
                 }
             }

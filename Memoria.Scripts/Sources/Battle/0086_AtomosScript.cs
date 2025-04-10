@@ -49,9 +49,7 @@ namespace Memoria.Scripts.Battle
                 TranceSeekCustomAPI.MonsterMechanic[_v.Target.Data][5] = TranceSeekCustomAPI.MonsterMechanic[_v.Target.Data][5] * 2;
             }
             if ((ff9item.FF9Item_GetCount(RegularItem.Amethyst)) > Comn.random16() % 100)
-            {
-                _v.Target.AlterStatus(BattleStatus.Mini, _v.Caster);
-            }
+                TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
             if (_v.Command.IsShortSummon)
                 _v.Target.HpDamage = _v.Target.HpDamage * 2 / 3;
         }

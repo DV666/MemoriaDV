@@ -39,7 +39,7 @@ namespace Memoria.Scripts.Battle
                 _v.CalcHpDamage();
             }
             if (_v.Command.HitRate > 0)
-                _v.TryAlterMagicStatuses();
+                TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
         }
     }
 }

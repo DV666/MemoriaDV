@@ -36,8 +36,8 @@ namespace Memoria.Scripts.Battle
                 if (_v.Caster.IsUnderAnyStatus(BattleStatus.Trance))
                 {
                     BeatrixPassive[_v.Caster.Data][2] = 2;
-                    _v.Caster.AlterStatus(BattleStatus.Regen);
-                    _v.Caster.AlterStatus(BattleStatus.AutoLife);
+                    _v.Command.AbilityStatus |= (BattleStatus.Regen | BattleStatus.AutoLife);
+                    TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
                 }
                 else
                 {
@@ -82,7 +82,7 @@ namespace Memoria.Scripts.Battle
                 return;
             }
 
-            _v.TryAlterMagicStatuses();
+            TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
             btl_stat.AlterStatus(_v.Target, CustomStatusId.PowerUp, parameters: $"+{_v.Command.Power}");
             btl_stat.AlterStatus(_v.Target, CustomStatusId.MagicUp, parameters: $"+{_v.Command.Power}");
         }

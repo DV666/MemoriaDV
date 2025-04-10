@@ -51,7 +51,7 @@ namespace Memoria.Scripts.Battle
                     }
                     else
                     {
-                        _v.TryAlterMagicStatuses();
+                        TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
 
                     }
                 }                    

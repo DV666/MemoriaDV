@@ -78,24 +78,27 @@ namespace Memoria.Scripts.Battle
                     {
                         TranceSeekCustomAPI.TryCriticalHit(_v);
                     }
-                    if (_v.Caster.PlayerIndex == CharacterId.Amarant && (_v.Command.AbilityId == BattleAbilityId.DemiShock1 || _v.Command.AbilityId == BattleAbilityId.DemiShock2)) // Tobigeri
+                    else if (_v.Caster.PlayerIndex == CharacterId.Amarant && (_v.Command.AbilityId == BattleAbilityId.DemiShock1 || _v.Command.AbilityId == BattleAbilityId.DemiShock2)) // Tobigeri
                     {
                         if (_v.Caster.IsUnderAnyStatus(BattleStatus.Protect))
-                            _v.Target.AlterStatus(BattleStatus.Blind, _v.Caster);
+                            _v.Command.AbilityStatus |= BattleStatus.Blind;
                         if (_v.Caster.IsUnderAnyStatus(BattleStatus.Shell))
-                            _v.Target.AlterStatus(BattleStatus.Silence, _v.Caster);
+                            _v.Command.AbilityStatus |= BattleStatus.Silence;
                         if (_v.Caster.IsUnderAnyStatus(BattleStatus.Reflect))
-                            _v.Target.AlterStatus(BattleStatus.Trouble, _v.Caster);
+                            _v.Command.AbilityStatus |= BattleStatus.Trouble;
                         if (_v.Caster.IsUnderAnyStatus(BattleStatus.Regen))
-                            _v.Target.AlterStatus(BattleStatus.Poison, _v.Caster);
+                            _v.Command.AbilityStatus |= BattleStatus.Poison;
                         if (_v.Caster.IsUnderAnyStatus(BattleStatus.AutoLife))
-                            _v.Target.AlterStatus(BattleStatus.Doom, _v.Caster);
+                            _v.Command.AbilityStatus |= BattleStatus.Doom;
                         if (_v.Caster.IsUnderAnyStatus(BattleStatus.Vanish))
-                            _v.Target.AlterStatus(BattleStatus.Confuse, _v.Caster);
+                            _v.Command.AbilityStatus |= BattleStatus.Confuse;
                         if (_v.Caster.IsUnderAnyStatus(BattleStatus.Haste))
-                            _v.Target.AlterStatus(BattleStatus.Slow, _v.Caster);
+                            _v.Command.AbilityStatus |= BattleStatus.Slow;
+
+                        TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
                     }
-                    _v.TryAlterMagicStatuses();
+                    else
+                        TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
                 }
             }
         }

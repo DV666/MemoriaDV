@@ -59,7 +59,8 @@ namespace Memoria.Scripts.Battle
                 }
                 else if (_v.Command.ItemId == (RegularItem)1033) // Image
                 {
-                    _v.Target.AlterStatus(BattleStatus.Vanish);
+                    _v.Command.AbilityStatus |= _v.Command.Weapon.Status;
+                    TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
                 }
                 else
                 {
@@ -116,7 +117,7 @@ namespace Memoria.Scripts.Battle
                         TranceSeekCustomAPI.BonusBackstabAndPenaltyLongDistance(_v);
                         _v.CalcHpDamage();
                         TranceSeekCustomAPI.RaiseTrouble(_v);
-                        _v.TryAlterMagicStatuses();
+                        TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
                     }
                 }
             }

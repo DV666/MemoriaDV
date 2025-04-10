@@ -213,7 +213,7 @@ namespace Memoria.Scripts.Battle
                     {
                         _v.CalcHpDamage();
                     }
-                    _v.TryAlterMagicStatuses();
+                    TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
                     break;
                 }
                 case (BattleAbilityId)1167: // Divine hand
@@ -226,7 +226,8 @@ namespace Memoria.Scripts.Battle
                 case (BattleAbilityId)1169: // Sacred fire
                 {
                     _v.Target.RemoveStatus(BattleStatus.Poison | BattleStatus.Venom | BattleStatus.Zombie);
-                    _v.Target.AlterStatus(BattleStatus.AutoLife | BattleStatus.Regen);
+                    _v.Command.AbilityStatus |= (BattleStatus.Regen | BattleStatus.AutoLife);
+                    TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
                     break;
                 }
             }

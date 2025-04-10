@@ -93,20 +93,23 @@ namespace Memoria.Scripts.Battle
                             _v.Target.RemoveStatus(BattleStatus.Poison | BattleStatus.Venom | BattleStatus.Silence | BattleStatus.Blind | BattleStatus.Trouble | BattleStatus.Mini | BattleStatus.Berserk | TranceSeekCustomAPI.CustomStatus.Vieillissement);
                             break;
                         case (BattleAbilityId)1019: // Récup Moug
-                            _v.Target.AlterStatus(BattleStatus.Regen, _v.Caster);
-                            _v.Target.AlterStatus(BattleStatus.Haste, _v.Caster);
+                            _v.Command.AbilityStatus |= (BattleStatus.Regen | BattleStatus.Haste);
+                            TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
                             break;
                         case (BattleAbilityId)1020: // Barrière Moug
                             if (GameRandom.Next8() % 2 != 0)
-                                _v.Target.AlterStatus(BattleStatus.Protect, _v.Caster);
+                                _v.Command.AbilityStatus |= BattleStatus.Protect;
                             else
-                                _v.Target.AlterStatus(BattleStatus.Shell, _v.Caster);
+                                _v.Command.AbilityStatus |= BattleStatus.Shell;
+                            TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
                             break;
                         case (BattleAbilityId)1021: // Mirroir Moug
-                            _v.Target.AlterStatus(BattleStatus.Vanish, _v.Caster);
+                            _v.Command.AbilityStatus |= BattleStatus.Vanish;
+                            TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
                             break;
                         case (BattleAbilityId)1022: // Pakaho Moug
-                            _v.Target.AlterStatus(BattleStatus.AutoLife, _v.Caster);
+                            _v.Command.AbilityStatus |= BattleStatus.AutoLife;
+                            TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
                             break;
                         case (BattleAbilityId)1023: // Atomoug
                         case (BattleAbilityId)1024: // Sidémoug
@@ -135,7 +138,7 @@ namespace Memoria.Scripts.Battle
                                     }
                                     _v.CalcHpDamage();
                                 }
-                                _v.TryAlterMagicStatuses();
+                                TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
                             }
                             break;
                     }

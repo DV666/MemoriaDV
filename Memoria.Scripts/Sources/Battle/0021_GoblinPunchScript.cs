@@ -35,7 +35,7 @@ namespace Memoria.Scripts.Battle
                     TranceSeekCustomAPI.CasterPenaltyMini(_v);
                     TranceSeekCustomAPI.PenaltyShellAttack(_v);
                     _v.CalcHpDamage();
-                    _v.TryAlterMagicStatuses();
+                    TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
                 }
                 else
                 {

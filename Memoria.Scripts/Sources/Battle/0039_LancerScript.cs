@@ -59,7 +59,7 @@ namespace Memoria.Scripts.Battle
                             _v.Caster.MpDamage = _v.Target.MpDamage / 2;
                         }
                     }
-                    _v.TryAlterMagicStatuses();
+                    TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
                 }
             }
             else
@@ -70,7 +70,7 @@ namespace Memoria.Scripts.Battle
                     {
                         _v.Target.CurrentHp = 1U;
                         _v.Target.CurrentMp = 1U;
-                        _v.TryAlterMagicStatuses();
+                        TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
                     }
                 }
                 else
@@ -104,7 +104,7 @@ namespace Memoria.Scripts.Battle
                                     _v.Caster.HpDamage = hpDamage3 / 2;
                                 }
                                 TranceSeekCustomAPI.RaiseTrouble(_v);
-                                _v.TryAlterMagicStatuses();
+                                TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
                             }
                         }
                     }

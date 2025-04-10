@@ -34,7 +34,7 @@ namespace Memoria.Scripts.Battle
                 if (TranceSeekCustomAPI.CanAttackWeaponElementalCommand(_v))
                 {
                     _v.CalcHpDamage();
-                    _v.TryAlterMagicStatuses();
+                    TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
                 }
                 if (_v.Command.HitRate == 214 && _v.Caster.PlayerIndex == CharacterId.Beatrix)
                 {
@@ -65,7 +65,7 @@ namespace Memoria.Scripts.Battle
                         int num = Math.Min(9999, _v.Context.PowerDifference * _v.Context.EnsureAttack);
                         _v.Target.MpDamage = (int)((short)(num >> 4));
                     }
-                    _v.TryAlterMagicStatuses();
+                    TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
                 }
             }
         }

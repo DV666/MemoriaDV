@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.Remoting.Contexts;
+using System.Security.Policy;
 using Memoria.Data;
 using Memoria.Prime;
 
@@ -95,8 +96,8 @@ namespace Memoria.Scripts.Battle
             }
             else if (_v.Caster.Data.dms_geo_id == 36 && _v.Command.Power == 1) // Silver Dragon - Shinryu's dance
             {
-                _v.Caster.AlterStatus(BattleStatus.Regen);
-                _v.Caster.AlterStatus(BattleStatus.Haste);
+                _v.Command.AbilityStatus |= (BattleStatus.Regen | BattleStatus.Haste);
+                TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
                 if (_v.Caster.PhysicalEvade < 255)
                     _v.Caster.PhysicalEvade += 10;
                 else

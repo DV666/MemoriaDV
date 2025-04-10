@@ -39,7 +39,7 @@ namespace Memoria.Scripts.Battle
                 {
                     TranceSeekCustomAPI.MagicAccuracy(_v);
                     _v.Context.HitRate += (Int16)(ff9item.FF9Item_GetCount(RegularItem.Ore) >> 1);
-                    if (_v.TryMagicHit())
+                    if (TranceSeekCustomAPI.TryMagicHit(_v))
                         TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
                 }
             }

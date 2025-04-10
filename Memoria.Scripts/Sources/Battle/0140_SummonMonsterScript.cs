@@ -189,7 +189,7 @@ namespace Memoria.Scripts.Battle
                                 }
                                 else
                                 {
-                                    _v.TryAlterMagicStatuses();
+                                    TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
                                     if (_v.Target.HpDamage < currentHp)
                                     {
                                         _v.Caster.HpDamage = _v.Target.HpDamage;
@@ -278,7 +278,7 @@ namespace Memoria.Scripts.Battle
                                     _v.CalcPhysicalHpDamage();
                                     TranceSeekCustomAPI.InfusedWeaponStatus(_v);
                                     TranceSeekCustomAPI.RaiseTrouble(_v);
-                                    _v.TryAlterMagicStatuses();
+                                    TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
                                 }                               
                             }
                         }
@@ -351,7 +351,7 @@ namespace Memoria.Scripts.Battle
                             _v.CalcHpDamage();
                             TranceSeekCustomAPI.RaiseTrouble(_v);
                         }
-                        _v.TryAlterMagicStatuses();
+                        TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
                         break;
                     }
                     // MAGIC RECOVERY - Script 10
@@ -373,7 +373,7 @@ namespace Memoria.Scripts.Battle
                         if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)102))
                             TranceSeekCustomAPI.TryCriticalHit(_v);
                         _v.CalcHpMagicRecovery();
-                        _v.TryAlterMagicStatuses();
+                        TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
                         break;
                     }
                     // BAD STATUS - Script 11
@@ -406,7 +406,7 @@ namespace Memoria.Scripts.Battle
                         {
                             if (_v.Target.CheckUnsafetyOrGuard())
                             {
-                                if (_v.TryMagicHit())
+                                if (TranceSeekCustomAPI.TryMagicHit(_v))
                                 {
                                     TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
                                 }
@@ -433,7 +433,7 @@ namespace Memoria.Scripts.Battle
                             }
                             break;
                         }
-                        if (_v.TryMagicHit() || _v.Command.HitRate == 255)
+                        if (TranceSeekCustomAPI.TryMagicHit(_v) || _v.Command.HitRate == 255)
                             TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
                         break;
                     }
@@ -453,7 +453,7 @@ namespace Memoria.Scripts.Battle
                             else
                             {
                                 TranceSeekCustomAPI.MagicAccuracy(_v);
-                                if (_v.TryMagicHit() || _v.Command.HitRate == 255)
+                                if (TranceSeekCustomAPI.TryMagicHit(_v) || _v.Command.HitRate == 255)
                                 {
                                     TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
                                 }
@@ -526,7 +526,7 @@ namespace Memoria.Scripts.Battle
                                 }
                                 _v.Target.MpDamage = num;
                                 _v.Caster.MpDamage = num;
-                                _v.TryAlterMagicStatuses();
+                                TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
                             }
                             else
                             {
@@ -546,7 +546,7 @@ namespace Memoria.Scripts.Battle
                                             _v.Caster.HpDamage = _v.Target.HpDamage;
                                         }
                                     }
-                                    _v.TryAlterMagicStatuses();                                
+                                    TranceSeekCustomAPI.TryAlterMagicStatuses(_v);                                
                                 }
                             }
                         }
@@ -605,7 +605,7 @@ namespace Memoria.Scripts.Battle
                             _v.Target.HpDamage = Math.Max(1, (_v.Target.HpDamage / TranceSeekCustomAPI.MonsterMechanic[_v.Target.Data][5]));
                             TranceSeekCustomAPI.MonsterMechanic[_v.Target.Data][5] = TranceSeekCustomAPI.MonsterMechanic[_v.Target.Data][5] * 2;
                         }
-                        _v.TryAlterMagicStatuses();
+                        TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
 
                         if (TranceSeekCustomAPI.AbsorbElement.TryGetValue(_v.Target.Data, out Int32 elementprotect))
                             if (elementprotect == 256)
@@ -629,7 +629,7 @@ namespace Memoria.Scripts.Battle
                         {
                             _v.CalcHpDamage();
                         }
-                        _v.TryAlterMagicStatuses();
+                        TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
                         break;
                     }
                     // GOBLIN PUNCH - Script 21
@@ -674,7 +674,7 @@ namespace Memoria.Scripts.Battle
                                         {
                                             _v.CalcHpDamage();
                                         }
-                                        _v.TryAlterMagicStatuses();
+                                        TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
                                     }
                                 }
                                 else
@@ -717,7 +717,7 @@ namespace Memoria.Scripts.Battle
                             {
                                 _v.CalcHpDamage();
                             }
-                            _v.TryAlterMagicStatuses();
+                            TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
                             btl_stat.AlterStatus(_v.Target, TranceSeekCustomAPI.CustomStatusId.ArmorBreak, parameters: "+2");
                             btl_stat.AlterStatus(_v.Target, TranceSeekCustomAPI.CustomStatusId.MentalBreak, parameters: "+2");
                         }
@@ -803,7 +803,7 @@ namespace Memoria.Scripts.Battle
                                     }
                                     _v.CalcHpDamage();
                                 }
-                                _v.TryAlterMagicStatuses();
+                                TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
                             }
                         }
                         break;
@@ -856,7 +856,7 @@ namespace Memoria.Scripts.Battle
                             TranceSeekCustomAPI.BonusElement(_v);
                             _v.CalcHpDamage();
                             _v.Command.AbilityStatus |= TranceSeekCustomAPI.CustomStatus.ArmorBreak;
-                            _v.TryAlterMagicStatuses();
+                            TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
                         }
                         break;
                     }
@@ -892,7 +892,7 @@ namespace Memoria.Scripts.Battle
                             TranceSeekCustomAPI.BonusElement(_v);
                             _v.CalcHpDamage();
                             _v.Command.AbilityStatus |= TranceSeekCustomAPI.CustomStatus.PowerBreak;
-                            _v.TryAlterMagicStatuses();
+                            TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
                         }
                         break;
                     }
@@ -928,7 +928,7 @@ namespace Memoria.Scripts.Battle
                             TranceSeekCustomAPI.BonusElement(_v);
                             _v.CalcHpDamage();
                             _v.Command.AbilityStatus |= TranceSeekCustomAPI.CustomStatus.MentalBreak;
-                            _v.TryAlterMagicStatuses();
+                            TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
                         }
                         break;
                     }
@@ -938,7 +938,7 @@ namespace Memoria.Scripts.Battle
                         _v.Target.Flags |= (CalcFlag.HpDamageOrHeal | CalcFlag.MpDamageOrHeal);
                         _v.Target.HpDamage = (int)(_v.Target.MaximumHp * (uint)_v.Command.Power / 100U);
                         _v.Target.MpDamage = (int)(_v.Target.MaximumMp * (uint)_v.Command.Power / 100U);
-                        _v.TryAlterMagicStatuses();
+                        TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
                         break;
                     }
                     // LANCER - Script 39
@@ -950,7 +950,7 @@ namespace Memoria.Scripts.Battle
                             {
                                 _v.Target.CurrentHp = 1U;
                                 _v.Target.CurrentMp = 1U;
-                                _v.TryAlterMagicStatuses();
+                                TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
                             }
                         }
                         else
@@ -984,7 +984,7 @@ namespace Memoria.Scripts.Battle
                                             _v.Caster.HpDamage = hpDamage3 / 2;
                                         }
                                         TranceSeekCustomAPI.RaiseTrouble(_v);
-                                        _v.TryAlterMagicStatuses();
+                                        TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
                                     }
                                 }
                             }
@@ -994,7 +994,7 @@ namespace Memoria.Scripts.Battle
                     // MIGHT SCRIPT - Script 43
                     case (BattleAbilityId)1335: // Lamia - Might
                     {
-                        _v.TryAlterMagicStatuses();
+                        TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
                         btl_stat.AlterStatus(_v.Target, TranceSeekCustomAPI.CustomStatusId.PowerUp, parameters: $"+{_v.Command.Power}");
                         btl_stat.AlterStatus(_v.Target, TranceSeekCustomAPI.CustomStatusId.MagicUp, parameters: $"+{_v.Command.Power}");
                         break;
@@ -1043,7 +1043,7 @@ namespace Memoria.Scripts.Battle
                                 TranceSeekCustomAPI.TryCriticalHit(_v);
                             _v.CalcHpDamage();
                         }
-                        _v.TryAlterMagicStatuses();
+                        TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
                         break;
                     }
                     // MELT - Script 88
@@ -1073,7 +1073,7 @@ namespace Memoria.Scripts.Battle
                             {
                                 _v.CalcPhysicalHpDamage();
                                 TranceSeekCustomAPI.RaiseTrouble(_v);
-                                _v.TryAlterMagicStatuses();
+                                TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
                             }
                         }
                         break;
@@ -1107,7 +1107,7 @@ namespace Memoria.Scripts.Battle
                                     }
                                     else
                                     {
-                                        _v.TryAlterMagicStatuses();
+                                        TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
                                     }
                                 }
                             }
@@ -1155,7 +1155,7 @@ namespace Memoria.Scripts.Battle
                                 TranceSeekCustomAPI.RaiseTrouble(_v);
                                 _v.CalcHpDamage();
                                 TranceSeekCustomAPI.InfusedWeaponStatus(_v);
-                                _v.TryAlterMagicStatuses();
+                                TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
                             }
                         }
                         break;
@@ -1218,7 +1218,7 @@ namespace Memoria.Scripts.Battle
                                 if (!_v.Target.IsZombie && !_v.Context.IsAbsorb)
                                     _v.Target.MpDamage = hpDamage2 >> 4;
                             }
-                            _v.TryAlterMagicStatuses();
+                            TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
                         }
                         break;
                     }
@@ -1237,7 +1237,7 @@ namespace Memoria.Scripts.Battle
                         {
                             _v.CalcHpDamage();
                         }
-                        _v.TryAlterMagicStatuses();
+                        TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
                         break;
                     }
                     // POISON MAGIC - Script 118
@@ -1267,7 +1267,7 @@ namespace Memoria.Scripts.Battle
                                 TranceSeekCustomAPI.TryCriticalHit(_v);
                             _v.CalcHpDamage();
                         }
-                        _v.TryAlterMagicStatuses();
+                        TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
                         break;
                     }
                     // TRANCE SEEK SPECIAL - Script 164

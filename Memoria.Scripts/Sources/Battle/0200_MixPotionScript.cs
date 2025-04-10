@@ -103,7 +103,7 @@ namespace Memoria.Scripts.Battle
                         _v.Context.Flags |= BattleCalcFlags.Miss;
                         return;
                     }
-                    if (HitRateForZombie() && !_v.TryMagicHit())
+                    if (HitRateForZombie() && !TranceSeekCustomAPI.TryMagicHit(_v))
                         return;
 
                     if (_v.Target.IsZombie && !_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill))
@@ -161,7 +161,7 @@ namespace Memoria.Scripts.Battle
                 case (RegularItem)2017: // Bienfait de Phénix
                 case (RegularItem)2018: // Bénédiction de Phénix
                 {
-                    if (HitRateForZombie() && !_v.TryMagicHit())
+                    if (HitRateForZombie() && !TranceSeekCustomAPI.TryMagicHit(_v))
                         return;
 
                     if (_v.Target.IsZombie && !_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill))
@@ -186,7 +186,7 @@ namespace Memoria.Scripts.Battle
                         _v.Context.Flags |= BattleCalcFlags.Miss;
                         return;
                     }
-                    if (HitRateForZombie() && !_v.TryMagicHit())
+                    if (HitRateForZombie() && !TranceSeekCustomAPI.TryMagicHit(_v))
                         return;
 
                     if (_v.Target.IsZombie && !_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill))
@@ -265,7 +265,7 @@ namespace Memoria.Scripts.Battle
                 case (RegularItem)2037: // Reviviscence
                 case (RegularItem)2038: // Megalixir des Tantalas
                 {
-                    if (HitRateForZombie() && !_v.TryMagicHit())
+                    if (HitRateForZombie() && !TranceSeekCustomAPI.TryMagicHit(_v))
                         return;
 
                     if (_v.Target.IsZombie && !_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill))

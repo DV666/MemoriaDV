@@ -140,7 +140,7 @@ namespace Memoria.Scripts.Battle
                             _v.Context.Flags |= BattleCalcFlags.Miss;
                             return;
                         }
-                        if (HitRateForZombie() && !_v.TryMagicHit())
+                        if (HitRateForZombie() && !TranceSeekCustomAPI.TryMagicHit(_v))
                             return;
 
                         if (_v.Target.IsZombie && !_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill))

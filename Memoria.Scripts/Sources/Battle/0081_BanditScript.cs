@@ -94,7 +94,7 @@ namespace Memoria.Scripts.Battle
                     _v.StealItem(battleEnemy, 0);
                 }
                 _v.CalcHpDamage();
-                _v.TryAlterMagicStatuses();
+                TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
             }
         }
     }

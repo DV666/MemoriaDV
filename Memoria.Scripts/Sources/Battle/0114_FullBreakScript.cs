@@ -52,7 +52,7 @@ namespace Memoria.Scripts.Battle
                 _v.Command.AbilityStatus |= TranceSeekCustomAPI.CustomStatus.MagicBreak;
                 _v.Command.AbilityStatus |= TranceSeekCustomAPI.CustomStatus.ArmorBreak;
                 _v.Command.AbilityStatus |= TranceSeekCustomAPI.CustomStatus.MentalBreak;
-                _v.TryAlterMagicStatuses();
+                TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
             }
         }
 

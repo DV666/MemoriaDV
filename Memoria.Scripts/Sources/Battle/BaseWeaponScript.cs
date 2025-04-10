@@ -83,7 +83,7 @@ namespace Memoria.Scripts.Battle
                         TranceSeekCustomAPI.AmarantPassive(_v);
                         if (_v.Caster.IsUnderAnyStatus(BattleStatus.Defend) && _v.Command.Id == BattleCommandId.Counter && TranceSeekCustomAPI.SpecialSAEffect[_v.Caster.Data][0] == 1) // Duel Amarant
                         {
-                            short criticalbonus = _v.Caster.Data.critical_rate_deal_bonus;
+                            short previouscriticalbonus = _v.Caster.Data.critical_rate_deal_bonus;
                             _v.Caster.Data.critical_rate_deal_bonus += _v.Caster.Will;
                             BattleStatus status = _v.Caster.WeaponStatus;
                             int statusrate = (50 + _v.Caster.WeaponRate + (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1025) ? (_v.Target.Will / 2) : 0));
@@ -92,11 +92,11 @@ namespace Memoria.Scripts.Battle
                                 if (((status & BattleStatus.Death) != 0 && !_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill)) || (status & BattleStatus.Death) == 0) // Don't force Death status.
                                 {
                                     if ((GameRandom.Next8() % 100) < statusrate)
-                                        _v.Target.TryAlterStatuses(status, false, _v.Caster);
+                                        _v.Command.AbilityStatus |= status;
                                 }
                             }
                             TranceSeekCustomAPI.TryCriticalHit(_v);
-                            _v.Caster.Data.critical_rate_deal_bonus = criticalbonus;
+                            _v.Caster.Data.critical_rate_deal_bonus = previouscriticalbonus;
                         }
                         else
                         {
@@ -108,9 +108,16 @@ namespace Memoria.Scripts.Battle
                         TranceSeekCustomAPI.TryCriticalHit(_v);
                         TranceSeekCustomAPI.TryApplyDragon(_v);
                     }
+                    if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)229) && (_v.Target.Flags & CalcFlag.Critical) != 0) // SA Lethality
+                    {
+                        _v.Command.AbilityStatus |= _v.Caster.WeaponStatus;
+                        if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1229))
+                            _v.Command.AbilityStatus |= BattleStatus.Doom;
+                    }
                     TranceSeekCustomAPI.IpsenCastleMalus(_v);
                     _v.CalcPhysicalHpDamage();
                     TranceSeekCustomAPI.InfusedWeaponStatus(_v);
+                    TranceSeekCustomAPI.TryAlterCommandStatuses(_v, false);
                     TranceSeekCustomAPI.RaiseTrouble(_v);
                 }
             }

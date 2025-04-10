@@ -91,7 +91,7 @@ namespace Memoria.Scripts.Battle
                     _v.Caster.MpDamage = num;
                 }
                 TranceSeekCustomAPI.MagicAccuracy(_v);
-                _v.TryAlterMagicStatuses();
+                TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
             }
             else
             {
@@ -99,13 +99,9 @@ namespace Memoria.Scripts.Battle
                 if (_v.Command.Power == 4) // Alchismiste Fou - Dark Ether
                 {
                     if (_v.Target.CurrentMp > _v.Target.MaximumMp / 4U)
-                    {
                         _v.Target.MpDamage = (int)(_v.Target.CurrentMp - _v.Target.MaximumMp / 4U);
-                    }
                     else
-                    {
                         _v.Context.Flags |= BattleCalcFlags.Miss;
-                    }
                 }
                 else
                 {
@@ -120,27 +116,16 @@ namespace Memoria.Scripts.Battle
                         }
 
                         if (_v.Target.IsUnderStatus(BattleStatus.Shell))
-                        {
                             _v.Target.MpDamage = (int)(Math.Min(9999, GameRandom.Next16() % (_v.Target.CurrentMp / 2U)));
-                        }
                         else
-                        {
                             _v.Target.MpDamage = (int)(Math.Min(9999, GameRandom.Next16() % _v.Target.CurrentMp));
-                        }
                     }
                     if (_v.Command.Power == 10)
                     {
                         TranceSeekCustomAPI.MagicAccuracy(_v);
-                        if (_v.Command.HitRate > Comn.random16() % 100)
-                        {
-                            _v.Target.AlterStatus(BattleStatus.Confuse, _v.Caster);
-                        }
-                        if (_v.Command.HitRate > Comn.random16() % 100)
-                        {
-                            _v.Target.AlterStatus(BattleStatus.Silence, _v.Caster);
-                        }
+                        _v.Command.AbilityStatus |= (BattleStatus.Confuse | BattleStatus.Silence);
                     }
-                    _v.TryAlterMagicStatuses();
+                    TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
                 }
             }
         }

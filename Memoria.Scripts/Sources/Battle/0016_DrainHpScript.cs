@@ -101,7 +101,7 @@ namespace Memoria.Scripts.Battle
                     }
                     _v.Target.MpDamage = num;
                     _v.Caster.MpDamage = num;
-                    _v.TryAlterMagicStatuses();
+                    TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
                 }
                 else
                 {
@@ -154,7 +154,7 @@ namespace Memoria.Scripts.Battle
                                     _v.Caster.HpDamage = _v.Target.HpDamage;
                                 }
                             }
-                            _v.TryAlterMagicStatuses();
+                            TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
                         }
                     }
                 }

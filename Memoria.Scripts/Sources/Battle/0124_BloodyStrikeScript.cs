@@ -57,7 +57,7 @@ namespace Memoria.Scripts.Battle
                     }
                     else
                     {
-                        _v.TryAlterMagicStatuses();
+                        TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
                         if (_v.Target.HpDamage < currentHp)
                         {
                             _v.Caster.HpDamage = _v.Target.HpDamage;

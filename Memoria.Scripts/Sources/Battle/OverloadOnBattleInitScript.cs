@@ -79,6 +79,8 @@ namespace Memoria.Scripts.Battle
                     MonsterMechanic[unit.Data] = [ 0, 0, 0, 0, 100, 0, 0 ];
                 if (!SpecialSAEffect.TryGetValue(unit.Data, out Int32[] specialSAeffect))
                     SpecialSAEffect[unit.Data] = [ 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ];
+                if (!TriggerSPSResistStatus.TryGetValue(unit.Data, out Boolean spsstatus))
+                    TriggerSPSResistStatus[unit.Data] = false;
                 if (!RollBackStats.TryGetValue(unit.Data, out Int32[] rb))
                     RollBackStats[unit.Data] = [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ];
                 if (!RollBackBattleStatus.TryGetValue(unit.Data, out BattleStatus rs))

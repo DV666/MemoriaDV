@@ -29,7 +29,7 @@ namespace Memoria.Scripts.Battle
             TranceSeekCustomAPI.MagicAccuracy(_v);
             _v.Target.PenaltyShellHitRate();
             _v.PenaltyCommandDividedHitRate();
-            if (_v.TryMagicHit())
+            if (TranceSeekCustomAPI.TryMagicHit(_v))
                 TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
         }
     }

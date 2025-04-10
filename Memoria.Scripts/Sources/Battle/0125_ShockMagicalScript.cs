@@ -47,7 +47,7 @@ namespace Memoria.Scripts.Battle
             {
                 _v.CalcHpDamage();
             }
-            _v.TryAlterMagicStatuses();
+            TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
             if (_v.Command.AbilityId == (BattleAbilityId)1044 || _v.Command.AbilityId == (BattleAbilityId)1056 || _v.Command.HitRate == 255)
             {
                 _v.Target.Flags |= CalcFlag.MpAlteration;

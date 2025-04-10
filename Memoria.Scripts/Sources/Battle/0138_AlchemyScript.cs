@@ -61,7 +61,7 @@ namespace Memoria.Scripts.Battle
                         TranceSeekCustomAPI.RaiseTrouble(_v);
                     }                   
                     _v.Target.PenaltyShellHitRate();
-                    if (_v.TryMagicHit())
+                    if (TranceSeekCustomAPI.TryMagicHit(_v))
                     {
                         TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
                     }
@@ -158,7 +158,7 @@ namespace Memoria.Scripts.Battle
                                 }
                                 if (!_v.Caster.IsPlayer)
                                 {
-                                    _v.TryAlterMagicStatuses();
+                                    TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
                                 }
                             }
                             break;

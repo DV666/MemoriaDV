@@ -23,7 +23,7 @@ namespace Memoria.Scripts.Battle
         {
             TranceSeekCustomAPI.MagicAccuracy(_v);
             _v.Target.PenaltyShellHitRate();
-            if (_v.TryMagicHit())
+            if (TranceSeekCustomAPI.TryMagicHit(_v))
                 BattleItem.AddToInventory(RegularItem.Ore);
         }
     }

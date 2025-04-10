@@ -44,16 +44,16 @@ namespace Memoria.Scripts.Battle
                 else if (_v.Command.HitRate == 111)
                 {
                     _v.Command.AbilityStatus |= BattleStatus.Regen;
-                    _v.TryAlterMagicStatuses();
+                    TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
                 }
                 else if (_v.Command.HitRate == 99)
                 {
                     _v.Command.AbilityStatus |= (TranceSeekCustomAPI.CustomStatus.ArmorUp | TranceSeekCustomAPI.CustomStatus.MentalUp);
-                    _v.TryAlterMagicStatuses();
+                    TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
                 }
                 else
                 {
-                    _v.TryAlterMagicStatuses();
+                    TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
                 }
                 if (_v.Target.Data.dms_geo_id == 416) // Meltigemini
                 {

@@ -63,7 +63,7 @@ namespace Memoria.Scripts.Battle
                     }
                     _v.Command.HitRate = _v.Caster.Will;
                     _v.Command.AbilityStatus = _v.Command.ItemStatus;
-                    _v.TryAlterMagicStatuses();
+                    TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
                     return;
                 }
                 case (RegularItem)2169: // Ultra Bombe G

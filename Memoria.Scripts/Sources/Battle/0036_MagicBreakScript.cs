@@ -49,7 +49,7 @@ namespace Memoria.Scripts.Battle
                 TranceSeekCustomAPI.BonusElement(_v);
                 _v.CalcHpDamage();
                 _v.Command.AbilityStatus |= TranceSeekCustomAPI.CustomStatus.MagicBreak;
-                _v.TryAlterMagicStatuses();
+                TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
             }
         }
 

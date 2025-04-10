@@ -94,7 +94,7 @@ namespace Memoria.Scripts.Battle
                 {
                     _v.CalcCannonProportionDamage();
                 }
-                _v.TryAlterMagicStatuses();
+                TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
 
                 if (!PolaritySPS.TryGetValue(_v.Target.Data, out SPSEffect sps)) // Init
                     PolaritySPS[_v.Target.Data] = null;

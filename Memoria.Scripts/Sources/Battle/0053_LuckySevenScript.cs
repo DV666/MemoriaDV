@@ -95,7 +95,7 @@ namespace Memoria.Scripts.Battle
                             TranceSeekCustomAPI.TryCriticalHit(_v);
                             _v.CalcPhysicalHpDamage();
                             TranceSeekCustomAPI.RaiseTrouble(_v);
-                            _v.TryAlterMagicStatuses();
+                            TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
                         }
                         if (_v.Target.Data.bi.player != 0)
                             UIManager.Battle.RemovePlayerFromAction(_v.Target.Data.btl_id, true);

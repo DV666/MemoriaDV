@@ -34,7 +34,7 @@ namespace Memoria.Scripts.Battle
                 TranceSeekCustomAPI.RaiseTrouble(_v);
             }
             _v.Command.AbilityStatus |= TranceSeekCustomAPI.CustomStatus.PowerBreak;
-            _v.TryAlterMagicStatuses();
+            TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
         }
 
         public Single RateTarget()

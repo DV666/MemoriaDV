@@ -23,7 +23,7 @@ namespace Memoria.Scripts.Battle
             TranceSeekCustomAPI.EnemyTranceBonusAttack(_v);
             _v.Target.PenaltyShellHitRate();
             _v.PenaltyCommandDividedHitRate();
-            if (_v.TryMagicHit())
+            if (TranceSeekCustomAPI.TryMagicHit(_v))
             {
                 _v.Target.Flags |= CalcFlag.HpAlteration;
                 _v.Target.HpDamage = _v.Target.Level * _v.Command.Power;
