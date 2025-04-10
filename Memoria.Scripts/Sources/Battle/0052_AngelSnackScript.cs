@@ -22,6 +22,7 @@ namespace Memoria.Scripts.Battle
         {
             if (_v.Caster.PlayerIndex == CharacterId.Quina)
             {
+                BattleStatus PreviousTargetStatus = _v.Target.CurrentStatus;
                 if (_v.Target.IsUnderAnyStatus(BattleStatus.Poison) & _v.Target.HasSupportAbility(SupportAbility2.Antibody))
                 {
                     _v.Target.RemoveStatus(BattleStatus.Poison);
@@ -62,7 +63,7 @@ namespace Memoria.Scripts.Battle
                 {
                     _v.Target.RemoveStatus(BattleStatus.Confuse);
                 }
-                if (_v.Target.IsUnderAnyStatus(BattleStatus.Berserk) & _v.Target.HasSupportAbilityByIndex((SupportAbility)107))
+                if (_v.Target.IsUnderAnyStatus(BattleStatus.Berserk) & _v.Target.HasSupportAbilityByIndex((SupportAbility)107)) // Inner Peace
                 {
                     _v.Target.RemoveStatus(BattleStatus.Berserk);
                 }
@@ -73,6 +74,30 @@ namespace Memoria.Scripts.Battle
                 if (_v.Target.IsUnderAnyStatus(BattleStatus.Slow) & _v.Target.HasSupportAbility(SupportAbility2.Locomotion))
                 {
                     _v.Target.RemoveStatus(BattleStatus.Slow);
+                }
+                if (_v.Target.IsUnderAnyStatus(BattleStatus.Berserk) & _v.Target.HasSupportAbilityByIndex((SupportAbility)111)) // Pasteurized
+                {
+                    _v.Target.RemoveStatus(BattleStatus.Virus);
+                }
+                if (_v.Target.IsUnderAnyStatus(BattleStatus.Berserk) & _v.Target.HasSupportAbilityByIndex((SupportAbility)112)) // United
+                {
+                    _v.Target.RemoveStatus(BattleStatus.Trouble);
+                }
+                if (_v.Target.IsUnderAnyStatus(BattleStatus.Berserk) & _v.Target.HasSupportAbilityByIndex((SupportAbility)113)) // Abundance
+                {
+                    _v.Target.RemoveStatus(BattleStatus.Mini);
+                }
+                if (_v.Target.IsUnderAnyStatus(BattleStatus.Berserk) & _v.Target.HasSupportAbilityByIndex((SupportAbility)114)) // Purity
+                {
+                    _v.Target.RemoveStatus(BattleStatus.Zombie);
+                }
+                if (_v.Target.IsUnderAnyStatus(BattleStatus.Berserk) & _v.Target.HasSupportAbility(SupportAbility1.AutoRegen)) // Resilience
+                {
+                    _v.Target.RemoveStatus(BattleStatus.Doom);
+                }
+                if (PreviousTargetStatus == _v.Target.CurrentStatus)
+                {
+                    _v.Context.Flags |= BattleCalcFlags.Miss;
                 }
             }
         }

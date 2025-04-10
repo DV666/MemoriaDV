@@ -5,6 +5,7 @@ using Memoria.Database;
 using Memoria.Prime;
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 using static Memoria.Scripts.Battle.TranceSeekCustomAPI;
 
 namespace Memoria.Scripts.Battle
@@ -18,8 +19,8 @@ namespace Memoria.Scripts.Battle
                 v.Target.CurrentHp = 10000;
             }
 
-            if (FF9StateSystem.Battle.battleMapIndex == 52 && FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum == 0 && FF9StateSystem.EventState.gEventGlobal[1305] > 0 && v.Caster.IsPlayer && v.Command.Id == BattleCommandId.Attack && v.Caster.Data != v.Target.Data) // Black Waltz 3 Broken (Polarity Mechanic)
-            {
+            if (FF9StateSystem.Battle.battleMapIndex == 52 && FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum == 0 && FF9StateSystem.EventState.gEventGlobal[1305] > 0 && v.Caster.IsPlayer && v.Command.Id == BattleCommandId.Attack && v.Caster.Data != v.Target.Data)
+            { // Black Waltz 3 Broken (Polarity Mechanic)
                 if (!TranceSeekSpecial.PolaritySPS.TryGetValue(v.Target.Data, out SPSEffect spsc))
                     TranceSeekSpecial.PolaritySPS[v.Caster.Data] = null;
 
@@ -449,6 +450,17 @@ namespace Memoria.Scripts.Battle
             }
 
             TranceSeekCustomAPI.SOS_SA(v);
+
+            if ((v.Target.ResistStatus & v.Command.AbilityStatus) != 0) // SPS immune status.
+            {
+                SPSEffect sps = HonoluluBattleMain.battleSPS.AddSequenceSPS(13, -1, 1);
+                if (sps == null)
+                    return false;
+                btl2d.GetIconPosition(v.Target, btl2d.ICON_POS_HEAD, out Transform attachTransf, out Vector3 iconOff);
+                sps.charTran = v.Target.Data.gameObject.transform;
+                sps.boneTran = attachTransf;
+                sps.posOffset = Vector3.zero;
+            }
             return false;
         }
     }
