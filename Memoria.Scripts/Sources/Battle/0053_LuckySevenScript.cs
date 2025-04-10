@@ -69,7 +69,7 @@ namespace Memoria.Scripts.Battle
                           { "GR", $"{extortitem} wurde zerstört!" },
                           { "IT", $"{extortitem} è stato distrutto!" },
                         };
-                        BattleMessagesExtort.TryGetValue(Localization.GetSymbol(), out string CustomMessage);
+                        BattleMessagesExtort.TryGetValue(Localization.CurrentSymbol, out string CustomMessage);
                         UIManager.Battle.SetBattleFollowMessage(4, CustomMessage);
                         return;
                     }

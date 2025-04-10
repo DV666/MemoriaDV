@@ -162,7 +162,7 @@ namespace Memoria.Scripts.Battle
                     {
                         if (_v.Target.CurrentHp <= _v.Target.MaximumHp / 4U)
                         {
-                            if ((EmbadedTextResources.CurrentSymbol ?? Localization.GetSymbol()) == "FR")
+                            if (Localization.CurrentSymbol == "FR")
                             {
                                 UIManager.Battle.SetBattleMessage("Miam ! Encore quelques coups de fourchettes...", 3);
                             }
@@ -179,7 +179,7 @@ namespace Memoria.Scripts.Battle
                             }
                             else
                             {
-                                if ((EmbadedTextResources.CurrentSymbol ?? Localization.GetSymbol()) == "FR")
+                                if (Localization.CurrentSymbol == "FR")
                                 {
                                     UIManager.Battle.SetBattleMessage("Plus de la moitié du travail a été fait... Miam !", 3);
                                 }
@@ -196,7 +196,7 @@ namespace Memoria.Scripts.Battle
                         {
                             if (_v.Target.CurrentHp <= _v.Target.MaximumHp / 4U)
                             {
-                                if ((EmbadedTextResources.CurrentSymbol ?? Localization.GetSymbol()) == "FR")
+                                if (Localization.CurrentSymbol == "FR")
                                 {
                                     UIManager.Battle.SetBattleMessage("Miam ! Encore quelques coups de fourchettes...", 3);
                                 }
@@ -209,7 +209,7 @@ namespace Memoria.Scripts.Battle
                             {
                                 if (_v.Target.CurrentHp <= _v.Target.MaximumHp / 2U)
                                 {
-                                    if ((EmbadedTextResources.CurrentSymbol ?? Localization.GetSymbol()) == "FR")
+                                    if (Localization.CurrentSymbol == "FR")
                                     {
                                         UIManager.Battle.SetBattleMessage("Plus de la moitié du travail a été fait... Miam !", 3);
                                     }

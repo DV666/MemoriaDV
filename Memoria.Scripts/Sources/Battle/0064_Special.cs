@@ -180,7 +180,7 @@ namespace Memoria.Scripts.Battle
                 {
                     _v.Caster.WeakElement = EffectElement.Wind | EffectElement.Wind | EffectElement.Cold;
                     _v.Caster.AbsorbElement = EffectElement.Holy | EffectElement.Fire;
-                    if ((EmbadedTextResources.CurrentSymbol ?? Localization.GetSymbol()) == "FR")
+                    if (Localization.CurrentSymbol == "FR")
                     {
                         UIManager.Battle.SetBattleMessage("[STRT=270,1]Les ailes Miskoxy brillent d'une couleur [FF0000][HSHD]rouge[FFFFFF][HSHD].", 3);
                     }
@@ -194,7 +194,7 @@ namespace Memoria.Scripts.Battle
                 {
                     _v.Caster.WeakElement = EffectElement.Wind | EffectElement.Wind | EffectElement.Fire;
                     _v.Caster.AbsorbElement = EffectElement.Holy | EffectElement.Cold;
-                    if ((EmbadedTextResources.CurrentSymbol ?? Localization.GetSymbol()) == "FR")
+                    if (Localization.CurrentSymbol == "FR")
                     {
                         UIManager.Battle.SetBattleMessage("[STRT=265,1]Les ailes Miskoxy brillent d'une couleur [00d5fe][HSHD]cyan[FFFFFF][HSHD].", 3);
                     }
@@ -208,7 +208,7 @@ namespace Memoria.Scripts.Battle
                 {
                     _v.Caster.WeakElement = EffectElement.Wind | EffectElement.Wind | EffectElement.Aqua;
                     _v.Caster.AbsorbElement = EffectElement.Holy | EffectElement.Thunder;
-                    if ((EmbadedTextResources.CurrentSymbol ?? Localization.GetSymbol()) == "FR")
+                    if (Localization.CurrentSymbol == "FR")
                     {
                         UIManager.Battle.SetBattleMessage("[STRT=269,1]Les ailes Miskoxy brillent d'une couleur [fdff36][HSHD]jaune[FFFFFF][HSHD].", 3);
                     }
@@ -222,7 +222,7 @@ namespace Memoria.Scripts.Battle
                 {
                     _v.Caster.WeakElement = EffectElement.Wind | EffectElement.Wind | EffectElement.Thunder;
                     _v.Caster.AbsorbElement = EffectElement.Holy | EffectElement.Aqua;
-                    if ((EmbadedTextResources.CurrentSymbol ?? Localization.GetSymbol()) == "FR")
+                    if (Localization.CurrentSymbol == "FR")
                     {
                         UIManager.Battle.SetBattleMessage("[STRT=268,1]Les ailes Miskoxy brillent d'une couleur [000fe0][HSHD]bleue[FFFFFF][HSHD].", 3);
                     }
@@ -236,7 +236,7 @@ namespace Memoria.Scripts.Battle
                 {
                     _v.Caster.WeakElement = EffectElement.Wind | EffectElement.Wind;
                     _v.Caster.AbsorbElement = EffectElement.Holy;
-                    if ((EmbadedTextResources.CurrentSymbol ?? Localization.GetSymbol()) == "FR")
+                    if (Localization.CurrentSymbol == "FR")
                     {
                         UIManager.Battle.SetBattleMessage("[STRT=288,1]Les ailes Miskoxy sont totalement transparentes.", 3);
                     }

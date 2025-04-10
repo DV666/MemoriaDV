@@ -36,7 +36,7 @@ namespace Memoria.Scripts.Battle
                     MonsterMechanic[v.Caster.Data][6] = 1; // Don't miss the attack.
                     btl_stat.RemoveStatus(v.Target, BattleStatusId.Haste);
                     FF9StateSystem.EventState.gEventGlobal[1305] = 0;
-                    if ((EmbadedTextResources.CurrentSymbol ?? Localization.GetSymbol()) == "FR")
+                    if (Localization.CurrentSymbol == "FR")
                     {
                         UIManager.Battle.SetBattleMessage("La barrière électrique disparaît.", 3);
                     }
@@ -450,17 +450,6 @@ namespace Memoria.Scripts.Battle
             }
 
             TranceSeekCustomAPI.SOS_SA(v);
-
-            if ((v.Target.ResistStatus & v.Command.AbilityStatus) != 0) // SPS immune status.
-            {
-                SPSEffect sps = HonoluluBattleMain.battleSPS.AddSequenceSPS(13, -1, 1);
-                if (sps == null)
-                    return false;
-                btl2d.GetIconPosition(v.Target, btl2d.ICON_POS_HEAD, out Transform attachTransf, out Vector3 iconOff);
-                sps.charTran = v.Target.Data.gameObject.transform;
-                sps.boneTran = attachTransf;
-                sps.posOffset = Vector3.zero;
-            }
             return false;
         }
     }

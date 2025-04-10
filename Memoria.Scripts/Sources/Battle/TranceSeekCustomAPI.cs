@@ -379,7 +379,7 @@ namespace Memoria.Scripts.Battle
                         { "IT", "↑ Reflex ↑" },
                     };
                     btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[FFFF00]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 20);
-                }    
+                }
                 return true;
             }
             if (v.Target.PlayerIndex == CharacterId.Zidane)
@@ -1058,6 +1058,23 @@ namespace Memoria.Scripts.Battle
                     else
                         inflicter.Trance = Byte.MaxValue;
                 }
+            }
+        }
+
+        public static void SPS_GuardStatus(this BattleCalculator v)
+        {
+            if (((v.Target.ResistStatus & v.Command.AbilityStatus) != 0 || (v.Target.ResistStatus & v.Caster.WeaponStatus) != 0 && v.Caster.HasSupportAbility(SupportAbility1.AddStatus) && v.Command.Id == BattleCommandId.Attack) && !v.Target.IsPlayer) // SPS immune status.
+            {
+                SPSEffect sps = HonoluluBattleMain.battleSPS.AddSequenceSPS(13, -1, 1);
+                if (sps == null)
+                    return;
+                btl2d.GetIconPosition(v.Target, btl2d.ICON_POS_DEFAULT, out Transform attachTransf, out Vector3 iconOff);
+                sps.charTran = v.Target.Data.gameObject.transform;
+                sps.boneTran = attachTransf;
+                sps.posOffset = Vector3.zero;
+                //sps.scale *= 1;
+                SoundLib.PlaySoundEffect(1314); // se000046, se060146, se070003
+                // [TODO] se050010 => Bruit quand la target défend ?
             }
         }
 

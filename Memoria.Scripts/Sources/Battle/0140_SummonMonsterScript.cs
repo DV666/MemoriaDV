@@ -52,7 +52,7 @@ namespace Memoria.Scripts.Battle
                     if (CaptureRate > Comn.random16() % 100)
                     {
                         ff9abil.FF9Abil_SetMaster(_v.Caster.Player, AbilityId);
-                        if ((EmbadedTextResources.CurrentSymbol ?? Localization.GetSymbol()) == "FR")
+                        if (Localization.CurrentSymbol == "FR")
                         {
                             UIManager.Battle.SetBattleMessage("Coubo ! Bienvenue dans l'équipe !", 3);
                         }
