@@ -33,7 +33,7 @@ Wait: Time=16
 EffectPoint: Char=Everyone ; Type=Figure
 Wait: Time=1
 SetBackgroundIntensity: Intensity=1 ; Time=16
-ShowMesh: ShowMesh: Char=MatchingCondition(!IsTargeted && IsTargetable) ; Enable=True ; IsDisappear=True
+ShowMesh: Char=MatchingCondition(!IsTargeted && IsTargetable) ; Enable=True ; IsDisappear=True
 ShowMesh: Char=MatchingCondition(!IsTargeted && IsTargetable) ; Enable=True ; Time=4
 Wait: Time=16
 StartThread: Condition=SFXUseCamera && !AreTargetsPlayers
