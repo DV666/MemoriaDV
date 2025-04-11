@@ -35,7 +35,7 @@ namespace Memoria.Scripts.Battle
             }
             else
             {
-                if (_v.Target.CheckUnsafetyOrGuard())
+                if (TranceSeekCustomAPI.CheckUnsafetyOrGuard(_v))
                 {
                     TranceSeekCustomAPI.MagicAccuracy(_v);
                     _v.Context.HitRate += (Int16)(ff9item.FF9Item_GetCount(RegularItem.Ore) >> 1);

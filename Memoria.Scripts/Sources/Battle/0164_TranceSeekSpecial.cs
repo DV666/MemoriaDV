@@ -112,7 +112,7 @@ namespace Memoria.Scripts.Battle
             }
             else if (_v.Command.Power == 25 && _v.Command.HitRate == 222 && (_v.Caster.Data.dms_geo_id == 278 || _v.Caster.Data.dms_geo_id == 593)) // Polarized staff (-) with SPS effect (Black Waltz 3)
             {
-                if (_v.Target.CheckUnsafetyOrGuard() && _v.Target.CanBeAttacked())
+                if (TranceSeekCustomAPI.CheckUnsafetyOrGuard(_v) && _v.Target.CanBeAttacked())
                 {
                     _v.Context.Flags |= BattleCalcFlags.DirectHP;
                     if (_v.Target.CurrentHp < 10U)

@@ -55,7 +55,7 @@ namespace Memoria.Scripts.Battle
                 }
                 return;
             }
-            if (_v.Target.CheckUnsafetyOrGuard())
+            if (TranceSeekCustomAPI.CheckUnsafetyOrGuard(_v))
             {
                 if (_v.Target.IsZombie)
                 {

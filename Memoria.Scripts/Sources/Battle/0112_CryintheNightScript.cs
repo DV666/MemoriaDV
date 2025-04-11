@@ -17,7 +17,7 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            if (_v.Target.IsUnderAnyStatus(_v.Command.AbilityStatus) && _v.Target.CheckUnsafetyOrGuard())
+            if (_v.Target.IsUnderAnyStatus(_v.Command.AbilityStatus) && TranceSeekCustomAPI.CheckUnsafetyOrGuard(_v))
             {
                 _v.Target.TryAlterStatuses(BattleStatus.Death, false, _v.Target);
                 return;

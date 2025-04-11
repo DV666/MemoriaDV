@@ -404,15 +404,15 @@ namespace Memoria.Scripts.Battle
 
             if (v.Context.HitRate <= Comn.random16() % 100)
             {
-                SPS_GuardStatus(v);
                 v.Context.Flags |= BattleCalcFlags.Miss;
+                SPS_GuardStatus(v);
                 return false;
             }
 
             if (v.Context.Evade > Comn.random16() % 100)
             {
-                SPS_GuardStatus(v);
                 v.Context.Flags |= BattleCalcFlags.Miss;
+                SPS_GuardStatus(v);
                 return false;
             }
 
@@ -448,9 +448,10 @@ namespace Memoria.Scripts.Battle
             foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(v.Target))
                 saFeature.TriggerOnAbility(v, "HitRateSetup", true);
 
-            SPS_GuardStatus(v);
             if (v.Command.HitRate > Comn.random16() % 100)
                 v.Target.TryAlterStatuses(v.Command.AbilityStatus, false, v.Caster);
+
+            SPS_GuardStatus(v);
         }
 
         public static void TargetPhysicalPenaltyAndBonusAttack(this BattleCalculator v)
@@ -466,7 +467,10 @@ namespace Memoria.Scripts.Battle
             }
 
             if (v.Target.IsUnderAnyStatus(BattleStatus.Defend))
+            {
                 v.Context.Attack >>= 1;
+                SoundLib.PlaySoundEffect(356); //se050010
+            }
 
             if (v.Target.PlayerIndex == CharacterId.Steiner && v.Target.IsUnderAnyStatus(BattleStatus.Trance)) // Steiner Trance => 25% reduce physical damage
             {
@@ -1034,8 +1038,8 @@ namespace Memoria.Scripts.Battle
 
         public static void TryAlterCommandStatuses(this BattleCalculator v, Boolean ChangeContext = true)
         {
-            SPS_GuardStatus(v);
             v.Target.TryAlterStatuses(v.Command.AbilityStatus, ChangeContext, v.Caster);
+            SPS_GuardStatus(v);
         }
 
         public static void TryRemoveAbilityStatuses(this BattleCalculator v)
@@ -1074,6 +1078,17 @@ namespace Memoria.Scripts.Battle
                 v.Context.Flags |= BattleCalcFlags.Miss;
         }
 
+        public static Boolean CheckUnsafetyOrGuard(this BattleCalculator v)
+        {
+            if (!v.Target.IsUnderAnyStatus(BattleStatus.EasyKill))
+                return true;
+
+            v.Context.Flags |= BattleCalcFlags.Guard;
+            TriggerSPSResistStatus[v.Target] = true;
+            SPS_GuardStatus(v);
+            return false;
+        }
+
         public static void RaiseTrouble(this BattleCalculator v)
         {
             if (v.Target.PhysicalDefence != 255 || v.Target.PhysicalDefence != 255 || v.Target.MagicDefence != 255 || v.Target.MagicEvade != 255 && !v.Command.IsManyTarget)
@@ -1102,6 +1117,9 @@ namespace Memoria.Scripts.Battle
 
         public static void SPS_GuardStatus(this BattleCalculator v)
         {
+            if (ZidanePassive[v.Caster.Data][4] == 2 && v.Caster.PlayerIndex == CharacterId.Zidane) // Don't trigger on second hit dagger from Zidane
+                return;
+
             if ((((v.Target.ResistStatus & v.Command.AbilityStatus) != 0 || (v.Target.ResistStatus & v.Caster.WeaponStatus) != 0 && v.Caster.HasSupportAbility(SupportAbility1.AddStatus) && v.Command.Id == BattleCommandId.Attack) && !v.Target.IsPlayer) || TriggerSPSResistStatus[v.Target]) // SPS immune status.
             {
                 SPSEffect sps = HonoluluBattleMain.battleSPS.AddSequenceSPS(13, -1, 1);
@@ -1114,7 +1132,21 @@ namespace Memoria.Scripts.Battle
                 sps.posOffset = Vector3.zero;
                 //sps.scale *= 1;
                 SoundLib.PlaySoundEffect(1314); // se000046, se060146, se070003
-                // [TODO] se050010 => Bruit quand la target défend ?
+                if (v.Target.HpDamage == 0 && v.Target.MpDamage == 0)
+                {
+                    v.Context.Flags = 0;
+                    Dictionary<String, String> localizedMessage = new Dictionary<String, String>
+                {
+                    { "US", "Immune!" },
+                    { "UK", "Immune!" },
+                    { "JP", "免疫だ！" },
+                    { "ES", "¡Inmune!" },
+                    { "FR", "Immunisé !" },
+                    { "GR", "Immun!" },
+                    { "IT", "Immune!" },
+                };
+                    btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[FF00FF]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 10);
+                }
             }
         }
 

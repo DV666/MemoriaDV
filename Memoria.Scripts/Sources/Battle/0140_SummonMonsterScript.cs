@@ -404,7 +404,7 @@ namespace Memoria.Scripts.Battle
                         _v.PenaltyCommandDividedHitRate();
                         if (_v.Command.AbilityId == (BattleAbilityId)1175) // Ahriman - Blaster
                         {
-                            if (_v.Target.CheckUnsafetyOrGuard())
+                            if (TranceSeekCustomAPI.CheckUnsafetyOrGuard(_v))
                             {
                                 if (TranceSeekCustomAPI.TryMagicHit(_v))
                                 {
@@ -441,7 +441,7 @@ namespace Memoria.Scripts.Battle
                     case (BattleAbilityId)1299: // Mimic - Death
                     case (BattleAbilityId)1306: // Drakan - Death
                     {
-                        if (_v.Target.CheckUnsafetyOrGuard())
+                        if (TranceSeekCustomAPI.CheckUnsafetyOrGuard(_v))
                         {
                             if (_v.Target.IsZombie)
                             {
@@ -727,7 +727,7 @@ namespace Memoria.Scripts.Battle
                     case (BattleAbilityId)1263: // Hecteyes - Roulette
                     case (BattleAbilityId)1377: // Zombie - Roulette
                     {
-                        if (_v.Target.CheckUnsafetyOrGuard() && _v.Target.CanBeAttacked())
+                        if (TranceSeekCustomAPI.CheckUnsafetyOrGuard(_v) && _v.Target.CanBeAttacked())
                             _v.TryDirectHPDamage();
                         break;
                     }
@@ -1082,7 +1082,7 @@ namespace Memoria.Scripts.Battle
                     case (BattleAbilityId)1181: // Amduscias
                     case (BattleAbilityId)1293: // Torama - Blaster
                     {
-                        if (_v.Target.CheckUnsafetyOrGuard() && _v.Target.CanBeAttacked())
+                        if (TranceSeekCustomAPI.CheckUnsafetyOrGuard(_v) && _v.Target.CanBeAttacked())
                         {
                             TranceSeekCustomAPI.MagicAccuracy(_v);
                             _v.Target.PenaltyShellHitRate();

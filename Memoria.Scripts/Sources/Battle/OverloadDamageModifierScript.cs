@@ -194,7 +194,7 @@ namespace Memoria.Scripts.Battle
                 uint factor = (uint)(v.Caster.HasSupportAbilityByIndex((SupportAbility)1127) ? 20 : 10);
                 v.Target.MaximumHp += Math.Min((v.Target.MaximumHp * factor) / 100, (uint)(v.Target.HpDamage - (v.Target.MaximumHp - v.Target.CurrentHp)));
                 v.Target.CurrentHp = v.Target.MaximumHp;
-            }           
+            }
         }
     }
 }

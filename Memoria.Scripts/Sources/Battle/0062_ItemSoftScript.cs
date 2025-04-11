@@ -23,7 +23,7 @@ namespace Memoria.Scripts.Battle
             BTL_DATA data = _v.Target.Data;
             if (data.dms_geo_id == 221 || data.dms_geo_id == 83)
             {
-                if (_v.Target.CheckUnsafetyOrGuard())
+                if (TranceSeekCustomAPI.CheckUnsafetyOrGuard(_v))
                 {
                     _v.Target.Flags |= CalcFlag.HpAlteration;
                     _v.Target.HpDamage = (int)(_v.Target.MaximumHp / 2U);
