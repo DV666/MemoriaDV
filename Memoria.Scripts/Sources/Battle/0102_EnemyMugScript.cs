@@ -51,6 +51,7 @@ namespace Memoria.Scripts.Battle
             {
                 RemoveItem();
             }
+            TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
         }
 
         private void RemoveItem()

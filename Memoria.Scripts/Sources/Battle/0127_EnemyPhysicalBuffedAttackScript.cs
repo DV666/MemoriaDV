@@ -37,7 +37,6 @@ namespace Memoria.Scripts.Battle
                 {
                     TranceSeekCustomAPI.TryCriticalHit(_v);
                     _v.CalcPhysicalHpDamage();
-                    TranceSeekCustomAPI.InfusedWeaponStatus(_v);
                     TranceSeekCustomAPI.RaiseTrouble(_v);
                     if (_v.Command.HitRate == 222) // Motivation Gauche
                     {
@@ -51,6 +50,7 @@ namespace Memoria.Scripts.Battle
                     }
                     else
                     {
+                        TranceSeekCustomAPI.InfusedWeaponStatus(_v);
                         TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
 
                     }

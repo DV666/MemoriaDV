@@ -745,11 +745,12 @@ namespace Memoria.Scripts.Battle
                     saFeature.TriggerOnAbility(v, "HitRateSetup", true);
 
                 if (v.Caster.IsPlayer)
+                {
                     if (v.Caster.WeaponRate > Comn.random16() % 100)
                         v.Command.AbilityStatus |= WeaponNewStatus[v.Caster.Data];
+                }
                 else
-                    if (v.Command.HitRate > Comn.random16() % 100)
-                        v.Command.AbilityStatus |= WeaponNewStatus[v.Caster.Data];
+                    v.Command.AbilityStatus |= WeaponNewStatus[v.Caster.Data];
 
                 if ((v.Target.ResistStatus & WeaponNewStatus[v.Caster.Data]) != 0 && !v.Target.IsPlayer)
                     TriggerSPSResistStatus[v.Target] = true;

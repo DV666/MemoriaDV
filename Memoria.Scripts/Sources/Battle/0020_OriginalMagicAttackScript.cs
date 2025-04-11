@@ -178,6 +178,7 @@ namespace Memoria.Scripts.Battle
                 }
                 _v.CalcHpDamage();
             }
+            TranceSeekCustomAPI.InfusedWeaponStatus(_v);
             TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
         }
     }

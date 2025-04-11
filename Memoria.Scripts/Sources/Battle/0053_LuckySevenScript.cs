@@ -27,6 +27,7 @@ namespace Memoria.Scripts.Battle
             {
                 if (_v.Command.AbilityId == (BattleAbilityId)1004) // Echauffement
                 {
+                    _v.Target.AlterStatus(TranceSeekCustomAPI.CustomStatus.PowerUp, _v.Caster);
                     _v.Target.AlterStatus(TranceSeekCustomAPI.CustomStatus.PerfectDodge, _v.Caster);
                     return;
                 }
