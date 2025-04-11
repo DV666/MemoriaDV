@@ -36,7 +36,7 @@ namespace Memoria.Scripts.Battle
                     MonsterMechanic[v.Caster.Data][6] = 1; // Don't miss the attack.
                     btl_stat.RemoveStatus(v.Target, BattleStatusId.Haste);
                     FF9StateSystem.EventState.gEventGlobal[1305] = 0;
-                    if (Localization.CurrentSymbol == "FR")
+                    if (EmbadedTextResources.CurrentSymbol == "FR")
                     {
                         UIManager.Battle.SetBattleMessage("La barrière électrique disparaît.", 3);
                     }
