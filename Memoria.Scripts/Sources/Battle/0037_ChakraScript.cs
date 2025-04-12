@@ -59,8 +59,8 @@ namespace Memoria.Scripts.Battle
                 }
                 else // Ogre - Zenitude
                 {
+                    btl_stat.AlterStatus(_v.Target, TranceSeekCustomAPI.CustomStatusId.PerfectCrit, parameters: $"+9");
                     TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
-                    _v.Target.Will = 99;
                 }
             }
             else if (_v.Caster.Data.dms_geo_id == 401) // Friendly Feather Circle - Angel Whisper + End

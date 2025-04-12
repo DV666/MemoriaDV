@@ -178,12 +178,12 @@ namespace Memoria.Scripts.Battle
                 ZidanePassive[v.Caster.Data][1] = 40;
             Int32 quarterWill = (v.Caster.Data.elem.wpr + ZidanePassive[v.Caster.Data][1]) >> 2;
             BonusCriticalFromWeapon(v.Caster.Weapon, out Int32 BonusWeaponCritical);
-            if (quarterWill != 0 && ((Comn.random16() % quarterWill) + v.Caster.Data.critical_rate_deal_bonus + v.Target.Data.critical_rate_receive_resistance + BonusWeaponCritical > Comn.random16() % 100) || v.Target.IsUnderAnyStatus(CustomStatus.PerfectCrit) || SpecialSAEffect[v.Target.Data][9] > 0)
+            if (quarterWill != 0 && ((Comn.random16() % quarterWill) + v.Caster.Data.critical_rate_deal_bonus + v.Target.Data.critical_rate_receive_resistance + BonusWeaponCritical > Comn.random16() % 100) || v.Caster.IsUnderAnyStatus(CustomStatus.PerfectCrit) || SpecialSAEffect[v.Target.Data][9] > 0)
             {
                 if (SpecialSAEffect[v.Target.Data][9] > 0)
                     SpecialSAEffect[v.Target.Data][9]--;
-                if (v.Target.IsUnderAnyStatus(CustomStatus.PerfectCrit)) // Perfect Crit
-                    btl_stat.AlterStatus(v.Target, CustomStatusId.PerfectCrit, parameters: "-1");
+                if (v.Caster.IsUnderAnyStatus(CustomStatus.PerfectCrit)) // Perfect Crit
+                    btl_stat.AlterStatus(v.Caster, CustomStatusId.PerfectCrit, parameters: "-1");
                 else
                     ZidanePassive[v.Caster.Data][1] = 0;
                 v.Context.Attack *= 2;
@@ -1117,7 +1117,7 @@ namespace Memoria.Scripts.Battle
 
         public static void SPS_GuardStatus(this BattleCalculator v)
         {
-            if (ZidanePassive[v.Caster.Data][4] == 2 && v.Caster.PlayerIndex == CharacterId.Zidane || (v.Context.Flags & BattleCalcFlags.Miss) != 0) // Don't trigger on second hit dagger from Zidane
+            if (ZidanePassive[v.Caster.Data][4] == 2 && v.Caster.PlayerIndex == CharacterId.Zidane || (v.Context.Flags & BattleCalcFlags.Miss) != 0) // Don't trigger on miss and second hit dagger from Zidane
                 return;
 
             if ((((v.Target.ResistStatus & v.Command.AbilityStatus) != 0 || (v.Target.ResistStatus & v.Caster.WeaponStatus) != 0 && v.Caster.HasSupportAbility(SupportAbility1.AddStatus) && v.Command.Id == BattleCommandId.Attack) && !v.Target.IsPlayer) || TriggerSPSResistStatus[v.Target]) // SPS immune status.
