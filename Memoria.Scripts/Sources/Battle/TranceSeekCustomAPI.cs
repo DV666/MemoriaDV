@@ -1132,19 +1132,19 @@ namespace Memoria.Scripts.Battle
                 sps.posOffset = Vector3.zero;
                 //sps.scale *= 1;
                 SoundLib.PlaySoundEffect(1314); // se000046, se060146, se070003
-                if (v.Target.HpDamage == 0 && v.Target.MpDamage == 0)
+                if (v.Target.HpDamage == 0 && v.Target.MpDamage == 0 && (v.Command.AbilityStatus - (v.Target.ResistStatus & v.Command.AbilityStatus)) == 0)
                 {
                     v.Context.Flags = 0;
                     Dictionary<String, String> localizedMessage = new Dictionary<String, String>
-                {
-                    { "US", "Immune!" },
-                    { "UK", "Immune!" },
-                    { "JP", "免疫！" },
-                    { "ES", "¡Inmune!" },
-                    { "FR", "Immunisé !" },
-                    { "GR", "Immun!" },
-                    { "IT", "Immunità!" },
-                };
+                    {
+                        { "US", "Immune!" },
+                        { "UK", "Immune!" },
+                        { "JP", "免疫！" },
+                        { "ES", "¡Inmune!" },
+                        { "FR", "Immunisé !" },
+                        { "GR", "Immun!" },
+                        { "IT", "Immunità!" },
+                    };
                     btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[FF00FF]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 10);
                 }
             }
