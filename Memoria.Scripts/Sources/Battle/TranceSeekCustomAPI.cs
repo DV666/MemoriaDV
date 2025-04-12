@@ -1117,7 +1117,7 @@ namespace Memoria.Scripts.Battle
 
         public static void SPS_GuardStatus(this BattleCalculator v)
         {
-            if (ZidanePassive[v.Caster.Data][4] == 2 && v.Caster.PlayerIndex == CharacterId.Zidane) // Don't trigger on second hit dagger from Zidane
+            if (ZidanePassive[v.Caster.Data][4] == 2 && v.Caster.PlayerIndex == CharacterId.Zidane || (v.Context.Flags & BattleCalcFlags.Miss) != 0) // Don't trigger on second hit dagger from Zidane
                 return;
 
             if ((((v.Target.ResistStatus & v.Command.AbilityStatus) != 0 || (v.Target.ResistStatus & v.Caster.WeaponStatus) != 0 && v.Caster.HasSupportAbility(SupportAbility1.AddStatus) && v.Command.Id == BattleCommandId.Attack) && !v.Target.IsPlayer) || TriggerSPSResistStatus[v.Target]) // SPS immune status.

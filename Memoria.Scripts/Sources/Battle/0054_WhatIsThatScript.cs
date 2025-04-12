@@ -2,6 +2,7 @@ using Assets.Sources.Scripts.UI.Common;
 using System;
 using Memoria.Data;
 using Memoria.Assets;
+using System.Text;
 
 namespace Memoria.Scripts.Battle
 {
@@ -202,19 +203,19 @@ namespace Memoria.Scripts.Battle
                             }
                             else if (num == 0)
                             {
-                                text += (EmbadedTextResources.CurrentSymbol == "FR") ? "Raté" : "Miss";
+                                text += Localization.Get("Miss");
                             }
                             else if (num == 1)
                             {
-                                text2 += (EmbadedTextResources.CurrentSymbol == "FR") ? "Raté" : "Miss";
+                                text2 += Localization.Get("Miss");
                             }
                             else if (num == 2)
                             {
-                                text3 += (EmbadedTextResources.CurrentSymbol == "FR") ? "Raté" : "Miss";
+                                text3 += Localization.Get("Miss");
                             }
                             else if (num == 3)
                             {
-                                text4 += (EmbadedTextResources.CurrentSymbol == "FR") ? "Raté" : "Miss";
+                                text4 += Localization.Get("Miss");
                             }
                             num += 1;
                         }
@@ -222,19 +223,19 @@ namespace Memoria.Scripts.Battle
                         {
                             if (num == 0)
                             {
-                                text += (EmbadedTextResources.CurrentSymbol == "FR") ? "Rien" : "None";
+                                text += Localization.Get("Miss");
                             }
                             else if (num == 1)
                             {
-                                text2 += (EmbadedTextResources.CurrentSymbol == "FR") ? "Rien" : "None";
+                                text2 += Localization.Get("Miss");
                             }
                             else if (num == 2)
                             {
-                                text3 += (EmbadedTextResources.CurrentSymbol == "FR") ? "Rien" : "None";
+                                text3 += Localization.Get("Miss");
                             }
                             else if (num == 3)
                             {
-                                text4 += (EmbadedTextResources.CurrentSymbol == "FR") ? "Rien" : "None";
+                                text4 += Localization.Get("Miss");
                             }
                             num += 1;
                         }

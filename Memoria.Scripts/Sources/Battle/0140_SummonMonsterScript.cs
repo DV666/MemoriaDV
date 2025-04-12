@@ -52,14 +52,7 @@ namespace Memoria.Scripts.Battle
                     if (CaptureRate > Comn.random16() % 100)
                     {
                         ff9abil.FF9Abil_SetMaster(_v.Caster.Player, AbilityId);
-                        if (EmbadedTextResources.CurrentSymbol == "FR")
-                        {
-                            UIManager.Battle.SetBattleTitle(null, "Coubo ! Bienvenue dans l'équipe !", 3);
-                        }
-                        else
-                        {
-                            UIManager.Battle.SetBattleTitle(null, "Another friend in the team, kupo !", 3);
-                        }
+                        UIManager.Battle.SetBattleFollowMessage(3, Localization.GetWithDefault("KutrolSucess"));
                         _v.Target.Kill(_v.Caster);
                     }
                     else

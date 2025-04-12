@@ -261,7 +261,7 @@ namespace Memoria.Scripts.Battle
                 }
                 else
                 {
-                    if (Configuration.TetraMaster.TripleTriad >= 16388)
+                    if (Configuration.TetraMaster.TripleTriad >= 16388 && Configuration.TetraMaster.TripleTriad != 16390)
                     {
                         unit.MagicDefence = 254;
                         unit.PhysicalDefence = 254;

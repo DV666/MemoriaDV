@@ -180,70 +180,35 @@ namespace Memoria.Scripts.Battle
                 {
                     _v.Caster.WeakElement = EffectElement.Wind | EffectElement.Wind | EffectElement.Cold;
                     _v.Caster.AbsorbElement = EffectElement.Holy | EffectElement.Fire;
-                    if (EmbadedTextResources.CurrentSymbol == "FR")
-                    {
-                        UIManager.Battle.SetBattleTitle(null, "[STRT=270,1]Les ailes Miskoxy brillent d'une couleur [FF0000][HSHD]rouge[FFFFFF][HSHD].", 3);
-                    }
-                    else
-                    {
-                        UIManager.Battle.SetBattleTitle(null, "[STRT=246,1]The Miskoxy wings shine with a [FF0000][HSHD]red[FFFFFF][HSHD] color.", 3);
-                    }
+                    UIManager.Battle.SetBattleFollowMessage(3, Localization.GetWithDefault("LadyBugRed"));
                     ModelFactory.ChangeModelTexture(_v.Caster.Data.gameObject, new string[] { "CustomTextures/FriendlyLadyBug/FireWings/405_0.png", "CustomTextures/FriendlyLadyBug/FireWings/405_1.png", "CustomTextures/FriendlyLadyBug/FireWings/405_2.png" });
                 }
                 else if (ColorWing == 1)
                 {
                     _v.Caster.WeakElement = EffectElement.Wind | EffectElement.Wind | EffectElement.Fire;
                     _v.Caster.AbsorbElement = EffectElement.Holy | EffectElement.Cold;
-                    if (EmbadedTextResources.CurrentSymbol == "FR")
-                    {
-                        UIManager.Battle.SetBattleTitle(null, "[STRT=265,1]Les ailes Miskoxy brillent d'une couleur [00d5fe][HSHD]cyan[FFFFFF][HSHD].", 3);
-                    }
-                    else
-                    {
-                        UIManager.Battle.SetBattleTitle(null, "[STRT=255,1]The Miskoxy wings shine with a color [00d5fe][HSHD]cyan[FFFFFF][HSHD].", 3);
-                    }
+                    UIManager.Battle.SetBattleFollowMessage(3, Localization.GetWithDefault("LadyBugCyan"));
                     ModelFactory.ChangeModelTexture(_v.Caster.Data.gameObject, new string[] { "CustomTextures/FriendlyLadyBug/IceWings/405_0.png", "CustomTextures/FriendlyLadyBug/IceWings/405_1.png", "CustomTextures/FriendlyLadyBug/IceWings/405_2.png" });
                 }
                 else if (ColorWing == 2)
                 {
                     _v.Caster.WeakElement = EffectElement.Wind | EffectElement.Wind | EffectElement.Aqua;
                     _v.Caster.AbsorbElement = EffectElement.Holy | EffectElement.Thunder;
-                    if (EmbadedTextResources.CurrentSymbol == "FR")
-                    {
-                        UIManager.Battle.SetBattleTitle(null, "[STRT=269,1]Les ailes Miskoxy brillent d'une couleur [fdff36][HSHD]jaune[FFFFFF][HSHD].", 3);
-                    }
-                    else
-                    {
-                        UIManager.Battle.SetBattleTitle(null, "[STRT=263,1]The Miskoxy wings shine with a color [fdff36][HSHD]yellow[FFFFFF][HSHD].", 3);
-                    }
+                    UIManager.Battle.SetBattleFollowMessage(3, Localization.GetWithDefault("LadyBugYellow"));
                     ModelFactory.ChangeModelTexture(_v.Caster.Data.gameObject, new string[] { "CustomTextures/FriendlyLadyBug/ThunderWings/405_0.png", "CustomTextures/FriendlyLadyBug/ThunderWings/405_1.png", "CustomTextures/FriendlyLadyBug/ThunderWings/405_2.png" });
                 }
                 else if (ColorWing == 3)
                 {
                     _v.Caster.WeakElement = EffectElement.Wind | EffectElement.Wind | EffectElement.Thunder;
                     _v.Caster.AbsorbElement = EffectElement.Holy | EffectElement.Aqua;
-                    if (EmbadedTextResources.CurrentSymbol == "FR")
-                    {
-                        UIManager.Battle.SetBattleTitle(null, "[STRT=268,1]Les ailes Miskoxy brillent d'une couleur [000fe0][HSHD]bleue[FFFFFF][HSHD].", 3);
-                    }
-                    else
-                    {
-                        UIManager.Battle.SetBattleTitle(null, "[STRT=224,1]Miskoxy wings shine with a color [000fe0][HSHD]blue[FFFFFF][HSHD].", 3);
-                    }
+                    UIManager.Battle.SetBattleFollowMessage(3, Localization.GetWithDefault("LadyBugBlue"));
                     ModelFactory.ChangeModelTexture(_v.Caster.Data.gameObject, new string[] { "CustomTextures/FriendlyLadyBug/WaterWings/405_0.png", "CustomTextures/FriendlyLadyBug/WaterWings/405_1.png", "CustomTextures/FriendlyLadyBug/WaterWings/405_2.png" });
                 }
                 else
                 {
                     _v.Caster.WeakElement = EffectElement.Wind | EffectElement.Wind;
                     _v.Caster.AbsorbElement = EffectElement.Holy;
-                    if (EmbadedTextResources.CurrentSymbol == "FR")
-                    {
-                        UIManager.Battle.SetBattleTitle(null, "[STRT=288,1]Les ailes Miskoxy sont totalement transparentes.", 3);
-                    }
-                    else
-                    {
-                        UIManager.Battle.SetBattleTitle(null, "[STRT=223,1]Miskoxy wings are totally transparent.", 3);
-                    }
+                    UIManager.Battle.SetBattleFollowMessage(3, Localization.GetWithDefault("LadyBugWhite"));
                 }
                 _v.Caster.Data.gameObject.SetActive(true);
             }

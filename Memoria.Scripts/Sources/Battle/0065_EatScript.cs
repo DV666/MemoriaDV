@@ -165,85 +165,26 @@ namespace Memoria.Scripts.Battle
                     if (!_v.Caster.IsUnderAnyStatus(BattleStatus.Trance))
                     {
                         if (_v.Target.CurrentHp <= _v.Target.MaximumHp / 4U)
-                        {
-                            multiLangMessage = new Dictionary<String, String>
-                            {
-                                { "US", "A few more fork strokes..." },
-                                { "UK", "A few more fork strokes..." },
-                                { "JP", "もう少しフォークを..." },
-                                { "ES", "Unos cuantos tenedores más..." },
-                                { "FR", "Miam ! Encore quelques coups de fourchettes..." },
-                                { "GR", "Noch ein paar Schläge mit der Gabel..." },
-                                { "IT", "Qualche altra forchetta..." },
-                            };
-                        }
+                            UIManager.Battle.SetBattleFollowMessage(3, Localization.GetWithDefault("Eat25"));
                         else
-                        {
                             if (_v.Target.CurrentHp <= _v.Target.MaximumHp / 2U)
-                            {
-                                multiLangMessage = new Dictionary<String, String>
-                                {
-                                    { "US", "More than half the work has been done...!" },
-                                    { "UK", "More than half the work has been done...!" },
-                                    { "JP", "仕事の半分以上は終わっている...。!" },
-                                    { "ES", "¡Más de la mitad del trabajo está hecho... !" },
-                                    { "FR", "Plus de la moitié du travail a été fait... Miam !" },
-                                    { "GR", "Mehr als die Hälfte der Arbeit wurde bereits erledigt ... !" },
-                                    { "IT", "Più della metà del lavoro è stata fatta... !" },
-                                };
-                            }
+                                UIManager.Battle.SetBattleFollowMessage(3, Localization.GetWithDefault("Eat50"));
                             else
-                            {
                                 UiState.SetBattleFollowFormatMessage(BattleMesages.CannotEatStrong);
-                                return;
-                            }
-                        }
-                    }
+                    } 
                     else
                     {
                         if (!_v.Target.HasCategory(EnemyCategory.Humanoid) && blueMagicId != 0)
                         {
                             if (_v.Target.CurrentHp <= _v.Target.MaximumHp / 4U)
-                            {
-                                multiLangMessage = new Dictionary<String, String>
-                                {
-                                    { "US", "A few more fork strokes..." },
-                                    { "UK", "A few more fork strokes..." },
-                                    { "JP", "もう少しフォークを..." },
-                                    { "ES", "Unos cuantos tenedores más..." },
-                                    { "FR", "Miam ! Encore quelques coups de fourchettes..." },
-                                    { "GR", "Noch ein paar Schläge mit der Gabel..." },
-                                    { "IT", "Qualche altra forchetta..." },
-                                };
-                            }
+                                UIManager.Battle.SetBattleFollowMessage(3, Localization.GetWithDefault("Eat25"));
                             else
-                            {
                                 if (_v.Target.CurrentHp <= _v.Target.MaximumHp / 2U)
-                                {
-                                    multiLangMessage = new Dictionary<String, String>
-                                    {
-                                        { "US", "More than half the work has been done...!" },
-                                        { "UK", "More than half the work has been done...!" },
-                                        { "JP", "仕事の半分以上は終わっている...。!" },
-                                        { "ES", "¡Más de la mitad del trabajo está hecho... !" },
-                                        { "FR", "Plus de la moitié du travail a été fait... Miam !" },
-                                        { "GR", "Mehr als die Hälfte der Arbeit wurde bereits erledigt ... !" },
-                                        { "IT", "Più della metà del lavoro è stata fatta... !" },
-                                    };
-                                }
+                                    UIManager.Battle.SetBattleFollowMessage(3, Localization.GetWithDefault("Eat50"));
                                 else
-                                {
                                     UiState.SetBattleFollowFormatMessage(BattleMesages.CannotEatStrong);
-                                    return;
-                                }
-                            }
                         }
                     }
-
-                    if (!multiLangMessage.TryGetValue(EmbadedTextResources.GetCurrentPath("").Substring(EmbadedTextResources.GetCurrentPath("").Length - 2), out String msg))
-                        multiLangMessage.TryGetValue("US", out msg);
-
-                    UIManager.Battle.SetBattleTitle(null, msg, 3);
                 }
             }
         }

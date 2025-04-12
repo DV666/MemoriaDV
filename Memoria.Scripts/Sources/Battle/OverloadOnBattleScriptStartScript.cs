@@ -36,14 +36,7 @@ namespace Memoria.Scripts.Battle
                     MonsterMechanic[v.Caster.Data][6] = 1; // Don't miss the attack.
                     btl_stat.RemoveStatus(v.Target, BattleStatusId.Haste);
                     FF9StateSystem.EventState.gEventGlobal[1305] = 0;
-                    if (EmbadedTextResources.CurrentSymbol == "FR")
-                    {
-                        UIManager.Battle.SetBattleTitle(null, "La barrière électrique disparaît.", 3);
-                    }
-                    else
-                    {
-                        UIManager.Battle.SetBattleTitle(null, "The electrical barrier disappears.", 3);
-                    }
+                    UIManager.Battle.SetBattleFollowMessage(3, Localization.GetWithDefault("PolarityOFF"));
                     foreach (BattleUnit unit in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
                     {
                         if (unit.Data.dms_geo_id == 331) // Electric Shield Mob

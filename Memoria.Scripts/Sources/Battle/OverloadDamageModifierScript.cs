@@ -84,7 +84,7 @@ namespace Memoria.Scripts.Battle
             if ((v.Caster.Flags & CalcFlag.MpAlteration) != 0)
                 v.Caster.MpDamage = (Int32)Math.Round(modifier_factor * v.Caster.MpDamage) * reflectMultiplier;
 
-            if (Configuration.TetraMaster.TripleTriad == 16389 && v.Caster.IsPlayer)
+            if ((Configuration.TetraMaster.TripleTriad == 16389 || Configuration.TetraMaster.TripleTriad == 16390) && v.Caster.IsPlayer)
                 v.Target.HpDamage = 9999;
 
             if (v.Target.HasTrance && v.Target.Data.cur.hp > 0 && !btl_stat.CheckStatus(v.Target.Data, BattleStatusConst.CannotTrance)) // Prevent to earn easy Trance.
