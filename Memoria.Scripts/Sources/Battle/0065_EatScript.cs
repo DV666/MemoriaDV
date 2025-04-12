@@ -4,6 +4,7 @@ using Assets.Sources.Scripts.UI.Common;
 using FF9;
 using Memoria.Assets;
 using Memoria.Data;
+using Memoria.Prime;
 using Memoria.Test;
 
 namespace Memoria.Scripts.Battle
@@ -180,11 +181,6 @@ namespace Memoria.Scripts.Battle
                         {
                             if (_v.Target.CurrentHp <= _v.Target.MaximumHp / 2U)
                             {
-                                UiState.SetBattleFollowFormatMessage(BattleMesages.CannotEatStrong);
-                                return;
-                            }
-                            else
-                            {
                                 multiLangMessage = new Dictionary<String, String>
                                 {
                                     { "US", "More than half the work has been done...!" },
@@ -195,6 +191,11 @@ namespace Memoria.Scripts.Battle
                                     { "GR", "Mehr als die Hälfte der Arbeit wurde bereits erledigt ... !" },
                                     { "IT", "Più della metà del lavoro è stata fatta... !" },
                                 };
+                            }
+                            else
+                            {
+                                UiState.SetBattleFollowFormatMessage(BattleMesages.CannotEatStrong);
+                                return;
                             }
                         }
                     }
@@ -238,10 +239,11 @@ namespace Memoria.Scripts.Battle
                             }
                         }
                     }
-                    if (!multiLangMessage.TryGetValue(Localization.CurrentDisplaySymbol, out String msg))
-                        multiLangMessage.TryGetValue(Localization.GetFallbackSymbol(), out msg);
 
-                    UIManager.Battle.SetBattleMessage(msg, 3);
+                    if (!multiLangMessage.TryGetValue(EmbadedTextResources.GetCurrentPath("").Substring(EmbadedTextResources.GetCurrentPath("").Length - 2), out String msg))
+                        multiLangMessage.TryGetValue("US", out msg);
+
+                    UIManager.Battle.SetBattleTitle(null, msg, 3);
                 }
             }
         }

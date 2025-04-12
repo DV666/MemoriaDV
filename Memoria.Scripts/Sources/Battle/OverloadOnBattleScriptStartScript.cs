@@ -38,11 +38,11 @@ namespace Memoria.Scripts.Battle
                     FF9StateSystem.EventState.gEventGlobal[1305] = 0;
                     if (EmbadedTextResources.CurrentSymbol == "FR")
                     {
-                        UIManager.Battle.SetBattleMessage("La barrière électrique disparaît.", 3);
+                        UIManager.Battle.SetBattleTitle(null, "La barrière électrique disparaît.", 3);
                     }
                     else
                     {
-                        UIManager.Battle.SetBattleMessage("The electrical barrier disappears.", 3);
+                        UIManager.Battle.SetBattleTitle(null, "The electrical barrier disappears.", 3);
                     }
                     foreach (BattleUnit unit in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
                     {

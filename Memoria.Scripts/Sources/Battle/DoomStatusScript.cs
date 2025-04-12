@@ -15,15 +15,17 @@ namespace Memoria.DefaultScripts
         public BattleUnit DoomInflicter = null;
         public Int32 GeoID;
         public Int32 Counter;
+        public Int32 InitialCounter;
 
         public override UInt32 Apply(BattleUnit target, BattleUnit inflicter, params Object[] parameters)
         {
             base.Apply(target, inflicter, parameters);
             btl2d.GetIconPosition(target, btl2d.ICON_POS_NUMBER, out Transform attachTransf, out Vector3 iconOff);
             DoomInflicter = inflicter;
-            Counter = parameters.Length > 0 ? (Int32)parameters[0] : 10;
-            Counter *= Target.HasSupportAbility(SupportAbility1.AutoRegen) ? 2 : 1;
-            Message = Singleton<HUDMessage>.Instance.Show(attachTransf, $"{Counter}", HUDMessage.MessageStyle.DEATH_SENTENCE, new Vector3(0f, iconOff.y), 0);
+            InitialCounter = parameters.Length > 0 ? Convert.ToInt32(parameters[0]) : 10;
+            InitialCounter *= (Target.HasSupportAbility(SupportAbility1.AutoRegen) ? 2 : 1);
+            Counter = InitialCounter;
+            Message = Singleton<HUDMessage>.Instance.Show(attachTransf, $"[FF0000]{Counter}", HUDMessage.MessageStyle.DEATH_SENTENCE, new Vector3(0f, iconOff.y), 0);
             btl2d.StatusMessages.Add(Message);
             target.AddDelayedModifier(UpdateMessageShow, null);
             GeoID = target.Data.dms_geo_id;
@@ -71,7 +73,7 @@ namespace Memoria.DefaultScripts
                 Counter--;
                 if (Counter > 0)
                 {
-                    Message.Label = $"{Counter}";
+                    UpdateLabel();
                     return false;
                 }
                 if ((Target.Data.stat.permanent & BattleStatus.Doom) != 0 && (Int32)Target.GetPropertyByName("StatusProperty CustomStatus21 LifeorDeath") == 0)
@@ -83,7 +85,7 @@ namespace Memoria.DefaultScripts
                     {
                         btl2d.GetIconPosition(target, btl2d.ICON_POS_NUMBER, out Transform attachTransf, out Vector3 iconOff);
                         Counter = 10;
-                        Message = Singleton<HUDMessage>.Instance.Show(attachTransf, $"{Counter}", HUDMessage.MessageStyle.DEATH_SENTENCE, new Vector3(0f, iconOff.y), 0);
+                        Message = Singleton<HUDMessage>.Instance.Show(attachTransf, $"[FF0000]{Counter}", HUDMessage.MessageStyle.DEATH_SENTENCE, new Vector3(0f, iconOff.y), 0);
                         btl2d.StatusMessages.Add(Message);
                     }
                     );
@@ -94,6 +96,14 @@ namespace Memoria.DefaultScripts
                 return true;
             }
             return false;
+        }
+
+        private void UpdateLabel()
+        {
+            Int32 intensity = 200 / (InitialCounter);
+            string color = (255 - intensity * (InitialCounter - Counter)).ToString("X");
+            Message.Label = $"[{color}0000]{Counter}";
+            Message.gameObject.SetActive(true);
         }
 
         private Boolean UpdateMessageShow(BattleUnit unit)
@@ -115,7 +125,7 @@ namespace Memoria.DefaultScripts
             if (Message == null)
             {
                 btl2d.GetIconPosition(unit, btl2d.ICON_POS_NUMBER, out Transform attachTransf, out Vector3 iconOff);
-                Message = Singleton<HUDMessage>.Instance.Show(attachTransf, $"{Counter}", HUDMessage.MessageStyle.DEATH_SENTENCE, new Vector3(0f, iconOff.y), 0);
+                Message = Singleton<HUDMessage>.Instance.Show(attachTransf, $"[FF0000]{Counter}", HUDMessage.MessageStyle.DEATH_SENTENCE, new Vector3(0f, iconOff.y), 0);
                 btl2d.StatusMessages.Add(Message);
             }
             return true;

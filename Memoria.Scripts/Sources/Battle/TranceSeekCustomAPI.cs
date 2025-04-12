@@ -1137,13 +1137,13 @@ namespace Memoria.Scripts.Battle
                     v.Context.Flags = 0;
                     Dictionary<String, String> localizedMessage = new Dictionary<String, String>
                 {
-                    { "US", "Immune!" },
-                    { "UK", "Immune!" },
-                    { "JP", "免疫だ！" },
-                    { "ES", "¡Inmune!" },
+                    { "US", "Immuned!" },
+                    { "UK", "Immuned!" },
+                    { "JP", "免疫がある！" },
+                    { "ES", "¡Inmunizado!" },
                     { "FR", "Immunisé !" },
-                    { "GR", "Immun!" },
-                    { "IT", "Immune!" },
+                    { "GR", "Immunisiert!" },
+                    { "IT", "Immunizzato!" },
                 };
                     btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[FF00FF]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 10);
                 }

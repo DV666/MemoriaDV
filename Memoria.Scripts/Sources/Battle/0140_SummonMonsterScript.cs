@@ -54,11 +54,11 @@ namespace Memoria.Scripts.Battle
                         ff9abil.FF9Abil_SetMaster(_v.Caster.Player, AbilityId);
                         if (EmbadedTextResources.CurrentSymbol == "FR")
                         {
-                            UIManager.Battle.SetBattleMessage("Coubo ! Bienvenue dans l'équipe !", 3);
+                            UIManager.Battle.SetBattleTitle(null, "Coubo ! Bienvenue dans l'équipe !", 3);
                         }
                         else
                         {
-                            UIManager.Battle.SetBattleMessage("Another friend in the team, kupo !", 3);
+                            UIManager.Battle.SetBattleTitle(null, "Another friend in the team, kupo !", 3);
                         }
                         _v.Target.Kill(_v.Caster);
                     }
