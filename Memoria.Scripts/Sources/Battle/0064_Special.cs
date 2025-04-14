@@ -111,8 +111,7 @@ namespace Memoria.Scripts.Battle
                                 monster.Data.weaponRenderer[i] = componentsInChildren[i].GetComponent<Renderer>();
                             geo.geoAttach(monster.Data.weapon_geo, monster.Data.gameObject, 16);
                             btl_mot.HideMesh(monster.Data, 7, false);
-                            monster.MaximumHp = 1000;
-                            monster.CurrentHp = 1000;
+                            monster.CurrentHp = (monster.MaximumHp / 2);
                         }
                     }
                 }
@@ -132,8 +131,7 @@ namespace Memoria.Scripts.Battle
                                 monster.Data.weaponRenderer[i] = componentsInChildren[i].GetComponent<Renderer>();
                             geo.geoAttach(monster.Data.weapon_geo, monster.Data.gameObject, 16);
                             btl_mot.HideMesh(monster.Data, 7, false);
-                            monster.MaximumHp = 1000;
-                            monster.CurrentHp = 1000;
+                            monster.CurrentHp = (monster.MaximumHp / 2);
                         }
                     }
                 }

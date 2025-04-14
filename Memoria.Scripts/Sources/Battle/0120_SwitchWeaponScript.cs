@@ -43,6 +43,8 @@ namespace Memoria.Scripts.Battle
 
                 string ModelZidane = null;
                 string ModelTranceZidane = null;
+                Vector3 ModelStatusScaleOld = _v.Caster.ModelStatusScale;
+                _v.Caster.ModelStatusScale += new Vector3(0.1f, 0.1f, 0.1f); // To force reset stack status.
                 if (btl_util.getSerialNumber(_v.Caster.Data) == CharacterSerialNumber.ZIDANE_DAGGER)
                 {
                     ModelZidane = "GEO_MAIN_B0_001"; // Model Zidane_Sword
@@ -101,6 +103,7 @@ namespace Memoria.Scripts.Battle
                         if (!caster.IsUnderAnyStatus(BattleStatusConst.StopAtb) && caster.CurrentAtb < (4 * caster.MaximumAtb / 5))
                             caster.CurrentAtb += (Int16)(4 * caster.MaximumAtb / 5);
                         caster.RemoveStatus(BattleStatus.Vanish);
+                        caster.ModelStatusScale = ModelStatusScaleOld;
                     }
                 );
             }
