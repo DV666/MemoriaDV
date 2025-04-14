@@ -481,7 +481,7 @@ namespace Memoria.Scripts.Battle
                 v.Context.Attack >>= 1;
 
             if (v.Target.IsUnderAnyStatus(BattleStatus.Mini) || v.Target.IsUnderAnyStatus(BattleStatus.Sleep) && !v.Target.IsUnderAnyStatus(BattleStatus.EasyKill) || v.Target.IsUnderAnyStatus(BattleStatus.Freeze))
-                v.Context.Attack = (Int16)(v.Context.Attack * 3 >> 1);
+                ++v.Context.DamageModifierCount;
 
             if (StackBreakOrUpStatus[v.Caster.Data][0] != 0)
                 v.Context.Attack += ((StackBreakOrUpStatus[v.Caster.Data][0] * v.Context.Attack) / 100);
@@ -497,19 +497,19 @@ namespace Memoria.Scripts.Battle
             if (v.Caster.IsUnderAnyStatus(BattleStatus.Mini))
                 v.Context.DecreaseAttackDrastically();
             if (v.Caster.IsUnderAnyStatus(BattleStatus.Berserk) || v.Caster.IsPlayer && v.Caster.IsUnderAnyStatus(BattleStatus.Trance))
-                v.Context.Attack = (Int16)(v.Context.Attack * 3 >> 1);
+                ++v.Context.DamageModifierCount;
         }
 
         public static void EnemyTranceBonusAttack(BattleCalculator v)
         {
             if (!v.Caster.IsPlayer && v.Caster.IsUnderAnyStatus(BattleStatus.Trance))
-                v.Context.Attack = (Int16)(v.Context.Attack * 3 >> 1);
+                ++v.Context.DamageModifierCount;
         }
 
         public static void BonusBackstabAndPenaltyLongDistance(this BattleCalculator v)
         {
             if ((Math.Abs(v.Caster.Data.evt.rotBattle.eulerAngles.y - v.Target.Data.evt.rotBattle.eulerAngles.y) < 0.1) || v.Target.IsRunningAway())
-                v.Context.Attack = v.Context.Attack * 3 >> 1;
+                ++v.Context.DamageModifierCount;
 
             if (Mathf.Abs(v.Caster.Row - v.Target.Row) > 1 && !v.Caster.HasLongRangeWeapon && v.Command.IsShortRange && v.Caster.IsPlayer)
             {
@@ -639,16 +639,16 @@ namespace Memoria.Scripts.Battle
         public static void BonusWeaponElement(this BattleCalculator v)
         {
             if ((v.Caster.WeaponElement & v.Caster.BonusElement) != 0)
-                v.Context.Attack = (Int16)(v.Context.Attack * 3 >> 1);
+                ++v.Context.DamageModifierCount;
 
             if ((WeaponNewElement[v.Caster.Data] & v.Caster.BonusElement) != 0)
-                v.Context.Attack = (Int16)(v.Context.Attack * 3 >> 1);
+                ++v.Context.DamageModifierCount;
         }
 
         public static void BonusElement(this BattleCalculator v)
         {
             if ((v.Command.ElementForBonus & v.Caster.BonusElement) != 0)
-                v.Context.Attack = (Int16)(v.Context.Attack * 3 >> 1);
+                ++v.Context.DamageModifierCount;
         }
 
         public static Boolean CanAttackWeaponElementalCommand(this BattleCalculator v)
@@ -671,13 +671,13 @@ namespace Memoria.Scripts.Battle
                 if (v.Caster.PlayerIndex == (CharacterId)12) // SA Maximum infusion
                 {
                     BattleAbilityId InfusedAA = ViviPreviousSpell[v.Caster.Data];
-                    if (InfusedAA == (BattleAbilityId)1095 || InfusedAA == (BattleAbilityId)1096 || InfusedAA == (BattleAbilityId)1097 || InfusedAA == (BattleAbilityId)1098)
-                    {
-                        v.Context.Attack = (Int16)(v.Context.Attack * 3 >> 1);
-                    }
-                    else if (InfusedAA == (BattleAbilityId)1091 || InfusedAA == (BattleAbilityId)1092 || InfusedAA == (BattleAbilityId)1093 || InfusedAA == (BattleAbilityId)1094)
+                    if (InfusedAA == (BattleAbilityId)1091 || InfusedAA == (BattleAbilityId)1092 || InfusedAA == (BattleAbilityId)1093 || InfusedAA == (BattleAbilityId)1094)
                     {
                         ++v.Context.DamageModifierCount;
+                    }
+                    if (InfusedAA == (BattleAbilityId)1095 || InfusedAA == (BattleAbilityId)1096 || InfusedAA == (BattleAbilityId)1097 || InfusedAA == (BattleAbilityId)1098)
+                    {
+                        v.Context.DamageModifierCount += 2;
                     }
                 }
             }
@@ -710,7 +710,7 @@ namespace Memoria.Scripts.Battle
                 v.Context.Attack /= 2;
 
             if (v.Target.IsWeakElement(v.Command.Element))
-                v.Context.Attack = (Int16)(v.Context.Attack * 3 >> 1);
+                ++v.Context.DamageModifierCount;
 
             if (v.Target.CanAbsorbElement(v.Command.Element))
             {

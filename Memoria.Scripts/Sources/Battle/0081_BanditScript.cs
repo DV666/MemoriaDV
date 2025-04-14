@@ -32,27 +32,38 @@ namespace Memoria.Scripts.Battle
                 }
 
                 BattleEnemy battleEnemy = BattleEnemy.Find(_v.Target);
+                if (!StealScript.HasStealableItems(battleEnemy))
+                {
+                    UiState.SetBattleFollowFormatMessage(BattleMesages.DoesNotHaveAnything);
+                    return;
+                }
+
                 float BonusRatioHP = 0;
                 if (TranceSeekCustomAPI.MonsterMechanic[_v.Target.Data][3] > 0)
                     BonusRatioHP = 100 - ((_v.Target.CurrentHp * 100) / (_v.Target.MaximumHp - 10000));
                 else
                     BonusRatioHP = 100 - ((_v.Target.CurrentHp * 100)/ _v.Target.MaximumHp);
 
-                if (GameRandom.Next8() < StealScript.NewStealableItemRates(battleEnemy.StealableItemRates[3], _v.Caster) + (BonusRatioHP / 4) && battleEnemy.StealableItems[3] != RegularItem.NoItem)
+                BonusRatioHP *= (Byte.MaxValue / 100);
+                if (GameRandom.Next8() < (StealScript.NewStealableItemRates(battleEnemy.StealableItemRates[3], _v.Caster) + (BonusRatioHP / 4)) && battleEnemy.StealableItems[3] != RegularItem.NoItem)
                 {
                     _v.StealItem(battleEnemy, 3);
                 }
-                else if (GameRandom.Next8() < StealScript.NewStealableItemRates(battleEnemy.StealableItemRates[2], _v.Caster) + (BonusRatioHP / 2) && battleEnemy.StealableItems[2] != RegularItem.NoItem)
+                else if (GameRandom.Next8() < (StealScript.NewStealableItemRates(battleEnemy.StealableItemRates[2], _v.Caster) + (BonusRatioHP / 2)) && battleEnemy.StealableItems[2] != RegularItem.NoItem)
                 {
                     _v.StealItem(battleEnemy, 2);
                 }
-                else if (GameRandom.Next8() < StealScript.NewStealableItemRates(battleEnemy.StealableItemRates[1], _v.Caster) + BonusRatioHP && battleEnemy.StealableItems[1] != RegularItem.NoItem)
+                else if (GameRandom.Next8() < (StealScript.NewStealableItemRates(battleEnemy.StealableItemRates[1], _v.Caster) + BonusRatioHP) && battleEnemy.StealableItems[1] != RegularItem.NoItem)
                 {
                     _v.StealItem(battleEnemy, 1);
                 }
-                else if (GameRandom.Next8() < StealScript.NewStealableItemRates(battleEnemy.StealableItemRates[0], _v.Caster) + BonusRatioHP && battleEnemy.StealableItems[0] != RegularItem.NoItem)
+                else if (GameRandom.Next8() < (StealScript.NewStealableItemRates(battleEnemy.StealableItemRates[0], _v.Caster) + BonusRatioHP) && battleEnemy.StealableItems[0] != RegularItem.NoItem)
                 {
                     _v.StealItem(battleEnemy, 0);
+                }
+                else
+                {
+                    UiState.SetBattleFollowFormatMessage(BattleMesages.CouldNotStealAnything);
                 }
                 return;
             }

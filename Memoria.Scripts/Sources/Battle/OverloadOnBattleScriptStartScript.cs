@@ -5,7 +5,6 @@ using Memoria.Database;
 using Memoria.Prime;
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 using static Memoria.Scripts.Battle.TranceSeekCustomAPI;
 
 namespace Memoria.Scripts.Battle
@@ -40,12 +39,40 @@ namespace Memoria.Scripts.Battle
                     foreach (BattleUnit unit in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
                     {
                         if (unit.Data.dms_geo_id == 331) // Electric Shield Mob
-                        {
                             unit.KillStandardCommands();
-                        }
                     }
                 }
             }
+
+            if (!v.Caster.IsPlayer && v.Command.Data.aa.Vfx2 > 0) // Custom status for monsters (using the Animation 2 value in HW) 
+            {
+                ulong AACustomStatus = v.Command.Data.aa.Vfx2;
+                if ((AACustomStatus & 1) != 0)
+                    v.Command.AbilityStatus |= CustomStatus.PowerBreak;
+                if ((AACustomStatus & 2) != 0)
+                    v.Command.AbilityStatus |= CustomStatus.MagicBreak;
+                if ((AACustomStatus & 4) != 0)
+                    v.Command.AbilityStatus |= CustomStatus.ArmorBreak;
+                if ((AACustomStatus & 8) != 0)
+                    v.Command.AbilityStatus |= CustomStatus.MentalBreak;
+                if ((AACustomStatus & 16) != 0)
+                    v.Command.AbilityStatus |= CustomStatus.PowerUp;
+                if ((AACustomStatus & 32) != 0)
+                    v.Command.AbilityStatus |= CustomStatus.MagicUp;
+                if ((AACustomStatus & 64) != 0)
+                    v.Command.AbilityStatus |= CustomStatus.ArmorUp;
+                if ((AACustomStatus & 128) != 0)
+                    v.Command.AbilityStatus |= CustomStatus.MentalUp;
+                if ((AACustomStatus & 256) != 0)
+                    v.Command.AbilityStatus |= CustomStatus.Bulwark;
+                if ((AACustomStatus & 512) != 0)
+                    v.Command.AbilityStatus |= CustomStatus.PerfectDodge;
+                if ((AACustomStatus & 1024) != 0)
+                    v.Command.AbilityStatus |= CustomStatus.PerfectCrit;
+                if ((AACustomStatus & 2048) != 0)
+                    v.Command.AbilityStatus |= CustomStatus.Vieillissement;
+            }
+
             if (v.Caster.HasSupportAbilityByIndex((SupportAbility)117) && SpecialSAEffect[v.Caster][4] == 0 && v.Caster.IsUnderAnyStatus(BattleStatus.Trance)) // Mode EX
             {
                 Int32 HealHPSAOrItem = (int)(v.Caster.MaximumHp * (v.Caster.HasSupportAbilityByIndex((SupportAbility)1117) ? 16 : 8) / 100);

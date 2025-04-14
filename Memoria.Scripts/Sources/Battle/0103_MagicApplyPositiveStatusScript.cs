@@ -93,6 +93,7 @@ namespace Memoria.Scripts.Battle
                 _v.Target.PhysicalDefence = 255;
                 _v.Target.MagicDefence = 255;
                 btl_stat.MakeStatusesPermanent(_v.Target, BattleStatus.Stop, true);
+                return;
             }
             else if (_v.Caster.Data.dms_geo_id == 36 && _v.Command.Power == 1) // Silver Dragon - Shinryu's dance
             {

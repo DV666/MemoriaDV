@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using FF9;
 using Memoria.Data;
 using Memoria.Database;
 using Memoria.DefaultScripts;
 using Memoria.Prime;
 using NCalc;
+using UnityEngine;
 using static Memoria.Scripts.Battle.TranceSeekCustomAPI;
 
 namespace Memoria.Scripts.Battle
@@ -294,6 +296,18 @@ namespace Memoria.Scripts.Battle
                     }
                 }
             }
+        }
+
+        public void ChangeBBG(string battleModelPath)
+        {
+            FF9StateSystem.Battle.FF9Battle.map.btlBGPtr.SetActive(false);
+            FF9StateSystem.Battle.FF9Battle.map.btlBGPtr = ModelFactory.CreateModel("BattleMap/BattleModel/battleMap_all/" + battleModelPath + "/" + battleModelPath, Vector3.zero, Vector3.zero, true);
+            battlebg.SetDefaultShader(FF9StateSystem.Battle.FF9Battle.map.btlBGPtr);
+            BBGINFO bbginfo = new BBGINFO();
+            bbginfo.ReadBattleInfo(battleModelPath);
+            FF9StateSystem.Battle.FF9Battle.map.btlBGInfoPtr = bbginfo;
+            battle.InitBattleMap();
+            FF9StateSystem.Battle.FF9Battle.map.btlBGPtr.SetActive(true);
         }
 
         public static Int32[,] BossBattleBonusHP = new Int32[,]

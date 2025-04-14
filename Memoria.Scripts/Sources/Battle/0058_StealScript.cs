@@ -74,7 +74,7 @@ namespace Memoria.Scripts.Battle
             }
         }
 
-        private static Boolean HasStealableItems(BattleEnemy enemy)
+        public static Boolean HasStealableItems(BattleEnemy enemy)
         {
             for (Int16 slot = 0; slot < 4; ++slot)
                 if (enemy.StealableItems[slot] != RegularItem.NoItem)

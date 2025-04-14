@@ -43,12 +43,9 @@ namespace Memoria.Scripts.Battle
                     v.Target.MpDamage = Math.Max(1, v.Target.MpDamage - malusMPdamage);
             }
 
-            Single modifier_factor = 1f + v.Context.DamageModifierCount * 0.25f;
-            while (v.Context.DamageModifierCount < 0)
-            {
-                modifier_factor *= 0.5f;
-                ++v.Context.DamageModifierCount;
-            }
+            Single modifier_factor = 1f + v.Context.DamageModifierCount * 0.25f; // [TODO] Make something more cleaner about PowerUp status like here ?
+            if (modifier_factor < 0)
+                modifier_factor = 0.01f; // Or 0 ? Hmm...
             Int32 reflectMultiplier = v.Command.GetReflectMultiplierOnTarget(v.Target.Id);
             if ((v.Target.Flags & CalcFlag.HpAlteration) != 0)
             {
