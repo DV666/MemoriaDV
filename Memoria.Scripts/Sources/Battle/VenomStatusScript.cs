@@ -9,6 +9,7 @@ namespace Memoria.DefaultScripts
     public class VenomStatusScript : StatusScriptBase, IOprStatusScript
     {
         public BattleUnit VenomInflicter = null;
+        public Int32 SpeedTick = 0;
 
         public override UInt32 Apply(BattleUnit target, BattleUnit inflicter, params Object[] parameters)
         {
@@ -38,7 +39,8 @@ namespace Memoria.DefaultScripts
         public IOprStatusScript.SetupOprMethod SetupOpr => SetupVenomOpr;
         public Int32 SetupVenomOpr()
         {
-            return (Target.IsUnderAnyStatus(BattleStatus.EasyKill) || Target.IsPlayer && FF9StateSystem.EventState.gEventGlobal[1403] == 1) ? 600 : 100;
+            return (Target.IsUnderAnyStatus(BattleStatus.EasyKill) || Target.IsPlayer && FF9StateSystem.EventState.gEventGlobal[1403] == 1) ? 600 : Math.Max(100, (600 - SpeedTick));
+            //return (Target.IsUnderAnyStatus(BattleStatus.EasyKill) || Target.IsPlayer && FF9StateSystem.EventState.gEventGlobal[1403] == 1) ? 600 : 100;
         }
         public Boolean OnOpr()
         {
@@ -63,6 +65,7 @@ namespace Memoria.DefaultScripts
             else
                 Target.Kill(VenomInflicter);
             btl2d.Btl2dStatReq(Target, (Int32)HPdamage, (Int32)MPdamage);
+            SpeedTick += 100;
             BattleVoice.TriggerOnStatusChange(Target, "Used", BattleStatusId.Venom);
             return false;
         }

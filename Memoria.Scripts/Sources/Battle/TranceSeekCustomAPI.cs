@@ -1126,7 +1126,7 @@ namespace Memoria.Scripts.Battle
                 TriggerSPSResistStatus[v.Target] = false;
                 if (sps == null)
                     return;
-                btl2d.GetIconPosition(v.Target, btl2d.ICON_POS_DEFAULT, out Transform attachTransf, out Vector3 iconOff);
+                btl2d.GetIconPosition(v.Target, btl2d.ICON_POS_ROOT, out Transform attachTransf, out Vector3 iconOff);
                 sps.charTran = v.Target.Data.gameObject.transform;
                 sps.boneTran = attachTransf;
                 sps.posOffset = Vector3.zero;
