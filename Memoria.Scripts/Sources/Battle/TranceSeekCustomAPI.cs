@@ -300,7 +300,7 @@ namespace Memoria.Scripts.Battle
                 }
             }
 
-            if (v.Caster.PlayerIndex == CharacterId.Zidane && v.Command.Id == BattleCommandId.Attack && ff9item._FF9Item_Data[FF9StateSystem.Common.FF9.player[(CharacterId)v.Caster.Data.bi.slot_no].equip[0]].shape == 1) // Zidane - Dagger double hits
+            if (v.Caster.PlayerIndex == CharacterId.Zidane && v.Command.Id == BattleCommandId.Attack && ff9item._FF9Item_Data[v.Caster.Weapon].shape == 1) // Zidane - Dagger double hits
             {
                 ZidanePassive[v.Caster.Data][4] = ZidanePassive[v.Caster.Data][4] == 0 ? 1 : 2;
                 if ((v.Command.AbilityCategory & 64) != 0)
@@ -1369,7 +1369,7 @@ namespace Memoria.Scripts.Battle
                 v.Target.MpDamage /= 2;
             }
 
-            if (v.Caster.PlayerIndex == CharacterId.Zidane && (v.Command.Id == BattleCommandId.Attack || v.Command.Id == BattleCommandId.Counter) && ff9item._FF9Item_Data[FF9StateSystem.Common.FF9.player[(CharacterId)v.Caster.Data.bi.slot_no].equip[0]].shape == 1)
+            if (v.Caster.PlayerIndex == CharacterId.Zidane && (v.Command.Id == BattleCommandId.Attack || v.Command.Id == BattleCommandId.Counter) && ff9item._FF9Item_Data[v.Caster.Weapon].shape == 1)
             { // Zidane - Dagger double hits
                 v.Target.HpDamage /= 2;
                 if (ZidanePassive[v.Caster.Data][4] == 2)
@@ -1392,7 +1392,7 @@ namespace Memoria.Scripts.Battle
             }
             if (v.Caster.HasSupportAbilityByIndex((SupportAbility)1061) && (v.Command.Id == BattleCommandId.Attack || v.Command.Id == BattleCommandId.Counter) && v.Target.Data != v.Caster.Data) // Mug+
             {
-                if (ff9item._FF9Item_Data[FF9StateSystem.Common.FF9.player[(CharacterId)v.Caster.Data.bi.slot_no].equip[0]].shape == 1)
+                if (ff9item._FF9Item_Data[v.Caster.Weapon].shape == 1)
                 {
                     if (v.Command.Data.info.effect_counter == 2)
                     {

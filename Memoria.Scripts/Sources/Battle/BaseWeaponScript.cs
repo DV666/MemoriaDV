@@ -431,13 +431,13 @@ namespace Memoria.Scripts.Battle
                 saFeature.TriggerOnAbility(_v, "Steal", true);
 
             BattleItem.AddToInventory(_v.Context.ItemSteal);
-            if (_v.Caster.PlayerIndex == CharacterId.Zidane && ff9item._FF9Item_Data[FF9StateSystem.Common.FF9.player[(CharacterId)_v.Caster.Data.bi.slot_no].equip[0]].shape != 1) // Thief Sword
+            if (_v.Caster.PlayerIndex == CharacterId.Zidane && ff9item._FF9Item_Data[FF9StateSystem.Common.FF9.player[(CharacterId)_v.Caster.Data.bi.slot_no].equip.Weapon].shape != 1) // Thief Sword
                 UiState.SetBattleFollowFormatMessage(BattleMesages.Stole, FF9TextTool.ItemName(_v.Context.ItemSteal));         
         }
 
         public void ShowMugMessage()
         {
-            if (_v.Caster.PlayerIndex == CharacterId.Zidane && ff9item._FF9Item_Data[FF9StateSystem.Common.FF9.player[(CharacterId)_v.Caster.Data.bi.slot_no].equip[0]].shape == 1) // Dagger
+            if (_v.Caster.PlayerIndex == CharacterId.Zidane && ff9item._FF9Item_Data[FF9StateSystem.Common.FF9.player[(CharacterId)_v.Caster.Data.bi.slot_no].equip.Weapon].shape == 1) // Dagger
             {
                 RegularItem FirstItemMugged = (RegularItem)TranceSeekCustomAPI.ZidanePassive[_v.Caster.Data][5];
                 RegularItem SecondItemMugged = (RegularItem)TranceSeekCustomAPI.ZidanePassive[_v.Caster.Data][6];
@@ -475,7 +475,7 @@ namespace Memoria.Scripts.Battle
                     bonusgil = (int)(GameRandom.Next16() % (btl_util.getEnemyPtr(_v.Target).bonus_gil / 8));
                 }
 
-                if (ff9item._FF9Item_Data[FF9StateSystem.Common.FF9.player[(CharacterId)_v.Caster.Data.bi.slot_no].equip[0]].shape == 1 && _v.Command.Data.info.effect_counter != 2)
+                if (ff9item._FF9Item_Data[FF9StateSystem.Common.FF9.player[(CharacterId)_v.Caster.Data.bi.slot_no].equip.Weapon].shape == 1 && _v.Command.Data.info.effect_counter != 2)
                 {
                     TranceSeekCustomAPI.ZidanePassive[_v.Caster.Data][8] = bonusgil;
                 }
