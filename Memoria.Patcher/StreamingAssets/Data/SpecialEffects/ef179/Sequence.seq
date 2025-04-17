@@ -3,7 +3,7 @@
 PlaySound: Sound=2535
 PlaySound: Sound=2536
 PlaySound: Sound=2537
-ShowMesh: ShowMesh: Char=MatchingCondition(!IsTargeted && IsTargetable) ; Enable=False ; IsDisappear=True
+ShowMesh: Char=MatchingCondition(!IsTargeted && IsTargetable) ; Enable=False ; IsDisappear=True
 ShowMesh: Char=AllTargets ; Enable=False ; Time=16
 StartThread: Condition=SFXUseCamera && AreTargetsPlayers
 	ShiftWorld: Angle=(0, 180, 0)

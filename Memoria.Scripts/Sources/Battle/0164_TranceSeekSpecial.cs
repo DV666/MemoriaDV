@@ -54,6 +54,34 @@ namespace Memoria.Scripts.Battle
                                 };
                 btl2d.Btl2dReqSymbolMessage(_v.Target.Data, "[F9FF39]", localizedMessage2, HUDMessage.MessageStyle.DAMAGE, 5);
             }
+            else if (_v.Command.Power == 1 && _v.Command.HitRate == 1 && _v.Caster.Data.dms_geo_id == 326) // Frying from Jötunn
+            {
+                _v.Caster.Flags |= (CalcFlag.HpDamageOrHeal| CalcFlag.MpDamageOrHeal);
+                _v.Target.Flags |= (CalcFlag.HpAlteration | CalcFlag.MpAlteration);
+                int HPDamageMiam = (int)(_v.Target.CurrentHp - 10000);
+                int MPDamageMiam = (int)(_v.Target.CurrentMp);
+                _v.Caster.HpDamage = _v.Target.HpDamage = HPDamageMiam;
+                _v.Caster.MpDamage = _v.Target.MpDamage = MPDamageMiam;
+                _v.Caster.AlterStatus(_v.Command.AbilityStatus);
+            }
+            else if (_v.Command.Power == 2 && _v.Command.HitRate == 2 && _v.Caster.Data.dms_geo_id == 326) // Troll Feast from Jötunn
+            {
+                int PiafTargetable = 0;
+                foreach (BattleUnit unit in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
+                {
+                    if (unit.Data.dms_geo_id == 9 && unit.Data.bi.target == 0)
+                    {
+                        unit.Data.bi.target = 1;
+                        PiafTargetable++;
+                    }
+                }
+                if (PiafTargetable > 0)
+                    return;
+                _v.Target.Flags |= (CalcFlag.HpDamageOrHeal | CalcFlag.MpDamageOrHeal);
+                _v.Target.HpDamage = (int)(_v.Target.MaximumHp - 10000);
+                _v.Target.MpDamage = (int)(_v.Target.MaximumMp);
+                //btl_mot.ShowMesh(_v.Target.Data, 65535, false);
+            }
             else if (_v.Command.Power == 25 && _v.Command.HitRate == 111 && _v.Caster.Data.dms_geo_id == 278) // Polarity (+) with SPS effect (Black Waltz 3)
             {
                 _v.NormalMagicParams();

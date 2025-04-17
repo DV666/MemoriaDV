@@ -1134,10 +1134,6 @@ namespace Memoria.Scripts.Battle
                 SoundLib.PlaySoundEffect(1314); // se000046, se060146, se070003
                 if (v.Target.HpDamage == 0 && v.Target.MpDamage == 0 && (v.Command.AbilityStatus - (v.Target.ResistStatus & v.Command.AbilityStatus)) == 0)
                 {
-                    Log.Message("[DEBUG] v.Target.ResistStatus = " + v.Target.Name);
-                    Log.Message("[DEBUG] v.Command.AbilityStatus = " + v.Command.AbilityStatus);
-                    Log.Message("[DEBUG] v.Target.ResistStatus = " + v.Target.ResistStatus);
-                    Log.Message("[DEBUG] v.Command.AbilityStatus = " + v.Command.AbilityName);
                     v.Context.Flags = 0;
                     Dictionary<String, String> localizedMessage = new Dictionary<String, String>
                     {
