@@ -22,8 +22,12 @@ namespace Memoria.Scripts.Battle
             // FF9StateSystem.EventState.gEventGlobal[1403] = 4; // Debug difficulty mode
 
             SB2_PATTERN sb2Pattern = FF9StateSystem.Battle.FF9Battle.btl_scene.PatAddr[FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum];
+            KeyValuePair<Int32, Int32> BattleExID = new KeyValuePair<Int32, Int32>(FF9StateSystem.Battle.battleMapIndex, FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum);
 
-            if (FF9StateSystem.Battle.battleMapIndex == 93 && FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum == 3) // Prison Cage + Little Girl
+            if (CustomBBGonBattleID.ContainsKey(BattleExID)) // Change BBG for specific, to have a better camera.
+                ChangeBBG(CustomBBGonBattleID[BattleExID]);
+
+            if (BattleExID.Equals(new KeyValuePair<Int32, Int32>(93, 3))) // Prison Cage + Little Girl
                 HonoluluBattleMain.SetupAttachModel(FF9StateSystem.Battle.FF9Battle.btl_data[4], FF9StateSystem.Battle.FF9Battle.btl_data[5], 55, 25);
 
             if (!InitHUDMessageChild)
@@ -298,13 +302,13 @@ namespace Memoria.Scripts.Battle
             }
         }
 
-        public void ChangeBBG(string battleModelPath)
+        public void ChangeBBG(string BBGNameID)
         {
             FF9StateSystem.Battle.FF9Battle.map.btlBGPtr.SetActive(false);
-            FF9StateSystem.Battle.FF9Battle.map.btlBGPtr = ModelFactory.CreateModel("BattleMap/BattleModel/battleMap_all/" + battleModelPath + "/" + battleModelPath, Vector3.zero, Vector3.zero, true);
+            FF9StateSystem.Battle.FF9Battle.map.btlBGPtr = ModelFactory.CreateModel("BattleMap/BattleModel/battleMap_all/" + BBGNameID + "/" + BBGNameID, Vector3.zero, Vector3.zero, true);
             battlebg.SetDefaultShader(FF9StateSystem.Battle.FF9Battle.map.btlBGPtr);
             BBGINFO bbginfo = new BBGINFO();
-            bbginfo.ReadBattleInfo(battleModelPath);
+            bbginfo.ReadBattleInfo(BBGNameID);
             FF9StateSystem.Battle.FF9Battle.map.btlBGInfoPtr = bbginfo;
             battle.InitBattleMap();
             FF9StateSystem.Battle.FF9Battle.map.btlBGPtr.SetActive(true);
@@ -369,6 +373,11 @@ namespace Memoria.Scripts.Battle
             { 301, 1 }, // Prison Cage + Vivi
             { 302, 1 }, // Prison Cage + Dagga
             { 303, 1 } // Dagga (Plant Brain CD1)
+        };
+
+        public static Dictionary<KeyValuePair<Int32, Int32>, String> CustomBBGonBattleID = new Dictionary<KeyValuePair<Int32, Int32>, String>
+        {
+            { new KeyValuePair<Int32, Int32>(299, 1), "BBG_B023" } // Lindblum boss (Steiner Quest)
         };
     }
 }
