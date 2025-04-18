@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using FF9;
 using Memoria.Data;
 using Memoria.Database;
 using Memoria.DefaultScripts;
-using Memoria.Prime;
-using NCalc;
 using UnityEngine;
 using static Memoria.Scripts.Battle.TranceSeekCustomAPI;
 
