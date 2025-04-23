@@ -36,7 +36,8 @@ namespace Memoria.DefaultScripts
         // Here, write the list of statuses with SHP that should overlap, ie. only one SHP will be displayed at a time
         private static List<BattleStatusId> OverlappingSHP1 = [CustomStatusId.PowerBreak, CustomStatusId.MagicBreak, CustomStatusId.ArmorBreak, CustomStatusId.MentalBreak,
             CustomStatusId.PowerUp, CustomStatusId.MagicUp, CustomStatusId.ArmorUp, CustomStatusId.MentalUp];
-        private static List<BattleStatusId> OverlappingSHP2 = [CustomStatusId.Redemption, CustomStatusId.MechanicalArmor, CustomStatusId.Bulwark, CustomStatusId.Rage];
+        private static List<BattleStatusId> OverlappingSHP2 = [CustomStatusId.Redemption, CustomStatusId.MechanicalArmor, CustomStatusId.Bulwark,
+            CustomStatusId.Rage, CustomStatusId.PerfectCrit, CustomStatusId.PerfectDodge];
         private static Dictionary<BTL_DATA, Int32> OverlapIndex1 = new Dictionary<BTL_DATA, Int32>();
         private static Dictionary<BTL_DATA, Int32> OverlapIndex2 = new Dictionary<BTL_DATA, Int32>();
 
@@ -255,6 +256,16 @@ namespace Memoria.DefaultScripts
                             RageStatusScript RageScript = effectScript as RageStatusScript;
                             RageScript.OnSHPShow(true);
                         }
+                        if (effectScript is PerfectCritStatusScript)
+                        {
+                            PerfectCritStatusScript PerfectCritScript = effectScript as PerfectCritStatusScript;
+                            PerfectCritScript.OnSHPShow(true);
+                        }
+                        if (effectScript is PerfectDodgeStatusScript)
+                        {
+                            PerfectDodgeStatusScript PerfectCritScript = effectScript as PerfectDodgeStatusScript;
+                            PerfectCritScript.OnSHPShow(true);
+                        }
                     }
                 }
                 else if ((shp.attr & SPSConst.ATTR_HIDDEN) == 0)
@@ -281,6 +292,16 @@ namespace Memoria.DefaultScripts
                     {
                         RageStatusScript RageScript = effectScript as RageStatusScript;
                         RageScript.OnSHPShow(false);
+                    }
+                    if (effectScript is PerfectCritStatusScript)
+                    {
+                        PerfectCritStatusScript PerfectCritScript = effectScript as PerfectCritStatusScript;
+                        PerfectCritScript.OnSHPShow(false);
+                    }
+                    if (effectScript is PerfectDodgeStatusScript)
+                    {
+                        PerfectDodgeStatusScript PerfectCritScript = effectScript as PerfectDodgeStatusScript;
+                        PerfectCritScript.OnSHPShow(false);
                     }
                 }
             }
