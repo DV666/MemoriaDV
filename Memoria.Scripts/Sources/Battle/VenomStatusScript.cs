@@ -39,7 +39,12 @@ namespace Memoria.DefaultScripts
         public IOprStatusScript.SetupOprMethod SetupOpr => SetupVenomOpr;
         public Int32 SetupVenomOpr()
         {
-            return (Target.IsUnderAnyStatus(BattleStatus.EasyKill) || Target.IsPlayer && FF9StateSystem.EventState.gEventGlobal[1403] == 1) ? 600 : Math.Max(100, (600 - SpeedTick));
+            if (Target.IsUnderAnyStatus(BattleStatus.EasyKill) || Target.IsPlayer && FF9StateSystem.EventState.gEventGlobal[1403] == 1) // Boss or Vivi mode
+                return 600;
+            else if (FF9StateSystem.EventState.gEventGlobal[1403] == 4) // Necron mode
+                return 100;
+            else // Other difficulties
+                return Math.Max(100, (600 - SpeedTick));
             //return (Target.IsUnderAnyStatus(BattleStatus.EasyKill) || Target.IsPlayer && FF9StateSystem.EventState.gEventGlobal[1403] == 1) ? 600 : 100;
         }
         public Boolean OnOpr()
