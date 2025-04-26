@@ -132,10 +132,6 @@ namespace Memoria.Scripts.Battle
                     MonsterMechanic[unit.Data][5] = 4; // Reduce gravity damage
                 }
 
-                if (unit.Row == 1)
-                    btl_stat.AlterStatus(unit, CustomStatusId.Special, parameters: "CanCover1");
-
-
                 if (unit.PlayerIndex == (CharacterId)14)
                 {
                     unit.SummonCount = 1; // Used for SA Take that!
@@ -294,6 +290,11 @@ namespace Memoria.Scripts.Battle
                         btl_stat.AlterStatus(unit, CustomStatusId.PowerBreak, parameters: "+1");
                         btl_stat.AlterStatus(unit, CustomStatusId.ArmorUp, parameters: "+1");
                     }
+
+                    if (unit.Row == 1)
+                        btl_stat.AlterStatus(unit, CustomStatusId.Special, parameters: "CanCover1");
+                    else
+                        btl_stat.AlterStatus(unit, CustomStatusId.Special, parameters: "CanCover0");
                 }
             }
         }
@@ -324,10 +325,9 @@ namespace Memoria.Scripts.Battle
             { 251, 0 }, { 363, 0 }, { 364, 0 }, { 838, 0 }, // Friendly Eskuriax
             { 192, 0 }, { 193, 0 }, { 196, 0 }, { 197, 0 }, { 199, 0 }, // Friendly Fantôme
             { 300, 0 }, // Fourmillion
-            { 2, 2 }, // Gardienne du feu
             { 107, 0 }, // Gargantua (1st)
             { 890, 0 }, // Garland
-            { 2, 2 }, { 2, 3 }, // Wind Guardian + Fire Guardian
+            { 2, 2 }, // Fire Guardian
             { 326, 0 }, // Gisamark
             { 723, 0 }, // Friendly Garuda
             { 57, 0 }, // Ozma

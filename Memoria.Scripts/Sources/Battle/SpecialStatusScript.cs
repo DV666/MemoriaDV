@@ -47,69 +47,37 @@ namespace Memoria.DefaultScripts
                     Secretingredient--;
                 }
                 else if (Parameter == "CursedBlood")
-                {
                     CursedBlood = 1;
-                }
                 else if (Parameter == "SoakedBlade" && parameters[1] != null)
-                {
                     SoakedBlade = (Int32)parameters[1];
-                }
                 else if (Parameter == "MasterofAlchemy")
-                {
                     MasterofAlchemy = 1;
-                }
                 else if (Parameter == "LifeorDeath++")
-                {
                     LifeorDeath = 1;
-                }
                 else if (Parameter == "LifeorDeath--")
-                {
                     LifeorDeath = 0;
-                }
                 else if (Parameter == "Propagation2")
-                {
                     Propagation = 2;
-                }
                 else if (Parameter == "Propagation1")
-                {
                     Propagation = 1;
-                }
                 else if (Parameter == "Propagation--")
-                {
                     Propagation = 0;
-                }
                 else if (Parameter == "Flexible2")
-                {
                     Flexible = 2;
-                }
                 else if (Parameter == "Flexible1")
-                {
                     Flexible = 1;
-                }
                 else if (Parameter == "Flexible0")
-                {
                     Flexible = 0;
-                }
                 else if (Parameter == "Duelist++")
-                {
                     Duelist++;
-                }
                 else if (Parameter == "Duelist--")
-                {
                     Duelist = 0;
-                }
                 else if (Parameter == "Duelist--")
-                {
                     Duelist = 0;
-                }
                 else if (Parameter == "CanCover0")
-                {
                     CanCover = 0;
-                }
                 else if (Parameter == "CanCover1")
-                {
                     CanCover = 1;
-                }
             }
             return btl_stat.ALTER_SUCCESS;
         }
