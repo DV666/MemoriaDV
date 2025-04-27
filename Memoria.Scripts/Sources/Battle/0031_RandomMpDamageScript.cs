@@ -1,6 +1,8 @@
 using FF9;
 using System;
 using Memoria.Data;
+using Memoria.Prime;
+using System.Runtime.Remoting.Contexts;
 
 namespace Memoria.Scripts.Battle
 {
@@ -42,17 +44,22 @@ namespace Memoria.Scripts.Battle
                 TranceSeekCustomAPI.BonusWeaponElement(_v);
                 if (TranceSeekCustomAPI.CanAttackWeaponElementalCommand(_v))
                 {
-                    if (_v.Context.IsAbsorb)
+                    _v.TryCriticalHit();
+                    _v.PenaltyReverseAttack();
+                    _v.CalcPhysicalHpDamage();
+                    _v.Target.HpDamage /= 2;
+                    if (!_v.Context.IsAbsorb)
                     {
-                        _v.Context.Flags |= BattleCalcFlags.Guard;
+                        _v.Target.Flags |= CalcFlag.MpAlteration;
+                        foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(_v.Caster))
+                            saFeature.TriggerOnAbility(_v, "CalcDamage", false);
+                        foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(_v.Target))
+                            saFeature.TriggerOnAbility(_v, "CalcDamage", true);
+
+
+                        _v.Target.MpDamage = Math.Max(0, _v.Context.PowerDifference) * _v.Context.EnsureAttack >> 3;
                     }
-                    else
-                    {
-                        _v.TryCriticalHit();
-                        _v.PenaltyReverseAttack();
-                        _v.CalcMpDamage();
-                        TranceSeekCustomAPI.RaiseTrouble(_v);
-                    }
+                    TranceSeekCustomAPI.RaiseTrouble(_v);
                 }
                 return;
             }

@@ -62,7 +62,23 @@ namespace Memoria.Scripts.Battle
                 int MPDamageMiam = (int)(_v.Target.CurrentMp);
                 _v.Caster.HpDamage = _v.Target.HpDamage = HPDamageMiam;
                 _v.Caster.MpDamage = _v.Target.MpDamage = MPDamageMiam;
-                _v.Caster.AlterStatus(_v.Command.AbilityStatus);
+                int NumberBonus = Math.Max(1, HPDamageMiam / 1000);
+                List<BattleStatusId> statuschoosen = new List<BattleStatusId>();
+                foreach (BattleStatusId statusID in _v.Command.AbilityStatus.ToStatusList())
+                    statuschoosen.Add(statusID);
+
+                while (NumberBonus > 0 && statuschoosen.Count > 0)
+                {
+                    BattleStatusId statusselected = statuschoosen[GameRandom.Next16() % statuschoosen.Count];
+                    _v.Caster.AlterStatus(statusselected, _v.Target);
+                    statuschoosen.Remove(statusselected);
+                    NumberBonus--;
+                }
+                BattleStatus statuspiaf = (_v.Target.CurrentStatus & ~BattleStatus.EasyKill);
+                _v.Target.RemoveStatus(statuspiaf);
+                statuspiaf = statuspiaf & ~_v.Caster.ResistStatus;
+                _v.Caster.AlterStatus(statuspiaf, _v.Target);
+                return;
             }
             else if (_v.Command.Power == 2 && _v.Command.HitRate == 2 && _v.Caster.Data.dms_geo_id == 326) // Troll Feast from Jötunn
             {
@@ -77,10 +93,11 @@ namespace Memoria.Scripts.Battle
                 }
                 if (PiafTargetable > 0)
                     return;
+
                 _v.Target.Flags |= (CalcFlag.HpDamageOrHeal | CalcFlag.MpDamageOrHeal);
                 _v.Target.HpDamage = (int)(_v.Target.MaximumHp - 10000);
                 _v.Target.MpDamage = (int)(_v.Target.MaximumMp);
-                //btl_mot.ShowMesh(_v.Target.Data, 65535, false);
+                return;
             }
             else if (_v.Command.Power == 25 && _v.Command.HitRate == 111 && _v.Caster.Data.dms_geo_id == 278) // Polarity (+) with SPS effect (Black Waltz 3)
             {

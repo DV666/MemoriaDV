@@ -327,7 +327,7 @@ namespace Memoria.Scripts.Battle
             { 300, 0 }, // Fourmillion
             { 107, 0 }, // Gargantua (1st)
             { 890, 0 }, // Garland
-            { 2, 2 }, // Fire Guardian
+            { 2, 0 }, { 2, 2 }, { 2, 3 }, { 2, 4 }, // Shrines Guardian
             { 326, 0 }, // Gisamark
             { 723, 0 }, // Friendly Garuda
             { 57, 0 }, // Ozma
