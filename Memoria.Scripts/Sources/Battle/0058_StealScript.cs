@@ -337,6 +337,7 @@ namespace Memoria.Scripts.Battle
                 BattleItem.AddToInventory(_v.Context.ItemSteal);
                 UiState.SetBattleFollowFormatMessage(BattleMesages.Stole, FF9TextTool.ItemName(_v.Context.ItemSteal));
             }
+            TranceSeekCustomAPI.PhantomHandSA(_v);
         }
     }
 }

@@ -359,7 +359,8 @@ namespace Memoria.Scripts.Battle
                 BattleItem.AddToInventory(_v.Context.ItemSteal);
                 if (_v.Caster.PlayerIndex == CharacterId.Zidane && ff9item._FF9Item_Data[FF9StateSystem.Common.FF9.player[(CharacterId)_v.Caster.Data.bi.slot_no].equip.Weapon].shape == 2) // Thief Sword
                     UiState.SetBattleFollowFormatMessage(BattleMesages.Stole, FF9TextTool.ItemName(_v.Context.ItemSteal));
-            }       
+            }
+            TranceSeekCustomAPI.PhantomHandSA(_v);
         }
 
         public void ShowMugMessage()

@@ -1235,7 +1235,7 @@ namespace Memoria.Scripts.Battle
                 );
             }
             // SOS Reflect
-            if (v.Target.HasSupportAbilityByIndex((SupportAbility)1133))
+            if (v.Target.HasSupportAbilityByIndex((SupportAbility)1133) && !v.Target.HasSupportAbilityByIndex((SupportAbility)134))
             {
                 v.Target.AddDelayedModifier(
                     target => target.CurrentHp > (target.MaximumHp / 2),
@@ -1245,7 +1245,7 @@ namespace Memoria.Scripts.Battle
                     }
                 );
             }
-            else if (v.Target.HasSupportAbilityByIndex((SupportAbility)133))
+            else if (v.Target.HasSupportAbilityByIndex((SupportAbility)133) && !v.Target.HasSupportAbilityByIndex((SupportAbility)134))
             {
                 v.Target.AddDelayedModifier(
                     target => !target.IsUnderAnyStatus(BattleStatus.LowHP),
@@ -1256,7 +1256,7 @@ namespace Memoria.Scripts.Battle
                 );
             }
             // SOS Vanish
-            if (v.Target.HasSupportAbilityByIndex((SupportAbility)1134))
+            if (v.Target.HasSupportAbilityByIndex((SupportAbility)1134) && !v.Target.HasSupportAbilityByIndex((SupportAbility)133))
             {
                 v.Target.AddDelayedModifier(
                     target => target.CurrentHp > (target.MaximumHp / 2),
@@ -1266,7 +1266,7 @@ namespace Memoria.Scripts.Battle
                     }
                 );
             }
-            else if (v.Target.HasSupportAbilityByIndex((SupportAbility)134))
+            else if (v.Target.HasSupportAbilityByIndex((SupportAbility)134) && !v.Target.HasSupportAbilityByIndex((SupportAbility)133))
             {
                 v.Target.AddDelayedModifier(
                     target => !target.IsUnderAnyStatus(BattleStatus.LowHP),
@@ -1275,6 +1275,28 @@ namespace Memoria.Scripts.Battle
                         target.AlterStatus(BattleStatus.Vanish, target);
                     }
                 );
+            }
+        }
+
+        public static void PhantomHandSA(this BattleCalculator v)
+        {
+            if (v.Caster.HasSupportAbilityByIndex((SupportAbility)202)) // SA Phantom hand
+            {
+                v.Caster.Flags |= CalcFlag.MpDamageOrHeal;
+                v.Caster.MpDamage = (int)(v.Caster.MaximumMp / UnityEngine.Random.Range(5, 20));
+                if (v.Caster.HasSupportAbilityByIndex((SupportAbility)1202) && !v.Caster.InTrance)
+                {
+                    int TranceIncrease = (Int16)(Comn.random16() % v.Caster.Will);
+                    if (v.Caster.Trance + TranceIncrease < Byte.MaxValue)
+                    {
+                        v.Caster.Trance += (Byte)TranceIncrease;
+                    }
+                    else
+                    {
+                        v.Caster.Trance = Byte.MaxValue;
+                        v.Caster.AlterStatus(BattleStatusId.Trance);
+                    }
+                }
             }
         }
 
@@ -1466,10 +1488,6 @@ namespace Memoria.Scripts.Battle
             {
                 HealMP += (int)(v.Target.HasSupportAbilityByIndex((SupportAbility)1118) ? (v.Target.MaximumMp / 25) : (v.Target.MaximumMp / 50));
             }
-            if (v.Caster.HasSupportAbilityByIndex((SupportAbility)202) && (v.Command.AbilityId == BattleAbilityId.Steal || v.Command.AbilityId == BattleAbilityId.Attack && v.Caster.HasSupportAbility(SupportAbility2.Bandit))) // SA Phantom hand
-            {
-                HealMP += (int)(v.Target.HasSupportAbilityByIndex((SupportAbility)1202) ? (v.Target.MaximumMp / 25) : (v.Target.MaximumMp / 50));
-            }
 
             if ((HealHP > 0 || HealMP > 0) && !v.Caster.IsUnderAnyStatus(BattleStatus.Death) && SpecialSAEffect[v.Caster.Data][7] <= 0)
             {
@@ -1524,13 +1542,14 @@ namespace Memoria.Scripts.Battle
 
                 if ((v.Target.Flags & CalcFlag.HpAlteration) != 0)
                 {
-                    v.Target.HpDamage = Math.Max((v.Target.HpDamage * (v.Target.HasSupportAbilityByIndex((SupportAbility)1123) ? 70 : 85)) / 100, 1);
                     HPAssistanceDamage = Math.Max((v.Target.HpDamage * (v.Target.HasSupportAbilityByIndex((SupportAbility)1123) ? 30 : 15)) / 100, 1);
+                    v.Target.HpDamage = Math.Max((v.Target.HpDamage * (v.Target.HasSupportAbilityByIndex((SupportAbility)1123) ? 70 : 85)) / 100, 1);
+                    
                 }
                 if ((v.Target.Flags & CalcFlag.MpAlteration) != 0)
                 {
-                    v.Target.MpDamage = Math.Max((v.Target.MpDamage * (v.Target.HasSupportAbilityByIndex((SupportAbility)1123) ? 70 : 85)) / 100, 1);
                     MPAssistanceDamage = Math.Max((v.Target.MpDamage * (v.Target.HasSupportAbilityByIndex((SupportAbility)1123) ? 30 : 15)) / 100, 1);
+                    v.Target.MpDamage = Math.Max((v.Target.MpDamage * (v.Target.HasSupportAbilityByIndex((SupportAbility)1123) ? 70 : 85)) / 100, 1);
                 }
 
                 foreach (BattleUnit unit in BattleState.EnumerateUnits())
@@ -1562,7 +1581,7 @@ namespace Memoria.Scripts.Battle
             if (v.Target.HasSupportAbilityByIndex((SupportAbility)1201) && (v.Command.AbilityCategory & 8) != 0 && ZidanePassive[v.Target.Data][1] > Comn.random16() % 100) // SA Gorilla+
                 BattleState.EnqueueCounter(v.Target, BattleCommandId.Counter, BattleAbilityId.Attack, v.Caster.Id);
 
-            if (v.Target.HasSupportAbilityByIndex((SupportAbility)211) && (v.Target.Flags & CalcFlag.HpRecovery) == 0 && !v.Target.IsUnderAnyStatus(BattleStatus.Heat) && v.Target.CurrentHp < (v.Target.MaximumHp / (v.Target.HasSupportAbilityByIndex((SupportAbility)1211) ? 1 : 2)) && !v.Caster.IsPlayer) // SA Auto Gem
+            if (v.Target.HasSupportAbilityByIndex((SupportAbility)211) && (v.Target.Flags & CalcFlag.HpRecovery) == 0 && !v.Target.IsUnderAnyStatus(BattleStatus.Heat) && v.Target.CurrentHp < (v.Target.MaximumHp / (v.Target.HasSupportAbilityByIndex((SupportAbility)1211) ? 2 : 4)) && !v.Caster.IsPlayer) // SA Auto Gem
             {
                 List <RegularItem> GemList = new List<RegularItem>{ RegularItem.Garnet, RegularItem.Amethyst, RegularItem.Aquamarine, RegularItem.Diamond, RegularItem.Emerald, RegularItem.Moonstone,
                     RegularItem.Ruby, RegularItem.Peridot, RegularItem.Sapphire, RegularItem.Opal, RegularItem.Topaz, RegularItem.LapisLazuli};

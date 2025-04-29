@@ -32,44 +32,45 @@ namespace Memoria.Scripts.Battle
             }
             else
             {
-                int num = Comn.random16() % (1 + (_v.Caster.Level + _v.Caster.Strength >> 3));
-                _v.Context.AttackPower = _v.Caster.WeaponPower;
-                _v.Context.Attack = ((short)(_v.Caster.Strength + num));
                 if (_v.Caster.HasSupportAbility(SupportAbility1.HighJump) && GameRandom.Next8() % 2 == 0 || _v.Caster.HasSupportAbilityByIndex((SupportAbility)1021))
                 {
                     _v.Target.AlterStatus(TranceSeekCustomAPI.CustomStatus.Dragon, _v.Caster);
                 }
-                byte OldDefenceValue = _v.Caster.HasSupportAbilityByIndex((SupportAbility)217) ? (byte)_v.Target.MagicDefence : (byte)_v.Target.PhysicalDefence;
                 if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)217)) // SA Skydive
                 {
-                    _v.Target.MagicDefence = (byte)(_v.Target.MagicDefence / (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1217) ? 2 : 1));
-                    _v.Context.DefensePower = _v.Target.MagicDefence;
+                    int num = Comn.random16() % (1 + (_v.Caster.Level + _v.Caster.Strength >> 3));
+                    _v.Context.AttackPower = _v.Caster.WeaponPower;
+                    _v.Context.Attack = ((short)(_v.Caster.Strength + num));
+                    _v.Context.DefensePower = _v.Target.MagicDefence / 2; 
+                    TranceSeekCustomAPI.PenaltyShellAttack(_v);
+                    if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1217)) // SA Skydive+
+                        _v.Caster.AlterStatus(TranceSeekCustomAPI.CustomStatus.MagicUp, _v.Caster);
                 }
                 else
                 {
-                    _v.Target.PhysicalDefence = (byte)(_v.Target.PhysicalDefence / 2);
-                    _v.Context.DefensePower = _v.Target.PhysicalDefence;
+                    int num = Comn.random16() % (1 + (_v.Caster.Level + _v.Caster.Strength >> 3));
+                    _v.Context.AttackPower = _v.Caster.WeaponPower;
+                    _v.Context.Attack = ((short)(_v.Caster.Strength + num));
+                    _v.Context.DefensePower = _v.Target.PhysicalDefence / 2;
+                    TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
                 }
 
                 _v.BonusKillerAbilities();
                 TranceSeekCustomAPI.CasterPenaltyMini(_v);
-                TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
+                TranceSeekCustomAPI.EnemyTranceBonusAttack(_v);
                 TranceSeekCustomAPI.BonusWeaponElement(_v);
                 if (TranceSeekCustomAPI.CanAttackWeaponElementalCommand(_v))
                 {
                     TranceSeekCustomAPI.IpsenCastleMalus(_v);
                     TranceSeekCustomAPI.RaiseTrouble(_v);
                     _v.CalcPhysicalHpDamage();
-                    if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)216)) // SA Sky Attack 
-                    {
-                        _v.Caster.Flags |= CalcFlag.HpDamageOrHeal;
-                        _v.Caster.HpDamage = _v.Target.HpDamage / (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1216) ? 2 : 4);
-                    }
                 }
-                if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)217)) // SA Skydive
-                    _v.Target.MagicDefence = OldDefenceValue;
-                else
-                    _v.Target.PhysicalDefence = OldDefenceValue;
+
+                if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)216)) // SA Sky Attack 
+                {
+                    _v.Caster.Flags |= CalcFlag.HpDamageOrHeal;
+                    _v.Caster.HpDamage = _v.Target.HpDamage / (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1216) ? 4 : 8);
+                }
             }
         }
     }
