@@ -255,7 +255,22 @@ namespace Memoria.Scripts.Battle
                             battleEnemy.Data.bonus_exp += (battleEnemy.Data.bonus_exp / 4);
                             battleEnemy.Data.bonus_gil += (battleEnemy.Data.bonus_gil / 4);
                         }
-                    }                  
+                    }
+
+                    if (FF9StateSystem.Battle.battleMapIndex == 838 && sb2Pattern.Monster[unit.Data.bi.slot_no].TypeNo == 1) // Golden Pidove (fake Sleep)
+                    {
+                        if (!TranceSeekSpecial.PolaritySPS.TryGetValue(unit, out SPSEffect sps))
+                            TranceSeekSpecial.PolaritySPS[unit] = null;
+
+                        sps = HonoluluBattleMain.battleSPS.AddSequenceSPS(2, -1, 1, true);
+                        if (sps == null)
+                            return;
+                        btl2d.GetIconPosition(unit, btl2d.ICON_POS_HEAD, out Transform attachTransf, out Vector3 iconOff);
+                        sps.charTran = unit.Data.gameObject.transform;
+                        sps.boneTran = attachTransf;
+                        sps.posOffset = Vector3.zero;
+                        TranceSeekSpecial.PolaritySPS[unit] = sps;
+                    }
                 }
                 else
                 {
@@ -307,7 +322,7 @@ namespace Memoria.Scripts.Battle
             BBGINFO bbginfo = new BBGINFO();
             bbginfo.ReadBattleInfo(BBGNameID);
             FF9StateSystem.Battle.FF9Battle.map.btlBGInfoPtr = bbginfo;
-            battle.InitBattleMap();
+            //battle.InitBattleMap();
             FF9StateSystem.Battle.FF9Battle.map.btlBGPtr.SetActive(true);
         }
 
@@ -373,7 +388,8 @@ namespace Memoria.Scripts.Battle
 
         public static Dictionary<KeyValuePair<Int32, Int32>, String> CustomBBGonBattleID = new Dictionary<KeyValuePair<Int32, Int32>, String>
         {
-            { new KeyValuePair<Int32, Int32>(299, 1), "BBG_B023" } // Lindblum boss (Steiner Quest)
+            { new KeyValuePair<Int32, Int32>(299, 1), "BBG_B023" }, // Lindblum boss (Steiner Quest)
+            { new KeyValuePair<Int32, Int32>(838, 1), "BBG_B042" } // Golden Pidove
         };
     }
 }

@@ -205,6 +205,36 @@ namespace Memoria.Scripts.Battle
                 PolaritySPS[_v.Caster.Data].meshRenderer.enabled = false;
                 return;
             }
+            else if (_v.Caster.Data.dms_geo_id == 63) // Golden Pidove
+            {
+                if (_v.Target.Data == _v.Caster.Data)
+                {
+                    PolaritySPS[_v.Caster.Data].attr = 0;
+                    PolaritySPS[_v.Caster.Data].meshRenderer.enabled = false;
+                    _v.Caster.AddDelayedModifier(
+                        caster => caster.CurrentAtb >= caster.MaximumAtb,
+                        caster =>
+                        {
+                            caster.CurrentHp = 10000;
+                            foreach (BattleUnit player in BattleState.EnumerateUnits())
+                            {
+                                if (player.IsPlayer)
+                                {
+                                    player.CurrentHp = player.MaximumHp;
+                                    player.CurrentMp = player.MaximumMp;
+                                }
+                            }
+                        }
+                    );
+                }
+                else
+                {
+                    int randomdamage = UnityEngine.Random.Range(0, 999999999);
+                    btl2d.Btl2dReqSymbolMessage(_v.Target.Data, "[FFFFFF]", randomdamage.ToString(), HUDMessage.MessageStyle.DAMAGE, 0);
+                    _v.Target.CurrentHp = (uint)Math.Max(1, _v.Target.CurrentHp - randomdamage);
+                }
+                return;
+            }
             else if (_v.Caster.Data.dms_geo_id == 349) // Gizamaluke (preparation to dive)
             {
                 if (_v.Command.Power == 11 && _v.Command.HitRate == 111)
