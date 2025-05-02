@@ -18,7 +18,7 @@ namespace Memoria.DefaultScripts
         {
             base.Apply(target, inflicter, parameters);
             OverlapSHP.SetupOverlappingSHP2(target);
-            Int32 StackMaximum = 3;
+            Int32 StackMaximum = 5;
             ModelScale = target.ModelStatusScale;
             if (parameters.Length > 0)
             {
