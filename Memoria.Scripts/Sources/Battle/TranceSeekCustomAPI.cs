@@ -784,11 +784,6 @@ namespace Memoria.Scripts.Battle
                                 Int32 BonusFocusMax = 0;
                                 switch (v.Caster.Weapon)
                                 {
-                                    case RegularItem.FlameStaff:
-                                    case RegularItem.IceStaff:
-                                    case RegularItem.LightningStaff:
-                                        BonusFocusMax += 5;
-                                        break;
                                     case RegularItem.OakStaff:
                                         BonusFocusMax += 10;
                                         break;

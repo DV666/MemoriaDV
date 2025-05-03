@@ -24,6 +24,7 @@ namespace Memoria.Scripts.Battle
             {
                 _v.Target.ResistStatus &= ~BattleStatus.Trance;
                 btl_stat.MakeStatusesPermanent(_v.Target, _v.Target.PermanentStatus | BattleStatus.Trance, true);
+                _v.Target.Trance = Byte.MaxValue;
             }
             else
             {

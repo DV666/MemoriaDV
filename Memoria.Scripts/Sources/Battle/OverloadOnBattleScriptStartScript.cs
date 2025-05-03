@@ -459,15 +459,6 @@ namespace Memoria.Scripts.Battle
 
             }
 
-            if (v.Command.AbilityId == (BattleAbilityId)1036 || v.Command.AbilityId == (BattleAbilityId)1037 || v.Command.AbilityId == (BattleAbilityId)1039 || v.Command.AbilityId == (BattleAbilityId)1040
-            || v.Command.AbilityId == (BattleAbilityId)1049 || v.Command.AbilityId == (BattleAbilityId)1050 || v.Command.AbilityId == (BattleAbilityId)1051 || v.Command.AbilityId == (BattleAbilityId)1052)
-            {
-                if (FF9StateSystem.Battle.battleMapIndex == 930 && FF9StateSystem.Battle.FF9Battle.btl_scene.PatAddr[FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum].Monster[v.Target.Data.bi.slot_no].TypeNo == 0)
-                { // [TODO] Tantarian quick fix for Vivi's special weapons...
-                    v.Context.Flags |= BattleCalcFlags.Guard;
-                }
-            }
-
             TranceSeekCustomAPI.SOS_SA(v);
             return false;
         }

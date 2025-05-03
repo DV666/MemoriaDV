@@ -12,6 +12,8 @@ namespace Memoria.Scripts.Battle
     /// </summary>
     public abstract class BaseWeaponScript : IBattleScript
     {
+        public const Int32 Id = 1000;
+
         private readonly BattleCalculator _v;
         private readonly CalcAttackBonus _bonus;
 

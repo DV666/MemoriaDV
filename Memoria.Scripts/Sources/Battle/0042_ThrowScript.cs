@@ -74,6 +74,18 @@ namespace Memoria.Scripts.Battle
                         if (_v.Target.IsUnderAnyStatus(BattleStatus.Vanish))
                             _v.Target.RemoveStatus(BattleStatus.Vanish);
                     }
+                    else if (_v.Command.AbilityId == (BattleAbilityId)1136) // Hammer throw
+                    {
+                        if (!_v.Target.TryKillFrozen())
+                        {
+                            if (_v.Target.IsUnderAnyStatus(BattleStatus.Vanish))
+                            {
+                                _v.Context.Flags |= BattleCalcFlags.Miss;
+                            }
+                            TranceSeekCustomAPI.WeaponPhysicalParams(CalcAttackBonus.Simple, _v);
+                            TranceSeekCustomAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
+                        }
+                    }
                     else
                     {
                         if (!_v.Target.TryKillFrozen())

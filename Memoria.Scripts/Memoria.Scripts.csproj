@@ -367,6 +367,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
     <Compile Include="Sources\Battle\0139_BakuScript.cs" />
+    <Compile Include="Sources\Battle\0141_MagicWeaponSpecialScript.cs" />
     <Compile Include="Sources\Battle\0208_DigestScript.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
@@ -482,7 +483,9 @@
       <Name>Memoria.Prime</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="Sources\Battle\AbilityFeaturesTranceSeek.txt" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>"$(SolutionDir)\References\pdb2mdb.exe" "$(TargetPath)"

@@ -31,27 +31,27 @@ namespace Memoria.Scripts.Battle
             {
                 _v.Target.TryAlterSingleStatus(BattleStatusId.ChangeStat, true, _v.Caster, "PhysicalDefence", Math.Min(255, _v.Target.PhysicalDefence + 2));
                 Dictionary<String, String> localizedMessage = new Dictionary<String, String>
-                                {
-                                    { "US", "Defence ↑" },
-                                    { "UK", "Defence ↑" },
-                                    { "JP", "ぼうぎょりょく↑" },
-                                    { "ES", "DIF fisica ↑" },
-                                    { "FR", "Défense ↑" },
-                                    { "GR", "Defensa F ↑" },
-                                    { "IT", "Abwehr ↑" },
-                                };
+                {
+                    { "US", "Defence ↑" },
+                    { "UK", "Defence ↑" },
+                    { "JP", "ぼうぎょりょく↑" },
+                    { "ES", "DIF fisica ↑" },
+                    { "FR", "Défense ↑" },
+                    { "GR", "Defensa F ↑" },
+                    { "IT", "Abwehr ↑" },
+                };
                 btl2d.Btl2dReqSymbolMessage(_v.Target.Data, "[F9FF39]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 0);
                 _v.Target.TryAlterSingleStatus(BattleStatusId.ChangeStat, true, _v.Caster, "MagicDefence", Math.Min(255, _v.Target.MagicDefence + 2));
                 Dictionary<String, String> localizedMessage2 = new Dictionary<String, String>
-                                {
-                                    { "US", "Magic Def ↑" },
-                                    { "UK", "Magic Def ↑" },
-                                    { "JP", "まほうぼうぎょ ↑" },
-                                    { "ES", "DIF magica ↑" },
-                                    { "FR", "Protection ↑" },
-                                    { "GR", "Defensa M ↑" },
-                                    { "IT", "Z-Abwehr ↑" },
-                                };
+                {
+                    { "US", "Magic Def ↑" },
+                    { "UK", "Magic Def ↑" },
+                    { "JP", "まほうぼうぎょ ↑" },
+                    { "ES", "DIF magica ↑" },
+                    { "FR", "Protection ↑" },
+                    { "GR", "Defensa M ↑" },
+                    { "IT", "Z-Abwehr ↑" },
+                };
                 btl2d.Btl2dReqSymbolMessage(_v.Target.Data, "[F9FF39]", localizedMessage2, HUDMessage.MessageStyle.DAMAGE, 5);
             }
             else if (_v.Command.Power == 1 && _v.Command.HitRate == 1 && _v.Caster.Data.dms_geo_id == 326) // Frying from Jötunn
