@@ -1,5 +1,6 @@
 using System;
 using Memoria.Data;
+using Memoria.Prime;
 
 namespace Memoria.Scripts.Battle
 {
@@ -32,6 +33,9 @@ namespace Memoria.Scripts.Battle
 
         public Single RateTarget()
         {
+            if (_v.Target.IsUnderAnyStatus(TranceSeekCustomAPI.CustomStatus.Vieillissement) && (_v.Command.ItemId == RegularItem.Remedy || _v.Command.ItemId == RegularItem.Annoyntment || _v.Command.ItemId == (RegularItem)1003))
+                return 20;
+
             BattleStatus playerStatus = _v.Target.CurrentStatus;
             BattleStatus removeStatus = _v.Command.ItemStatus;
             BattleStatus removedStatus = playerStatus & removeStatus;

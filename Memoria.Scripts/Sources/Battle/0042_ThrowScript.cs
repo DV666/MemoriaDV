@@ -25,30 +25,26 @@ namespace Memoria.Scripts.Battle
             {
                 if (_v.Command.AbilityId == (BattleAbilityId)1136 || _v.Command.AbilityId == (BattleAbilityId)1138) // Accelerator hammer
                 {
-                    if (!_v.Target.TryKillFrozen())
+                    if (_v.Target.IsUnderAnyStatus(BattleStatus.Vanish))
                     {
-                        if (_v.Target.IsUnderAnyStatus(BattleStatus.Vanish))
-                        {
-                            _v.Context.Flags |= BattleCalcFlags.Miss;
-                        }
-                        _v.Caster.SetLowPhysicalAttack();
-                        TranceSeekCustomAPI.CharacterBonusPassive(_v, "LowPhysicalAttack");
-                        _v.Target.SetPhysicalDefense();
-                        _v.Context.AttackPower = _v.Caster.WeaponPower << 1;
-                        TranceSeekCustomAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
+                        _v.Context.Flags |= BattleCalcFlags.Miss;
                     }
-                    if ((_v.Caster.WeaponElement & _v.Caster.WeakElement) != 0)
-                        ++_v.Context.DamageModifierCount;
+                    TranceSeekCustomAPI.WeaponPhysicalParams(CalcAttackBonus.Simple, _v);
+                    TranceSeekCustomAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
                     TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
-                    if (TranceSeekCustomAPI.CanAttackMagic(_v))
+                    TranceSeekCustomAPI.BonusWeaponElement(_v);
+                    if (TranceSeekCustomAPI.CanAttackWeaponElementalCommand(_v))
                     {
+                        TranceSeekCustomAPI.TryCriticalHit(_v);
+                        TranceSeekCustomAPI.IpsenCastleMalus(_v);
                         _v.CalcPhysicalHpDamage();
+                        TranceSeekCustomAPI.InfusedWeaponStatus(_v);
+                        TranceSeekCustomAPI.TryAlterCommandStatuses(_v, false);
+                        TranceSeekCustomAPI.RaiseTrouble(_v);
                     }
-                    if (_v.Caster.WeaponRate > Comn.random16() % 100)
-                        _v.Target.TryAlterStatuses(_v.Caster.WeaponStatus, false);
                     return;
                 }
-                if (_v.Command.ItemId == (RegularItem)1032) // Smoking Bomb
+                else if (_v.Command.ItemId == (RegularItem)1032) // Smoking Bomb
                 {
                     btl_sys.CheckEscape(false);
                     if (_v.CanEscape())
@@ -73,18 +69,6 @@ namespace Memoria.Scripts.Battle
                         TranceSeekCustomAPI.PenaltyShellAttack(_v);
                         if (_v.Target.IsUnderAnyStatus(BattleStatus.Vanish))
                             _v.Target.RemoveStatus(BattleStatus.Vanish);
-                    }
-                    else if (_v.Command.AbilityId == (BattleAbilityId)1136) // Hammer throw
-                    {
-                        if (!_v.Target.TryKillFrozen())
-                        {
-                            if (_v.Target.IsUnderAnyStatus(BattleStatus.Vanish))
-                            {
-                                _v.Context.Flags |= BattleCalcFlags.Miss;
-                            }
-                            TranceSeekCustomAPI.WeaponPhysicalParams(CalcAttackBonus.Simple, _v);
-                            TranceSeekCustomAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
-                        }
                     }
                     else
                     {

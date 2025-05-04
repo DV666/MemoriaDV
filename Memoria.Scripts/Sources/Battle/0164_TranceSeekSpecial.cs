@@ -97,6 +97,7 @@ namespace Memoria.Scripts.Battle
                 _v.Target.Flags |= (CalcFlag.HpDamageOrHeal | CalcFlag.MpDamageOrHeal);
                 _v.Target.HpDamage = (int)(_v.Target.MaximumHp - 10000);
                 _v.Target.MpDamage = (int)(_v.Target.MaximumMp);
+                TranceSeekCustomAPI.MonsterMechanic[_v.Target.Data][4] = 100;
                 return;
             }
             else if (_v.Command.Power == 25 && _v.Command.HitRate == 111 && _v.Caster.Data.dms_geo_id == 278) // Polarity (+) with SPS effect (Black Waltz 3)

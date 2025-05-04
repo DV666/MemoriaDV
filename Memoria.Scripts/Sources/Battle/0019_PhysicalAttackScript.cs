@@ -46,39 +46,39 @@ namespace Memoria.Scripts.Battle
             TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
             TranceSeekCustomAPI.EnemyTranceBonusAttack(_v);
             TranceSeekCustomAPI.BonusElement(_v);
-            if (_v.CanAttackElementalCommand())
+            if (_v.CanAttackMagic())
             {
-                if (_v.Caster.PlayerIndex == CharacterId.Freya)
+                if (_v.Command.AbilityId == BattleAbilityId.CherryBlossom)
                 {
-                    if (_v.Command.AbilityId == BattleAbilityId.CherryBlossom)
+                    short CriticalBonus = _v.Caster.Data.critical_rate_deal_bonus;
+                    _v.Caster.Data.critical_rate_deal_bonus += 33;
+                    TranceSeekCustomAPI.TryCriticalHit(_v);
+                    if (_v.Target.IsUnderAnyStatus(TranceSeekCustomAPI.CustomStatus.Dragon) || (_v.Caster.IsUnderStatus(BattleStatus.Trance)))
                     {
-                        short CriticalBonus = _v.Caster.Data.critical_rate_deal_bonus;
-                        _v.Caster.Data.critical_rate_deal_bonus += 33;
-                        TranceSeekCustomAPI.TryCriticalHit(_v);
-                        if (_v.Target.IsUnderAnyStatus(TranceSeekCustomAPI.CustomStatus.Dragon) || (_v.Caster.IsUnderStatus(BattleStatus.Trance)))
+                        if (_v.Caster.Will > Comn.random16() % 100)
                         {
-                            if (_v.Caster.Will > Comn.random16() % 100)
-                            {
-                                _v.Target.TryAlterStatuses(BattleStatus.Venom, false, _v.Caster);
-                                _v.Target.TryAlterStatuses(BattleStatus.Poison, false, _v.Caster);
-                            }
-                            else
-                            {
-                                _v.Target.TryAlterStatuses(BattleStatus.Poison, false, _v.Caster);
-                            }
+                            _v.Target.TryAlterStatuses(BattleStatus.Venom, false, _v.Caster);
+                            _v.Target.TryAlterStatuses(BattleStatus.Poison, false, _v.Caster);
                         }
-                        _v.Caster.Data.critical_rate_deal_bonus = CriticalBonus;
-                        _v.CalcHpDamage();
+                        else
+                        {
+                            _v.Target.TryAlterStatuses(BattleStatus.Poison, false, _v.Caster);
+                        }
                     }
+                    _v.Caster.Data.critical_rate_deal_bonus = CriticalBonus;
+                    _v.CalcHpDamage();
                 }
                 else
                 {
                     _v.CalcHpDamage();
-                    if (_v.Caster.PlayerIndex == CharacterId.Beatrix && _v.Command.AbilityId == (BattleAbilityId)1043) // Fury of the general
+                    if (_v.Command.AbilityId == (BattleAbilityId)1009) // Pluto Charge
                     {
-                        TranceSeekCustomAPI.TryCriticalHit(_v);
+                        int factorDefense = _v.Caster.PhysicalDefence + (_v.Caster.PhysicalDefence * (TranceSeekCustomAPI.StackBreakOrUpStatus[_v.Caster.Data][2]) / 100);
+                        _v.Target.HpDamage = (_v.Target.HpDamage * factorDefense) / 100;
                     }
-                    else if (_v.Caster.PlayerIndex == CharacterId.Amarant && (_v.Command.AbilityId == BattleAbilityId.DemiShock1 || _v.Command.AbilityId == BattleAbilityId.DemiShock2)) // Tobigeri
+                    else if (_v.Command.AbilityId == (BattleAbilityId)1043) // Fury of the general
+                        TranceSeekCustomAPI.TryCriticalHit(_v);
+                    else if (_v.Command.AbilityId == BattleAbilityId.DemiShock1 || _v.Command.AbilityId == BattleAbilityId.DemiShock2) // Tobigeri
                     {
                         if (_v.Caster.IsUnderAnyStatus(BattleStatus.Protect))
                             _v.Command.AbilityStatus |= BattleStatus.Blind;

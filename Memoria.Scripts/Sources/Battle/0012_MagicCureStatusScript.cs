@@ -53,6 +53,9 @@ namespace Memoria.Scripts.Battle
 
         public Single RateTarget()
         {
+            if (_v.Target.IsUnderAnyStatus(TranceSeekCustomAPI.CustomStatus.Vieillissement) && _v.Command.AbilityId == BattleAbilityId.Esuna)
+                return 20;
+
             BattleStatus playerStatus = _v.Target.CurrentStatus;
             BattleStatus removeStatus = _v.Command.AbilityStatus;
             BattleStatus removedStatus = playerStatus & removeStatus;
