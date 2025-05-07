@@ -30,6 +30,7 @@ namespace Memoria.Scripts.Battle
             {
                 FF9StateSystem.Common.FF9.GetPlayer(CharacterId.Eiko).equip.Accessory = RegularItem.NoItem;
             }
+
             if (_v.Caster.PlayerIndex == CharacterId.Quina && (_v.Command.AbilityId == BattleAbilityId.AutoLife || _v.Command.AbilityId == (BattleAbilityId)1526))
             {
                 if (_v.Target.CurrentHp == _v.Target.MaximumHp)
@@ -43,6 +44,7 @@ namespace Memoria.Scripts.Battle
                     {
                         _v.Target.Flags |= CalcFlag.HpRecovery;
                     }
+
                     if ((_v.Target.CanBeRevived() || _v.Target.Accessory != (RegularItem)1213) && _v.Target.CheckIsPlayer() && _v.Target.CurrentHp == 0U)
                     {
                         _v.Target.HpDamage = (int)(_v.Target.MaximumHp * 3UL / 4UL);
@@ -52,14 +54,10 @@ namespace Memoria.Scripts.Battle
                     {
                         _v.Target.HpDamage = (int)(_v.Target.MaximumHp * 3UL / 4UL);
                     }
+
                     if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)100)) // Medecin
-                    {
-                        _v.Target.HpDamage += _v.Caster.HpDamage / 4;
-                    }
-                    else if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1100)) // Medecin +
-                    {
-                        _v.Target.HpDamage += _v.Caster.HpDamage / 2;
-                    }
+                        _v.Target.HpDamage += _v.Caster.HpDamage / (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1100) ? 2 : 4);
+
 
                     if (_v.Command.IsManyTarget)
                     {
@@ -94,14 +92,9 @@ namespace Memoria.Scripts.Battle
             else
             {
                 _v.Target.HpDamage = (Int32)(_v.Target.MaximumHp * (_v.Target.Will + _v.Command.Power) / 100);
+
                 if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)100)) // Medecin
-                {
-                    _v.Target.HpDamage += _v.Caster.HpDamage / 4;
-                }
-                else if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1100)) // Medecin +
-                {
-                    _v.Target.HpDamage += _v.Caster.HpDamage / 2;
-                }
+                    _v.Target.HpDamage += _v.Caster.HpDamage / (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1100) ? 2 : 4);
 
                 if (_v.Command.IsManyTarget)
                 {

@@ -91,14 +91,9 @@ namespace Memoria.Scripts.Battle
                     _v.Context.AttackPower = 1250;
                 }
 
-                if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1100)) // Medecin +
-                {
-                    _v.Context.AttackPower += _v.Context.AttackPower / 2;
-                }
-                else if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)100)) // Medecin
-                {
-                    _v.Context.AttackPower += _v.Context.AttackPower / 4;
-                }
+                if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)100)) // Medecin
+                    _v.Target.HpDamage += _v.Caster.HpDamage / (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1100) ? 2 : 4);
+
                 if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1027) && (_v.Target.IsPlayer && BattleState.BattleUnitCount(true) > 1 || !_v.Target.IsPlayer && BattleState.BattleUnitCount(false) > 1))
                 { // Herboriste +                    
                     foreach (BattleUnit unit in BattleState.EnumerateUnits())

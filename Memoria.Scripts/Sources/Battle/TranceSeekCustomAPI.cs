@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Assets.Sources.Scripts.UI.Common;
 using FF9;
 using Memoria.Data;
+using Memoria.Prime;
 using UnityEngine;
 
 namespace Memoria.Scripts.Battle
@@ -554,6 +555,9 @@ namespace Memoria.Scripts.Battle
 
         public static void PenaltyShellAttack(this BattleCalculator v)
         {
+            if (v.Caster.HasSupportAbilityByIndex((SupportAbility)1257)) // SA Mania+ [TODO] Need a new function for that ? Like HitRateBonus()
+                v.Context.HitRate += (v.Context.HitRate * FF9StateSystem.Battle.FF9Battle.aa_data[v.Command.AbilityId].MP) / 100;
+
             if (v.Target.MagicDefence == 255)
             {
                 v.Context.Attack = 0;
@@ -879,11 +883,6 @@ namespace Memoria.Scripts.Battle
                                     Int32 BonusFocusMax = 0;
                                     switch (Vivi.Weapon)
                                     {
-                                        case RegularItem.FlameStaff:
-                                        case RegularItem.IceStaff:
-                                        case RegularItem.LightningStaff:
-                                            BonusFocusMax += 5;
-                                            break;
                                         case RegularItem.OakStaff:
                                             BonusFocusMax += 10;
                                             break;
@@ -1088,7 +1087,7 @@ namespace Memoria.Scripts.Battle
                 v.RaiseTrouble();
         }
 
-        public static void SA_StatusApply(BattleUnit inflicter, Boolean Positive)
+        public static void SA_StatusApply(BattleUnit inflicter, Boolean StatusIsPositive)
         {
             if (inflicter != null)
             {
@@ -1097,13 +1096,17 @@ namespace Memoria.Scripts.Battle
                     int factor = inflicter.HasSupportAbilityByIndex((SupportAbility)1128) ? 2 : 1;
                     inflicter.CurrentMp = (uint)Math.Min(inflicter.CurrentMp + factor * (inflicter.MaximumMp / 100), inflicter.MaximumMp);
                 }
-                if (inflicter.HasSupportAbilityByIndex((SupportAbility)131) && !inflicter.InTrance && inflicter.Trance < byte.MaxValue && Positive) // SA Altruistic
+                if (inflicter.HasSupportAbilityByIndex((SupportAbility)131) && !inflicter.InTrance && inflicter.Trance < byte.MaxValue && StatusIsPositive) // SA Altruistic
                 {
                     byte bonusTrance = (byte)(inflicter.Will / 10);
                     if (inflicter.Trance + bonusTrance < Byte.MaxValue)
                         inflicter.Trance += bonusTrance;
                     else
                         inflicter.Trance = Byte.MaxValue;
+                }
+                if (inflicter.HasSupportAbilityByIndex((SupportAbility)1258)) // SA Reward+
+                {
+                    inflicter.CurrentMp = Math.Min(inflicter.CurrentMp + 25 * (inflicter.MaximumMp / 100), inflicter.MaximumMp);
                 }
             }
         }
@@ -1229,7 +1232,7 @@ namespace Memoria.Scripts.Battle
                     }
                 );
             }
-            // SOS Reflect
+            // SOS Reflect (don't work with SOS Vanish)
             if (v.Target.HasSupportAbilityByIndex((SupportAbility)1133) && !v.Target.HasSupportAbilityByIndex((SupportAbility)134))
             {
                 v.Target.AddDelayedModifier(
@@ -1250,7 +1253,7 @@ namespace Memoria.Scripts.Battle
                     }
                 );
             }
-            // SOS Vanish
+            // SOS Vanish (don't work with SOS Reflect)
             if (v.Target.HasSupportAbilityByIndex((SupportAbility)1134) && !v.Target.HasSupportAbilityByIndex((SupportAbility)133))
             {
                 v.Target.AddDelayedModifier(
@@ -1417,7 +1420,7 @@ namespace Memoria.Scripts.Battle
                     btl_stat.AlterStatus(v.Target, CustomStatusId.Dragon, v.Caster, parameters: "Remove");
             }
 
-            if (v.Command.Id == (BattleCommandId)10032) // SA Witchcraft
+            if (v.Command.Id == (BattleCommandId)1032) // SA Witchcraft
             {
                 v.Target.HpDamage /= 2;
                 v.Target.MpDamage /= 2;
@@ -1470,6 +1473,10 @@ namespace Memoria.Scripts.Battle
             if (v.Caster.HasSupportAbilityByIndex((SupportAbility)115) && (v.Target.WeakElement & v.Command.Element) != 0) // Soul Drain
             {
                 HealHP += v.Target.HpDamage / (v.Caster.HasSupportAbilityByIndex((SupportAbility)1115) ? 2 : 4);
+            }
+            if (v.Caster.HasSupportAbilityByIndex((SupportAbility)258) && (v.Target.WeakElement & v.Command.Element) != 0) // Reward
+            {
+                HealMP += (int)(v.Caster.MaximumMp / 25);
             }
             if (WeaponNewStatus[v.Caster.Data] == BattleStatus.Protect && (v.Command.Id == BattleCommandId.Attack || v.Command.Id == BattleCommandId.Counter)) // Drain MagiLame
             {
@@ -1633,6 +1640,20 @@ namespace Memoria.Scripts.Battle
             if (v.Caster.HasSupportAbilityByIndex((SupportAbility)235) && v.Command.Id == BattleCommandId.Attack) // SA Fencing
                 v.Target.HpDamage += v.Caster.HasSupportAbilityByIndex((SupportAbility)1235) ? v.Target.HpDamage / 4 : v.Target.HpDamage / 8;
 
+            Log.Message("v.Target.HpDamage = " + v.Target.HpDamage);
+            if (v.Caster.HasSupportAbilityByIndex((SupportAbility)257)) // SA Mania
+                v.Target.HpDamage += (v.Target.HpDamage * FF9StateSystem.Battle.FF9Battle.aa_data[v.Command.AbilityId].MP) / 100;
+
+            Log.Message("[NEW]v.Target.HpDamage = " + v.Target.HpDamage);
+
+            if (v.Target.IsCovering && v.Target.Data.bi.cover_unit.dms_geo_id == 220)
+            {
+                BattleUnit Mog = new BattleUnit(v.Target.Data.bi.cover_unit);
+                if (Mog.HasSupportAbilityByIndex((SupportAbility)259)) // SA Mog Kiss
+                    v.Target.AlterStatus(BattleStatus.Regen);
+                if (Mog.HasSupportAbilityByIndex((SupportAbility)1259))
+                    v.Target.RemoveStatus(BattleStatusConst.AnyNegative &~BattleStatus.Death);
+            }
         }
     }
 }

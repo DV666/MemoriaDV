@@ -192,7 +192,7 @@ namespace Memoria.Scripts.Battle
                     btl2d.Btl2dReqSymbolMessage(v.Caster.Data, "[FFFF00]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 10);
                 }
 
-                if (v.Command.Id == (BattleCommandId)10021 || v.Command.Id == (BattleCommandId)10036 || v.Command.Id == (BattleCommandId)10037)  // CMD Invention
+                if (v.Command.Id == (BattleCommandId)1021 || v.Command.Id == (BattleCommandId)1036 || v.Command.Id == (BattleCommandId)1037)  // CMD Invention
                 {
                     int mpCost = 0;
                     switch (v.Command.AbilityId)
@@ -298,7 +298,7 @@ namespace Memoria.Scripts.Battle
                 }
             }
 
-            if (v.Command.Id == (BattleCommandId)10020) // CMD Mixing
+            if (v.Command.Id == (BattleCommandId)1020) // CMD Mixing
             {
                 int TranceDelta = v.Caster.HasSupportAbilityByIndex((SupportAbility)1251) ? 42 : v.Caster.HasSupportAbilityByIndex((SupportAbility)251) ? 64 : 128;
                 v.Caster.Trance = (byte)Math.Max(0, v.Caster.Trance - TranceDelta);
@@ -315,7 +315,7 @@ namespace Memoria.Scripts.Battle
                 );                
             }
 
-            if (v.Command.Id == (BattleCommandId)10032 && !v.Caster.HasSupportAbilityByIndex((SupportAbility)1205)) // Witchcraft (Vivi's SA)
+            if (v.Command.Id == (BattleCommandId)1032 && !v.Caster.HasSupportAbilityByIndex((SupportAbility)1205)) // Witchcraft (Vivi's SA)
             {
                 v.Command.HitRate /= 2;
             }
@@ -453,9 +453,9 @@ namespace Memoria.Scripts.Battle
                 CharacterPresetId presetId = v.Caster.Player.PresetId;
                 v.Caster.SummonCount++;
                 if (v.Caster.HasSupportAbilityByIndex((SupportAbility)1253) || v.Caster.HasSupportAbilityByIndex((SupportAbility)253) && v.Caster.SummonCount % 2 == 0) // SA Take that!
-                    CharacterCommands.CommandSets[presetId].Regular[0] = (BattleCommandId)(UnityEngine.Random.Range(10042, 10045));
+                    CharacterCommands.CommandSets[presetId].Regular[0] = (BattleCommandId)(UnityEngine.Random.Range(1042, 1045));
                 else
-                    CharacterCommands.CommandSets[presetId].Regular[0] = (BattleCommandId)(UnityEngine.Random.Range(10038, 10041));
+                    CharacterCommands.CommandSets[presetId].Regular[0] = (BattleCommandId)(UnityEngine.Random.Range(1038, 1041));
 
             }
 

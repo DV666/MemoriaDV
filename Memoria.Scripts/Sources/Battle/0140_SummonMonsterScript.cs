@@ -29,7 +29,7 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            if (_v.Command.Id == (BattleCommandId)10029) // Kutrol
+            if (_v.Command.Id == (BattleCommandId)1029) // Kutrol
             {
                 int AbilityId = GeoMonsterWithAA.FirstOrDefault(x => x.Value == _v.Target.Data.dms_geo_id).Key;
                 AbilityId = ff9abil.GetAbilityIdFromActiveAbility((BattleAbilityId)AbilityId);
@@ -750,13 +750,8 @@ namespace Memoria.Scripts.Battle
                             {
                                 int Heal = (int)_v.Caster.CurrentHp;
                                 if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)100)) // Medecin
-                                {
-                                    Heal += Heal / 4;
-                                }
-                                else if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1100)) // Medecin +
-                                {
-                                    Heal += Heal / 2;
-                                }
+                                    Heal += Heal / (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1100) ? 2 : 4);
+
                                 foreach (BattleUnit unit in BattleState.EnumerateUnits())
                                 {
                                     if (!unit.IsPlayer || !unit.IsTargetable || unit.IsUnderAnyStatus(BattleStatus.Death | BattleStatus.Petrify | BattleStatus.Jump))

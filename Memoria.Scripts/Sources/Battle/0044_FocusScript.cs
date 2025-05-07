@@ -24,7 +24,7 @@ namespace Memoria.Scripts.Battle
         {
             if (_v.Caster.PlayerIndex == CharacterId.Vivi)
             {
-                if (_v.Command.Id == (BattleCommandId)10000) // AA Mana Well
+                if (_v.Command.Id == (BattleCommandId)1000) // AA Mana Well
                 {
                     _v.Target.Flags |= (CalcFlag.MpAlteration | CalcFlag.MpRecovery);
                     short mpDamage = (short)(_v.Target.MaximumMp / 2U);
@@ -101,7 +101,7 @@ namespace Memoria.Scripts.Battle
                         }
                     }
                 }
-                else if (_v.Command.Id == (BattleCommandId)10033) // SA Absorb
+                else if (_v.Command.Id == (BattleCommandId)1033) // SA Absorb
                 {
                     _v.Target.Flags |= CalcFlag.HpAlteration;
                     _v.Caster.Flags |= CalcFlag.MpDamageOrHeal;

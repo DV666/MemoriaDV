@@ -169,47 +169,6 @@ namespace Memoria.Scripts.Battle
                     _v.Caster.RemoveStatus(BattleStatus.Defend);
                 }
             }
-            else if (_v.Caster.Data.dms_geo_id == 405 && _v.Caster.Level == 28 && _v.Command.Power == 1 && _v.Command.HitRate == 1) // Friendly Lady Bug - Wind mechanics
-            {
-                int ColorWing = GameRandom.Next16() % 5;
-                _v.Caster.Data.gameObject.SetActive(false);
-                _v.Caster.Data.gameObject = ModelFactory.CreateModel("GEO_MON_B3_159", true);
-                if (ColorWing == 0)
-                {
-                    _v.Caster.WeakElement = EffectElement.Wind | EffectElement.Wind | EffectElement.Cold;
-                    _v.Caster.AbsorbElement = EffectElement.Holy | EffectElement.Fire;
-                    UIManager.Battle.SetBattleFollowMessage(3, Localization.GetWithDefault("LadyBugRed"));
-                    ModelFactory.ChangeModelTexture(_v.Caster.Data.gameObject, new string[] { "CustomTextures/FriendlyLadyBug/FireWings/405_0.png", "CustomTextures/FriendlyLadyBug/FireWings/405_1.png", "CustomTextures/FriendlyLadyBug/FireWings/405_2.png" });
-                }
-                else if (ColorWing == 1)
-                {
-                    _v.Caster.WeakElement = EffectElement.Wind | EffectElement.Wind | EffectElement.Fire;
-                    _v.Caster.AbsorbElement = EffectElement.Holy | EffectElement.Cold;
-                    UIManager.Battle.SetBattleFollowMessage(3, Localization.GetWithDefault("LadyBugCyan"));
-                    ModelFactory.ChangeModelTexture(_v.Caster.Data.gameObject, new string[] { "CustomTextures/FriendlyLadyBug/IceWings/405_0.png", "CustomTextures/FriendlyLadyBug/IceWings/405_1.png", "CustomTextures/FriendlyLadyBug/IceWings/405_2.png" });
-                }
-                else if (ColorWing == 2)
-                {
-                    _v.Caster.WeakElement = EffectElement.Wind | EffectElement.Wind | EffectElement.Aqua;
-                    _v.Caster.AbsorbElement = EffectElement.Holy | EffectElement.Thunder;
-                    UIManager.Battle.SetBattleFollowMessage(3, Localization.GetWithDefault("LadyBugYellow"));
-                    ModelFactory.ChangeModelTexture(_v.Caster.Data.gameObject, new string[] { "CustomTextures/FriendlyLadyBug/ThunderWings/405_0.png", "CustomTextures/FriendlyLadyBug/ThunderWings/405_1.png", "CustomTextures/FriendlyLadyBug/ThunderWings/405_2.png" });
-                }
-                else if (ColorWing == 3)
-                {
-                    _v.Caster.WeakElement = EffectElement.Wind | EffectElement.Wind | EffectElement.Thunder;
-                    _v.Caster.AbsorbElement = EffectElement.Holy | EffectElement.Aqua;
-                    UIManager.Battle.SetBattleFollowMessage(3, Localization.GetWithDefault("LadyBugBlue"));
-                    ModelFactory.ChangeModelTexture(_v.Caster.Data.gameObject, new string[] { "CustomTextures/FriendlyLadyBug/WaterWings/405_0.png", "CustomTextures/FriendlyLadyBug/WaterWings/405_1.png", "CustomTextures/FriendlyLadyBug/WaterWings/405_2.png" });
-                }
-                else
-                {
-                    _v.Caster.WeakElement = EffectElement.Wind | EffectElement.Wind;
-                    _v.Caster.AbsorbElement = EffectElement.Holy;
-                    UIManager.Battle.SetBattleFollowMessage(3, Localization.GetWithDefault("LadyBugWhite"));
-                }
-                _v.Caster.Data.gameObject.SetActive(true);
-            }
         }
     }
 }
