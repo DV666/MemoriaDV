@@ -15,7 +15,7 @@ WaitSFXLoaded: SFX=Special_Steiner_VS_Blank ; Reflect=False
 WaitAnimation: Char=Caster
 PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_148_030
 PlaySFX: SFX=Special_Steiner_VS_Blank ; Reflect=False ; HideMeshes=7, 8, 9, 10 ; SkipSequence
-StartThread: Sync=False;
+StartThread: Sync=False
 	PlaySound: Sound=1648
 	PlaySound: Sound=1649
 	PlaySound: Sound=1650

@@ -602,11 +602,11 @@ DisableSA 1036 36 1054 54 1056 56
 
 ### Komrade ###
 Command
-[code=Condition] CommandId == 10030 && AbilityId != 1205 [/code]
+[code=Condition] CommandId == 1030 && AbilityId != 1205 [/code]
 [code=CommandTargetId] ((AbilityCategory & 32) != 0 && (AbilityCategory & 128) != 0) ? CasterUnitId : ((AbilityCategory & 32) != 0 ? BattleFilter(255, 1, 1, BattleStatus_Death | BattleStatus_Jump) : ((AbilityCategory & 4) != 0 ? BattleFilter(255, 0, 1, BattleStatus_Death | BattleStatus_Jump) : ((AbilityCategory & 128) != 0 ? GetRandomBit(BattleFilter(255, 1, 1, BattleStatus_Death | BattleStatus_Jump)) : GetRandomBit(BattleFilter(255, 0, 1, BattleStatus_Death | BattleStatus_Jump))))) [/code]
 
 Command
-[code=Condition] CommandId == 10030 && (AbilityId == 1263 || AbilityId == 1377) [/code]
+[code=Condition] CommandId == 1030 && (AbilityId == 1263 || AbilityId == 1377) [/code]
 [code=CommandTargetId] GetRandomBit(BattleFilter(255, GetRandom(0, 2), 1, BattleStatus_Death)) [/code]
 
 ############# Garnet Passive (Gems) #################
@@ -660,89 +660,7 @@ Ability AsTarget WhenBattleScriptEnd
 [code=Condition] TargetCharacterIndex == CharacterId_Garnet && CommandId < BattleCommandId_BoundaryCheck && (AbilityCategory & 8) != 0 && (TargetAccessoryId == RegularItem_Diamond || (CheckAnyStatus(TargetCurrentStatus, BattleStatus_Trance) && GetItemCount(RegularItem_Diamond) > 0)) [/code]
 [code=HPDamage] (HPDamage - (HPDamage * (1 + GetItemCount(RegularItem_Diamond)) / 400)) * (TargetHasSA(1210) ? 1.5 : (TargetHasSA(210) ? 1.25 : 1)) [/code]
 
-############# Eiko Passive (Moug) #################
-Command EvenImmobilized
-[code=Condition] !HasSA(226) && CharacterIndex == CharacterId_Eiko && IsCasterWellDefined && IsTargeted && HP < MaxHP && !CheckAnyStatus(CurrentStatus, BattleStatus_Zombie | BattleStatus_Heat) && GetRandom(0, (HasSA(1224) ? 20 : (HasSA(224) ? 30 : 40))) == 0 [/code]
-[code=Counter] CasterIsPlayer != IsPlayer ? 1017 : BattleAbilityId_Void [/code]
-
-Command EvenImmobilized
-[code=Condition] !HasSA(226) && CharacterIndex == CharacterId_Eiko && IsCasterWellDefined && IsTargeted && !CheckAnyStatus(CurrentStatus, BattleStatus_Heat) && (CheckAnyStatus(CurrentStatus, BattleStatus_Poison) || CheckAnyStatus(CurrentStatus, BattleStatus_Venom) || CheckAnyStatus(CurrentStatus, BattleStatus_Silence) || CheckAnyStatus(CurrentStatus, BattleStatus_Blind) || CheckAnyStatus(CurrentStatus, BattleStatus_Trouble) || CheckAnyStatus(CurrentStatus, BattleStatus_Berserk) || CheckAnyStatus(CurrentStatus, BattleStatus_Mini)) && GetRandom(0, (HasSA(1224) ? 20 : (HasSA(224) ? 30 : 40))) == 0 [/code]
-[code=Counter] CasterIsPlayer != IsPlayer ? 1018 : BattleAbilityId_Void [/code]
-
-Command EvenImmobilized
-[code=Condition] !HasSA(226) && CharacterIndex == CharacterId_Eiko && IsCasterWellDefined && IsTargeted && !CheckAnyStatus(CurrentStatus, BattleStatus_Heat) && GetRandom(0, (HasSA(1224) ? 20 : (HasSA(224) ? 30 : 40))) == 0 [/code]
-[code=Counter] CasterIsPlayer != IsPlayer ? 1018 : BattleAbilityId_Void [/code]
-
-Command EvenImmobilized
-[code=Condition] !HasSA(226) && CharacterIndex == CharacterId_Eiko && IsCasterWellDefined && IsTargeted && !CheckAnyStatus(CurrentStatus, BattleStatus_Heat) && GetRandom(0, (HasSA(1224) ? 20 : (HasSA(224) ? 30 : 40))) == 0 [/code]
-[code=Counter] CasterIsPlayer != IsPlayer ? 1019 : BattleAbilityId_Void [/code]
-
-Command EvenImmobilized
-[code=Condition] !HasSA(226) && CharacterIndex == CharacterId_Eiko && IsCasterWellDefined && IsTargeted && !CheckAnyStatus(CurrentStatus, BattleStatus_Heat) && GetRandom(0, (HasSA(1224) ? 20 : (HasSA(224) ? 30 : 40))) == 0 [/code]
-[code=Counter] CasterIsPlayer != IsPlayer ? 1020 : BattleAbilityId_Void [/code]
-
-Command EvenImmobilized
-[code=Condition] !HasSA(226) && CharacterIndex == CharacterId_Eiko && IsCasterWellDefined && IsTargeted && !CheckAnyStatus(CurrentStatus, BattleStatus_Vanish | BattleStatus_Heat) && GetRandom(0, (HasSA(1224) ? 20 : (HasSA(224) ? 30 : 40))) == 0 [/code]
-[code=Counter] CasterIsPlayer != IsPlayer ? 1021 : BattleAbilityId_Void [/code]
-
-Command EvenImmobilized
-[code=Condition] !HasSA(226) && CharacterIndex == CharacterId_Eiko && IsCasterWellDefined && IsTargeted && !CheckAnyStatus(CurrentStatus, BattleStatus_AutoLife | BattleStatus_Heat) && GetRandom(0, (HasSA(1224) ? 20 : (HasSA(224) ? 30 : 40))) == 0 [/code]
-[code=Counter] CasterIsPlayer != IsPlayer ? 1022 : BattleAbilityId_Void [/code]
-
-Command EvenImmobilized
-[code=Condition] !HasSA(226) && CharacterIndex == CharacterId_Eiko && IsCasterWellDefined && IsTargeted && !CheckAnyStatus(CurrentStatus, BattleStatus_Heat) && GetRandom(0, (HasSA(1224) ? 20 : (HasSA(224) ? 30 : 40))) == 0 [/code]
-[code=Counter] CasterIsPlayer != IsPlayer ? 1023 : BattleAbilityId_Void [/code]
-
-Command EvenImmobilized
-[code=Condition] !HasSA(226) && CharacterIndex == CharacterId_Eiko && IsCasterWellDefined && IsTargeted && !CheckAnyStatus(CurrentStatus, BattleStatus_Heat) && GetRandom(0, (HasSA(1224) ? 20 : (HasSA(224) ? 30 : 40))) == 0 [/code]
-[code=Counter] CasterIsPlayer != IsPlayer ? 1024 : BattleAbilityId_Void [/code]
-
 ############# Special Weapons #################
-##### Dagga #####
-Command
-[code=Condition] IsSingleTarget && IsCasterWellDefined && IsTheCaster && CommandId == BattleCommandId_Attack [/code]
-[code=Counter] CasterIsPlayer != TargetIsPlayer && CasterCharacterIndex == CharacterId_Garnet && CasterWeaponId == RegularItem_StardustRod && GetRandom(0, 4) == 0 ? 1052 : BattleAbilityId_Void [/code]
-
-##### Vivi #####
-Command
-[code=Condition] IsSingleTarget && IsCasterWellDefined && IsTheCaster && CommandId == BattleCommandId_Attack [/code]
-[code=Counter] CasterIsPlayer != TargetIsPlayer && CasterCharacterIndex == CharacterId_Vivi && CasterWeaponId == RegularItem_FlameStaff && GetRandom(0, 4) == 0 ? 1049 : BattleAbilityId_Void [/code]
-
-Command
-[code=Condition] IsSingleTarget && IsCasterWellDefined && IsTheCaster && CommandId == BattleCommandId_Attack [/code]
-[code=Counter] CasterIsPlayer != TargetIsPlayer && CasterCharacterIndex == CharacterId_Vivi && CasterWeaponId == RegularItem_LightningStaff && GetRandom(0, 4) == 0 ? 1050 : BattleAbilityId_Void [/code]
-
-Command
-[code=Condition] IsSingleTarget && IsCasterWellDefined && IsTheCaster && CommandId == BattleCommandId_Attack [/code]
-[code=Counter] CasterIsPlayer != TargetIsPlayer && CasterCharacterIndex == CharacterId_Vivi && CasterWeaponId == RegularItem_IceStaff && GetRandom(0, 4) == 0 ? 1051 : BattleAbilityId_Void [/code]
-
-Command
-[code=Condition] IsSingleTarget && IsCasterWellDefined && IsTheCaster && CommandId == BattleCommandId_Attack [/code]
-[code=Counter] CasterIsPlayer != TargetIsPlayer && CasterCharacterIndex == CharacterId_Vivi && CasterWeaponId == 1028 && GetRandom(0, 4) == 0 ? 1035 : BattleAbilityId_Void [/code]
-
-Command
-[code=Condition] IsSingleTarget && IsCasterWellDefined && IsTheCaster && CommandId == BattleCommandId_Attack [/code]
-[code=Counter] CasterIsPlayer != TargetIsPlayer && CasterCharacterIndex == CharacterId_Vivi && CasterWeaponId == 1028 ? 1034 : BattleAbilityId_Void [/code]
-
-Command
-[code=Condition] IsSingleTarget && IsCasterWellDefined && IsTheCaster && CommandId == BattleCommandId_Attack [/code]
-[code=Counter] CasterIsPlayer != TargetIsPlayer && CasterCharacterIndex == CharacterId_Vivi && CasterWeaponId == 1029 && GetRandom(0, 4) == 0 ? 1037 : BattleAbilityId_Void [/code]
-
-Command
-[code=Condition] IsSingleTarget && IsCasterWellDefined && IsTheCaster && CommandId == BattleCommandId_Attack [/code]
-[code=Counter] CasterIsPlayer != TargetIsPlayer && CasterCharacterIndex == CharacterId_Vivi && CasterWeaponId == 1029 ? 1036 : BattleAbilityId_Void [/code]
-
-Command
-[code=Condition] IsSingleTarget && IsCasterWellDefined && IsTheCaster && CommandId == BattleCommandId_Attack [/code]
-[code=Counter] CasterIsPlayer != TargetIsPlayer && CasterCharacterIndex == CharacterId_Vivi && CasterWeaponId == 1030 && GetRandom(0, 4) == 0 ? 1038 : BattleAbilityId_Void [/code]
-
-Command
-[code=Condition] IsSingleTarget && IsCasterWellDefined && IsTheCaster && CommandId == BattleCommandId_Attack [/code]
-[code=Counter] CasterIsPlayer != TargetIsPlayer && CasterCharacterIndex == CharacterId_Vivi && CasterWeaponId == 1031 && GetRandom(0, 4) == 0 ? 1040 : BattleAbilityId_Void [/code]
-
-Command
-[code=Condition] IsSingleTarget && IsCasterWellDefined && IsTheCaster && CommandId == BattleCommandId_Attack [/code]
-[code=Counter] CasterIsPlayer != TargetIsPlayer && CasterCharacterIndex == CharacterId_Vivi && CasterWeaponId == 1031 ? 1039 : BattleAbilityId_Void [/code]
 
 ##### Freyja - Heavy Lance #####
 Ability WhenHitRateSetup EvenImmobilized
@@ -846,6 +764,13 @@ BattleResult WhenRewardAll
 [code=Condition] AccessoryId == 1239 [/code]
 [code=BonusAP] BonusAP * 2 [/code]
 
+BattleResult WhenRewardAll
+[code=Condition] HeadId == 1241 [/code]
+[code=BonusItemCount1] GetItemProperty(BonusItem1, 'Shape') == 21 ? (BonusItemCount1 + (GetUnitProperty(GetPartyMemberIndex(0), 'HeadId') == 1241 ? 1 : 0) + (GetUnitProperty(GetPartyMemberIndex(1), 'HeadId') == 1241 ? 1 : 0) + (GetUnitProperty(GetPartyMemberIndex(2), 'HeadId') == 1241 ? 1 : 0) + (GetUnitProperty(GetPartyMemberIndex(3), 'HeadId') == 1241 ? 1 : 0)) : BonusItemCount1 [/code]
+[code=BonusItemCount2] GetItemProperty(BonusItem2, 'Shape') == 21 ? (BonusItemCount2 + (GetUnitProperty(GetPartyMemberIndex(0), 'HeadId') == 1241 ? 1 : 0) + (GetUnitProperty(GetPartyMemberIndex(1), 'HeadId') == 1241 ? 1 : 0) + (GetUnitProperty(GetPartyMemberIndex(2), 'HeadId') == 1241 ? 1 : 0) + (GetUnitProperty(GetPartyMemberIndex(3), 'HeadId') == 1241 ? 1 : 0)) : BonusItemCount2 [/code]
+[code=BonusItemCount3] GetItemProperty(BonusItem3, 'Shape') == 21 ? (BonusItemCount3 + (GetUnitProperty(GetPartyMemberIndex(0), 'HeadId') == 1241 ? 1 : 0) + (GetUnitProperty(GetPartyMemberIndex(1), 'HeadId') == 1241 ? 1 : 0) + (GetUnitProperty(GetPartyMemberIndex(2), 'HeadId') == 1241 ? 1 : 0) + (GetUnitProperty(GetPartyMemberIndex(3), 'HeadId') == 1241 ? 1 : 0)) : BonusItemCount3 [/code]
+[code=BonusItemCount4] GetItemProperty(BonusItem4, 'Shape') == 21 ? (BonusItemCount4 + (GetUnitProperty(GetPartyMemberIndex(0), 'HeadId') == 1241 ? 1 : 0) + (GetUnitProperty(GetPartyMemberIndex(1), 'HeadId') == 1241 ? 1 : 0) + (GetUnitProperty(GetPartyMemberIndex(2), 'HeadId') == 1241 ? 1 : 0) + (GetUnitProperty(GetPartyMemberIndex(3), 'HeadId') == 1241 ? 1 : 0)) : BonusItemCount4 [/code]
+
 ############# Enemy #################
 >SA GlobalEnemy+
 StatusInit [code=Condition] CheckAnyStatus(CurrentStatus, BattleStatus_EasyKill) [/code] [code=DurationFactorCustomStatus17] 0.20 [/code]
@@ -891,28 +816,36 @@ ________________________________________________________________________________
 
 ############# Special mechanics/features #################
 
+#### Basic commands ###
+>CMD 1 Attack
+[code=Patch] CharacterIndex == CharacterId_Marcus && CheckAnyStatus(CurrentStatus, BattleStatus_Trance) ? 1028 : ((WeaponId == 59 || WeaponId == 71 || WeaponId == 72 || WeaponId == 73 || WeaponId == 1028 || WeaponId == 1029 || WeaponId == 1030 || WeaponId == 1031 ) ? (GetRandom(0, 3) != 0 ? ((WeaponId == 59 || WeaponId == 71 || WeaponId == 72 || WeaponId == 73) ? 1050 : 1051) : ((WeaponId == 59 || WeaponId == 71 || WeaponId == 72 || WeaponId == 73) ? 1051 : 1052)) : -1) [/code]
+
+>CMD 2 Special CMD (like Steal)
+[code=Patch] (((CharacterIndex == CharacterId_Blank && ScenarioCounter >= 11100 && Trance > 128) || PropertyByName('StatusProperty CustomStatus21 MasterofAlchemy') != 0)) ? 1020 : (HasSA(1247) ? 1037 : (HasSA(247) ? 1036 : 2)) [/code]
+
+
 #### Zidane (switch weapons) ####
 >CMD 25 Replace Skill by Bandit
-[code=Patch] SerialNumber != 0 ? 10001 : 25 [/code]
+[code=Patch] SerialNumber != 0 ? 1001 : 25 [/code]
 
 >AA 1001 Disable Bandit ! for early daggers
 [code=Disable] CasterWeaponId == RegularItem_Dagger || CasterWeaponId == RegularItem_MageMasher || CasterWeaponId == RegularItem_MythrilDagger [/code]
 
 #### Sentinel Steiner + Dual Amarant ####
 >CMD 4
-[code=Patch] (HasSA(223) && GetEventGlobalByte(1320) > 0) ? 10035 : ((SerialNumber == 7 || SerialNumber == 8) ? 10015 : (SerialNumber == 13 ? 10016 : (InTrance && CharacterIndex == 14 ? 10027 : 4))) [/code]
+[code=Patch] (HasSA(223) && GetEventGlobalByte(1320) > 0) ? 1035 : ((SerialNumber == 7 || SerialNumber == 8) ? 10015 : (SerialNumber == 13 ? 1016 : (InTrance && CharacterIndex == 14 ? 1027 : 4))) [/code]
 
-#### SA CMD for Vivi ####
+#### SA CMD for Steiner ####
 
 >AA 142 Deathblow
 [code=Patch] HasSA(1213) && GetUnitProperty(CharacterId_Steiner, 'StatusProperty CustomStatus21 Duelist') >= 2 ? 1551 : (HasSA(213) && GetUnitProperty(CharacterId_Steiner, 'StatusProperty CustomStatus21 Duelist') > 0 ? 1550 : -1) [/code]
 
 #### SA CMD for Vivi ####
 >CMD 13
-[code=Patch] HasSA(1206) ? 10034 : (HasSA(206) ? 10033 : -1) [/code]
+[code=Patch] HasSA(1206) ? 10034 : (HasSA(206) ? 1033 : -1) [/code]
 
 >CMD 22
-[code=Patch] (HasSA(205) || HasSA(1205)) ? 10032 : -1 [/code]
+[code=Patch] (HasSA(205) || HasSA(1205)) ? 1032 : -1 [/code]
 
 #### SA AA for Dagga ####
 >AA 49
@@ -1051,18 +984,15 @@ ________________________________________________________________________________
 >CMD 31 Magic Sword
 [code=HardDisable] !IsCharacterInParty(CharacterId_Vivi) [/code]
 
->CMD 2
-[code=Patch] (((CharacterIndex == CharacterId_Blank && ScenarioCounter >= 11100 && Trance > 128) || PropertyByName('StatusProperty CustomStatus21 MasterofAlchemy') != 0)) ? 10020 : (HasSA(1247) ? 10037 : (HasSA(247) ? 10036 : 2)) [/code]
-
->CMD 10021
+>CMD 1021
 [code=HardDisable] ScenarioCounter < 11100 [/code]
 
->CMD 1
-[code=Patch] CharacterIndex == CharacterId_Marcus && CheckAnyStatus(CurrentStatus, BattleStatus_Trance) ? 10028 : -1 [/code]
-
->CMD 10023
+>CMD 1023
 [code=Disable] MP < 32 [/code]
-[code=Patch] HasSA(1255) ? 10047 : (HasSA(255) ? 10046 : -1) [/code]
+[code=Patch] HasSA(1255) ? 1047 : (HasSA(255) ? 1046 : -1) [/code]
+
+>CMD 1029
+[code=Patch] HasSA(1256) ? 1054 : (HasSA(256) ? 1053 : -1) [/code]
 
 >AA 1107
 [code=MPCost] CasterHasSA(1243) ? MPCost / 2 : (CasterHasSA(243) ? MPCost / 4 : MPCost) [/code]
@@ -1168,29 +1098,65 @@ ________________________________________________________________________________
 
 ############# QoL for Eiko passive (AA visible in the menu) #################
 
->AA 1017
-[code=Patch] GetAbilityUsageCount(1017) == 0 ? 1552 : -1 [/code]
+>AA 2000
+[code=Patch] GetAbilityUsageCount(2000) == 0 ? 1552 : -1 [/code]
 
->AA 1018
-[code=Patch] GetAbilityUsageCount(1018) == 0 ? 1552 : -1 [/code]
+>AA 2001
+[code=Patch] GetAbilityUsageCount(2001) == 0 ? 1552 : -1 [/code]
 
->AA 1019
-[code=Patch] GetAbilityUsageCount(1019) == 0 ? 1552 : -1 [/code]
+>AA 2002
+[code=Patch] GetAbilityUsageCount(2002) == 0 ? 1552 : -1 [/code]
 
->AA 1020
-[code=Patch] GetAbilityUsageCount(1020) == 0 ? 1552 : -1 [/code]
+>AA 2003
+[code=Patch] GetAbilityUsageCount(2003) == 0 ? 1552 : -1 [/code]
 
->AA 1021
-[code=Patch] GetAbilityUsageCount(1021) == 0 ? 1552 : -1 [/code]
+>AA 2004
+[code=Patch] GetAbilityUsageCount(2004) == 0 ? 1552 : -1 [/code]
 
->AA 1022
-[code=Patch] GetAbilityUsageCount(1022) == 0 ? 1552 : -1 [/code]
+>AA 2005
+[code=Patch] GetAbilityUsageCount(2005) == 0 ? 1552 : -1 [/code]
 
->AA 1023
-[code=Patch] GetAbilityUsageCount(1023) == 0 ? 1552 : -1 [/code]
+>AA 2006
+[code=Patch] GetAbilityUsageCount(2006) == 0 ? 1552 : -1 [/code]
 
->AA 1024
-[code=Patch] GetAbilityUsageCount(1024) == 0 ? 1552 : -1 [/code]
+>AA 2007
+[code=Patch] GetAbilityUsageCount(2007) == 0 ? 1552 : -1 [/code]
+
+>AA 2008
+[code=Patch] GetAbilityUsageCount(2008) == 0 ? 1552 : -1 [/code]
+
+>AA 2009
+[code=Patch] GetAbilityUsageCount(2009) == 0 ? 1552 : -1 [/code]
+
+>AA 2010
+[code=Patch] GetAbilityUsageCount(2010) == 0 ? 1552 : -1 [/code]
+
+>AA 2011
+[code=Patch] GetAbilityUsageCount(2011) == 0 ? 1552 : -1 [/code]
+
+>AA 2012
+[code=Patch] GetAbilityUsageCount(2012) == 0 ? 1552 : -1 [/code]
+
+>AA 2013
+[code=Patch] GetAbilityUsageCount(2013) == 0 ? 1552 : -1 [/code]
+
+>AA 2014
+[code=Patch] GetAbilityUsageCount(2014) == 0 ? 1552 : -1 [/code]
+
+>AA 2015
+[code=Patch] GetAbilityUsageCount(2015) == 0 ? 1552 : -1 [/code]
+
+>AA 2016
+[code=Patch] GetAbilityUsageCount(2016) == 0 ? 1552 : -1 [/code]
+
+>AA 2017
+[code=Patch] GetAbilityUsageCount(2017) == 0 ? 1552 : -1 [/code]
+
+>AA 2018
+[code=Patch] GetAbilityUsageCount(2018) == 0 ? 1552 : -1 [/code]
+
+>AA 2019
+[code=Patch] GetAbilityUsageCount(2019) == 0 ? 1552 : -1 [/code]
 
 ############# SA Propagation + Flutes + Blue Magic Quina #################
 
@@ -1345,730 +1311,731 @@ ________________________________________________________________________________
 [code=MPCost] CasterPropertyByName('StatusProperty CustomStatus21 Flexible') == 2 ? 0 : (CasterPropertyByName('StatusProperty CustomStatus21 Flexible') == 1 ? (MPCost / 2) : MPCost) [/code]
 
 #### ??? ####
+
 >AA 1172
-[code=Patch] ((GetAbilityUsageCount(1172) + GetAbilityUsageCount(1173) - 1)) % 2 == 0 ? 1173 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1172) + GetAbilityUsageCount(1173) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1172) + GetMemoriaDictionary(1030, 1173) - 1)) % 2 == 0 ? 1173 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1172) + GetMemoriaDictionary(1030, 1173) - 1) [/code]
 
 >AA 1173
-[code=MPCost] 8 * (GetAbilityUsageCount(1172) + GetAbilityUsageCount(1173) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1172) + GetMemoriaDictionary(1030, 1173) - 1) [/code]
 
 >AA 1174
-[code=Patch] ((GetAbilityUsageCount(1174) + GetAbilityUsageCount(1175) - 1)) % 2 == 0 ? 1175 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1174) + GetAbilityUsageCount(1175) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1174) + GetMemoriaDictionary(1030, 1175) - 1)) % 2 == 0 ? 1175 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1174) + GetMemoriaDictionary(1030, 1175) - 1) [/code]
 
 >AA 1175
-[code=MPCost] 8 * (GetAbilityUsageCount(1174) + GetAbilityUsageCount(1175) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1174) + GetMemoriaDictionary(1030, 1175) - 1) [/code]
 
 >AA 1176
-[code=Patch] ((GetAbilityUsageCount(1176) + GetAbilityUsageCount(1177) - 1)) % 2 == 0 ? 1177 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1176) + GetAbilityUsageCount(1177) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1176) + GetMemoriaDictionary(1030, 1177) - 1)) % 2 == 0 ? 1177 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1176) + GetMemoriaDictionary(1030, 1177) - 1) [/code]
 
 >AA 1177
-[code=MPCost] 8 * (GetAbilityUsageCount(1176) + GetAbilityUsageCount(1177) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1176) + GetMemoriaDictionary(1030, 1177) - 1) [/code]
 
 >AA 1178
-[code=Patch] ((GetAbilityUsageCount(1178) + GetAbilityUsageCount(1179) - 1)) % 2 == 0 ? 1179 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1178) + GetAbilityUsageCount(1179) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1178) + GetMemoriaDictionary(1030, 1179) - 1)) % 2 == 0 ? 1179 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1178) + GetMemoriaDictionary(1030, 1179) - 1) [/code]
 
 >AA 1179
-[code=MPCost] 8 * (GetAbilityUsageCount(1178) + GetAbilityUsageCount(1179) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1178) + GetMemoriaDictionary(1030, 1179) - 1) [/code]
 
 >AA 1180
-[code=Patch] ((GetAbilityUsageCount(1180) + GetAbilityUsageCount(1181) - 1)) % 2 == 0 ? 1181 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1180) + GetAbilityUsageCount(1181) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1180) + GetMemoriaDictionary(1030, 1181) - 1)) % 2 == 0 ? 1181 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1180) + GetMemoriaDictionary(1030, 1181) - 1) [/code]
 
 >AA 1181
-[code=MPCost] 8 * (GetAbilityUsageCount(1180) + GetAbilityUsageCount(1181) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1180) + GetMemoriaDictionary(1030, 1181) - 1) [/code]
 
 >AA 1182
-[code=Patch] ((GetAbilityUsageCount(1182) + GetAbilityUsageCount(1183) - 1)) % 2 == 0 ? 1183 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1182) + GetAbilityUsageCount(1183) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1182) + GetMemoriaDictionary(1030, 1183) - 1)) % 2 == 0 ? 1183 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1182) + GetMemoriaDictionary(1030, 1183) - 1) [/code]
 
 >AA 1183
-[code=MPCost] 8 * (GetAbilityUsageCount(1182) + GetAbilityUsageCount(1183) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1182) + GetMemoriaDictionary(1030, 1183) - 1) [/code]
 
 >AA 1184
-[code=Patch] ((GetAbilityUsageCount(1184) + GetAbilityUsageCount(1185) - 1)) % 2 == 0 ? 1185 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1184) + GetAbilityUsageCount(1185) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1184) + GetMemoriaDictionary(1030, 1185) - 1)) % 2 == 0 ? 1185 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1184) + GetMemoriaDictionary(1030, 1185) - 1) [/code]
 
 >AA 1185
-[code=MPCost] 8 * (GetAbilityUsageCount(1184) + GetAbilityUsageCount(1185) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1184) + GetMemoriaDictionary(1030, 1185) - 1) [/code]
 
 >AA 1186
-[code=Patch] ((GetAbilityUsageCount(1186) + GetAbilityUsageCount(1187) - 1)) % 2 == 0 ? 1187 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1186) + GetAbilityUsageCount(1187) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1186) + GetMemoriaDictionary(1030, 1187) - 1)) % 2 == 0 ? 1187 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1186) + GetMemoriaDictionary(1030, 1187) - 1) [/code]
 
 >AA 1187
-[code=MPCost] 8 * (GetAbilityUsageCount(1186) + GetAbilityUsageCount(1187) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1186) + GetMemoriaDictionary(1030, 1187) - 1) [/code]
 
 >AA 1188
-[code=Patch] ((GetAbilityUsageCount(1188) + GetAbilityUsageCount(1189) - 1)) % 2 == 0 ? 1189 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1188) + GetAbilityUsageCount(1189) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1188) + GetMemoriaDictionary(1030, 1189) - 1)) % 2 == 0 ? 1189 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1188) + GetMemoriaDictionary(1030, 1189) - 1) [/code]
 
 >AA 1189
-[code=MPCost] 8 * (GetAbilityUsageCount(1188) + GetAbilityUsageCount(1189) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1188) + GetMemoriaDictionary(1030, 1189) - 1) [/code]
 
 >AA 1190
-[code=Patch] ((GetAbilityUsageCount(1190) + GetAbilityUsageCount(1191) - 1)) % 2 == 0 ? 1191 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1190) + GetAbilityUsageCount(1191) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1190) + GetMemoriaDictionary(1030, 1191) - 1)) % 2 == 0 ? 1191 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1190) + GetMemoriaDictionary(1030, 1191) - 1) [/code]
 
 >AA 1191
-[code=MPCost] 8 * (GetAbilityUsageCount(1190) + GetAbilityUsageCount(1191) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1190) + GetMemoriaDictionary(1030, 1191) - 1) [/code]
 
 >AA 1192
-[code=Patch] ((GetAbilityUsageCount(1192) + GetAbilityUsageCount(1193) - 1)) % 2 == 0 ? 1193 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1192) + GetAbilityUsageCount(1193) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1192) + GetMemoriaDictionary(1030, 1193) - 1)) % 2 == 0 ? 1193 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1192) + GetMemoriaDictionary(1030, 1193) - 1) [/code]
 
 >AA 1193
-[code=MPCost] 8 * (GetAbilityUsageCount(1192) + GetAbilityUsageCount(1193) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1192) + GetMemoriaDictionary(1030, 1193) - 1) [/code]
 
 >AA 1194
-[code=Patch] ((GetAbilityUsageCount(1194) + GetAbilityUsageCount(1195) - 1)) % 2 == 0 ? 1195 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1194) + GetAbilityUsageCount(1195) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1194) + GetMemoriaDictionary(1030, 1195) - 1)) % 2 == 0 ? 1195 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1194) + GetMemoriaDictionary(1030, 1195) - 1) [/code]
 
 >AA 1195
-[code=MPCost] 8 * (GetAbilityUsageCount(1194) + GetAbilityUsageCount(1195) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1194) + GetMemoriaDictionary(1030, 1195) - 1) [/code]
 
 >AA 1196
-[code=Patch] ((GetAbilityUsageCount(1196) + GetAbilityUsageCount(1197) - 1)) % 2 == 0 ? 1197 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1196) + GetAbilityUsageCount(1197) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1196) + GetMemoriaDictionary(1030, 1197) - 1)) % 2 == 0 ? 1197 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1196) + GetMemoriaDictionary(1030, 1197) - 1) [/code]
 
 >AA 1197
-[code=MPCost] 8 * (GetAbilityUsageCount(1196) + GetAbilityUsageCount(1197) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1196) + GetMemoriaDictionary(1030, 1197) - 1) [/code]
 
 >AA 1198
-[code=Patch] ((GetAbilityUsageCount(1198) + GetAbilityUsageCount(1199) - 1)) % 2 == 0 ? 1199 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1198) + GetAbilityUsageCount(1199) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1198) + GetMemoriaDictionary(1030, 1199) - 1)) % 2 == 0 ? 1199 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1198) + GetMemoriaDictionary(1030, 1199) - 1) [/code]
 
 >AA 1199
-[code=MPCost] 8 * (GetAbilityUsageCount(1198) + GetAbilityUsageCount(1199) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1198) + GetMemoriaDictionary(1030, 1199) - 1) [/code]
 
 >AA 1200
-[code=Patch] ((GetAbilityUsageCount(1200) + GetAbilityUsageCount(1201) - 1)) % 2 == 0 ? 1201 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1200) + GetAbilityUsageCount(1201) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1200) + GetMemoriaDictionary(1030, 1201) - 1)) % 2 == 0 ? 1201 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1200) + GetMemoriaDictionary(1030, 1201) - 1) [/code]
 
 >AA 1201
-[code=MPCost] 8 * (GetAbilityUsageCount(1200) + GetAbilityUsageCount(1201) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1200) + GetMemoriaDictionary(1030, 1201) - 1) [/code]
 
 >AA 1202
-[code=Patch] ((GetAbilityUsageCount(1202) + GetAbilityUsageCount(1203) - 1)) % 2 == 0 ? 1203 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1202) + GetAbilityUsageCount(1203) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1202) + GetMemoriaDictionary(1030, 1203) - 1)) % 2 == 0 ? 1203 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1202) + GetMemoriaDictionary(1030, 1203) - 1) [/code]
 
 >AA 1203
-[code=MPCost] 8 * (GetAbilityUsageCount(1202) + GetAbilityUsageCount(1203) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1202) + GetMemoriaDictionary(1030, 1203) - 1) [/code]
 
 >AA 1204
-[code=Patch] ((GetAbilityUsageCount(1204) + GetAbilityUsageCount(1205) - 1)) % 2 == 0 ? 1205 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1204) + GetAbilityUsageCount(1205) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1204) + GetMemoriaDictionary(1030, 1205) - 1)) % 2 == 0 ? 1205 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1204) + GetMemoriaDictionary(1030, 1205) - 1) [/code]
 
 >AA 1205
-[code=MPCost] 8 * (GetAbilityUsageCount(1204) + GetAbilityUsageCount(1205) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1204) + GetMemoriaDictionary(1030, 1205) - 1) [/code]
 
 >AA 1206
-[code=Patch] ((GetAbilityUsageCount(1206) + GetAbilityUsageCount(1207) - 1)) % 2 == 0 ? 1207 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1206) + GetAbilityUsageCount(1207) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1206) + GetMemoriaDictionary(1030, 1207) - 1)) % 2 == 0 ? 1207 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1206) + GetMemoriaDictionary(1030, 1207) - 1) [/code]
 
 >AA 1207
-[code=MPCost] 8 * (GetAbilityUsageCount(1206) + GetAbilityUsageCount(1207) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1206) + GetMemoriaDictionary(1030, 1207) - 1) [/code]
 
 >AA 1208
-[code=Patch] ((GetAbilityUsageCount(1208) + GetAbilityUsageCount(1209) - 1)) % 2 == 0 ? 1209 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1208) + GetAbilityUsageCount(1209) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1208) + GetMemoriaDictionary(1030, 1209) - 1)) % 2 == 0 ? 1209 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1208) + GetMemoriaDictionary(1030, 1209) - 1) [/code]
 
 >AA 1209
-[code=MPCost] 8 * (GetAbilityUsageCount(1208) + GetAbilityUsageCount(1209) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1208) + GetMemoriaDictionary(1030, 1209) - 1) [/code]
 
 >AA 1210
-[code=Patch] ((GetAbilityUsageCount(1210) + GetAbilityUsageCount(1211) - 1)) % 2 == 0 ? 1211 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1210) + GetAbilityUsageCount(1211) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1210) + GetMemoriaDictionary(1030, 1211) - 1)) % 2 == 0 ? 1211 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1210) + GetMemoriaDictionary(1030, 1211) - 1) [/code]
 
 >AA 1211
-[code=MPCost] 8 * (GetAbilityUsageCount(1210) + GetAbilityUsageCount(1211) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1210) + GetMemoriaDictionary(1030, 1211) - 1) [/code]
 
 >AA 1212
-[code=Patch] ((GetAbilityUsageCount(1212) + GetAbilityUsageCount(1213) - 1)) % 2 == 0 ? 1213 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1212) + GetAbilityUsageCount(1213) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1212) + GetMemoriaDictionary(1030, 1213) - 1)) % 2 == 0 ? 1213 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1212) + GetMemoriaDictionary(1030, 1213) - 1) [/code]
 
 >AA 1213
-[code=MPCost] 8 * (GetAbilityUsageCount(1212) + GetAbilityUsageCount(1213) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1212) + GetMemoriaDictionary(1030, 1213) - 1) [/code]
 
 >AA 1214
-[code=Patch] ((GetAbilityUsageCount(1214) + GetAbilityUsageCount(1215) - 1)) % 2 == 0 ? 1215 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1214) + GetAbilityUsageCount(1215) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1214) + GetMemoriaDictionary(1030, 1215) - 1)) % 2 == 0 ? 1215 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1214) + GetMemoriaDictionary(1030, 1215) - 1) [/code]
 
 >AA 1215
-[code=MPCost] 8 * (GetAbilityUsageCount(1214) + GetAbilityUsageCount(1215) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1214) + GetMemoriaDictionary(1030, 1215) - 1) [/code]
 
 >AA 1216
-[code=Patch] ((GetAbilityUsageCount(1216) + GetAbilityUsageCount(1217) - 1)) % 2 == 0 ? 1217 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1216) + GetAbilityUsageCount(1217) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1216) + GetMemoriaDictionary(1030, 1217) - 1)) % 2 == 0 ? 1217 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1216) + GetMemoriaDictionary(1030, 1217) - 1) [/code]
 
 >AA 1217
-[code=MPCost] 8 * (GetAbilityUsageCount(1216) + GetAbilityUsageCount(1217) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1216) + GetMemoriaDictionary(1030, 1217) - 1) [/code]
 
 >AA 1218
-[code=Patch] ((GetAbilityUsageCount(1218) + GetAbilityUsageCount(1219) - 1)) % 2 == 0 ? 1219 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1218) + GetAbilityUsageCount(1219) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1218) + GetMemoriaDictionary(1030, 1219) - 1)) % 2 == 0 ? 1219 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1218) + GetMemoriaDictionary(1030, 1219) - 1) [/code]
 
 >AA 1219
-[code=MPCost] 8 * (GetAbilityUsageCount(1218) + GetAbilityUsageCount(1219) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1218) + GetMemoriaDictionary(1030, 1219) - 1) [/code]
 
 >AA 1220
-[code=Patch] ((GetAbilityUsageCount(1220) + GetAbilityUsageCount(1221) - 1)) % 2 == 0 ? 1221 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1220) + GetAbilityUsageCount(1221) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1220) + GetMemoriaDictionary(1030, 1221) - 1)) % 2 == 0 ? 1221 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1220) + GetMemoriaDictionary(1030, 1221) - 1) [/code]
 
 >AA 1221
-[code=MPCost] 8 * (GetAbilityUsageCount(1220) + GetAbilityUsageCount(1221) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1220) + GetMemoriaDictionary(1030, 1221) - 1) [/code]
 
 >AA 1222
-[code=Patch] ((GetAbilityUsageCount(1222) + GetAbilityUsageCount(1223) - 1)) % 2 == 0 ? 1223 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1222) + GetAbilityUsageCount(1223) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1222) + GetMemoriaDictionary(1030, 1223) - 1)) % 2 == 0 ? 1223 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1222) + GetMemoriaDictionary(1030, 1223) - 1) [/code]
 
 >AA 1223
-[code=MPCost] 8 * (GetAbilityUsageCount(1222) + GetAbilityUsageCount(1223) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1222) + GetMemoriaDictionary(1030, 1223) - 1) [/code]
 
 >AA 1224
-[code=Patch] ((GetAbilityUsageCount(1224) + GetAbilityUsageCount(1225) - 1)) % 2 == 0 ? 1225 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1224) + GetAbilityUsageCount(1225) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1224) + GetMemoriaDictionary(1030, 1225) - 1)) % 2 == 0 ? 1225 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1224) + GetMemoriaDictionary(1030, 1225) - 1) [/code]
 
 >AA 1225
-[code=MPCost] 8 * (GetAbilityUsageCount(1224) + GetAbilityUsageCount(1225) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1224) + GetMemoriaDictionary(1030, 1225) - 1) [/code]
 
 >AA 1226
-[code=Patch] ((GetAbilityUsageCount(1226) + GetAbilityUsageCount(1227) - 1)) % 2 == 0 ? 1227 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1226) + GetAbilityUsageCount(1227) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1226) + GetMemoriaDictionary(1030, 1227) - 1)) % 2 == 0 ? 1227 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1226) + GetMemoriaDictionary(1030, 1227) - 1) [/code]
 
 >AA 1227
-[code=MPCost] 8 * (GetAbilityUsageCount(1226) + GetAbilityUsageCount(1227) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1226) + GetMemoriaDictionary(1030, 1227) - 1) [/code]
 
 >AA 1228
-[code=Patch] ((GetAbilityUsageCount(1228) + GetAbilityUsageCount(1229) - 1)) % 2 == 0 ? 1229 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1228) + GetAbilityUsageCount(1229) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1228) + GetMemoriaDictionary(1030, 1229) - 1)) % 2 == 0 ? 1229 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1228) + GetMemoriaDictionary(1030, 1229) - 1) [/code]
 
 >AA 1229
-[code=MPCost] 8 * (GetAbilityUsageCount(1228) + GetAbilityUsageCount(1229) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1228) + GetMemoriaDictionary(1030, 1229) - 1) [/code]
 
 >AA 1230
-[code=Patch] ((GetAbilityUsageCount(1230) + GetAbilityUsageCount(1231) - 1)) % 2 == 0 ? 1231 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1230) + GetAbilityUsageCount(1231) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1230) + GetMemoriaDictionary(1030, 1231) - 1)) % 2 == 0 ? 1231 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1230) + GetMemoriaDictionary(1030, 1231) - 1) [/code]
 
 >AA 1231
-[code=MPCost] 8 * (GetAbilityUsageCount(1230) + GetAbilityUsageCount(1231) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1230) + GetMemoriaDictionary(1030, 1231) - 1) [/code]
 
 >AA 1232
-[code=Patch] ((GetAbilityUsageCount(1232) + GetAbilityUsageCount(1233) - 1)) % 2 == 0 ? 1233 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1232) + GetAbilityUsageCount(1233) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1232) + GetMemoriaDictionary(1030, 1233) - 1)) % 2 == 0 ? 1233 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1232) + GetMemoriaDictionary(1030, 1233) - 1) [/code]
 
 >AA 1233
-[code=MPCost] 8 * (GetAbilityUsageCount(1232) + GetAbilityUsageCount(1233) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1232) + GetMemoriaDictionary(1030, 1233) - 1) [/code]
 
 >AA 1234
-[code=Patch] ((GetAbilityUsageCount(1234) + GetAbilityUsageCount(1235) - 1)) % 2 == 0 ? 1235 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1234) + GetAbilityUsageCount(1235) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1234) + GetMemoriaDictionary(1030, 1235) - 1)) % 2 == 0 ? 1235 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1234) + GetMemoriaDictionary(1030, 1235) - 1) [/code]
 
 >AA 1235
-[code=MPCost] 8 * (GetAbilityUsageCount(1234) + GetAbilityUsageCount(1235) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1234) + GetMemoriaDictionary(1030, 1235) - 1) [/code]
 
 >AA 1236
-[code=Patch] ((GetAbilityUsageCount(1236) + GetAbilityUsageCount(1237) - 1)) % 2 == 0 ? 1237 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1236) + GetAbilityUsageCount(1237) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1236) + GetMemoriaDictionary(1030, 1237) - 1)) % 2 == 0 ? 1237 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1236) + GetMemoriaDictionary(1030, 1237) - 1) [/code]
 
 >AA 1237
-[code=MPCost] 8 * (GetAbilityUsageCount(1236) + GetAbilityUsageCount(1237) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1236) + GetMemoriaDictionary(1030, 1237) - 1) [/code]
 
 >AA 1238
-[code=Patch] ((GetAbilityUsageCount(1238) + GetAbilityUsageCount(1239) - 1)) % 2 == 0 ? 1239 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1238) + GetAbilityUsageCount(1239) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1238) + GetMemoriaDictionary(1030, 1239) - 1)) % 2 == 0 ? 1239 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1238) + GetMemoriaDictionary(1030, 1239) - 1) [/code]
 
 >AA 1239
-[code=MPCost] 8 * (GetAbilityUsageCount(1238) + GetAbilityUsageCount(1239) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1238) + GetMemoriaDictionary(1030, 1239) - 1) [/code]
 
 >AA 1240
-[code=Patch] ((GetAbilityUsageCount(1240) + GetAbilityUsageCount(1241) - 1)) % 2 == 0 ? 1241 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1240) + GetAbilityUsageCount(1241) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1240) + GetMemoriaDictionary(1030, 1241) - 1)) % 2 == 0 ? 1241 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1240) + GetMemoriaDictionary(1030, 1241) - 1) [/code]
 
 >AA 1241
-[code=MPCost] 8 * (GetAbilityUsageCount(1240) + GetAbilityUsageCount(1241) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1240) + GetMemoriaDictionary(1030, 1241) - 1) [/code]
 
 >AA 1242
-[code=Patch] ((GetAbilityUsageCount(1242) + GetAbilityUsageCount(1243) - 1)) % 2 == 0 ? 1243 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1242) + GetAbilityUsageCount(1243) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1242) + GetMemoriaDictionary(1030, 1243) - 1)) % 2 == 0 ? 1243 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1242) + GetMemoriaDictionary(1030, 1243) - 1) [/code]
 
 >AA 1243
-[code=MPCost] 8 * (GetAbilityUsageCount(1242) + GetAbilityUsageCount(1243) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1242) + GetMemoriaDictionary(1030, 1243) - 1) [/code]
 
 >AA 1244
-[code=Patch] ((GetAbilityUsageCount(1244) + GetAbilityUsageCount(1245) - 1)) % 2 == 0 ? 1245 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1244) + GetAbilityUsageCount(1245) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1244) + GetMemoriaDictionary(1030, 1245) - 1)) % 2 == 0 ? 1245 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1244) + GetMemoriaDictionary(1030, 1245) - 1) [/code]
 
 >AA 1245
-[code=MPCost] 8 * (GetAbilityUsageCount(1244) + GetAbilityUsageCount(1245) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1244) + GetMemoriaDictionary(1030, 1245) - 1) [/code]
 
 >AA 1246
-[code=Patch] ((GetAbilityUsageCount(1246) + GetAbilityUsageCount(1247) - 1)) % 2 == 0 ? 1247 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1246) + GetAbilityUsageCount(1247) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1246) + GetMemoriaDictionary(1030, 1247) - 1)) % 2 == 0 ? 1247 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1246) + GetMemoriaDictionary(1030, 1247) - 1) [/code]
 
 >AA 1247
-[code=MPCost] 8 * (GetAbilityUsageCount(1246) + GetAbilityUsageCount(1247) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1246) + GetMemoriaDictionary(1030, 1247) - 1) [/code]
 
 >AA 1248
-[code=Patch] ((GetAbilityUsageCount(1248) + GetAbilityUsageCount(1249) - 1)) % 2 == 0 ? 1249 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1248) + GetAbilityUsageCount(1249) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1248) + GetMemoriaDictionary(1030, 1249) - 1)) % 2 == 0 ? 1249 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1248) + GetMemoriaDictionary(1030, 1249) - 1) [/code]
 
 >AA 1249
-[code=MPCost] 8 * (GetAbilityUsageCount(1248) + GetAbilityUsageCount(1249) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1248) + GetMemoriaDictionary(1030, 1249) - 1) [/code]
 
 >AA 1250
-[code=Patch] ((GetAbilityUsageCount(1250) + GetAbilityUsageCount(1251) - 1)) % 2 == 0 ? 1251 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1250) + GetAbilityUsageCount(1251) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1250) + GetMemoriaDictionary(1030, 1251) - 1)) % 2 == 0 ? 1251 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1250) + GetMemoriaDictionary(1030, 1251) - 1) [/code]
 
 >AA 1251
-[code=MPCost] 8 * (GetAbilityUsageCount(1250) + GetAbilityUsageCount(1251) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1250) + GetMemoriaDictionary(1030, 1251) - 1) [/code]
 
 >AA 1252
-[code=Patch] ((GetAbilityUsageCount(1252) + GetAbilityUsageCount(1253) - 1)) % 2 == 0 ? 1253 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1252) + GetAbilityUsageCount(1253) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1252) + GetMemoriaDictionary(1030, 1253) - 1)) % 2 == 0 ? 1253 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1252) + GetMemoriaDictionary(1030, 1253) - 1) [/code]
 
 >AA 1253
-[code=MPCost] 8 * (GetAbilityUsageCount(1252) + GetAbilityUsageCount(1253) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1252) + GetMemoriaDictionary(1030, 1253) - 1) [/code]
 
 >AA 1254
-[code=Patch] ((GetAbilityUsageCount(1254) + GetAbilityUsageCount(1255) - 1)) % 2 == 0 ? 1255 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1254) + GetAbilityUsageCount(1255) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1254) + GetMemoriaDictionary(1030, 1255) - 1)) % 2 == 0 ? 1255 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1254) + GetMemoriaDictionary(1030, 1255) - 1) [/code]
 
 >AA 1255
-[code=MPCost] 8 * (GetAbilityUsageCount(1254) + GetAbilityUsageCount(1255) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1254) + GetMemoriaDictionary(1030, 1255) - 1) [/code]
 
 >AA 1256
-[code=Patch] ((GetAbilityUsageCount(1256) + GetAbilityUsageCount(1257) - 1)) % 2 == 0 ? 1257 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1256) + GetAbilityUsageCount(1257) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1256) + GetMemoriaDictionary(1030, 1257) - 1)) % 2 == 0 ? 1257 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1256) + GetMemoriaDictionary(1030, 1257) - 1) [/code]
 
 >AA 1257
-[code=MPCost] 8 * (GetAbilityUsageCount(1256) + GetAbilityUsageCount(1257) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1256) + GetMemoriaDictionary(1030, 1257) - 1) [/code]
 
 >AA 1258
-[code=Patch] ((GetAbilityUsageCount(1258) + GetAbilityUsageCount(1259) - 1)) % 2 == 0 ? 1259 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1258) + GetAbilityUsageCount(1259) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1258) + GetMemoriaDictionary(1030, 1259) - 1)) % 2 == 0 ? 1259 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1258) + GetMemoriaDictionary(1030, 1259) - 1) [/code]
 
 >AA 1259
-[code=MPCost] 8 * (GetAbilityUsageCount(1258) + GetAbilityUsageCount(1259) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1258) + GetMemoriaDictionary(1030, 1259) - 1) [/code]
 
 >AA 1260
-[code=Patch] ((GetAbilityUsageCount(1260) + GetAbilityUsageCount(1261) - 1)) % 2 == 0 ? 1261 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1260) + GetAbilityUsageCount(1261) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1260) + GetMemoriaDictionary(1030, 1261) - 1)) % 2 == 0 ? 1261 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1260) + GetMemoriaDictionary(1030, 1261) - 1) [/code]
 
 >AA 1261
-[code=MPCost] 8 * (GetAbilityUsageCount(1260) + GetAbilityUsageCount(1261) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1260) + GetMemoriaDictionary(1030, 1261) - 1) [/code]
 
 >AA 1262
-[code=Patch] ((GetAbilityUsageCount(1262) + GetAbilityUsageCount(1263) - 1)) % 2 == 0 ? 1263 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1262) + GetAbilityUsageCount(1263) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1262) + GetMemoriaDictionary(1030, 1263) - 1)) % 2 == 0 ? 1263 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1262) + GetMemoriaDictionary(1030, 1263) - 1) [/code]
 
 >AA 1263
-[code=MPCost] 8 * (GetAbilityUsageCount(1262) + GetAbilityUsageCount(1263) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1262) + GetMemoriaDictionary(1030, 1263) - 1) [/code]
 
 >AA 1264
-[code=Patch] ((GetAbilityUsageCount(1264) + GetAbilityUsageCount(1265) - 1)) % 2 == 0 ? 1265 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1264) + GetAbilityUsageCount(1265) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1264) + GetMemoriaDictionary(1030, 1265) - 1)) % 2 == 0 ? 1265 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1264) + GetMemoriaDictionary(1030, 1265) - 1) [/code]
 
 >AA 1265
-[code=MPCost] 8 * (GetAbilityUsageCount(1264) + GetAbilityUsageCount(1265) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1264) + GetMemoriaDictionary(1030, 1265) - 1) [/code]
 
 >AA 1266
-[code=Patch] ((GetAbilityUsageCount(1266) + GetAbilityUsageCount(1267) - 1)) % 2 == 0 ? 1267 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1266) + GetAbilityUsageCount(1267) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1266) + GetMemoriaDictionary(1030, 1267) - 1)) % 2 == 0 ? 1267 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1266) + GetMemoriaDictionary(1030, 1267) - 1) [/code]
 
 >AA 1267
-[code=MPCost] 8 * (GetAbilityUsageCount(1266) + GetAbilityUsageCount(1267) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1266) + GetMemoriaDictionary(1030, 1267) - 1) [/code]
 
 >AA 1268
-[code=Patch] ((GetAbilityUsageCount(1268) + GetAbilityUsageCount(1269) - 1)) % 2 == 0 ? 1269 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1268) + GetAbilityUsageCount(1269) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1268) + GetMemoriaDictionary(1030, 1269) - 1)) % 2 == 0 ? 1269 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1268) + GetMemoriaDictionary(1030, 1269) - 1) [/code]
 
 >AA 1269
-[code=MPCost] 8 * (GetAbilityUsageCount(1268) + GetAbilityUsageCount(1269) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1268) + GetMemoriaDictionary(1030, 1269) - 1) [/code]
 
 >AA 1270
-[code=Patch] ((GetAbilityUsageCount(1270) + GetAbilityUsageCount(1271) - 1)) % 2 == 0 ? 1271 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1270) + GetAbilityUsageCount(1271) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1270) + GetMemoriaDictionary(1030, 1271) - 1)) % 2 == 0 ? 1271 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1270) + GetMemoriaDictionary(1030, 1271) - 1) [/code]
 
 >AA 1271
-[code=MPCost] 8 * (GetAbilityUsageCount(1270) + GetAbilityUsageCount(1271) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1270) + GetMemoriaDictionary(1030, 1271) - 1) [/code]
 
 >AA 1272
-[code=Patch] ((GetAbilityUsageCount(1272) + GetAbilityUsageCount(1273) - 1)) % 2 == 0 ? 1273 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1272) + GetAbilityUsageCount(1273) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1272) + GetMemoriaDictionary(1030, 1273) - 1)) % 2 == 0 ? 1273 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1272) + GetMemoriaDictionary(1030, 1273) - 1) [/code]
 
 >AA 1273
-[code=MPCost] 8 * (GetAbilityUsageCount(1272) + GetAbilityUsageCount(1273) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1272) + GetMemoriaDictionary(1030, 1273) - 1) [/code]
 
 >AA 1274
-[code=Patch] ((GetAbilityUsageCount(1274) + GetAbilityUsageCount(1275) - 1)) % 2 == 0 ? 1275 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1274) + GetAbilityUsageCount(1275) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1274) + GetMemoriaDictionary(1030, 1275) - 1)) % 2 == 0 ? 1275 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1274) + GetMemoriaDictionary(1030, 1275) - 1) [/code]
 
 >AA 1275
-[code=MPCost] 8 * (GetAbilityUsageCount(1274) + GetAbilityUsageCount(1275) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1274) + GetMemoriaDictionary(1030, 1275) - 1) [/code]
 
 >AA 1276
-[code=Patch] ((GetAbilityUsageCount(1276) + GetAbilityUsageCount(1277) - 1)) % 2 == 0 ? 1277 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1276) + GetAbilityUsageCount(1277) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1276) + GetMemoriaDictionary(1030, 1277) - 1)) % 2 == 0 ? 1277 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1276) + GetMemoriaDictionary(1030, 1277) - 1) [/code]
 
 >AA 1277
-[code=MPCost] 8 * (GetAbilityUsageCount(1276) + GetAbilityUsageCount(1277) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1276) + GetMemoriaDictionary(1030, 1277) - 1) [/code]
 
 >AA 1278
-[code=Patch] ((GetAbilityUsageCount(1278) + GetAbilityUsageCount(1279) - 1)) % 2 == 0 ? 1279 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1278) + GetAbilityUsageCount(1279) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1278) + GetMemoriaDictionary(1030, 1279) - 1)) % 2 == 0 ? 1279 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1278) + GetMemoriaDictionary(1030, 1279) - 1) [/code]
 
 >AA 1279
-[code=MPCost] 8 * (GetAbilityUsageCount(1278) + GetAbilityUsageCount(1279) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1278) + GetMemoriaDictionary(1030, 1279) - 1) [/code]
 
 >AA 1280
-[code=Patch] ((GetAbilityUsageCount(1280) + GetAbilityUsageCount(1281) - 1)) % 2 == 0 ? 1281 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1280) + GetAbilityUsageCount(1281) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1280) + GetMemoriaDictionary(1030, 1281) - 1)) % 2 == 0 ? 1281 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1280) + GetMemoriaDictionary(1030, 1281) - 1) [/code]
 
 >AA 1281
-[code=MPCost] 8 * (GetAbilityUsageCount(1280) + GetAbilityUsageCount(1281) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1280) + GetMemoriaDictionary(1030, 1281) - 1) [/code]
 
 >AA 1282
-[code=Patch] ((GetAbilityUsageCount(1282) + GetAbilityUsageCount(1283) - 1)) % 2 == 0 ? 1283 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1282) + GetAbilityUsageCount(1283) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1282) + GetMemoriaDictionary(1030, 1283) - 1)) % 2 == 0 ? 1283 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1282) + GetMemoriaDictionary(1030, 1283) - 1) [/code]
 
 >AA 1283
-[code=MPCost] 8 * (GetAbilityUsageCount(1282) + GetAbilityUsageCount(1283) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1282) + GetMemoriaDictionary(1030, 1283) - 1) [/code]
 
 >AA 1284
-[code=Patch] ((GetAbilityUsageCount(1284) + GetAbilityUsageCount(1285) - 1)) % 2 == 0 ? 1285 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1284) + GetAbilityUsageCount(1285) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1284) + GetMemoriaDictionary(1030, 1285) - 1)) % 2 == 0 ? 1285 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1284) + GetMemoriaDictionary(1030, 1285) - 1) [/code]
 
 >AA 1285
-[code=MPCost] 8 * (GetAbilityUsageCount(1284) + GetAbilityUsageCount(1285) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1284) + GetMemoriaDictionary(1030, 1285) - 1) [/code]
 
 >AA 1286
-[code=Patch] ((GetAbilityUsageCount(1286) + GetAbilityUsageCount(1287) - 1)) % 2 == 0 ? 1287 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1286) + GetAbilityUsageCount(1287) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1286) + GetMemoriaDictionary(1030, 1287) - 1)) % 2 == 0 ? 1287 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1286) + GetMemoriaDictionary(1030, 1287) - 1) [/code]
 
 >AA 1287
-[code=MPCost] 8 * (GetAbilityUsageCount(1286) + GetAbilityUsageCount(1287) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1286) + GetMemoriaDictionary(1030, 1287) - 1) [/code]
 
 >AA 1288
-[code=Patch] ((GetAbilityUsageCount(1288) + GetAbilityUsageCount(1289) - 1)) % 2 == 0 ? 1289 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1288) + GetAbilityUsageCount(1289) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1288) + GetMemoriaDictionary(1030, 1289) - 1)) % 2 == 0 ? 1289 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1288) + GetMemoriaDictionary(1030, 1289) - 1) [/code]
 
 >AA 1289
-[code=MPCost] 8 * (GetAbilityUsageCount(1288) + GetAbilityUsageCount(1289) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1288) + GetMemoriaDictionary(1030, 1289) - 1) [/code]
 
 >AA 1290
-[code=Patch] ((GetAbilityUsageCount(1290) + GetAbilityUsageCount(1291) - 1)) % 2 == 0 ? 1291 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1290) + GetAbilityUsageCount(1291) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1290) + GetMemoriaDictionary(1030, 1291) - 1)) % 2 == 0 ? 1291 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1290) + GetMemoriaDictionary(1030, 1291) - 1) [/code]
 
 >AA 1291
-[code=MPCost] 8 * (GetAbilityUsageCount(1290) + GetAbilityUsageCount(1291) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1290) + GetMemoriaDictionary(1030, 1291) - 1) [/code]
 
 >AA 1292
-[code=Patch] ((GetAbilityUsageCount(1292) + GetAbilityUsageCount(1293) - 1)) % 2 == 0 ? 1293 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1292) + GetAbilityUsageCount(1293) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1292) + GetMemoriaDictionary(1030, 1293) - 1)) % 2 == 0 ? 1293 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1292) + GetMemoriaDictionary(1030, 1293) - 1) [/code]
 
 >AA 1293
-[code=MPCost] 8 * (GetAbilityUsageCount(1292) + GetAbilityUsageCount(1293) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1292) + GetMemoriaDictionary(1030, 1293) - 1) [/code]
 
 >AA 1294
-[code=Patch] ((GetAbilityUsageCount(1294) + GetAbilityUsageCount(1295) - 1)) % 2 == 0 ? 1295 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1294) + GetAbilityUsageCount(1295) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1294) + GetMemoriaDictionary(1030, 1295) - 1)) % 2 == 0 ? 1295 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1294) + GetMemoriaDictionary(1030, 1295) - 1) [/code]
 
 >AA 1295
-[code=MPCost] 8 * (GetAbilityUsageCount(1294) + GetAbilityUsageCount(1295) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1294) + GetMemoriaDictionary(1030, 1295) - 1) [/code]
 
 >AA 1296
-[code=Patch] ((GetAbilityUsageCount(1296) + GetAbilityUsageCount(1297) - 1)) % 2 == 0 ? 1297 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1296) + GetAbilityUsageCount(1297) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1296) + GetMemoriaDictionary(1030, 1297) - 1)) % 2 == 0 ? 1297 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1296) + GetMemoriaDictionary(1030, 1297) - 1) [/code]
 
 >AA 1297
-[code=MPCost] 8 * (GetAbilityUsageCount(1296) + GetAbilityUsageCount(1297) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1296) + GetMemoriaDictionary(1030, 1297) - 1) [/code]
 
 >AA 1298
-[code=Patch] ((GetAbilityUsageCount(1298) + GetAbilityUsageCount(1299) - 1)) % 2 == 0 ? 1299 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1298) + GetAbilityUsageCount(1299) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1298) + GetMemoriaDictionary(1030, 1299) - 1)) % 2 == 0 ? 1299 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1298) + GetMemoriaDictionary(1030, 1299) - 1) [/code]
 
 >AA 1299
-[code=MPCost] 8 * (GetAbilityUsageCount(1298) + GetAbilityUsageCount(1299) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1298) + GetMemoriaDictionary(1030, 1299) - 1) [/code]
 
 >AA 1300
-[code=Patch] ((GetAbilityUsageCount(1300) + GetAbilityUsageCount(1301) - 1)) % 2 == 0 ? 1301 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1300) + GetAbilityUsageCount(1301) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1300) + GetMemoriaDictionary(1030, 1301) - 1)) % 2 == 0 ? 1301 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1300) + GetMemoriaDictionary(1030, 1301) - 1) [/code]
 
 >AA 1301
-[code=MPCost] 8 * (GetAbilityUsageCount(1300) + GetAbilityUsageCount(1301) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1300) + GetMemoriaDictionary(1030, 1301) - 1) [/code]
 
 >AA 1302
-[code=Patch] ((GetAbilityUsageCount(1302) + GetAbilityUsageCount(1303) - 1)) % 2 == 0 ? 1303 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1302) + GetAbilityUsageCount(1303) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1302) + GetMemoriaDictionary(1030, 1303) - 1)) % 2 == 0 ? 1303 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1302) + GetMemoriaDictionary(1030, 1303) - 1) [/code]
 
 >AA 1303
-[code=MPCost] 8 * (GetAbilityUsageCount(1302) + GetAbilityUsageCount(1303) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1302) + GetMemoriaDictionary(1030, 1303) - 1) [/code]
 
 >AA 1304
-[code=Patch] ((GetAbilityUsageCount(1304) + GetAbilityUsageCount(1305) - 1)) % 2 == 0 ? 1305 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1304) + GetAbilityUsageCount(1305) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1304) + GetMemoriaDictionary(1030, 1305) - 1)) % 2 == 0 ? 1305 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1304) + GetMemoriaDictionary(1030, 1305) - 1) [/code]
 
 >AA 1305
-[code=MPCost] 8 * (GetAbilityUsageCount(1304) + GetAbilityUsageCount(1305) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1304) + GetMemoriaDictionary(1030, 1305) - 1) [/code]
 
 >AA 1306
-[code=Patch] ((GetAbilityUsageCount(1306) + GetAbilityUsageCount(1307) - 1)) % 2 == 0 ? 1307 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1306) + GetAbilityUsageCount(1307) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1306) + GetMemoriaDictionary(1030, 1307) - 1)) % 2 == 0 ? 1307 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1306) + GetMemoriaDictionary(1030, 1307) - 1) [/code]
 
 >AA 1307
-[code=MPCost] 8 * (GetAbilityUsageCount(1306) + GetAbilityUsageCount(1307) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1306) + GetMemoriaDictionary(1030, 1307) - 1) [/code]
 
 >AA 1308
-[code=Patch] ((GetAbilityUsageCount(1308) + GetAbilityUsageCount(1309) - 1)) % 2 == 0 ? 1309 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1308) + GetAbilityUsageCount(1309) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1308) + GetMemoriaDictionary(1030, 1309) - 1)) % 2 == 0 ? 1309 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1308) + GetMemoriaDictionary(1030, 1309) - 1) [/code]
 
 >AA 1309
-[code=MPCost] 8 * (GetAbilityUsageCount(1308) + GetAbilityUsageCount(1309) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1308) + GetMemoriaDictionary(1030, 1309) - 1) [/code]
 
 >AA 1310
-[code=Patch] ((GetAbilityUsageCount(1310) + GetAbilityUsageCount(1311) - 1)) % 2 == 0 ? 1311 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1310) + GetAbilityUsageCount(1311) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1310) + GetMemoriaDictionary(1030, 1311) - 1)) % 2 == 0 ? 1311 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1310) + GetMemoriaDictionary(1030, 1311) - 1) [/code]
 
 >AA 1311
-[code=MPCost] 8 * (GetAbilityUsageCount(1310) + GetAbilityUsageCount(1311) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1310) + GetMemoriaDictionary(1030, 1311) - 1) [/code]
 
 >AA 1312
-[code=Patch] ((GetAbilityUsageCount(1312) + GetAbilityUsageCount(1313) - 1)) % 2 == 0 ? 1313 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1312) + GetAbilityUsageCount(1313) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1312) + GetMemoriaDictionary(1030, 1313) - 1)) % 2 == 0 ? 1313 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1312) + GetMemoriaDictionary(1030, 1313) - 1) [/code]
 
 >AA 1313
-[code=MPCost] 8 * (GetAbilityUsageCount(1312) + GetAbilityUsageCount(1313) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1312) + GetMemoriaDictionary(1030, 1313) - 1) [/code]
 
 >AA 1314
-[code=Patch] ((GetAbilityUsageCount(1314) + GetAbilityUsageCount(1315) - 1)) % 2 == 0 ? 1315 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1314) + GetAbilityUsageCount(1315) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1314) + GetMemoriaDictionary(1030, 1315) - 1)) % 2 == 0 ? 1315 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1314) + GetMemoriaDictionary(1030, 1315) - 1) [/code]
 
 >AA 1315
-[code=MPCost] 8 * (GetAbilityUsageCount(1314) + GetAbilityUsageCount(1315) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1314) + GetMemoriaDictionary(1030, 1315) - 1) [/code]
 
 >AA 1316
-[code=Patch] ((GetAbilityUsageCount(1316) + GetAbilityUsageCount(1317) - 1)) % 2 == 0 ? 1317 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1316) + GetAbilityUsageCount(1317) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1316) + GetMemoriaDictionary(1030, 1317) - 1)) % 2 == 0 ? 1317 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1316) + GetMemoriaDictionary(1030, 1317) - 1) [/code]
 
 >AA 1317
-[code=MPCost] 8 * (GetAbilityUsageCount(1316) + GetAbilityUsageCount(1317) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1316) + GetMemoriaDictionary(1030, 1317) - 1) [/code]
 
 >AA 1318
-[code=Patch] ((GetAbilityUsageCount(1318) + GetAbilityUsageCount(1319) - 1)) % 2 == 0 ? 1319 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1318) + GetAbilityUsageCount(1319) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1318) + GetMemoriaDictionary(1030, 1319) - 1)) % 2 == 0 ? 1319 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1318) + GetMemoriaDictionary(1030, 1319) - 1) [/code]
 
 >AA 1319
-[code=MPCost] 8 * (GetAbilityUsageCount(1318) + GetAbilityUsageCount(1319) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1318) + GetMemoriaDictionary(1030, 1319) - 1) [/code]
 
 >AA 1320
-[code=Patch] ((GetAbilityUsageCount(1320) + GetAbilityUsageCount(1321) - 1)) % 2 == 0 ? 1321 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1320) + GetAbilityUsageCount(1321) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1320) + GetMemoriaDictionary(1030, 1321) - 1)) % 2 == 0 ? 1321 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1320) + GetMemoriaDictionary(1030, 1321) - 1) [/code]
 
 >AA 1321
-[code=MPCost] 8 * (GetAbilityUsageCount(1320) + GetAbilityUsageCount(1321) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1320) + GetMemoriaDictionary(1030, 1321) - 1) [/code]
 
 >AA 1322
-[code=Patch] ((GetAbilityUsageCount(1322) + GetAbilityUsageCount(1323) - 1)) % 2 == 0 ? 1323 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1322) + GetAbilityUsageCount(1323) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1322) + GetMemoriaDictionary(1030, 1323) - 1)) % 2 == 0 ? 1323 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1322) + GetMemoriaDictionary(1030, 1323) - 1) [/code]
 
 >AA 1323
-[code=MPCost] 8 * (GetAbilityUsageCount(1322) + GetAbilityUsageCount(1323) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1322) + GetMemoriaDictionary(1030, 1323) - 1) [/code]
 
 >AA 1324
-[code=Patch] ((GetAbilityUsageCount(1324) + GetAbilityUsageCount(1325) - 1)) % 2 == 0 ? 1325 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1324) + GetAbilityUsageCount(1325) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1324) + GetMemoriaDictionary(1030, 1325) - 1)) % 2 == 0 ? 1325 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1324) + GetMemoriaDictionary(1030, 1325) - 1) [/code]
 
 >AA 1325
-[code=MPCost] 8 * (GetAbilityUsageCount(1324) + GetAbilityUsageCount(1325) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1324) + GetMemoriaDictionary(1030, 1325) - 1) [/code]
 
 >AA 1326
-[code=Patch] ((GetAbilityUsageCount(1326) + GetAbilityUsageCount(1327) - 1)) % 2 == 0 ? 1327 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1326) + GetAbilityUsageCount(1327) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1326) + GetMemoriaDictionary(1030, 1327) - 1)) % 2 == 0 ? 1327 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1326) + GetMemoriaDictionary(1030, 1327) - 1) [/code]
 
 >AA 1327
-[code=MPCost] 8 * (GetAbilityUsageCount(1326) + GetAbilityUsageCount(1327) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1326) + GetMemoriaDictionary(1030, 1327) - 1) [/code]
 
 >AA 1328
-[code=Patch] ((GetAbilityUsageCount(1328) + GetAbilityUsageCount(1329) - 1)) % 2 == 0 ? 1329 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1328) + GetAbilityUsageCount(1329) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1328) + GetMemoriaDictionary(1030, 1329) - 1)) % 2 == 0 ? 1329 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1328) + GetMemoriaDictionary(1030, 1329) - 1) [/code]
 
 >AA 1329
-[code=MPCost] 8 * (GetAbilityUsageCount(1328) + GetAbilityUsageCount(1329) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1328) + GetMemoriaDictionary(1030, 1329) - 1) [/code]
 
 >AA 1330
-[code=Patch] ((GetAbilityUsageCount(1330) + GetAbilityUsageCount(1331) - 1)) % 2 == 0 ? 1331 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1330) + GetAbilityUsageCount(1331) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1330) + GetMemoriaDictionary(1030, 1331) - 1)) % 2 == 0 ? 1331 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1330) + GetMemoriaDictionary(1030, 1331) - 1) [/code]
 
 >AA 1331
-[code=MPCost] 8 * (GetAbilityUsageCount(1330) + GetAbilityUsageCount(1331) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1330) + GetMemoriaDictionary(1030, 1331) - 1) [/code]
 
 >AA 1332
-[code=Patch] ((GetAbilityUsageCount(1332) + GetAbilityUsageCount(1333) - 1)) % 2 == 0 ? 1333 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1332) + GetAbilityUsageCount(1333) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1332) + GetMemoriaDictionary(1030, 1333) - 1)) % 2 == 0 ? 1333 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1332) + GetMemoriaDictionary(1030, 1333) - 1) [/code]
 
 >AA 1333
-[code=MPCost] 8 * (GetAbilityUsageCount(1332) + GetAbilityUsageCount(1333) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1332) + GetMemoriaDictionary(1030, 1333) - 1) [/code]
 
 >AA 1334
-[code=Patch] ((GetAbilityUsageCount(1334) + GetAbilityUsageCount(1335) - 1)) % 2 == 0 ? 1335 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1334) + GetAbilityUsageCount(1335) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1334) + GetMemoriaDictionary(1030, 1335) - 1)) % 2 == 0 ? 1335 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1334) + GetMemoriaDictionary(1030, 1335) - 1) [/code]
 
 >AA 1335
-[code=MPCost] 8 * (GetAbilityUsageCount(1334) + GetAbilityUsageCount(1335) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1334) + GetMemoriaDictionary(1030, 1335) - 1) [/code]
 
 >AA 1336
-[code=Patch] ((GetAbilityUsageCount(1336) + GetAbilityUsageCount(1337) - 1)) % 2 == 0 ? 1337 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1336) + GetAbilityUsageCount(1337) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1336) + GetMemoriaDictionary(1030, 1337) - 1)) % 2 == 0 ? 1337 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1336) + GetMemoriaDictionary(1030, 1337) - 1) [/code]
 
 >AA 1337
-[code=MPCost] 8 * (GetAbilityUsageCount(1336) + GetAbilityUsageCount(1337) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1336) + GetMemoriaDictionary(1030, 1337) - 1) [/code]
 
 >AA 1338
-[code=Patch] ((GetAbilityUsageCount(1338) + GetAbilityUsageCount(1339) - 1)) % 2 == 0 ? 1339 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1338) + GetAbilityUsageCount(1339) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1338) + GetMemoriaDictionary(1030, 1339) - 1)) % 2 == 0 ? 1339 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1338) + GetMemoriaDictionary(1030, 1339) - 1) [/code]
 
 >AA 1339
-[code=MPCost] 8 * (GetAbilityUsageCount(1338) + GetAbilityUsageCount(1339) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1338) + GetMemoriaDictionary(1030, 1339) - 1) [/code]
 
 >AA 1340
-[code=Patch] ((GetAbilityUsageCount(1340) + GetAbilityUsageCount(1341) - 1)) % 2 == 0 ? 1341 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1340) + GetAbilityUsageCount(1341) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1340) + GetMemoriaDictionary(1030, 1341) - 1)) % 2 == 0 ? 1341 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1340) + GetMemoriaDictionary(1030, 1341) - 1) [/code]
 
 >AA 1341
-[code=MPCost] 8 * (GetAbilityUsageCount(1340) + GetAbilityUsageCount(1341) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1340) + GetMemoriaDictionary(1030, 1341) - 1) [/code]
 
 >AA 1342
-[code=Patch] ((GetAbilityUsageCount(1342) + GetAbilityUsageCount(1343) - 1)) % 2 == 0 ? 1343 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1342) + GetAbilityUsageCount(1343) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1342) + GetMemoriaDictionary(1030, 1343) - 1)) % 2 == 0 ? 1343 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1342) + GetMemoriaDictionary(1030, 1343) - 1) [/code]
 
 >AA 1343
-[code=MPCost] 8 * (GetAbilityUsageCount(1342) + GetAbilityUsageCount(1343) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1342) + GetMemoriaDictionary(1030, 1343) - 1) [/code]
 
 >AA 1344
-[code=Patch] ((GetAbilityUsageCount(1344) + GetAbilityUsageCount(1345) - 1)) % 2 == 0 ? 1345 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1344) + GetAbilityUsageCount(1345) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1344) + GetMemoriaDictionary(1030, 1345) - 1)) % 2 == 0 ? 1345 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1344) + GetMemoriaDictionary(1030, 1345) - 1) [/code]
 
 >AA 1345
-[code=MPCost] 8 * (GetAbilityUsageCount(1344) + GetAbilityUsageCount(1345) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1344) + GetMemoriaDictionary(1030, 1345) - 1) [/code]
 
 >AA 1346
-[code=Patch] ((GetAbilityUsageCount(1346) + GetAbilityUsageCount(1347) - 1)) % 2 == 0 ? 1347 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1346) + GetAbilityUsageCount(1347) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1346) + GetMemoriaDictionary(1030, 1347) - 1)) % 2 == 0 ? 1347 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1346) + GetMemoriaDictionary(1030, 1347) - 1) [/code]
 
 >AA 1347
-[code=MPCost] 8 * (GetAbilityUsageCount(1346) + GetAbilityUsageCount(1347) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1346) + GetMemoriaDictionary(1030, 1347) - 1) [/code]
 
 >AA 1348
-[code=Patch] ((GetAbilityUsageCount(1348) + GetAbilityUsageCount(1349) - 1)) % 2 == 0 ? 1349 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1348) + GetAbilityUsageCount(1349) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1348) + GetMemoriaDictionary(1030, 1349) - 1)) % 2 == 0 ? 1349 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1348) + GetMemoriaDictionary(1030, 1349) - 1) [/code]
 
 >AA 1349
-[code=MPCost] 8 * (GetAbilityUsageCount(1348) + GetAbilityUsageCount(1349) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1348) + GetMemoriaDictionary(1030, 1349) - 1) [/code]
 
 >AA 1350
-[code=Patch] ((GetAbilityUsageCount(1350) + GetAbilityUsageCount(1351) - 1)) % 2 == 0 ? 1351 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1350) + GetAbilityUsageCount(1351) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1350) + GetMemoriaDictionary(1030, 1351) - 1)) % 2 == 0 ? 1351 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1350) + GetMemoriaDictionary(1030, 1351) - 1) [/code]
 
 >AA 1351
-[code=MPCost] 8 * (GetAbilityUsageCount(1350) + GetAbilityUsageCount(1351) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1350) + GetMemoriaDictionary(1030, 1351) - 1) [/code]
 
 >AA 1352
-[code=Patch] ((GetAbilityUsageCount(1352) + GetAbilityUsageCount(1353) - 1)) % 2 == 0 ? 1353 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1352) + GetAbilityUsageCount(1353) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1352) + GetMemoriaDictionary(1030, 1353) - 1)) % 2 == 0 ? 1353 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1352) + GetMemoriaDictionary(1030, 1353) - 1) [/code]
 
 >AA 1353
-[code=MPCost] 8 * (GetAbilityUsageCount(1352) + GetAbilityUsageCount(1353) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1352) + GetMemoriaDictionary(1030, 1353) - 1) [/code]
 
 >AA 1354
-[code=Patch] ((GetAbilityUsageCount(1354) + GetAbilityUsageCount(1355) - 1)) % 2 == 0 ? 1355 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1354) + GetAbilityUsageCount(1355) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1354) + GetMemoriaDictionary(1030, 1355) - 1)) % 2 == 0 ? 1355 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1354) + GetMemoriaDictionary(1030, 1355) - 1) [/code]
 
 >AA 1355
-[code=MPCost] 8 * (GetAbilityUsageCount(1354) + GetAbilityUsageCount(1355) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1354) + GetMemoriaDictionary(1030, 1355) - 1) [/code]
 
 >AA 1356
-[code=Patch] ((GetAbilityUsageCount(1356) + GetAbilityUsageCount(1357) - 1)) % 2 == 0 ? 1357 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1356) + GetAbilityUsageCount(1357) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1356) + GetMemoriaDictionary(1030, 1357) - 1)) % 2 == 0 ? 1357 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1356) + GetMemoriaDictionary(1030, 1357) - 1) [/code]
 
 >AA 1357
-[code=MPCost] 8 * (GetAbilityUsageCount(1356) + GetAbilityUsageCount(1357) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1356) + GetMemoriaDictionary(1030, 1357) - 1) [/code]
 
 >AA 1358
-[code=Patch] ((GetAbilityUsageCount(1358) + GetAbilityUsageCount(1359) - 1)) % 2 == 0 ? 1359 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1358) + GetAbilityUsageCount(1359) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1358) + GetMemoriaDictionary(1030, 1359) - 1)) % 2 == 0 ? 1359 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1358) + GetMemoriaDictionary(1030, 1359) - 1) [/code]
 
 >AA 1359
-[code=MPCost] 8 * (GetAbilityUsageCount(1358) + GetAbilityUsageCount(1359) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1358) + GetMemoriaDictionary(1030, 1359) - 1) [/code]
 
 >AA 1360
-[code=Patch] ((GetAbilityUsageCount(1360) + GetAbilityUsageCount(1361) - 1)) % 2 == 0 ? 1361 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1360) + GetAbilityUsageCount(1361) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1360) + GetMemoriaDictionary(1030, 1361) - 1)) % 2 == 0 ? 1361 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1360) + GetMemoriaDictionary(1030, 1361) - 1) [/code]
 
 >AA 1361
-[code=MPCost] 8 * (GetAbilityUsageCount(1360) + GetAbilityUsageCount(1361) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1360) + GetMemoriaDictionary(1030, 1361) - 1) [/code]
 
 >AA 1362
-[code=Patch] ((GetAbilityUsageCount(1362) + GetAbilityUsageCount(1363) - 1)) % 2 == 0 ? 1363 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1362) + GetAbilityUsageCount(1363) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1362) + GetMemoriaDictionary(1030, 1363) - 1)) % 2 == 0 ? 1363 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1362) + GetMemoriaDictionary(1030, 1363) - 1) [/code]
 
 >AA 1363
-[code=MPCost] 8 * (GetAbilityUsageCount(1362) + GetAbilityUsageCount(1363) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1362) + GetMemoriaDictionary(1030, 1363) - 1) [/code]
 
 >AA 1364
-[code=Patch] ((GetAbilityUsageCount(1364) + GetAbilityUsageCount(1365) - 1)) % 2 == 0 ? 1365 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1364) + GetAbilityUsageCount(1365) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1364) + GetMemoriaDictionary(1030, 1365) - 1)) % 2 == 0 ? 1365 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1364) + GetMemoriaDictionary(1030, 1365) - 1) [/code]
 
 >AA 1365
-[code=MPCost] 8 * (GetAbilityUsageCount(1364) + GetAbilityUsageCount(1365) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1364) + GetMemoriaDictionary(1030, 1365) - 1) [/code]
 
 >AA 1366
-[code=Patch] ((GetAbilityUsageCount(1366) + GetAbilityUsageCount(1367) - 1)) % 2 == 0 ? 1367 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1366) + GetAbilityUsageCount(1367) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1366) + GetMemoriaDictionary(1030, 1367) - 1)) % 2 == 0 ? 1367 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1366) + GetMemoriaDictionary(1030, 1367) - 1) [/code]
 
 >AA 1367
-[code=MPCost] 8 * (GetAbilityUsageCount(1366) + GetAbilityUsageCount(1367) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1366) + GetMemoriaDictionary(1030, 1367) - 1) [/code]
 
 >AA 1368
-[code=Patch] ((GetAbilityUsageCount(1368) + GetAbilityUsageCount(1369) - 1)) % 2 == 0 ? 1369 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1368) + GetAbilityUsageCount(1369) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1368) + GetMemoriaDictionary(1030, 1369) - 1)) % 2 == 0 ? 1369 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1368) + GetMemoriaDictionary(1030, 1369) - 1) [/code]
 
 >AA 1369
-[code=MPCost] 8 * (GetAbilityUsageCount(1368) + GetAbilityUsageCount(1369) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1368) + GetMemoriaDictionary(1030, 1369) - 1) [/code]
 
 >AA 1370
-[code=Patch] ((GetAbilityUsageCount(1370) + GetAbilityUsageCount(1371) - 1)) % 2 == 0 ? 1371 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1370) + GetAbilityUsageCount(1371) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1370) + GetMemoriaDictionary(1030, 1371) - 1)) % 2 == 0 ? 1371 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1370) + GetMemoriaDictionary(1030, 1371) - 1) [/code]
 
 >AA 1371
-[code=MPCost] 8 * (GetAbilityUsageCount(1370) + GetAbilityUsageCount(1371) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1370) + GetMemoriaDictionary(1030, 1371) - 1) [/code]
 
 >AA 1372
-[code=Patch] ((GetAbilityUsageCount(1372) + GetAbilityUsageCount(1373) - 1)) % 2 == 0 ? 1373 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1372) + GetAbilityUsageCount(1373) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1372) + GetMemoriaDictionary(1030, 1373) - 1)) % 2 == 0 ? 1373 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1372) + GetMemoriaDictionary(1030, 1373) - 1) [/code]
 
 >AA 1373
-[code=MPCost] 8 * (GetAbilityUsageCount(1372) + GetAbilityUsageCount(1373) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1372) + GetMemoriaDictionary(1030, 1373) - 1) [/code]
 
 >AA 1374
-[code=Patch] ((GetAbilityUsageCount(1374) + GetAbilityUsageCount(1375) - 1)) % 2 == 0 ? 1375 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1374) + GetAbilityUsageCount(1375) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1374) + GetMemoriaDictionary(1030, 1375) - 1)) % 2 == 0 ? 1375 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1374) + GetMemoriaDictionary(1030, 1375) - 1) [/code]
 
 >AA 1375
-[code=MPCost] 8 * (GetAbilityUsageCount(1374) + GetAbilityUsageCount(1375) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1374) + GetMemoriaDictionary(1030, 1375) - 1) [/code]
 
 >AA 1376
-[code=Patch] ((GetAbilityUsageCount(1376) + GetAbilityUsageCount(1377) - 1)) % 2 == 0 ? 1377 : -1 [/code]
-[code=MPCost] 8 * (GetAbilityUsageCount(1376) + GetAbilityUsageCount(1377) - 1) [/code]
+[code=Patch] ((GetMemoriaDictionary(1030, 1376) + GetMemoriaDictionary(1030, 1377) - 1)) % 2 == 0 ? 1377 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1376) + GetMemoriaDictionary(1030, 1377) - 1) [/code]
 
 >AA 1377
-[code=MPCost] 8 * (GetAbilityUsageCount(1376) + GetAbilityUsageCount(1377) - 1) [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1376) + GetMemoriaDictionary(1030, 1377) - 1) [/code]
 
 ##>AA 1378
-##[code=Patch] HasLearntAbility(1314) ? (((GetAbilityUsageCount(1378) + GetAbilityUsageCount(1379) - 1)) % 2 == 0 ? 1379 : -1) : 1552 [/code]
-##[code=MPCost] 8 * (GetAbilityUsageCount(1378) + GetAbilityUsageCount(1379) - 1) [/code]
+##[code=Patch] HasLearntAbility(1314) ? (((GetMemoriaDictionary(1030, 1378) + GetMemoriaDictionary(1030, 1379) - 1)) % 2 == 0 ? 1379 : -1) : 1552 [/code]
+##[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1378) + GetMemoriaDictionary(1030, 1379) - 1) [/code]
 
 ############# Supporting Abilities #################
 
@@ -2578,7 +2545,7 @@ DisableSA 1239 239 1054 54 1056 56
 
 >SA 245 Training
 Ability WhenCalcDamage EvenImmobilized
-[code=Condition] CommandId == 10021 [/code]
+[code=Condition] CommandId == 1021 [/code]
 [code=DamageModifierCount] DamageModifierCount + 1 [/code]
 
 >SA 246 Emergency plan (effect is coded in AbilityFeatures.txt)
@@ -2604,6 +2571,14 @@ StatusInit InitialStatus Regen
 >SA 254 In top form!
 
 >SA 255 Gyahaha! (effect is coded in Memoria.Scripts.dll)
+
+>SA 256 Metronome (effect is coded in 0164_TranceSeekSpecial.cs)
+
+>SA 257 Mania (effect is coded in TranceSeekCustomAPI.cs)
+
+>SA 258 Reward (effect is coded in TranceSeekCustomAPI.cs)
+
+>SA 259 Mog Kiss (effect is coded in TranceSeekCustomAPI.cs)
 _______________________________________________________________________________________________
 
 >SA 1000 Bénédiction+  (effect is coded in TranceSeekCustomAPI.cs)
@@ -3172,7 +3147,7 @@ DisableSA 1239 239 1054 54 1056 56
 
 >SA 1245 Training+
 Ability WhenCalcDamage EvenImmobilized
-[code=Condition] CommandId == 10021 [/code]
+[code=Condition] CommandId == 1021 [/code]
 [code=DamageModifierCount] DamageModifierCount + 1 [/code]
 
 >SA 1246 Emergency plan+ (effect is coded in AbilityFeatures.txt)
@@ -3197,6 +3172,14 @@ Ability WhenCalcDamage EvenImmobilized
 >SA 1254 In top form!+
 
 >SA 1255 Gyahaha!+ (effect is coded in Memoria.Scripts.dll)
+
+>SA 1256 Metronome+ (effect is coded in 0164_TranceSeekSpecial.cs)
+
+>SA 1257 Mania+ (effect is coded in TranceSeekCustomAPI.cs)
+
+>SA 1258 Reward+ (effect is coded in TranceSeekCustomAPI.cs)
+
+>SA 1259 Mog Kiss+ (effect is coded in TranceSeekCustomAPI.cs)
 
 _______________________________________________________________________________________________
 
@@ -3240,3 +3223,4 @@ Ability WhenCalcDamage EvenImmobilized
 Ability WhenCalcDamage EvenImmobilized
 [code=Condition] AbilityId == BattleAbilityId_Attack && (TargetCategory & 1) != 0 && CasterIsPlayer != TargetIsPlayer && (CasterWeaponId >= 26 && CasterWeaponId <= 30 || CasterWeaponId == 1237) [/code]
 [code=DamageModifierCount] DamageModifierCount + 1 [/code]
+

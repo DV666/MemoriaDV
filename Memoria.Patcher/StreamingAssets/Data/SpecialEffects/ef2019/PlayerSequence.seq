@@ -1,0 +1,19 @@
+// Player sequence of Mouga Homing
+
+PlaySound: Sound=1362
+SetupReflect: Delay=SFXLoaded
+EffectPoint: Char=Caster ; Type=Both
+Wait: Time=30
+EffectPoint: Char=Caster ; Type=Both
+WaitAnimation: Char=Caster
+SetVariable: Variable=cmd_status ; Value=&65533 ; Reflect=True
+Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
+SetupReflect: Delay=SFXLoaded
+LoadSFX: SFX=Madeen__Short ; Reflect=True ; UseCamera=True
+WaitSFXLoaded: SFX=Madeen__Short ; Reflect=True
+PlaySFX: SFX=Madeen__Short ; Reflect=True
+WaitSFXDone: SFX=Madeen__Short ; Reflect=True
+SetVariable: Variable=cmd_status ; Value=|2 ; Reflect=True
+WaitAnimation: Char=Caster
+ActivateReflect
+WaitReflect

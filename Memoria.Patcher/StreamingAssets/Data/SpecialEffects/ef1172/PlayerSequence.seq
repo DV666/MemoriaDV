@@ -1,10 +1,7 @@
 // Player sequence of SFX Summon_Agares_Thundaga__Single
 
 WaitAnimation: Char=Caster
-StartThread: Condition=IsSingleSelectedTarget
-	Turn: Char=Caster ; BaseAngle=AllTargets ; Time=5
-EndThread
-SetupReflect: Delay=SFXLoaded
+SetupReflect: Delay=60
 StartThread: Target=Caster ; Sync=True
 	LoadSFX: SFX=Green_Smoke ; UseCamera=False
 	WaitSFXLoaded: SFX=Green_Smoke
@@ -12,30 +9,26 @@ StartThread: Target=Caster ; Sync=True
 	EffectPoint: Char=Caster ; Type=Both
 	WaitSFXDone: SFX=Green_Smoke
 EndThread
-StartThread: Target=AllEnemies ; Sync=True
-	StartThread: Target=RandomTarget ; Sync=True
-		LoadSFX: SFX=Thundaga__Single ; Reflect=True
-		PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_070_020
-		WaitAnimation: Char=Caster
-		Message: Priority=1 ; Title=True ; Reflect=True ; TextUS=[STRT=58,1]Thundaga ; TextUK=[STRT=58,1]Thundaga ; TextJP=[STRT=58,1]Thundaga ; TextES=[STRT=58,1]Thundaga ; TextFR=[STRT=52,1]Foudre X ; TextGR=[STRT=58,1]Thundaga ; TextIT=[STRT=58,1]Thundaga
-		PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_070_021
-		WaitSFXLoaded: SFX=Thundaga__Single ; Reflect=True
-		WaitAnimation: Char=Caster
-		PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_070_022
-		Wait: Time=18
-		PlaySFX: SFX=Thundaga__Single ; Reflect=True		
-		WaitSFXDone: SFX=Thundaga__Single
-	EndThread
-EndThread
-StartThread: Target=Caster ; Sync=True
-	LoadSFX: SFX=Green_Smoke ; UseCamera=False
-	WaitSFXLoaded: SFX=Green_Smoke
-	PlaySFX: SFX=Green_Smoke
-	EffectPoint: Char=Caster ; Type=Both
-	WaitSFXDone: SFX=Green_Smoke
-EndThread
+LoadSFX: SFX=Thundaga__Single ; Reflect=True
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_070_020
+WaitAnimation: Char=Caster
+Message: Priority=1 ; Title=True ; Reflect=True ; TextFR=[STRT=52,1]Foudre X ; Text=[STRT=58,1]Thundaga
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_070_021
+WaitSFXLoaded: SFX=Thundaga__Single ; Reflect=True
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_070_022
+Wait: Time=18
+PlaySFX: SFX=Thundaga__Single ; Reflect=True		
+WaitSFXDone: SFX=Thundaga__Single
 ActivateReflect
 WaitReflect
+StartThread: Target=Caster ; Sync=True
+	LoadSFX: SFX=Green_Smoke ; UseCamera=False
+	WaitSFXLoaded: SFX=Green_Smoke
+	PlaySFX: SFX=Green_Smoke
+	EffectPoint: Char=Caster ; Type=Both
+	WaitSFXDone: SFX=Green_Smoke
+EndThread
 PlayAnimation: Char=Caster ; Anim=Idle
 Turn: Char=Caster ; BaseAngle=Default ; Time=5
 WaitTurn: Char=Caster

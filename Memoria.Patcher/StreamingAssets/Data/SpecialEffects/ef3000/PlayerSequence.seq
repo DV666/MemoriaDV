@@ -10,15 +10,21 @@ WaitMove: Char=Caster
 PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_105_012
 StartThread
 	SetupReflect
-	LoadSFX: SFX=SFX_Attack_Broadsword ; FirstBone=0 ; Reflect=True
+	LoadSFX: SFX=Player_Attack_Blank_Pluto ; FirstBone=0 ; Reflect=True
 	Wait: Time=8 ; Reflect=True
 	WaitSFXLoaded: Reflect=True
-	PlaySFX: SkipSequence=False ; Reflect=True
+	PlaySFX: SFX=Player_Attack_Blank_Pluto
 	WaitSFXDone: Reflect=True
 EndThread
 StartThread
 	Wait: Time=9
-	PlaySound: Sound=673 ; Volume=1 ; Once=False
+	EffectPoint: Char=AllTargets ; Type=Effect
+	PlaySound: Sound=WeaponAttack
+	StartThread: Condition=!IsAttackMiss
+		PlaySound: Sound=WeaponHit
+	EndThread
+	Wait: Time=4
+	EffectPoint: Char=Everyone ; Type=Figure
 EndThread
 Wait: Time=10
 Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=False

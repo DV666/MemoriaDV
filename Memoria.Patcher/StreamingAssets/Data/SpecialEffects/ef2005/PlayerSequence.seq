@@ -1,21 +1,14 @@
-// Player sequence of SFX Mad Rush
+// Player sequence of Mog AutoLife
 
+PlaySound: Sound=1362
+SetupReflect: Delay=SFXLoaded
+EffectPoint: Char=Caster ; Type=Both
+Wait: Time=30
+EffectPoint: Char=Caster ; Type=Both
+Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
+Wait: Time=10
+LoadSFX: SFX=Auto_Life ; Reflect=True
+WaitSFXLoaded: SFX=Auto_Life ; Reflect=True
+PlaySFX: SFX=Auto_Life ; Reflect=True ; MeshColors=(1.0, 0.0, 0.5)
+WaitSFXDone: SFX=Auto_Life ; Reflect=True
 WaitAnimation: Char=Caster
-Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=False
-PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_122_040
-WaitAnimation: Char=Caster
-StartThread: Target = AllPlayers
-	StartThread: TargetLoop=True ; Chain=True ; Sync=True
-		Wait: Time=2
-		StartThread
-			LoadSFX: SFX=Berserk__Single ; Reflect=True ; UseCamera=False
-			WaitSFXLoaded: SFX=Berserk__Single ; Reflect=True
-			PlaySFX: SFX=Berserk__Single ; Reflect=True
-		EndThread
-		StartThread
-			LoadSFX: SFX=Protect ; Reflect=True ; UseCamera=False
-			WaitSFXLoaded: SFX=Protect ; Reflect=True
-			PlaySFX: SFX=Protect ; Reflect=True ; MeshColors=(0.917, 0.041, 0.041)
-		EndThread
-	EndThread
-EndThread

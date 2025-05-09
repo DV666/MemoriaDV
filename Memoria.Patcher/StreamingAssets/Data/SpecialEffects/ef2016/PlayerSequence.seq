@@ -1,25 +1,17 @@
-// Player sequence of SFX Prithvi Sword
+// Player sequence of Moga AutoLife
 
-WaitAnimation: Char=Caster
-Channel
+PlaySound: Sound=1362
 SetupReflect: Delay=SFXLoaded
-LoadMonsterSFX: SFX=Earth_Shake ; FirstBone=0 ; SecondBone=0 ; Args=0 ; Reflect=True
-PlayTextureAnimation: Char=Caster ; Anim=2 ; Once=False ; Stop=True
-PlayTextureAnimation: Char=Caster ; Anim=0 ; Once=True ; Stop=False
-PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_122_020
+EffectPoint: Char=Caster ; Type=Both
+Wait: Time=30
+EffectPoint: Char=Caster ; Type=Both
+Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
+Wait: Time=10
+StartThread: TargetLoop=True ; Chain=True ; Sync=True
+	Wait: Time=1
+	LoadSFX: SFX=Auto_Life ; Reflect=True ; UseCamera=False
+	WaitSFXLoaded: SFX=Auto_Life ; Reflect=True
+	PlaySFX: SFX=Auto_Life ; Reflect=True ; MeshColors=(1.0, 0.0, 0.5)
+EndThread
+WaitSFXDone: SFX=Auto_Life ; Reflect=True
 WaitAnimation: Char=Caster
-PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_122_021
-WaitMonsterSFXLoaded: Reflect=True
-WaitAnimation: Char=Caster
-PlayTextureAnimation: Char=Caster ; Anim=1 ; Once=True ; Stop=False
-PlayTextureAnimation: Char=Caster ; Anim=2 ; Once=False ; Stop=False
-PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_122_022
-PlayMonsterSFX: Reflect=True
-Wait: Time=15
-Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=False
-WaitAnimation: Char=Caster
-PlayAnimation: Char=Caster ; Anim=Idle
-WaitMonsterSFXDone: Reflect=True
-WaitTurn: Char=Caster
-ActivateReflect
-WaitReflect

@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using Assets.Sources.Scripts.UI.Common;
 using FF9;
 using Memoria.Data;
+using Memoria.Database;
 using Memoria.Prime;
+using NCalc;
 using UnityEngine;
 
 namespace Memoria.Scripts.Battle
@@ -11,29 +13,27 @@ namespace Memoria.Scripts.Battle
     public static class TranceSeekCustomAPI
     {
         public static Dictionary<BTL_DATA, Boolean> InitBTL = new Dictionary<BTL_DATA, Boolean>();
-
         public static Dictionary<BTL_DATA, Int32[]> ZidanePassive = new Dictionary<BTL_DATA, Int32[]>();
         // [0] => Dodge ; [1] => Critical ; [2] => Eye of the thief ; [3] => Master Thief ; [4] => Dagger Attack ; [5] => FirstItemMug ; [6] => SecondItemMug ; [7] => Mug+ ; [8] => Steal Gil ; [9] => Flexible
         // [10] => FirstItemMugMT ; [11] => SecondItemMugMT
 
         public static Dictionary<BTL_DATA, Int32[]> ViviPassive = new Dictionary<BTL_DATA, Int32[]>(); // [0] => Focus ; [1] => NumberTargets ; [2] => TriggerOneTime
         public static Dictionary<BTL_DATA, BattleAbilityId> ViviPreviousSpell = new Dictionary<BTL_DATA, BattleAbilityId>();
-
         public static Dictionary<BTL_DATA, Int32[]> BeatrixPassive = new Dictionary<BTL_DATA, Int32[]>(); // [0] => Strength ; [1] => Magic ; [2] => Bravoure ; [3] => TargetCount
-
         public static Dictionary<BTL_DATA, Dictionary<BattleStatus, Int32>> ProtectStatus = new Dictionary<BTL_DATA, Dictionary<BattleStatus, Int32>>();
         public static Dictionary<BTL_DATA, Int32> AbsorbElement = new Dictionary<BTL_DATA, Int32>();
-
         public static Dictionary<BTL_DATA, Int32> StateMoug = new Dictionary<BTL_DATA, Int32>();
         public static Dictionary<BTL_DATA, GameObject> ModelMoug = new Dictionary<BTL_DATA, GameObject>();
+        public static Dictionary<BTL_DATA, Int32[]> StackBreakOrUpStatus = new Dictionary<BTL_DATA, Int32[]>();
+        // [0] => StackStrength ; [1] => StackMagic ; [2] => StackArmor ; [3] => StackMental
 
-        public static Dictionary<BTL_DATA, Int32[]> StackBreakOrUpStatus = new Dictionary<BTL_DATA, Int32[]>();  // [0] => StackStrength ; [1] => StackMagic ; [2] => StackArmor ; [3] => StackMental
-
-        public static Dictionary<BTL_DATA, Int32[]> MonsterMechanic = new Dictionary<BTL_DATA, Int32[]>(); // [0] => Trance Activated ; [1] => Special1 ; [2] => Special2 ; [3] => HPBoss10000? ; [4] => ResistStatusEasyKill ; [5] => NerfGravity ; [6] => NoDodge
-
+        public static Dictionary<BTL_DATA, Int32[]> MonsterMechanic = new Dictionary<BTL_DATA, Int32[]>();
+        // [0] => Trance Activated ; [1] => Special1 ; [2] => Special2 ; [3] => HPBoss10000? ; [4] => ResistStatusEasyKill ; [5] => NerfGravity ; [6] => NoDodge
+        
         public static Dictionary<BTL_DATA, Int32[]> SpecialSAEffect = new Dictionary<BTL_DATA, Int32[]>();
         // [0] => Sentinel/Duel ; [1] => LastStand ; [2] => Instinct ; [3] => PreventTranceSFX ; [4] => Mode EX ; [5] => HealHP ; [6] => HealMP ; [7] => TargetCount ; [8] => SpringBoots ; [9] => CriticalHit100 ;
         // [10] => SteinerEnchantedBlade ; [11] => Peuh! ; [12] => That's all ; [13] => In top form!
+
         public static Dictionary<BTL_DATA, Int32[]> RollBackStats = new Dictionary<BTL_DATA, Int32[]>();
         public static Dictionary<BTL_DATA, Boolean> TriggerSPSResistStatus = new Dictionary<BTL_DATA, Boolean>();
         public static Dictionary<BTL_DATA, BattleStatus> RollBackBattleStatus = new Dictionary<BTL_DATA, BattleStatus>();
@@ -556,7 +556,19 @@ namespace Memoria.Scripts.Battle
         public static void PenaltyShellAttack(this BattleCalculator v)
         {
             if (v.Caster.HasSupportAbilityByIndex((SupportAbility)1257)) // SA Mania+ [TODO] Need a new function for that ? Like HitRateBonus()
-                v.Context.HitRate += (v.Context.HitRate * FF9StateSystem.Battle.FF9Battle.aa_data[v.Command.AbilityId].MP) / 100;
+            {
+                if (FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1030, out Dictionary<Int32, Int32> dict))
+                {
+                    int MpCost = FF9StateSystem.Battle.FF9Battle.aa_data[v.Command.AbilityId].MP;
+                    int IdAA = (int)v.Command.AbilityId;
+                    if (IdAA % 2 == 0)
+                        MpCost *= Math.Max(1, (dict[IdAA] + dict[IdAA + 1] - 2));
+                    else
+                        MpCost *= Math.Max(1, (dict[IdAA] + dict[IdAA - 1] - 2));
+
+                    v.Context.HitRate += (v.Context.HitRate * MpCost) / 100;
+                }
+            }
 
             if (v.Target.MagicDefence == 255)
             {
@@ -996,6 +1008,268 @@ namespace Memoria.Scripts.Battle
             }
         }
 
+        public static void EikoMougMechanic(this BattleCalculator v)
+        {
+            if (FF9StateSystem.Common.FF9.party.IsInParty(CharacterId.Eiko) && v.Command.ScriptId != 64 && v.Command.ScriptId != 164 && v.Command.Id != BattleCommandId.Counter)
+            {
+                if (v.Caster.IsPlayer && v.Target.IsUnderAnyStatus(BattleStatus.Death) && (v.Command.ScriptId == 13 || v.Command.ScriptId == 72)) // Don't trigger if a player revive someone.
+                    return;
+
+                BattleUnit Eiko = BattleState.GetPlayerUnit(CharacterId.Eiko);
+                int ChanceMoug = (Eiko.HasSupportAbilityByIndex((SupportAbility)1224) ? 20 : (Eiko.HasSupportAbilityByIndex((SupportAbility)224) ? 15 : 10));
+
+                if (StateMoug[Eiko.Data] == 0 && !Eiko.IsUnderAnyStatus(BattleStatus.Death | BattleStatus.Petrify | BattleStatus.Jump))
+                    if (Comn.random16() % 100 > ChanceMoug || Eiko.IsUnderAnyStatus(BattleStatus.Heat) || v.Caster.Data == Eiko.Data)
+                        return;
+
+                ushort TargetId = v.Caster.Id;
+                StateMoug[Eiko.Data] = 1;
+                List<BattleAbilityId> MougAAList = new List<BattleAbilityId>();
+                foreach (BattleAbilityId abilId in CharacterCommands.Commands[(BattleCommandId)1049].EnumerateAbilities()) // CMD Kupo (not used for Eiko)
+                {
+                    Boolean AddAA = true;
+                    switch (abilId)
+                    {
+                        case (BattleAbilityId)2000: // Mog Cure
+                        {
+                            if (Eiko.Level < 35 || Eiko.CurrentHp > Eiko.MaximumHp / 2)
+                                AddAA = false;
+                            break;
+                        }
+                        case (BattleAbilityId)2001: // Mog Hug
+                        {
+                            if (Eiko.Level < 35 || Eiko.CurrentMp > Eiko.MaximumMp / 2)
+                                AddAA = false;
+                            break;
+                        }
+                        case (BattleAbilityId)2002: // Mog Regen
+                        {
+                            if (Eiko.Level < 35 || Eiko.IsUnderAnyStatus(BattleStatus.Regen))
+                                AddAA = false;
+                            break;
+                        }
+                        case (BattleAbilityId)2004: // Mog Mirror
+                        {
+                            if (Eiko.Level < 35 || Eiko.IsUnderAnyStatus(BattleStatus.Vanish))
+                                AddAA = false;
+                            break;
+                        }
+                        case (BattleAbilityId)2005: // Mog AutoLife
+                        {
+                            if (Eiko.Level < 35 || Eiko.IsUnderAnyStatus(BattleStatus.AutoLife))
+                                AddAA = false;
+                            break;
+                        }
+                        case (BattleAbilityId)2006: // Mog Esuna
+                        {
+                            if (Eiko.Level < 35 || !Eiko.IsUnderAnyStatus(BattleStatus.Heat | BattleStatus.Poison | BattleStatus.Venom | BattleStatus.Silence | BattleStatus.Blind | BattleStatus.Trouble | BattleStatus.Berserk | BattleStatus.Mini | CustomStatus.Vieillissement))
+                                AddAA = false;
+                            break;
+                        }
+                        case (BattleAbilityId)2007: // Mog Support
+                        {
+                            if (Eiko.Level < 30 || StackBreakOrUpStatus[Eiko.Data][1] >= 50 || StackBreakOrUpStatus[Eiko.Data][3] >= 50)
+                                AddAA = false;
+                            break;
+                        }
+                        case (BattleAbilityId)2008: // Mog Life
+                        {
+                            AddAA = false; // Specific, handle aside.
+                            break;
+                        }
+                        case (BattleAbilityId)2009: // Mog Flare
+                        case (BattleAbilityId)2010: // Mog Holy
+                        {
+                            if (FF9StateSystem.EventState.ScenarioCounter < 9990) // The party finds Hilda
+                                AddAA = false;
+                            else
+                            {
+                                Boolean TargetAvailable = false;
+                                foreach (BattleUnit monster in BattleState.EnumerateUnits())
+                                    if (!monster.IsPlayer && monster.IsTargetable && !monster.IsUnderAnyStatus(BattleStatus.Death | BattleStatus.Petrify | BattleStatus.Jump | BattleStatus.Reflect))
+                                        TargetAvailable = true;
+
+                                if (!TargetAvailable)
+                                    AddAA = false;
+                            }
+                            break;
+                        }
+                        case (BattleAbilityId)2011: // Moga Cure
+                        {
+                            if (Eiko.Level < 40)
+                                AddAA = false;
+                            else
+                            {
+                                uint CurrentHPTeam = 0;
+                                uint CurrentMaxHPTeam = 0;
+                                Boolean ZombiePresent = false;
+                                foreach (BattleUnit unit in BattleState.EnumerateUnits())
+                                    if (unit.IsPlayer && unit.IsTargetable && !unit.IsUnderAnyStatus(BattleStatus.Death | BattleStatus.Petrify | BattleStatus.Jump))
+                                    {
+                                        CurrentHPTeam += unit.CurrentHp;
+                                        CurrentMaxHPTeam += unit.MaximumHp;
+                                        if (unit.IsZombie)
+                                            ZombiePresent = true;
+                                    }
+                                if (CurrentHPTeam > (CurrentMaxHPTeam / 2) || ZombiePresent)
+                                    AddAA = false;
+                            }
+                            break;
+                        }
+                        case (BattleAbilityId)2012: // Moga Hug
+                        {
+                            if (Eiko.Level < 50)
+                                AddAA = false;
+                            else
+                            {
+                                uint CurrentMPTeam = 0;
+                                uint CurrentMaxMPTeam = 0;
+                                Boolean ZombiePresent = false;
+                                foreach (BattleUnit unit in BattleState.EnumerateUnits())
+                                    if (unit.IsPlayer && unit.IsTargetable && !unit.IsUnderAnyStatus(BattleStatus.Death | BattleStatus.Petrify | BattleStatus.Jump))
+                                    {
+                                        CurrentMPTeam += unit.CurrentMp;
+                                        CurrentMaxMPTeam += unit.MaximumMp;
+                                        if (unit.IsZombie)
+                                            ZombiePresent = true;
+                                    }
+                                if (CurrentMPTeam > (CurrentMaxMPTeam / 4) || ZombiePresent)
+                                    AddAA = false;
+                            }
+                            break;
+                        }
+                        case (BattleAbilityId)2014: // Moga Shield
+                        {
+                            if (Eiko.Level < 60)
+                                AddAA = false;
+                            break;
+                        }
+                        case (BattleAbilityId)2013: // Moga Regen
+                        {
+                            if (Eiko.Level < 70)
+                                AddAA = false;
+                            else
+                            {
+                                Boolean StatusToApply = false;
+                                foreach (BattleUnit unit in BattleState.EnumerateUnits())
+                                    if (unit.IsPlayer && unit.IsTargetable && !unit.IsUnderAnyStatus(BattleStatus.Death | BattleStatus.Petrify | BattleStatus.Jump | BattleStatus.Regen))
+                                        StatusToApply = true;
+
+                                if (!StatusToApply)
+                                    AddAA = false;
+                            }
+                            break;
+                        }
+                        case (BattleAbilityId)2017: // Moga Esuna
+                        {
+                            if (Eiko.Level < 75)
+                                AddAA = false;
+                            else
+                            {
+                                Boolean StatusToCure = false;
+                                foreach (BattleUnit unit in BattleState.EnumerateUnits())
+                                    if (unit.IsPlayer && unit.IsTargetable && !unit.IsUnderAnyStatus(BattleStatus.Death | BattleStatus.Petrify | BattleStatus.Jump) && unit.IsUnderAnyStatus(BattleStatus.Poison | BattleStatus.Venom | BattleStatus.Silence | BattleStatus.Blind | BattleStatus.Trouble | BattleStatus.Mini | BattleStatus.Berserk | TranceSeekCustomAPI.CustomStatus.Vieillissement))
+                                            StatusToCure = true;
+
+                                if (!StatusToCure)
+                                    AddAA = false;
+                            }
+                            break;
+                        }
+                        case (BattleAbilityId)2015: // Moga Mirror
+                        {
+                            if (Eiko.Level < 80)
+                                AddAA = false;
+                            else
+                            {
+                                Boolean StatusToApply = false;
+                                foreach (BattleUnit unit in BattleState.EnumerateUnits())
+                                    if (unit.IsPlayer && unit.IsTargetable && !unit.IsUnderAnyStatus(BattleStatus.Death | BattleStatus.Petrify | BattleStatus.Jump | BattleStatus.Vanish))
+                                        StatusToApply = true;
+
+                                if (!StatusToApply)
+                                    AddAA = false;
+                            }
+                            break;
+                        }
+                        case (BattleAbilityId)2018: // Moga Support
+                        {
+                            if (Eiko.Level < 85)
+                                AddAA = false;
+                            else
+                            {
+                                Boolean StatusToApply = false;
+                                foreach (BattleUnit unit in BattleState.EnumerateUnits())
+                                    if (unit.IsPlayer && unit.IsTargetable && !unit.IsUnderAnyStatus(BattleStatus.Death | BattleStatus.Petrify | BattleStatus.Jump) && (StackBreakOrUpStatus[unit.Data][1] < 50 || StackBreakOrUpStatus[unit.Data][3] < 50))
+                                        StatusToApply = true;
+
+                                if (!StatusToApply)
+                                    AddAA = false;
+                            }
+                            break;
+                        }
+                        case (BattleAbilityId)2016: // Moga AutoLife
+                        {
+                            if (Eiko.Level < 90)
+                                AddAA = false;
+                            else
+                            {
+                                Boolean StatusToApply = false;
+                                foreach (BattleUnit unit in BattleState.EnumerateUnits())
+                                    if (unit.IsPlayer && unit.IsTargetable && !unit.IsUnderAnyStatus(BattleStatus.Death | BattleStatus.Petrify | BattleStatus.Jump | BattleStatus.AutoLife))
+                                        StatusToApply = true;
+
+                                if (!StatusToApply)
+                                    AddAA = false;
+                            }
+                            break;
+                        }
+                        case (BattleAbilityId)2019: // Mouga Homing
+                        {
+                            if (Eiko.Level < 99)
+                                AddAA = false;
+                            break;
+                        }
+                    }
+                    if (AddAA)
+                        MougAAList.Add(abilId);
+                }
+
+                BattleAbilityId MougAAChoosen = MougAAList[GameRandom.Next16() % MougAAList.Count];
+                TargetType TargetAA = FF9StateSystem.Battle.FF9Battle.aa_data[MougAAChoosen].Info.Target;
+                Boolean TargetDefaultAlly = FF9StateSystem.Battle.FF9Battle.aa_data[MougAAChoosen].Info.DefaultAlly;
+
+                if (TargetDefaultAlly)
+                {
+                    if (TargetAA == TargetType.Self)
+                        TargetId = Eiko.Id;
+                    else
+                        TargetId = 15;
+                }
+                else
+                {
+                    if (TargetAA == TargetType.AllEnemy)
+                        TargetId = 240;
+                    else
+                        TargetId = BattleState.GetRandomUnitId(isPlayer: false);
+                }
+
+                if (Comn.random16() % 100 <= ChanceMoug) // Mog Life
+                {
+                    List<UInt16> candidates = new List<UInt16>(4);
+                    for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
+                        if (next.bi.player == 1 && btl_stat.CheckStatus(next, BattleStatus.Death) && next.bi.target != 0)
+                            candidates.Add(next.btl_id);
+                    if (candidates.Count > 0)
+                    {
+                        TargetId = candidates[UnityEngine.Random.Range(0, candidates.Count)];
+                        MougAAChoosen = (BattleAbilityId)2008;
+                    }
+                }
+                btl_cmd.SetCounter(Eiko, BattleCommandId.Counter, (int)MougAAChoosen, TargetId);
+            }
+        }
+
         public static void CharacterBonusPassive(this BattleCalculator v, string mode = "")
         {
             if (v.Caster.PlayerIndex == CharacterId.Beatrix)
@@ -1104,10 +1378,8 @@ namespace Memoria.Scripts.Battle
                     else
                         inflicter.Trance = Byte.MaxValue;
                 }
-                if (inflicter.HasSupportAbilityByIndex((SupportAbility)1258)) // SA Reward+
-                {
-                    inflicter.CurrentMp = Math.Min(inflicter.CurrentMp + 25 * (inflicter.MaximumMp / 100), inflicter.MaximumMp);
-                }
+                if (inflicter.HasSupportAbilityByIndex((SupportAbility)1258) && inflicter.CurrentMp < inflicter.MaximumMp) // SA Reward+
+                    inflicter.CurrentMp = Math.Min(inflicter.CurrentMp + (inflicter.MaximumMp / 25), inflicter.MaximumMp);
             }
         }
 
@@ -1640,11 +1912,20 @@ namespace Memoria.Scripts.Battle
             if (v.Caster.HasSupportAbilityByIndex((SupportAbility)235) && v.Command.Id == BattleCommandId.Attack) // SA Fencing
                 v.Target.HpDamage += v.Caster.HasSupportAbilityByIndex((SupportAbility)1235) ? v.Target.HpDamage / 4 : v.Target.HpDamage / 8;
 
-            Log.Message("v.Target.HpDamage = " + v.Target.HpDamage);
             if (v.Caster.HasSupportAbilityByIndex((SupportAbility)257)) // SA Mania
-                v.Target.HpDamage += (v.Target.HpDamage * FF9StateSystem.Battle.FF9Battle.aa_data[v.Command.AbilityId].MP) / 100;
+            {
+                if (FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1030, out Dictionary<Int32, Int32> dict))
+                {
+                    int MpCost = FF9StateSystem.Battle.FF9Battle.aa_data[v.Command.AbilityId].MP;
+                    int IdAA = (int)v.Command.AbilityId;
+                    if (IdAA % 2 == 0)
+                        MpCost *= Math.Max(1, (dict[IdAA] + dict[IdAA + 1] - 2));
+                    else
+                        MpCost *= Math.Max(1, (dict[IdAA] + dict[IdAA - 1] - 2));
 
-            Log.Message("[NEW]v.Target.HpDamage = " + v.Target.HpDamage);
+                    v.Target.HpDamage += (v.Target.HpDamage * MpCost) / 100;
+                }
+            }
 
             if (v.Target.IsCovering && v.Target.Data.bi.cover_unit.dms_geo_id == 220)
             {

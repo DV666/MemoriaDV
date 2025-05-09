@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using FF9;
 using Memoria.Data;
 using Memoria.Database;
 using Memoria.DefaultScripts;
 using UnityEngine;
+using static Memoria.Assets.DataResources;
 using static Memoria.Scripts.Battle.TranceSeekCustomAPI;
 
 namespace Memoria.Scripts.Battle
@@ -34,7 +37,7 @@ namespace Memoria.Scripts.Battle
                 InitHUDMessageChild = true;
             }
 
-            for (Int32 i = 0; i < 8; i++)
+            for (Int32 i = 0; i < 8; i++) // CMD Engineer reset
             {
                 int idAA = 1136 + i;
                 FF9StateSystem.Battle.FF9Battle.aa_data[(BattleAbilityId)idAA].MP = 0;
@@ -52,47 +55,48 @@ namespace Memoria.Scripts.Battle
                         if (!monster.IsPlayer)
                         {
                             BattleEnemy battleEnemy = BattleEnemy.Find(monster);
-                            battleEnemy.Data.bonus_item_rate[3] = 16;
-                            battleEnemy.Data.bonus_item_rate[2] = 96;
-                            battleEnemy.Data.bonus_item_rate[1] = 192;
+                            battleEnemy.Data.bonus_item_rate[3] += 15;
+                            battleEnemy.Data.bonus_item_rate[2] += 64;
+                            battleEnemy.Data.bonus_item_rate[1] += 96;
                         }
                     }
-                    break;
                 }
             }
 
             foreach (BattleUnit unit in BattleState.EnumerateUnits())
             {
-                if (!ZidanePassive.TryGetValue(unit.Data, out Int32[] zidanepassive))
+                //if (!ZidanePassive.TryGetValue(unit.Data, out Int32[] zidanepassive))
                     ZidanePassive[unit.Data] = [0, 0, 0, 0, 0, 255, 255, 0, 0, 0, 0, 0 ];
-                if (!ViviPreviousSpell.TryGetValue(unit.Data, out BattleAbilityId e))
+                //if (!ViviPreviousSpell.TryGetValue(unit.Data, out BattleAbilityId e))
                     ViviPreviousSpell[unit.Data] = BattleAbilityId.Void;
-                if (!ViviPassive.TryGetValue(unit.Data, out Int32[] vivipassive))
+                //if (!ViviPassive.TryGetValue(unit.Data, out Int32[] vivipassive))
                     ViviPassive[unit.Data] = [0, 0, 0];
-                if (!BeatrixPassive.TryGetValue(unit.Data, out Int32[] beatrixpassive))
+                //if (!BeatrixPassive.TryGetValue(unit.Data, out Int32[] beatrixpassive))
                     BeatrixPassive[unit.Data] = [0, 0, 0, 0];
-                if (!ProtectStatus.TryGetValue(unit.Data, out Dictionary<BattleStatus, Int32> statusprotect))
+                //if (!ProtectStatus.TryGetValue(unit.Data, out Dictionary<BattleStatus, Int32> statusprotect))
                     ProtectStatus[unit.Data] = new Dictionary<BattleStatus, Int32> { { 0, 0 } };
-                if (!AbsorbElement.TryGetValue(unit.Data, out Int32 elementprotect))
+                //if (!AbsorbElement.TryGetValue(unit.Data, out Int32 elementprotect))
                     AbsorbElement[unit.Data] = -1;
-                if (!StackBreakOrUpStatus.TryGetValue(unit.Data, out Int32[] stackstatus))
+                //if (!StackBreakOrUpStatus.TryGetValue(unit.Data, out Int32[] stackstatus))
                     StackBreakOrUpStatus[unit.Data] = [0, 0, 0, 0];
-                if (!MonsterMechanic.TryGetValue(unit.Data, out Int32[] monstermechanic))
+                //if (!MonsterMechanic.TryGetValue(unit.Data, out Int32[] monstermechanic))
                     MonsterMechanic[unit.Data] = [ 0, 0, 0, 0, 100, 0, 0 ];
-                if (!SpecialSAEffect.TryGetValue(unit.Data, out Int32[] specialSAeffect))
+                //if (!SpecialSAEffect.TryGetValue(unit.Data, out Int32[] specialSAeffect))
                     SpecialSAEffect[unit.Data] = [ 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ];
-                if (!TriggerSPSResistStatus.TryGetValue(unit.Data, out Boolean spsstatus))
+                //if (!TriggerSPSResistStatus.TryGetValue(unit.Data, out Boolean spsstatus))
                     TriggerSPSResistStatus[unit.Data] = false;
-                if (!RollBackStats.TryGetValue(unit.Data, out Int32[] rb))
+                //if (!RollBackStats.TryGetValue(unit.Data, out Int32[] rb))
                     RollBackStats[unit.Data] = [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ];
-                if (!RollBackBattleStatus.TryGetValue(unit.Data, out BattleStatus rs))
+                //if (!RollBackBattleStatus.TryGetValue(unit.Data, out BattleStatus rs))
                     RollBackBattleStatus[unit.Data] = 0;
-                if (!WeaponNewElement.TryGetValue(unit.Data, out EffectElement wpelem))
+                //if (!WeaponNewElement.TryGetValue(unit.Data, out EffectElement wpelem))
                     WeaponNewElement[unit.Data] = EffectElement.None;
-                if (!WeaponNewStatus.TryGetValue(unit.Data, out BattleStatus wpstatus))
+                //if (!WeaponNewStatus.TryGetValue(unit.Data, out BattleStatus wpstatus))
                     WeaponNewStatus[unit.Data] = 0;
-                //if (!AlchemyScript.SoakedBlade.TryGetValue(unit.Data, out BattleStatus soakedbladestatus))
-                //    AlchemyScript.SoakedBlade[unit.Data] = 0;
+                //if (!StateMoug.TryGetValue(unit.Data, out Int32 State))
+                    StateMoug[unit.Data] = 0;
+                //if (!ModelMoug.TryGetValue(unit.Data, out GameObject MM))
+                    ModelMoug[unit.Data] = null;
 
                 if ((FF9StateSystem.Battle.battleMapIndex == 334 || FF9StateSystem.Battle.battleMapIndex == 335) && unit.IsPlayer) // Add Steal command for Zidane/Marcus against Steiner 2nd
                 {
@@ -140,14 +144,27 @@ namespace Memoria.Scripts.Battle
 
                 if (unit.PlayerIndex == (CharacterId)15) // Reset CMD Komrade
                 {
-                    for (Int32 i = 0; i < 206; i++)
+                    List <BattleAbilityId> ListAAKomrade = CharacterCommands.Commands[(BattleCommandId)1030].EnumerateAbilities().ToList();
+                    int TotalAAKomrade = 2 * ListAAKomrade.Count;
+                    int FirstAAKomradeId = (Int32)ListAAKomrade[0];
+                    if (!FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1030, out Dictionary<Int32, Int32> dict))
                     {
-                        FF9StateSystem.EventState.gAbilityUsage[(BattleAbilityId)(1172 + i)] = 1;
+                        dict = new Dictionary<Int32, Int32>();
+                        for (Int32 i = 0; i < TotalAAKomrade; i++)
+                            dict[FirstAAKomradeId + i] = 1;
+
+                        FF9StateSystem.EventState.gScriptDictionary.Add(1030, dict);
+                    }
+                    else
+                    {
+                        for (Int32 i = 0; i < TotalAAKomrade; i++)
+                            dict[FirstAAKomradeId + i] = 1;
                     }
                 }
 
                 if (!unit.IsPlayer)
                 {
+                    BattleEnemy battleEnemy = BattleEnemy.Find(unit);
                     Boolean ChangeStats = true;
                     if (FF9StateSystem.EventState.gEventGlobal[1403] >= 3)
                     {
@@ -163,7 +180,6 @@ namespace Memoria.Scripts.Battle
                     if (ChangeStats)
                     {
                         Boolean ChangeHP = false;
-                        BattleEnemy battleEnemy = BattleEnemy.Find(unit);
                         for (Int32 i = 0; i < BossBattleBonusHP.GetLength(0); i++) // Check if boss have +10000 HP for scripts
                         {
                             if (FF9StateSystem.Battle.battleMapIndex == BossBattleBonusHP[i, 0] && sb2Pattern.Monster[unit.Data.bi.slot_no].TypeNo == BossBattleBonusHP[i, 1])

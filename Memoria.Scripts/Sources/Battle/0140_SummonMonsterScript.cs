@@ -131,6 +131,9 @@ namespace Memoria.Scripts.Battle
                 NumberTargets[_v.Caster.Data] = ((_v.Command.AbilityCategory & 32) != 0 && (_v.Command.AbilityCategory & 128) != 0) ? 1 : ((_v.Command.AbilityCategory & 4) != 0 && (_v.Command.AbilityCategory & 32) != 0 ? (BattleState.TargetCount(true) + BattleState.TargetCount(false)) : ((_v.Command.AbilityCategory & 4) != 0 ? BattleState.TargetCount(false) : (_v.Command.AbilityCategory & 32) != 0 ? BattleState.TargetCount(true) : 1));
                 SummonStep[_v.Caster.Data] = 1;
 
+                if (FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1030, out Dictionary<Int32, Int32> dict)) // Increase AA utilisation, for MPCost in AbilityFeatures.txt
+                    dict[(int)_v.Command.AbilityId]++;
+
                 if (_v.Command.AbilityId == (BattleAbilityId)1255) // Grenada - Fire balls
                     NumberTargets[_v.Caster.Data] = 6;
                 else if (_v.Command.AbilityId == (BattleAbilityId)1263 || _v.Command.AbilityId == (BattleAbilityId)1377) // Hecteyes and Zombie - Roulette

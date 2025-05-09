@@ -3,11 +3,30 @@
 WaitAnimation: Char=Caster
 LoadSFX: SFX=SFX_Attack_Save_The_Queen
 WaitSFXLoaded: SFX=SFX_Attack_Save_The_Queen
+Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
 StartThread: Condition=AreCasterAndTargetsEnemies ; Sync=False
 	Turn: Char=Caster ; BaseAngle=AllTargets ; Time=0
 	WaitTurn: Char=Caster
 	PlayAnimation: Char=Caster ; Anim=ANH_MAIN_F0_STN_RUN ; Loop
-	ShowMesh: Char=Caster ; Enable=False ; Mesh=65535 ; Time=12
+	StartThread: Sync=False
+		Wait: Time=4
+		PlaySound: Sound=925
+		Wait: Time=4
+		PlaySound: Sound=925
+		Wait: Time=4
+		PlaySound: Sound=925
+		Wait: Time=4
+		PlaySound: Sound=925
+		Wait: Time=4
+		PlaySound: Sound=925
+		Wait: Time=4
+		PlaySound: Sound=925
+		Wait: Time=4
+		PlaySound: Sound=925
+		Wait: Time=4
+		PlaySound: Sound=925
+	EndThread
+	ShowMesh: Char=Caster ; Enable=False ; Mesh=65535 ; Time=16
 	ShowShadow: Char=Caster ; Enable=False
 	MoveToTarget: Char=Caster ; Target=AllTargets ; Distance=-3800 ; Time=24 ; UseCollisionRadius
 	Wait: Time=15
@@ -15,10 +34,11 @@ StartThread: Condition=AreCasterAndTargetsEnemies ; Sync=False
 EndThread
 Wait: Time=10
 PlaySFX: SFX=SFX_Attack_Save_The_Queen ; SkipSequence
-StartThread: Sync=False
+StartThread: Sync=False ; Condition=(TargetCategory != 128 && !CheckAnyStatus(TargetCurrentStatus, BattleStatus_Float))
 	StartThread: Sync=False
 		MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 1000.0, 0.0) ; Time=4 ; MoveHeight=True
 	EndThread
+	PlaySound: Sound=622
 	Wait: Time=1
 	Turn: BaseAngle=Default ; Angle=2.8 ; Time=0 ; Char=AllTargets
 	Wait: Time=1
@@ -86,6 +106,10 @@ StartThread: Sync=False
 	Turn: BaseAngle=Default ; Angle=357.2 ; Time=0 ; Char=AllTargets
 	Wait: Time=1
 	Turn: BaseAngle=Default ; Time=0 ; Char=AllTargets
+	Wait: Time=2
+	EffectPoint: Char=AllTargets ; Type=Both
+	Wait: Time=2
+ElseThread
 	Wait: Time=2
 	EffectPoint: Char=AllTargets ; Type=Both
 	Wait: Time=2

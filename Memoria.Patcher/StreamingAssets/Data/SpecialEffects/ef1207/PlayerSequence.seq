@@ -1,0 +1,46 @@
+// Player sequence of SFX Summon_GrandDragon_DragonBreath
+
+WaitAnimation: Char=Caster
+SetupReflect: Delay=60
+StartThread: Target=Caster ; Sync=True
+	LoadSFX: SFX=Green_Smoke ; UseCamera=False
+	WaitSFXLoaded: SFX=Green_Smoke
+	PlaySFX: SFX=Green_Smoke
+	EffectPoint: Char=Caster ; Type=Both
+	WaitSFXDone: SFX=Green_Smoke
+EndThread
+WaitAnimation: Char=Caster
+PlayCamera: Camera=1 ; Char=0 ; Alternate=False
+LoadSFX: SFX=Dragon_Breath ; FirstBone=13 ; SecondBone=0 ; Args=200 ; Reflect=True ; UseCamera=False
+WaitSFXLoaded: Reflect=True
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_166_040
+Wait: Time=11
+Turn: Char=Caster ; BaseAngle=AllTargets ; Angle=0 ; Time=3
+WaitAnimation: Char=Caster
+Message: Priority=1 ; Title=True ; Reflect=True ; TextFR=[STRT=107,1]Souffle du Dragon ; Text=[STRT=85,1]Dragon Breath
+PlaySFX: JumpToFrame=68 ; HideMeshes=0, 1, 2, 3, 4 ; MeshColors=(2.0, 1.0, 0.0)
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_166_041
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_166_042
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_166_043
+Wait: Time=20
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_166_044
+Wait: Time=2
+Turn: Char=Caster ; BaseAngle=Default ; Angle=0 ; Time=3
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=Idle
+WaitSFXDone: Reflect=True
+WaitTurn: Char=Caster
+ActivateReflect
+WaitReflect
+StartThread: Target=Caster ; Sync=True
+	LoadSFX: SFX=Green_Smoke ; UseCamera=False
+	WaitSFXLoaded: SFX=Green_Smoke
+	PlaySFX: SFX=Green_Smoke
+	EffectPoint: Char=Caster ; Type=Both
+	WaitSFXDone: SFX=Green_Smoke
+EndThread
+PlayAnimation: Char=Caster ; Anim=Idle
+Turn: Char=Caster ; BaseAngle=Default ; Time=5
+WaitTurn: Char=Caster

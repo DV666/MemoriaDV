@@ -107,7 +107,7 @@ namespace Memoria.Scripts.Battle
                 }
                 else if (TargetAA == TargetType.ManyAny || TargetAA == TargetType.ManyAlly || TargetAA == TargetType.ManyEnemy)
                 {
-                    if (GameRandom.Next16() % 2 == 0)
+                    if (GameRandom.Next16() % 2 == 0 || (BattleState.TargetCount(false) == 1 && TargetAA == TargetType.ManyEnemy) || (BattleState.TargetCount(true) == 1 && TargetAA == TargetType.ManyAlly))
                     {
                         if (TargetDefaultAlly)
                             target = BattleState.GetRandomUnitId(isPlayer: true);

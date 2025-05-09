@@ -1,0 +1,60 @@
+// Player sequence of SFX Summon_CarrionWorm_StomachAcid
+
+WaitAnimation: Char=Caster
+SetupReflect: Delay=60
+StartThread: Target=Caster ; Sync=True ; Reflect=False
+	WaitAnimation: Char=Caster
+	StartThread: Condition=IsSingleSelectedTarget
+		Turn: Char=Caster ; BaseAngle=AllTargets ; Time=5
+	EndThread
+	LoadSFX: SFX=Green_Smoke ; UseCamera=False ; Reflect=False
+	WaitSFXLoaded: SFX=Green_Smoke ; Reflect=False
+	PlaySFX: SFX=Green_Smoke ; Reflect=False
+	EffectPoint: Char=Caster ; Type=Both ; Reflect=False
+	WaitSFXDone: SFX=Green_Smoke ; Reflect=False
+EndThread
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_017_010
+Turn: Char=Caster ; BaseAngle=AllTargets ; Angle=0 ; Time=5
+PlayCamera: Camera=2 ; Char=0 ; Alternate=False
+LoadMonsterSFX: SFX=Trouble_Juice ; FirstBone=0 ; SecondBone=0 ; Args=0 ; Reflect=True
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_017_011
+Message: Priority=1 ; Title=True ; Reflect=False ; TextFR=[STRT=96,1]Acide Gastrique ; Text=[STRT=84,1]Stomach Acid
+WaitMonsterSFXLoaded: Reflect=True
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_017_012
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_017_013
+MoveToTarget: Char=Caster ; Target=AllTargets ; Time=18 ; Distance=1350
+WaitMove: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_017_014
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_017_015
+PlayMonsterSFX: Reflect=True
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_017_015
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_017_016
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_017_017
+Turn: Char=Caster ; BaseAngle=Default ; Angle=0 ; Time=13
+MoveToPosition: Char=Caster ; Time=13 ; AbsolutePosition=Default ; MoveHeight=true
+WaitMove: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_017_018
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=Idle
+WaitMonsterSFXDone: Reflect=True
+WaitTurn: Char=Caster
+ActivateReflect
+WaitReflect
+StartThread: Target=Caster ; Sync=True ; Reflect=False
+	LoadSFX: SFX=Green_Smoke ; UseCamera=False ; Reflect=False
+	WaitSFXLoaded: SFX=Green_Smoke ; Reflect=False
+	PlaySFX: SFX=Green_Smoke ; Reflect=False
+	EffectPoint: Char=Caster ; Type=Both ; Reflect=False
+	WaitSFXDone: SFX=Green_Smoke ; Reflect=False
+EndThread
+PlayAnimation: Char=Caster ; Anim=Idle
+Turn: Char=Caster ; BaseAngle=Default ; Time=5
+WaitTurn: Char=Caster

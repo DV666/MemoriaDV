@@ -1,0 +1,21 @@
+// Player sequence of SFX Mad Rush
+
+WaitAnimation: Char=Caster
+Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=False
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_122_040
+WaitAnimation: Char=Caster
+StartThread: Target = AllPlayers
+	StartThread: TargetLoop=True ; Chain=True ; Sync=True
+		Wait: Time=2
+		StartThread
+			LoadSFX: SFX=Berserk__Single ; Reflect=True ; UseCamera=False
+			WaitSFXLoaded: SFX=Berserk__Single ; Reflect=True
+			PlaySFX: SFX=Berserk__Single ; Reflect=True
+		EndThread
+		StartThread
+			LoadSFX: SFX=Protect ; Reflect=True ; UseCamera=False
+			WaitSFXLoaded: SFX=Protect ; Reflect=True
+			PlaySFX: SFX=Protect ; Reflect=True ; MeshColors=(0.917, 0.041, 0.041)
+		EndThread
+	EndThread
+EndThread

@@ -97,45 +97,39 @@ namespace Memoria.DefaultScripts
 
             if (target.PlayerIndex == CharacterId.Beatrix)
             {
-                if (!TranceSeekCustomAPI.ModelMoug.TryGetValue(target.Data, out GameObject ModelMoug))
-                    TranceSeekCustomAPI.ModelMoug[target.Data] = null;
-
                 target.AddDelayedModifier(
                     target => !target.Data.tranceGo.activeSelf,
                     target =>
                     {
-                        if (TranceSeekCustomAPI.ModelMoug[target.Data] == null)
+                        if (ModelMoug[target.Data] == null)
                         {
-                            TranceSeekCustomAPI.ModelMoug[target.Data] = ModelFactory.CreateModel("GEO_MON_B3_115", true);
-                            TranceSeekCustomAPI.ModelMoug[target.Data].SetActive(true);
-                            GeoAttach(TranceSeekCustomAPI.ModelMoug[target.Data], target.Data.gameObject, 11);
-                            TranceSeekCustomAPI.ModelMoug[target.Data].transform.localPosition -= new Vector3(5f, -100f, 275f);
-                            TranceSeekCustomAPI.ModelMoug[target.Data].transform.localRotation = Quaternion.Euler(new Vector3(296f, 0, 0));
-                            //TranceSeekCustomAPI.ModelMoug[target.Data].transform.localScale = (new Vector3(0.85f, 0.85f, 0.85f));
-                            ModelFactory.ChangeModelTexture(TranceSeekCustomAPI.ModelMoug[target.Data], new string[] { "CustomTextures/Players/BeatrixTranceWings/Wings_0.png", "CustomTextures/Players/BeatrixTranceWings/Wings_1.png", "CustomTextures/Players/BeatrixTranceWings/Wings_2.png" });
+                            ModelMoug[target.Data] = ModelFactory.CreateModel("GEO_MON_B3_115", true);
+                            ModelMoug[target.Data].SetActive(true);
+                            GeoAttach(ModelMoug[target.Data], target.Data.gameObject, 11);
+                            ModelMoug[target.Data].transform.localPosition -= new Vector3(5f, -100f, 275f);
+                            ModelMoug[target.Data].transform.localRotation = Quaternion.Euler(new Vector3(296f, 0, 0));
+                            //ModelMoug[target.Data].transform.localScale = (new Vector3(0.85f, 0.85f, 0.85f));
+                            ModelFactory.ChangeModelTexture(ModelMoug[target.Data], new string[] { "CustomTextures/Players/BeatrixTranceWings/Wings_0.png", "CustomTextures/Players/BeatrixTranceWings/Wings_1.png", "CustomTextures/Players/BeatrixTranceWings/Wings_2.png" });
                         }
                     }
                     );
             }
             else if (target.Data.dms_geo_id == 427 && !target.IsPlayer)
             {
-                if (!TranceSeekCustomAPI.ModelMoug.TryGetValue(target.Data, out GameObject ModelMoug))
-                    TranceSeekCustomAPI.ModelMoug[target.Data] = null;
-
                 target.AddDelayedModifier(
                     target => target.Data.bi.def_idle == 1,
                     target =>
                     {
-                        if (TranceSeekCustomAPI.ModelMoug[target.Data] == null)
+                        if (ModelMoug[target.Data] == null)
                         {
                             ModelFactory.ChangeModelTexture(target.Data.gameObject, new string[] { "CustomTextures/Players/BeatrixTranceWings/427_0_trance.png", "CustomTextures/Players/BeatrixTranceWings/427_1_trance.png" });
-                            TranceSeekCustomAPI.ModelMoug[target.Data] = ModelFactory.CreateModel("GEO_MON_B3_115", true);
-                            TranceSeekCustomAPI.ModelMoug[target.Data].SetActive(true);
-                            GeoAttach(TranceSeekCustomAPI.ModelMoug[target.Data], target.Data.gameObject, 11);
-                            TranceSeekCustomAPI.ModelMoug[target.Data].transform.localPosition -= new Vector3(5f, -100f, 275f);
-                            TranceSeekCustomAPI.ModelMoug[target.Data].transform.localRotation = Quaternion.Euler(new Vector3(296f, 0, 0));
-                            //TranceSeekCustomAPI.ModelMoug[target.Data].transform.localScale = (new Vector3(0.85f, 0.85f, 0.85f));
-                            ModelFactory.ChangeModelTexture(TranceSeekCustomAPI.ModelMoug[target.Data], new string[] { "CustomTextures/Players/BeatrixTranceWings/Wings_0.png", "CustomTextures/Players/BeatrixTranceWings/Wings_1.png", "CustomTextures/Players/BeatrixTranceWings/Wings_2.png" });
+                            ModelMoug[target.Data] = ModelFactory.CreateModel("GEO_MON_B3_115", true);
+                            ModelMoug[target.Data].SetActive(true);
+                            GeoAttach(ModelMoug[target.Data], target.Data.gameObject, 11);
+                            ModelMoug[target.Data].transform.localPosition -= new Vector3(5f, -100f, 275f);
+                            ModelMoug[target.Data].transform.localRotation = Quaternion.Euler(new Vector3(296f, 0, 0));
+                            //ModelMoug[target.Data].transform.localScale = (new Vector3(0.85f, 0.85f, 0.85f));
+                            ModelFactory.ChangeModelTexture(ModelMoug[target.Data], new string[] { "CustomTextures/Players/BeatrixTranceWings/Wings_0.png", "CustomTextures/Players/BeatrixTranceWings/Wings_1.png", "CustomTextures/Players/BeatrixTranceWings/Wings_2.png" });
                         }
                     }
                     );

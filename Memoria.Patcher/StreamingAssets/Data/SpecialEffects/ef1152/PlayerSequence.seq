@@ -1,0 +1,64 @@
+// Player sequence of SFX Again!
+
+WaitAnimation: Char=Caster
+StartThread: Condition=IsSingleSelectedTarget
+	Turn: Char=Caster ; BaseAngle=AllTargets ; Time=5
+EndThread
+Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
+SetupReflect: Delay=SFXLoaded
+LoadSFX: SFX=Magic_Hammer ; Reflect=True ; UseCamera=False
+PlayAnimation: Char=Caster ; Anim=MP_IDLE_TO_CHANT
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=MP_CHANT ; Loop=True
+Channel
+WaitSFXLoaded: SFX=Magic_Hammer ; Reflect=True
+WaitAnimation: Char=Caster
+StopChannel
+PlayAnimation: Char=Caster ; Anim=MP_MAGIC
+WaitAnimation: Char=Caster
+PlaySFX: SFX=Magic_Hammer ; Reflect=True ; MeshColors=(0.57397, 0.99594, 0.24243 ) ; HideMeshes=0, 1, 2, 3, 4, 5, 6, 7, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 ; JumpToFrame=11 ; SkipSequence
+PlaySound: Sound=2204
+PlaySound: Sound=2205
+PlaySound: Sound=2206
+Wait: Time=1
+ChangeSize: Char=AllTargets ; Size=(1.0, 1.0, 1.0) ; ScaleShadow=True ; Time=0
+Wait: Time=1
+ChangeSize: Char=AllTargets ; Size=(1.4, 0.6, 1.4) ; ScaleShadow=True ; Time=0
+Wait: Time=1
+ChangeSize: Char=AllTargets ; Size=(1.5, 0.5, 1.5) ; ScaleShadow=True ; Time=0
+Wait: Time=1
+ChangeSize: Char=AllTargets ; Size=(1.3, 0.7, 1.3) ; ScaleShadow=True ; Time=0
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=1
+ChangeSize: Char=AllTargets ; Size=(1.0, 1.0, 1.0) ; ScaleShadow=True ; Time=0
+Wait: Time=1
+ChangeSize: Char=AllTargets ; Size=(0.7, 1.3, 0.7) ; ScaleShadow=True ; Time=0
+Wait: Time=1
+ChangeSize: Char=AllTargets ; Size=(0.6, 1.4, 0.6) ; ScaleShadow=True ; Time=0
+Wait: Time=1
+ChangeSize: Char=AllTargets ; Size=(0.7, 1.3, 0.7) ; ScaleShadow=True ; Time=0
+Wait: Time=1
+ChangeSize: Char=AllTargets ; Size=(1.0, 1.0, 1.0) ; ScaleShadow=True ; Time=0
+Wait: Time=1
+ChangeSize: Char=AllTargets ; Size=(1.2, 0.8, 1.2) ; ScaleShadow=True ; Time=0
+Wait: Time=1
+ChangeSize: Char=AllTargets ; Size=(1.3, 0.7, 1.3) ; ScaleShadow=True ; Time=0
+Wait: Time=1
+ChangeSize: Char=AllTargets ; Size=(1.2, 0.8, 1.2) ; ScaleShadow=True ; Time=0
+Wait: Time=1
+ChangeSize: Char=AllTargets ; Size=(1.0, 1.0, 1.0) ; ScaleShadow=True ; Time=0
+Wait: Time=1
+ChangeSize: Char=AllTargets ; Size=(0.9, 1.1, 0.9) ; ScaleShadow=True ; Time=0
+Wait: Time=1
+ChangeSize: Char=AllTargets ; Size=(0.9, 1.1, 0.9) ; ScaleShadow=True ; Time=0
+Wait: Time=1
+ChangeSize: Char=AllTargets ; Size=(1.0, 1.0, 1.0) ; ScaleShadow=True ; Time=0
+Wait: Time=4
+EffectPoint: Char=AllTargets ; Type=Figure
+Wait: Time=20
+WaitSFXDone: SFX=Magic_Hammer ; Reflect=True
+ActivateReflect
+WaitReflect
+PlayAnimation: Char=Caster ; Anim=Idle
+Turn: Char=Caster ; BaseAngle=Default ; Time=5
+WaitTurn: Char=Caster

@@ -2,9 +2,9 @@
 
 WaitAnimation: Char=Caster
 Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
-LoadSFX: SFX=Boomerang ; Reflect=True ; UseCamera=False ; Target=AllEnemies
+LoadSFX: SFX=Boomerang ; Reflect=True ; UseCamera=False ; Target=MatchingCondition(!IsPlayer && IsTargetable)
 WaitSFXLoaded: SFX=Boomerang ; Reflect=True
-StartThread: Sync=False ; Target=AllEnemies
+StartThread: Sync=False ; Target=MatchingCondition(!IsPlayer && IsTargetable)
 	Wait: Time=1
 	PlaySFX: SFX=Boomerang ; Reflect=True ; JumpToFrame=40 ; HideMeshes=0, 1, 2, 3 ; MeshColors=(0.0, 2.0, 2.0) ; SkipSequence
 	Wait: Time=17
@@ -16,7 +16,7 @@ StartThread: Sync=False ; Target=AllEnemies
 	EffectPoint: Char=Everyone ; Type=Figure
 	Wait: Time=24
 EndThread
-StartThread: Target=AllEnemies
+StartThread: Target=MatchingCondition(!IsPlayer && IsTargetable)
 	PlayAnimation: Char=Caster ; Anim=MP_SET
 	WaitAnimation: Char=Caster
 	MoveToTarget: Char=Caster ; Target=AllTargets ; Distance=600 ; UseCollisionRadius=True ; Anim=MP_RUN

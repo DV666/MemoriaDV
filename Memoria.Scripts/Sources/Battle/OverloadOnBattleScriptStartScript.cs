@@ -460,6 +460,7 @@ namespace Memoria.Scripts.Battle
             }
 
             TranceSeekCustomAPI.SOS_SA(v);
+            TranceSeekCustomAPI.EikoMougMechanic(v);
             return false;
         }
     }
