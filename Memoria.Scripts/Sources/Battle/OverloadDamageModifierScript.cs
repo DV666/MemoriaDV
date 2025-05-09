@@ -21,6 +21,12 @@ namespace Memoria.Scripts.Battle
 
         public void OnDamageFinalChanges(BattleCalculator v)
         {
+            if ((v.Target.FigInfo & Param.FIG_INFO_DEATH) != 0) // Avoid to have "Miss !" if the target die with HpDamage + Death status.
+            {
+                v.Target.Flags = 0;
+                v.Context.Flags = 0;
+                return;
+            }
             if (!v.Caster.IsPlayer && (FF9StateSystem.EventState.gEventGlobal[1403] == 1 || FF9StateSystem.EventState.gEventGlobal[1403] == 2)) // Lower Difficulty
             {
                 Int32 malusHPdamage = 0;

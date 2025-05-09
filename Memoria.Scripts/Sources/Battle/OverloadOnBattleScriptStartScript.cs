@@ -195,42 +195,59 @@ namespace Memoria.Scripts.Battle
                 if (v.Command.Id == (BattleCommandId)1021 || v.Command.Id == (BattleCommandId)1036 || v.Command.Id == (BattleCommandId)1037)  // CMD Invention
                 {
                     int mpCost = 0;
-                    switch (v.Command.AbilityId)
+                    KeyValuePair<RegularItem, BattleAbilityId> PassiveHammer = new KeyValuePair<RegularItem, BattleAbilityId>(v.Caster.Weapon, v.Command.AbilityId);
+                    if ((GameRandom.Next8() % 100) < 25 && InventionPreserved.Contains(PassiveHammer))
                     {
-                        case (BattleAbilityId)1136: // Hammer throw
-                            mpCost = 2;
-                            break;
-                        case (BattleAbilityId)1137: // Spring boots
-                            mpCost = 3;
-                            break;
-                        case (BattleAbilityId)1138: // Accelerator hammer
-                            mpCost = 4;
-                            break;
-                        case (BattleAbilityId)1139: // Critical aim
-                            mpCost = 5;
-                            break;
-                        case (BattleAbilityId)1140: // Electroshock
-                            mpCost = 6;
-                            break;
-                        case (BattleAbilityId)1141: // Flurry of hammers
-                            mpCost = 7;
-                            break;
-                        case (BattleAbilityId)1142: // Adjustable Wrench
-                            mpCost = 8;
-                            break;
-                        case (BattleAbilityId)1143: // Hymn of the Tantalas
-                            mpCost = 9;
-                            break;
-                        case (BattleAbilityId)1538: // Idea
-                            mpCost = 10;
-                            break;
-                        case (BattleAbilityId)1539: // Eureka
-                            mpCost = 6;
-                            break;
+                        Dictionary<String, String> localizedMessage = new Dictionary<String, String>
+                        {
+                            { "US", "Preserved!" },
+                            { "UK", "Preserved!" },
+                            { "JP", "プリザーブド！" },
+                            { "ES", "¡Conservado!" },
+                            { "FR", "Conservée !" },
+                            { "GR", "Erhalten!" },
+                            { "IT", "Conservata!" },
+                        };
+                        btl2d.Btl2dReqSymbolMessage(v.Caster.Data, "[FFC000]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 10);
                     }
-                    FF9StateSystem.Battle.FF9Battle.aa_data[v.Command.AbilityId].MP = mpCost;
+                    else
+                    {
+                        switch (v.Command.AbilityId)
+                        {
+                            case (BattleAbilityId)1136: // Hammer throw
+                                mpCost = 2;
+                                break;
+                            case (BattleAbilityId)1137: // Spring boots
+                                mpCost = 3;
+                                break;
+                            case (BattleAbilityId)1138: // Accelerator hammer
+                                mpCost = 4;
+                                break;
+                            case (BattleAbilityId)1139: // Critical aim
+                                mpCost = 5;
+                                break;
+                            case (BattleAbilityId)1140: // Electroshock
+                                mpCost = 6;
+                                break;
+                            case (BattleAbilityId)1141: // Flurry of hammers
+                                mpCost = 7;
+                                break;
+                            case (BattleAbilityId)1142: // Adjustable Wrench
+                                mpCost = 8;
+                                break;
+                            case (BattleAbilityId)1143: // Hymn of the Tantalas
+                                mpCost = 9;
+                                break;
+                            case (BattleAbilityId)1538: // Idea
+                                mpCost = 10;
+                                break;
+                            case (BattleAbilityId)1539: // Eureka
+                                mpCost = 6;
+                                break;
+                        }
+                        FF9StateSystem.Battle.FF9Battle.aa_data[v.Command.AbilityId].MP = mpCost;
+                    }
                 }
-
             }
             if (SpecialSAEffect[v.Caster.Data][8] > 0) // AA SpringBoots
             {
@@ -312,7 +329,7 @@ namespace Memoria.Scripts.Battle
                     {
                         caster.Player.trance = caster.Trance;
                     }
-                );                
+                );
             }
 
             if (v.Command.Id == (BattleCommandId)1032 && !v.Caster.HasSupportAbilityByIndex((SupportAbility)1205)) // Witchcraft (Vivi's SA)
@@ -320,7 +337,7 @@ namespace Memoria.Scripts.Battle
                 v.Command.HitRate /= 2;
             }
 
-            if (v.Command.IsManyTarget && v.Command.AbilityId >= (BattleAbilityId)1500 && v.Command.AbilityId <= (BattleAbilityId)1526) 
+            if (v.Command.IsManyTarget && v.Command.AbilityId >= (BattleAbilityId)1500 && v.Command.AbilityId <= (BattleAbilityId)1526)
             {
                 if (v.Caster.HasSupportAbilityByIndex((SupportAbility)1126))
                     v.Command.HitRate = (v.Command.HitRate * 3) / 4;
@@ -448,7 +465,7 @@ namespace Memoria.Scripts.Battle
                 );
             }
 
-            if (v.Caster.PlayerIndex == (CharacterId)14) 
+            if (v.Caster.PlayerIndex == (CharacterId)14)
             {
                 CharacterPresetId presetId = v.Caster.Player.PresetId;
                 v.Caster.SummonCount++;
@@ -463,5 +480,17 @@ namespace Memoria.Scripts.Battle
             TranceSeekCustomAPI.EikoMougMechanic(v);
             return false;
         }
+
+        public static List<KeyValuePair<RegularItem, BattleAbilityId>> InventionPreserved = new List<KeyValuePair<RegularItem, BattleAbilityId>>
+        {
+            { new KeyValuePair<RegularItem, BattleAbilityId>((RegularItem)1108, (BattleAbilityId)1136) }, // Steel Hammer
+            { new KeyValuePair<RegularItem, BattleAbilityId>((RegularItem)1109, (BattleAbilityId)1137) }, // Boing Hammer
+            { new KeyValuePair<RegularItem, BattleAbilityId>((RegularItem)1110, (BattleAbilityId)1138) }, // OverHammerClock
+            { new KeyValuePair<RegularItem, BattleAbilityId>((RegularItem)1111, (BattleAbilityId)1139) }, // Mithril Hammer
+            { new KeyValuePair<RegularItem, BattleAbilityId>((RegularItem)1112, (BattleAbilityId)1140) }, // Tazermmer
+            { new KeyValuePair<RegularItem, BattleAbilityId>((RegularItem)1113, (BattleAbilityId)1141) }, // Fiery Hammer
+            { new KeyValuePair<RegularItem, BattleAbilityId>((RegularItem)1114, (BattleAbilityId)1142) }, // GregTech Hammer
+            { new KeyValuePair<RegularItem, BattleAbilityId>((RegularItem)1115, (BattleAbilityId)1143) } // E=MCinna²
+        };
     }
 }

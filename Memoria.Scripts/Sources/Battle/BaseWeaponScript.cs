@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System;
 using FF9;
 using Memoria.Prime;
+using static SiliconStudio.Social.ResponseData;
 
 namespace Memoria.Scripts.Battle
 {
@@ -84,15 +85,22 @@ namespace Memoria.Scripts.Battle
                         {
                             short previouscriticalbonus = _v.Caster.Data.critical_rate_deal_bonus;
                             _v.Caster.Data.critical_rate_deal_bonus += _v.Caster.Will;
-                            BattleStatus status = _v.Caster.WeaponStatus;
-                            int statusrate = (50 + _v.Caster.WeaponRate + (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1025) ? (_v.Target.Will / 2) : 0));
-                            if (!_v.Target.IsPlayer && status != 0)
+                            BattleStatus WeaponStatus = _v.Caster.WeaponStatus;
+                            int HitRateWeaponStatus = (50 + _v.Caster.WeaponRate + (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1025) ? (_v.Target.Will / 2) : 0));
+                            if (WeaponStatus != 0)
                             {
-                                if (((status & BattleStatus.Death) != 0 && !_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill)) || (status & BattleStatus.Death) == 0) // Don't force Death status.
+                                if (((WeaponStatus & BattleStatus.Death) != 0 && TranceSeekCustomAPI.EliteMonster(_v.Target.Data)) || (WeaponStatus & BattleStatus.Death) == 0) // Don't force Death status.
                                 {
-                                    if ((GameRandom.Next8() % 100) < statusrate)
-                                        _v.Command.AbilityStatus |= status;
+                                    if ((WeaponStatus & BattleStatus.Death) != 0 && TranceSeekCustomAPI.EliteMonster(_v.Target.Data))
+                                        HitRateWeaponStatus /= 2;
+
+                                    if ((GameRandom.Next8() % 100) < HitRateWeaponStatus)
+                                        _v.Command.AbilityStatus |= WeaponStatus;
                                 }
+                            }
+                            else if ((WeaponStatus & BattleStatus.Death) != 0 && _v.Target.IsUnderAnyStatus(BattleStatus.Death))
+                            {
+                                TranceSeekCustomAPI.TriggerSPSResistStatus[_v.Target] = true;
                             }
                             TranceSeekCustomAPI.TryCriticalHit(_v);
                             _v.Caster.Data.critical_rate_deal_bonus = previouscriticalbonus;
@@ -112,6 +120,23 @@ namespace Memoria.Scripts.Battle
                         _v.Command.AbilityStatus |= _v.Caster.WeaponStatus;
                         if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1229))
                             _v.Command.AbilityStatus |= BattleStatus.Doom;
+                    }
+                    if (_v.Caster.HasSupportAbility(SupportAbility1.AddStatus)) // SA Add Status (to handle specific case, like Elite Monsters). Can be improved ...?
+                    {
+                        BattleStatus WeaponStatus = _v.Caster.WeaponStatus;
+                        if (((WeaponStatus & BattleStatus.Death) != 0 && TranceSeekCustomAPI.EliteMonster(_v.Target.Data)) || (WeaponStatus & BattleStatus.Death) == 0) // Don't force Death status.
+                        {
+                            int HitRateWeaponStatus = _v.Caster.WeaponRate + (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1025) ? (_v.Target.Will / 3) : 0);
+                            if ((WeaponStatus & BattleStatus.Death) != 0 && TranceSeekCustomAPI.EliteMonster(_v.Target.Data))
+                                    HitRateWeaponStatus /= 2;
+
+                            if ((GameRandom.Next8() % 100) < HitRateWeaponStatus)
+                                _v.Command.AbilityStatus |= WeaponStatus;
+                        }
+                        else if ((WeaponStatus & BattleStatus.Death) != 0 && _v.Target.IsUnderAnyStatus(BattleStatus.Death))
+                        {
+                            TranceSeekCustomAPI.TriggerSPSResistStatus[_v.Target] = true;
+                        }
                     }
                     TranceSeekCustomAPI.IpsenCastleMalus(_v);
                     _v.CalcPhysicalHpDamage();

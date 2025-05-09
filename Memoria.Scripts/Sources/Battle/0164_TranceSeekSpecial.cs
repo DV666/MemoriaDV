@@ -259,6 +259,26 @@ namespace Memoria.Scripts.Battle
                 _v.Caster.AlterStatus(statuspiaf, _v.Target);
                 return;
             }
+            else if (_v.Command.Power == 2 && _v.Command.HitRate == 2 && _v.Caster.Data.dms_geo_id == 326) // Troll Feast from Jötunn
+            {
+                int PiafTargetable = 0;
+                foreach (BattleUnit unit in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
+                {
+                    if (unit.Data.dms_geo_id == 9 && unit.Data.bi.target == 0)
+                    {
+                        unit.Data.bi.target = 1;
+                        PiafTargetable++;
+                    }
+                }
+                if (PiafTargetable > 0)
+                    return;
+
+                _v.Target.Flags |= (CalcFlag.HpDamageOrHeal | CalcFlag.MpDamageOrHeal);
+                _v.Target.HpDamage = (int)(_v.Target.MaximumHp - 10000);
+                _v.Target.MpDamage = (int)(_v.Target.MaximumMp);
+                TranceSeekCustomAPI.MonsterMechanic[_v.Target.Data][4] = 100;
+                return;
+            }
             else if (_v.Command.Power == 1 && _v.Command.HitRate == 1 && _v.Caster.Data.dms_geo_id == 405) // Friendly Lady Bug - Wind mechanics
             {
                 int ColorWing = GameRandom.Next16() % 5;
@@ -299,26 +319,6 @@ namespace Memoria.Scripts.Battle
                     UIManager.Battle.SetBattleFollowMessage(3, Localization.GetWithDefault("LadyBugWhite"));
                 }
                 _v.Caster.Data.gameObject.SetActive(true);
-            }
-            else if (_v.Command.Power == 2 && _v.Command.HitRate == 2 && _v.Caster.Data.dms_geo_id == 326) // Troll Feast from Jötunn
-            {
-                int PiafTargetable = 0;
-                foreach (BattleUnit unit in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
-                {
-                    if (unit.Data.dms_geo_id == 9 && unit.Data.bi.target == 0)
-                    {
-                        unit.Data.bi.target = 1;
-                        PiafTargetable++;
-                    }
-                }
-                if (PiafTargetable > 0)
-                    return;
-
-                _v.Target.Flags |= (CalcFlag.HpDamageOrHeal | CalcFlag.MpDamageOrHeal);
-                _v.Target.HpDamage = (int)(_v.Target.MaximumHp - 10000);
-                _v.Target.MpDamage = (int)(_v.Target.MaximumMp);
-                TranceSeekCustomAPI.MonsterMechanic[_v.Target.Data][4] = 100;
-                return;
             }
             else if (_v.Command.Power == 25 && _v.Command.HitRate == 111 && _v.Caster.Data.dms_geo_id == 278) // Polarity (+) with SPS effect (Black Waltz 3)
             {

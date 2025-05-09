@@ -27,7 +27,7 @@ namespace Memoria.Scripts.Battle
                 {
                     _v.Target.Libra(BattleHUD.LibraInformation.NameLevel | BattleHUD.LibraInformation.Category | BattleHUD.LibraInformation.ElementalAffinities | BattleHUD.LibraInformation.StatusAffinities);
                 }
-                else if (_v.Target.IsUnderStatus(BattleStatus.EasyKill) && (btl_util.getEnemyPtr(_v.Target).info.flags & 128) == 0) // Si Unused(8) coché, affiche un scan normal
+                else if (_v.Target.IsUnderStatus(BattleStatus.EasyKill) && !TranceSeekCustomAPI.EliteMonster(_v.Target.Data)) // Boss
                 {
                     _v.Target.Libra(BattleHUD.LibraInformation.Name | BattleHUD.LibraInformation.Level | BattleHUD.LibraInformation.Category | BattleHUD.LibraInformation.ItemSteal);
                 }

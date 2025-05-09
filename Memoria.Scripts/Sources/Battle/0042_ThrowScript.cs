@@ -86,14 +86,14 @@ namespace Memoria.Scripts.Battle
                         }
                     }
                     _v.Command.Element = _v.Command.Weapon.Element;
+                    if (_v.Command.Weapon.HitRate > Comn.random16() % 100)
+                        _v.Command.AbilityStatus |= _v.Command.Weapon.Status;
+
                     TranceSeekCustomAPI.BonusWeaponElement(_v);
                     TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
+                    TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
                     if (TranceSeekCustomAPI.CanAttackMagic(_v))
-                    {
                         _v.CalcPhysicalHpDamage();
-                    }
-                    if (_v.Command.Weapon.HitRate > Comn.random16() % 100)
-                        _v.Target.TryAlterStatuses(_v.Command.Weapon.Status, false);
                 }
             }
             else

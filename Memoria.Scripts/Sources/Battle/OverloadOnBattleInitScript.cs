@@ -332,14 +332,17 @@ namespace Memoria.Scripts.Battle
 
         public void ChangeBBG(string BBGNameID)
         {
-            FF9StateSystem.Battle.FF9Battle.map.btlBGPtr.SetActive(false);
-            FF9StateSystem.Battle.FF9Battle.map.btlBGPtr = ModelFactory.CreateModel("BattleMap/BattleModel/battleMap_all/" + BBGNameID + "/" + BBGNameID, Vector3.zero, Vector3.zero, true);
-            battlebg.SetDefaultShader(FF9StateSystem.Battle.FF9Battle.map.btlBGPtr);
+            FF9StateBattleSystem ff9Battle = FF9StateSystem.Battle.FF9Battle;
+            ff9Battle.map.btlBGPtr.SetActive(false);
+            ff9Battle.map.btlBGPtr = ModelFactory.CreateModel("BattleMap/BattleModel/battleMap_all/" + BBGNameID + "/" + BBGNameID, Vector3.zero, Vector3.zero, true);
+            GEOTEXHEADER geotexheader = new GEOTEXHEADER();
+            geotexheader.ReadBGTextureAnim(BBGNameID);
+            ff9Battle.map.btlBGTexAnimPtr = geotexheader;
             BBGINFO bbginfo = new BBGINFO();
             bbginfo.ReadBattleInfo(BBGNameID);
-            FF9StateSystem.Battle.FF9Battle.map.btlBGInfoPtr = bbginfo;
-            //battle.InitBattleMap();
-            FF9StateSystem.Battle.FF9Battle.map.btlBGPtr.SetActive(true);
+            ff9Battle.map.btlBGInfoPtr = bbginfo;
+            battle.InitBattleMap();
+            ff9Battle.map.btlBGPtr.SetActive(true);
         }
 
         public static Int32[,] BossBattleBonusHP = new Int32[,]

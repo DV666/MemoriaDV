@@ -86,12 +86,12 @@ namespace Memoria.Scripts.Battle
                 }
             }
 
-            if (blueMagicId == 0 && _v.Target.IsUnderAnyStatus(BattleStatus.EasyKill) || !_v.Target.CanBeAttacked() || btl_util.getEnemyTypePtr(_v.Target.Data).category == 1) // TODO - Remplacer BlueMagicId == 0
+            if (_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill) && !TranceSeekCustomAPI.EliteMonster(_v.Target.Data) || !_v.Target.CanBeAttacked() || btl_util.getEnemyTypePtr(_v.Target.Data).category == 1)
             {
                 if (!_v.Caster.IsUnderAnyStatus(BattleStatus.Trance))
                 {
-                    UiState.SetBattleFollowFormatMessage(BattleMesages.CannotEat, new object[0]);
-                    _v.Context.Flags |= BattleCalcFlags.Miss;
+                    UiState.SetBattleFollowFormatMessage(BattleMesages.CannotEat);
+                    _v.Context.Flags |= BattleCalcFlags.Guard;
                     return;
                 }
             }

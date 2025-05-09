@@ -92,6 +92,14 @@ namespace Memoria.Scripts.Battle
             public const BattleStatusId Provok = BattleStatusId.CustomStatus22;
         }
 
+        public static Boolean EliteMonster(BTL_DATA Monster)
+        {
+            if (Monster.bi.player != 0)
+                return false;
+
+            return (btl_util.getEnemyPtr(Monster).info.flags & 128) != 0; // Unused (8)
+        }
+
         public static void WeaponPhysicalParams(CalcAttackBonus bonus, BattleCalculator v)
         {
             Int32 baseDamage = Comn.random16() % (1 + (v.Caster.Level + v.Caster.Strength >> 3));
@@ -447,6 +455,8 @@ namespace Memoria.Scripts.Battle
             foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(v.Target))
                 saFeature.TriggerOnAbility(v, "HitRateSetup", true);
 
+            ReduceAccuracyEliteMonsters(v);
+
             if (v.Command.HitRate > Comn.random16() % 100)
                 v.Target.TryAlterStatuses(v.Command.AbilityStatus, false, v.Caster);
 
@@ -544,6 +554,8 @@ namespace Memoria.Scripts.Battle
             if (v.Caster.HasSupportAbilityByIndex((SupportAbility)230))
                 AmarantPassive(v);
 
+            ReduceAccuracyEliteMonsters(v);
+
             if (v.Context.HitRate < 1)
                 v.Context.HitRate = 1;
 
@@ -551,6 +563,24 @@ namespace Memoria.Scripts.Battle
 
             if (v.Caster.HasSupportAbilityByIndex((SupportAbility)1200) && v.Caster.PlayerIndex == CharacterId.Zidane) // SA Knavery+
                 v.Context.Evade += ZidanePassive[v.Caster.Data][0];
+        }
+
+        public static void ReduceAccuracyEliteMonsters(this BattleCalculator v, Boolean MalusForcedForElite = false)
+        {
+            if (EliteMonster(v.Target.Data))
+            {            
+                if ((v.Command.AbilityStatus & BattleStatus.Death) != 0 || MalusForcedForElite)
+                    v.Command.HitRate /= 2;
+            }
+            else if (v.Target.IsUnderAnyStatus(BattleStatus.EasyKill)) // Security for special cases... maybe useless.
+            {
+                if ((v.Command.AbilityStatus & BattleStatus.Death) != 0)
+                {
+                    v.Command.AbilityStatus &= ~BattleStatus.Death;
+                    TriggerSPSResistStatus[v.Target] = true;
+                }
+            }
+
         }
 
         public static void PenaltyShellAttack(this BattleCalculator v)
@@ -1010,7 +1040,7 @@ namespace Memoria.Scripts.Battle
 
         public static void EikoMougMechanic(this BattleCalculator v)
         {
-            if (FF9StateSystem.Common.FF9.party.IsInParty(CharacterId.Eiko) && v.Command.ScriptId != 64 && v.Command.ScriptId != 164 && v.Command.Id != BattleCommandId.Counter)
+            if (FF9StateSystem.Common.FF9.party.IsInParty(CharacterId.Eiko) && v.Command.ScriptId != 64 && v.Command.ScriptId != 164 && v.Command.Id != BattleCommandId.Counter && v.Command.Data.info.effect_counter == 1)
             {
                 if (v.Caster.IsPlayer && v.Target.IsUnderAnyStatus(BattleStatus.Death) && (v.Command.ScriptId == 13 || v.Command.ScriptId == 72)) // Don't trigger if a player revive someone.
                     return;
@@ -1304,7 +1334,9 @@ namespace Memoria.Scripts.Battle
 
         public static void TryAlterCommandStatuses(this BattleCalculator v, Boolean ChangeContext = true)
         {
-            v.Target.TryAlterStatuses(v.Command.AbilityStatus, ChangeContext, v.Caster);
+            if (v.Command.AbilityStatus != 0)
+                v.Target.TryAlterStatuses(v.Command.AbilityStatus, ChangeContext, v.Caster);
+
             SPS_GuardStatus(v);
         }
 
@@ -1346,7 +1378,7 @@ namespace Memoria.Scripts.Battle
 
         public static Boolean CheckUnsafetyOrGuard(this BattleCalculator v)
         {
-            if (!v.Target.IsUnderAnyStatus(BattleStatus.EasyKill))
+            if (!v.Target.IsUnderAnyStatus(BattleStatus.EasyKill) || EliteMonster(v.Target.Data))
                 return true;
 
             v.Context.Flags |= BattleCalcFlags.Guard;
@@ -1877,13 +1909,21 @@ namespace Memoria.Scripts.Battle
             if (v.Target.HasSupportAbilityByIndex((SupportAbility)225) && (v.Target.Flags & CalcFlag.HpRecovery) == 0 && v.Target.HpDamage > 0 && Comn.random16() % 100 < 10) // SA Bodyguard (10%)
             {
                 if (v.Target.HasSupportAbilityByIndex((SupportAbility)1225))
-                {
                     v.Target.HpDamage = 0;
-                }
                 else
-                {
                     v.Target.HpDamage /= 2;
-                }
+
+                Dictionary<String, String> localizedMessage = new Dictionary<String, String>
+                {
+                    { "US", "Bodyguard!" },
+                    { "UK", "Bodyguard!" },
+                    { "JP", "Bodyguard!" },
+                    { "ES", "Bodyguard!" },
+                    { "FR", "Garde du corps !" },
+                    { "GR", "Bodyguard!" },
+                    { "IT", "Bodyguard!" },
+                };
+                btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[FF00EA]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 8);
             }
 
             if (v.Caster.HasSupportAbilityByIndex((SupportAbility)1238) && (v.Target.Flags & CalcFlag.HpRecovery) == 0 && v.Target.HpDamage > 0) // SA Crisis level+
@@ -1896,15 +1936,15 @@ namespace Memoria.Scripts.Battle
             {
                 v.Target.HpDamage = (int)(v.Target.CurrentHp - 1);
                 Dictionary<String, String> localizedMessage = new Dictionary<String, String>
-                            {
-                                { "US", "Auto-Life!" },
-                                { "UK", "Auto-Life!" },
-                                { "JP", "リレイズ!" },
-                                { "ES", "¡AutoLázaro!" },
-                                { "FR", "Auréole !" },
-                                { "GR", "Reinkarnat!" },
-                                { "IT", "Risveglio!" },
-                            };
+                {
+                    { "US", "Auto-Life!" },
+                    { "UK", "Auto-Life!" },
+                    { "JP", "リレイズ!" },
+                    { "ES", "¡AutoLázaro!" },
+                    { "FR", "Auréole !" },
+                    { "GR", "Reinkarnat!" },
+                    { "IT", "Risveglio!" },
+                };
                 btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[FF99FD]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 20);
                 v.Target.RemoveStatus(BattleStatus.AutoLife);
             }
