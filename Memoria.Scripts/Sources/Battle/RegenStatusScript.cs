@@ -71,7 +71,7 @@ namespace Memoria.DefaultScripts
                 }
                 btl2d.Btl2dStatReq(Target, isDmg ? (Int32)healHP : -(Int32)healHP, 0);
             }
-            BattleVoice.TriggerOnStatusChange(Target, "Used", BattleStatusId.Regen);
+            BattleVoice.TriggerOnStatusChange(Target, BattleVoice.BattleMoment.Used, BattleStatusId.Regen);
             return false;
         }
     }

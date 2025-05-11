@@ -45,7 +45,7 @@ namespace Memoria.DefaultScripts
                 Target.CurrentHp -= 1;
             else
                 Target.Kill(VirusInflicter);
-            BattleVoice.TriggerOnStatusChange(Target, "Used", BattleStatusId.Virus);
+            BattleVoice.TriggerOnStatusChange(Target, BattleVoice.BattleMoment.Used, BattleStatusId.Virus);
             return false;
         }
     }

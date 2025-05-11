@@ -64,7 +64,7 @@ namespace Memoria.DefaultScripts
                     {
                         if (btl_stat.AlterStatus(new BattleUnit(btl), BattleStatusId.Death) == btl_stat.ALTER_SUCCESS)
                         {
-                            BattleVoice.TriggerOnStatusChange(btl, "Used", BattleStatusId.Heat);
+                            BattleVoice.TriggerOnStatusChange(btl, BattleVoice.BattleMoment.Used, BattleStatusId.Heat);
                             btl_cmd.KillCommand(cmd);
                         }
                     }

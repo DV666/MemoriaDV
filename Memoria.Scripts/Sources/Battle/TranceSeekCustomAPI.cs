@@ -278,7 +278,7 @@ namespace Memoria.Scripts.Battle
             if (v.Target.IsUnderAnyStatus(BattleStatus.EasyKill) && !EliteMonster(v.Target.Data))
                 return false;
 
-            BattleVoice.TriggerOnStatusChange(v.Target.Data, "Used", BattleStatusId.Freeze);
+            BattleVoice.TriggerOnStatusChange(v.Target.Data, BattleVoice.BattleMoment.Used, BattleStatusId.Freeze);
             btl_cmd.KillSpecificCommand(v.Target.Data, BattleCommandId.SysStone);
             v.Target.Kill();
             UIManager.Battle.SetBattleFollowMessage(BattleMesages.ImpactCrushes);

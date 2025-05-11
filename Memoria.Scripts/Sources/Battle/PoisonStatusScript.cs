@@ -61,7 +61,7 @@ namespace Memoria.DefaultScripts
                 Target.CurrentHp = Math.Min(Target.CurrentHp + damage, Target.MaximumHp);
             }
             btl2d.Btl2dStatReq(Target, isDmg ? (Int32)damage : -(Int32)damage, 0);
-            BattleVoice.TriggerOnStatusChange(Target, "Used", BattleStatusId.Regen);
+            BattleVoice.TriggerOnStatusChange(Target, BattleVoice.BattleMoment.Used, BattleStatusId.Poison);
             return false;
         }
     }

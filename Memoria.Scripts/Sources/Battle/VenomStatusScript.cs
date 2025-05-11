@@ -71,7 +71,7 @@ namespace Memoria.DefaultScripts
                 Target.Kill(VenomInflicter);
             btl2d.Btl2dStatReq(Target, (Int32)HPdamage, (Int32)MPdamage);
             SpeedTick += 100;
-            BattleVoice.TriggerOnStatusChange(Target, "Used", BattleStatusId.Venom);
+            BattleVoice.TriggerOnStatusChange(Target, BattleVoice.BattleMoment.Used, BattleStatusId.Venom);
             return false;
         }
     }

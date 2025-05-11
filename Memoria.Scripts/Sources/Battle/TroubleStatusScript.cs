@@ -47,7 +47,7 @@ namespace Memoria.DefaultScripts
                 if (unit.IsPlayer == Target.IsPlayer && unit.Id != Target.Id && unit.IsTargetable && !unit.IsUnderAnyStatus(BattleStatus.Death))
                 {
                     btl_para.SetDamage(unit, dmg, 0, requestFigureNow: true);
-                    BattleVoice.TriggerOnStatusChange(Target, "Used", BattleStatusId.Trouble);
+                    BattleVoice.TriggerOnStatusChange(Target, BattleVoice.BattleMoment.Used, BattleStatusId.Trouble);
                 }
             }
         }
