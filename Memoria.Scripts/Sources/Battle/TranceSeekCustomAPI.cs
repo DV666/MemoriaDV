@@ -271,6 +271,20 @@ namespace Memoria.Scripts.Battle
                 v.Context.AttackPower = 1;
         }
 
+        public static Boolean TryKillFrozen(this BattleCalculator v)
+        {
+            if (!v.Target.IsUnderAnyStatus(BattleStatus.Freeze) || v.Target.IsUnderAnyStatus(BattleStatus.Petrify))
+                return false;
+            if (v.Target.IsUnderAnyStatus(BattleStatus.EasyKill) && !EliteMonster(v.Target.Data))
+                return false;
+
+            BattleVoice.TriggerOnStatusChange(v.Target.Data, "Used", BattleStatusId.Freeze);
+            btl_cmd.KillSpecificCommand(v.Target.Data, BattleCommandId.SysStone);
+            v.Target.Kill();
+            UIManager.Battle.SetBattleFollowMessage(BattleMesages.ImpactCrushes);
+            return true;
+        }
+
         public static Boolean TryPhysicalHit(this BattleCalculator v)
         {
             if (MonsterMechanic[v.Caster.Data][6] == 1)
@@ -565,12 +579,17 @@ namespace Memoria.Scripts.Battle
                 v.Context.Evade += ZidanePassive[v.Caster.Data][0];
         }
 
-        public static void ReduceAccuracyEliteMonsters(this BattleCalculator v, Boolean MalusForcedForElite = false)
+        public static void ReduceAccuracyEliteMonsters(this BattleCalculator v, Boolean MalusForced = false)
         {
+            BattleStatus LethalStatus = BattleStatus.Death | BattleStatus.Petrify | BattleStatus.Death | BattleStatus.Mini | BattleStatus.Heat |
+                                        BattleStatus.Freeze | BattleStatus.Zombie | BattleStatus.Stop | CustomStatus.Vieillissement;
             if (EliteMonster(v.Target.Data))
             {            
-                if ((v.Command.AbilityStatus & BattleStatus.Death) != 0 || MalusForcedForElite)
+                if ((v.Command.AbilityStatus & LethalStatus) != 0 || MalusForced)
+                {
+                    v.Context.HitRate /= 2;
                     v.Command.HitRate /= 2;
+                }
             }
             else if (v.Target.IsUnderAnyStatus(BattleStatus.EasyKill)) // Security for special cases... maybe useless.
             {

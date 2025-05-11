@@ -86,7 +86,7 @@ namespace Memoria.Scripts.Battle
                 }
             }
 
-            if (_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill) && !TranceSeekCustomAPI.EliteMonster(_v.Target.Data) || !_v.Target.CanBeAttacked() || btl_util.getEnemyTypePtr(_v.Target.Data).category == 1)
+            if (_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill) || !_v.Target.CanBeAttacked() || btl_util.getEnemyTypePtr(_v.Target.Data).category == 1)
             {
                 if (!_v.Caster.IsUnderAnyStatus(BattleStatus.Trance))
                 {
@@ -120,14 +120,15 @@ namespace Memoria.Scripts.Battle
                     }
                     if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)223))
                     {
+                        if (!FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1035, out Dictionary<Int32, Int32> dict))
+                        {
+                            dict = new Dictionary<Int32, Int32>();
+                            FF9StateSystem.EventState.gScriptDictionary.Add(1035, dict);
+                        }
                         Int32 HPDigest = (int)(_v.Caster.MaximumHp / (_v.Command.Power / 2));
                         Int32 MPDigest = (int)(_v.Caster.MaximumMp / (_v.Command.Power / 2));
-                        HPDigest += (FF9StateSystem.EventState.gEventGlobal[1320] * 256) + FF9StateSystem.EventState.gEventGlobal[1321];
-                        MPDigest += (FF9StateSystem.EventState.gEventGlobal[1322] * 256) + FF9StateSystem.EventState.gEventGlobal[1323];
-                        FF9StateSystem.EventState.gEventGlobal[1320] = (byte)(HPDigest / 256);
-                        FF9StateSystem.EventState.gEventGlobal[1321] = (byte)(HPDigest % 256);
-                        FF9StateSystem.EventState.gEventGlobal[1322] = (byte)(MPDigest / 256);
-                        FF9StateSystem.EventState.gEventGlobal[1323] = (byte)(MPDigest % 256);
+                        dict[0] = (int)Math.Min(dict[0] + HPDigest, _v.Caster.MaximumHp);
+                        dict[1] = (int)Math.Min(dict[1] + MPDigest, _v.Caster.MaximumMp);
                     }
                     else
                     {

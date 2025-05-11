@@ -133,7 +133,7 @@ namespace Memoria.Scripts.Battle
                 if (unit.IsUnderAnyStatus(BattleStatus.EasyKill))
                 {
                     MonsterMechanic[unit.Data][4] = 100; // Reduce time for Sleep/Freeze/Stop
-                    MonsterMechanic[unit.Data][5] = 4; // Reduce gravity damage
+                    MonsterMechanic[unit.Data][5] = EliteMonster(unit.Data) ? 1 : 4; // Reduce gravity damage
                 }
 
                 if (unit.PlayerIndex == (CharacterId)14)

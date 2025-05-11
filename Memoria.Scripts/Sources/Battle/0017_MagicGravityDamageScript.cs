@@ -62,7 +62,7 @@ namespace Memoria.Scripts.Battle
                     _v.CalcCannonProportionDamage();
                 }
             }
-            if (_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill))
+            if (_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill) || TranceSeekCustomAPI.EliteMonster(_v.Target.Data))
             {
                 _v.Target.HpDamage = Math.Max(1, (_v.Target.HpDamage / TranceSeekCustomAPI.MonsterMechanic[_v.Target.Data][5]));
                 TranceSeekCustomAPI.MonsterMechanic[_v.Target.Data][5] = TranceSeekCustomAPI.MonsterMechanic[_v.Target.Data][5] * 2;
