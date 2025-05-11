@@ -24,7 +24,7 @@ namespace Memoria.Scripts.Battle
             {
                 _v.Command.AbilityCategory -= 16; // Remove Magical effect to prevent Vanish to dissapear.
                 btl_stat.AlterStatus(_v.Target, TranceSeekCustomAPI.CustomStatusId.PowerUp, parameters: "+2");
-                if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)208))
+                if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)208) && _v.Target.IsPlayer)
                 {
                     if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1208))
                     {

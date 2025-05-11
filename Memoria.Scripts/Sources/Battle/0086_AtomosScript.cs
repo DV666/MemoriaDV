@@ -26,7 +26,7 @@ namespace Memoria.Scripts.Battle
                 _v.Command.AbilityCategory -= 16; // Remove Magical effect to prevent Vanish to dissapear.
                 _v.Target.TryRemoveStatuses(_v.Command.AbilityStatus);
                 _v.Target.AlterStatus(TranceSeekCustomAPI.CustomStatus.PerfectDodge);
-                if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)208))
+                if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)208) && _v.Target.IsPlayer)
                 {
                     if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1208))
                     {

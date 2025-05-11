@@ -2,6 +2,7 @@
 using Memoria.Assets;
 using Memoria.Data;
 using Memoria.Database;
+using Memoria.Prime;
 using System;
 using System.Collections.Generic;
 using static Memoria.Scripts.Battle.TranceSeekCustomAPI;

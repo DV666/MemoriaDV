@@ -833,7 +833,7 @@ ________________________________________________________________________________
 
 #### Sentinel Steiner + Dual Amarant ####
 >CMD 4
-[code=Patch] (HasSA(223) && GetEventGlobalByte(1320) > 0) ? 1035 : ((SerialNumber == 7 || SerialNumber == 8) ? 10015 : (SerialNumber == 13 ? 1016 : (InTrance && CharacterIndex == 14 ? 1027 : 4))) [/code]
+[code=Patch] (HasSA(223) && GetEventGlobalByte(1320) > 0) ? 1035 : ((SerialNumber == 7 || SerialNumber == 8) ? 1015 : (SerialNumber == 13 ? 1016 : (InTrance && CharacterIndex == 14 ? 1027 : 4))) [/code]
 
 #### SA CMD for Steiner ####
 
