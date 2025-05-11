@@ -31,10 +31,11 @@ namespace Memoria.DefaultScripts
                 btl_stat.RemoveStatus(Target, BattleStatusId.Berserk);
                 return false;
             }
+            int TargetID = Target.Data.dms_geo_id == 341 ? 15 : btl_util.GetRandomBtlID(1); // Mantis Reaper from Abadon
             if (Target.IsPlayer)
                 btl_cmd.SetCommand(Target.ATBCommand, BattleCommandId.Attack, (Int32)BattleAbilityId.Attack, btl_util.GetRandomBtlID(0), 0u);
             else
-                btl_cmd.SetEnemyCommand(Target, BattleCommandId.EnemyAtk, Target.EnemyType.p_atk_no, btl_util.GetRandomBtlID(1));
+                btl_cmd.SetEnemyCommand(Target, BattleCommandId.EnemyAtk, Target.EnemyType.p_atk_no, (ushort)TargetID);
             if (Configuration.VoiceActing.Enabled)
                 Target.AddDelayedModifier(WaitForAutoAttack, TriggerUsageForBattleVoice);
             return true;

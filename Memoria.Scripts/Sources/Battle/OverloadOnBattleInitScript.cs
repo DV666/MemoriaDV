@@ -80,7 +80,7 @@ namespace Memoria.Scripts.Battle
                 //if (!StackBreakOrUpStatus.TryGetValue(unit.Data, out Int32[] stackstatus))
                     StackBreakOrUpStatus[unit.Data] = [0, 0, 0, 0];
                 //if (!MonsterMechanic.TryGetValue(unit.Data, out Int32[] monstermechanic))
-                    MonsterMechanic[unit.Data] = [ 0, 0, 0, 0, 100, 0, 0 ];
+                    MonsterMechanic[unit.Data] = [ 0, 0, 0, 0, 100, 1, 0 ];
                 //if (!SpecialSAEffect.TryGetValue(unit.Data, out Int32[] specialSAeffect))
                     SpecialSAEffect[unit.Data] = [ 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ];
                 //if (!TriggerSPSResistStatus.TryGetValue(unit.Data, out Boolean spsstatus))
@@ -133,7 +133,7 @@ namespace Memoria.Scripts.Battle
                 if (unit.IsUnderAnyStatus(BattleStatus.EasyKill))
                 {
                     MonsterMechanic[unit.Data][4] = 100; // Reduce time for Sleep/Freeze/Stop
-                    MonsterMechanic[unit.Data][5] = EliteMonster(unit.Data) ? 1 : 4; // Reduce gravity damage
+                    MonsterMechanic[unit.Data][5] = 4; // Reduce gravity damage (start at 1 for Elite)
                 }
 
                 if (unit.PlayerIndex == (CharacterId)14)
