@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.Remoting.Contexts;
 using Assets.Sources.Scripts.UI.Common;
 using FF9;
 using Memoria.Assets;
@@ -29,17 +30,21 @@ namespace Memoria.Scripts.Battle
         {
             BattleEnemyPrototype enemyPrototype = BattleEnemyPrototype.Find(_v.Target);
             Int32 blueMagicId = enemyPrototype.BlueMagicId;
-            if (_v.Caster.IsUnderAnyStatus(BattleStatus.Trance) || _v.Caster.HasSupportAbilityByIndex((SupportAbility)220) || _v.Caster.HasSupportAbilityByIndex((SupportAbility)221))
+            if (_v.Caster.InTrance || _v.Caster.HasSupportAbilityByIndex((SupportAbility)220) || _v.Caster.HasSupportAbilityByIndex((SupportAbility)221))
             {
-                if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)221)) // SA Gourmandise
+                if (!_v.Caster.InTrance && _v.Caster.HasSupportAbilityByIndex((SupportAbility)220) && _v.Caster.HasSupportAbilityByIndex((SupportAbility)221)) // SA Appetite AND Gourmandise
                 {
-                    Int32 baseDamage = Comn.random16() % (1 + (_v.Caster.Level + _v.Caster.Magic >> 3));
+                    Int32 MixStrMag = (_v.Caster.Strength + _v.Caster.Magic) / 2;
+                    Int32 baseDamage = Comn.random16() % (1 + (_v.Caster.Level + MixStrMag >> 3));
                     _v.Context.AttackPower = _v.Caster.GetWeaponPower(_v.Command);
-                    _v.Target.SetMagicDefense();
-                    _v.Context.Attack = Comn.random16() % _v.Caster.Magic + baseDamage;
+                    _v.Context.DefensePower = (_v.Target.PhysicalDefence + _v.Target.MagicDefence) / 2;
+                    _v.Context.Attack = Comn.random16() % MixStrMag + baseDamage;
+                    TranceSeekCustomAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
+                    TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
+                    TranceSeekCustomAPI.BonusBackstabAndPenaltyLongDistance(_v);
                     TranceSeekCustomAPI.PenaltyShellAttack(_v);
                 }
-                else
+                else if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)220) || _v.Caster.InTrance) // SA Appetite
                 {
                     Int32 baseDamage = Comn.random16() % (1 + (_v.Caster.Level + _v.Caster.Strength >> 3));
                     _v.Context.AttackPower = _v.Caster.GetWeaponPower(_v.Command);
@@ -49,6 +54,15 @@ namespace Memoria.Scripts.Battle
                     TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
                     TranceSeekCustomAPI.BonusBackstabAndPenaltyLongDistance(_v);
                 }
+                else if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)221)) // SA Gourmandise
+                {
+                    Int32 baseDamage = Comn.random16() % (1 + (_v.Caster.Level + _v.Caster.Magic >> 3));
+                    _v.Context.AttackPower = _v.Caster.GetWeaponPower(_v.Command);
+                    _v.Target.SetMagicDefense();
+                    _v.Context.Attack = Comn.random16() % _v.Caster.Magic + baseDamage;
+                    TranceSeekCustomAPI.PenaltyShellAttack(_v);
+                }
+
                 _v.BonusKillerAbilities();
                 TranceSeekCustomAPI.BonusWeaponElement(_v);
                 if (TranceSeekCustomAPI.CanAttackWeaponElementalCommand(_v))
@@ -79,6 +93,8 @@ namespace Memoria.Scripts.Battle
                     _v.Target.MpDamage = mpDamage;
                     _v.Caster.HpDamage = hpDamage;
                     _v.Caster.MpDamage = mpDamage;
+                    if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)220))
+                        _v.Caster.HpDamage /= 4;
                     if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1220))
                         _v.Caster.AlterStatus(TranceSeekCustomAPI.CustomStatus.PowerUp, _v.Caster);
                     if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1221))

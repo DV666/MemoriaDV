@@ -1649,7 +1649,8 @@ namespace Memoria.Scripts.Battle
                 v.Target.Flags |= CalcFlag.HpDamageOrHeal;
 
             }
-            if (v.Target.HasSupportAbilityByIndex((SupportAbility)234) && (int)v.Target.GetPropertyByName("StatusProperty CustomStatus12 Stack") >= 2 && v.Target.Will < Comn.random16() % 100 && !v.Caster.IsPlayer) // SA Dominance
+            if (v.Target.HasSupportAbilityByIndex(SupportAbility.Counter) && v.Target.HasSupportAbilityByIndex((SupportAbility)234) &&
+                (int)v.Target.GetPropertyByName("StatusProperty CustomStatus12 Stack") >= 2 && v.Target.Will < Comn.random16() % 100 && !v.Caster.IsPlayer) // SA Dominance
             {
                 List<BattleAbilityId> Counter_AA = new List<BattleAbilityId>{ BattleAbilityId.ThunderSlash, BattleAbilityId.StockBreak, BattleAbilityId.Climhazzard, BattleAbilityId.Shock,
                 BattleAbilityId.Protect, BattleAbilityId.Shell, BattleAbilityId.Cura, BattleAbilityId.Berserk, BattleAbilityId.Reflect, BattleAbilityId.Regen, BattleAbilityId.Holy};
