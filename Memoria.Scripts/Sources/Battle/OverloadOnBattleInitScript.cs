@@ -109,7 +109,7 @@ namespace Memoria.Scripts.Battle
                 }
                 if (unit.HasSupportAbilityByIndex((SupportAbility)1041)) // Alert+
                 {
-                    btl_stat.AlterStatus(unit, CustomStatusId.PerfectDodge, parameters: "+2");
+                    btl_stat.AlterStatus(unit, TranceSeekCustomStatusId.PerfectDodge, parameters: "+2");
                 }
                 if (unit.HasSupportAbilityByIndex((SupportAbility)52)) // Last Stand
                 {
@@ -117,18 +117,18 @@ namespace Memoria.Scripts.Battle
                 }
                 if (unit.HasSupportAbilityByIndex((SupportAbility)1252)) // SA I'm all set
                 {
-                    unit.AlterStatus(CustomStatus.ArmorUp, unit);
-                    unit.AlterStatus(CustomStatus.MentalUp, unit);
+                    unit.AlterStatus(TranceSeekCustomStatus.ArmorUp, unit);
+                    unit.AlterStatus(TranceSeekCustomStatus.MentalUp, unit);
                 }
                 if (unit.Weapon == RegularItem.Defender)
                 {
-                    unit.AlterStatus(CustomStatus.ArmorUp, unit);
-                    unit.AlterStatus(CustomStatus.MentalUp, unit);
+                    unit.AlterStatus(TranceSeekCustomStatus.ArmorUp, unit);
+                    unit.AlterStatus(TranceSeekCustomStatus.MentalUp, unit);
                 }
                 if (unit.Armor == (RegularItem)1220) // Mechanical Armor
                 {
                     MonsterMechanic[unit.Data][1] = 10;
-                    btl_stat.AlterStatus(unit, CustomStatusId.MechanicalArmor, parameters: MonsterMechanic[unit.Data][1]);
+                    btl_stat.AlterStatus(unit, TranceSeekCustomStatusId.MechanicalArmor, parameters: MonsterMechanic[unit.Data][1]);
                 }
                 if (unit.IsUnderAnyStatus(BattleStatus.EasyKill))
                 {
@@ -313,19 +313,19 @@ namespace Memoria.Scripts.Battle
 
                     if (unit.HasSupportAbilityByIndex((SupportAbility)1212)) // SA Protector+
                     {
-                        btl_stat.AlterStatus(unit, CustomStatusId.PowerBreak, parameters: "+2");
-                        btl_stat.AlterStatus(unit, CustomStatusId.ArmorUp, parameters: "+2");
+                        btl_stat.AlterStatus(unit, TranceSeekCustomStatusId.PowerBreak, parameters: "+2");
+                        btl_stat.AlterStatus(unit, TranceSeekCustomStatusId.ArmorUp, parameters: "+2");
                     }
                     else if (unit.HasSupportAbilityByIndex((SupportAbility)212)) // SA Protector
                     {
-                        btl_stat.AlterStatus(unit, CustomStatusId.PowerBreak, parameters: "+1");
-                        btl_stat.AlterStatus(unit, CustomStatusId.ArmorUp, parameters: "+1");
+                        btl_stat.AlterStatus(unit, TranceSeekCustomStatusId.PowerBreak, parameters: "+1");
+                        btl_stat.AlterStatus(unit, TranceSeekCustomStatusId.ArmorUp, parameters: "+1");
                     }
 
                     if (unit.Row == 1)
-                        btl_stat.AlterStatus(unit, CustomStatusId.Special, parameters: "CanCover1");
+                        btl_stat.AlterStatus(unit, TranceSeekCustomStatusId.Special, parameters: "CanCover1");
                     else
-                        btl_stat.AlterStatus(unit, CustomStatusId.Special, parameters: "CanCover0");
+                        btl_stat.AlterStatus(unit, TranceSeekCustomStatusId.Special, parameters: "CanCover0");
                 }
             }
         }

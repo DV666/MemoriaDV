@@ -23,7 +23,7 @@ namespace Memoria.Scripts.Battle
             _v.Target.Flags |= CalcFlag.HpAlteration | CalcFlag.HpRecovery;
             _v.Target.HpDamage = _v.Command.Item.Power * (ff9item.FF9Item_GetCount(_v.Command.ItemId) + 1);
             if (_v.Caster.PlayerIndex == CharacterId.Blank && _v.Command.Id == BattleCommandId.Item)
-                btl_stat.AlterStatus(_v.Caster, TranceSeekCustomAPI.CustomStatusId.Special, _v.Caster, true, "SoakedBlade", _v.Command.ItemId);
+                btl_stat.AlterStatus(_v.Caster, TranceSeekCustomStatusId.Special, _v.Caster, true, "SoakedBlade", _v.Command.ItemId);
         }
 
         public Single RateTarget()

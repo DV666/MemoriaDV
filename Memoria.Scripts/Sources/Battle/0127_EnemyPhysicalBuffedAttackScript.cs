@@ -40,12 +40,12 @@ namespace Memoria.Scripts.Battle
                     TranceSeekCustomAPI.RaiseTrouble(_v);
                     if (_v.Command.HitRate == 222) // Motivation Gauche
                     {
-                        _v.Command.AbilityStatus |= TranceSeekCustomAPI.CustomStatus.PowerUp;
+                        _v.Command.AbilityStatus |= TranceSeekCustomStatus.PowerUp;
                         TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
                     }
                     else if (_v.Command.HitRate == 223) // Motivation droite
                     {
-                        _v.Command.AbilityStatus |= TranceSeekCustomAPI.CustomStatus.ArmorUp;
+                        _v.Command.AbilityStatus |= TranceSeekCustomStatus.ArmorUp;
                         TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
                     }
                     else

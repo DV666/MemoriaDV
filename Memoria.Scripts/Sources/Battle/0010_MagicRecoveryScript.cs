@@ -48,7 +48,7 @@ namespace Memoria.Scripts.Battle
                 }
                 else if (_v.Command.HitRate == 99)
                 {
-                    _v.Command.AbilityStatus |= (TranceSeekCustomAPI.CustomStatus.ArmorUp | TranceSeekCustomAPI.CustomStatus.MentalUp);
+                    _v.Command.AbilityStatus |= (TranceSeekCustomStatus.ArmorUp | TranceSeekCustomStatus.MentalUp);
                     TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
                 }
                 else
@@ -65,7 +65,7 @@ namespace Memoria.Scripts.Battle
                             TranceSeekCustomAPI.MonsterMechanic[_v.Target.Data][1] = Math.Min((int)(PreviousHP - _v.Target.CurrentHp), 9999);
                         }
                     );
-                    _v.Target.TryAlterSingleStatus(BattleStatusId.CustomStatus10, true, _v.Caster, _v.Target.HpDamage);
+                    _v.Target.TryAlterSingleStatus(TranceSeekCustomStatusId.ZombieArmor, true, _v.Caster, _v.Target.HpDamage);
                 }
             }
         }

@@ -33,7 +33,7 @@ namespace Memoria.Scripts.Battle
                 _v.CalcHpDamage();
                 TranceSeekCustomAPI.RaiseTrouble(_v);
             }
-            _v.Command.AbilityStatus |= TranceSeekCustomAPI.CustomStatus.PowerBreak;
+            _v.Command.AbilityStatus |= TranceSeekCustomStatus.PowerBreak;
             TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
         }
 

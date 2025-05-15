@@ -59,10 +59,10 @@ namespace Memoria.Scripts.Battle
                         _v.Target.RemoveStatus(BattleStatus.Zombie);
                         _v.Command.AbilityStatus |= BattleStatus.Zombie;
                     }
-                    if (_v.Target.IsUnderAnyStatus(TranceSeekCustomAPI.CustomStatus.SilenceEasyKill))
+                    if (_v.Target.IsUnderAnyStatus(TranceSeekCustomStatus.SilenceEasyKill))
                     {
-                        _v.Target.RemoveStatus(TranceSeekCustomAPI.CustomStatus.SilenceEasyKill);
-                        _v.Command.AbilityStatus |= TranceSeekCustomAPI.CustomStatus.SilenceEasyKill;
+                        _v.Target.RemoveStatus(TranceSeekCustomStatus.SilenceEasyKill);
+                        _v.Command.AbilityStatus |= TranceSeekCustomStatus.SilenceEasyKill;
                     }
                     TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
                 }

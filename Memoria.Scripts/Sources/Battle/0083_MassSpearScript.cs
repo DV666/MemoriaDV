@@ -34,7 +34,7 @@ namespace Memoria.Scripts.Battle
             {
                 if (_v.Caster.HasSupportAbility(SupportAbility1.HighJump) && GameRandom.Next8() % 2 == 0 || _v.Caster.HasSupportAbilityByIndex((SupportAbility)1021))
                 {
-                    _v.Target.AlterStatus(TranceSeekCustomAPI.CustomStatus.Dragon, _v.Caster);
+                    _v.Target.AlterStatus(TranceSeekCustomStatus.Dragon, _v.Caster);
                 }
                 if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)217)) // SA Skydive
                 {
@@ -44,7 +44,7 @@ namespace Memoria.Scripts.Battle
                     _v.Context.DefensePower = _v.Target.MagicDefence / 2; 
                     TranceSeekCustomAPI.PenaltyShellAttack(_v);
                     if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1217)) // SA Skydive+
-                        _v.Caster.AlterStatus(TranceSeekCustomAPI.CustomStatus.MagicUp, _v.Caster);
+                        _v.Caster.AlterStatus(TranceSeekCustomStatus.MagicUp, _v.Caster);
                 }
                 else
                 {

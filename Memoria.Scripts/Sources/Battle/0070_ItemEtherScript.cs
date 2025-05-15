@@ -72,7 +72,7 @@ namespace Memoria.Scripts.Battle
                 _v.CalcMpMagicRecovery();
 
             if (_v.Caster.PlayerIndex == CharacterId.Blank && _v.Command.Id == BattleCommandId.Item)
-                btl_stat.AlterStatus(_v.Caster, TranceSeekCustomAPI.CustomStatusId.Special, _v.Caster, true, "SoakedBlade", _v.Command.ItemId);
+                btl_stat.AlterStatus(_v.Caster, TranceSeekCustomStatusId.Special, _v.Caster, true, "SoakedBlade", _v.Command.ItemId);
         }
 
         public Single RateTarget()

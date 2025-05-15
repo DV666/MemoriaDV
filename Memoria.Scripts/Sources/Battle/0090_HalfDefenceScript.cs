@@ -20,8 +20,8 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            btl_stat.AlterStatus(_v.Target, CustomStatusId.ArmorBreak, parameters: "+4");
-            btl_stat.AlterStatus(_v.Target, CustomStatusId.MentalBreak, parameters: "+4");
+            btl_stat.AlterStatus(_v.Target, TranceSeekCustomStatusId.ArmorBreak, parameters: "+4");
+            btl_stat.AlterStatus(_v.Target, TranceSeekCustomStatusId.MentalBreak, parameters: "+4");
         }
     }
 }

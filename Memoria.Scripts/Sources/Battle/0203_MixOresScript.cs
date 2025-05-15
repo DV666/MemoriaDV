@@ -258,46 +258,46 @@ namespace Memoria.Scripts.Battle
                 }
                 case (RegularItem)2457: // Roc de fer
                 {
-                    btl_stat.AlterStatus(_v.Target, TranceSeekCustomAPI.CustomStatusId.ArmorUp, parameters: "+1");
+                    btl_stat.AlterStatus(_v.Target, TranceSeekCustomStatusId.ArmorUp, parameters: "+1");
                     return;
                 }
                 case (RegularItem)2458: // Roc de titane
                 {
-                    btl_stat.AlterStatus(_v.Target, TranceSeekCustomAPI.CustomStatusId.ArmorUp, parameters: "+2");
+                    btl_stat.AlterStatus(_v.Target, TranceSeekCustomStatusId.ArmorUp, parameters: "+2");
                     return;
                 }
                 case (RegularItem)2459: // Roc d'adamantium
                 {
-                    btl_stat.AlterStatus(_v.Target, TranceSeekCustomAPI.CustomStatusId.ArmorUp, parameters: "+3");
+                    btl_stat.AlterStatus(_v.Target, TranceSeekCustomStatusId.ArmorUp, parameters: "+3");
                     return;
                 }
                 case (RegularItem)2460: // Roc violâtre
                 {
-                    btl_stat.AlterStatus(_v.Target, TranceSeekCustomAPI.CustomStatusId.MentalUp, parameters: "+2");
+                    btl_stat.AlterStatus(_v.Target, TranceSeekCustomStatusId.MentalUp, parameters: "+2");
                     return;
                 }
                 case (RegularItem)2461: // Roc spirituel
                 {
-                    btl_stat.AlterStatus(_v.Target, TranceSeekCustomAPI.CustomStatusId.MentalUp, parameters: "+4");
+                    btl_stat.AlterStatus(_v.Target, TranceSeekCustomStatusId.MentalUp, parameters: "+4");
                     return;
                 }
                 case (RegularItem)2462: // Roc fabuleux
                 {
-                    btl_stat.AlterStatus(_v.Target, TranceSeekCustomAPI.CustomStatusId.ArmorUp, parameters: "+1");
-                    btl_stat.AlterStatus(_v.Target, TranceSeekCustomAPI.CustomStatusId.MentalUp, parameters: "+1");
+                    btl_stat.AlterStatus(_v.Target, TranceSeekCustomStatusId.ArmorUp, parameters: "+1");
+                    btl_stat.AlterStatus(_v.Target, TranceSeekCustomStatusId.MentalUp, parameters: "+1");
                     return;
                 }
                 case (RegularItem)2463: // Roc mystique
                 {
-                    btl_stat.AlterStatus(_v.Target, TranceSeekCustomAPI.CustomStatusId.ArmorUp, parameters: "+2");
-                    btl_stat.AlterStatus(_v.Target, TranceSeekCustomAPI.CustomStatusId.MentalUp, parameters: "+2");
+                    btl_stat.AlterStatus(_v.Target, TranceSeekCustomStatusId.ArmorUp, parameters: "+2");
+                    btl_stat.AlterStatus(_v.Target, TranceSeekCustomStatusId.MentalUp, parameters: "+2");
                     return;
                 }
                 case (RegularItem)2464: // Roc en mythril
                 case (RegularItem)2465: // Megakoroc en mythril
                 {
-                    btl_stat.AlterStatus(_v.Target, TranceSeekCustomAPI.CustomStatusId.ArmorUp, parameters: "+5");
-                    btl_stat.AlterStatus(_v.Target, TranceSeekCustomAPI.CustomStatusId.MentalUp, parameters: "+5");
+                    btl_stat.AlterStatus(_v.Target, TranceSeekCustomStatusId.ArmorUp, parameters: "+5");
+                    btl_stat.AlterStatus(_v.Target, TranceSeekCustomStatusId.MentalUp, parameters: "+5");
                     return;
                 }
             }

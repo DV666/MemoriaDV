@@ -140,7 +140,7 @@ namespace Memoria.Scripts.Battle
                         if (unit.Data.dms_geo_id == 416) // Meltigemini
                         {
                             TranceSeekCustomAPI.MonsterMechanic[unit.Data][1] = Math.Min(healing, 9999);
-                            btl_stat.AlterStatus(unit, BattleStatusId.CustomStatus10, parameters: healing);
+                            btl_stat.AlterStatus(unit, TranceSeekCustomStatusId.ZombieArmor, parameters: healing);
                         }
                     }
                 }
@@ -150,12 +150,12 @@ namespace Memoria.Scripts.Battle
                     if (_v.Target.Data.dms_geo_id == 416) // Meltigemini
                     {
                         TranceSeekCustomAPI.MonsterMechanic[_v.Target.Data][1] = Math.Min(_v.Target.HpDamage, 9999);
-                        btl_stat.AlterStatus(_v.Target, BattleStatusId.CustomStatus10, parameters: _v.Target.HpDamage);
+                        btl_stat.AlterStatus(_v.Target, TranceSeekCustomStatusId.ZombieArmor, parameters: _v.Target.HpDamage);
                     }
                 }  
             }
             if (_v.Caster.PlayerIndex == CharacterId.Blank && _v.Command.Id == BattleCommandId.Item)
-                btl_stat.AlterStatus(_v.Caster, TranceSeekCustomAPI.CustomStatusId.Special, _v.Caster, true, "SoakedBlade", (Int32)_v.Command.ItemId);
+                btl_stat.AlterStatus(_v.Caster, TranceSeekCustomStatusId.Special, _v.Caster, true, "SoakedBlade", (Int32)_v.Command.ItemId);
         }
 
         public Single RateTarget()

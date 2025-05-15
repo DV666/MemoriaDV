@@ -40,58 +40,6 @@ namespace Memoria.Scripts.Battle
         public static Dictionary<BTL_DATA, EffectElement> WeaponNewElement = new Dictionary<BTL_DATA, EffectElement>();
         public static Dictionary<BTL_DATA, BattleStatus> WeaponNewStatus = new Dictionary<BTL_DATA, BattleStatus>();
 
-        public static class CustomStatus
-        {
-            public const BattleStatus PowerBreak = BattleStatus.CustomStatus1;
-            public const BattleStatus MagicBreak = BattleStatus.CustomStatus2;
-            public const BattleStatus ArmorBreak = BattleStatus.CustomStatus3;
-            public const BattleStatus MentalBreak = BattleStatus.CustomStatus4;
-            public const BattleStatus PowerUp = BattleStatus.CustomStatus5;
-            public const BattleStatus MagicUp = BattleStatus.CustomStatus6;
-            public const BattleStatus ArmorUp = BattleStatus.CustomStatus7;
-            public const BattleStatus MentalUp = BattleStatus.CustomStatus8;
-            public const BattleStatus Dragon = BattleStatus.CustomStatus9;
-            public const BattleStatus ZombieArmor = BattleStatus.CustomStatus10;
-            public const BattleStatus MechanicalArmor = BattleStatus.CustomStatus11;
-            public const BattleStatus Redemption = BattleStatus.CustomStatus12;
-            public const BattleStatus Bulwark = BattleStatus.CustomStatus13;
-            public const BattleStatus PerfectDodge = BattleStatus.CustomStatus14;
-            public const BattleStatus PerfectCrit = BattleStatus.CustomStatus15;
-            public const BattleStatus Vieillissement = BattleStatus.CustomStatus16;
-            public const BattleStatus SleepEasyKill = BattleStatus.CustomStatus17;
-            public const BattleStatus SilenceEasyKill = BattleStatus.CustomStatus18;
-            public const BattleStatus Rage = BattleStatus.CustomStatus19;
-            public const BattleStatus Runic = BattleStatus.CustomStatus20;
-            public const BattleStatus Special = BattleStatus.CustomStatus21;
-            public const BattleStatus Provok = BattleStatus.CustomStatus22;
-        }
-
-        public static class CustomStatusId
-        {
-            public const BattleStatusId PowerBreak = BattleStatusId.CustomStatus1;
-            public const BattleStatusId MagicBreak = BattleStatusId.CustomStatus2;
-            public const BattleStatusId ArmorBreak = BattleStatusId.CustomStatus3;
-            public const BattleStatusId MentalBreak = BattleStatusId.CustomStatus4;
-            public const BattleStatusId PowerUp = BattleStatusId.CustomStatus5;
-            public const BattleStatusId MagicUp = BattleStatusId.CustomStatus6;
-            public const BattleStatusId ArmorUp = BattleStatusId.CustomStatus7;
-            public const BattleStatusId MentalUp = BattleStatusId.CustomStatus8;
-            public const BattleStatusId Dragon = BattleStatusId.CustomStatus9;
-            public const BattleStatusId ZombieArmor = BattleStatusId.CustomStatus10;
-            public const BattleStatusId MechanicalArmor = BattleStatusId.CustomStatus11;
-            public const BattleStatusId Redemption = BattleStatusId.CustomStatus12;
-            public const BattleStatusId Bulwark = BattleStatusId.CustomStatus13;
-            public const BattleStatusId PerfectDodge = BattleStatusId.CustomStatus14;
-            public const BattleStatusId PerfectCrit = BattleStatusId.CustomStatus15;
-            public const BattleStatusId Vieillissement = BattleStatusId.CustomStatus16;
-            public const BattleStatusId SleepEasyKill = BattleStatusId.CustomStatus17;
-            public const BattleStatusId SilenceEasyKill = BattleStatusId.CustomStatus18;
-            public const BattleStatusId Rage = BattleStatusId.CustomStatus19;
-            public const BattleStatusId Runic = BattleStatusId.CustomStatus20;
-            public const BattleStatusId Special = BattleStatusId.CustomStatus21;
-            public const BattleStatusId Provok = BattleStatusId.CustomStatus22;
-        }
-
         public static Boolean EliteMonster(BTL_DATA Monster)
         {
             if (Monster.bi.player != 0)
@@ -141,7 +89,7 @@ namespace Memoria.Scripts.Battle
 
         public static void TryApplyDragon(this BattleCalculator v)
         {
-            if (v.Caster.PlayerIndex == CharacterId.Freya && !v.Target.IsUnderAnyStatus(CustomStatus.Dragon))
+            if (v.Caster.PlayerIndex == CharacterId.Freya && !v.Target.IsUnderAnyStatus(TranceSeekCustomStatus.Dragon))
             {
                 Int32 quarterWill = v.Caster.Data.elem.wpr >> 2;
                 Int32 bonus = 0;
@@ -174,7 +122,7 @@ namespace Memoria.Scripts.Battle
 
                 if (quarterWill != 0 && (((Comn.random16() % quarterWill) + bonus) > Comn.random16() % 100))
                 {
-                    v.Target.AlterStatus(CustomStatus.Dragon, v.Caster);
+                    v.Target.AlterStatus(TranceSeekCustomStatus.Dragon, v.Caster);
                 }
             }
         }
@@ -185,12 +133,12 @@ namespace Memoria.Scripts.Battle
                 ZidanePassive[v.Caster.Data][1] = 40;
             Int32 quarterWill = (v.Caster.Data.elem.wpr + ZidanePassive[v.Caster.Data][1]) >> 2;
             BonusCriticalFromWeapon(v.Caster.Weapon, out Int32 BonusWeaponCritical);
-            if (quarterWill != 0 && ((Comn.random16() % quarterWill) + v.Caster.Data.critical_rate_deal_bonus + v.Target.Data.critical_rate_receive_resistance + BonusWeaponCritical > Comn.random16() % 100) || v.Caster.IsUnderAnyStatus(CustomStatus.PerfectCrit) || SpecialSAEffect[v.Target.Data][9] > 0)
+            if (quarterWill != 0 && ((Comn.random16() % quarterWill) + v.Caster.Data.critical_rate_deal_bonus + v.Target.Data.critical_rate_receive_resistance + BonusWeaponCritical > Comn.random16() % 100) || v.Caster.IsUnderAnyStatus(TranceSeekCustomStatus.PerfectCrit) || SpecialSAEffect[v.Target.Data][9] > 0)
             {
                 if (SpecialSAEffect[v.Target.Data][9] > 0)
                     SpecialSAEffect[v.Target.Data][9]--;
-                if (v.Caster.IsUnderAnyStatus(CustomStatus.PerfectCrit)) // Perfect Crit
-                    btl_stat.AlterStatus(v.Caster, CustomStatusId.PerfectCrit, parameters: "-1");
+                if (v.Caster.IsUnderAnyStatus(TranceSeekCustomStatus.PerfectCrit)) // Perfect Crit
+                    btl_stat.AlterStatus(v.Caster, TranceSeekCustomStatusId.PerfectCrit, parameters: "-1");
                 else
                     ZidanePassive[v.Caster.Data][1] = 0;
                 v.Context.Attack *= 2;
@@ -198,7 +146,7 @@ namespace Memoria.Scripts.Battle
                 v.Target.MpDamage *= 2;
                 v.Target.Flags |= CalcFlag.Critical;
                 if (v.Caster.PlayerIndex == CharacterId.Freya)
-                    v.Target.AlterStatus(CustomStatus.Dragon, v.Caster);
+                    v.Target.AlterStatus(TranceSeekCustomStatus.Dragon, v.Caster);
             }
             else if (v.Caster.PlayerIndex == CharacterId.Zidane && btl_util.getSerialNumber(v.Caster.Data) == CharacterSerialNumber.ZIDANE_SWORD)
             {
@@ -356,11 +304,11 @@ namespace Memoria.Scripts.Battle
 
             v.Target.PenaltyBanishHitRate();
 
-            if (v.Target.IsUnderAnyStatus(CustomStatus.PerfectDodge) && !v.Caster.HasSupportAbility(SupportAbility1.Healer)) // Perfect Dodge
+            if (v.Target.IsUnderAnyStatus(TranceSeekCustomStatus.PerfectDodge) && !v.Caster.HasSupportAbility(SupportAbility1.Healer)) // Perfect Dodge
             {
                 v.Context.Flags |= BattleCalcFlags.Miss | BattleCalcFlags.Dodge;
-                btl_stat.AlterStatus(v.Target, CustomStatusId.PerfectDodge, parameters: "Remove");
-                //if (v.Target.IsUnderAnyStatus(CustomStatus.PerfectDodge)) // Didn't work when Stack > 1.... ?
+                btl_stat.AlterStatus(v.Target, TranceSeekCustomStatusId.PerfectDodge, parameters: "Remove");
+                //if (v.Target.IsUnderAnyStatus(TranceSeekCustomStatus.PerfectDodge)) // Didn't work when Stack > 1.... ?
                 //    btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[FFFFFF]", Localization.Get("Miss"), HUDMessage.MessageStyle.DAMAGE, 0);
 
                 return false;
@@ -380,9 +328,9 @@ namespace Memoria.Scripts.Battle
                 return false;
             }
 
-            if (v.Target.PhysicalDefence == 255 || (v.Target.IsUnderAnyStatus(CustomStatus.Bulwark) && !v.Caster.HasSupportAbility(SupportAbility1.Healer))) // Bulwark
+            if (v.Target.PhysicalDefence == 255 || (v.Target.IsUnderAnyStatus(TranceSeekCustomStatus.Bulwark) && !v.Caster.HasSupportAbility(SupportAbility1.Healer))) // Bulwark
             {
-                v.Target.RemoveStatus(CustomStatus.Bulwark);
+                v.Target.RemoveStatus(TranceSeekCustomStatus.Bulwark);
                 v.Context.Flags |= BattleCalcFlags.Guard;
                 return false;
             }
@@ -582,7 +530,7 @@ namespace Memoria.Scripts.Battle
         public static void ReduceAccuracyEliteMonsters(this BattleCalculator v, Boolean MalusForced = false)
         {
             BattleStatus LethalStatus = BattleStatus.Death | BattleStatus.Petrify | BattleStatus.Death | BattleStatus.Mini | BattleStatus.Heat |
-                                        BattleStatus.Freeze | BattleStatus.Zombie | BattleStatus.Stop | CustomStatus.Vieillissement;
+                                        BattleStatus.Freeze | BattleStatus.Zombie | BattleStatus.Stop | TranceSeekCustomStatus.Vieillissement;
             if (EliteMonster(v.Target.Data))
             {            
                 if ((v.Command.AbilityStatus & LethalStatus) != 0 || MalusForced)
@@ -750,7 +698,7 @@ namespace Memoria.Scripts.Battle
 
         public static Boolean CanAttackMagic(this BattleCalculator v)
         {
-            if (v.Target.IsUnderAnyStatus(CustomStatus.Runic))
+            if (v.Target.IsUnderAnyStatus(TranceSeekCustomStatus.Runic))
             {
                 v.CalcHpDamage();
                 v.Target.Flags = (CalcFlag.HpDamageOrHeal | CalcFlag.MpDamageOrHeal);
@@ -1032,8 +980,8 @@ namespace Memoria.Scripts.Battle
             Int32 factor = 0;
             List<BattleStatusId> statuschoosen = new List<BattleStatusId>{ BattleStatusId.Poison, BattleStatusId.Venom, BattleStatusId.Blind, BattleStatusId.Silence, BattleStatusId.Trouble,
                     BattleStatusId.Sleep, BattleStatusId.Freeze, BattleStatusId.Heat, BattleStatusId.Doom, BattleStatusId.Mini, BattleStatusId.Petrify, BattleStatusId.GradualPetrify,
-                    BattleStatusId.Berserk, BattleStatusId.Confuse, BattleStatusId.Stop, BattleStatusId.Zombie, BattleStatusId.Slow, CustomStatusId.Vieillissement,
-                    CustomStatusId.ArmorBreak, CustomStatusId.MagicBreak, CustomStatusId.MentalBreak, CustomStatusId.PowerBreak};
+                    BattleStatusId.Berserk, BattleStatusId.Confuse, BattleStatusId.Stop, BattleStatusId.Zombie, BattleStatusId.Slow, TranceSeekCustomStatusId.Vieillissement,
+                    TranceSeekCustomStatusId.ArmorBreak, TranceSeekCustomStatusId.MagicBreak, TranceSeekCustomStatusId.MentalBreak, TranceSeekCustomStatusId.PowerBreak};
 
             for (Int32 i = 0; i < (statuschoosen.Count - 1); i++)
             {
@@ -1113,7 +1061,7 @@ namespace Memoria.Scripts.Battle
                         }
                         case (BattleAbilityId)2006: // Mog Esuna
                         {
-                            if (Eiko.Level < 35 || !Eiko.IsUnderAnyStatus(BattleStatus.Heat | BattleStatus.Poison | BattleStatus.Venom | BattleStatus.Silence | BattleStatus.Blind | BattleStatus.Trouble | BattleStatus.Berserk | BattleStatus.Mini | CustomStatus.Vieillissement))
+                            if (Eiko.Level < 35 || !Eiko.IsUnderAnyStatus(BattleStatus.Heat | BattleStatus.Poison | BattleStatus.Venom | BattleStatus.Silence | BattleStatus.Blind | BattleStatus.Trouble | BattleStatus.Berserk | BattleStatus.Mini | TranceSeekCustomStatus.Vieillissement))
                                 AddAA = false;
                             break;
                         }
@@ -1219,7 +1167,7 @@ namespace Memoria.Scripts.Battle
                             {
                                 Boolean StatusToCure = false;
                                 foreach (BattleUnit unit in BattleState.EnumerateUnits())
-                                    if (unit.IsPlayer && unit.IsTargetable && !unit.IsUnderAnyStatus(BattleStatus.Death | BattleStatus.Petrify | BattleStatus.Jump) && unit.IsUnderAnyStatus(BattleStatus.Poison | BattleStatus.Venom | BattleStatus.Silence | BattleStatus.Blind | BattleStatus.Trouble | BattleStatus.Mini | BattleStatus.Berserk | TranceSeekCustomAPI.CustomStatus.Vieillissement))
+                                    if (unit.IsPlayer && unit.IsTargetable && !unit.IsUnderAnyStatus(BattleStatus.Death | BattleStatus.Petrify | BattleStatus.Jump) && unit.IsUnderAnyStatus(BattleStatus.Poison | BattleStatus.Venom | BattleStatus.Silence | BattleStatus.Blind | BattleStatus.Trouble | BattleStatus.Mini | BattleStatus.Berserk | TranceSeekCustomStatus.Vieillissement))
                                             StatusToCure = true;
 
                                 if (!StatusToCure)
@@ -1473,8 +1421,7 @@ namespace Memoria.Scripts.Battle
 
         public static void SOS_SA(this BattleCalculator v)
         {
-            // SOS Protect
-            if (v.Target.HasSupportAbilityByIndex((SupportAbility)1103))
+            if (v.Target.HasSupportAbilityByIndex(TranceSeekCustomSupportAbility.SOS_Protect2))
             {
                 v.Target.AddDelayedModifier(
                     target => target.CurrentHp > (target.MaximumHp / 2),
@@ -1484,7 +1431,7 @@ namespace Memoria.Scripts.Battle
                     }
                 );
             }
-            else if (v.Target.HasSupportAbilityByIndex((SupportAbility)103)) 
+            else if (v.Target.HasSupportAbilityByIndex(TranceSeekCustomSupportAbility.SOS_Protect))
             {
                 v.Target.AddDelayedModifier(
                     target => !target.IsUnderAnyStatus(BattleStatus.LowHP),
@@ -1494,8 +1441,7 @@ namespace Memoria.Scripts.Battle
                     }
                 );
             }
-            // SOS Shell
-            if (v.Target.HasSupportAbilityByIndex((SupportAbility)1104))
+            if (v.Target.HasSupportAbilityByIndex(TranceSeekCustomSupportAbility.SOS_Shell2))
             {
                 v.Target.AddDelayedModifier(
                     target => target.CurrentHp > (target.MaximumHp / 2),
@@ -1505,7 +1451,7 @@ namespace Memoria.Scripts.Battle
                     }
                 );
             }
-            else if (v.Target.HasSupportAbilityByIndex((SupportAbility)104))
+            else if (v.Target.HasSupportAbilityByIndex(TranceSeekCustomSupportAbility.SOS_Shell))
             {
                 v.Target.AddDelayedModifier(
                     target => !target.IsUnderAnyStatus(BattleStatus.LowHP),
@@ -1515,8 +1461,7 @@ namespace Memoria.Scripts.Battle
                     }
                 );
             }
-            // SOS Regen
-            if (v.Target.HasSupportAbilityByIndex((SupportAbility)1105))
+            if (v.Target.HasSupportAbilityByIndex(TranceSeekCustomSupportAbility.SOS_Regen2))
             {
                 v.Target.AddDelayedModifier(
                     target => target.CurrentHp > (target.MaximumHp / 2),
@@ -1526,7 +1471,7 @@ namespace Memoria.Scripts.Battle
                     }
                 );
             }
-            else if (v.Target.HasSupportAbilityByIndex((SupportAbility)105))
+            else if (v.Target.HasSupportAbilityByIndex(TranceSeekCustomSupportAbility.SOS_Regen))
             {
                 v.Target.AddDelayedModifier(
                     target => !target.IsUnderAnyStatus(BattleStatus.LowHP),
@@ -1536,8 +1481,7 @@ namespace Memoria.Scripts.Battle
                     }
                 );
             }
-            // SOS Haste
-            if (v.Target.HasSupportAbilityByIndex((SupportAbility)1106))
+            if (v.Target.HasSupportAbilityByIndex(TranceSeekCustomSupportAbility.SOS_Haste2))
             {
                 v.Target.AddDelayedModifier(
                     target => target.CurrentHp > (target.MaximumHp / 2),
@@ -1547,7 +1491,7 @@ namespace Memoria.Scripts.Battle
                     }
                 );
             }
-            else if (v.Target.HasSupportAbilityByIndex((SupportAbility)106)) 
+            else if (v.Target.HasSupportAbilityByIndex(TranceSeekCustomSupportAbility.SOS_Haste))
             {
                 v.Target.AddDelayedModifier(
                     target => !target.IsUnderAnyStatus(BattleStatus.LowHP),
@@ -1557,47 +1501,51 @@ namespace Memoria.Scripts.Battle
                     }
                 );
             }
-            // SOS Reflect (don't work with SOS Vanish)
-            if (v.Target.HasSupportAbilityByIndex((SupportAbility)1133) && !v.Target.HasSupportAbilityByIndex((SupportAbility)134))
+            if (!v.Target.HasSupportAbilityByIndex(TranceSeekCustomSupportAbility.SOS_Vanish))
             {
-                v.Target.AddDelayedModifier(
-                    target => target.CurrentHp > (target.MaximumHp / 2),
-                    target =>
-                    {
-                        target.AlterStatus(BattleStatus.Reflect, target);
-                    }
-                );
+                if (v.Target.HasSupportAbilityByIndex(TranceSeekCustomSupportAbility.SOS_Reflect2))
+                {
+                    v.Target.AddDelayedModifier(
+                        target => target.CurrentHp > (target.MaximumHp / 2),
+                        target =>
+                        {
+                            target.AlterStatus(BattleStatus.Reflect, target);
+                        }
+                    );
+                }
+                else if (v.Target.HasSupportAbilityByIndex(TranceSeekCustomSupportAbility.SOS_Reflect))
+                {
+                    v.Target.AddDelayedModifier(
+                        target => !target.IsUnderAnyStatus(BattleStatus.LowHP),
+                        target =>
+                        {
+                            target.AlterStatus(BattleStatus.Reflect, target);
+                        }
+                    );
+                }
             }
-            else if (v.Target.HasSupportAbilityByIndex((SupportAbility)133) && !v.Target.HasSupportAbilityByIndex((SupportAbility)134))
+            if (!v.Target.HasSupportAbilityByIndex(TranceSeekCustomSupportAbility.SOS_Reflect))
             {
-                v.Target.AddDelayedModifier(
-                    target => !target.IsUnderAnyStatus(BattleStatus.LowHP),
-                    target =>
-                    {
-                        target.AlterStatus(BattleStatus.Reflect, target);
-                    }
-                );
-            }
-            // SOS Vanish (don't work with SOS Reflect)
-            if (v.Target.HasSupportAbilityByIndex((SupportAbility)1134) && !v.Target.HasSupportAbilityByIndex((SupportAbility)133))
-            {
-                v.Target.AddDelayedModifier(
-                    target => target.CurrentHp > (target.MaximumHp / 2),
-                    target =>
-                    {
-                        target.AlterStatus(BattleStatus.Vanish, target);
-                    }
-                );
-            }
-            else if (v.Target.HasSupportAbilityByIndex((SupportAbility)134) && !v.Target.HasSupportAbilityByIndex((SupportAbility)133))
-            {
-                v.Target.AddDelayedModifier(
-                    target => !target.IsUnderAnyStatus(BattleStatus.LowHP),
-                    target =>
-                    {
-                        target.AlterStatus(BattleStatus.Vanish, target);
-                    }
-                );
+                if (v.Target.HasSupportAbilityByIndex(TranceSeekCustomSupportAbility.SOS_Vanish2))
+                {
+                    v.Target.AddDelayedModifier(
+                        target => target.CurrentHp > (target.MaximumHp / 2),
+                        target =>
+                        {
+                            target.AlterStatus(BattleStatus.Vanish, target);
+                        }
+                    );
+                }
+                else if (v.Target.HasSupportAbilityByIndex(TranceSeekCustomSupportAbility.SOS_Vanish))
+                {
+                    v.Target.AddDelayedModifier(
+                        target => !target.IsUnderAnyStatus(BattleStatus.LowHP),
+                        target =>
+                        {
+                            target.AlterStatus(BattleStatus.Vanish, target);
+                        }
+                    );
+                }
             }
         }
 
@@ -1625,7 +1573,7 @@ namespace Memoria.Scripts.Battle
 
         public static void SpecialSA(this BattleCalculator v)
         {
-            if (v.Target.HpDamage > 0 && v.Target.IsUnderAnyStatus(CustomStatus.MechanicalArmor) && MonsterMechanic[v.Target.Data][1] > 0 && (v.Target.Flags & CalcFlag.HpRecovery) == 0) // Armor Mechanical
+            if (v.Target.HpDamage > 0 && v.Target.IsUnderAnyStatus(TranceSeekCustomStatus.MechanicalArmor) && MonsterMechanic[v.Target.Data][1] > 0 && (v.Target.Flags & CalcFlag.HpRecovery) == 0) // Armor Mechanical
             {
                 Int32 DamageReduction = MonsterMechanic[v.Target.Data][1] * 10;
                 if (DamageReduction < 100)
@@ -1641,10 +1589,10 @@ namespace Memoria.Scripts.Battle
                 if (MonsterMechanic[v.Target.Data][1] < 0)
                 {
                     MonsterMechanic[v.Target.Data][1] = 0;
-                    v.Target.RemoveStatus(CustomStatusId.MechanicalArmor);
+                    v.Target.RemoveStatus(TranceSeekCustomStatusId.MechanicalArmor);
                 }
                 else
-                    v.Target.TryAlterSingleStatus(CustomStatusId.MechanicalArmor, true, v.Caster, MonsterMechanic[v.Target.Data][1]);
+                    v.Target.TryAlterSingleStatus(TranceSeekCustomStatusId.MechanicalArmor, true, v.Caster, MonsterMechanic[v.Target.Data][1]);
             }
             if (v.Context.IsAbsorb)
             {
@@ -1738,12 +1686,12 @@ namespace Memoria.Scripts.Battle
             if (v.Caster.HasSupportAbility(SupportAbility1.ReflectNull) && v.Target.IsUnderAnyStatus(BattleStatus.Reflect) && !v.Caster.HasSupportAbilityByIndex((SupportAbility)1030))
                 v.Target.HpDamage >>= 1;
 
-            if (v.Target.IsUnderAnyStatus(CustomStatus.Dragon) && !v.Caster.IsUnderStatus(BattleStatus.Trance) && v.Command.Id == BattleCommandId.DragonAct) // Trigger Dragon status
+            if (v.Target.IsUnderAnyStatus(TranceSeekCustomStatus.Dragon) && !v.Caster.IsUnderStatus(BattleStatus.Trance) && v.Command.Id == BattleCommandId.DragonAct) // Trigger Dragon status
             {
                 float DragonRemove = v.Caster.HasSupportAbilityByIndex((SupportAbility)1122) ? 25 : (v.Caster.HasSupportAbilityByIndex((SupportAbility)122) ? 12.5f : 0); // Eye of the dragon
 
                 if (DragonRemove < Comn.random16() % 100)
-                    btl_stat.AlterStatus(v.Target, CustomStatusId.Dragon, v.Caster, parameters: "Remove");
+                    btl_stat.AlterStatus(v.Target, TranceSeekCustomStatusId.Dragon, v.Caster, parameters: "Remove");
             }
 
             if (v.Command.Id == (BattleCommandId)1032) // SA Witchcraft

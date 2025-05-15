@@ -27,8 +27,8 @@ namespace Memoria.Scripts.Battle
             {
                 if (_v.Command.AbilityId == (BattleAbilityId)1004) // Echauffement
                 {
-                    _v.Target.AlterStatus(TranceSeekCustomAPI.CustomStatus.PowerUp, _v.Caster);
-                    _v.Target.AlterStatus(TranceSeekCustomAPI.CustomStatus.PerfectDodge, _v.Caster);
+                    _v.Target.AlterStatus(TranceSeekCustomStatus.PowerUp, _v.Caster);
+                    _v.Target.AlterStatus(TranceSeekCustomStatus.PerfectDodge, _v.Caster);
                     return;
                 }
                 else if (_v.Command.AbilityId == BattleAbilityId.LuckySeven) // Extorquer

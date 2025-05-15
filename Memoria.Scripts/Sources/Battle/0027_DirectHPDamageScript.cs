@@ -22,7 +22,7 @@ namespace Memoria.Scripts.Battle
         {
             if (_v.Command.AbilityId == BattleAbilityId.Luna)
             {
-                btl_stat.AlterStatus(_v.Target, TranceSeekCustomAPI.CustomStatusId.Dragon, _v.Caster);
+                btl_stat.AlterStatus(_v.Target, TranceSeekCustomStatusId.Dragon, _v.Caster);
                 return;
             }
             else

@@ -53,7 +53,7 @@ namespace Memoria.Scripts.Battle
                         _v.Target.Flags |= (CalcFlag.HpAlteration | CalcFlag.MpAlteration);
                         _v.Target.MpDamage = Math.Max(1, hpDamage >> 5);
                         _v.Caster.HpDamage = Math.Max(1, hpDamage / 2);
-                        if (_v.Target.IsUnderAnyStatus(TranceSeekCustomAPI.CustomStatus.Dragon) || _v.Caster.IsUnderStatus(BattleStatus.Trance))
+                        if (_v.Target.IsUnderAnyStatus(TranceSeekCustomStatus.Dragon) || _v.Caster.IsUnderStatus(BattleStatus.Trance))
                         {
                             _v.Caster.Flags |= (CalcFlag.MpAlteration | CalcFlag.MpRecovery);
                             _v.Caster.MpDamage = _v.Target.MpDamage / 2;

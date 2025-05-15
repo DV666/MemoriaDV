@@ -96,9 +96,9 @@ namespace Memoria.Scripts.Battle
                     if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)220))
                         _v.Caster.HpDamage /= 4;
                     if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1220))
-                        _v.Caster.AlterStatus(TranceSeekCustomAPI.CustomStatus.PowerUp, _v.Caster);
+                        _v.Caster.AlterStatus(TranceSeekCustomStatus.PowerUp, _v.Caster);
                     if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1221))
-                        _v.Caster.AlterStatus(TranceSeekCustomAPI.CustomStatus.MagicUp, _v.Caster);
+                        _v.Caster.AlterStatus(TranceSeekCustomStatus.MagicUp, _v.Caster);
                 }
             }
 

@@ -162,7 +162,7 @@ namespace Memoria.Scripts.Battle
                         if (playerunit.IsPlayer)
                         {
                             Single PlayerRatioStatus = 0;
-                            if (playerunit.IsUnderAnyStatus(TranceSeekCustomAPI.CustomStatus.Vieillissement) && AbilityChoosen == BattleAbilityId.Esuna)
+                            if (playerunit.IsUnderAnyStatus(TranceSeekCustomStatus.Vieillissement) && AbilityChoosen == BattleAbilityId.Esuna)
                                 PlayerRatioStatus = 20;
 
                             BattleStatus playerStatus = playerunit.CurrentStatus;

@@ -25,7 +25,7 @@ namespace Memoria.Scripts.Battle
                 case (BattleAbilityId)1153: // You there!
                 case (BattleAbilityId)1159: // Get over here!
                 {
-                    _v.Target.TryAlterStatuses(TranceSeekCustomAPI.CustomStatus.Provok, true, _v.Caster);
+                    _v.Target.TryAlterStatuses(TranceSeekCustomStatus.Provok, true, _v.Caster);
                     break;
                 }
                 case (BattleAbilityId)1154: // Get moving!
@@ -124,8 +124,8 @@ namespace Memoria.Scripts.Battle
                 }
                 case (BattleAbilityId)1045: // Praise
                 {
-                    List<BattleStatus> PraiseStatus = new List<BattleStatus>{ TranceSeekCustomAPI.CustomStatus.PowerUp, TranceSeekCustomAPI.CustomStatus.MagicUp,
-                    TranceSeekCustomAPI.CustomStatus.ArmorUp, TranceSeekCustomAPI.CustomStatus.MentalUp};
+                    List<BattleStatus> PraiseStatus = new List<BattleStatus>{ TranceSeekCustomStatus.PowerUp, TranceSeekCustomStatus.MagicUp,
+                    TranceSeekCustomStatus.ArmorUp, TranceSeekCustomStatus.MentalUp};
 
                     _v.Target.AlterStatus(PraiseStatus[Comn.random16() % PraiseStatus.Count]);
                     break;
@@ -188,7 +188,7 @@ namespace Memoria.Scripts.Battle
                 case (BattleAbilityId)1165: // Chosen
                 {
                     BattleStatus GoodStatus = (BattleStatus.AutoLife | BattleStatus.Protect | BattleStatus.Shell | BattleStatus.Regen | BattleStatus.Float | BattleStatus.AutoLife |
-                    BattleStatus.Haste | BattleStatus.Vanish | BattleStatus.Reflect | TranceSeekCustomAPI.CustomStatus.PowerUp | TranceSeekCustomAPI.CustomStatus.MagicUp | TranceSeekCustomAPI.CustomStatus.ArmorUp | TranceSeekCustomAPI.CustomStatus.MentalUp);
+                    BattleStatus.Haste | BattleStatus.Vanish | BattleStatus.Reflect | TranceSeekCustomStatus.PowerUp | TranceSeekCustomStatus.MagicUp | TranceSeekCustomStatus.ArmorUp | TranceSeekCustomStatus.MentalUp);
                     _v.Target.AlterStatus(GoodStatus);
                     _v.Caster.AddDelayedModifier(
                         caster => caster.IsUnderAnyStatus(BattleStatus.Trance),

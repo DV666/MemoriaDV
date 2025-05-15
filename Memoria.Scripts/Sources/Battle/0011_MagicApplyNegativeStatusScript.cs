@@ -99,15 +99,15 @@ namespace Memoria.Scripts.Battle
                 }
                 else if (_v.Command.Power == 10) // Garland - Regression
                 {
-                    _v.Command.AbilityStatus |= (TranceSeekCustomAPI.CustomStatus.Vieillissement);
+                    _v.Command.AbilityStatus |= (TranceSeekCustomStatus.Vieillissement);
                 }
                 else if (_v.Command.Power == 100) // Bass - Shackle Foe
                 {
-                    _v.Command.AbilityStatus |= (TranceSeekCustomAPI.CustomStatus.PowerBreak);
+                    _v.Command.AbilityStatus |= (TranceSeekCustomStatus.PowerBreak);
                 }
                 else if (_v.Command.Power == 101) // Bass - Armor Corrosive
                 {
-                    _v.Command.AbilityStatus |= (TranceSeekCustomAPI.CustomStatus.ArmorBreak);
+                    _v.Command.AbilityStatus |= (TranceSeekCustomStatus.ArmorBreak);
                 }
                 else if (_v.Command.AbilityId == (BattleAbilityId)1108) // Nightmara
                 {

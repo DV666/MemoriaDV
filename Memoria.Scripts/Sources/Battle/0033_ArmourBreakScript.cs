@@ -48,7 +48,7 @@ namespace Memoria.Scripts.Battle
                 TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
                 TranceSeekCustomAPI.BonusElement(_v);
                 _v.CalcHpDamage();
-                _v.Command.AbilityStatus |= TranceSeekCustomAPI.CustomStatus.ArmorBreak;
+                _v.Command.AbilityStatus |= TranceSeekCustomStatus.ArmorBreak;
                 TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
             } 
         }

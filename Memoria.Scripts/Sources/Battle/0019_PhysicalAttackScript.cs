@@ -53,7 +53,7 @@ namespace Memoria.Scripts.Battle
                     short CriticalBonus = _v.Caster.Data.critical_rate_deal_bonus;
                     _v.Caster.Data.critical_rate_deal_bonus += 33;
                     TranceSeekCustomAPI.TryCriticalHit(_v);
-                    if (_v.Target.IsUnderAnyStatus(TranceSeekCustomAPI.CustomStatus.Dragon) || (_v.Caster.IsUnderStatus(BattleStatus.Trance)))
+                    if (_v.Target.IsUnderAnyStatus(TranceSeekCustomStatus.Dragon) || (_v.Caster.IsUnderStatus(BattleStatus.Trance)))
                     {
                         if (_v.Caster.Will > Comn.random16() % 100)
                         {

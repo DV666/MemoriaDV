@@ -37,7 +37,7 @@ namespace Memoria.Scripts.Battle
                     {
                         _v.Command.AbilityCategory -= 16; // Remove Magical effect to prevent Vanish to dissapear.
                         _v.Target.TryRemoveStatuses(_v.Command.AbilityStatus);
-                        _v.Target.AlterStatus(TranceSeekCustomAPI.CustomStatus.MentalUp);
+                        _v.Target.AlterStatus(TranceSeekCustomStatus.MentalUp);
                     }
                     else
                     {
@@ -54,7 +54,7 @@ namespace Memoria.Scripts.Battle
                     {
                         _v.Command.AbilityCategory -= 16; // Remove Magical effect to prevent Vanish to dissapear.
                         _v.Target.TryRemoveStatuses(_v.Command.AbilityStatus);
-                        _v.Target.AlterStatus(TranceSeekCustomAPI.CustomStatus.ArmorUp);
+                        _v.Target.AlterStatus(TranceSeekCustomStatus.ArmorUp);
                     }
                     else
                     {
@@ -71,7 +71,7 @@ namespace Memoria.Scripts.Battle
                     {
                         _v.Command.AbilityCategory -= 16; // Remove Magical effect to prevent Vanish to dissapear.
                         _v.Target.TryRemoveStatuses(_v.Command.AbilityStatus);
-                        _v.Target.AlterStatus(TranceSeekCustomAPI.CustomStatus.MagicUp);
+                        _v.Target.AlterStatus(TranceSeekCustomStatus.MagicUp);
                     }
                     else
                     {
@@ -123,7 +123,7 @@ namespace Memoria.Scripts.Battle
                     {
                         _v.Command.AbilityCategory -= 16; // Remove Magical effect to prevent Vanish to dissapear.
                         _v.Target.TryRemoveStatuses(_v.Command.AbilityStatus);
-                        _v.Target.AlterStatus(TranceSeekCustomAPI.CustomStatus.PowerUp | TranceSeekCustomAPI.CustomStatus.MagicUp | TranceSeekCustomAPI.CustomStatus.ArmorUp | TranceSeekCustomAPI.CustomStatus.MentalUp);
+                        _v.Target.AlterStatus(TranceSeekCustomStatus.PowerUp | TranceSeekCustomStatus.MagicUp | TranceSeekCustomStatus.ArmorUp | TranceSeekCustomStatus.MentalUp);
                     }
                     else
                     {

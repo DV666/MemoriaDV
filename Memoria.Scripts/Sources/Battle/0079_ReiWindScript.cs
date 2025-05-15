@@ -36,7 +36,7 @@ namespace Memoria.Scripts.Battle
                 _v.CalcHpMagicRecovery();
                 if (!_v.Target.IsUnderAnyStatus(BattleStatus.Zombie))
                     _v.Target.Flags |= CalcFlag.HpRecovery;
-                if (_v.Target.IsUnderAnyStatus(TranceSeekCustomAPI.CustomStatus.Dragon) || _v.Caster.IsUnderAnyStatus(BattleStatus.Trance))
+                if (_v.Target.IsUnderAnyStatus(TranceSeekCustomStatus.Dragon) || _v.Caster.IsUnderAnyStatus(BattleStatus.Trance))
                     _v.Target.HpDamage *= 2;
                 if (_v.Target.IsUnderAnyStatus(BattleStatus.LowHP) || (_v.Target.CurrentHp <= _v.Target.MaximumHp / 4 && HPratio <= Comn.random16() % 100))
                 {

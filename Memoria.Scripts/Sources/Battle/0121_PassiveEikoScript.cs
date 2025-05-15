@@ -113,11 +113,11 @@ namespace Memoria.Scripts.Battle
                             break;
                         case (BattleAbilityId)2006: // Mog Esuna
                         case (BattleAbilityId)2017: // Moga Esuna
-                            _v.Target.RemoveStatus(BattleStatus.Poison | BattleStatus.Venom | BattleStatus.Silence | BattleStatus.Blind | BattleStatus.Trouble | BattleStatus.Mini | BattleStatus.Berserk | TranceSeekCustomAPI.CustomStatus.Vieillissement);
+                            _v.Target.RemoveStatus(BattleStatus.Poison | BattleStatus.Venom | BattleStatus.Silence | BattleStatus.Blind | BattleStatus.Trouble | BattleStatus.Mini | BattleStatus.Berserk | TranceSeekCustomStatus.Vieillissement);
                             break;
                         case (BattleAbilityId)2007: // Mog Support
                         case (BattleAbilityId)2018: // Moga Support
-                            _v.Command.AbilityStatus |= (TranceSeekCustomAPI.CustomStatus.MagicUp | TranceSeekCustomAPI.CustomStatus.MentalUp);
+                            _v.Command.AbilityStatus |= (TranceSeekCustomStatus.MagicUp | TranceSeekCustomStatus.MentalUp);
                             TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
                             break;
                         case (BattleAbilityId)2008: // Mog Life

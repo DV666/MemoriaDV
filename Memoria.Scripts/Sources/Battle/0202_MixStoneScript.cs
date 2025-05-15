@@ -426,8 +426,8 @@ namespace Memoria.Scripts.Battle
                     int statusrate = 0;
 
                     BattleStatusId[] statuslist = { BattleStatusId.Protect, BattleStatusId.Shell, BattleStatusId.Regen, BattleStatusId.AutoLife, BattleStatusId.Trance,
-                    BattleStatusId.Reflect, BattleStatusId.Haste, BattleStatusId.Vanish, BattleStatusId.Float, TranceSeekCustomAPI.CustomStatusId.ArmorUp,
-                    TranceSeekCustomAPI.CustomStatusId.MagicUp, TranceSeekCustomAPI.CustomStatusId.MentalUp, TranceSeekCustomAPI.CustomStatusId.PowerUp};
+                    BattleStatusId.Reflect, BattleStatusId.Haste, BattleStatusId.Vanish, BattleStatusId.Float, TranceSeekCustomStatusId.ArmorUp,
+                    TranceSeekCustomStatusId.MagicUp, TranceSeekCustomStatusId.MentalUp, TranceSeekCustomStatusId.PowerUp};
 
                     for (Int32 i = 0; i < statuslist.Length; i++)
                     {

@@ -38,7 +38,7 @@ namespace Memoria.Scripts.Battle
                 }
                 case (BattleAbilityId)1146: // Ingrédient secret
                 {
-                    btl_stat.AlterStatus(_v.Target, TranceSeekCustomAPI.CustomStatusId.Special, parameters: "Secretingredient++");
+                    btl_stat.AlterStatus(_v.Target, TranceSeekCustomStatusId.Special, parameters: "Secretingredient++");
                     break;
                 }
                 case (BattleAbilityId)1147: // Lame trempée
@@ -206,9 +206,9 @@ namespace Memoria.Scripts.Battle
                         case (RegularItem)1003:
                         {
                             _v.Command.AbilityStatus = ff9item.GetItemEffect(ItemChoosen).status;
-                            if ((_v.Command.ItemId == RegularItem.Remedy || _v.Command.ItemId == RegularItem.Annoyntment || _v.Command.ItemId == (RegularItem)1003) && _v.Target.IsUnderAnyStatus(TranceSeekCustomAPI.CustomStatus.Vieillissement))
+                            if ((_v.Command.ItemId == RegularItem.Remedy || _v.Command.ItemId == RegularItem.Annoyntment || _v.Command.ItemId == (RegularItem)1003) && _v.Target.IsUnderAnyStatus(TranceSeekCustomStatus.Vieillissement))
                             {
-                                _v.Command.AbilityStatus |= TranceSeekCustomAPI.CustomStatus.Vieillissement;
+                                _v.Command.AbilityStatus |= TranceSeekCustomStatus.Vieillissement;
                             }
                             TranceSeekCustomAPI.TryRemoveAbilityStatuses(_v);
                             break;
@@ -237,7 +237,7 @@ namespace Memoria.Scripts.Battle
                 }
                 case (BattleAbilityId)1151: // Maître Alchimiste
                 {
-                    btl_stat.AlterStatus(_v.Target, TranceSeekCustomAPI.CustomStatusId.Special, parameters: "MasterofAlchemy");
+                    btl_stat.AlterStatus(_v.Target, TranceSeekCustomStatusId.Special, parameters: "MasterofAlchemy");
                     break;
                 }                
             }

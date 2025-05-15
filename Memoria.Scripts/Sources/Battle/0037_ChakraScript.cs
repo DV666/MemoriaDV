@@ -59,7 +59,7 @@ namespace Memoria.Scripts.Battle
                 }
                 else // Ogre - Zenitude
                 {
-                    btl_stat.AlterStatus(_v.Target, TranceSeekCustomAPI.CustomStatusId.PerfectCrit, parameters: $"+9");
+                    btl_stat.AlterStatus(_v.Target, TranceSeekCustomStatusId.PerfectCrit, parameters: $"+9");
                     TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
                 }
             }

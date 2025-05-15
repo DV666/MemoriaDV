@@ -251,9 +251,9 @@ namespace Memoria.Scripts.Battle
                     HPHeal = (int)(_v.Target.MaximumHp);
                     MPHeal = (int)(_v.Target.MaximumMp);
                     if (_v.Command.ItemId == (RegularItem)2025 || _v.Command.ItemId == (RegularItem)2032) // Ultra Elixir + Ultra Megalixir
-                        _v.Target.AlterStatus(TranceSeekCustomAPI.CustomStatus.ArmorUp, _v.Target);
+                        _v.Target.AlterStatus(TranceSeekCustomStatus.ArmorUp, _v.Target);
                     else if (_v.Command.ItemId == (RegularItem)2027 || _v.Command.ItemId == (RegularItem)2034) // Elixir fabuleux + Megalixir fabuleux
-                        _v.Target.AlterStatus(TranceSeekCustomAPI.CustomStatus.MentalUp, _v.Target);
+                        _v.Target.AlterStatus(TranceSeekCustomStatus.MentalUp, _v.Target);
 
                     _v.Target.TryAlterStatuses(_v.Command.Item.Status, false);
                     break;
@@ -277,7 +277,7 @@ namespace Memoria.Scripts.Battle
                     if (_v.Command.ItemId == (RegularItem)2037) // Reviviscence
                     {
                         BattleStatusId[] statuslist = { BattleStatusId.Protect, BattleStatusId.Shell, BattleStatusId.Regen, BattleStatusId.AutoLife,
-                            TranceSeekCustomAPI.CustomStatusId.ArmorUp, TranceSeekCustomAPI.CustomStatusId.MentalUp};
+                            TranceSeekCustomStatusId.ArmorUp, TranceSeekCustomStatusId.MentalUp};
 
                         BattleStatusId statusselected = statuslist[GameRandom.Next16() % statuslist.Length];
                         btl_stat.AlterStatus(_v.Target, statusselected, _v.Caster);
@@ -288,8 +288,8 @@ namespace Memoria.Scripts.Battle
                         _v.Target.AlterStatus(BattleStatus.Shell, _v.Target);
                         _v.Target.AlterStatus(BattleStatus.AutoLife, _v.Target);
                         _v.Target.AlterStatus(BattleStatus.Regen, _v.Target);
-                        _v.Target.AlterStatus(TranceSeekCustomAPI.CustomStatus.ArmorUp, _v.Target);
-                        _v.Target.AlterStatus(TranceSeekCustomAPI.CustomStatus.MentalUp, _v.Target);
+                        _v.Target.AlterStatus(TranceSeekCustomStatus.ArmorUp, _v.Target);
+                        _v.Target.AlterStatus(TranceSeekCustomStatus.MentalUp, _v.Target);
                     }
                     _v.Target.RemoveStatus(BattleStatus.Death);
                     if (_v.Command.ItemId == (RegularItem)2019) // Réselixir

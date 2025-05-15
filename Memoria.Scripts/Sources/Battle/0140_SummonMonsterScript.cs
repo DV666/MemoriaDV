@@ -688,7 +688,7 @@ namespace Memoria.Scripts.Battle
                         {
                             if (_v.IsTargetLevelMultipleOfCommandRate() && _v.Target.CanBeAttacked())
                             {
-                                _v.Target.AlterStatus(TranceSeekCustomAPI.CustomStatus.Vieillissement);
+                                _v.Target.AlterStatus(TranceSeekCustomStatus.Vieillissement);
                             }
                             else
                             {
@@ -714,8 +714,8 @@ namespace Memoria.Scripts.Battle
                                 _v.CalcHpDamage();
                             }
                             TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
-                            btl_stat.AlterStatus(_v.Target, TranceSeekCustomAPI.CustomStatusId.ArmorBreak, parameters: "+2");
-                            btl_stat.AlterStatus(_v.Target, TranceSeekCustomAPI.CustomStatusId.MentalBreak, parameters: "+2");
+                            btl_stat.AlterStatus(_v.Target, TranceSeekCustomStatusId.ArmorBreak, parameters: "+2");
+                            btl_stat.AlterStatus(_v.Target, TranceSeekCustomStatusId.MentalBreak, parameters: "+2");
                         }
                         break;
                     }
@@ -846,7 +846,7 @@ namespace Memoria.Scripts.Battle
                             TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
                             TranceSeekCustomAPI.BonusElement(_v);
                             _v.CalcHpDamage();
-                            _v.Command.AbilityStatus |= TranceSeekCustomAPI.CustomStatus.ArmorBreak;
+                            _v.Command.AbilityStatus |= TranceSeekCustomStatus.ArmorBreak;
                             TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
                         }
                         break;
@@ -882,7 +882,7 @@ namespace Memoria.Scripts.Battle
                             TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
                             TranceSeekCustomAPI.BonusElement(_v);
                             _v.CalcHpDamage();
-                            _v.Command.AbilityStatus |= TranceSeekCustomAPI.CustomStatus.PowerBreak;
+                            _v.Command.AbilityStatus |= TranceSeekCustomStatus.PowerBreak;
                             TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
                         }
                         break;
@@ -918,7 +918,7 @@ namespace Memoria.Scripts.Battle
                             TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
                             TranceSeekCustomAPI.BonusElement(_v);
                             _v.CalcHpDamage();
-                            _v.Command.AbilityStatus |= TranceSeekCustomAPI.CustomStatus.MentalBreak;
+                            _v.Command.AbilityStatus |= TranceSeekCustomStatus.MentalBreak;
                             TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
                         }
                         break;
@@ -986,8 +986,8 @@ namespace Memoria.Scripts.Battle
                     case (BattleAbilityId)1335: // Lamia - Might
                     {
                         TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
-                        btl_stat.AlterStatus(_v.Target, TranceSeekCustomAPI.CustomStatusId.PowerUp, parameters: $"+{_v.Command.Power}");
-                        btl_stat.AlterStatus(_v.Target, TranceSeekCustomAPI.CustomStatusId.MagicUp, parameters: $"+{_v.Command.Power}");
+                        btl_stat.AlterStatus(_v.Target, TranceSeekCustomStatusId.PowerUp, parameters: $"+{_v.Command.Power}");
+                        btl_stat.AlterStatus(_v.Target, TranceSeekCustomStatusId.MagicUp, parameters: $"+{_v.Command.Power}");
                         break;
                     }
                     // STEAL SCRIPT - Script 58

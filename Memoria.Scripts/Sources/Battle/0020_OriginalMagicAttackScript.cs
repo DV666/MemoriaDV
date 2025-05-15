@@ -48,8 +48,8 @@ namespace Memoria.Scripts.Battle
                 {
                     BattleStatusId[] statuslist = { BattleStatusId.Poison, BattleStatusId.Venom, BattleStatusId.Blind, BattleStatusId.Silence, BattleStatusId.Trouble,
                     BattleStatusId.Sleep, BattleStatusId.Freeze, BattleStatusId.Heat, BattleStatusId.Doom, BattleStatusId.Mini, BattleStatusId.Petrify, BattleStatusId.GradualPetrify,
-                    BattleStatusId.Berserk, BattleStatusId.Confuse, BattleStatusId.Stop, BattleStatusId.Zombie, BattleStatusId.Slow, TranceSeekCustomAPI.CustomStatusId.Vieillissement,
-                    TranceSeekCustomAPI.CustomStatusId.ArmorBreak, TranceSeekCustomAPI.CustomStatusId.MagicBreak, TranceSeekCustomAPI.CustomStatusId.MentalBreak, TranceSeekCustomAPI.CustomStatusId.PowerBreak};
+                    BattleStatusId.Berserk, BattleStatusId.Confuse, BattleStatusId.Stop, BattleStatusId.Zombie, BattleStatusId.Slow, TranceSeekCustomStatusId.Vieillissement,
+                    TranceSeekCustomStatusId.ArmorBreak, TranceSeekCustomStatusId.MagicBreak, TranceSeekCustomStatusId.MentalBreak, TranceSeekCustomStatusId.PowerBreak};
 
                     List<BattleStatusId> statuschoosen = new List<BattleStatusId>();
 
@@ -57,7 +57,7 @@ namespace Memoria.Scripts.Battle
                     {
                         if ((statuslist[i].ToBattleStatus() & _v.Target.ResistStatus) == 0)
                         {
-                            if (statuslist[i] == TranceSeekCustomAPI.CustomStatusId.Vieillissement && _v.Target.IsUnderAnyStatus(BattleStatus.EasyKill))
+                            if (statuslist[i] == TranceSeekCustomStatusId.Vieillissement && _v.Target.IsUnderAnyStatus(BattleStatus.EasyKill))
                                 continue;
 
                             statuschoosen.Add(statuslist[i]);
@@ -129,7 +129,7 @@ namespace Memoria.Scripts.Battle
                 if (_v.Caster.PlayerIndex == CharacterId.Freya) // Dragon abilities
                 {
                     TranceSeekCustomAPI.TryCriticalHit(_v);
-                    if (_v.Target.IsUnderAnyStatus(TranceSeekCustomAPI.CustomStatus.Dragon) || _v.Caster.IsUnderStatus(BattleStatus.Trance))
+                    if (_v.Target.IsUnderAnyStatus(TranceSeekCustomStatus.Dragon) || _v.Caster.IsUnderStatus(BattleStatus.Trance))
                     {
                         switch (_v.Command.AbilityId)
                         {

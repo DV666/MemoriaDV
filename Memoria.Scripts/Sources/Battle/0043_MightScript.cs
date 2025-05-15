@@ -29,10 +29,10 @@ namespace Memoria.Scripts.Battle
                     _v.Context.Flags |= BattleCalcFlags.Miss;
                     return;
                 }
-                btl_stat.AlterStatus(_v.Target, CustomStatusId.PowerUp, parameters: $"+{_v.Command.Power}");
-                btl_stat.AlterStatus(_v.Target, CustomStatusId.MagicUp, parameters: $"+{_v.Command.Power}");
-                _v.Target.AlterStatus(CustomStatus.Redemption, _v.Caster);
-                _v.Target.AlterStatus(CustomStatus.Redemption, _v.Caster);
+                btl_stat.AlterStatus(_v.Target, TranceSeekCustomStatusId.PowerUp, parameters: $"+{_v.Command.Power}");
+                btl_stat.AlterStatus(_v.Target, TranceSeekCustomStatusId.MagicUp, parameters: $"+{_v.Command.Power}");
+                _v.Target.AlterStatus(TranceSeekCustomStatus.Redemption, _v.Caster);
+                _v.Target.AlterStatus(TranceSeekCustomStatus.Redemption, _v.Caster);
                 if (_v.Caster.IsUnderAnyStatus(BattleStatus.Trance))
                 {
                     BeatrixPassive[_v.Caster.Data][2] = 2;
@@ -47,8 +47,8 @@ namespace Memoria.Scripts.Battle
             }
             else if (_v.Caster.Data.dms_geo_id == 410 && _v.Command.Power == 2 || (_v.Caster.Data.dms_geo_id == 410 && _v.Command.Power == 4 || _v.Command.AbilityId == (BattleAbilityId)1081)) // [Lani] Adrénaline + Super Muscles
             {
-                btl_stat.AlterStatus(_v.Target, CustomStatusId.PowerUp, parameters: $"+{_v.Command.Power}");
-                btl_stat.AlterStatus(_v.Target, CustomStatusId.ArmorUp, parameters: $"+{_v.Command.Power}");
+                btl_stat.AlterStatus(_v.Target, TranceSeekCustomStatusId.PowerUp, parameters: $"+{_v.Command.Power}");
+                btl_stat.AlterStatus(_v.Target, TranceSeekCustomStatusId.ArmorUp, parameters: $"+{_v.Command.Power}");
                 return;
             }
             else if (_v.Command.HitRate == 77) // [Divinorum] Knowledge of the Elders
@@ -83,8 +83,8 @@ namespace Memoria.Scripts.Battle
             }
 
             TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
-            btl_stat.AlterStatus(_v.Target, CustomStatusId.PowerUp, parameters: $"+{_v.Command.Power}");
-            btl_stat.AlterStatus(_v.Target, CustomStatusId.MagicUp, parameters: $"+{_v.Command.Power}");
+            btl_stat.AlterStatus(_v.Target, TranceSeekCustomStatusId.PowerUp, parameters: $"+{_v.Command.Power}");
+            btl_stat.AlterStatus(_v.Target, TranceSeekCustomStatusId.MagicUp, parameters: $"+{_v.Command.Power}");
         }
     }
 }

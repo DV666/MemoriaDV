@@ -51,7 +51,7 @@ namespace Memoria.DefaultScripts
                 BeatrixPassive[target.Data][2] = 0;
             }
             if (!target.HasSupportAbilityByIndex((SupportAbility)1232)) // SA Expiation+
-                btl_stat.RemoveStatus(target, CustomStatusId.Redemption);
+                btl_stat.RemoveStatus(target, TranceSeekCustomStatusId.Redemption);
             return btl_stat.ALTER_SUCCESS;
         }
 

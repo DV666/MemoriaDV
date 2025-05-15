@@ -33,8 +33,8 @@ namespace Memoria.Scripts.Battle
                 }
 
                 List<BattleStatusId> statuslist = new List<BattleStatusId>{ BattleStatusId.Protect, BattleStatusId.Shell, BattleStatusId.Haste, BattleStatusId.Reflect, BattleStatusId.Regen,
-                    BattleStatusId.AutoLife, BattleStatusId.Float, BattleStatusId.Vanish, TranceSeekCustomAPI.CustomStatusId.ArmorUp,
-                    TranceSeekCustomAPI.CustomStatusId.MagicUp, TranceSeekCustomAPI.CustomStatusId.MentalUp, TranceSeekCustomAPI.CustomStatusId.PowerUp};
+                    BattleStatusId.AutoLife, BattleStatusId.Float, BattleStatusId.Vanish, TranceSeekCustomStatusId.ArmorUp,
+                    TranceSeekCustomStatusId.MagicUp, TranceSeekCustomStatusId.MentalUp, TranceSeekCustomStatusId.PowerUp};
 
                 BattleStatusId statusselected;
                 while (TranceSeekCustomAPI.ViviPassive[_v.Caster.Data][0] > 0)
@@ -49,18 +49,18 @@ namespace Memoria.Scripts.Battle
 
             if ( _v.Command.AbilityId == (BattleAbilityId)1104 && (_v.Caster.ResistStatus & BattleStatus.Doom) == 0) // Sang Maudit
             {
-                btl_stat.AlterStatus(_v.Target, TranceSeekCustomAPI.CustomStatusId.PowerUp, parameters: $"+{_v.Command.Power}");
-                btl_stat.AlterStatus(_v.Target, TranceSeekCustomAPI.CustomStatusId.MagicUp, parameters: $"+{_v.Command.Power}");
-                btl_stat.AlterStatus(_v.Target, TranceSeekCustomAPI.CustomStatusId.ArmorUp, parameters: $"+{_v.Command.Power}");
-                btl_stat.AlterStatus(_v.Target, TranceSeekCustomAPI.CustomStatusId.MentalUp, parameters: $"+{_v.Command.Power}");
-                btl_stat.AlterStatus(_v.Target, TranceSeekCustomAPI.CustomStatusId.Special, parameters: "LifeorDeath++");
+                btl_stat.AlterStatus(_v.Target, TranceSeekCustomStatusId.PowerUp, parameters: $"+{_v.Command.Power}");
+                btl_stat.AlterStatus(_v.Target, TranceSeekCustomStatusId.MagicUp, parameters: $"+{_v.Command.Power}");
+                btl_stat.AlterStatus(_v.Target, TranceSeekCustomStatusId.ArmorUp, parameters: $"+{_v.Command.Power}");
+                btl_stat.AlterStatus(_v.Target, TranceSeekCustomStatusId.MentalUp, parameters: $"+{_v.Command.Power}");
+                btl_stat.AlterStatus(_v.Target, TranceSeekCustomStatusId.Special, parameters: "LifeorDeath++");
                 btl_stat.MakeStatusesPermanent(_v.Target, BattleStatus.Doom, true);
                 _v.Target.AddDelayedModifier(
                     target => !target.IsUnderAnyStatus(BattleStatus.Death),
                     target =>
                     {
                         btl_stat.MakeStatusesPermanent(target, BattleStatus.Doom, false);
-                        btl_stat.AlterStatus(target, TranceSeekCustomAPI.CustomStatusId.Special, parameters: "LifeorDeath--");
+                        btl_stat.AlterStatus(target, TranceSeekCustomStatusId.Special, parameters: "LifeorDeath--");
                         btl_stat.RemoveStatus(target, BattleStatusId.Doom);
                     }
                 );
@@ -69,15 +69,15 @@ namespace Memoria.Scripts.Battle
 
             if (_v.Command.AbilityId == (BattleAbilityId)1099) // Iron Clast
             {
-                _v.Command.AbilityStatus |= TranceSeekCustomAPI.CustomStatus.ArmorUp;
+                _v.Command.AbilityStatus |= TranceSeekCustomStatus.ArmorUp;
             }
             else if (_v.Command.AbilityId == (BattleAbilityId)1007) // Rempart
             {
-                _v.Command.AbilityStatus |= TranceSeekCustomAPI.CustomStatus.Bulwark;
+                _v.Command.AbilityStatus |= TranceSeekCustomStatus.Bulwark;
             }
             else if (_v.Command.AbilityId == (BattleAbilityId)1059) // Runic
             {
-                _v.Command.AbilityStatus |= TranceSeekCustomAPI.CustomStatus.Runic;
+                _v.Command.AbilityStatus |= TranceSeekCustomStatus.Runic;
             }
             if (!_v.Target.IsPlayer)
             {
@@ -117,7 +117,7 @@ namespace Memoria.Scripts.Battle
             }
             else if (_v.Caster.Data.dms_geo_id == 412 && _v.Command.Power == 99) // Vin de Bacchus
             {
-                btl_stat.AlterStatus(_v.Target, TranceSeekCustomAPI.CustomStatusId.PowerUp, parameters: "4");
+                btl_stat.AlterStatus(_v.Target, TranceSeekCustomStatusId.PowerUp, parameters: "4");
             }
             TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
             if (_v.Command.AbilityId == (BattleAbilityId)1137) // Spring Boots

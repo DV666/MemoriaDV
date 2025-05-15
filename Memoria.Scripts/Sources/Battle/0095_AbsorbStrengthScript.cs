@@ -20,8 +20,8 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            _v.Caster.AlterStatus(TranceSeekCustomAPI.CustomStatus.PowerUp, _v.Caster);
-            _v.Target.AlterStatus(TranceSeekCustomAPI.CustomStatus.PowerBreak, _v.Caster);
+            _v.Caster.AlterStatus(TranceSeekCustomStatus.PowerUp, _v.Caster);
+            _v.Target.AlterStatus(TranceSeekCustomStatus.PowerBreak, _v.Caster);
         }
     }
 }

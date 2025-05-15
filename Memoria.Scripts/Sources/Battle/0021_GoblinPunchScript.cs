@@ -98,7 +98,7 @@ namespace Memoria.Scripts.Battle
                                 _v.Caster.HpDamage = _v.Target.HpDamage / 2;
                             }
                             TranceSeekCustomAPI.RaiseTrouble(_v);
-                            btl_stat.AlterStatus(_v.Caster, TranceSeekCustomAPI.CustomStatusId.Special, parameters: "Duelist--");
+                            btl_stat.AlterStatus(_v.Caster, TranceSeekCustomStatusId.Special, parameters: "Duelist--");
                         }
                     }
                 }

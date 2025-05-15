@@ -429,6 +429,10 @@
     <Compile Include="Sources\Battle\GradualPetrifyStatusScript.cs" />
     <Compile Include="Sources\Battle\HasteStatusScript.cs" />
     <Compile Include="Sources\Battle\MiniStatusScript.cs" />
+    <Compile Include="Sources\Battle\TranceSeekCustomBattleAbility.cs" />
+    <Compile Include="Sources\Battle\TranceSeekCustomSupportAbility.cs" />
+    <Compile Include="Sources\Battle\TranceSeekCustomStatusId.cs" />
+    <Compile Include="Sources\Battle\TranceSeekCustomStatus.cs" />
     <Compile Include="Sources\Battle\PetrifyStatusScript.cs" />
     <Compile Include="Sources\Battle\ProtectStatusScript.cs" />
     <Compile Include="Sources\Battle\ProvokStatusScript.cs" />

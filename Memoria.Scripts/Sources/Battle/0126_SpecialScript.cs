@@ -23,7 +23,7 @@ namespace Memoria.Scripts.Battle
         {
             if (_v.Command.AbilityId == (BattleAbilityId)1102) // Sang Maudit
             {
-                btl_stat.AlterStatus(_v.Target, CustomStatusId.Special, _v.Caster, true, "CursedBlood");
+                btl_stat.AlterStatus(_v.Target, TranceSeekCustomStatusId.Special, _v.Caster, true, "CursedBlood");
             }
             else if (_v.Caster.Data.dms_geo_id == 349 && _v.Command.Power == 10 && _v.Command.HitRate == 10) // Gisamark - Plongée
             {
@@ -46,7 +46,7 @@ namespace Memoria.Scripts.Battle
             {
                 _v.Caster.Data.mot[0] = "ANH_MON_B3_122_BTL_DEFENDIDLE";
                 _v.Caster.Data.mot[2] = "ANH_MON_B3_122_BTL_DEFENDIDLE";
-                btl_stat.MakeStatusesPermanent(_v.Caster, CustomStatus.Runic, true);
+                btl_stat.MakeStatusesPermanent(_v.Caster, TranceSeekCustomStatus.Runic, true);
                 btl_stat.MakeStatusesPermanent(_v.Caster, BattleStatus.Defend, true);
             }
 
