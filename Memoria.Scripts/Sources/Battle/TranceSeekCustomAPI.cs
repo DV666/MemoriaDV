@@ -829,8 +829,9 @@ namespace Memoria.Scripts.Battle
             if (ViviPassive[v.Caster.Data][2] == 0)
             {
                 ViviPassive[v.Caster.Data][2] = 1;
+                Int32 counter = 25;
                 v.Caster.AddDelayedModifier(
-                    caster => caster.CurrentAtb >= caster.MaximumAtb,
+                    caster => (counter -= BattleState.ATBTickCount) > 0,
                     caster =>
                     {
                         ViviPassive[v.Caster.Data][1] = 0;
@@ -839,7 +840,7 @@ namespace Memoria.Scripts.Battle
                 );
                 if (v.Caster.PlayerIndex == CharacterId.Vivi)
                 {
-                    if ((v.Command.Id == BattleCommandId.BlackMagic || v.Command.Id == BattleCommandId.DoubleBlackMagic))
+                    if ((v.Command.Id == BattleCommandId.BlackMagic || v.Command.Id == BattleCommandId.DoubleBlackMagic) || v.Command.Id == (BattleCommandId)1032)
                     {
                         if (ViviPassive[v.Caster.Data][1] == 0)
                         {
@@ -930,7 +931,8 @@ namespace Memoria.Scripts.Battle
                         }
                     }
                 }
-                else if (v.Caster.PlayerIndex == CharacterId.Steiner && v.Command.Id == BattleCommandId.MagicSword)
+                else if (v.Caster.PlayerIndex == CharacterId.Steiner && v.Command.Id == BattleCommandId.MagicSword && v.Command.AbilityId != (BattleAbilityId)1571 &&
+                    v.Command.AbilityId != (BattleAbilityId)1572 && v.Command.AbilityId != (BattleAbilityId)1573 && v.Command.AbilityId != (BattleAbilityId)1574)
                 {
                     if (ViviPassive[v.Caster.Data][1] == 0)
                     {

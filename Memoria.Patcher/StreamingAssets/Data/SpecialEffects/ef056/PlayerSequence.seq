@@ -36,8 +36,7 @@ StartThread: Condition=AbilityId == 167
 	WaitTurn: Char=Caster
 	ActivateReflect
 	WaitReflect
-EndThread
-StartThread: Condition=AbilityId != 167
+ElseThread
 	WaitAnimation: Char=Caster
 	StartThread: Condition=CasterRow == 0 && AreCasterAndSelectedTargetsEnemies ; Sync=True
 		MoveToPosition: Char=Caster ; RelativePosition=(0, 0, 400) ; Anim=MP_STEP_FORWARD
