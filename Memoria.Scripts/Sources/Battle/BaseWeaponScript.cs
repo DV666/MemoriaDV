@@ -52,7 +52,7 @@ namespace Memoria.Scripts.Battle
             }
             if (TranceSeekAPI.TryPhysicalHit(_v) || _v.Command.AbilityId == (BattleAbilityId)1161) // Attack from King Leo
             {
-                if (_v.Command.Id == (BattleCommandId)1050 || _v.Command.Id == TranceSeekBattleCommand.MagicWeapon_Normal || _v.Command.Id == (BattleCommandId)1052)
+                if (_v.Command.Id == TranceSeekBattleCommand.MagicWeapon_Weak || _v.Command.Id == TranceSeekBattleCommand.MagicWeapon_Normal || _v.Command.Id == TranceSeekBattleCommand.MagicWeapon_Strong)
                 {
                     _v.Target.RemoveStatus(BattleStatusConst.RemoveOnPhysicallyAttacked & ~_v.Context.AddedStatuses);
                     if (FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1050, out Dictionary<Int32, Int32> dict))
