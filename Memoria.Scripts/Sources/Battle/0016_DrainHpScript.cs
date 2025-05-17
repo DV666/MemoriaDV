@@ -31,10 +31,10 @@ namespace Memoria.Scripts.Battle
 
                     Int32 damage = 0;
                     _v.NormalMagicParams();
-                    TranceSeekCustomAPI.CharacterBonusPassive(_v, "MagicAttack");
-                    TranceSeekCustomAPI.CasterPenaltyMini(_v);
-                    TranceSeekCustomAPI.EnemyTranceBonusAttack(_v);
-                    TranceSeekCustomAPI.PenaltyShellAttack(_v);
+                    TranceSeekAPI.CharacterBonusPassive(_v, "MagicAttack");
+                    TranceSeekAPI.CasterPenaltyMini(_v);
+                    TranceSeekAPI.EnemyTranceBonusAttack(_v);
+                    TranceSeekAPI.PenaltyShellAttack(_v);
                     _v.Target.Flags |= CalcFlag.MpAlteration;
                     _v.Caster.Flags |= CalcFlag.MpAlteration;
 
@@ -79,14 +79,14 @@ namespace Memoria.Scripts.Battle
             {
                 uint currentHp = _v.Target.CurrentHp;
                 _v.NormalMagicParams();
-                TranceSeekCustomAPI.CharacterBonusPassive(_v, "MagicAttack");
-                TranceSeekCustomAPI.EnemyTranceBonusAttack(_v);
-                TranceSeekCustomAPI.BonusElement(_v);
-                TranceSeekCustomAPI.CasterPenaltyMini(_v);
+                TranceSeekAPI.CharacterBonusPassive(_v, "MagicAttack");
+                TranceSeekAPI.EnemyTranceBonusAttack(_v);
+                TranceSeekAPI.BonusElement(_v);
+                TranceSeekAPI.CasterPenaltyMini(_v);
                 if (_v.Command.HitRate != 111)
-                    TranceSeekCustomAPI.PenaltyShellAttack(_v);
+                    TranceSeekAPI.PenaltyShellAttack(_v);
                 if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)102))
-                    TranceSeekCustomAPI.TryCriticalHit(_v);
+                    TranceSeekAPI.TryCriticalHit(_v);
                 if (_v.Command.HitRate == 254)
                 {
                     _v.Caster.Flags |= CalcFlag.HpDamageOrHeal | CalcFlag.MpDamageOrHeal;
@@ -101,13 +101,13 @@ namespace Memoria.Scripts.Battle
                     }
                     _v.Target.MpDamage = num;
                     _v.Caster.MpDamage = num;
-                    TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
+                    TranceSeekAPI.TryAlterMagicStatuses(_v);
                 }
                 else
                 {
-                    if (TranceSeekCustomAPI.CanAttackMagic(_v))
+                    if (TranceSeekAPI.CanAttackMagic(_v))
                     {
-                        TranceSeekCustomAPI.PrepareHpDraining(_v);
+                        TranceSeekAPI.PrepareHpDraining(_v);
                         if (_v.Command.HitRate == 222) // Prison Cage CD4 - Vampire
                         {
                             if (_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill) || _v.Target.Data.dms_geo_id == 557 || _v.Target.Data.dms_geo_id == 558) // Vivi & Dagga from CD1.
@@ -122,8 +122,8 @@ namespace Memoria.Scripts.Battle
                             else
                                 _v.Target.HpDamage = (int)(_v.Target.MaximumHp / 2) + 1;
 
-                            _v.Caster.AlterStatus(TranceSeekCustomStatus.PowerUp, _v.Caster);
-                            _v.Caster.AlterStatus(TranceSeekCustomStatus.MagicUp, _v.Caster);
+                            _v.Caster.AlterStatus(TranceSeekStatus.PowerUp, _v.Caster);
+                            _v.Caster.AlterStatus(TranceSeekStatus.MagicUp, _v.Caster);
                         }
                         else if (_v.Command.HitRate == 224) // Plant Brain CD1
                         {
@@ -132,8 +132,8 @@ namespace Memoria.Scripts.Battle
                             else
                                 _v.Target.HpDamage = (int)(_v.Target.MaximumHp / 3) + 1;
 
-                            _v.Caster.AlterStatus(TranceSeekCustomStatus.PowerUp, _v.Caster);
-                            _v.Caster.AlterStatus(TranceSeekCustomStatus.MagicUp, _v.Caster);
+                            _v.Caster.AlterStatus(TranceSeekStatus.PowerUp, _v.Caster);
+                            _v.Caster.AlterStatus(TranceSeekStatus.MagicUp, _v.Caster);
                         }
                         else if (_v.Command.HitRate == 255) // Crowler - Deadly Drain
                         {
@@ -154,7 +154,7 @@ namespace Memoria.Scripts.Battle
                                     _v.Caster.HpDamage = _v.Target.HpDamage;
                                 }
                             }
-                            TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
+                            TranceSeekAPI.TryAlterMagicStatuses(_v);
                         }
                     }
                 }

@@ -4,7 +4,7 @@ using Memoria.Data;
 using Memoria.Prime;
 using System;
 using System.Collections.Generic;
-using static Memoria.Scripts.Battle.TranceSeekCustomAPI;
+using static Memoria.Scripts.Battle.TranceSeekAPI;
 
 namespace Memoria.Scripts.Battle
 {
@@ -58,10 +58,10 @@ namespace Memoria.Scripts.Battle
                 v.Target.HpDamage = (Int32)Math.Round(modifier_factor * v.Target.HpDamage) * reflectMultiplier;
                 if (v.Target.PlayerIndex == (CharacterId)12 && (v.Target.Flags & CalcFlag.HpRecovery) == 0) // Lani's Rage Mechanic
                 {
-                    v.Target.AlterStatus(TranceSeekCustomStatus.Rage, v.Caster);
+                    v.Target.AlterStatus(TranceSeekStatus.Rage, v.Caster);
                     if (v.Target.HasSupportAbilityByIndex((SupportAbility)236) && (v.Target.HasSupportAbilityByIndex((SupportAbility)1236) ? 50 : 25) < Comn.random16() % 100) // SA Enraged
                     {
-                        v.Target.AlterStatus(TranceSeekCustomStatus.Rage, v.Caster);
+                        v.Target.AlterStatus(TranceSeekStatus.Rage, v.Caster);
                     }
                     if (v.Target.HasSupportAbilityByIndex((SupportAbility)238)) // SA Crisis level
                     {
@@ -105,17 +105,17 @@ namespace Memoria.Scripts.Battle
                     v.Target.HpDamage /= 2;
             }
 
-            if (v.Caster.IsUnderAnyStatus(TranceSeekCustomStatus.Special) && v.Command.Id == BattleCommandId.Item && (v.Target.Flags & CalcFlag.HpRecovery) != 0) // Secret ingredient
+            if (v.Caster.IsUnderAnyStatus(TranceSeekStatus.Special) && v.Command.Id == BattleCommandId.Item && (v.Target.Flags & CalcFlag.HpRecovery) != 0) // Secret ingredient
             {
                 object Secretingredient = v.Caster.GetPropertyByName("StatusProperty CustomStatus21 Secretingredient");
                 if ((int)Secretingredient > 0)
                 {
                     v.Target.HpDamage *= 2;
-                    btl_stat.AlterStatus(v.Caster, TranceSeekCustomStatusId.Special, parameters: "Secretingredient--");
+                    btl_stat.AlterStatus(v.Caster, TranceSeekStatusId.Special, parameters: "Secretingredient--");
                 }
             }
 
-            TranceSeekCustomAPI.SpecialSA(v);
+            TranceSeekAPI.SpecialSA(v);
 
             if (v.Target.PlayerIndex == CharacterId.Amarant && SpecialSAEffect[v.Target.Data][0] == 1 && (v.Command.AbilityCategory & 8) != 0 && v.Target.IsUnderAnyStatus(BattleStatus.Defend)) // Dual Amarant
             {
@@ -189,7 +189,7 @@ namespace Memoria.Scripts.Battle
 
             if (v.Target.IsCovering && v.Target.HasSupportAbilityByIndex((SupportAbility)213)) // SA Duelist
             {
-                btl_stat.AlterStatus(v.Target, TranceSeekCustomStatusId.Special, parameters: "Duelist++");
+                btl_stat.AlterStatus(v.Target, TranceSeekStatusId.Special, parameters: "Duelist++");
             }
 
             if ((v.Target.Flags & CalcFlag.HpRecovery) != 0 && v.Caster.HasSupportAbilityByIndex((SupportAbility)127) && !v.Target.IsZombie && v.Target.HpDamage > (v.Target.MaximumHp - v.Target.CurrentHp)) // SA Invigorating

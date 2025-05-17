@@ -30,23 +30,23 @@ namespace Memoria.Scripts.Battle
                 if (!NumberTargets.TryGetValue(_v.Caster.Data, out Int32 Targets))
                     NumberTargets[_v.Caster.Data] = 0;
 
-                if (TranceSeekCustomAPI.StateMoug[_v.Caster.Data] == 1 && TranceSeekCustomAPI.ModelMoug[_v.Caster.Data] == null) // Moug appears.
+                if (TranceSeekAPI.StateMoug[_v.Caster.Data] == 1 && TranceSeekAPI.ModelMoug[_v.Caster.Data] == null) // Moug appears.
                 {
-                    TranceSeekCustomAPI.ModelMoug[_v.Caster.Data] = ModelFactory.CreateModel("GEO_NPC_F4_MOG", true);
+                    TranceSeekAPI.ModelMoug[_v.Caster.Data] = ModelFactory.CreateModel("GEO_NPC_F4_MOG", true);
                     // ANH_NPC_F4_MOG_INTO_EIK_PASSIVE_1
                     // ANH_NPC_F4_MOG_INTO_EIK_PASSIVE_2
                     if (FF9StateSystem.EventState.ScenarioCounter > 9990) // Moug has a "phantom" effect after Mont Gulug.
-                        btl_util.GeoSetABR(TranceSeekCustomAPI.ModelMoug[_v.Caster.Data], "GEO_POLYFLAGS_TRANS_100_PLUS_25");
-                    TranceSeekCustomAPI.ModelMoug[_v.Caster.Data].transform.localPosition = _v.Caster.Data.gameObject.transform.localPosition;
-                    TranceSeekCustomAPI.ModelMoug[_v.Caster.Data].transform.localRotation = _v.Caster.Data.gameObject.transform.localRotation;
-                    TranceSeekCustomAPI.ModelMoug[_v.Caster.Data].transform.localScale = _v.Caster.Data.gameObject.transform.localScale;
-                    TranceSeekCustomAPI.StateMoug[_v.Caster.Data] = 2;
-                    TranceSeekCustomAPI.ModelMoug[_v.Caster.Data].SetActive(true);
-                    Animation animation = TranceSeekCustomAPI.ModelMoug[_v.Caster.Data].GetComponent<Animation>();
+                        btl_util.GeoSetABR(TranceSeekAPI.ModelMoug[_v.Caster.Data], "GEO_POLYFLAGS_TRANS_100_PLUS_25");
+                    TranceSeekAPI.ModelMoug[_v.Caster.Data].transform.localPosition = _v.Caster.Data.gameObject.transform.localPosition;
+                    TranceSeekAPI.ModelMoug[_v.Caster.Data].transform.localRotation = _v.Caster.Data.gameObject.transform.localRotation;
+                    TranceSeekAPI.ModelMoug[_v.Caster.Data].transform.localScale = _v.Caster.Data.gameObject.transform.localScale;
+                    TranceSeekAPI.StateMoug[_v.Caster.Data] = 2;
+                    TranceSeekAPI.ModelMoug[_v.Caster.Data].SetActive(true);
+                    Animation animation = TranceSeekAPI.ModelMoug[_v.Caster.Data].GetComponent<Animation>();
                     if (animation.GetClip("ANH_NPC_F4_MOG_INTO_EIK_PASSIVE_1") == null)
-                        AnimationFactory.AddAnimWithAnimatioName(TranceSeekCustomAPI.ModelMoug[_v.Caster.Data], "ANH_NPC_F4_MOG_INTO_EIK_PASSIVE_1");
+                        AnimationFactory.AddAnimWithAnimatioName(TranceSeekAPI.ModelMoug[_v.Caster.Data], "ANH_NPC_F4_MOG_INTO_EIK_PASSIVE_1");
                     if (animation.GetClip("ANH_NPC_F4_MOG_INTO_EIK_PASSIVE_2") == null)
-                        AnimationFactory.AddAnimWithAnimatioName(TranceSeekCustomAPI.ModelMoug[_v.Caster.Data], "ANH_NPC_F4_MOG_INTO_EIK_PASSIVE_2");
+                        AnimationFactory.AddAnimWithAnimatioName(TranceSeekAPI.ModelMoug[_v.Caster.Data], "ANH_NPC_F4_MOG_INTO_EIK_PASSIVE_2");
                     if (animation != null)
                     {
                         animation.Play("ANH_NPC_F4_MOG_INTO_EIK_PASSIVE_1");
@@ -55,23 +55,23 @@ namespace Memoria.Scripts.Battle
                     }
                     return;
                 }
-                else if (TranceSeekCustomAPI.StateMoug[_v.Caster.Data] == 2 && TranceSeekCustomAPI.ModelMoug[_v.Caster.Data] != null) // Moug cast.
+                else if (TranceSeekAPI.StateMoug[_v.Caster.Data] == 2 && TranceSeekAPI.ModelMoug[_v.Caster.Data] != null) // Moug cast.
                 {
-                    TranceSeekCustomAPI.ModelMoug[_v.Caster.Data].transform.localPosition = _v.Caster.Data.gameObject.transform.localPosition + new Vector3(0f, 0f, 250f);
-                    Animation animation = TranceSeekCustomAPI.ModelMoug[_v.Caster.Data].GetComponent<Animation>();
+                    TranceSeekAPI.ModelMoug[_v.Caster.Data].transform.localPosition = _v.Caster.Data.gameObject.transform.localPosition + new Vector3(0f, 0f, 250f);
+                    Animation animation = TranceSeekAPI.ModelMoug[_v.Caster.Data].GetComponent<Animation>();
                     if (animation != null)
                     {
                         animation.Play("ANH_NPC_F4_MOG_INTO_EIK_2");
                         if (animation["ANH_NPC_F4_MOG_INTO_EIK_2"] != null)
                             animation["ANH_NPC_F4_MOG_INTO_EIK_2"].speed = 1f;
                     }
-                    TranceSeekCustomAPI.StateMoug[_v.Caster.Data] = 3;
+                    TranceSeekAPI.StateMoug[_v.Caster.Data] = 3;
                     NumberTargets[_v.Caster.Data] = _v.Command.TargetCount;
                     return;
                 }
-                else if (TranceSeekCustomAPI.StateMoug[_v.Caster.Data] == 3 && TranceSeekCustomAPI.ModelMoug[_v.Caster.Data] != null) // Moug cast
+                else if (TranceSeekAPI.StateMoug[_v.Caster.Data] == 3 && TranceSeekAPI.ModelMoug[_v.Caster.Data] != null) // Moug cast
                 {
-                    Animation animation = TranceSeekCustomAPI.ModelMoug[_v.Caster.Data].GetComponent<Animation>();
+                    Animation animation = TranceSeekAPI.ModelMoug[_v.Caster.Data].GetComponent<Animation>();
                     if (animation != null)
                     {
                         animation.Play("ANH_NPC_F4_MOG_IDLE");
@@ -100,7 +100,7 @@ namespace Memoria.Scripts.Battle
                         case (BattleAbilityId)2013: // Moga Regen
                         case (BattleAbilityId)2015: // Moga Mirror
                         case (BattleAbilityId)2016: // Moga AutoLife
-                            TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
+                            TranceSeekAPI.TryAlterCommandStatuses(_v);
                             break;
                         case (BattleAbilityId)2003: // Mog Shield
                         case (BattleAbilityId)2014: // Moga Shield
@@ -109,16 +109,16 @@ namespace Memoria.Scripts.Battle
                             else
                                 _v.Command.AbilityStatus |= BattleStatus.Shell;
 
-                            TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
+                            TranceSeekAPI.TryAlterCommandStatuses(_v);
                             break;
                         case (BattleAbilityId)2006: // Mog Esuna
                         case (BattleAbilityId)2017: // Moga Esuna
-                            _v.Target.RemoveStatus(BattleStatus.Poison | BattleStatus.Venom | BattleStatus.Silence | BattleStatus.Blind | BattleStatus.Trouble | BattleStatus.Mini | BattleStatus.Berserk | TranceSeekCustomStatus.Vieillissement);
+                            _v.Target.RemoveStatus(BattleStatus.Poison | BattleStatus.Venom | BattleStatus.Silence | BattleStatus.Blind | BattleStatus.Trouble | BattleStatus.Mini | BattleStatus.Berserk | TranceSeekStatus.Vieillissement);
                             break;
                         case (BattleAbilityId)2007: // Mog Support
                         case (BattleAbilityId)2018: // Moga Support
-                            _v.Command.AbilityStatus |= (TranceSeekCustomStatus.MagicUp | TranceSeekCustomStatus.MentalUp);
-                            TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
+                            _v.Command.AbilityStatus |= (TranceSeekStatus.MagicUp | TranceSeekStatus.MentalUp);
+                            TranceSeekAPI.TryAlterCommandStatuses(_v);
                             break;
                         case (BattleAbilityId)2008: // Mog Life
                             if (!_v.Target.CanBeRevived())
@@ -127,7 +127,7 @@ namespace Memoria.Scripts.Battle
                                 return;
                             }
 
-                            if (HitRateForZombie() && !TranceSeekCustomAPI.TryMagicHit(_v))
+                            if (HitRateForZombie() && !TranceSeekAPI.TryMagicHit(_v))
                                 return;
 
                             if (_v.Target.IsZombie && !_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill))
@@ -152,7 +152,7 @@ namespace Memoria.Scripts.Battle
                                 if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)100)) // Medecin
                                     _v.Target.HpDamage += _v.Caster.HpDamage / (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1100) ? 2 : 4);
                             }
-                            TranceSeekCustomAPI.TryRemoveAbilityStatuses(_v);
+                            TranceSeekAPI.TryRemoveAbilityStatuses(_v);
                             break;
                         case (BattleAbilityId)2009: // Atomoug
                         case (BattleAbilityId)2010: // Sidémoug
@@ -164,13 +164,13 @@ namespace Memoria.Scripts.Battle
                             else
                             {
                                 _v.NormalMagicParams();
-                                TranceSeekCustomAPI.CharacterBonusPassive(_v, "MagicAttack");
-                                TranceSeekCustomAPI.CasterPenaltyMini(_v);
-                                TranceSeekCustomAPI.EnemyTranceBonusAttack(_v);
-                                TranceSeekCustomAPI.PenaltyShellAttack(_v);
-                                TranceSeekCustomAPI.PenaltyCommandDividedAttack(_v);
-                                TranceSeekCustomAPI.BonusElement(_v);
-                                if (TranceSeekCustomAPI.CanAttackMagic(_v))
+                                TranceSeekAPI.CharacterBonusPassive(_v, "MagicAttack");
+                                TranceSeekAPI.CasterPenaltyMini(_v);
+                                TranceSeekAPI.EnemyTranceBonusAttack(_v);
+                                TranceSeekAPI.PenaltyShellAttack(_v);
+                                TranceSeekAPI.PenaltyCommandDividedAttack(_v);
+                                TranceSeekAPI.BonusElement(_v);
+                                if (TranceSeekAPI.CanAttackMagic(_v))
                                 {
                                     if (_v.Target.HasCategory(EnemyCategory.Humanoid) && (_v.Command.AbilityId == BattleAbilityId.Poison || _v.Command.AbilityId == BattleAbilityId.Bio))
                                     {
@@ -182,7 +182,7 @@ namespace Memoria.Scripts.Battle
                                     }
                                     _v.CalcHpDamage();
                                 }
-                                TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
+                                TranceSeekAPI.TryAlterMagicStatuses(_v);
                             }
                             break;
                     }
@@ -193,7 +193,7 @@ namespace Memoria.Scripts.Battle
                         if (!ff9abil.FF9Abil_IsMaster(_v.Caster.Player, (int)_v.Command.AbilityId))
                             ff9abil.FF9Abil_SetMaster(_v.Caster.Player, (int)_v.Command.AbilityId);
 
-                        TranceSeekCustomAPI.ModelMoug[_v.Caster.Data].transform.localPosition = _v.Caster.Data.gameObject.transform.localPosition;
+                        TranceSeekAPI.ModelMoug[_v.Caster.Data].transform.localPosition = _v.Caster.Data.gameObject.transform.localPosition;
                         if (animation != null)
                         {
                             animation.Play("ANH_NPC_F4_MOG_INTO_EIK_PASSIVE_2");
@@ -206,9 +206,9 @@ namespace Memoria.Scripts.Battle
                             caster => (counter -= BattleState.ATBTickCount) > 0,
                             caster =>
                             {
-                                TranceSeekCustomAPI.StateMoug[caster.Data] = 0;
-                                UnityEngine.Object.Destroy(TranceSeekCustomAPI.ModelMoug[_v.Caster.Data]);
-                                TranceSeekCustomAPI.ModelMoug[_v.Caster.Data] = null;
+                                TranceSeekAPI.StateMoug[caster.Data] = 0;
+                                UnityEngine.Object.Destroy(TranceSeekAPI.ModelMoug[_v.Caster.Data]);
+                                TranceSeekAPI.ModelMoug[_v.Caster.Data] = null;
                             }
                         );
                     }
@@ -219,7 +219,7 @@ namespace Memoria.Scripts.Battle
         {
             if (_v.Target.IsZombie)
             {
-                TranceSeekCustomAPI.MagicAccuracy(_v);
+                TranceSeekAPI.MagicAccuracy(_v);
                 return true;
             }
             return false;

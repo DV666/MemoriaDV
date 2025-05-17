@@ -24,25 +24,25 @@ namespace Memoria.Scripts.Battle
             }
             _v.SetCommandPower();
             _v.Caster.SetMagicAttack();
-            TranceSeekCustomAPI.CasterPenaltyMini(_v);
-            TranceSeekCustomAPI.EnemyTranceBonusAttack(_v);
-            TranceSeekCustomAPI.PenaltyShellAttack(_v);
-            TranceSeekCustomAPI.PenaltyCommandDividedAttack(_v);
-            TranceSeekCustomAPI.BonusElement(_v);
+            TranceSeekAPI.CasterPenaltyMini(_v);
+            TranceSeekAPI.EnemyTranceBonusAttack(_v);
+            TranceSeekAPI.PenaltyShellAttack(_v);
+            TranceSeekAPI.PenaltyCommandDividedAttack(_v);
+            TranceSeekAPI.BonusElement(_v);
             _v.CalcHpDamage();
-            TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
+            TranceSeekAPI.TryAlterMagicStatuses(_v);
         }
 
         public Single RateTarget()
         {
             _v.NormalMagicParams();
-            TranceSeekCustomAPI.CharacterBonusPassive(_v, "MagicAttack");
-            TranceSeekCustomAPI.CasterPenaltyMini(_v);
-            TranceSeekCustomAPI.PenaltyShellAttack(_v);
-            TranceSeekCustomAPI.PenaltyCommandDividedAttack(_v);
-            TranceSeekCustomAPI.BonusElement(_v);
+            TranceSeekAPI.CharacterBonusPassive(_v, "MagicAttack");
+            TranceSeekAPI.CasterPenaltyMini(_v);
+            TranceSeekAPI.PenaltyShellAttack(_v);
+            TranceSeekAPI.PenaltyCommandDividedAttack(_v);
+            TranceSeekAPI.BonusElement(_v);
 
-            if (!TranceSeekCustomAPI.CanAttackMagic(_v))
+            if (!TranceSeekAPI.CanAttackMagic(_v))
                 return 0;
 
             if (_v.Target.IsUnderAnyStatus(BattleStatus.Reflect) && !_v.Command.IsReflectNull)

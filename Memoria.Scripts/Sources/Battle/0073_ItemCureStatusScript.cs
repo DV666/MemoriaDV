@@ -21,19 +21,19 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            TranceSeekCustomAPI.TryRemoveItemStatuses(_v);
-            if ((_v.Command.ItemId == RegularItem.Remedy || _v.Command.ItemId == RegularItem.Annoyntment || _v.Command.ItemId == (RegularItem)1003) && _v.Target.IsUnderAnyStatus(TranceSeekCustomStatus.Vieillissement))
+            TranceSeekAPI.TryRemoveItemStatuses(_v);
+            if ((_v.Command.ItemId == RegularItem.Remedy || _v.Command.ItemId == RegularItem.Annoyntment || _v.Command.ItemId == (RegularItem)1003) && _v.Target.IsUnderAnyStatus(TranceSeekStatus.Vieillissement))
             {
-                _v.Target.RemoveStatus(TranceSeekCustomStatus.Vieillissement);
+                _v.Target.RemoveStatus(TranceSeekStatus.Vieillissement);
                 _v.Context.Flags = 0;
             }
             if (_v.Caster.PlayerIndex == CharacterId.Blank && _v.Command.Id == BattleCommandId.Item)
-                btl_stat.AlterStatus(_v.Caster, TranceSeekCustomStatusId.Special, _v.Caster, true, "SoakedBlade", _v.Command.ItemId);
+                btl_stat.AlterStatus(_v.Caster, TranceSeekStatusId.Special, _v.Caster, true, "SoakedBlade", _v.Command.ItemId);
         }
 
         public Single RateTarget()
         {
-            if (_v.Target.IsUnderAnyStatus(TranceSeekCustomStatus.Vieillissement) && (_v.Command.ItemId == RegularItem.Remedy || _v.Command.ItemId == RegularItem.Annoyntment || _v.Command.ItemId == (RegularItem)1003))
+            if (_v.Target.IsUnderAnyStatus(TranceSeekStatus.Vieillissement) && (_v.Command.ItemId == RegularItem.Remedy || _v.Command.ItemId == RegularItem.Annoyntment || _v.Command.ItemId == (RegularItem)1003))
                 return 20;
 
             BattleStatus playerStatus = _v.Target.CurrentStatus;

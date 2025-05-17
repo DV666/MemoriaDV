@@ -51,19 +51,19 @@ namespace Memoria.Scripts.Battle
                 case (RegularItem)2179: // Bombe Anima
                 {
                     _v.NormalMagicParams();
-                    TranceSeekCustomAPI.CasterPenaltyMini(_v);
-                    TranceSeekCustomAPI.EnemyTranceBonusAttack(_v);
-                    TranceSeekCustomAPI.PenaltyShellAttack(_v);
-                    TranceSeekCustomAPI.PenaltyCommandDividedAttack(_v);
-                    TranceSeekCustomAPI.BonusElement(_v);
-                    if (TranceSeekCustomAPI.CanAttackMagic(_v))
+                    TranceSeekAPI.CasterPenaltyMini(_v);
+                    TranceSeekAPI.EnemyTranceBonusAttack(_v);
+                    TranceSeekAPI.PenaltyShellAttack(_v);
+                    TranceSeekAPI.PenaltyCommandDividedAttack(_v);
+                    TranceSeekAPI.BonusElement(_v);
+                    if (TranceSeekAPI.CanAttackMagic(_v))
                     {
                         _v.CalcHpDamage();
-                        TranceSeekCustomAPI.RaiseTrouble(_v);
+                        TranceSeekAPI.RaiseTrouble(_v);
                     }
                     _v.Command.HitRate = _v.Caster.Will;
                     _v.Command.AbilityStatus = _v.Command.ItemStatus;
-                    TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
+                    TranceSeekAPI.TryAlterMagicStatuses(_v);
                     return;
                 }
                 case (RegularItem)2169: // Ultra Bombe G
@@ -95,15 +95,15 @@ namespace Memoria.Scripts.Battle
                 {
                     _v.NormalMagicParams();
                     _v.Command.Element = EffectElement.Thunder;
-                    TranceSeekCustomAPI.CasterPenaltyMini(_v);
-                    TranceSeekCustomAPI.EnemyTranceBonusAttack(_v);
-                    TranceSeekCustomAPI.PenaltyShellAttack(_v);
-                    TranceSeekCustomAPI.PenaltyCommandDividedAttack(_v);
-                    TranceSeekCustomAPI.BonusElement(_v);
-                    if (TranceSeekCustomAPI.CanAttackMagic(_v))
+                    TranceSeekAPI.CasterPenaltyMini(_v);
+                    TranceSeekAPI.EnemyTranceBonusAttack(_v);
+                    TranceSeekAPI.PenaltyShellAttack(_v);
+                    TranceSeekAPI.PenaltyCommandDividedAttack(_v);
+                    TranceSeekAPI.BonusElement(_v);
+                    if (TranceSeekAPI.CanAttackMagic(_v))
                     {
                         _v.CalcHpDamage();
-                        TranceSeekCustomAPI.RaiseTrouble(_v);
+                        TranceSeekAPI.RaiseTrouble(_v);
                     }
                     if ((_v.Target.WeakElement & EffectElement.Thunder) != 0)
                         _v.Target.TryAlterStatuses(_v.Command.ItemStatus, false, _v.Caster);
@@ -126,15 +126,15 @@ namespace Memoria.Scripts.Battle
                 {
                     _v.NormalMagicParams();
                     _v.Command.Element = EffectElement.Fire;
-                    TranceSeekCustomAPI.CasterPenaltyMini(_v);
-                    TranceSeekCustomAPI.EnemyTranceBonusAttack(_v);
-                    TranceSeekCustomAPI.PenaltyShellAttack(_v);
-                    TranceSeekCustomAPI.PenaltyCommandDividedAttack(_v);
-                    TranceSeekCustomAPI.BonusElement(_v);
-                    if (TranceSeekCustomAPI.CanAttackMagic(_v))
+                    TranceSeekAPI.CasterPenaltyMini(_v);
+                    TranceSeekAPI.EnemyTranceBonusAttack(_v);
+                    TranceSeekAPI.PenaltyShellAttack(_v);
+                    TranceSeekAPI.PenaltyCommandDividedAttack(_v);
+                    TranceSeekAPI.BonusElement(_v);
+                    if (TranceSeekAPI.CanAttackMagic(_v))
                     {
                         _v.CalcHpDamage();
-                        TranceSeekCustomAPI.RaiseTrouble(_v);
+                        TranceSeekAPI.RaiseTrouble(_v);
                     }
                     if ((_v.Target.WeakElement & EffectElement.Fire) != 0)
                         _v.Target.TryAlterStatuses(_v.Command.ItemStatus, false, _v.Caster);
@@ -157,15 +157,15 @@ namespace Memoria.Scripts.Battle
                 {
                     _v.NormalMagicParams();
                     _v.Command.Element = EffectElement.Cold;
-                    TranceSeekCustomAPI.CasterPenaltyMini(_v);
-                    TranceSeekCustomAPI.EnemyTranceBonusAttack(_v);
-                    TranceSeekCustomAPI.PenaltyShellAttack(_v);
-                    TranceSeekCustomAPI.PenaltyCommandDividedAttack(_v);
-                    TranceSeekCustomAPI.BonusElement(_v);
-                    if (TranceSeekCustomAPI.CanAttackMagic(_v))
+                    TranceSeekAPI.CasterPenaltyMini(_v);
+                    TranceSeekAPI.EnemyTranceBonusAttack(_v);
+                    TranceSeekAPI.PenaltyShellAttack(_v);
+                    TranceSeekAPI.PenaltyCommandDividedAttack(_v);
+                    TranceSeekAPI.BonusElement(_v);
+                    if (TranceSeekAPI.CanAttackMagic(_v))
                     {
                         _v.CalcHpDamage();
-                        TranceSeekCustomAPI.RaiseTrouble(_v);
+                        TranceSeekAPI.RaiseTrouble(_v);
                     }
                     if ((_v.Target.WeakElement & EffectElement.Cold) != 0)
                         _v.Target.TryAlterStatuses(_v.Command.ItemStatus, false, _v.Caster);
@@ -182,15 +182,15 @@ namespace Memoria.Scripts.Battle
                 case (RegularItem)2215: // Bombe Anima MK.G
                 {
                     _v.NormalMagicParams();
-                    TranceSeekCustomAPI.CasterPenaltyMini(_v);
-                    TranceSeekCustomAPI.EnemyTranceBonusAttack(_v);
-                    TranceSeekCustomAPI.PenaltyShellAttack(_v);
-                    TranceSeekCustomAPI.PenaltyCommandDividedAttack(_v);
-                    TranceSeekCustomAPI.BonusElement(_v);
-                    if (TranceSeekCustomAPI.CanAttackMagic(_v))
+                    TranceSeekAPI.CasterPenaltyMini(_v);
+                    TranceSeekAPI.EnemyTranceBonusAttack(_v);
+                    TranceSeekAPI.PenaltyShellAttack(_v);
+                    TranceSeekAPI.PenaltyCommandDividedAttack(_v);
+                    TranceSeekAPI.BonusElement(_v);
+                    if (TranceSeekAPI.CanAttackMagic(_v))
                     {
                         _v.CalcHpDamage();
-                        TranceSeekCustomAPI.RaiseTrouble(_v);
+                        TranceSeekAPI.RaiseTrouble(_v);
                     }
                     if ((btl_util.getEnemyTypePtr(_v.Target.Data).category & (Int16)EnemyCategory.Stone) != 0) // TODO : Need to create an Gravity element
                         _v.Target.TryAlterStatuses(_v.Command.ItemStatus, false, _v.Caster);
@@ -213,15 +213,15 @@ namespace Memoria.Scripts.Battle
                 {
                     _v.NormalMagicParams();
                     _v.Command.Element = EffectElement.Aqua;
-                    TranceSeekCustomAPI.CasterPenaltyMini(_v);
-                    TranceSeekCustomAPI.EnemyTranceBonusAttack(_v);
-                    TranceSeekCustomAPI.PenaltyShellAttack(_v);
-                    TranceSeekCustomAPI.PenaltyCommandDividedAttack(_v);
-                    TranceSeekCustomAPI.BonusElement(_v);
-                    if (TranceSeekCustomAPI.CanAttackMagic(_v))
+                    TranceSeekAPI.CasterPenaltyMini(_v);
+                    TranceSeekAPI.EnemyTranceBonusAttack(_v);
+                    TranceSeekAPI.PenaltyShellAttack(_v);
+                    TranceSeekAPI.PenaltyCommandDividedAttack(_v);
+                    TranceSeekAPI.BonusElement(_v);
+                    if (TranceSeekAPI.CanAttackMagic(_v))
                     {
                         _v.CalcHpDamage();
-                        TranceSeekCustomAPI.RaiseTrouble(_v);
+                        TranceSeekAPI.RaiseTrouble(_v);
                     }
                     if ((_v.Target.WeakElement & EffectElement.Aqua) != 0)
                         _v.Target.TryAlterStatuses(_v.Command.ItemStatus, false, _v.Caster);
@@ -238,15 +238,15 @@ namespace Memoria.Scripts.Battle
                 case (RegularItem)2233: // Bombe Anima MK.A
                 {
                     _v.NormalMagicParams();
-                    TranceSeekCustomAPI.CasterPenaltyMini(_v);
-                    TranceSeekCustomAPI.EnemyTranceBonusAttack(_v);
-                    TranceSeekCustomAPI.PenaltyShellAttack(_v);
-                    TranceSeekCustomAPI.PenaltyCommandDividedAttack(_v);
-                    TranceSeekCustomAPI.BonusElement(_v);
-                    if (TranceSeekCustomAPI.CanAttackMagic(_v))
+                    TranceSeekAPI.CasterPenaltyMini(_v);
+                    TranceSeekAPI.EnemyTranceBonusAttack(_v);
+                    TranceSeekAPI.PenaltyShellAttack(_v);
+                    TranceSeekAPI.PenaltyCommandDividedAttack(_v);
+                    TranceSeekAPI.BonusElement(_v);
+                    if (TranceSeekAPI.CanAttackMagic(_v))
                     {
                         _v.CalcHpDamage();
-                        TranceSeekCustomAPI.RaiseTrouble(_v);
+                        TranceSeekAPI.RaiseTrouble(_v);
                     }
                     if (_v.Target.WeakElement == 0)
                         _v.Target.TryAlterStatuses(_v.Command.ItemStatus, false, _v.Caster);
@@ -269,15 +269,15 @@ namespace Memoria.Scripts.Battle
                 {
                     _v.NormalMagicParams();
                     _v.Command.Element = EffectElement.Earth;
-                    TranceSeekCustomAPI.CasterPenaltyMini(_v);
-                    TranceSeekCustomAPI.EnemyTranceBonusAttack(_v);
-                    TranceSeekCustomAPI.PenaltyShellAttack(_v);
-                    TranceSeekCustomAPI.PenaltyCommandDividedAttack(_v);
-                    TranceSeekCustomAPI.BonusElement(_v);
-                    if (TranceSeekCustomAPI.CanAttackMagic(_v))
+                    TranceSeekAPI.CasterPenaltyMini(_v);
+                    TranceSeekAPI.EnemyTranceBonusAttack(_v);
+                    TranceSeekAPI.PenaltyShellAttack(_v);
+                    TranceSeekAPI.PenaltyCommandDividedAttack(_v);
+                    TranceSeekAPI.BonusElement(_v);
+                    if (TranceSeekAPI.CanAttackMagic(_v))
                     {
                         _v.CalcHpDamage();
-                        TranceSeekCustomAPI.RaiseTrouble(_v);
+                        TranceSeekAPI.RaiseTrouble(_v);
                     }
                     if ((_v.Target.WeakElement & EffectElement.Earth) != 0)
                         _v.Target.TryAlterStatuses(_v.Command.ItemStatus, false, _v.Caster);
@@ -294,15 +294,15 @@ namespace Memoria.Scripts.Battle
                 case (RegularItem)2251: // Bombe Anima MK.R
                 {
                     _v.NormalMagicParams();
-                    TranceSeekCustomAPI.CasterPenaltyMini(_v);
-                    TranceSeekCustomAPI.EnemyTranceBonusAttack(_v);
-                    TranceSeekCustomAPI.PenaltyShellAttack(_v);
-                    TranceSeekCustomAPI.PenaltyCommandDividedAttack(_v);
-                    TranceSeekCustomAPI.BonusElement(_v);
-                    if (TranceSeekCustomAPI.CanAttackMagic(_v))
+                    TranceSeekAPI.CasterPenaltyMini(_v);
+                    TranceSeekAPI.EnemyTranceBonusAttack(_v);
+                    TranceSeekAPI.PenaltyShellAttack(_v);
+                    TranceSeekAPI.PenaltyCommandDividedAttack(_v);
+                    TranceSeekAPI.BonusElement(_v);
+                    if (TranceSeekAPI.CanAttackMagic(_v))
                     {
                         _v.CalcHpDamage();
-                        TranceSeekCustomAPI.RaiseTrouble(_v);
+                        TranceSeekAPI.RaiseTrouble(_v);
                     }
                     if (_v.Target.IsUnderStatus(BattleStatus.Reflect))
                         _v.Target.TryAlterStatuses(_v.Command.ItemStatus, false, _v.Caster);
@@ -325,15 +325,15 @@ namespace Memoria.Scripts.Battle
                 {
                     _v.NormalMagicParams();
                     _v.Command.Element = EffectElement.Wind;
-                    TranceSeekCustomAPI.CasterPenaltyMini(_v);
-                    TranceSeekCustomAPI.EnemyTranceBonusAttack(_v);
-                    TranceSeekCustomAPI.PenaltyShellAttack(_v);
-                    TranceSeekCustomAPI.PenaltyCommandDividedAttack(_v);
-                    TranceSeekCustomAPI.BonusElement(_v);
-                    if (TranceSeekCustomAPI.CanAttackMagic(_v))
+                    TranceSeekAPI.CasterPenaltyMini(_v);
+                    TranceSeekAPI.EnemyTranceBonusAttack(_v);
+                    TranceSeekAPI.PenaltyShellAttack(_v);
+                    TranceSeekAPI.PenaltyCommandDividedAttack(_v);
+                    TranceSeekAPI.BonusElement(_v);
+                    if (TranceSeekAPI.CanAttackMagic(_v))
                     {
                         _v.CalcHpDamage();
-                        TranceSeekCustomAPI.RaiseTrouble(_v);
+                        TranceSeekAPI.RaiseTrouble(_v);
                     }
                     if ((_v.Target.WeakElement & EffectElement.Wind) != 0)
                         _v.Target.TryAlterStatuses(_v.Command.ItemStatus, false, _v.Caster);
@@ -356,15 +356,15 @@ namespace Memoria.Scripts.Battle
                 {
                     _v.NormalMagicParams();
                     _v.Command.Element = EffectElement.Darkness;
-                    TranceSeekCustomAPI.CasterPenaltyMini(_v);
-                    TranceSeekCustomAPI.EnemyTranceBonusAttack(_v);
-                    TranceSeekCustomAPI.PenaltyShellAttack(_v);
-                    TranceSeekCustomAPI.PenaltyCommandDividedAttack(_v);
-                    TranceSeekCustomAPI.BonusElement(_v);
-                    if (TranceSeekCustomAPI.CanAttackMagic(_v))
+                    TranceSeekAPI.CasterPenaltyMini(_v);
+                    TranceSeekAPI.EnemyTranceBonusAttack(_v);
+                    TranceSeekAPI.PenaltyShellAttack(_v);
+                    TranceSeekAPI.PenaltyCommandDividedAttack(_v);
+                    TranceSeekAPI.BonusElement(_v);
+                    if (TranceSeekAPI.CanAttackMagic(_v))
                     {
                         _v.CalcHpDamage();
-                        TranceSeekCustomAPI.RaiseTrouble(_v);
+                        TranceSeekAPI.RaiseTrouble(_v);
                     }
                     if ((_v.Target.WeakElement & EffectElement.Darkness) != 0)
                         _v.Target.TryAlterStatuses(_v.Command.ItemStatus, false, _v.Caster);
@@ -387,15 +387,15 @@ namespace Memoria.Scripts.Battle
                 {
                     _v.NormalMagicParams();
                     _v.Command.Element = EffectElement.Holy;
-                    TranceSeekCustomAPI.CasterPenaltyMini(_v);
-                    TranceSeekCustomAPI.EnemyTranceBonusAttack(_v);
-                    TranceSeekCustomAPI.PenaltyShellAttack(_v);
-                    TranceSeekCustomAPI.PenaltyCommandDividedAttack(_v);
-                    TranceSeekCustomAPI.BonusElement(_v);
-                    if (TranceSeekCustomAPI.CanAttackMagic(_v))
+                    TranceSeekAPI.CasterPenaltyMini(_v);
+                    TranceSeekAPI.EnemyTranceBonusAttack(_v);
+                    TranceSeekAPI.PenaltyShellAttack(_v);
+                    TranceSeekAPI.PenaltyCommandDividedAttack(_v);
+                    TranceSeekAPI.BonusElement(_v);
+                    if (TranceSeekAPI.CanAttackMagic(_v))
                     {
                         _v.CalcHpDamage();
-                        TranceSeekCustomAPI.RaiseTrouble(_v);
+                        TranceSeekAPI.RaiseTrouble(_v);
                     }
                     if ((_v.Target.WeakElement & EffectElement.Holy) != 0)
                         _v.Target.TryAlterStatuses(_v.Command.ItemStatus, false, _v.Caster);
@@ -412,22 +412,22 @@ namespace Memoria.Scripts.Battle
                 case (RegularItem)2474: // Bombe Anima MK.W
                 {
                     _v.NormalMagicParams();
-                    TranceSeekCustomAPI.CasterPenaltyMini(_v);
-                    TranceSeekCustomAPI.EnemyTranceBonusAttack(_v);
-                    TranceSeekCustomAPI.PenaltyShellAttack(_v);
-                    TranceSeekCustomAPI.PenaltyCommandDividedAttack(_v);
-                    TranceSeekCustomAPI.BonusElement(_v);
-                    if (TranceSeekCustomAPI.CanAttackMagic(_v))
+                    TranceSeekAPI.CasterPenaltyMini(_v);
+                    TranceSeekAPI.EnemyTranceBonusAttack(_v);
+                    TranceSeekAPI.PenaltyShellAttack(_v);
+                    TranceSeekAPI.PenaltyCommandDividedAttack(_v);
+                    TranceSeekAPI.BonusElement(_v);
+                    if (TranceSeekAPI.CanAttackMagic(_v))
                     {
                         _v.CalcHpDamage();
-                        TranceSeekCustomAPI.RaiseTrouble(_v);
+                        TranceSeekAPI.RaiseTrouble(_v);
                     }
 
                     int statusrate = 0;
 
                     BattleStatusId[] statuslist = { BattleStatusId.Protect, BattleStatusId.Shell, BattleStatusId.Regen, BattleStatusId.AutoLife, BattleStatusId.Trance,
-                    BattleStatusId.Reflect, BattleStatusId.Haste, BattleStatusId.Vanish, BattleStatusId.Float, TranceSeekCustomStatusId.ArmorUp,
-                    TranceSeekCustomStatusId.MagicUp, TranceSeekCustomStatusId.MentalUp, TranceSeekCustomStatusId.PowerUp};
+                    BattleStatusId.Reflect, BattleStatusId.Haste, BattleStatusId.Vanish, BattleStatusId.Float, TranceSeekStatusId.ArmorUp,
+                    TranceSeekStatusId.MagicUp, TranceSeekStatusId.MentalUp, TranceSeekStatusId.PowerUp};
 
                     for (Int32 i = 0; i < statuslist.Length; i++)
                     {
@@ -447,12 +447,12 @@ namespace Memoria.Scripts.Battle
                     uint CasterMaxDamageLimit = _v.Caster.MaxDamageLimit;
                     _v.Caster.MaxDamageLimit = 99999;
                     _v.NormalMagicParams();
-                    TranceSeekCustomAPI.CasterPenaltyMini(_v);
-                    TranceSeekCustomAPI.EnemyTranceBonusAttack(_v);
-                    TranceSeekCustomAPI.PenaltyShellAttack(_v);
-                    TranceSeekCustomAPI.PenaltyCommandDividedAttack(_v);
-                    TranceSeekCustomAPI.BonusElement(_v);
-                    if (TranceSeekCustomAPI.CanAttackMagic(_v))
+                    TranceSeekAPI.CasterPenaltyMini(_v);
+                    TranceSeekAPI.EnemyTranceBonusAttack(_v);
+                    TranceSeekAPI.PenaltyShellAttack(_v);
+                    TranceSeekAPI.PenaltyCommandDividedAttack(_v);
+                    TranceSeekAPI.BonusElement(_v);
+                    if (TranceSeekAPI.CanAttackMagic(_v))
                     {
                         _v.CalcHpDamage();
                     }
@@ -470,7 +470,7 @@ namespace Memoria.Scripts.Battle
                     uint CasterMaxDamageLimit = _v.Caster.MaxDamageLimit;
                     _v.Caster.MaxDamageLimit = 99999;
                     _v.NormalMagicParams();
-                    if (TranceSeekCustomAPI.CanAttackMagic(_v))
+                    if (TranceSeekAPI.CanAttackMagic(_v))
                     {
                         HPDamage = 19998;
                     }
@@ -507,7 +507,7 @@ namespace Memoria.Scripts.Battle
         {
             if (_v.Target.IsZombie)
             {
-                TranceSeekCustomAPI.MagicAccuracy(_v);
+                TranceSeekAPI.MagicAccuracy(_v);
                 return true;
             }
             return false;

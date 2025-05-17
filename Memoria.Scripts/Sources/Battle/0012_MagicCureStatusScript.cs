@@ -23,14 +23,14 @@ namespace Memoria.Scripts.Battle
         {       
             if (_v.Command.AbilityId == BattleAbilityId.Esuna)
             {
-                _v.Command.AbilityStatus |= TranceSeekCustomStatus.Vieillissement;
+                _v.Command.AbilityStatus |= TranceSeekStatus.Vieillissement;
             }
             if (_v.Command.HitRate == 255)
             {
-                _v.Command.AbilityStatus |= (TranceSeekCustomStatus.PowerUp | TranceSeekCustomStatus.MagicUp | TranceSeekCustomStatus.ArmorUp
-                    | TranceSeekCustomStatus.MentalUp | TranceSeekCustomStatus.Bulwark | TranceSeekCustomStatus.PerfectCrit | TranceSeekCustomStatus.PerfectDodge);
+                _v.Command.AbilityStatus |= (TranceSeekStatus.PowerUp | TranceSeekStatus.MagicUp | TranceSeekStatus.ArmorUp
+                    | TranceSeekStatus.MentalUp | TranceSeekStatus.Bulwark | TranceSeekStatus.PerfectCrit | TranceSeekStatus.PerfectDodge);
             }
-            TranceSeekCustomAPI.TryRemoveAbilityStatuses(_v);
+            TranceSeekAPI.TryRemoveAbilityStatuses(_v);
             if (_v.Command.Power == 111)
             {
                 Boolean easykill = false;
@@ -53,7 +53,7 @@ namespace Memoria.Scripts.Battle
 
         public Single RateTarget()
         {
-            if (_v.Target.IsUnderAnyStatus(TranceSeekCustomStatus.Vieillissement) && _v.Command.AbilityId == BattleAbilityId.Esuna)
+            if (_v.Target.IsUnderAnyStatus(TranceSeekStatus.Vieillissement) && _v.Command.AbilityId == BattleAbilityId.Esuna)
                 return 20;
 
             BattleStatus playerStatus = _v.Target.CurrentStatus;

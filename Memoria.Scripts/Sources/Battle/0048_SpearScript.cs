@@ -36,7 +36,7 @@ namespace Memoria.Scripts.Battle
 
                 if (_v.Caster.HasSupportAbility(SupportAbility1.HighJump) && GameRandom.Next8() % 2 == 0 || _v.Caster.HasSupportAbilityByIndex((SupportAbility)1021))
                 {
-                    _v.Target.AlterStatus(TranceSeekCustomStatus.Dragon, _v.Caster);
+                    _v.Target.AlterStatus(TranceSeekStatus.Dragon, _v.Caster);
                 }
                 if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)217)) // SA Skydive
                 {
@@ -44,9 +44,9 @@ namespace Memoria.Scripts.Battle
                     _v.Context.AttackPower = _v.Caster.WeaponPower;
                     _v.Context.Attack = ((short)(_v.Caster.Strength + num));
                     _v.Context.DefensePower = _v.Target.MagicDefence / 2;
-                    TranceSeekCustomAPI.PenaltyShellAttack(_v);
+                    TranceSeekAPI.PenaltyShellAttack(_v);
                     if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1217)) // SA Skydive+
-                        _v.Caster.AlterStatus(TranceSeekCustomStatus.MagicUp, _v.Caster);
+                        _v.Caster.AlterStatus(TranceSeekStatus.MagicUp, _v.Caster);
                 }
                 else
                 {
@@ -54,17 +54,17 @@ namespace Memoria.Scripts.Battle
                     _v.Context.AttackPower = _v.Caster.WeaponPower;
                     _v.Context.Attack = ((short)(_v.Caster.Strength + num));
                     _v.Context.DefensePower = _v.Target.PhysicalDefence / 2; // [TODO] Change maybe with this formula ? => Math.Max(1, (_v.Target.PhysicalDefence / 2) - _v.Caster.Level + _v.Target.Level)
-                    TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
+                    TranceSeekAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
                 }
 
                 _v.BonusKillerAbilities();
-                TranceSeekCustomAPI.CasterPenaltyMini(_v);
-                TranceSeekCustomAPI.EnemyTranceBonusAttack(_v);
-                TranceSeekCustomAPI.BonusWeaponElement(_v);
-                if (TranceSeekCustomAPI.CanAttackWeaponElementalCommand(_v))
+                TranceSeekAPI.CasterPenaltyMini(_v);
+                TranceSeekAPI.EnemyTranceBonusAttack(_v);
+                TranceSeekAPI.BonusWeaponElement(_v);
+                if (TranceSeekAPI.CanAttackWeaponElementalCommand(_v))
                 {
-                    TranceSeekCustomAPI.IpsenCastleMalus(_v);
-                    TranceSeekCustomAPI.RaiseTrouble(_v);
+                    TranceSeekAPI.IpsenCastleMalus(_v);
+                    TranceSeekAPI.RaiseTrouble(_v);
                     _v.CalcPhysicalHpDamage();
                 }
 

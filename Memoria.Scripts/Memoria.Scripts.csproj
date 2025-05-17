@@ -429,10 +429,12 @@
     <Compile Include="Sources\Battle\GradualPetrifyStatusScript.cs" />
     <Compile Include="Sources\Battle\HasteStatusScript.cs" />
     <Compile Include="Sources\Battle\MiniStatusScript.cs" />
-    <Compile Include="Sources\Battle\TranceSeekCustomBattleAbility.cs" />
-    <Compile Include="Sources\Battle\TranceSeekCustomSupportAbility.cs" />
-    <Compile Include="Sources\Battle\TranceSeekCustomStatusId.cs" />
-    <Compile Include="Sources\Battle\TranceSeekCustomStatus.cs" />
+    <Compile Include="Sources\Battle\TranceSeekRegularItem.cs" />
+    <Compile Include="Sources\Battle\TranceSeekBattleCommand.cs" />
+    <Compile Include="Sources\Battle\TranceSeekBattleAbility.cs" />
+    <Compile Include="Sources\Battle\TranceSeekSupportAbility.cs" />
+    <Compile Include="Sources\Battle\TranceSeekStatusId.cs" />
+    <Compile Include="Sources\Battle\TranceSeekStatus.cs" />
     <Compile Include="Sources\Battle\PetrifyStatusScript.cs" />
     <Compile Include="Sources\Battle\ProtectStatusScript.cs" />
     <Compile Include="Sources\Battle\ProvokStatusScript.cs" />
@@ -466,7 +468,7 @@
     <Compile Include="Sources\Battle\SleepEasyKillStatusScript.cs" />
     <Compile Include="Sources\Battle\SleepStatusScript.cs" />
     <Compile Include="Sources\Battle\StopStatusScript.cs" />
-    <Compile Include="Sources\Battle\TranceSeekCustomAPI.cs" />
+    <Compile Include="Sources\Battle\TranceSeekAPI.cs" />
     <Compile Include="Sources\Battle\TranceStatusScript.cs" />
     <Compile Include="Sources\Battle\TroubleStatusScript.cs" />
     <Compile Include="Sources\Battle\VanishStatusScript.cs" />

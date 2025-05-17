@@ -48,8 +48,8 @@ namespace Memoria.Scripts.Battle
                 {
                     BattleStatusId[] statuslist = { BattleStatusId.Poison, BattleStatusId.Venom, BattleStatusId.Blind, BattleStatusId.Silence, BattleStatusId.Trouble,
                     BattleStatusId.Sleep, BattleStatusId.Freeze, BattleStatusId.Heat, BattleStatusId.Doom, BattleStatusId.Mini, BattleStatusId.Petrify, BattleStatusId.GradualPetrify,
-                    BattleStatusId.Berserk, BattleStatusId.Confuse, BattleStatusId.Stop, BattleStatusId.Zombie, BattleStatusId.Slow, TranceSeekCustomStatusId.Vieillissement,
-                    TranceSeekCustomStatusId.ArmorBreak, TranceSeekCustomStatusId.MagicBreak, TranceSeekCustomStatusId.MentalBreak, TranceSeekCustomStatusId.PowerBreak};
+                    BattleStatusId.Berserk, BattleStatusId.Confuse, BattleStatusId.Stop, BattleStatusId.Zombie, BattleStatusId.Slow, TranceSeekStatusId.Vieillissement,
+                    TranceSeekStatusId.ArmorBreak, TranceSeekStatusId.MagicBreak, TranceSeekStatusId.MentalBreak, TranceSeekStatusId.PowerBreak};
 
                     List<BattleStatusId> statuschoosen = new List<BattleStatusId>();
 
@@ -57,7 +57,7 @@ namespace Memoria.Scripts.Battle
                     {
                         if ((statuslist[i].ToBattleStatus() & _v.Target.ResistStatus) == 0)
                         {
-                            if (statuslist[i] == TranceSeekCustomStatusId.Vieillissement && _v.Target.IsUnderAnyStatus(BattleStatus.EasyKill))
+                            if (statuslist[i] == TranceSeekStatusId.Vieillissement && _v.Target.IsUnderAnyStatus(BattleStatus.EasyKill))
                                 continue;
 
                             statuschoosen.Add(statuslist[i]);
@@ -66,9 +66,9 @@ namespace Memoria.Scripts.Battle
                     BattleStatusId statusselected = statuschoosen[GameRandom.Next16() % statuschoosen.Count];
                     btl_stat.AlterStatus(_v.Target, statusselected, _v.Caster);
                 }
-                TranceSeekCustomAPI.CasterPenaltyMini(_v);
-                TranceSeekCustomAPI.PenaltyShellAttack(_v);
-                TranceSeekCustomAPI.PenaltyCommandDividedAttack(_v);
+                TranceSeekAPI.CasterPenaltyMini(_v);
+                TranceSeekAPI.PenaltyShellAttack(_v);
+                TranceSeekAPI.PenaltyCommandDividedAttack(_v);
                 if ((_v.Command.AbilityId == BattleAbilityId.ScoopArt && GameRandom.Next8() % 4 == 0))
                 {
                     _v.Context.Attack *= 2;
@@ -87,9 +87,9 @@ namespace Memoria.Scripts.Battle
                         _v.Context.DefensePower = _v.Context.DefensePower - (_v.Context.DefensePower / 4);
                     }
                     _v.Target.SetMagicDefense();
-                    TranceSeekCustomAPI.CasterPenaltyMini(_v);
-                    TranceSeekCustomAPI.PenaltyShellAttack(_v);
-                    TranceSeekCustomAPI.PenaltyCommandDividedAttack(_v);
+                    TranceSeekAPI.CasterPenaltyMini(_v);
+                    TranceSeekAPI.PenaltyShellAttack(_v);
+                    TranceSeekAPI.PenaltyCommandDividedAttack(_v);
                     if (_v.Command.HitRate == 99 && GameRandom.Next8() % 4 == 0)
                     {
                         _v.Context.Attack *= 2;
@@ -102,7 +102,7 @@ namespace Memoria.Scripts.Battle
                     if (_v.Caster.IsPlayer)
                     {
                         _v.OriginalMagicParams();
-                        TranceSeekCustomAPI.CharacterBonusPassive(_v, "LowPhysicalAttack");
+                        TranceSeekAPI.CharacterBonusPassive(_v, "LowPhysicalAttack");
                     }
                     else
                     {
@@ -110,26 +110,26 @@ namespace Memoria.Scripts.Battle
                         _v.Caster.SetLowPhysicalAttack();
                         _v.Target.SetMagicDefense();
                     }
-                    TranceSeekCustomAPI.CasterPenaltyMini(_v);
+                    TranceSeekAPI.CasterPenaltyMini(_v);
                     if (_v.Target.IsUnderStatus(BattleStatus.Defend))
                     {
                         _v.Context.Attack >>= 1;
                     }
-                    TranceSeekCustomAPI.PenaltyShellAttack(_v);
+                    TranceSeekAPI.PenaltyShellAttack(_v);
                     if (!_v.Caster.IsPlayer)
                     {
-                        TranceSeekCustomAPI.BonusBackstabAndPenaltyLongDistance(_v);
+                        TranceSeekAPI.BonusBackstabAndPenaltyLongDistance(_v);
                     }
                 }
             }
-            TranceSeekCustomAPI.EnemyTranceBonusAttack(_v);
-            TranceSeekCustomAPI.BonusElement(_v);
-            if (TranceSeekCustomAPI.CanAttackMagic(_v))
+            TranceSeekAPI.EnemyTranceBonusAttack(_v);
+            TranceSeekAPI.BonusElement(_v);
+            if (TranceSeekAPI.CanAttackMagic(_v))
             {
                 if (_v.Caster.PlayerIndex == CharacterId.Freya) // Dragon abilities
                 {
-                    TranceSeekCustomAPI.TryCriticalHit(_v);
-                    if (_v.Target.IsUnderAnyStatus(TranceSeekCustomStatus.Dragon) || _v.Caster.IsUnderStatus(BattleStatus.Trance))
+                    TranceSeekAPI.TryCriticalHit(_v);
+                    if (_v.Target.IsUnderAnyStatus(TranceSeekStatus.Dragon) || _v.Caster.IsUnderStatus(BattleStatus.Trance))
                     {
                         switch (_v.Command.AbilityId)
                         {
@@ -178,8 +178,8 @@ namespace Memoria.Scripts.Battle
                 }
                 _v.CalcHpDamage();
             }
-            TranceSeekCustomAPI.InfusedWeaponStatus(_v);
-            TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
+            TranceSeekAPI.InfusedWeaponStatus(_v);
+            TranceSeekAPI.TryAlterMagicStatuses(_v);
         }
     }
 }

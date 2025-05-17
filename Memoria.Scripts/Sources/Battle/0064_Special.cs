@@ -141,10 +141,10 @@ namespace Memoria.Scripts.Battle
                 List<BattleStatusId> statuschoosen = new List<BattleStatusId>{ BattleStatusId.Poison, BattleStatusId.Venom, BattleStatusId.Blind, BattleStatusId.Silence,
                     BattleStatusId.Trouble, BattleStatusId.Freeze, BattleStatusId.Heat, BattleStatusId.Doom, BattleStatusId.Mini, BattleStatusId.GradualPetrify,
                     BattleStatusId.Berserk, BattleStatusId.Confuse, BattleStatusId.Stop, BattleStatusId.Zombie, BattleStatusId.Slow, BattleStatusId.Haste,
-                    BattleStatusId.Protect, BattleStatusId.Shell, BattleStatusId.Regen, BattleStatusId.Float, BattleStatusId.Vanish, TranceSeekCustomStatusId.PowerBreak,
-                TranceSeekCustomStatusId.MagicBreak, TranceSeekCustomStatusId.ArmorBreak, TranceSeekCustomStatusId.MentalBreak, TranceSeekCustomStatusId.PowerUp,
-                TranceSeekCustomStatusId.MagicUp, TranceSeekCustomStatusId.ArmorUp, TranceSeekCustomStatusId.MentalUp, TranceSeekCustomStatusId.Vieillissement,
-                TranceSeekCustomStatusId.Dragon};
+                    BattleStatusId.Protect, BattleStatusId.Shell, BattleStatusId.Regen, BattleStatusId.Float, BattleStatusId.Vanish, TranceSeekStatusId.PowerBreak,
+                TranceSeekStatusId.MagicBreak, TranceSeekStatusId.ArmorBreak, TranceSeekStatusId.MentalBreak, TranceSeekStatusId.PowerUp,
+                TranceSeekStatusId.MagicUp, TranceSeekStatusId.ArmorUp, TranceSeekStatusId.MentalUp, TranceSeekStatusId.Vieillissement,
+                TranceSeekStatusId.Dragon};
 
                 for (Int32 i = 0; i < (statuschoosen.Count - 1); i++)
                 {

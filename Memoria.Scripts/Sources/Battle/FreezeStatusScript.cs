@@ -13,15 +13,15 @@ namespace Memoria.DefaultScripts
             base.Apply(target, inflicter, parameters);
             if (Target.IsUnderAnyStatus(BattleStatus.EasyKill))
             {
-                if (TranceSeekCustomAPI.MonsterMechanic[target.Data][4] > 0)
+                if (TranceSeekAPI.MonsterMechanic[target.Data][4] > 0)
                 {
-                    Target.Data.stat.duration_factor[BattleStatusId.Sleep] = (Target.Data.stat.duration_factor[BattleStatusId.Freeze] * TranceSeekCustomAPI.MonsterMechanic[target.Data][4]) / 100f;
-                    TranceSeekCustomAPI.MonsterMechanic[target.Data][4] -= 20;
+                    Target.Data.stat.duration_factor[BattleStatusId.Sleep] = (Target.Data.stat.duration_factor[BattleStatusId.Freeze] * TranceSeekAPI.MonsterMechanic[target.Data][4]) / 100f;
+                    TranceSeekAPI.MonsterMechanic[target.Data][4] -= 20;
                 }
                 else
                     return btl_stat.ALTER_RESIST;
             }
-            TranceSeekCustomAPI.SA_StatusApply(inflicter, false);
+            TranceSeekAPI.SA_StatusApply(inflicter, false);
             return btl_stat.ALTER_SUCCESS;
         }
 

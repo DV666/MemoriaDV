@@ -41,7 +41,7 @@ namespace Memoria.Scripts.Battle
                 case (RegularItem)2360: // Super Mother G
                 {
                     _v.Command.AbilityStatus = _v.Command.ItemStatus;
-                    TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
+                    TranceSeekAPI.TryAlterCommandStatuses(_v);
                     break;
                 }
                 case (RegularItem)2364: // Super Péridot
@@ -188,15 +188,15 @@ namespace Memoria.Scripts.Battle
                     if (_v.Target.IsUnderAnyStatus(BattleStatus.Reflect))
                         _v.Command.Power *= 2;
 
-                    TranceSeekCustomAPI.CasterPenaltyMini(_v);
-                    TranceSeekCustomAPI.EnemyTranceBonusAttack(_v);
-                    TranceSeekCustomAPI.PenaltyShellAttack(_v);
-                    TranceSeekCustomAPI.PenaltyCommandDividedAttack(_v);
-                    TranceSeekCustomAPI.BonusElement(_v);
-                    if (TranceSeekCustomAPI.CanAttackMagic(_v))
+                    TranceSeekAPI.CasterPenaltyMini(_v);
+                    TranceSeekAPI.EnemyTranceBonusAttack(_v);
+                    TranceSeekAPI.PenaltyShellAttack(_v);
+                    TranceSeekAPI.PenaltyCommandDividedAttack(_v);
+                    TranceSeekAPI.BonusElement(_v);
+                    if (TranceSeekAPI.CanAttackMagic(_v))
                     {
                         _v.CalcHpDamage();
-                        TranceSeekCustomAPI.RaiseTrouble(_v);
+                        TranceSeekAPI.RaiseTrouble(_v);
                     }
                     return;
                 }
@@ -225,16 +225,16 @@ namespace Memoria.Scripts.Battle
                     string ItemName = FF9TextTool.ItemName(_v.Command.ItemId);
 
                     if (ElementItem.ContainsKey(_v.Command.ItemId))
-                        TranceSeekCustomAPI.AbsorbElement[_v.Target.Data] = (Int32)ElementItem[_v.Command.ItemId];
+                        TranceSeekAPI.AbsorbElement[_v.Target.Data] = (Int32)ElementItem[_v.Command.ItemId];
                     if (_v.Command.ItemId == (RegularItem)2345 || _v.Command.ItemId == (RegularItem)2356)
-                        TranceSeekCustomAPI.AbsorbElement[_v.Target.Data] = 256; // Gravity
+                        TranceSeekAPI.AbsorbElement[_v.Target.Data] = 256; // Gravity
 
                     Int32 wait = (short)((400 + (_v.Caster.Will * 3)) * 30);
                     _v.Target.AddDelayedModifier(
                     target => (wait -= target.Data.cur.at_coef * BattleState.ATBTickCount) > 0,
                     target =>
                     {
-                        TranceSeekCustomAPI.AbsorbElement[_v.Target.Data] = -1;
+                        TranceSeekAPI.AbsorbElement[_v.Target.Data] = -1;
                         if (!Message)
                         {
                             Dictionary<String, String> localizedStatusProtect = new Dictionary<String, String>
@@ -258,46 +258,46 @@ namespace Memoria.Scripts.Battle
                 }
                 case (RegularItem)2457: // Roc de fer
                 {
-                    btl_stat.AlterStatus(_v.Target, TranceSeekCustomStatusId.ArmorUp, parameters: "+1");
+                    btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.ArmorUp, parameters: "+1");
                     return;
                 }
                 case (RegularItem)2458: // Roc de titane
                 {
-                    btl_stat.AlterStatus(_v.Target, TranceSeekCustomStatusId.ArmorUp, parameters: "+2");
+                    btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.ArmorUp, parameters: "+2");
                     return;
                 }
                 case (RegularItem)2459: // Roc d'adamantium
                 {
-                    btl_stat.AlterStatus(_v.Target, TranceSeekCustomStatusId.ArmorUp, parameters: "+3");
+                    btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.ArmorUp, parameters: "+3");
                     return;
                 }
                 case (RegularItem)2460: // Roc violâtre
                 {
-                    btl_stat.AlterStatus(_v.Target, TranceSeekCustomStatusId.MentalUp, parameters: "+2");
+                    btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.MentalUp, parameters: "+2");
                     return;
                 }
                 case (RegularItem)2461: // Roc spirituel
                 {
-                    btl_stat.AlterStatus(_v.Target, TranceSeekCustomStatusId.MentalUp, parameters: "+4");
+                    btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.MentalUp, parameters: "+4");
                     return;
                 }
                 case (RegularItem)2462: // Roc fabuleux
                 {
-                    btl_stat.AlterStatus(_v.Target, TranceSeekCustomStatusId.ArmorUp, parameters: "+1");
-                    btl_stat.AlterStatus(_v.Target, TranceSeekCustomStatusId.MentalUp, parameters: "+1");
+                    btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.ArmorUp, parameters: "+1");
+                    btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.MentalUp, parameters: "+1");
                     return;
                 }
                 case (RegularItem)2463: // Roc mystique
                 {
-                    btl_stat.AlterStatus(_v.Target, TranceSeekCustomStatusId.ArmorUp, parameters: "+2");
-                    btl_stat.AlterStatus(_v.Target, TranceSeekCustomStatusId.MentalUp, parameters: "+2");
+                    btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.ArmorUp, parameters: "+2");
+                    btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.MentalUp, parameters: "+2");
                     return;
                 }
                 case (RegularItem)2464: // Roc en mythril
                 case (RegularItem)2465: // Megakoroc en mythril
                 {
-                    btl_stat.AlterStatus(_v.Target, TranceSeekCustomStatusId.ArmorUp, parameters: "+5");
-                    btl_stat.AlterStatus(_v.Target, TranceSeekCustomStatusId.MentalUp, parameters: "+5");
+                    btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.ArmorUp, parameters: "+5");
+                    btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.MentalUp, parameters: "+5");
                     return;
                 }
             }
@@ -364,7 +364,7 @@ namespace Memoria.Scripts.Battle
         {
             if (_v.Target.IsZombie)
             {
-                TranceSeekCustomAPI.MagicAccuracy(_v);
+                TranceSeekAPI.MagicAccuracy(_v);
                 return true;
             }
             return false;

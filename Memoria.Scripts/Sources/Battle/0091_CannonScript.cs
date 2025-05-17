@@ -21,21 +21,21 @@ namespace Memoria.Scripts.Battle
         public void Perform()
         {
             _v.PhysicalAccuracy();
-            if (TranceSeekCustomAPI.TryPhysicalHit(_v))
+            if (TranceSeekAPI.TryPhysicalHit(_v))
             {
                 _v.NormalPhysicalParams();
-                TranceSeekCustomAPI.CharacterBonusPassive(_v, "PhysicalAttack");
-                TranceSeekCustomAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
-                TranceSeekCustomAPI.EnemyTranceBonusAttack(_v);
-                TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
+                TranceSeekAPI.CharacterBonusPassive(_v, "PhysicalAttack");
+                TranceSeekAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
+                TranceSeekAPI.EnemyTranceBonusAttack(_v);
+                TranceSeekAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
                 if (Mathf.Abs((_v.Caster.Row - _v.Target.Row)) > 1)
                     ++_v.Context.DamageModifierCount;
-                TranceSeekCustomAPI.BonusElement(_v);
+                TranceSeekAPI.BonusElement(_v);
                 if (_v.CanAttackElementalCommand())
                 {
                     _v.CalcPhysicalHpDamage();
-                    TranceSeekCustomAPI.RaiseTrouble(_v);
-                    TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
+                    TranceSeekAPI.RaiseTrouble(_v);
+                    TranceSeekAPI.TryAlterMagicStatuses(_v);
                 }
             }
         }

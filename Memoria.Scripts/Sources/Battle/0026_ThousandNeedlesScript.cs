@@ -27,7 +27,7 @@ namespace Memoria.Scripts.Battle
                 _v.Target.HpDamage = ((short)(_v.Command.Power * 100) * num);
                 if (_v.Caster.Data.dms_geo_id == 553 && _v.Command.Power == 6 && _v.Command.HitRate == 66)
                 {
-                    TranceSeekCustomAPI.RaiseTrouble(_v);
+                    TranceSeekAPI.RaiseTrouble(_v);
                 }
             }
             else

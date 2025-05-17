@@ -30,12 +30,12 @@ namespace Memoria.Scripts.Battle
             else
             {
                 _v.NormalMagicParams();
-                TranceSeekCustomAPI.CharacterBonusPassive(_v, "MagicAttack");
-                TranceSeekCustomAPI.CasterPenaltyMini(_v);
-                TranceSeekCustomAPI.EnemyTranceBonusAttack(_v);
-                TranceSeekCustomAPI.PenaltyCommandDividedAttack(_v);
+                TranceSeekAPI.CharacterBonusPassive(_v, "MagicAttack");
+                TranceSeekAPI.CasterPenaltyMini(_v);
+                TranceSeekAPI.EnemyTranceBonusAttack(_v);
+                TranceSeekAPI.PenaltyCommandDividedAttack(_v);
                 if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)102))
-                    TranceSeekCustomAPI.TryCriticalHit(_v);
+                    TranceSeekAPI.TryCriticalHit(_v);
                 _v.CalcHpMagicRecovery();
                 if (_v.Command.HitRate == 255)
                 {
@@ -44,16 +44,16 @@ namespace Memoria.Scripts.Battle
                 else if (_v.Command.HitRate == 111)
                 {
                     _v.Command.AbilityStatus |= BattleStatus.Regen;
-                    TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
+                    TranceSeekAPI.TryAlterMagicStatuses(_v);
                 }
                 else if (_v.Command.HitRate == 99)
                 {
-                    _v.Command.AbilityStatus |= (TranceSeekCustomStatus.ArmorUp | TranceSeekCustomStatus.MentalUp);
-                    TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
+                    _v.Command.AbilityStatus |= (TranceSeekStatus.ArmorUp | TranceSeekStatus.MentalUp);
+                    TranceSeekAPI.TryAlterMagicStatuses(_v);
                 }
                 else
                 {
-                    TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
+                    TranceSeekAPI.TryAlterMagicStatuses(_v);
                 }
                 if (_v.Target.Data.dms_geo_id == 416) // Meltigemini
                 {
@@ -62,10 +62,10 @@ namespace Memoria.Scripts.Battle
                         caster => caster.CurrentAtb >= caster.MaximumAtb,
                         caster =>
                         {
-                            TranceSeekCustomAPI.MonsterMechanic[_v.Target.Data][1] = Math.Min((int)(PreviousHP - _v.Target.CurrentHp), 9999);
+                            TranceSeekAPI.MonsterMechanic[_v.Target.Data][1] = Math.Min((int)(PreviousHP - _v.Target.CurrentHp), 9999);
                         }
                     );
-                    _v.Target.TryAlterSingleStatus(TranceSeekCustomStatusId.ZombieArmor, true, _v.Caster, _v.Target.HpDamage);
+                    _v.Target.TryAlterSingleStatus(TranceSeekStatusId.ZombieArmor, true, _v.Caster, _v.Target.HpDamage);
                 }
             }
         }

@@ -7,7 +7,7 @@ using Memoria.Database;
 using Memoria.DefaultScripts;
 using UnityEngine;
 using static Memoria.Assets.DataResources;
-using static Memoria.Scripts.Battle.TranceSeekCustomAPI;
+using static Memoria.Scripts.Battle.TranceSeekAPI;
 
 namespace Memoria.Scripts.Battle
 {
@@ -109,7 +109,7 @@ namespace Memoria.Scripts.Battle
                 }
                 if (unit.HasSupportAbilityByIndex((SupportAbility)1041)) // Alert+
                 {
-                    btl_stat.AlterStatus(unit, TranceSeekCustomStatusId.PerfectDodge, parameters: "+2");
+                    btl_stat.AlterStatus(unit, TranceSeekStatusId.PerfectDodge, parameters: "+2");
                 }
                 if (unit.HasSupportAbilityByIndex((SupportAbility)52)) // Last Stand
                 {
@@ -117,18 +117,18 @@ namespace Memoria.Scripts.Battle
                 }
                 if (unit.HasSupportAbilityByIndex((SupportAbility)1252)) // SA I'm all set
                 {
-                    unit.AlterStatus(TranceSeekCustomStatus.ArmorUp, unit);
-                    unit.AlterStatus(TranceSeekCustomStatus.MentalUp, unit);
+                    unit.AlterStatus(TranceSeekStatus.ArmorUp, unit);
+                    unit.AlterStatus(TranceSeekStatus.MentalUp, unit);
                 }
                 if (unit.Weapon == RegularItem.Defender)
                 {
-                    unit.AlterStatus(TranceSeekCustomStatus.ArmorUp, unit);
-                    unit.AlterStatus(TranceSeekCustomStatus.MentalUp, unit);
+                    unit.AlterStatus(TranceSeekStatus.ArmorUp, unit);
+                    unit.AlterStatus(TranceSeekStatus.MentalUp, unit);
                 }
                 if (unit.Armor == (RegularItem)1220) // Mechanical Armor
                 {
                     MonsterMechanic[unit.Data][1] = 10;
-                    btl_stat.AlterStatus(unit, TranceSeekCustomStatusId.MechanicalArmor, parameters: MonsterMechanic[unit.Data][1]);
+                    btl_stat.AlterStatus(unit, TranceSeekStatusId.MechanicalArmor, parameters: MonsterMechanic[unit.Data][1]);
                 }
                 if (unit.IsUnderAnyStatus(BattleStatus.EasyKill))
                 {
@@ -313,19 +313,19 @@ namespace Memoria.Scripts.Battle
 
                     if (unit.HasSupportAbilityByIndex((SupportAbility)1212)) // SA Protector+
                     {
-                        btl_stat.AlterStatus(unit, TranceSeekCustomStatusId.PowerBreak, parameters: "+2");
-                        btl_stat.AlterStatus(unit, TranceSeekCustomStatusId.ArmorUp, parameters: "+2");
+                        btl_stat.AlterStatus(unit, TranceSeekStatusId.PowerBreak, parameters: "+2");
+                        btl_stat.AlterStatus(unit, TranceSeekStatusId.ArmorUp, parameters: "+2");
                     }
                     else if (unit.HasSupportAbilityByIndex((SupportAbility)212)) // SA Protector
                     {
-                        btl_stat.AlterStatus(unit, TranceSeekCustomStatusId.PowerBreak, parameters: "+1");
-                        btl_stat.AlterStatus(unit, TranceSeekCustomStatusId.ArmorUp, parameters: "+1");
+                        btl_stat.AlterStatus(unit, TranceSeekStatusId.PowerBreak, parameters: "+1");
+                        btl_stat.AlterStatus(unit, TranceSeekStatusId.ArmorUp, parameters: "+1");
                     }
 
                     if (unit.Row == 1)
-                        btl_stat.AlterStatus(unit, TranceSeekCustomStatusId.Special, parameters: "CanCover1");
+                        btl_stat.AlterStatus(unit, TranceSeekStatusId.Special, parameters: "CanCover1");
                     else
-                        btl_stat.AlterStatus(unit, TranceSeekCustomStatusId.Special, parameters: "CanCover0");
+                        btl_stat.AlterStatus(unit, TranceSeekStatusId.Special, parameters: "CanCover0");
                 }
             }
         }
@@ -390,7 +390,7 @@ namespace Memoria.Scripts.Battle
             { 936, 0 }, // Sulfura
             { 294, 0 }, // Valseur 2
             { 296, 0 }, // Valseur 3
-            { 74, 0 }, // Zorn & Thorn
+            { 74, 0 }, { 74, 1 }, // Zorn & Thorn
             { 930, 1 }, { 930, 2 }, { 930, 3 }, // Adds from Lovecraft fight
             { 600, 2 }, { 600, 3 }, { 600, 4 }, // Adds from Fandalf fight
             { 668, 0 },  { 217, 0 }, { 670, 0 }, { 751, 0 }, { 652, 0 }, { 664, 0 }, { 216, 0 }, // Friendly Yeti

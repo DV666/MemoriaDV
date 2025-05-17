@@ -22,7 +22,7 @@ namespace Memoria.Scripts.Battle
         public void Perform()
         {
             float RatioDamage = (float)(_v.Command.Power + _v.Caster.Level - _v.Target.PhysicalDefence - _v.Target.Level) / 5;
-            TranceSeekCustomAPI.WeaponPhysicalParams(CalcAttackBonus.Simple, _v);
+            TranceSeekAPI.WeaponPhysicalParams(CalcAttackBonus.Simple, _v);
             _v.Caster.SetLowPhysicalAttack();
             if (RatioDamage < 0)
             {
@@ -35,14 +35,14 @@ namespace Memoria.Scripts.Battle
             {
                 _v.Context.Attack = (_v.Context.Attack * 3) / 4; // Little Malus if condition is not respected.
             }
-            TranceSeekCustomAPI.EnemyTranceBonusAttack(_v);
-            TranceSeekCustomAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
-            TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
-            TranceSeekCustomAPI.BonusElement(_v);
-            if (TranceSeekCustomAPI.CanAttackWeaponElementalCommand(_v))
+            TranceSeekAPI.EnemyTranceBonusAttack(_v);
+            TranceSeekAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
+            TranceSeekAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
+            TranceSeekAPI.BonusElement(_v);
+            if (TranceSeekAPI.CanAttackWeaponElementalCommand(_v))
             {
                 _v.CalcHpDamage();
-                TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
+                TranceSeekAPI.TryAlterMagicStatuses(_v);
             }
         }
     }

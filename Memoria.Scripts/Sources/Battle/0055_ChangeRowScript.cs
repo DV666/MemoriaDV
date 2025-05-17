@@ -25,9 +25,9 @@ namespace Memoria.Scripts.Battle
 
             _v.Target.ChangeRow();
             if (_v.Target.Row == 1)
-                btl_stat.AlterStatus(_v.Target, TranceSeekCustomStatusId.Special, parameters: "CanCover1"); 
+                btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.Special, parameters: "CanCover1"); 
             else
-                btl_stat.AlterStatus(_v.Target, TranceSeekCustomStatusId.Special, parameters: "CanCover0");           
+                btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.Special, parameters: "CanCover0");           
         }
     }
 }

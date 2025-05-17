@@ -5,6 +5,7 @@ using System;
 using FF9;
 using Memoria.Prime;
 using static SiliconStudio.Social.ResponseData;
+using System.ComponentModel.Design;
 
 namespace Memoria.Scripts.Battle
 {
@@ -49,18 +50,25 @@ namespace Memoria.Scripts.Battle
                     _v.Context.Evade = 0;
                 }
             }
-            if (TranceSeekCustomAPI.TryPhysicalHit(_v) || _v.Command.AbilityId == (BattleAbilityId)1161) // Attack from King Leo
+            if (TranceSeekAPI.TryPhysicalHit(_v) || _v.Command.AbilityId == (BattleAbilityId)1161) // Attack from King Leo
             {
-                TranceSeekCustomAPI.WeaponPhysicalParams(_bonus, _v);
-                TranceSeekCustomAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
-                TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
+                if (_v.Command.Id == (BattleCommandId)1050 || _v.Command.Id == TranceSeekBattleCommand.MagicWeapon_Normal || _v.Command.Id == (BattleCommandId)1052)
+                {
+                    _v.Target.RemoveStatus(BattleStatusConst.RemoveOnPhysicallyAttacked & ~_v.Context.AddedStatuses);
+                    if (FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1050, out Dictionary<Int32, Int32> dict))
+                        dict[0] = 1;
+                }
+
+                TranceSeekAPI.WeaponPhysicalParams(_bonus, _v);
+                TranceSeekAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
+                TranceSeekAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
                 if (_v.Caster.IsUnderStatus(BattleStatus.Trance) && _v.Caster.PlayerIndex == CharacterId.Steiner)
                 {
                     _v.Context.Attack += _v.Context.Attack / 4;
                 }
-                TranceSeekCustomAPI.BonusBackstabAndPenaltyLongDistance(_v);
-                TranceSeekCustomAPI.BonusWeaponElement(_v);
-                if (TranceSeekCustomAPI.CanAttackWeaponElementalCommand(_v))
+                TranceSeekAPI.BonusBackstabAndPenaltyLongDistance(_v);
+                TranceSeekAPI.BonusWeaponElement(_v);
+                if (TranceSeekAPI.CanAttackWeaponElementalCommand(_v))
                 {
                     if (_v.Caster.HasSupportAbility(SupportAbility2.Mug) && !_v.Target.IsPlayer)
                     {
@@ -80,8 +88,8 @@ namespace Memoria.Scripts.Battle
                     }
                     if (_v.Caster.PlayerIndex == CharacterId.Amarant)
                     {
-                        TranceSeekCustomAPI.AmarantPassive(_v);
-                        if (_v.Caster.IsUnderAnyStatus(BattleStatus.Defend) && _v.Command.Id == BattleCommandId.Counter && TranceSeekCustomAPI.SpecialSAEffect[_v.Caster.Data][0] == 1) // Duel Amarant
+                        TranceSeekAPI.AmarantPassive(_v);
+                        if (_v.Caster.IsUnderAnyStatus(BattleStatus.Defend) && _v.Command.Id == BattleCommandId.Counter && TranceSeekAPI.SpecialSAEffect[_v.Caster.Data][0] == 1) // Duel Amarant
                         {
                             short previouscriticalbonus = _v.Caster.Data.critical_rate_deal_bonus;
                             _v.Caster.Data.critical_rate_deal_bonus += _v.Caster.Will;
@@ -89,9 +97,9 @@ namespace Memoria.Scripts.Battle
                             int HitRateWeaponStatus = (50 + _v.Caster.WeaponRate + (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1025) ? (_v.Target.Will / 2) : 0));
                             if (WeaponStatus != 0)
                             {
-                                if (((WeaponStatus & BattleStatus.Death) != 0 && TranceSeekCustomAPI.EliteMonster(_v.Target.Data)) || (WeaponStatus & BattleStatus.Death) == 0) // Don't force Death status.
+                                if (((WeaponStatus & BattleStatus.Death) != 0 && TranceSeekAPI.EliteMonster(_v.Target.Data)) || (WeaponStatus & BattleStatus.Death) == 0) // Don't force Death status.
                                 {
-                                    if ((WeaponStatus & BattleStatus.Death) != 0 && TranceSeekCustomAPI.EliteMonster(_v.Target.Data))
+                                    if ((WeaponStatus & BattleStatus.Death) != 0 && TranceSeekAPI.EliteMonster(_v.Target.Data))
                                         HitRateWeaponStatus /= 2;
 
                                     if ((GameRandom.Next8() % 100) < HitRateWeaponStatus)
@@ -100,20 +108,20 @@ namespace Memoria.Scripts.Battle
                             }
                             else if ((WeaponStatus & BattleStatus.Death) != 0 && _v.Target.IsUnderAnyStatus(BattleStatus.Death))
                             {
-                                TranceSeekCustomAPI.TriggerSPSResistStatus[_v.Target] = true;
+                                TranceSeekAPI.TriggerSPSResistStatus[_v.Target] = true;
                             }
-                            TranceSeekCustomAPI.TryCriticalHit(_v);
+                            TranceSeekAPI.TryCriticalHit(_v);
                             _v.Caster.Data.critical_rate_deal_bonus = previouscriticalbonus;
                         }
                         else
                         {
-                            TranceSeekCustomAPI.TryCriticalHit(_v);
+                            TranceSeekAPI.TryCriticalHit(_v);
                         }
                     }
                     else
                     {
-                        TranceSeekCustomAPI.TryCriticalHit(_v);
-                        TranceSeekCustomAPI.TryApplyDragon(_v);
+                        TranceSeekAPI.TryCriticalHit(_v);
+                        TranceSeekAPI.TryApplyDragon(_v);
                     }
                     if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)229) && (_v.Target.Flags & CalcFlag.Critical) != 0) // SA Lethality
                     {
@@ -124,10 +132,10 @@ namespace Memoria.Scripts.Battle
                     if (_v.Caster.HasSupportAbility(SupportAbility1.AddStatus)) // SA Add Status (to handle specific case, like Elite Monsters). Can be improved ...?
                     {
                         BattleStatus WeaponStatus = _v.Caster.WeaponStatus;
-                        if (((WeaponStatus & BattleStatus.Death) != 0 && TranceSeekCustomAPI.EliteMonster(_v.Target.Data)) || (WeaponStatus & BattleStatus.Death) == 0) // Don't force Death status.
+                        if (((WeaponStatus & BattleStatus.Death) != 0 && TranceSeekAPI.EliteMonster(_v.Target.Data)) || (WeaponStatus & BattleStatus.Death) == 0) // Don't force Death status.
                         {
                             int HitRateWeaponStatus = _v.Caster.WeaponRate + (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1025) ? (_v.Target.Will / 3) : 0);
-                            if ((WeaponStatus & BattleStatus.Death) != 0 && TranceSeekCustomAPI.EliteMonster(_v.Target.Data))
+                            if ((WeaponStatus & BattleStatus.Death) != 0 && TranceSeekAPI.EliteMonster(_v.Target.Data))
                                     HitRateWeaponStatus /= 2;
 
                             if ((GameRandom.Next8() % 100) < HitRateWeaponStatus)
@@ -135,14 +143,14 @@ namespace Memoria.Scripts.Battle
                         }
                         else if ((WeaponStatus & BattleStatus.Death) != 0 && _v.Target.IsUnderAnyStatus(BattleStatus.Death))
                         {
-                            TranceSeekCustomAPI.TriggerSPSResistStatus[_v.Target] = true;
+                            TranceSeekAPI.TriggerSPSResistStatus[_v.Target] = true;
                         }
                     }
-                    TranceSeekCustomAPI.IpsenCastleMalus(_v);
+                    TranceSeekAPI.IpsenCastleMalus(_v);
                     _v.CalcPhysicalHpDamage();
-                    TranceSeekCustomAPI.InfusedWeaponStatus(_v);
-                    TranceSeekCustomAPI.TryAlterCommandStatuses(_v, false);
-                    TranceSeekCustomAPI.RaiseTrouble(_v);
+                    TranceSeekAPI.InfusedWeaponStatus(_v);
+                    TranceSeekAPI.TryAlterCommandStatuses(_v, false);
+                    TranceSeekAPI.RaiseTrouble(_v);
                 }
             }
             else
@@ -176,12 +184,12 @@ namespace Memoria.Scripts.Battle
                     _v.Context.AttackPower = 20;
                     break;
             }
-            TranceSeekCustomAPI.CharacterBonusPassive(_v, "MagicAttack");
-            TranceSeekCustomAPI.CasterPenaltyMini(_v);
-            TranceSeekCustomAPI.EnemyTranceBonusAttack(_v);
+            TranceSeekAPI.CharacterBonusPassive(_v, "MagicAttack");
+            TranceSeekAPI.CasterPenaltyMini(_v);
+            TranceSeekAPI.EnemyTranceBonusAttack(_v);
             --_v.Context.DamageModifierCount;
             if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)102))
-                TranceSeekCustomAPI.TryCriticalHit(_v);
+                TranceSeekAPI.TryCriticalHit(_v);
             _v.Caster.HpDamage = _v.Context.EnsureAttack * _v.Context.EnsurePowerDifference;
             foreach (BattleUnit unit in BattleState.EnumerateUnits())
             {
@@ -211,25 +219,25 @@ namespace Memoria.Scripts.Battle
             int SlotMugSteal = 4 + _v.Command.Data.info.effect_counter;
             if (GameRandom.Next8() < StealScript.NewStealableItemRates(battleEnemy.StealableItemRates[3], _v.Caster) && battleEnemy.StealableItems[3] != RegularItem.NoItem)
             {
-                TranceSeekCustomAPI.ZidanePassive[_v.Caster.Data][SlotMugSteal] = (Int32)battleEnemy.StealableItems[3];
+                TranceSeekAPI.ZidanePassive[_v.Caster.Data][SlotMugSteal] = (Int32)battleEnemy.StealableItems[3];
                 MugItem(battleEnemy, 3);            
             }
             else if (GameRandom.Next8() < StealScript.NewStealableItemRates(battleEnemy.StealableItemRates[2], _v.Caster) && battleEnemy.StealableItems[2] != RegularItem.NoItem)
             {
-                TranceSeekCustomAPI.ZidanePassive[_v.Caster.Data][SlotMugSteal] = (Int32)battleEnemy.StealableItems[2];
+                TranceSeekAPI.ZidanePassive[_v.Caster.Data][SlotMugSteal] = (Int32)battleEnemy.StealableItems[2];
                 MugItem(battleEnemy, 2);
             }
             else if (GameRandom.Next8() < StealScript.NewStealableItemRates(battleEnemy.StealableItemRates[1], _v.Caster) && battleEnemy.StealableItems[1] != RegularItem.NoItem)
             {
-                TranceSeekCustomAPI.ZidanePassive[_v.Caster.Data][SlotMugSteal] = (Int32)battleEnemy.StealableItems[1];
+                TranceSeekAPI.ZidanePassive[_v.Caster.Data][SlotMugSteal] = (Int32)battleEnemy.StealableItems[1];
                 MugItem(battleEnemy, 1);
             }
             else if (GameRandom.Next8() < StealScript.NewStealableItemRates(battleEnemy.StealableItemRates[0], _v.Caster) && battleEnemy.StealableItems[0] != RegularItem.NoItem)
             {
-                TranceSeekCustomAPI.ZidanePassive[_v.Caster.Data][SlotMugSteal] = (Int32)battleEnemy.StealableItems[0];
+                TranceSeekAPI.ZidanePassive[_v.Caster.Data][SlotMugSteal] = (Int32)battleEnemy.StealableItems[0];
                 MugItem(battleEnemy, 0);
             }
-            else if (TranceSeekCustomAPI.ZidanePassive[_v.Target.Data][2] > 0) // Oeil de voleur activé
+            else if (TranceSeekAPI.ZidanePassive[_v.Target.Data][2] > 0) // Oeil de voleur activé
             {
                 AddBonusSteal();
                 Dictionary<String, String> localizedMessage = new Dictionary<String, String>
@@ -244,44 +252,44 @@ namespace Memoria.Scripts.Battle
                 };
                 if (GameRandom.Next8() < StealScript.NewStealableItemRates(battleEnemy.StealableItemRates[3], _v.Caster) && battleEnemy.StealableItems[3] != RegularItem.NoItem)
                 {
-                    TranceSeekCustomAPI.ZidanePassive[_v.Caster.Data][SlotMugSteal] = (Int32)battleEnemy.StealableItems[3];
+                    TranceSeekAPI.ZidanePassive[_v.Caster.Data][SlotMugSteal] = (Int32)battleEnemy.StealableItems[3];
                     MugItem(battleEnemy, 3);
                 }
                 else if (GameRandom.Next8() < StealScript.NewStealableItemRates(battleEnemy.StealableItemRates[2], _v.Caster) && battleEnemy.StealableItems[2] != RegularItem.NoItem)
                 {
-                    TranceSeekCustomAPI.ZidanePassive[_v.Caster.Data][SlotMugSteal] = (Int32)battleEnemy.StealableItems[2];
+                    TranceSeekAPI.ZidanePassive[_v.Caster.Data][SlotMugSteal] = (Int32)battleEnemy.StealableItems[2];
                     MugItem(battleEnemy, 2);
                 }
                 else if (GameRandom.Next8() < StealScript.NewStealableItemRates(battleEnemy.StealableItemRates[1], _v.Caster) && battleEnemy.StealableItems[1] != RegularItem.NoItem)
                 {
-                    TranceSeekCustomAPI.ZidanePassive[_v.Caster.Data][SlotMugSteal] = (Int32)battleEnemy.StealableItems[1];
+                    TranceSeekAPI.ZidanePassive[_v.Caster.Data][SlotMugSteal] = (Int32)battleEnemy.StealableItems[1];
                     MugItem(battleEnemy, 1);
                 }
                 else if (GameRandom.Next8() < StealScript.NewStealableItemRates(battleEnemy.StealableItemRates[0], _v.Caster) && battleEnemy.StealableItems[0] != RegularItem.NoItem)
                 {
-                    TranceSeekCustomAPI.ZidanePassive[_v.Caster.Data][SlotMugSteal] = (Int32)battleEnemy.StealableItems[0];
+                    TranceSeekAPI.ZidanePassive[_v.Caster.Data][SlotMugSteal] = (Int32)battleEnemy.StealableItems[0];
                     MugItem(battleEnemy, 0);
                 }
                 else if (_v.Caster.IsUnderAnyStatus(BattleStatus.Trance) && _v.Caster.PlayerIndex == CharacterId.Zidane)
                 {
                     if (battleEnemy.StealableItems[0] != RegularItem.NoItem)
                     {
-                        TranceSeekCustomAPI.ZidanePassive[_v.Caster.Data][SlotMugSteal] = (Int32)battleEnemy.StealableItems[0];
+                        TranceSeekAPI.ZidanePassive[_v.Caster.Data][SlotMugSteal] = (Int32)battleEnemy.StealableItems[0];
                         MugItem(battleEnemy, 0);
                     }
                     else if (battleEnemy.StealableItems[1] != RegularItem.NoItem)
                     {
-                        TranceSeekCustomAPI.ZidanePassive[_v.Caster.Data][SlotMugSteal] = (Int32)battleEnemy.StealableItems[1];
+                        TranceSeekAPI.ZidanePassive[_v.Caster.Data][SlotMugSteal] = (Int32)battleEnemy.StealableItems[1];
                         MugItem(battleEnemy, 1);
                     }
                     else if (battleEnemy.StealableItems[2] != RegularItem.NoItem)
                     {
-                        TranceSeekCustomAPI.ZidanePassive[_v.Caster.Data][SlotMugSteal] = (Int32)battleEnemy.StealableItems[2];
+                        TranceSeekAPI.ZidanePassive[_v.Caster.Data][SlotMugSteal] = (Int32)battleEnemy.StealableItems[2];
                         MugItem(battleEnemy, 2);
                     }
                     else if (battleEnemy.StealableItems[3] != RegularItem.NoItem && GameRandom.Next8() < (127 + battleEnemy.StealableItemRates[3]))
                     {
-                        TranceSeekCustomAPI.ZidanePassive[_v.Caster.Data][SlotMugSteal] = (Int32)battleEnemy.StealableItems[3];
+                        TranceSeekAPI.ZidanePassive[_v.Caster.Data][SlotMugSteal] = (Int32)battleEnemy.StealableItems[3];
                         MugItem(battleEnemy, 3);
                     }
                     else
@@ -302,22 +310,22 @@ namespace Memoria.Scripts.Battle
             {
                 if (battleEnemy.StealableItems[0] != RegularItem.NoItem)
                 {
-                    TranceSeekCustomAPI.ZidanePassive[_v.Caster.Data][SlotMugSteal] = (Int32)battleEnemy.StealableItems[0];
+                    TranceSeekAPI.ZidanePassive[_v.Caster.Data][SlotMugSteal] = (Int32)battleEnemy.StealableItems[0];
                     MugItem(battleEnemy, 0);
                 }
                 else if (battleEnemy.StealableItems[1] != RegularItem.NoItem)
                 {
-                    TranceSeekCustomAPI.ZidanePassive[_v.Caster.Data][SlotMugSteal] = (Int32)battleEnemy.StealableItems[1];
+                    TranceSeekAPI.ZidanePassive[_v.Caster.Data][SlotMugSteal] = (Int32)battleEnemy.StealableItems[1];
                     MugItem(battleEnemy, 1);
                 }
                 else if (battleEnemy.StealableItems[2] != RegularItem.NoItem)
                 {
-                    TranceSeekCustomAPI.ZidanePassive[_v.Caster.Data][SlotMugSteal] = (Int32)battleEnemy.StealableItems[2];
+                    TranceSeekAPI.ZidanePassive[_v.Caster.Data][SlotMugSteal] = (Int32)battleEnemy.StealableItems[2];
                     MugItem(battleEnemy, 2);
                 }
                 else if (battleEnemy.StealableItems[3] != RegularItem.NoItem && GameRandom.Next8() < (127 + battleEnemy.StealableItemRates[3]))
                 {
-                    TranceSeekCustomAPI.ZidanePassive[_v.Caster.Data][SlotMugSteal] = (Int32)battleEnemy.StealableItems[3];
+                    TranceSeekAPI.ZidanePassive[_v.Caster.Data][SlotMugSteal] = (Int32)battleEnemy.StealableItems[3];
                     MugItem(battleEnemy, 3);
                 }
                 else
@@ -374,9 +382,9 @@ namespace Memoria.Scripts.Battle
             {
                 ff9item.FF9Item_Add(_v.Context.ItemSteal, 2);
                 if (_v.Caster.HasSupportAbility(SupportAbility1.MasterThief) && slot == 0)
-                    TranceSeekCustomAPI.ZidanePassive[_v.Caster.Data][10] = 1;
+                    TranceSeekAPI.ZidanePassive[_v.Caster.Data][10] = 1;
                 else if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1022) && slot == 1)
-                    TranceSeekCustomAPI.ZidanePassive[_v.Caster.Data][11] = 1;
+                    TranceSeekAPI.ZidanePassive[_v.Caster.Data][11] = 1;
 
                 if (_v.Caster.PlayerIndex == CharacterId.Zidane && ff9item._FF9Item_Data[FF9StateSystem.Common.FF9.player[(CharacterId)_v.Caster.Data.bi.slot_no].equip.Weapon].shape == 2) // Thief Sword
                     UiState.SetBattleFollowFormatMessage(BattleMesages.Stole, FF9TextTool.ItemName(_v.Context.ItemSteal) + " X 2");
@@ -387,27 +395,27 @@ namespace Memoria.Scripts.Battle
                 if (_v.Caster.PlayerIndex == CharacterId.Zidane && ff9item._FF9Item_Data[FF9StateSystem.Common.FF9.player[(CharacterId)_v.Caster.Data.bi.slot_no].equip.Weapon].shape == 2) // Thief Sword
                     UiState.SetBattleFollowFormatMessage(BattleMesages.Stole, FF9TextTool.ItemName(_v.Context.ItemSteal));
             }
-            TranceSeekCustomAPI.PhantomHandSA(_v);
+            TranceSeekAPI.PhantomHandSA(_v);
         }
 
         public void ShowMugMessage()
         {
             if (_v.Caster.PlayerIndex == CharacterId.Zidane && ff9item._FF9Item_Data[FF9StateSystem.Common.FF9.player[(CharacterId)_v.Caster.Data.bi.slot_no].equip.Weapon].shape == 1 && _v.Command.Data.info.effect_counter == 2) // Dagger
             {
-                RegularItem FirstItemMugged = (RegularItem)TranceSeekCustomAPI.ZidanePassive[_v.Caster.Data][5];
-                RegularItem SecondItemMugged = (RegularItem)TranceSeekCustomAPI.ZidanePassive[_v.Caster.Data][6];
-                string FirstItemMuggedText = TranceSeekCustomAPI.ZidanePassive[_v.Caster.Data][10] > 0 ? $"{FF9TextTool.ItemName(FirstItemMugged)} X 2" : $"{FF9TextTool.ItemName(FirstItemMugged)}";
-                string SecondItemMuggedText = TranceSeekCustomAPI.ZidanePassive[_v.Caster.Data][11] > 0 ? $"{FF9TextTool.ItemName(SecondItemMugged)} X 2" : $"{FF9TextTool.ItemName(SecondItemMugged)}";
+                RegularItem FirstItemMugged = (RegularItem)TranceSeekAPI.ZidanePassive[_v.Caster.Data][5];
+                RegularItem SecondItemMugged = (RegularItem)TranceSeekAPI.ZidanePassive[_v.Caster.Data][6];
+                string FirstItemMuggedText = TranceSeekAPI.ZidanePassive[_v.Caster.Data][10] > 0 ? $"{FF9TextTool.ItemName(FirstItemMugged)} X 2" : $"{FF9TextTool.ItemName(FirstItemMugged)}";
+                string SecondItemMuggedText = TranceSeekAPI.ZidanePassive[_v.Caster.Data][11] > 0 ? $"{FF9TextTool.ItemName(SecondItemMugged)} X 2" : $"{FF9TextTool.ItemName(SecondItemMugged)}";
                 if (FirstItemMugged != RegularItem.NoItem && SecondItemMugged != RegularItem.NoItem)
                     UiState.SetBattleFollowFormatMessage(BattleMesages.Stole, FirstItemMuggedText + " / " + SecondItemMuggedText);
                 else if (FirstItemMugged != RegularItem.NoItem)
                     UiState.SetBattleFollowFormatMessage(BattleMesages.Stole, FirstItemMuggedText);
                 else if (SecondItemMugged != RegularItem.NoItem)
                     UiState.SetBattleFollowFormatMessage(BattleMesages.Stole, SecondItemMuggedText);
-                TranceSeekCustomAPI.ZidanePassive[_v.Caster.Data][5] = 255;
-                TranceSeekCustomAPI.ZidanePassive[_v.Caster.Data][6] = 255;
-                TranceSeekCustomAPI.ZidanePassive[_v.Caster.Data][10] = 0;
-                TranceSeekCustomAPI.ZidanePassive[_v.Caster.Data][11] = 0;
+                TranceSeekAPI.ZidanePassive[_v.Caster.Data][5] = 255;
+                TranceSeekAPI.ZidanePassive[_v.Caster.Data][6] = 255;
+                TranceSeekAPI.ZidanePassive[_v.Caster.Data][10] = 0;
+                TranceSeekAPI.ZidanePassive[_v.Caster.Data][11] = 0;
             }
         }
 
@@ -432,12 +440,12 @@ namespace Memoria.Scripts.Battle
 
                 if (ff9item._FF9Item_Data[FF9StateSystem.Common.FF9.player[(CharacterId)_v.Caster.Data.bi.slot_no].equip.Weapon].shape == 1 && _v.Command.Data.info.effect_counter != 2)
                 {
-                    TranceSeekCustomAPI.ZidanePassive[_v.Caster.Data][8] = bonusgil;
+                    TranceSeekAPI.ZidanePassive[_v.Caster.Data][8] = bonusgil;
                 }
                 else
                 {
-                    bonusgil = bonusgil + TranceSeekCustomAPI.ZidanePassive[_v.Caster.Data][8];
-                    TranceSeekCustomAPI.ZidanePassive[_v.Caster.Data][8] = 0;
+                    bonusgil = bonusgil + TranceSeekAPI.ZidanePassive[_v.Caster.Data][8];
+                    TranceSeekAPI.ZidanePassive[_v.Caster.Data][8] = 0;
                     Dictionary<String, String> localizedMessage = new Dictionary<String, String>
                         {
                           { "US", $"+{bonusgil} gils!" },

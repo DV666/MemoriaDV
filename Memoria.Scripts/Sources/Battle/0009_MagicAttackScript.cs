@@ -47,14 +47,14 @@ namespace Memoria.Scripts.Battle
                 if (_v.Command.AbilityId == BattleAbilityId.Attack) // Racket
                 {
                     _v.PhysicalAccuracy();
-                    if (TranceSeekCustomAPI.TryPhysicalHit(_v))
+                    if (TranceSeekAPI.TryPhysicalHit(_v))
                     {
                         Int32 baseDamage = Comn.random16() % (1 + (_v.Caster.Level + _v.Caster.Magic >> 3));
                         _v.Context.AttackPower = _v.Caster.GetWeaponPower(_v.Command);
                         _v.Target.SetMagicDefense();
                         _v.Context.Attack = _v.Caster.Magic + baseDamage;
                         _v.Command.Element = _v.Caster.WeaponElement;
-                        TranceSeekCustomAPI.BonusBackstabAndPenaltyLongDistance(_v);
+                        TranceSeekAPI.BonusBackstabAndPenaltyLongDistance(_v);
                     }
                     else
                         return;
@@ -62,11 +62,11 @@ namespace Memoria.Scripts.Battle
                 else
                     _v.NormalMagicParams();
 
-                TranceSeekCustomAPI.CharacterBonusPassive(_v, "MagicAttack");
-                TranceSeekCustomAPI.CasterPenaltyMini(_v);
-                TranceSeekCustomAPI.EnemyTranceBonusAttack(_v);
-                TranceSeekCustomAPI.PenaltyShellAttack(_v);
-                TranceSeekCustomAPI.PenaltyCommandDividedAttack(_v);
+                TranceSeekAPI.CharacterBonusPassive(_v, "MagicAttack");
+                TranceSeekAPI.CasterPenaltyMini(_v);
+                TranceSeekAPI.EnemyTranceBonusAttack(_v);
+                TranceSeekAPI.PenaltyShellAttack(_v);
+                TranceSeekAPI.PenaltyCommandDividedAttack(_v);
                 if (_v.Caster.Data.dms_geo_id == 5 || _v.Caster.Data.dms_geo_id == 267) // Kuja (multiple target malus)
                 {
                     if (_v.Context.sfxThread.targetId != 1 && _v.Context.sfxThread.targetId != 2 && _v.Context.sfxThread.targetId != 4 && _v.Context.sfxThread.targetId != 8)
@@ -75,8 +75,8 @@ namespace Memoria.Scripts.Battle
                         _v.Context.HitRate /= 2;
                     }
                 }
-                TranceSeekCustomAPI.BonusElement(_v);
-                if (TranceSeekCustomAPI.CanAttackMagic(_v))
+                TranceSeekAPI.BonusElement(_v);
+                if (TranceSeekAPI.CanAttackMagic(_v))
                 {
                     if (_v.Target.HasCategory(EnemyCategory.Humanoid) && (_v.Command.AbilityId == BattleAbilityId.Poison || _v.Command.AbilityId == BattleAbilityId.Bio))
                     {
@@ -87,11 +87,11 @@ namespace Memoria.Scripts.Battle
                         _v.Target.Flags |= CalcFlag.HpRecovery;
                     }
                     if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)102))
-                        TranceSeekCustomAPI.TryCriticalHit(_v);
+                        TranceSeekAPI.TryCriticalHit(_v);
                     _v.CalcHpDamage();
-                    TranceSeekCustomAPI.RaiseTrouble(_v);
+                    TranceSeekAPI.RaiseTrouble(_v);
                 }
-                TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
+                TranceSeekAPI.TryAlterMagicStatuses(_v);
             }
             if (FF9StateSystem.Battle.battleMapIndex == 303) // Blambourine Fight
             {
@@ -114,13 +114,13 @@ namespace Memoria.Scripts.Battle
         public Single RateTarget()
         {
             _v.NormalMagicParams();
-            TranceSeekCustomAPI.CharacterBonusPassive(_v, "MagicAttack");
-            TranceSeekCustomAPI.CasterPenaltyMini(_v);
-            TranceSeekCustomAPI.PenaltyShellAttack(_v);
-            TranceSeekCustomAPI.PenaltyCommandDividedAttack(_v);
-            TranceSeekCustomAPI.BonusElement(_v);
+            TranceSeekAPI.CharacterBonusPassive(_v, "MagicAttack");
+            TranceSeekAPI.CasterPenaltyMini(_v);
+            TranceSeekAPI.PenaltyShellAttack(_v);
+            TranceSeekAPI.PenaltyCommandDividedAttack(_v);
+            TranceSeekAPI.BonusElement(_v);
 
-            if (!TranceSeekCustomAPI.CanAttackMagic(_v))
+            if (!TranceSeekAPI.CanAttackMagic(_v))
                 return 0;
 
             if (_v.Target.IsUnderAnyStatus(BattleStatus.Reflect) && !_v.Command.IsReflectNull)

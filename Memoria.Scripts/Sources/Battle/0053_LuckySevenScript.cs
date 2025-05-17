@@ -27,8 +27,8 @@ namespace Memoria.Scripts.Battle
             {
                 if (_v.Command.AbilityId == (BattleAbilityId)1004) // Echauffement
                 {
-                    _v.Target.AlterStatus(TranceSeekCustomStatus.PowerUp, _v.Caster);
-                    _v.Target.AlterStatus(TranceSeekCustomStatus.PerfectDodge, _v.Caster);
+                    _v.Target.AlterStatus(TranceSeekStatus.PowerUp, _v.Caster);
+                    _v.Target.AlterStatus(TranceSeekStatus.PerfectDodge, _v.Caster);
                     return;
                 }
                 else if (_v.Command.AbilityId == BattleAbilityId.LuckySeven) // Extorquer
@@ -83,20 +83,20 @@ namespace Memoria.Scripts.Battle
                 if (!_v.Target.TryKillFrozen())
                 {
                     _v.PhysicalAccuracy();
-                    if (TranceSeekCustomAPI.TryPhysicalHit(_v))
+                    if (TranceSeekAPI.TryPhysicalHit(_v))
                     {
                         _v.NormalPhysicalParams();
-                        TranceSeekCustomAPI.CharacterBonusPassive(_v, "PhysicalAttack");
-                        TranceSeekCustomAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
-                        TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
-                        TranceSeekCustomAPI.BonusBackstabAndPenaltyLongDistance(_v);
-                        TranceSeekCustomAPI.BonusElement(_v);
+                        TranceSeekAPI.CharacterBonusPassive(_v, "PhysicalAttack");
+                        TranceSeekAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
+                        TranceSeekAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
+                        TranceSeekAPI.BonusBackstabAndPenaltyLongDistance(_v);
+                        TranceSeekAPI.BonusElement(_v);
                         if (_v.CanAttackElementalCommand())
                         {
-                            TranceSeekCustomAPI.TryCriticalHit(_v);
+                            TranceSeekAPI.TryCriticalHit(_v);
                             _v.CalcPhysicalHpDamage();
-                            TranceSeekCustomAPI.RaiseTrouble(_v);
-                            TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
+                            TranceSeekAPI.RaiseTrouble(_v);
+                            TranceSeekAPI.TryAlterMagicStatuses(_v);
                         }
                         if (_v.Target.Data.bi.player != 0)
                             UIManager.Battle.RemovePlayerFromAction(_v.Target.Data.btl_id, true);

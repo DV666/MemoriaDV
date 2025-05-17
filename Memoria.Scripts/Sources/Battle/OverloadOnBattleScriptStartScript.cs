@@ -5,7 +5,7 @@ using Memoria.Database;
 using Memoria.Prime;
 using System;
 using System.Collections.Generic;
-using static Memoria.Scripts.Battle.TranceSeekCustomAPI;
+using static Memoria.Scripts.Battle.TranceSeekAPI;
 
 namespace Memoria.Scripts.Battle
 {
@@ -48,29 +48,29 @@ namespace Memoria.Scripts.Battle
             {
                 ulong AACustomStatus = v.Command.Data.aa.Vfx2;
                 if ((AACustomStatus & 1) != 0)
-                    v.Command.AbilityStatus |= TranceSeekCustomStatus.PowerBreak;
+                    v.Command.AbilityStatus |= TranceSeekStatus.PowerBreak;
                 if ((AACustomStatus & 2) != 0)
-                    v.Command.AbilityStatus |= TranceSeekCustomStatus.MagicBreak;
+                    v.Command.AbilityStatus |= TranceSeekStatus.MagicBreak;
                 if ((AACustomStatus & 4) != 0)
-                    v.Command.AbilityStatus |= TranceSeekCustomStatus.ArmorBreak;
+                    v.Command.AbilityStatus |= TranceSeekStatus.ArmorBreak;
                 if ((AACustomStatus & 8) != 0)
-                    v.Command.AbilityStatus |= TranceSeekCustomStatus.MentalBreak;
+                    v.Command.AbilityStatus |= TranceSeekStatus.MentalBreak;
                 if ((AACustomStatus & 16) != 0)
-                    v.Command.AbilityStatus |= TranceSeekCustomStatus.PowerUp;
+                    v.Command.AbilityStatus |= TranceSeekStatus.PowerUp;
                 if ((AACustomStatus & 32) != 0)
-                    v.Command.AbilityStatus |= TranceSeekCustomStatus.MagicUp;
+                    v.Command.AbilityStatus |= TranceSeekStatus.MagicUp;
                 if ((AACustomStatus & 64) != 0)
-                    v.Command.AbilityStatus |= TranceSeekCustomStatus.ArmorUp;
+                    v.Command.AbilityStatus |= TranceSeekStatus.ArmorUp;
                 if ((AACustomStatus & 128) != 0)
-                    v.Command.AbilityStatus |= TranceSeekCustomStatus.MentalUp;
+                    v.Command.AbilityStatus |= TranceSeekStatus.MentalUp;
                 if ((AACustomStatus & 256) != 0)
-                    v.Command.AbilityStatus |= TranceSeekCustomStatus.Bulwark;
+                    v.Command.AbilityStatus |= TranceSeekStatus.Bulwark;
                 if ((AACustomStatus & 512) != 0)
-                    v.Command.AbilityStatus |= TranceSeekCustomStatus.PerfectDodge;
+                    v.Command.AbilityStatus |= TranceSeekStatus.PerfectDodge;
                 if ((AACustomStatus & 1024) != 0)
-                    v.Command.AbilityStatus |= TranceSeekCustomStatus.PerfectCrit;
+                    v.Command.AbilityStatus |= TranceSeekStatus.PerfectCrit;
                 if ((AACustomStatus & 2048) != 0)
-                    v.Command.AbilityStatus |= TranceSeekCustomStatus.Vieillissement;
+                    v.Command.AbilityStatus |= TranceSeekStatus.Vieillissement;
             }
 
             if (v.Caster.HasSupportAbilityByIndex((SupportAbility)117) && SpecialSAEffect[v.Caster][4] == 0 && v.Caster.IsUnderAnyStatus(BattleStatus.Trance)) // Mode EX
@@ -99,7 +99,7 @@ namespace Memoria.Scripts.Battle
             {
                 v.Caster.Data.mot[0] = "ANH_MON_B3_122_000";
                 v.Caster.Data.mot[2] = "ANH_MON_B3_122_003";
-                btl_stat.MakeStatusesPermanent(v.Caster, TranceSeekCustomStatus.Runic, false);
+                btl_stat.MakeStatusesPermanent(v.Caster, TranceSeekStatus.Runic, false);
                 btl_stat.MakeStatusesPermanent(v.Caster, BattleStatus.Defend, false);
             }
             if (v.Caster.PlayerIndex == (CharacterId)12 && v.Command.Data.info.effect_counter == 1 && !v.Caster.InTrance) // Lani's Rage Mechanic
@@ -113,7 +113,7 @@ namespace Memoria.Scripts.Battle
                     case (BattleAbilityId)1084: // Thunder Blade
                     case (BattleAbilityId)1085: // Liquid Steel
                     {
-                        btl_stat.AlterStatus(v.Caster, TranceSeekCustomStatusId.Rage, parameters: "-1");
+                        btl_stat.AlterStatus(v.Caster, TranceSeekStatusId.Rage, parameters: "-1");
                         break;
                     }
                     case (BattleAbilityId)1077: // Carnage
@@ -123,14 +123,14 @@ namespace Memoria.Scripts.Battle
                     case (BattleAbilityId)1088: // Indra Blade
                     case (BattleAbilityId)1089: // Varuna Blade
                     {
-                        btl_stat.AlterStatus(v.Caster, TranceSeekCustomStatusId.Rage, parameters: "-2");
+                        btl_stat.AlterStatus(v.Caster, TranceSeekStatusId.Rage, parameters: "-2");
                         break;
                     }
                     case (BattleAbilityId)1078: // Ripping
                     case (BattleAbilityId)1081: // Super Muscles
                     case (BattleAbilityId)1090: // Prithvi Blade
                     {
-                        btl_stat.AlterStatus(v.Caster, TranceSeekCustomStatusId.Rage, parameters: "-3");
+                        btl_stat.AlterStatus(v.Caster, TranceSeekStatusId.Rage, parameters: "-3");
                         break;
                     }
                 }
@@ -267,7 +267,7 @@ namespace Memoria.Scripts.Battle
                 && v.Command.Id != BattleCommandId.Counter && v.Command.Id != BattleCommandId.RushAttack) // SA Flexible
             {
                 ZidanePassive[v.Caster.Data][9]++;
-                btl_stat.AlterStatus(v.Caster, TranceSeekCustomStatusId.Special, parameters: "Flexible0");
+                btl_stat.AlterStatus(v.Caster, TranceSeekStatusId.Special, parameters: "Flexible0");
                 if (ZidanePassive[v.Caster.Data][9] >= 4)
                 {
                     ZidanePassive[v.Caster.Data][9] = 0;
@@ -277,9 +277,9 @@ namespace Memoria.Scripts.Battle
                         BattleState.EnqueueCounter(v.Caster, BattleCommandId.RushAttack, (BattleAbilityId)1001, v.Caster.Id);
 
                     if (v.Caster.HasSupportAbilityByIndex((SupportAbility)1203))
-                        btl_stat.AlterStatus(v.Caster, TranceSeekCustomStatusId.Special, parameters: "Flexible2"); // SA Flexible+
+                        btl_stat.AlterStatus(v.Caster, TranceSeekStatusId.Special, parameters: "Flexible2"); // SA Flexible+
                     else
-                        btl_stat.AlterStatus(v.Caster, TranceSeekCustomStatusId.Special, parameters: "Flexible1"); // SA Flexible
+                        btl_stat.AlterStatus(v.Caster, TranceSeekStatusId.Special, parameters: "Flexible1"); // SA Flexible
                 }
             }
 
@@ -346,15 +346,15 @@ namespace Memoria.Scripts.Battle
                     v.Command.HitRate /= 2;
 
                 if (v.Caster.HasSupportAbilityByIndex((SupportAbility)1126))
-                    btl_stat.AlterStatus(v.Caster, TranceSeekCustomStatusId.Special, parameters: "Propagation2"); // SA Propagation+
+                    btl_stat.AlterStatus(v.Caster, TranceSeekStatusId.Special, parameters: "Propagation2"); // SA Propagation+
                 else
-                    btl_stat.AlterStatus(v.Caster, TranceSeekCustomStatusId.Special, parameters: "Propagation1"); // SA Propagation
+                    btl_stat.AlterStatus(v.Caster, TranceSeekStatusId.Special, parameters: "Propagation1"); // SA Propagation
 
                 v.Caster.AddDelayedModifier(
                     caster => caster.CurrentAtb >= caster.MaximumAtb,
                     caster =>
                     {
-                        btl_stat.AlterStatus(caster, TranceSeekCustomStatusId.Special, parameters: "Propagation--");
+                        btl_stat.AlterStatus(caster, TranceSeekStatusId.Special, parameters: "Propagation--");
                     }
                 );
             }
@@ -401,7 +401,7 @@ namespace Memoria.Scripts.Battle
                     if (v.Command.Id == BattleCommandId.Attack || v.Command.Id == BattleCommandId.Defend || v.Command.Id == BattleCommandId.Counter && v.Command.AbilityId == BattleAbilityId.Attack ||
                         v.Command.Id == BattleCommandId.HolyWhiteMagic || v.Caster.IsUnderAnyStatus(BattleStatus.Trance) || v.Command.Data.info.cover == 1 && v.Target.HasSupportAbility(SupportAbility2.Cover))
                     {
-                        v.Caster.AlterStatus(TranceSeekCustomStatus.Redemption, v.Caster);
+                        v.Caster.AlterStatus(TranceSeekStatus.Redemption, v.Caster);
                     }
                     else if (v.Command.Id == BattleCommandId.HolySword1 || v.Command.Id == BattleCommandId.Counter && !v.Caster.HasSupportAbilityByIndex((SupportAbility)1234) &&
                         (v.Command.AbilityId == BattleAbilityId.ThunderSlash || v.Command.AbilityId == BattleAbilityId.StockBreak || v.Command.AbilityId == BattleAbilityId.Climhazzard || v.Command.AbilityId == BattleAbilityId.Shock
@@ -409,11 +409,11 @@ namespace Memoria.Scripts.Battle
                     {
                         if (v.Caster.HasSupportAbilityByIndex((SupportAbility)233) && (v.Caster.HasSupportAbilityByIndex((SupportAbility)1233) ? 50 : 25) < Comn.random16() % 100)
                         {
-                            btl_stat.AlterStatus(v.Caster, TranceSeekCustomStatusId.Redemption, v.Caster, parameters: "Remove");
+                            btl_stat.AlterStatus(v.Caster, TranceSeekStatusId.Redemption, v.Caster, parameters: "Remove");
                         }
                         else
                         {
-                            v.Caster.RemoveStatus(TranceSeekCustomStatus.Redemption);
+                            v.Caster.RemoveStatus(TranceSeekStatus.Redemption);
                         }
                     }
                     BeatrixPassive[v.Caster.Data][3] = 1;
@@ -477,8 +477,8 @@ namespace Memoria.Scripts.Battle
 
             }
 
-            TranceSeekCustomAPI.SOS_SA(v);
-            TranceSeekCustomAPI.EikoMougMechanic(v);
+            TranceSeekAPI.SOS_SA(v);
+            TranceSeekAPI.EikoMougMechanic(v);
             return false;
         }
 

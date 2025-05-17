@@ -29,26 +29,26 @@ namespace Memoria.Scripts.Battle
             if (_v.Command.Power > 0)
             {
                 _v.NormalMagicParams();
-                TranceSeekCustomAPI.CharacterBonusPassive(_v, "MagicAttack");
-                TranceSeekCustomAPI.CasterPenaltyMini(_v);
-                TranceSeekCustomAPI.EnemyTranceBonusAttack(_v);
-                TranceSeekCustomAPI.PenaltyShellAttack(_v);
-                TranceSeekCustomAPI.PenaltyCommandDividedAttack(_v);
-                TranceSeekCustomAPI.BonusElement(_v);
-                if (TranceSeekCustomAPI.CanAttackMagic(_v))
+                TranceSeekAPI.CharacterBonusPassive(_v, "MagicAttack");
+                TranceSeekAPI.CasterPenaltyMini(_v);
+                TranceSeekAPI.EnemyTranceBonusAttack(_v);
+                TranceSeekAPI.PenaltyShellAttack(_v);
+                TranceSeekAPI.PenaltyCommandDividedAttack(_v);
+                TranceSeekAPI.BonusElement(_v);
+                if (TranceSeekAPI.CanAttackMagic(_v))
                 {
                     _v.CalcHpDamage();
                 }
-                TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
+                TranceSeekAPI.TryAlterMagicStatuses(_v);
             }
             else if (_v.Command.HitRate > 0 && _v.Command.Power == 0)
             {
-                TranceSeekCustomAPI.MagicAccuracy(_v);
+                TranceSeekAPI.MagicAccuracy(_v);
                 _v.Target.PenaltyShellHitRate();
                 _v.PenaltyCommandDividedHitRate();
-                if (TranceSeekCustomAPI.TryMagicHit(_v))
+                if (TranceSeekAPI.TryMagicHit(_v))
                 {
-                    TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
+                    TranceSeekAPI.TryAlterCommandStatuses(_v);
                 }
             }
         }

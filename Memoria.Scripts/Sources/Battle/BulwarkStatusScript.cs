@@ -14,7 +14,7 @@ namespace Memoria.DefaultScripts
         {
             base.Apply(target, inflicter, parameters);
             OverlapSHP.SetupOverlappingSHP2(target);
-            TranceSeekCustomAPI.SA_StatusApply(inflicter, true);
+            TranceSeekAPI.SA_StatusApply(inflicter, true);
             return btl_stat.ALTER_SUCCESS;
         }
 

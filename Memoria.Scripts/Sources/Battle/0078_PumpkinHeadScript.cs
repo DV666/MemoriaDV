@@ -23,19 +23,19 @@ namespace Memoria.Scripts.Battle
             uint num = Math.Min(((_v.Caster.MaximumHp - _v.Caster.CurrentHp) / 33), 100);
             _v.NormalMagicParams();
             _v.Context.AttackPower = (int)(_v.Command.Power + num);
-            TranceSeekCustomAPI.CharacterBonusPassive(_v, "MagicAttack");
-            TranceSeekCustomAPI.CasterPenaltyMini(_v);
-            TranceSeekCustomAPI.PenaltyShellAttack(_v);
-            TranceSeekCustomAPI.PenaltyCommandDividedAttack(_v);
-            TranceSeekCustomAPI.BonusElement(_v);
-            if (TranceSeekCustomAPI.CanAttackMagic(_v))
+            TranceSeekAPI.CharacterBonusPassive(_v, "MagicAttack");
+            TranceSeekAPI.CasterPenaltyMini(_v);
+            TranceSeekAPI.PenaltyShellAttack(_v);
+            TranceSeekAPI.PenaltyCommandDividedAttack(_v);
+            TranceSeekAPI.BonusElement(_v);
+            if (TranceSeekAPI.CanAttackMagic(_v))
             {
                 _v.Target.Flags = CalcFlag.HpAlteration;
                 if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)102))
-                    TranceSeekCustomAPI.TryCriticalHit(_v);
+                    TranceSeekAPI.TryCriticalHit(_v);
                 _v.CalcHpDamage();
             }
-            TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
+            TranceSeekAPI.TryAlterMagicStatuses(_v);
         }
     }
 }

@@ -44,7 +44,7 @@ namespace Memoria.Scripts.Battle
                 case (RegularItem)2094: // Anticorps
                 {
                     HPHeal = 200;
-                    TranceSeekCustomAPI.TryRemoveItemStatuses(_v);
+                    TranceSeekAPI.TryRemoveItemStatuses(_v);
                     break;
                 }
                 case (RegularItem)2040: // Maxi Sérum
@@ -56,7 +56,7 @@ namespace Memoria.Scripts.Battle
                 case (RegularItem)2095: // Maxi Anticorps
                 {
                     HPHeal = 500;
-                    TranceSeekCustomAPI.TryRemoveItemStatuses(_v);
+                    TranceSeekAPI.TryRemoveItemStatuses(_v);
                     break;
                 }
                 case (RegularItem)2041: // Ultra Sérum
@@ -68,7 +68,7 @@ namespace Memoria.Scripts.Battle
                 case (RegularItem)2096: // Ultra Anticorps
                 {
                     HPHeal = 1250;
-                    TranceSeekCustomAPI.TryRemoveItemStatuses(_v);
+                    TranceSeekAPI.TryRemoveItemStatuses(_v);
                     break;
                 }
                 case (RegularItem)2103: // Médicament
@@ -79,7 +79,7 @@ namespace Memoria.Scripts.Battle
                 case (RegularItem)2115: // Ultra Médicament +
                 {
                     HPHeal = (int)(_v.Target.MaximumHp * _v.Command.Power) / 100;
-                    TranceSeekCustomAPI.TryRemoveItemStatuses(_v);
+                    TranceSeekAPI.TryRemoveItemStatuses(_v);
                     break;
                 }
                 case (RegularItem)2106: // Traitement
@@ -87,7 +87,7 @@ namespace Memoria.Scripts.Battle
                 case (RegularItem)2116: // Traitement X
                 {
                     MPHeal = (int)(_v.Target.MaximumMp * _v.Command.Power) / 100;
-                    TranceSeekCustomAPI.TryRemoveItemStatuses(_v);
+                    TranceSeekAPI.TryRemoveItemStatuses(_v);
                     break;
                 }
                 case (RegularItem)2042: // Sérum amélioré
@@ -98,8 +98,8 @@ namespace Memoria.Scripts.Battle
                 case (RegularItem)2088: // Eau bénite amélioré
                 case (RegularItem)2097: // Anticorps amélioré
                 {
-                    TranceSeekCustomAPI.TryRemoveItemStatuses(_v);
-                    if (TranceSeekCustomAPI.ProtectStatus.TryGetValue(_v.Target.Data, out Dictionary<BattleStatus, Int32> statusprotect))
+                    TranceSeekAPI.TryRemoveItemStatuses(_v);
+                    if (TranceSeekAPI.ProtectStatus.TryGetValue(_v.Target.Data, out Dictionary<BattleStatus, Int32> statusprotect))
                     {
                         foreach (BattleStatusId statusID in _v.Command.Item.Status.ToStatusList())
                         {
@@ -117,8 +117,8 @@ namespace Memoria.Scripts.Battle
                 case (RegularItem)2089: // Puissante Eau bénite
                 case (RegularItem)2098: // Puissant Anticorps
                 {
-                    TranceSeekCustomAPI.TryRemoveItemStatuses(_v);
-                    if (TranceSeekCustomAPI.ProtectStatus.TryGetValue(_v.Target.Data, out Dictionary<BattleStatus, Int32> statusprotect))
+                    TranceSeekAPI.TryRemoveItemStatuses(_v);
+                    if (TranceSeekAPI.ProtectStatus.TryGetValue(_v.Target.Data, out Dictionary<BattleStatus, Int32> statusprotect))
                     {
                         foreach (BattleStatusId statusID in _v.Command.Item.Status.ToStatusList())
                         {
@@ -140,7 +140,7 @@ namespace Memoria.Scripts.Battle
                             _v.Context.Flags |= BattleCalcFlags.Miss;
                             return;
                         }
-                        if (HitRateForZombie() && !TranceSeekCustomAPI.TryMagicHit(_v))
+                        if (HitRateForZombie() && !TranceSeekAPI.TryMagicHit(_v))
                             return;
 
                         if (_v.Target.IsZombie && !_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill))
@@ -159,8 +159,8 @@ namespace Memoria.Scripts.Battle
                             HPHeal = (int)(_v.Target.MaximumHp);
                     }
 
-                    TranceSeekCustomAPI.TryRemoveItemStatuses(_v);
-                    if (TranceSeekCustomAPI.ProtectStatus.TryGetValue(_v.Target.Data, out Dictionary<BattleStatus, Int32> statusprotect))
+                    TranceSeekAPI.TryRemoveItemStatuses(_v);
+                    if (TranceSeekAPI.ProtectStatus.TryGetValue(_v.Target.Data, out Dictionary<BattleStatus, Int32> statusprotect))
                     {
                         Boolean Message = false;
                         string ItemName = FF9TextTool.ItemName(_v.Command.ItemId);
@@ -206,7 +206,7 @@ namespace Memoria.Scripts.Battle
                 {
                     if (_v.Target.IsUnderAnyStatus(_v.Command.Item.Status))
                     {
-                        TranceSeekCustomAPI.TryRemoveItemStatuses(_v);
+                        TranceSeekAPI.TryRemoveItemStatuses(_v);
                         _v.Target.AlterStatus(BattleStatus.Regen, _v.Target);
                     }
                     break;
@@ -226,8 +226,8 @@ namespace Memoria.Scripts.Battle
                 case (RegularItem)2158: // Remède V
                 case (RegularItem)2159: // Remède V +
                 {
-                    TranceSeekCustomAPI.TryRemoveItemStatuses(_v);
-                    if (TranceSeekCustomAPI.ProtectStatus.TryGetValue(_v.Target.Data, out Dictionary<BattleStatus, Int32> statusprotect))
+                    TranceSeekAPI.TryRemoveItemStatuses(_v);
+                    if (TranceSeekAPI.ProtectStatus.TryGetValue(_v.Target.Data, out Dictionary<BattleStatus, Int32> statusprotect))
                     {
                         Boolean Message = false;
                         string ItemName = FF9TextTool.ItemName(_v.Command.ItemId);
@@ -273,7 +273,7 @@ namespace Memoria.Scripts.Battle
                 {
                     if (_v.Target.IsUnderAnyStatus(_v.Command.Item.Status))
                     {
-                        TranceSeekCustomAPI.TryRemoveItemStatuses(_v);
+                        TranceSeekAPI.TryRemoveItemStatuses(_v);
                         _v.Target.AlterStatus(BattleStatus.AutoLife, _v.Target);
                     }
                     break;
@@ -299,7 +299,7 @@ namespace Memoria.Scripts.Battle
                 {
                     HPHeal = (int)(_v.Target.MaximumHp);
                     MPHeal = (int)(_v.Target.MaximumMp);
-                    TranceSeekCustomAPI.TryRemoveItemStatuses(_v);
+                    TranceSeekAPI.TryRemoveItemStatuses(_v);
                     break;
                 }
                 case (RegularItem)2120: // Boccidote
@@ -329,7 +329,7 @@ namespace Memoria.Scripts.Battle
                         if ((_v.Target.CurrentStatus & status) != 0)
                             statuspresent++;
                     }
-                    TranceSeekCustomAPI.TryRemoveItemStatuses(_v);
+                    TranceSeekAPI.TryRemoveItemStatuses(_v);
                     if (statuspresent > 1)
                     {
                         HPHeal = (int)(_v.Target.MaximumHp) / 4;
@@ -347,7 +347,7 @@ namespace Memoria.Scripts.Battle
                 case (RegularItem)2160: // Remède X
                 case (RegularItem)2161: // Mega Remède
                 {
-                    TranceSeekCustomAPI.TryRemoveItemStatuses(_v);
+                    TranceSeekAPI.TryRemoveItemStatuses(_v);
                     return;
                 }
             }
@@ -375,7 +375,7 @@ namespace Memoria.Scripts.Battle
         {
             if (_v.Target.IsZombie)
             {
-                TranceSeekCustomAPI.MagicAccuracy(_v);
+                TranceSeekAPI.MagicAccuracy(_v);
                 return true;
             }
             return false;

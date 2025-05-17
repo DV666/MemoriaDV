@@ -22,16 +22,16 @@ namespace Memoria.Scripts.Battle
             _v.Context.Attack = GameRandom.Next16() % (_v.Caster.Magic + _v.Caster.Level);
             _v.SetCommandPower();
             _v.Context.DefensePower = 0;
-            TranceSeekCustomAPI.CasterPenaltyMini(_v);
-            TranceSeekCustomAPI.EnemyTranceBonusAttack(_v);
-            TranceSeekCustomAPI.PenaltyShellAttack(_v);
-            TranceSeekCustomAPI.PenaltyCommandDividedAttack(_v);
-            TranceSeekCustomAPI.BonusElement(_v);
-            if (TranceSeekCustomAPI.CanAttackMagic(_v))
+            TranceSeekAPI.CasterPenaltyMini(_v);
+            TranceSeekAPI.EnemyTranceBonusAttack(_v);
+            TranceSeekAPI.PenaltyShellAttack(_v);
+            TranceSeekAPI.PenaltyCommandDividedAttack(_v);
+            TranceSeekAPI.BonusElement(_v);
+            if (TranceSeekAPI.CanAttackMagic(_v))
             {
                 _v.CalcHpDamage();
             }
-            TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
+            TranceSeekAPI.TryAlterMagicStatuses(_v);
         }
     }
 }

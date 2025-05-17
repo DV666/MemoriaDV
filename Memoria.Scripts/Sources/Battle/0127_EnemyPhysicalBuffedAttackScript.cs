@@ -24,34 +24,34 @@ namespace Memoria.Scripts.Battle
             if (!_v.Target.TryKillFrozen())
             {
                 _v.NormalPhysicalParams();
-                TranceSeekCustomAPI.CharacterBonusPassive(_v, "PhysicalAttack");
-                TranceSeekCustomAPI.EnemyTranceBonusAttack(_v);
-                TranceSeekCustomAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
-                TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
+                TranceSeekAPI.CharacterBonusPassive(_v, "PhysicalAttack");
+                TranceSeekAPI.EnemyTranceBonusAttack(_v);
+                TranceSeekAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
+                TranceSeekAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
                 if (_v.Command.HitRate != 101)
                 {
-                    TranceSeekCustomAPI.BonusBackstabAndPenaltyLongDistance(_v);
+                    TranceSeekAPI.BonusBackstabAndPenaltyLongDistance(_v);
                 }
-                TranceSeekCustomAPI.BonusElement(_v);
+                TranceSeekAPI.BonusElement(_v);
                 if (_v.CanAttackElementalCommand())
                 {
-                    TranceSeekCustomAPI.TryCriticalHit(_v);
+                    TranceSeekAPI.TryCriticalHit(_v);
                     _v.CalcPhysicalHpDamage();
-                    TranceSeekCustomAPI.RaiseTrouble(_v);
+                    TranceSeekAPI.RaiseTrouble(_v);
                     if (_v.Command.HitRate == 222) // Motivation Gauche
                     {
-                        _v.Command.AbilityStatus |= TranceSeekCustomStatus.PowerUp;
-                        TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
+                        _v.Command.AbilityStatus |= TranceSeekStatus.PowerUp;
+                        TranceSeekAPI.TryAlterCommandStatuses(_v);
                     }
                     else if (_v.Command.HitRate == 223) // Motivation droite
                     {
-                        _v.Command.AbilityStatus |= TranceSeekCustomStatus.ArmorUp;
-                        TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
+                        _v.Command.AbilityStatus |= TranceSeekStatus.ArmorUp;
+                        TranceSeekAPI.TryAlterCommandStatuses(_v);
                     }
                     else
                     {
-                        TranceSeekCustomAPI.InfusedWeaponStatus(_v);
-                        TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
+                        TranceSeekAPI.InfusedWeaponStatus(_v);
+                        TranceSeekAPI.TryAlterMagicStatuses(_v);
 
                     }
                 }                    

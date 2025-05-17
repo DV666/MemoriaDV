@@ -19,7 +19,7 @@ namespace Memoria.DefaultScripts
             }
             target.CurrentAtb = 0;
             btl_cmd.KillSpecificCommand(target, BattleCommandId.SysStone);
-            TranceSeekCustomAPI.SA_StatusApply(inflicter, false);
+            TranceSeekAPI.SA_StatusApply(inflicter, false);
             return btl_stat.ALTER_SUCCESS;
         }
 

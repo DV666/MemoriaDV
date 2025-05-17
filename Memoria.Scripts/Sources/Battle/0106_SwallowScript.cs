@@ -21,7 +21,7 @@ namespace Memoria.Scripts.Battle
         {
             if (_v.Command.HitRate == 111)
             {
-                TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
+                TranceSeekAPI.TryAlterMagicStatuses(_v);
                 _v.Target.Remove(false);
             }
             else

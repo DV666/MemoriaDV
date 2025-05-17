@@ -25,7 +25,7 @@ namespace Memoria.Scripts.Battle
                 case (BattleAbilityId)1153: // You there!
                 case (BattleAbilityId)1159: // Get over here!
                 {
-                    _v.Target.TryAlterStatuses(TranceSeekCustomStatus.Provok, true, _v.Caster);
+                    _v.Target.TryAlterStatuses(TranceSeekStatus.Provok, true, _v.Caster);
                     break;
                 }
                 case (BattleAbilityId)1154: // Get moving!
@@ -36,7 +36,7 @@ namespace Memoria.Scripts.Battle
                 }
                 case (BattleAbilityId)1155: // Peuh!
                 {
-                    TranceSeekCustomAPI.SpecialSAEffect[_v.Target.Data][11] = 1;
+                    TranceSeekAPI.SpecialSAEffect[_v.Target.Data][11] = 1;
                     break;
                 }
                 case (BattleAbilityId)1156: // A gift for you!
@@ -77,7 +77,7 @@ namespace Memoria.Scripts.Battle
                 }
                 case (BattleAbilityId)1158: // That's all?
                 {
-                    if (TranceSeekCustomAPI.SpecialSAEffect[_v.Target.Data][12] != 0)
+                    if (TranceSeekAPI.SpecialSAEffect[_v.Target.Data][12] != 0)
                     {
                         _v.Context.Flags |= BattleCalcFlags.Miss;
                         return;
@@ -85,13 +85,13 @@ namespace Memoria.Scripts.Battle
 
                     uint VanillaMaxMP = _v.Target.MaximumHp;
                     _v.Target.MaximumHp *= 2;
-                    TranceSeekCustomAPI.SpecialSAEffect[_v.Target.Data][12] = 1;
+                    TranceSeekAPI.SpecialSAEffect[_v.Target.Data][12] = 1;
                     _v.Target.AddDelayedModifier(
                         target => !target.IsUnderAnyStatus(BattleStatus.Death),
                         target =>
                         {
                             target.MaximumHp = VanillaMaxMP;
-                            TranceSeekCustomAPI.SpecialSAEffect[_v.Target.Data][12] = 0;
+                            TranceSeekAPI.SpecialSAEffect[_v.Target.Data][12] = 0;
                         }
                     );
                     break;
@@ -124,8 +124,8 @@ namespace Memoria.Scripts.Battle
                 }
                 case (BattleAbilityId)1045: // Praise
                 {
-                    List<BattleStatus> PraiseStatus = new List<BattleStatus>{ TranceSeekCustomStatus.PowerUp, TranceSeekCustomStatus.MagicUp,
-                    TranceSeekCustomStatus.ArmorUp, TranceSeekCustomStatus.MentalUp};
+                    List<BattleStatus> PraiseStatus = new List<BattleStatus>{ TranceSeekStatus.PowerUp, TranceSeekStatus.MagicUp,
+                    TranceSeekStatus.ArmorUp, TranceSeekStatus.MentalUp};
 
                     _v.Target.AlterStatus(PraiseStatus[Comn.random16() % PraiseStatus.Count]);
                     break;
@@ -188,7 +188,7 @@ namespace Memoria.Scripts.Battle
                 case (BattleAbilityId)1165: // Chosen
                 {
                     BattleStatus GoodStatus = (BattleStatus.AutoLife | BattleStatus.Protect | BattleStatus.Shell | BattleStatus.Regen | BattleStatus.Float | BattleStatus.AutoLife |
-                    BattleStatus.Haste | BattleStatus.Vanish | BattleStatus.Reflect | TranceSeekCustomStatus.PowerUp | TranceSeekCustomStatus.MagicUp | TranceSeekCustomStatus.ArmorUp | TranceSeekCustomStatus.MentalUp);
+                    BattleStatus.Haste | BattleStatus.Vanish | BattleStatus.Reflect | TranceSeekStatus.PowerUp | TranceSeekStatus.MagicUp | TranceSeekStatus.ArmorUp | TranceSeekStatus.MentalUp);
                     _v.Target.AlterStatus(GoodStatus);
                     _v.Caster.AddDelayedModifier(
                         caster => caster.IsUnderAnyStatus(BattleStatus.Trance),
@@ -205,15 +205,15 @@ namespace Memoria.Scripts.Battle
                     _v.SetWeaponPower();
                     _v.Caster.SetMagicAttack();
                     _v.Target.SetMagicDefense();
-                    TranceSeekCustomAPI.CasterPenaltyMini(_v);
-                    TranceSeekCustomAPI.PenaltyShellAttack(_v);
-                    TranceSeekCustomAPI.EnemyTranceBonusAttack(_v);
-                    TranceSeekCustomAPI.BonusElement(_v);
-                    if (TranceSeekCustomAPI.CanAttackMagic(_v))
+                    TranceSeekAPI.CasterPenaltyMini(_v);
+                    TranceSeekAPI.PenaltyShellAttack(_v);
+                    TranceSeekAPI.EnemyTranceBonusAttack(_v);
+                    TranceSeekAPI.BonusElement(_v);
+                    if (TranceSeekAPI.CanAttackMagic(_v))
                     {
                         _v.CalcHpDamage();
                     }
-                    TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
+                    TranceSeekAPI.TryAlterMagicStatuses(_v);
                     break;
                 }
                 case (BattleAbilityId)1167: // Divine hand
@@ -227,7 +227,7 @@ namespace Memoria.Scripts.Battle
                 {
                     _v.Target.RemoveStatus(BattleStatus.Poison | BattleStatus.Venom | BattleStatus.Zombie);
                     _v.Command.AbilityStatus |= (BattleStatus.Regen | BattleStatus.AutoLife);
-                    TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
+                    TranceSeekAPI.TryAlterCommandStatuses(_v);
                     break;
                 }
             }

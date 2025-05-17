@@ -13,7 +13,7 @@ namespace Memoria.DefaultScripts
             base.Apply(target, inflicter, parameters);
             if (target.IsPlayer && !target.IsUnderAnyStatus(BattleStatus.Trance))
                 target.Trance = 0;
-            TranceSeekCustomAPI.SA_StatusApply(inflicter, false);
+            TranceSeekAPI.SA_StatusApply(inflicter, false);
             return btl_stat.ALTER_SUCCESS;
         }
 

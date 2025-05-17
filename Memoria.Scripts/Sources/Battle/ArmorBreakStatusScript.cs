@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 using Memoria.Data;
-using static Memoria.Scripts.Battle.TranceSeekCustomAPI;
+using static Memoria.Scripts.Battle.TranceSeekAPI;
 using Object = System.Object;
 
 namespace Memoria.DefaultScripts

@@ -2,7 +2,7 @@
 
 namespace Memoria.Scripts.Battle
 {
-    public static class TranceSeekCustomStatusId
+    public static class TranceSeekStatusId
     {
         public const BattleStatusId PowerBreak = BattleStatusId.CustomStatus1;
         public const BattleStatusId MagicBreak = BattleStatusId.CustomStatus2;

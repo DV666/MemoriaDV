@@ -36,36 +36,36 @@ namespace Memoria.Scripts.Battle
                 if (_v.Caster.IsPlayer)
                 {
                     _v.WeaponPhysicalParams();
-                    TranceSeekCustomAPI.CharacterBonusPassive(_v, "LowPhysicalAttack");
+                    TranceSeekAPI.CharacterBonusPassive(_v, "LowPhysicalAttack");
                 }
                 else
                 {
                     _v.NormalPhysicalParams();
                 }
-                TranceSeekCustomAPI.MagicAccuracy(_v);
-                TranceSeekCustomAPI.EnemyTranceBonusAttack(_v);
-                TranceSeekCustomAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
-                TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
-                TranceSeekCustomAPI.BonusElement(_v);
+                TranceSeekAPI.MagicAccuracy(_v);
+                TranceSeekAPI.EnemyTranceBonusAttack(_v);
+                TranceSeekAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
+                TranceSeekAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
+                TranceSeekAPI.BonusElement(_v);
                 _v.CalcHpDamage();
-                _v.Command.AbilityStatus |= TranceSeekCustomStatus.PowerBreak;
-                _v.Command.AbilityStatus |= TranceSeekCustomStatus.MagicBreak;
-                _v.Command.AbilityStatus |= TranceSeekCustomStatus.ArmorBreak;
-                _v.Command.AbilityStatus |= TranceSeekCustomStatus.MentalBreak;
-                TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
+                _v.Command.AbilityStatus |= TranceSeekStatus.PowerBreak;
+                _v.Command.AbilityStatus |= TranceSeekStatus.MagicBreak;
+                _v.Command.AbilityStatus |= TranceSeekStatus.ArmorBreak;
+                _v.Command.AbilityStatus |= TranceSeekStatus.MentalBreak;
+                TranceSeekAPI.TryAlterMagicStatuses(_v);
             }
         }
 
         public Single RateTarget()
         {
             _v.NormalMagicParams();
-            TranceSeekCustomAPI.CharacterBonusPassive(_v, "MagicAttack");
-            TranceSeekCustomAPI.CasterPenaltyMini(_v);
-            TranceSeekCustomAPI.PenaltyShellAttack(_v);
-            TranceSeekCustomAPI.PenaltyCommandDividedAttack(_v);
-            TranceSeekCustomAPI.BonusElement(_v);
+            TranceSeekAPI.CharacterBonusPassive(_v, "MagicAttack");
+            TranceSeekAPI.CasterPenaltyMini(_v);
+            TranceSeekAPI.PenaltyShellAttack(_v);
+            TranceSeekAPI.PenaltyCommandDividedAttack(_v);
+            TranceSeekAPI.BonusElement(_v);
 
-            if (!TranceSeekCustomAPI.CanAttackMagic(_v))
+            if (!TranceSeekAPI.CanAttackMagic(_v))
                 return 0;
 
             if (_v.Target.IsUnderAnyStatus(BattleStatus.Reflect) && !_v.Command.IsReflectNull)

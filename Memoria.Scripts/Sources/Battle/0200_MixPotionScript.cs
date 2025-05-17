@@ -103,7 +103,7 @@ namespace Memoria.Scripts.Battle
                         _v.Context.Flags |= BattleCalcFlags.Miss;
                         return;
                     }
-                    if (HitRateForZombie() && !TranceSeekCustomAPI.TryMagicHit(_v))
+                    if (HitRateForZombie() && !TranceSeekAPI.TryMagicHit(_v))
                         return;
 
                     if (_v.Target.IsZombie && !_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill))
@@ -161,7 +161,7 @@ namespace Memoria.Scripts.Battle
                 case (RegularItem)2017: // Bienfait de Phénix
                 case (RegularItem)2018: // Bénédiction de Phénix
                 {
-                    if (HitRateForZombie() && !TranceSeekCustomAPI.TryMagicHit(_v))
+                    if (HitRateForZombie() && !TranceSeekAPI.TryMagicHit(_v))
                         return;
 
                     if (_v.Target.IsZombie && !_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill))
@@ -186,7 +186,7 @@ namespace Memoria.Scripts.Battle
                         _v.Context.Flags |= BattleCalcFlags.Miss;
                         return;
                     }
-                    if (HitRateForZombie() && !TranceSeekCustomAPI.TryMagicHit(_v))
+                    if (HitRateForZombie() && !TranceSeekAPI.TryMagicHit(_v))
                         return;
 
                     if (_v.Target.IsZombie && !_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill))
@@ -233,7 +233,7 @@ namespace Memoria.Scripts.Battle
                     else if (_v.Target.CheckIsPlayer())
                     {
                         HPHeal = (1 + GameRandom.Next8() % 10);
-                        TranceSeekCustomAPI.TryRemoveItemStatuses(_v);
+                        TranceSeekAPI.TryRemoveItemStatuses(_v);
                     }
                     break;
                 }
@@ -251,9 +251,9 @@ namespace Memoria.Scripts.Battle
                     HPHeal = (int)(_v.Target.MaximumHp);
                     MPHeal = (int)(_v.Target.MaximumMp);
                     if (_v.Command.ItemId == (RegularItem)2025 || _v.Command.ItemId == (RegularItem)2032) // Ultra Elixir + Ultra Megalixir
-                        _v.Target.AlterStatus(TranceSeekCustomStatus.ArmorUp, _v.Target);
+                        _v.Target.AlterStatus(TranceSeekStatus.ArmorUp, _v.Target);
                     else if (_v.Command.ItemId == (RegularItem)2027 || _v.Command.ItemId == (RegularItem)2034) // Elixir fabuleux + Megalixir fabuleux
-                        _v.Target.AlterStatus(TranceSeekCustomStatus.MentalUp, _v.Target);
+                        _v.Target.AlterStatus(TranceSeekStatus.MentalUp, _v.Target);
 
                     _v.Target.TryAlterStatuses(_v.Command.Item.Status, false);
                     break;
@@ -265,7 +265,7 @@ namespace Memoria.Scripts.Battle
                 case (RegularItem)2037: // Reviviscence
                 case (RegularItem)2038: // Megalixir des Tantalas
                 {
-                    if (HitRateForZombie() && !TranceSeekCustomAPI.TryMagicHit(_v))
+                    if (HitRateForZombie() && !TranceSeekAPI.TryMagicHit(_v))
                         return;
 
                     if (_v.Target.IsZombie && !_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill))
@@ -277,7 +277,7 @@ namespace Memoria.Scripts.Battle
                     if (_v.Command.ItemId == (RegularItem)2037) // Reviviscence
                     {
                         BattleStatusId[] statuslist = { BattleStatusId.Protect, BattleStatusId.Shell, BattleStatusId.Regen, BattleStatusId.AutoLife,
-                            TranceSeekCustomStatusId.ArmorUp, TranceSeekCustomStatusId.MentalUp};
+                            TranceSeekStatusId.ArmorUp, TranceSeekStatusId.MentalUp};
 
                         BattleStatusId statusselected = statuslist[GameRandom.Next16() % statuslist.Length];
                         btl_stat.AlterStatus(_v.Target, statusselected, _v.Caster);
@@ -288,8 +288,8 @@ namespace Memoria.Scripts.Battle
                         _v.Target.AlterStatus(BattleStatus.Shell, _v.Target);
                         _v.Target.AlterStatus(BattleStatus.AutoLife, _v.Target);
                         _v.Target.AlterStatus(BattleStatus.Regen, _v.Target);
-                        _v.Target.AlterStatus(TranceSeekCustomStatus.ArmorUp, _v.Target);
-                        _v.Target.AlterStatus(TranceSeekCustomStatus.MentalUp, _v.Target);
+                        _v.Target.AlterStatus(TranceSeekStatus.ArmorUp, _v.Target);
+                        _v.Target.AlterStatus(TranceSeekStatus.MentalUp, _v.Target);
                     }
                     _v.Target.RemoveStatus(BattleStatus.Death);
                     if (_v.Command.ItemId == (RegularItem)2019) // Réselixir
@@ -371,7 +371,7 @@ namespace Memoria.Scripts.Battle
         {
             if (_v.Target.IsZombie)
             {
-                TranceSeekCustomAPI.MagicAccuracy(_v);
+                TranceSeekAPI.MagicAccuracy(_v);
                 return true;
             }
             return false;

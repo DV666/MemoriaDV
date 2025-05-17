@@ -26,7 +26,7 @@ namespace Memoria.Scripts.Battle
             if (_v.Command.Id == BattleCommandId.Attack && _v.Caster.PlayerIndex == CharacterId.Quina) // Magik Fork
             {
                 _v.PhysicalAccuracy();
-                if (!TranceSeekCustomAPI.TryPhysicalHit(_v))
+                if (!TranceSeekAPI.TryPhysicalHit(_v))
                     return;
 
                 Int32 baseDamage = Comn.random16() % (1 + (_v.Caster.Level + _v.Caster.Magic >> 3));
@@ -38,11 +38,11 @@ namespace Memoria.Scripts.Battle
                     _v.Context.Attack = UnityEngine.Random.Range(_v.Caster.Magic / 2, _v.Caster.Magic) + baseDamage;
                 else
                     _v.Context.Attack = Comn.random16() % _v.Caster.Magic + baseDamage;
-                TranceSeekCustomAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
-                TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
+                TranceSeekAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
+                TranceSeekAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
                 _v.BonusBackstabAndPenaltyLongDistance();
-                TranceSeekCustomAPI.BonusWeaponElement(_v);
-                if (TranceSeekCustomAPI.CanAttackWeaponElementalCommand(_v))
+                TranceSeekAPI.BonusWeaponElement(_v);
+                if (TranceSeekAPI.CanAttackWeaponElementalCommand(_v))
                 {
                     _v.TryCriticalHit();
                     _v.PenaltyReverseAttack();
@@ -59,7 +59,7 @@ namespace Memoria.Scripts.Battle
 
                         _v.Target.MpDamage = Math.Max(0, _v.Context.PowerDifference) * _v.Context.EnsureAttack >> 3;
                     }
-                    TranceSeekCustomAPI.RaiseTrouble(_v);
+                    TranceSeekAPI.RaiseTrouble(_v);
                 }
                 return;
             }
@@ -97,8 +97,8 @@ namespace Memoria.Scripts.Battle
                     _v.Target.MpDamage = num;
                     _v.Caster.MpDamage = num;
                 }
-                TranceSeekCustomAPI.MagicAccuracy(_v);
-                TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
+                TranceSeekAPI.MagicAccuracy(_v);
+                TranceSeekAPI.TryAlterMagicStatuses(_v);
             }
             else
             {
@@ -129,10 +129,10 @@ namespace Memoria.Scripts.Battle
                     }
                     if (_v.Command.Power == 10)
                     {
-                        TranceSeekCustomAPI.MagicAccuracy(_v);
+                        TranceSeekAPI.MagicAccuracy(_v);
                         _v.Command.AbilityStatus |= (BattleStatus.Confuse | BattleStatus.Silence);
                     }
-                    TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
+                    TranceSeekAPI.TryAlterMagicStatuses(_v);
                 }
             }
         }

@@ -1,7 +1,7 @@
 using FF9;
 using System;
 using Memoria.Data;
-using static Memoria.Scripts.Battle.TranceSeekCustomAPI;
+using static Memoria.Scripts.Battle.TranceSeekAPI;
 
 namespace Memoria.Scripts.Battle
 {
@@ -25,12 +25,12 @@ namespace Memoria.Scripts.Battle
             if (_v.Command.AbilityStatus == BattleStatus.AutoLife)
             {
                 _v.Target.RemoveStatus(BattleStatus.AutoLife);
-                TranceSeekCustomAPI.SpecialSAEffect[_v.Target.Data][1] = 0;
+                TranceSeekAPI.SpecialSAEffect[_v.Target.Data][1] = 0;
             }
             _v.Target.Flags |= CalcFlag.HpAlteration;
             if (_v.Command.Power == 99 & _v.Command.HitRate == 99) // Explosion to make a game over.
             {
-                _v.Target.RemoveStatus(BattleStatus.AutoLife | TranceSeekCustomStatus.MechanicalArmor);
+                _v.Target.RemoveStatus(BattleStatus.AutoLife | TranceSeekStatus.MechanicalArmor);
                 _v.Target.HpDamage = 9999;
             }
             else

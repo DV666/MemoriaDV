@@ -1,6 +1,6 @@
 using Memoria.Data;
 using System;
-using static Memoria.Scripts.Battle.TranceSeekCustomAPI;
+using static Memoria.Scripts.Battle.TranceSeekAPI;
 
 namespace Memoria.Scripts.Battle
 {
@@ -55,12 +55,12 @@ namespace Memoria.Scripts.Battle
                 }
                 if (!_v.Caster.IsPlayer)
                 {
-                    TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
+                    TranceSeekAPI.TryAlterMagicStatuses(_v);
                 }
             }
 
             if (_v.Caster.PlayerIndex == CharacterId.Blank && _v.Command.Id == BattleCommandId.Item)
-                btl_stat.AlterStatus(_v.Caster, TranceSeekCustomStatusId.Special, _v.Caster, true, "SoakedBlade", _v.Command.ItemId);
+                btl_stat.AlterStatus(_v.Caster, TranceSeekStatusId.Special, _v.Caster, true, "SoakedBlade", _v.Command.ItemId);
         }
 
         public Single RateTarget()

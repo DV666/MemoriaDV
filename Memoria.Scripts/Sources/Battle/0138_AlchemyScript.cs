@@ -25,7 +25,7 @@ namespace Memoria.Scripts.Battle
             {
                 case (BattleAbilityId)1144: // Concoction
                 {
-                    TranceSeekCustomAPI.TryRemoveAbilityStatuses(_v);
+                    TranceSeekAPI.TryRemoveAbilityStatuses(_v);
                     break;
                 }
                 case (BattleAbilityId)1145: // Bandage
@@ -38,7 +38,7 @@ namespace Memoria.Scripts.Battle
                 }
                 case (BattleAbilityId)1146: // Ingrédient secret
                 {
-                    btl_stat.AlterStatus(_v.Target, TranceSeekCustomStatusId.Special, parameters: "Secretingredient++");
+                    btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.Special, parameters: "Secretingredient++");
                     break;
                 }
                 case (BattleAbilityId)1147: // Lame trempée
@@ -48,22 +48,22 @@ namespace Memoria.Scripts.Battle
                         _v.Command.AbilityStatus = ff9item.GetItemEffect((RegularItem)SoakedBladeItem).status;
 
                     _v.WeaponPhysicalParams();
-                    TranceSeekCustomAPI.MagicAccuracy(_v);
-                    TranceSeekCustomAPI.CharacterBonusPassive(_v, "PhysicalAttack");
-                    TranceSeekCustomAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
-                    TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
-                    TranceSeekCustomAPI.EnemyTranceBonusAttack(_v);
-                    TranceSeekCustomAPI.BonusElement(_v);
+                    TranceSeekAPI.MagicAccuracy(_v);
+                    TranceSeekAPI.CharacterBonusPassive(_v, "PhysicalAttack");
+                    TranceSeekAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
+                    TranceSeekAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
+                    TranceSeekAPI.EnemyTranceBonusAttack(_v);
+                    TranceSeekAPI.BonusElement(_v);
                     if (_v.CanAttackElementalCommand())
                     {
                         _v.CalcHpDamage();
-                        TranceSeekCustomAPI.TryCriticalHit(_v);
-                        TranceSeekCustomAPI.RaiseTrouble(_v);
+                        TranceSeekAPI.TryCriticalHit(_v);
+                        TranceSeekAPI.RaiseTrouble(_v);
                     }                   
                     _v.Target.PenaltyShellHitRate();
-                    if (TranceSeekCustomAPI.TryMagicHit(_v))
+                    if (TranceSeekAPI.TryMagicHit(_v))
                     {
-                        TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
+                        TranceSeekAPI.TryAlterCommandStatuses(_v);
                     }
                     break;
                 }
@@ -124,7 +124,7 @@ namespace Memoria.Scripts.Battle
                             {
                                 if (_v.Target.Data.dms_geo_id == 416)
                                 {
-                                    TranceSeekCustomAPI.MonsterMechanic[_v.Target.Data][1] = 9999;
+                                    TranceSeekAPI.MonsterMechanic[_v.Target.Data][1] = 9999;
                                     _v.Target.CurrentHp = 1;
                                     return;
                                 }
@@ -153,7 +153,7 @@ namespace Memoria.Scripts.Battle
                                 }
                                 if (!_v.Caster.IsPlayer)
                                 {
-                                    TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
+                                    TranceSeekAPI.TryAlterMagicStatuses(_v);
                                 }
                             }
                             break;
@@ -191,7 +191,7 @@ namespace Memoria.Scripts.Battle
                                     {
                                         _v.Target.CurrentHp = (UInt32)(1 + GameRandom.Next8() % 10);
                                     }
-                                TranceSeekCustomAPI.TryRemoveItemStatuses(_v);
+                                TranceSeekAPI.TryRemoveItemStatuses(_v);
                             }
                             break;
                         }
@@ -206,11 +206,11 @@ namespace Memoria.Scripts.Battle
                         case (RegularItem)1003:
                         {
                             _v.Command.AbilityStatus = ff9item.GetItemEffect(ItemChoosen).status;
-                            if ((_v.Command.ItemId == RegularItem.Remedy || _v.Command.ItemId == RegularItem.Annoyntment || _v.Command.ItemId == (RegularItem)1003) && _v.Target.IsUnderAnyStatus(TranceSeekCustomStatus.Vieillissement))
+                            if ((_v.Command.ItemId == RegularItem.Remedy || _v.Command.ItemId == RegularItem.Annoyntment || _v.Command.ItemId == (RegularItem)1003) && _v.Target.IsUnderAnyStatus(TranceSeekStatus.Vieillissement))
                             {
-                                _v.Command.AbilityStatus |= TranceSeekCustomStatus.Vieillissement;
+                                _v.Command.AbilityStatus |= TranceSeekStatus.Vieillissement;
                             }
-                            TranceSeekCustomAPI.TryRemoveAbilityStatuses(_v);
+                            TranceSeekAPI.TryRemoveAbilityStatuses(_v);
                             break;
                         }
                         case RegularItem.Garnet:
@@ -237,7 +237,7 @@ namespace Memoria.Scripts.Battle
                 }
                 case (BattleAbilityId)1151: // Maître Alchimiste
                 {
-                    btl_stat.AlterStatus(_v.Target, TranceSeekCustomStatusId.Special, parameters: "MasterofAlchemy");
+                    btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.Special, parameters: "MasterofAlchemy");
                     break;
                 }                
             }

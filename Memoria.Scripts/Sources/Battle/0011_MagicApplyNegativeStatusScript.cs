@@ -37,17 +37,17 @@ namespace Memoria.Scripts.Battle
                 }
                 else
                 {
-                    TranceSeekCustomAPI.MagicAccuracy(_v);
+                    TranceSeekAPI.MagicAccuracy(_v);
                     _v.Target.PenaltyShellHitRate();
                     _v.PenaltyCommandDividedHitRate();
-                    if (TranceSeekCustomAPI.TryMagicHit(_v))
-                        TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
+                    if (TranceSeekAPI.TryMagicHit(_v))
+                        TranceSeekAPI.TryAlterCommandStatuses(_v);
                 }
             }
             else
             {
-                TranceSeekCustomAPI.MagicAccuracy(_v);
-                TranceSeekCustomAPI.ViviFocus(_v);
+                TranceSeekAPI.MagicAccuracy(_v);
+                TranceSeekAPI.ViviFocus(_v);
                 _v.Target.PenaltyShellHitRate();
                 _v.PenaltyCommandDividedHitRate();
                 if (_v.Caster.Data.dms_geo_id == 5 || _v.Caster.Data.dms_geo_id == 267) // Kuja (multiple target malus)
@@ -71,9 +71,9 @@ namespace Memoria.Scripts.Battle
                 }
                 else if (_v.Command.Power == 7) // Ahriman - Blaster
                 {
-                    if (TranceSeekCustomAPI.TryMagicHit(_v))
+                    if (TranceSeekAPI.TryMagicHit(_v))
                     {
-                        TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
+                        TranceSeekAPI.TryAlterCommandStatuses(_v);
                     }
                     else
                     {
@@ -99,15 +99,15 @@ namespace Memoria.Scripts.Battle
                 }
                 else if (_v.Command.Power == 10) // Garland - Regression
                 {
-                    _v.Command.AbilityStatus |= (TranceSeekCustomStatus.Vieillissement);
+                    _v.Command.AbilityStatus |= (TranceSeekStatus.Vieillissement);
                 }
                 else if (_v.Command.Power == 100) // Bass - Shackle Foe
                 {
-                    _v.Command.AbilityStatus |= (TranceSeekCustomStatus.PowerBreak);
+                    _v.Command.AbilityStatus |= (TranceSeekStatus.PowerBreak);
                 }
                 else if (_v.Command.Power == 101) // Bass - Armor Corrosive
                 {
-                    _v.Command.AbilityStatus |= (TranceSeekCustomStatus.ArmorBreak);
+                    _v.Command.AbilityStatus |= (TranceSeekStatus.ArmorBreak);
                 }
                 else if (_v.Command.AbilityId == (BattleAbilityId)1108) // Nightmara
                 {
@@ -129,12 +129,12 @@ namespace Memoria.Scripts.Battle
                         else
                         {
                             _v.NormalMagicParams();
-                            TranceSeekCustomAPI.CasterPenaltyMini(_v);
-                            TranceSeekCustomAPI.EnemyTranceBonusAttack(_v);
-                            TranceSeekCustomAPI.PenaltyShellAttack(_v);
-                            TranceSeekCustomAPI.PenaltyCommandDividedAttack(_v);
-                            TranceSeekCustomAPI.BonusElement(_v);
-                            if (TranceSeekCustomAPI.CanAttackMagic(_v))
+                            TranceSeekAPI.CasterPenaltyMini(_v);
+                            TranceSeekAPI.EnemyTranceBonusAttack(_v);
+                            TranceSeekAPI.PenaltyShellAttack(_v);
+                            TranceSeekAPI.PenaltyCommandDividedAttack(_v);
+                            TranceSeekAPI.BonusElement(_v);
+                            if (TranceSeekAPI.CanAttackMagic(_v))
                             {
                                 _v.Target.Flags |= (CalcFlag.HpAlteration | CalcFlag.MpAlteration);
                                 if (_v.Context.IsAbsorb)
@@ -150,7 +150,7 @@ namespace Memoria.Scripts.Battle
                                 _v.Target.MpDamage = hpDamage2 >> 4;
                             }
                             _v.Command.AbilityStatus |= (BattleStatus.Stop | BattleStatus.Doom);
-                            TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
+                            TranceSeekAPI.TryAlterCommandStatuses(_v);
                             return;
                         }
                     }
@@ -167,7 +167,7 @@ namespace Memoria.Scripts.Battle
                             _v.Target.MpDamage = (int)(Math.Min(9999, GameRandom.Next16() % _v.Target.CurrentMp));
                         }
                     }
-                    if (TranceSeekCustomAPI.TryMagicHit(_v))
+                    if (TranceSeekAPI.TryMagicHit(_v))
                     {
                         if (_v.Command.Power == 3) // Cauchemar
                             _v.Command.AbilityStatus |= (BattleStatus.Sleep | BattleStatus.Confuse | BattleStatus.Berserk);
@@ -178,11 +178,11 @@ namespace Memoria.Scripts.Battle
                         else if (_v.Command.Power == 6) // Cauchemar
                             _v.Command.AbilityStatus |= (BattleStatus.Sleep | BattleStatus.Silence | BattleStatus.Confuse);
 
-                        TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
+                        TranceSeekAPI.TryAlterCommandStatuses(_v);
                     }
                     return;
                 }
-                else if (_v.Caster.Data.dms_geo_id == 166 && TranceSeekCustomAPI.TryMagicHit(_v)) // Thousand Fears (from Dark Beatrix)
+                else if (_v.Caster.Data.dms_geo_id == 166 && TranceSeekAPI.TryMagicHit(_v)) // Thousand Fears (from Dark Beatrix)
                 {
                     if (_v.Command.Power == 77) // Eyes of Anguish
                     {
@@ -200,16 +200,16 @@ namespace Memoria.Scripts.Battle
                         else
                             _v.Command.AbilityStatus |= (BattleStatus.Sleep | BattleStatus.Silence | BattleStatus.Confuse);
                     }
-                    TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
+                    TranceSeekAPI.TryAlterCommandStatuses(_v);
                     return;
                 }
                 if (_v.Command.HitRate == 255 || (_v.Caster.PlayerIndex == CharacterId.Amarant && _v.Caster.IsUnderStatus(BattleStatus.Trance) && _v.Command.AbilityId == BattleAbilityId.Revive2))
                 { // 3 Plaies+
-                    TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
+                    TranceSeekAPI.TryAlterCommandStatuses(_v);
                 }
-                else if (TranceSeekCustomAPI.TryMagicHit(_v))
+                else if (TranceSeekAPI.TryMagicHit(_v))
                 {
-                    TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
+                    TranceSeekAPI.TryAlterCommandStatuses(_v);
                 }
             }
         }

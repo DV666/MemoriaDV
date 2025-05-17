@@ -22,7 +22,7 @@ namespace Memoria.Scripts.Battle
         {
             if (_v.Command.AbilityId == BattleAbilityId.Luna)
             {
-                btl_stat.AlterStatus(_v.Target, TranceSeekCustomStatusId.Dragon, _v.Caster);
+                btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.Dragon, _v.Caster);
                 return;
             }
             else
@@ -31,11 +31,11 @@ namespace Memoria.Scripts.Battle
                 {
                     _v.Context.Attack = (short)(GameRandom.Next16() % (_v.Caster.Magic + _v.Caster.Level));
                     _v.SetCommandPower();
-                    TranceSeekCustomAPI.CasterPenaltyMini(_v);
-                    TranceSeekCustomAPI.PenaltyShellAttack(_v);
-                    TranceSeekCustomAPI.PenaltyCommandDividedAttack(_v);
-                    TranceSeekCustomAPI.BonusElement(_v);
-                    if (TranceSeekCustomAPI.CanAttackMagic(_v))
+                    TranceSeekAPI.CasterPenaltyMini(_v);
+                    TranceSeekAPI.PenaltyShellAttack(_v);
+                    TranceSeekAPI.PenaltyCommandDividedAttack(_v);
+                    TranceSeekAPI.BonusElement(_v);
+                    if (TranceSeekAPI.CanAttackMagic(_v))
                     {
                         int num = GameRandom.Next16() % 8;
                         if (num == 0)
@@ -77,15 +77,15 @@ namespace Memoria.Scripts.Battle
                         }
                         _v.CalcHpDamage();
                     }
-                    TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
+                    TranceSeekAPI.TryAlterMagicStatuses(_v);
                 }
                 else
                 {
-                    if (TranceSeekCustomAPI.CheckUnsafetyOrGuard(_v) && _v.Target.CanBeAttacked())
+                    if (TranceSeekAPI.CheckUnsafetyOrGuard(_v) && _v.Target.CanBeAttacked())
                     {
-                        TranceSeekCustomAPI.MagicAccuracy(_v);
+                        TranceSeekAPI.MagicAccuracy(_v);
                         _v.Target.PenaltyShellHitRate();
-                        if (TranceSeekCustomAPI.TryMagicHit(_v))
+                        if (TranceSeekAPI.TryMagicHit(_v))
                         {
                             _v.TryDirectHPDamage();
                         }

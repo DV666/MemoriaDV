@@ -19,7 +19,7 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            if (!TranceSeekCustomAPI.CheckUnsafetyOrGuard(_v) || !_v.Target.CanBeAttacked())
+            if (!TranceSeekAPI.CheckUnsafetyOrGuard(_v) || !_v.Target.CanBeAttacked())
                 return;
 
             UInt32 hp = _v.Caster.CurrentHp;

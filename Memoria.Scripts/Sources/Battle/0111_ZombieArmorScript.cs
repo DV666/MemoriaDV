@@ -27,13 +27,13 @@ namespace Memoria.Scripts.Battle
                 if (_v.Command.Power == 99)
                     _v.Target.HpDamage = 9999;
                 else
-                    _v.Target.HpDamage = TranceSeekCustomAPI.MonsterMechanic[_v.Caster.Data][1];
+                    _v.Target.HpDamage = TranceSeekAPI.MonsterMechanic[_v.Caster.Data][1];
                 Int32 wait = 20;
                 _v.Caster.AddDelayedModifier(
                     caster => (wait -= BattleState.ATBTickCount) > 0,
                     caster =>
                     {
-                        TranceSeekCustomAPI.MonsterMechanic[_v.Caster.Data][1] = 0;
+                        TranceSeekAPI.MonsterMechanic[_v.Caster.Data][1] = 0;
                     }
                 );
             }

@@ -35,10 +35,10 @@ namespace Memoria.DefaultScripts
         }
 
         // Here, write the list of statuses with SHP that should overlap, ie. only one SHP will be displayed at a time
-        private static List<BattleStatusId> OverlappingSHP1 = [TranceSeekCustomStatusId.PowerBreak, TranceSeekCustomStatusId.MagicBreak, TranceSeekCustomStatusId.ArmorBreak, TranceSeekCustomStatusId.MentalBreak,
-            TranceSeekCustomStatusId.PowerUp, TranceSeekCustomStatusId.MagicUp, TranceSeekCustomStatusId.ArmorUp, TranceSeekCustomStatusId.MentalUp];
-        private static List<BattleStatusId> OverlappingSHP2 = [TranceSeekCustomStatusId.Redemption, TranceSeekCustomStatusId.MechanicalArmor, TranceSeekCustomStatusId.Bulwark,
-            TranceSeekCustomStatusId.Rage, TranceSeekCustomStatusId.PerfectCrit, TranceSeekCustomStatusId.PerfectDodge];
+        private static List<BattleStatusId> OverlappingSHP1 = [TranceSeekStatusId.PowerBreak, TranceSeekStatusId.MagicBreak, TranceSeekStatusId.ArmorBreak, TranceSeekStatusId.MentalBreak,
+            TranceSeekStatusId.PowerUp, TranceSeekStatusId.MagicUp, TranceSeekStatusId.ArmorUp, TranceSeekStatusId.MentalUp];
+        private static List<BattleStatusId> OverlappingSHP2 = [TranceSeekStatusId.Redemption, TranceSeekStatusId.MechanicalArmor, TranceSeekStatusId.Bulwark,
+            TranceSeekStatusId.Rage, TranceSeekStatusId.PerfectCrit, TranceSeekStatusId.PerfectDodge];
         private static Dictionary<BTL_DATA, Int32> OverlapIndex1 = new Dictionary<BTL_DATA, Int32>();
         private static Dictionary<BTL_DATA, Int32> OverlapIndex2 = new Dictionary<BTL_DATA, Int32>();
 

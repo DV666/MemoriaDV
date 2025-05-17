@@ -29,7 +29,7 @@ namespace Memoria.Scripts.Battle
             {
                 _v.NormalPhysicalParams();
             }
-            TranceSeekCustomAPI.CharacterBonusPassive(_v, "PhysicalAttack");
+            TranceSeekAPI.CharacterBonusPassive(_v, "PhysicalAttack");
             if ((_v.Command.AbilityId == (BattleAbilityId)1005 || _v.Command.AbilityId == (BattleAbilityId)1042) && _v.Command.IsATBCommand) // Attaque Eclair, Hikari
             {
                 _v.Command.Element = _v.Caster.WeaponElement;
@@ -42,18 +42,18 @@ namespace Memoria.Scripts.Battle
                     }
                 );
             }
-            TranceSeekCustomAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
-            TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
-            TranceSeekCustomAPI.EnemyTranceBonusAttack(_v);
-            TranceSeekCustomAPI.BonusElement(_v);
+            TranceSeekAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
+            TranceSeekAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
+            TranceSeekAPI.EnemyTranceBonusAttack(_v);
+            TranceSeekAPI.BonusElement(_v);
             if (_v.CanAttackMagic())
             {
                 if (_v.Command.AbilityId == BattleAbilityId.CherryBlossom)
                 {
                     short CriticalBonus = _v.Caster.Data.critical_rate_deal_bonus;
                     _v.Caster.Data.critical_rate_deal_bonus += 33;
-                    TranceSeekCustomAPI.TryCriticalHit(_v);
-                    if (_v.Target.IsUnderAnyStatus(TranceSeekCustomStatus.Dragon) || (_v.Caster.IsUnderStatus(BattleStatus.Trance)))
+                    TranceSeekAPI.TryCriticalHit(_v);
+                    if (_v.Target.IsUnderAnyStatus(TranceSeekStatus.Dragon) || (_v.Caster.IsUnderStatus(BattleStatus.Trance)))
                     {
                         if (_v.Caster.Will > Comn.random16() % 100)
                         {
@@ -73,11 +73,11 @@ namespace Memoria.Scripts.Battle
                     _v.CalcHpDamage();
                     if (_v.Command.AbilityId == (BattleAbilityId)1009) // Pluto Charge
                     {
-                        int factorDefense = _v.Caster.PhysicalDefence + (_v.Caster.PhysicalDefence * (TranceSeekCustomAPI.StackBreakOrUpStatus[_v.Caster.Data][2]) / 100);
+                        int factorDefense = _v.Caster.PhysicalDefence + (_v.Caster.PhysicalDefence * (TranceSeekAPI.StackBreakOrUpStatus[_v.Caster.Data][2]) / 100);
                         _v.Target.HpDamage = (_v.Target.HpDamage * factorDefense) / 100;
                     }
                     else if (_v.Command.AbilityId == (BattleAbilityId)1043) // Fury of the general
-                        TranceSeekCustomAPI.TryCriticalHit(_v);
+                        TranceSeekAPI.TryCriticalHit(_v);
                     else if (_v.Command.AbilityId == BattleAbilityId.DemiShock1 || _v.Command.AbilityId == BattleAbilityId.DemiShock2) // Tobigeri
                     {
                         if (_v.Caster.IsUnderAnyStatus(BattleStatus.Protect))
@@ -95,10 +95,10 @@ namespace Memoria.Scripts.Battle
                         if (_v.Caster.IsUnderAnyStatus(BattleStatus.Haste))
                             _v.Command.AbilityStatus |= BattleStatus.Slow;
 
-                        TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
+                        TranceSeekAPI.TryAlterCommandStatuses(_v);
                     }
                     else
-                        TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
+                        TranceSeekAPI.TryAlterMagicStatuses(_v);
                 }
             }
         }

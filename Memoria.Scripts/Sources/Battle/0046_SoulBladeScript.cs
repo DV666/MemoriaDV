@@ -29,8 +29,8 @@ namespace Memoria.Scripts.Battle
 
             if (!_v.Target.IsPlayer)
             {
-                if ((_v.Command.AbilityStatus & BattleStatus.Death) == 0 || TranceSeekCustomAPI.CheckUnsafetyOrGuard(_v))
-                    TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
+                if ((_v.Command.AbilityStatus & BattleStatus.Death) == 0 || TranceSeekAPI.CheckUnsafetyOrGuard(_v))
+                    TranceSeekAPI.TryAlterCommandStatuses(_v);
             else
                 if (_v.Target.IsUnderStatus(_v.Command.AbilityStatus))
                     _v.Target.RemoveStatus(_v.Command.AbilityStatus);

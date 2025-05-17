@@ -21,9 +21,9 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            TranceSeekCustomAPI.MagicAccuracy(_v);
+            TranceSeekAPI.MagicAccuracy(_v);
             _v.Target.PenaltyShellHitRate();
-            if (TranceSeekCustomAPI.TryMagicHit(_v))
+            if (TranceSeekAPI.TryMagicHit(_v))
                 BattleItem.AddToInventory(RegularItem.Ore);
         }
     }

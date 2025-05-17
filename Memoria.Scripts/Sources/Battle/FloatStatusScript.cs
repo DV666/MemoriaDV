@@ -15,7 +15,7 @@ namespace Memoria.DefaultScripts
         {
             base.Apply(target, inflicter, parameters);
             target.AddDelayedModifier(HoveringMovement, null);
-            TranceSeekCustomAPI.SA_StatusApply(inflicter, false);
+            TranceSeekAPI.SA_StatusApply(inflicter, false);
             return btl_stat.ALTER_SUCCESS;
         }
 

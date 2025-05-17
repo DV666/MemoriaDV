@@ -16,7 +16,7 @@ namespace Memoria.DefaultScripts
         {
             base.Apply(target, inflicter, parameters);
             HeatInflicter = inflicter;
-            TranceSeekCustomAPI.SA_StatusApply(inflicter, false);
+            TranceSeekAPI.SA_StatusApply(inflicter, false);
             return btl_stat.ALTER_SUCCESS;
         }
 
@@ -30,7 +30,7 @@ namespace Memoria.DefaultScripts
             if (Target.IsUnderAnyStatus(BattleStatus.Heat) && Target.IsUnderAnyStatus(BattleStatus.EasyKill) && Target.CurrentHp > 1) // Heat Damage
             {
                 UInt32 heat_damage = Target.MaximumHp / 64;
-                if (TranceSeekCustomAPI.MonsterMechanic[Target.Data][3] > 0)
+                if (TranceSeekAPI.MonsterMechanic[Target.Data][3] > 0)
                     heat_damage = (Target.MaximumHp - 10000) / 64;
                 if (heat_damage > 9999)
                     heat_damage = Math.Max(Target.CurrentHp, 9999);

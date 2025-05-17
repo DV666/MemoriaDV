@@ -19,11 +19,11 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            TranceSeekCustomAPI.MagicAccuracy(_v);
-            TranceSeekCustomAPI.EnemyTranceBonusAttack(_v);
+            TranceSeekAPI.MagicAccuracy(_v);
+            TranceSeekAPI.EnemyTranceBonusAttack(_v);
             _v.Target.PenaltyShellHitRate();
             _v.PenaltyCommandDividedHitRate();
-            if (TranceSeekCustomAPI.TryMagicHit(_v))
+            if (TranceSeekAPI.TryMagicHit(_v))
             {
                 _v.Target.Flags |= CalcFlag.HpAlteration;
                 _v.Target.HpDamage = _v.Target.Level * _v.Command.Power;

@@ -134,7 +134,7 @@ namespace Memoria.Scripts.Battle
             }
             else
             {
-                _v.Target.AlterStatus(TranceSeekCustomStatus.MagicUp, _v.Caster);
+                _v.Target.AlterStatus(TranceSeekStatus.MagicUp, _v.Caster);
             }
         }
     }

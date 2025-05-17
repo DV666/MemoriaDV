@@ -23,7 +23,7 @@ namespace Memoria.Scripts.Battle
             if (_v.Target.IsPlayer && _v.Command.AbilityId == (BattleAbilityId)1533)
             {
                 _v.Command.AbilityCategory -= 16; // Remove Magical effect to prevent Vanish to dissapear.
-                btl_stat.AlterStatus(_v.Target, TranceSeekCustomStatusId.PowerUp, parameters: "+2");
+                btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.PowerUp, parameters: "+2");
                 if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)208) && _v.Target.IsPlayer)
                 {
                     if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1208))
@@ -35,12 +35,12 @@ namespace Memoria.Scripts.Battle
             }
             else
             {
-                if (TranceSeekCustomAPI.CheckUnsafetyOrGuard(_v))
+                if (TranceSeekAPI.CheckUnsafetyOrGuard(_v))
                 {
-                    TranceSeekCustomAPI.MagicAccuracy(_v);
+                    TranceSeekAPI.MagicAccuracy(_v);
                     _v.Context.HitRate += (Int16)(ff9item.FF9Item_GetCount(RegularItem.Ore) >> 1);
-                    if (TranceSeekCustomAPI.TryMagicHit(_v))
-                        TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
+                    if (TranceSeekAPI.TryMagicHit(_v))
+                        TranceSeekAPI.TryAlterCommandStatuses(_v);
                 }
             }
 

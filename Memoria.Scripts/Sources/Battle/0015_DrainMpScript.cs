@@ -26,10 +26,10 @@ namespace Memoria.Scripts.Battle
                 return;
 
             _v.NormalMagicParams();
-            TranceSeekCustomAPI.CharacterBonusPassive(_v, "MagicAttack");
-            TranceSeekCustomAPI.CasterPenaltyMini(_v);
-            TranceSeekCustomAPI.EnemyTranceBonusAttack(_v);
-            TranceSeekCustomAPI.PenaltyShellAttack(_v);
+            TranceSeekAPI.CharacterBonusPassive(_v, "MagicAttack");
+            TranceSeekAPI.CasterPenaltyMini(_v);
+            TranceSeekAPI.EnemyTranceBonusAttack(_v);
+            TranceSeekAPI.PenaltyShellAttack(_v);
             _v.Target.Flags |= CalcFlag.MpAlteration;
             _v.Caster.Flags |= CalcFlag.MpAlteration;
             _v.Context.IsDrain = true;

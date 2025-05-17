@@ -48,7 +48,7 @@ namespace Memoria.Scripts.Battle
                     if ((_v.Target.CanBeRevived() || _v.Target.Accessory != (RegularItem)1213) && _v.Target.CheckIsPlayer() && _v.Target.CurrentHp == 0U)
                     {
                         _v.Target.HpDamage = (int)(_v.Target.MaximumHp * 3UL / 4UL);
-                        TranceSeekCustomAPI.TryRemoveAbilityStatuses(_v);
+                        TranceSeekAPI.TryRemoveAbilityStatuses(_v);
                     }
                     else
                     {
@@ -70,7 +70,7 @@ namespace Memoria.Scripts.Battle
                 return;
             }
 
-            if (HitRateForZombie() && !TranceSeekCustomAPI.TryMagicHit(_v))
+            if (HitRateForZombie() && !TranceSeekAPI.TryMagicHit(_v))
                 return;
 
             if (_v.Target.IsZombie && !_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill))
@@ -104,14 +104,14 @@ namespace Memoria.Scripts.Battle
                         _v.Target.HpDamage /= 2;
                 }
             }
-            TranceSeekCustomAPI.TryRemoveAbilityStatuses(_v);
+            TranceSeekAPI.TryRemoveAbilityStatuses(_v);
         }
 
         private Boolean HitRateForZombie()
         {
             if (_v.Target.IsZombie)
             {
-                TranceSeekCustomAPI.MagicAccuracy(_v);
+                TranceSeekAPI.MagicAccuracy(_v);
                 return true;
             }
             return false;
@@ -124,7 +124,7 @@ namespace Memoria.Scripts.Battle
 
             if (_v.Target.IsZombie)
             {
-                TranceSeekCustomAPI.MagicAccuracy(_v);
+                TranceSeekAPI.MagicAccuracy(_v);
 
                 Single hitRate = BattleScriptAccuracyEstimate.RatePlayerAttackHit(_v.Context.HitRate);
                 Single evaRate = BattleScriptAccuracyEstimate.RatePlayerAttackEvade(_v.Context.Evade);

@@ -20,14 +20,14 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            if (TranceSeekCustomAPI.CheckUnsafetyOrGuard(_v) && _v.Target.CanBeAttacked())
+            if (TranceSeekAPI.CheckUnsafetyOrGuard(_v) && _v.Target.CanBeAttacked())
             {
-                TranceSeekCustomAPI.MagicAccuracy(_v);
+                TranceSeekAPI.MagicAccuracy(_v);
                 _v.Target.PenaltyShellHitRate();
                 _v.PenaltyCommandDividedHitRate();
                 _v.Command.HitRate += _v.Caster.Level - _v.Target.Level;
-                TranceSeekCustomAPI.ReduceAccuracyEliteMonsters(_v, true);
-                if (TranceSeekCustomAPI.TryMagicHit(_v) || _v.Command.HitRate == 255)
+                TranceSeekAPI.ReduceAccuracyEliteMonsters(_v, true);
+                if (TranceSeekAPI.TryMagicHit(_v) || _v.Command.HitRate == 255)
                 {
                     _v.Context.Flags |= BattleCalcFlags.DirectHP;
                     if (_v.Caster.Data.dms_geo_id == 401) // Friendly Feather Circle - Heartless Angel
@@ -43,7 +43,7 @@ namespace Memoria.Scripts.Battle
                     {
                         _v.Target.CurrentHp = (uint)(1 + GameRandom.Next8() % 9);
                     }
-                    TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
+                    TranceSeekAPI.TryAlterCommandStatuses(_v);
                 }
             }
         }

@@ -2,7 +2,7 @@
 using Memoria.Data;
 using FF9;
 using Object = System.Object;
-using static Memoria.Scripts.Battle.TranceSeekCustomAPI;
+using static Memoria.Scripts.Battle.TranceSeekAPI;
 using Memoria.Prime;
 using UnityEngine;
 using System.IO;

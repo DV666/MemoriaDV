@@ -29,12 +29,12 @@ namespace Memoria.Scripts.Battle
             {
                 _v.NormalPhysicalParams();
             }
-            TranceSeekCustomAPI.CharacterBonusPassive(_v, "PhysicalAttack");
-            TranceSeekCustomAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
-            TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
-            TranceSeekCustomAPI.BonusBackstabAndPenaltyLongDistance(_v);
-            TranceSeekCustomAPI.EnemyTranceBonusAttack(_v);
-            TranceSeekCustomAPI.BonusElement(_v);
+            TranceSeekAPI.CharacterBonusPassive(_v, "PhysicalAttack");
+            TranceSeekAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
+            TranceSeekAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
+            TranceSeekAPI.BonusBackstabAndPenaltyLongDistance(_v);
+            TranceSeekAPI.EnemyTranceBonusAttack(_v);
+            TranceSeekAPI.BonusElement(_v);
             if (_v.CanAttackElementalCommand())
             {
                 _v.CalcHpDamage();
@@ -47,7 +47,7 @@ namespace Memoria.Scripts.Battle
                 {
                     _v.Caster.HpDamage = (Int32)(_v.Caster.MaximumHp >> 3);
                 }
-                TranceSeekCustomAPI.RaiseTrouble(_v);
+                TranceSeekAPI.RaiseTrouble(_v);
             }           
         }
     }

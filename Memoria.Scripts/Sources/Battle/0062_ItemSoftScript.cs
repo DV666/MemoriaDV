@@ -23,7 +23,7 @@ namespace Memoria.Scripts.Battle
             BTL_DATA data = _v.Target.Data;
             if (data.dms_geo_id == 221 || data.dms_geo_id == 83)
             {
-                if (TranceSeekCustomAPI.CheckUnsafetyOrGuard(_v))
+                if (TranceSeekAPI.CheckUnsafetyOrGuard(_v))
                 {
                     _v.Target.Flags |= CalcFlag.HpAlteration;
                     _v.Target.HpDamage = (int)(_v.Target.MaximumHp / 2U);
@@ -35,11 +35,11 @@ namespace Memoria.Scripts.Battle
             }
             else
             {
-                TranceSeekCustomAPI.TryRemoveItemStatuses(_v);
+                TranceSeekAPI.TryRemoveItemStatuses(_v);
             }
 
             if (_v.Caster.PlayerIndex == CharacterId.Blank && _v.Command.Id == BattleCommandId.Item)
-                btl_stat.AlterStatus(_v.Caster, TranceSeekCustomStatusId.Special, _v.Caster, true, "SoakedBlade", _v.Command.ItemId);
+                btl_stat.AlterStatus(_v.Caster, TranceSeekStatusId.Special, _v.Caster, true, "SoakedBlade", _v.Command.ItemId);
         }
 
         public Single RateTarget()

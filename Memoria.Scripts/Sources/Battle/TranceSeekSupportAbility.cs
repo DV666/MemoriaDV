@@ -2,7 +2,7 @@
 
 namespace Memoria.Scripts.Battle
 {
-    public static class TranceSeekCustomSupportAbility // TODO x_x
+    public static class TranceSeekSupportAbility // TODO x_x
     {
         public const SupportAbility Doctor = (SupportAbility)100;
         public const SupportAbility Maleficent = (SupportAbility)101;

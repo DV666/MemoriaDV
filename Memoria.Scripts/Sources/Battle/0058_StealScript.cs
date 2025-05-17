@@ -2,7 +2,7 @@ using Memoria.Data;
 using System;
 using System.Collections.Generic;
 using FF9;
-using static Memoria.Scripts.Battle.TranceSeekCustomAPI;
+using static Memoria.Scripts.Battle.TranceSeekAPI;
 using Assets.Sources.Scripts.UI.Common;
 using Memoria.Prime;
 using System.Runtime.Remoting.Contexts;
@@ -337,7 +337,7 @@ namespace Memoria.Scripts.Battle
                 BattleItem.AddToInventory(_v.Context.ItemSteal);
                 UiState.SetBattleFollowFormatMessage(BattleMesages.Stole, FF9TextTool.ItemName(_v.Context.ItemSteal));
             }
-            TranceSeekCustomAPI.PhantomHandSA(_v);
+            TranceSeekAPI.PhantomHandSA(_v);
         }
     }
 }

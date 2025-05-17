@@ -39,7 +39,7 @@ namespace Memoria.Scripts.Battle
                 }
 
                 float BonusRatioHP = 0;
-                if (TranceSeekCustomAPI.MonsterMechanic[_v.Target.Data][3] > 0)
+                if (TranceSeekAPI.MonsterMechanic[_v.Target.Data][3] > 0)
                     BonusRatioHP = 100 - ((_v.Target.CurrentHp * 100) / (_v.Target.MaximumHp - 10000));
                 else
                     BonusRatioHP = 100 - ((_v.Target.CurrentHp * 100)/ _v.Target.MaximumHp);
@@ -75,11 +75,11 @@ namespace Memoria.Scripts.Battle
             {
                 _v.NormalPhysicalParams();
             }
-            TranceSeekCustomAPI.CharacterBonusPassive(_v, "PhysicalAttack");
-            TranceSeekCustomAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
-            TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
-            TranceSeekCustomAPI.EnemyTranceBonusAttack(_v);
-            TranceSeekCustomAPI.BonusElement(_v);
+            TranceSeekAPI.CharacterBonusPassive(_v, "PhysicalAttack");
+            TranceSeekAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
+            TranceSeekAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
+            TranceSeekAPI.EnemyTranceBonusAttack(_v);
+            TranceSeekAPI.BonusElement(_v);
             if (_v.CanAttackElementalCommand())
             {
                 BattleEnemy battleEnemy = BattleEnemy.Find(_v.Target);
@@ -105,7 +105,7 @@ namespace Memoria.Scripts.Battle
                     _v.StealItem(battleEnemy, 0);
                 }
                 _v.CalcHpDamage();
-                TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
+                TranceSeekAPI.TryAlterMagicStatuses(_v);
             }
         }
     }

@@ -23,7 +23,7 @@ namespace Memoria.Scripts.Battle
             if (_v.Command.AbilityId == BattleAbilityId.FrogDrop || _v.Command.Power == 18) // Flash
             {
                 if (_v.Target.Data != _v.Caster.Data)
-                    TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
+                    TranceSeekAPI.TryAlterCommandStatuses(_v);
             }
             else if (_v.Command.Power == 0 && _v.Command.HitRate == 255)
             {
@@ -90,7 +90,7 @@ namespace Memoria.Scripts.Battle
                     {
                         _v.Target.CurrentHp = _v.Target.MaximumHp;
                         _v.Target.CurrentMp = _v.Target.MaximumMp;
-                        TranceSeekCustomAPI.TryRemoveAbilityStatuses(_v);
+                        TranceSeekAPI.TryRemoveAbilityStatuses(_v);
                         _v.Caster.CurrentMp = 0;
                         _v.Caster.Kill(_v.Caster);
                     }

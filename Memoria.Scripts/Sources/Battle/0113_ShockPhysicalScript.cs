@@ -27,14 +27,14 @@ namespace Memoria.Scripts.Battle
                 _v.Target.RemoveStatus(BattleStatus.Vanish);
                 _v.Target.RemoveStatus(BattleStatus.Reflect);
                 _v.WeaponPhysicalParams();
-                TranceSeekCustomAPI.CharacterBonusPassive(_v, "MagicAttack");
-                TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
-                TranceSeekCustomAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
-                TranceSeekCustomAPI.BonusElement(_v);
-                if (TranceSeekCustomAPI.CanAttackWeaponElementalCommand(_v))
+                TranceSeekAPI.CharacterBonusPassive(_v, "MagicAttack");
+                TranceSeekAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
+                TranceSeekAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
+                TranceSeekAPI.BonusElement(_v);
+                if (TranceSeekAPI.CanAttackWeaponElementalCommand(_v))
                 {
                     _v.CalcHpDamage();
-                    TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
+                    TranceSeekAPI.TryAlterMagicStatuses(_v);
                 }
                 if (_v.Command.HitRate == 214 && _v.Caster.PlayerIndex == CharacterId.Beatrix)
                 {
@@ -52,10 +52,10 @@ namespace Memoria.Scripts.Battle
                 _v.Target.RemoveStatus(BattleStatus.Vanish);
                 _v.Target.RemoveStatus(BattleStatus.Reflect);
                 _v.NormalPhysicalParams();
-                TranceSeekCustomAPI.CharacterBonusPassive(_v, "PhysicalAttack");
-                TranceSeekCustomAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
-                TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
-                TranceSeekCustomAPI.BonusElement(_v);
+                TranceSeekAPI.CharacterBonusPassive(_v, "PhysicalAttack");
+                TranceSeekAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
+                TranceSeekAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
+                TranceSeekAPI.BonusElement(_v);
                 if (_v.CanAttackElementalCommand())
                 {
                     _v.CalcPhysicalHpDamage();
@@ -65,7 +65,7 @@ namespace Memoria.Scripts.Battle
                         int num = Math.Min(9999, _v.Context.PowerDifference * _v.Context.EnsureAttack);
                         _v.Target.MpDamage = (int)((short)(num >> 4));
                     }
-                    TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
+                    TranceSeekAPI.TryAlterMagicStatuses(_v);
                 }
             }
         }

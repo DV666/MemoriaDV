@@ -23,26 +23,26 @@ namespace Memoria.Scripts.Battle
             if (_v.Target.CanBeAttacked() && !_v.Target.TryKillFrozen())
             {
                 _v.PhysicalAccuracy();
-                if (TranceSeekCustomAPI.TryPhysicalHit(_v))
+                if (TranceSeekAPI.TryPhysicalHit(_v))
                 {
                     if (_v.Caster.IsPlayer)
                     {
-                        TranceSeekCustomAPI.WeaponPhysicalParams(CalcAttackBonus.Simple, _v);
+                        TranceSeekAPI.WeaponPhysicalParams(CalcAttackBonus.Simple, _v);
                     }
                     else
                     {
                         _v.NormalPhysicalParams();
                     }
-                    TranceSeekCustomAPI.EnemyTranceBonusAttack(_v);
-                    TranceSeekCustomAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
-                    TranceSeekCustomAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
+                    TranceSeekAPI.EnemyTranceBonusAttack(_v);
+                    TranceSeekAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
+                    TranceSeekAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
                     if (_v.Caster.IsUnderStatus(BattleStatus.Trance) && _v.Caster.PlayerIndex == CharacterId.Steiner)
                     {
                         _v.Context.Attack += _v.Context.Attack / 4;
                     }
-                    TranceSeekCustomAPI.BonusBackstabAndPenaltyLongDistance(_v);
-                    TranceSeekCustomAPI.TryCriticalHit(_v);
-                    TranceSeekCustomAPI.IpsenCastleMalus(_v);
+                    TranceSeekAPI.BonusBackstabAndPenaltyLongDistance(_v);
+                    TranceSeekAPI.TryCriticalHit(_v);
+                    TranceSeekAPI.IpsenCastleMalus(_v);
                     _v.Target.Flags |= CalcFlag.HpAlteration;
                     _v.Caster.Flags |= CalcFlag.HpAlteration;
                     if (_v.Target.IsZombie)
@@ -61,7 +61,7 @@ namespace Memoria.Scripts.Battle
                     }
                     else
                     {
-                        TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
+                        TranceSeekAPI.TryAlterMagicStatuses(_v);
                         if (_v.Target.HpDamage < currentHp)
                         {
                             _v.Caster.HpDamage = _v.Target.HpDamage;

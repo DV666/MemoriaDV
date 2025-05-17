@@ -118,7 +118,7 @@ namespace Memoria.Scripts.Battle
                                 }
                                 _v.StealItem(battleEnemy, 0);
                             }
-                            else if (TranceSeekCustomAPI.ZidanePassive[battleUnit.Data][2] > 0) // Oeil de voleur
+                            else if (TranceSeekAPI.ZidanePassive[battleUnit.Data][2] > 0) // Oeil de voleur
                             {
                                 if (battleEnemy.StealableItems[3] != RegularItem.NoItem && GameRandom.Next8() < StealScript.NewStealableItemRates(battleEnemy.StealableItemRates[3], _v.Caster))
                                 {

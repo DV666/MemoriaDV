@@ -22,14 +22,14 @@ namespace Memoria.DefaultScripts
             btl2d.GetIconPosition(target, btl2d.ICON_POS_NUMBER, out Transform attachTransf, out Vector3 iconOff);
             InitialCounter = parameters.Length > 0 ? Convert.ToInt32(parameters[0]) : 10;
             InitialCounter *= (Target.HasSupportAbility(SupportAbility1.AutoRegen) ? 2 : 1);
-            InitialCounter *= (TranceSeekCustomAPI.EliteMonster(target.Data) ? 3 : 1);
+            InitialCounter *= (TranceSeekAPI.EliteMonster(target.Data) ? 3 : 1);
             Counter = InitialCounter;
             Message = Singleton<HUDMessage>.Instance.Show(attachTransf, $"{Counter}", HUDMessage.MessageStyle.DEATH_SENTENCE, new Vector3(0f, iconOff.y), 0);
             btl2d.StatusMessages.Add(Message);
             UpdateLabel();
             target.AddDelayedModifier(UpdateMessageShow, null);
             GeoID = target.Data.dms_geo_id;
-            TranceSeekCustomAPI.SA_StatusApply(inflicter, false);
+            TranceSeekAPI.SA_StatusApply(inflicter, false);
             return btl_stat.ALTER_SUCCESS;
         }
 

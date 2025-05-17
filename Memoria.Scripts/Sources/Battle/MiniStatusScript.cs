@@ -24,7 +24,7 @@ namespace Memoria.DefaultScripts
 
             target.ModelStatusScale *= 0.5f;
             geo.geoScaleUpdate(target, true);
-            TranceSeekCustomAPI.SA_StatusApply(inflicter, false);
+            TranceSeekAPI.SA_StatusApply(inflicter, false);
             return btl_stat.ALTER_SUCCESS;
         }
 

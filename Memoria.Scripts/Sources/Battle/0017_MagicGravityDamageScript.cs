@@ -32,16 +32,16 @@ namespace Memoria.Scripts.Battle
             }
 
             _v.SetCommandAttack();
-            TranceSeekCustomAPI.PenaltyCommandDividedAttack(_v);
+            TranceSeekAPI.PenaltyCommandDividedAttack(_v);
             if (_v.Target.IsUnderStatus(BattleStatus.Shell))
                 _v.Context.Attack = _v.Context.Attack / 2;
             if (_v.Target.HasCategory(EnemyCategory.Stone) && !_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill))
             {
                 _v.Context.Attack = _v.Context.Attack * 2;
             }
-            TranceSeekCustomAPI.ViviFocus(_v);
-            TranceSeekCustomAPI.BonusElement(_v);
-            if (TranceSeekCustomAPI.CanAttackMagic(_v))
+            TranceSeekAPI.ViviFocus(_v);
+            TranceSeekAPI.BonusElement(_v);
+            if (TranceSeekAPI.CanAttackMagic(_v))
             {
                 if (_v.Command.HitRate == 255)
                 {
@@ -62,14 +62,14 @@ namespace Memoria.Scripts.Battle
                     _v.CalcCannonProportionDamage();
                 }
             }
-            if (_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill) || TranceSeekCustomAPI.EliteMonster(_v.Target.Data))
+            if (_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill) || TranceSeekAPI.EliteMonster(_v.Target.Data))
             {
-                _v.Target.HpDamage = Math.Max(1, (_v.Target.HpDamage / TranceSeekCustomAPI.MonsterMechanic[_v.Target.Data][5]));
-                TranceSeekCustomAPI.MonsterMechanic[_v.Target.Data][5] = TranceSeekCustomAPI.MonsterMechanic[_v.Target.Data][5] * 2;
+                _v.Target.HpDamage = Math.Max(1, (_v.Target.HpDamage / TranceSeekAPI.MonsterMechanic[_v.Target.Data][5]));
+                TranceSeekAPI.MonsterMechanic[_v.Target.Data][5] = TranceSeekAPI.MonsterMechanic[_v.Target.Data][5] * 2;
             }
-            TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
+            TranceSeekAPI.TryAlterMagicStatuses(_v);
 
-            if (TranceSeekCustomAPI.AbsorbElement.TryGetValue(_v.Target.Data, out Int32 elementprotect))
+            if (TranceSeekAPI.AbsorbElement.TryGetValue(_v.Target.Data, out Int32 elementprotect))
                 if (elementprotect == 256)
                     _v.Target.Flags |= CalcFlag.HpRecovery;
         }

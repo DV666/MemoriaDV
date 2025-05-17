@@ -24,7 +24,7 @@ namespace Memoria.Scripts.Battle
 
             if (_v.Command.AbilityId == BattleAbilityId.NoMercy1 || _v.Command.AbilityId == BattleAbilityId.NoMercy2) // Fragilité
             {
-                TranceSeekCustomAPI.MagicAccuracy(_v);
+                TranceSeekAPI.MagicAccuracy(_v);
                 _v.Target.PenaltyShellHitRate();
                 _v.PenaltyCommandDividedHitRate();
                 foreach (BattleStatusId statusId in (_v.Target.Data.stat.cur & (BattleStatusConst.ContiCount & BattleStatusConst.AnyNegative)).ToStatusList())
@@ -59,19 +59,19 @@ namespace Memoria.Scripts.Battle
                         _v.Target.RemoveStatus(BattleStatus.Zombie);
                         _v.Command.AbilityStatus |= BattleStatus.Zombie;
                     }
-                    if (_v.Target.IsUnderAnyStatus(TranceSeekCustomStatus.SilenceEasyKill))
+                    if (_v.Target.IsUnderAnyStatus(TranceSeekStatus.SilenceEasyKill))
                     {
-                        _v.Target.RemoveStatus(TranceSeekCustomStatus.SilenceEasyKill);
-                        _v.Command.AbilityStatus |= TranceSeekCustomStatus.SilenceEasyKill;
+                        _v.Target.RemoveStatus(TranceSeekStatus.SilenceEasyKill);
+                        _v.Command.AbilityStatus |= TranceSeekStatus.SilenceEasyKill;
                     }
-                    TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
+                    TranceSeekAPI.TryAlterCommandStatuses(_v);
                 }
                 if (_v.Command.AbilityId == BattleAbilityId.NoMercy2)
                 {
                     _v.Command.AbilityStatus |= (BattleStatus.Poison | BattleStatus.Venom);
                 }
-                if (TranceSeekCustomAPI.TryMagicHit(_v))
-                    TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
+                if (TranceSeekAPI.TryMagicHit(_v))
+                    TranceSeekAPI.TryAlterCommandStatuses(_v);
                 return;
             }               
             
@@ -83,12 +83,12 @@ namespace Memoria.Scripts.Battle
                     return;
                 }
                 _v.NormalMagicParams();
-                TranceSeekCustomAPI.CharacterBonusPassive(_v, "MagicAttack");
-                TranceSeekCustomAPI.CasterPenaltyMini(_v);
-                TranceSeekCustomAPI.PenaltyShellAttack(_v);
-                TranceSeekCustomAPI.PenaltyCommandDividedAttack(_v);
+                TranceSeekAPI.CharacterBonusPassive(_v, "MagicAttack");
+                TranceSeekAPI.CasterPenaltyMini(_v);
+                TranceSeekAPI.PenaltyShellAttack(_v);
+                TranceSeekAPI.PenaltyCommandDividedAttack(_v);
                 _v.CalcHpDamage();
-                TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
+                TranceSeekAPI.TryAlterMagicStatuses(_v);
             }
             if (_v.Caster.Data.dms_geo_id == 328) // Fandalf Curse
             {
@@ -133,11 +133,11 @@ namespace Memoria.Scripts.Battle
                 {
                     if (_v.Command.HitRate == 255)
                     {
-                        TranceSeekCustomAPI.TryRemoveAbilityStatuses(_v);
+                        TranceSeekAPI.TryRemoveAbilityStatuses(_v);
                     }
                     else
                     {
-                        TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
+                        TranceSeekAPI.TryAlterMagicStatuses(_v);
                     }
                 }
             }

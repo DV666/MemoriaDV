@@ -162,7 +162,7 @@ namespace Memoria.Scripts.Battle
                         if (playerunit.IsPlayer)
                         {
                             Single PlayerRatioStatus = 0;
-                            if (playerunit.IsUnderAnyStatus(TranceSeekCustomStatus.Vieillissement) && AbilityChoosen == BattleAbilityId.Esuna)
+                            if (playerunit.IsUnderAnyStatus(TranceSeekStatus.Vieillissement) && AbilityChoosen == BattleAbilityId.Esuna)
                                 PlayerRatioStatus = 20;
 
                             BattleStatus playerStatus = playerunit.CurrentStatus;
@@ -276,7 +276,7 @@ namespace Memoria.Scripts.Battle
                 _v.Target.Flags |= (CalcFlag.HpDamageOrHeal | CalcFlag.MpDamageOrHeal);
                 _v.Target.HpDamage = (int)(_v.Target.MaximumHp - 10000);
                 _v.Target.MpDamage = (int)(_v.Target.MaximumMp);
-                TranceSeekCustomAPI.MonsterMechanic[_v.Target.Data][4] = 100;
+                TranceSeekAPI.MonsterMechanic[_v.Target.Data][4] = 100;
                 return;
             }
             else if (_v.Command.Power == 1 && _v.Command.HitRate == 1 && _v.Caster.Data.dms_geo_id == 405) // Friendly Lady Bug - Wind mechanics
@@ -323,18 +323,18 @@ namespace Memoria.Scripts.Battle
             else if (_v.Command.Power == 25 && _v.Command.HitRate == 111 && _v.Caster.Data.dms_geo_id == 278) // Polarity (+) with SPS effect (Black Waltz 3)
             {
                 _v.NormalMagicParams();
-                TranceSeekCustomAPI.CharacterBonusPassive(_v, "MagicAttack");
-                TranceSeekCustomAPI.CasterPenaltyMini(_v);
-                TranceSeekCustomAPI.EnemyTranceBonusAttack(_v);
-                TranceSeekCustomAPI.PenaltyShellAttack(_v);
-                TranceSeekCustomAPI.PenaltyCommandDividedAttack(_v);
-                TranceSeekCustomAPI.BonusElement(_v);
-                if (TranceSeekCustomAPI.CanAttackMagic(_v))
+                TranceSeekAPI.CharacterBonusPassive(_v, "MagicAttack");
+                TranceSeekAPI.CasterPenaltyMini(_v);
+                TranceSeekAPI.EnemyTranceBonusAttack(_v);
+                TranceSeekAPI.PenaltyShellAttack(_v);
+                TranceSeekAPI.PenaltyCommandDividedAttack(_v);
+                TranceSeekAPI.BonusElement(_v);
+                if (TranceSeekAPI.CanAttackMagic(_v))
                 {
                     _v.CalcHpDamage();
-                    TranceSeekCustomAPI.RaiseTrouble(_v);
+                    TranceSeekAPI.RaiseTrouble(_v);
                 }
-                TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
+                TranceSeekAPI.TryAlterCommandStatuses(_v);
 
                 if (!PolaritySPS.TryGetValue(_v.Caster.Data, out SPSEffect sps)) // Init
                     PolaritySPS[_v.Caster.Data] = null;
@@ -352,15 +352,15 @@ namespace Memoria.Scripts.Battle
             else if (_v.Command.HitRate == 133 && _v.Caster.Data.dms_geo_id == 593) // Polarity (+) with SPS effect (Black Waltz 3 broken)
             {
                 _v.SetCommandAttack();
-                TranceSeekCustomAPI.PenaltyCommandDividedAttack(_v);
+                TranceSeekAPI.PenaltyCommandDividedAttack(_v);
                 if (_v.Target.IsUnderStatus(BattleStatus.Shell))
                     _v.Context.Attack = _v.Context.Attack / 2;
-                TranceSeekCustomAPI.BonusElement(_v);
-                if (TranceSeekCustomAPI.CanAttackMagic(_v))
+                TranceSeekAPI.BonusElement(_v);
+                if (TranceSeekAPI.CanAttackMagic(_v))
                 {
                     _v.CalcCannonProportionDamage();
                 }
-                TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
+                TranceSeekAPI.TryAlterMagicStatuses(_v);
 
                 if (!PolaritySPS.TryGetValue(_v.Target.Data, out SPSEffect sps)) // Init
                     PolaritySPS[_v.Target.Data] = null;
@@ -378,7 +378,7 @@ namespace Memoria.Scripts.Battle
             }
             else if (_v.Command.Power == 25 && _v.Command.HitRate == 222 && (_v.Caster.Data.dms_geo_id == 278 || _v.Caster.Data.dms_geo_id == 593)) // Polarized staff (-) with SPS effect (Black Waltz 3)
             {
-                if (TranceSeekCustomAPI.CheckUnsafetyOrGuard(_v) && _v.Target.CanBeAttacked())
+                if (TranceSeekAPI.CheckUnsafetyOrGuard(_v) && _v.Target.CanBeAttacked())
                 {
                     _v.Context.Flags |= BattleCalcFlags.DirectHP;
                     if (_v.Target.CurrentHp < 10U)
@@ -389,7 +389,7 @@ namespace Memoria.Scripts.Battle
                     {
                         _v.Target.CurrentHp = (uint)(1 + GameRandom.Next8() % 9);
                     }
-                    TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
+                    TranceSeekAPI.TryAlterCommandStatuses(_v);
                 }
 
                 if (!PolaritySPS.TryGetValue(_v.Target.Data, out SPSEffect sps)) // Init
@@ -421,7 +421,7 @@ namespace Memoria.Scripts.Battle
             }
             else if (_v.Command.Power == 25 && _v.Command.HitRate == 77 && _v.Caster.Data.dms_geo_id == 278) // Barrier OFF (Black Waltz 3)
             {
-                TranceSeekCustomAPI.TryRemoveAbilityStatuses(_v);
+                TranceSeekAPI.TryRemoveAbilityStatuses(_v);
                 PolaritySPS[_v.Caster.Data].attr = 0;
                 PolaritySPS[_v.Caster.Data].meshRenderer.enabled = false;
                 return;
@@ -512,13 +512,13 @@ namespace Memoria.Scripts.Battle
                         }
                         btl_stat.MakeStatusesPermanent(_v.Target, BattleStatus.Stop, true);
                         _v.Target.Data.bi.target = 0;
-                        TranceSeekCustomAPI.MonsterMechanic[_v.Caster.Data][2] = _v.Target.Id;
+                        TranceSeekAPI.MonsterMechanic[_v.Caster.Data][2] = _v.Target.Id;
                     }
                     else
                     {
                         foreach (BattleUnit unit in BattleState.EnumerateUnits())
                         {
-                            if (TranceSeekCustomAPI.MonsterMechanic[_v.Caster.Data][2] == unit.Id)
+                            if (TranceSeekAPI.MonsterMechanic[_v.Caster.Data][2] == unit.Id)
                             {
                                 unit.Data.bi.target = 1;
                                 btl_stat.MakeStatusesPermanent(unit, BattleStatus.Stop, false);

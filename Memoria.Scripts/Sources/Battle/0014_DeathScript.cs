@@ -35,7 +35,7 @@ namespace Memoria.Scripts.Battle
                     }
                     else
                     {
-                        TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
+                        TranceSeekAPI.TryAlterCommandStatuses(_v);
                     }
                 }
                 else
@@ -55,7 +55,7 @@ namespace Memoria.Scripts.Battle
                 }
                 return;
             }
-            if (TranceSeekCustomAPI.CheckUnsafetyOrGuard(_v))
+            if (TranceSeekAPI.CheckUnsafetyOrGuard(_v))
             {
                 if (_v.Target.IsZombie)
                 {
@@ -66,11 +66,11 @@ namespace Memoria.Scripts.Battle
                 }
                 else
                 {
-                    TranceSeekCustomAPI.MagicAccuracy(_v);
+                    TranceSeekAPI.MagicAccuracy(_v);
                     _v.Target.PenaltyShellHitRate();
-                    if (TranceSeekCustomAPI.TryMagicHit(_v) || _v.Command.HitRate == 255)
+                    if (TranceSeekAPI.TryMagicHit(_v) || _v.Command.HitRate == 255)
                     {
-                        TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
+                        TranceSeekAPI.TryAlterCommandStatuses(_v);
                     }
                 }
             }

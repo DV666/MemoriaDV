@@ -24,7 +24,7 @@ namespace Memoria.DefaultScripts
                 }
                 );
             }
-            TranceSeekCustomAPI.SA_StatusApply(inflicter, false);
+            TranceSeekAPI.SA_StatusApply(inflicter, false);
             return btl_stat.ALTER_SUCCESS;
         }
 

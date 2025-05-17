@@ -24,12 +24,12 @@ namespace Memoria.Scripts.Battle
             else
             {
                 _v.NormalMagicParams();
-                TranceSeekCustomAPI.CasterPenaltyMini(_v);
-                TranceSeekCustomAPI.EnemyTranceBonusAttack(_v);
-                TranceSeekCustomAPI.PenaltyShellAttack(_v);
-                TranceSeekCustomAPI.PenaltyCommandDividedAttack(_v);
-                TranceSeekCustomAPI.BonusElement(_v);
-                if (TranceSeekCustomAPI.CanAttackMagic(_v))
+                TranceSeekAPI.CasterPenaltyMini(_v);
+                TranceSeekAPI.EnemyTranceBonusAttack(_v);
+                TranceSeekAPI.PenaltyShellAttack(_v);
+                TranceSeekAPI.PenaltyCommandDividedAttack(_v);
+                TranceSeekAPI.BonusElement(_v);
+                if (TranceSeekAPI.CanAttackMagic(_v))
                 {
                     _v.Target.Flags |= (CalcFlag.HpAlteration | CalcFlag.MpAlteration);
                     if (_v.Target.HasCategory(EnemyCategory.Humanoid))
@@ -49,7 +49,7 @@ namespace Memoria.Scripts.Battle
                     if (!_v.Target.IsZombie && !_v.Context.IsAbsorb)
                         _v.Target.MpDamage = hpDamage2 >> 4;
                 }
-                TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
+                TranceSeekAPI.TryAlterMagicStatuses(_v);
             }
         }
     }

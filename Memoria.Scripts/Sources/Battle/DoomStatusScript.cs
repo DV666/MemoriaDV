@@ -23,13 +23,13 @@ namespace Memoria.DefaultScripts
             DoomInflicter = inflicter;
             InitialCounter = parameters.Length > 0 ? Convert.ToInt32(parameters[0]) : 10;
             InitialCounter *= (Target.HasSupportAbility(SupportAbility1.AutoRegen) ? 2 : 1);
-            InitialCounter *= (TranceSeekCustomAPI.EliteMonster(target.Data) ? 3 : 1);
+            InitialCounter *= (TranceSeekAPI.EliteMonster(target.Data) ? 3 : 1);
             Counter = InitialCounter;
             Message = Singleton<HUDMessage>.Instance.Show(attachTransf, $"[FF0000]{Counter}", HUDMessage.MessageStyle.DEATH_SENTENCE, new Vector3(0f, iconOff.y), 0);
             btl2d.StatusMessages.Add(Message);
             target.AddDelayedModifier(UpdateMessageShow, null);
             GeoID = target.Data.dms_geo_id;
-            TranceSeekCustomAPI.SA_StatusApply(inflicter, false);
+            TranceSeekAPI.SA_StatusApply(inflicter, false);
             return btl_stat.ALTER_SUCCESS;
         }
 
@@ -37,7 +37,7 @@ namespace Memoria.DefaultScripts
         {
             btl2d.StatusMessages.Remove(Message);
             Singleton<HUDMessage>.Instance.ReleaseObject(Message);
-            if (Target.IsUnderAnyStatus(BattleStatus.EasyKill) && !TranceSeekCustomAPI.EliteMonster(Target.Data))
+            if (Target.IsUnderAnyStatus(BattleStatus.EasyKill) && !TranceSeekAPI.EliteMonster(Target.Data))
             {
                 List<BattleStatus> statuschoosen = new List<BattleStatus>{ BattleStatus.Poison, BattleStatus.Venom, BattleStatus.Blind, BattleStatus.Silence, BattleStatus.Trouble,
                 BattleStatus.Sleep, BattleStatus.Freeze, BattleStatus.Heat, BattleStatus.Mini, BattleStatus.Petrify, BattleStatus.GradualPetrify,

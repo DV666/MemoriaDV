@@ -22,7 +22,7 @@ namespace Memoria.Scripts.Battle
         public void Perform()
         {
             _v.PhysicalAccuracy();
-            if (TranceSeekCustomAPI.TryPhysicalHit(_v))
+            if (TranceSeekAPI.TryPhysicalHit(_v))
                 RemoveItem();
             else
                 UiState.SetBattleFollowFormatMessage(BattleMesages.CouldNotStealAnything);

@@ -21,7 +21,7 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            if (_v.Caster.Data.dms_geo_id == 446 && TranceSeekCustomAPI.MonsterMechanic[_v.Caster.Data][2] == 1) // Garland - Final Meteor
+            if (_v.Caster.Data.dms_geo_id == 446 && TranceSeekAPI.MonsterMechanic[_v.Caster.Data][2] == 1) // Garland - Final Meteor
             {            
                 _v.Caster.Data.mot[0] = "ANH_MON_B3_185_008";
                 _v.Caster.Data.mot[1] = "ANH_MON_B3_185_000";
@@ -36,16 +36,16 @@ namespace Memoria.Scripts.Battle
             _v.Context.Attack = UnityEngine.Random.Range(((_v.Caster.Magic + _v.Caster.Level) / 3), (_v.Caster.Magic + _v.Caster.Level));
             _v.SetCommandPower();
             _v.Target.SetMagicDefense();
-            TranceSeekCustomAPI.CasterPenaltyMini(_v);
-            TranceSeekCustomAPI.EnemyTranceBonusAttack(_v);
-            TranceSeekCustomAPI.PenaltyShellAttack(_v);
-            TranceSeekCustomAPI.PenaltyCommandDividedAttack(_v);
-            TranceSeekCustomAPI.BonusElement(_v);
-            if (TranceSeekCustomAPI.CanAttackMagic(_v))
+            TranceSeekAPI.CasterPenaltyMini(_v);
+            TranceSeekAPI.EnemyTranceBonusAttack(_v);
+            TranceSeekAPI.PenaltyShellAttack(_v);
+            TranceSeekAPI.PenaltyCommandDividedAttack(_v);
+            TranceSeekAPI.BonusElement(_v);
+            if (TranceSeekAPI.CanAttackMagic(_v))
             {
                 _v.CalcHpDamage();
             }
-            TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
+            TranceSeekAPI.TryAlterMagicStatuses(_v);
         }
     }
 }

@@ -69,12 +69,12 @@ namespace Memoria.Scripts.Battle
                         {
                             _v.Target.CurrentHp = (UInt32)(1 + GameRandom.Next8() % 10);
                         }
-                    TranceSeekCustomAPI.TryRemoveItemStatuses(_v);
+                    TranceSeekAPI.TryRemoveItemStatuses(_v);
                 }
             }
 
             if (_v.Caster.PlayerIndex == CharacterId.Blank && _v.Command.Id == BattleCommandId.Item)
-                btl_stat.AlterStatus(_v.Caster, TranceSeekCustomStatusId.Special, _v.Caster, true, "SoakedBlade", _v.Command.ItemId);
+                btl_stat.AlterStatus(_v.Caster, TranceSeekStatusId.Special, _v.Caster, true, "SoakedBlade", _v.Command.ItemId);
         }
 
         public Single RateTarget()

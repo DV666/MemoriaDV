@@ -28,7 +28,7 @@ namespace Memoria.Scripts.Battle
             }
             else
             {
-                if (_v.Target.PhysicalEvade == 255 || TranceSeekCustomAPI.ZidanePassive[_v.Target.Data][2] > 0)
+                if (_v.Target.PhysicalEvade == 255 || TranceSeekAPI.ZidanePassive[_v.Target.Data][2] > 0)
                 {
                     _v.Context.Flags |= BattleCalcFlags.Miss;
                 }
@@ -44,7 +44,7 @@ namespace Memoria.Scripts.Battle
                         { "IT", "Occhio del ladro!" },
                     };
                 btl2d.Btl2dReqSymbolMessage(_v.Target.Data, "[FDEE00]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 5);
-                TranceSeekCustomAPI.ZidanePassive[_v.Target.Data][2] = 1;
+                TranceSeekAPI.ZidanePassive[_v.Target.Data][2] = 1;
             }
         }
         private static bool HasStealableItems(BattleEnemy enemy)

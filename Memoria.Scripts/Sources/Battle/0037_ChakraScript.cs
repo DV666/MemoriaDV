@@ -55,12 +55,12 @@ namespace Memoria.Scripts.Battle
                                     { "IT", "Wille ↑" },
                                 };
                     btl2d.Btl2dReqSymbolMessage(_v.Caster.Data, "[F9FF39]", localizedMessage2, HUDMessage.MessageStyle.DAMAGE, 5);
-                    TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
+                    TranceSeekAPI.TryAlterCommandStatuses(_v);
                 }
                 else // Ogre - Zenitude
                 {
-                    btl_stat.AlterStatus(_v.Target, TranceSeekCustomStatusId.PerfectCrit, parameters: $"+9");
-                    TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
+                    btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.PerfectCrit, parameters: $"+9");
+                    TranceSeekAPI.TryAlterCommandStatuses(_v);
                 }
             }
             else if (_v.Caster.Data.dms_geo_id == 401) // Friendly Feather Circle - Angel Whisper + End
@@ -108,7 +108,7 @@ namespace Memoria.Scripts.Battle
                     _v.Target.RemoveStatus(BattleStatus.Silence);
                     _v.Target.RemoveStatus(BattleStatus.Blind);
                 }
-                TranceSeekCustomAPI.TryAlterMagicStatuses(_v);
+                TranceSeekAPI.TryAlterMagicStatuses(_v);
             }
         }
     }

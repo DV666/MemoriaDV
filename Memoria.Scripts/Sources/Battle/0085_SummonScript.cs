@@ -22,10 +22,10 @@ namespace Memoria.Scripts.Battle
         public void Perform()
         {
             _v.NormalMagicParams();
-            TranceSeekCustomAPI.CasterPenaltyMini(_v);
-            TranceSeekCustomAPI.PenaltyShellAttack(_v);
-            TranceSeekCustomAPI.BonusElement(_v);
-            TranceSeekCustomAPI.MagicAccuracy(_v);
+            TranceSeekAPI.CasterPenaltyMini(_v);
+            TranceSeekAPI.PenaltyShellAttack(_v);
+            TranceSeekAPI.BonusElement(_v);
+            TranceSeekAPI.MagicAccuracy(_v);
             switch (_v.Command.AbilityId)
             {
                 case BattleAbilityId.Shiva:
@@ -37,7 +37,7 @@ namespace Memoria.Scripts.Battle
                     {
                         _v.Command.AbilityCategory -= 16; // Remove Magical effect to prevent Vanish to dissapear.
                         _v.Target.TryRemoveStatuses(_v.Command.AbilityStatus);
-                        _v.Target.AlterStatus(TranceSeekCustomStatus.MentalUp);
+                        _v.Target.AlterStatus(TranceSeekStatus.MentalUp);
                     }
                     else
                     {
@@ -54,7 +54,7 @@ namespace Memoria.Scripts.Battle
                     {
                         _v.Command.AbilityCategory -= 16; // Remove Magical effect to prevent Vanish to dissapear.
                         _v.Target.TryRemoveStatuses(_v.Command.AbilityStatus);
-                        _v.Target.AlterStatus(TranceSeekCustomStatus.ArmorUp);
+                        _v.Target.AlterStatus(TranceSeekStatus.ArmorUp);
                     }
                     else
                     {
@@ -71,7 +71,7 @@ namespace Memoria.Scripts.Battle
                     {
                         _v.Command.AbilityCategory -= 16; // Remove Magical effect to prevent Vanish to dissapear.
                         _v.Target.TryRemoveStatuses(_v.Command.AbilityStatus);
-                        _v.Target.AlterStatus(TranceSeekCustomStatus.MagicUp);
+                        _v.Target.AlterStatus(TranceSeekStatus.MagicUp);
                     }
                     else
                     {
@@ -123,7 +123,7 @@ namespace Memoria.Scripts.Battle
                     {
                         _v.Command.AbilityCategory -= 16; // Remove Magical effect to prevent Vanish to dissapear.
                         _v.Target.TryRemoveStatuses(_v.Command.AbilityStatus);
-                        _v.Target.AlterStatus(TranceSeekCustomStatus.PowerUp | TranceSeekCustomStatus.MagicUp | TranceSeekCustomStatus.ArmorUp | TranceSeekCustomStatus.MentalUp);
+                        _v.Target.AlterStatus(TranceSeekStatus.PowerUp | TranceSeekStatus.MagicUp | TranceSeekStatus.ArmorUp | TranceSeekStatus.MentalUp);
                     }
                     else
                     {
@@ -145,7 +145,7 @@ namespace Memoria.Scripts.Battle
                     {
                         _v.Caster.Will = (byte)(_v.Caster.Will * 2);
                     }
-                    TranceSeekCustomAPI.TryAlterCommandStatuses(_v);
+                    TranceSeekAPI.TryAlterCommandStatuses(_v);
                     _v.Caster.Will = will;
                     return;
                 }
@@ -168,7 +168,7 @@ namespace Memoria.Scripts.Battle
                     _v.Target.HpDamage /= 3;
                 }
             }
-            else if (TranceSeekCustomAPI.CanAttackMagic(_v))
+            else if (TranceSeekAPI.CanAttackMagic(_v))
             {
                 _v.CalcHpDamage();
 
