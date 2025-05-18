@@ -833,7 +833,7 @@ ________________________________________________________________________________
 
 #### Sentinel Steiner + Dual Amarant ####
 >CMD 4
-[code=Patch] (HasSA(223) && GetEventGlobalByte(1320) > 0) ? 1035 : ((SerialNumber == 7 || SerialNumber == 8) ? 1015 : (SerialNumber == 13 ? 1016 : (InTrance && CharacterIndex == 14 ? 1027 : 4))) [/code]
+[code=Patch] (HasSA(223) && GetMemoriaDictionary(1035, 0) > 0) ? 1035 : ((SerialNumber == 7 || SerialNumber == 8) ? 1015 : (SerialNumber == 13 ? 1016 : (InTrance && CharacterIndex == 14 ? 1027 : 4))) [/code]
 
 #### SA CMD for Steiner ####
 
@@ -2158,10 +2158,7 @@ Ability WhenHitRateSetup EvenImmobilized
 [code=HitRate] 255 [/code]
 [code=Evade] 0 [/code]
 
->SA 25 Add Status
-Ability WhenCalcDamage EvenImmobilized
-[code=Condition] (AbilityId == BattleAbilityId_Attack || AbilityId == BattleAbilityId_Jump1 || AbilityId == BattleAbilityId_Jump2) && GetRandom(0, 100) < CasterWeaponRate && !CasterHasSA(1025)[/code]
-[code=EffectFlags] EffectFlags | BattleCalcFlags_AddStat [/code]
+>SA 25 Add Status (effect is coded in TranceSeekCustomAPI.cs)
 
 >SA 26 Stone Skin
 Ability AsTarget WhenBattleScriptEnd EvenImmobilized
@@ -2568,7 +2565,7 @@ StatusInit InitialStatus Regen
 
 >SA 253 Take that! (effect is coded in TranceSeekCustomAPI.cs)
 
->SA 254 In top form!
+>SA 254 In top form! (effect is coded in OverloadOnBattleScriptStartScript.cs)
 
 >SA 255 Gyahaha! (effect is coded in Memoria.Scripts.dll)
 
@@ -2725,11 +2722,7 @@ Ability WhenHitRateSetup EvenImmobilized
 [code=Evade] 0 [/code]
 DisableSA 24
 
->SA 1025 Add Status+
-Ability WhenCalcDamage EvenImmobilized
-[code=Condition] (AbilityId == BattleAbilityId_Attack || AbilityId == BattleAbilityId_Jump1 || AbilityId == BattleAbilityId_Jump2) && (GetRandom(0, 100) < (CasterWeaponRate + (TargetSpirit / 3))) [/code]
-[code=EffectFlags] EffectFlags | BattleCalcFlags_AddStat [/code]
-DisableSA 25
+>SA 1025 Add Status+ (effect is coded in TranceSeekCustomAPI.cs)
 
 >SA 1026 Stone Skin+
 Ability AsTarget WhenBattleScriptEnd EvenImmobilized
@@ -3169,7 +3162,7 @@ Ability WhenCalcDamage EvenImmobilized
 
 >SA 1253 Take that!+ (effect is coded in TranceSeekCustomAPI.cs)
 
->SA 1254 In top form!+
+>SA 1254 In top form!+ (effect is coded in OverloadOnBattleScriptStartScript.cs)
 
 >SA 1255 Gyahaha!+ (effect is coded in Memoria.Scripts.dll)
 
@@ -3223,4 +3216,3 @@ Ability WhenCalcDamage EvenImmobilized
 Ability WhenCalcDamage EvenImmobilized
 [code=Condition] AbilityId == BattleAbilityId_Attack && (TargetCategory & 1) != 0 && CasterIsPlayer != TargetIsPlayer && (CasterWeaponId >= 26 && CasterWeaponId <= 30 || CasterWeaponId == 1237) [/code]
 [code=DamageModifierCount] DamageModifierCount + 1 [/code]
-

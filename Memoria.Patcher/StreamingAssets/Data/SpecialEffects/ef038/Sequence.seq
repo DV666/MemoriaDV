@@ -1,6 +1,6 @@
 // Shared sequence of SFX Shiva__Full
 
-ShowMesh: Char=Everyone ; Enable=False ; IsDisappear=True
+ShowMesh: Char=MatchingCondition(!IsTargeted && IsTargetable) ; Enable=False ; IsDisappear=True
 StartThread: Condition=SFXUseCamera && AreTargetsPlayers
 	ShiftWorld: Angle=(0, 180, 0)
 EndThread
@@ -15,7 +15,7 @@ PlaySound: Sound=2800
 PlaySound: Sound=2801
 PlaySound: Sound=2802
 Wait: Time=22
-ShowMesh: Char=AllTargets ; Enable=True ; IsDisappear=True
+ShowMesh: Char=MatchingCondition(IsTargeted && IsTargetable) ; Enable=True ; IsDisappear=True
 Wait: Time=4
 PlaySound: Sound=2803
 PlaySound: Sound=2804
@@ -35,6 +35,6 @@ Wait: Time=33
 StartThread: Condition=SFXUseCamera && AreTargetsPlayers
 	ShiftWorld: Angle=(0, 0, 0)
 EndThread
-ShowMesh: Char=Everyone ; Enable=True ; IsDisappear=True
-ShowMesh: Char=AllNonTargets ; Enable=True ; Time=12
+ShowMesh: Char=MatchingCondition(!IsTargeted && IsTargetable) ; Enable=True ; IsDisappear=True
+ShowMesh: Char=MatchingCondition(!IsTargeted && IsTargetable) ; Enable=True ; Time=12
 Wait: Time=31

@@ -1,0 +1,213 @@
+// Player sequence of Magic Weapon (normal)
+
+WaitAnimation: Char=Caster
+SetupReflect: Delay=SFXLoaded
+StartThread: Condition=CasterCharacterIndex == CharacterId_Vivi ; Sync
+	LoadSFX: SFX=Player_Attack_Vivi ; Reflect=False
+	PlayAnimation: Char=Caster ; Anim=MP_SET ; Reflect=False
+	WaitAnimation: Char=Caster ; Reflect=False
+	StartThread: Condition=AreCasterAndTargetsEnemies ; Sync=True
+		MoveToTarget: Char=Caster ; Target=AllTargets ; Distance=740 ; UseCollisionRadius=True ; Anim=MP_RUN ; Reflect=False
+		Turn: Char=Caster ; BaseAngle=AllTargets ; Time=8 ; Reflect=False
+		WaitMove: Char=Caster ; Reflect=False
+		MoveToTarget: Char=Caster ; Target=AllTargets ; Distance=250 ; UseCollisionRadius=True ; Anim=MP_RUN_TO_ATTACK ; Reflect=False
+	EndThread
+	StartThread: Condition=!AreCasterAndTargetsEnemies ; Sync=True
+		MoveToTarget: Char=Caster ; Target=AllTargets ; Offset=(0.0, 0.0, 1600) ; Time=0 ; Reflect=False
+		Turn: Char=Caster ; BaseAngle=AllTargets ; Time=0 ; Reflect=False
+		MoveToTarget: Char=Caster ; Target=AllTargets ; Distance=650 ; UseCollisionRadius=True ; Anim=MP_RUN_TO_ATTACK ; Reflect=False
+	EndThread
+	WaitMove: Char=Caster ; Reflect=False
+	StartThread
+		Wait: Time=1 ; Reflect=False
+		WaitSFXLoaded: SFX=Player_Attack_Vivi ; Reflect=False
+		PlaySFX: SFX=Player_Attack_Vivi ; Reflect=False
+		EffectPoint: Char=AllTargets ; Type=Effect ; Reflect=False
+		PlaySound: Sound=WeaponAttack ; Reflect=False
+		StartThread: Condition=!IsAttackMiss
+			PlaySound: Sound=WeaponHit ; Reflect=False
+		EndThread
+		Wait: Time=4 ; Reflect=False
+		EffectPoint: Char=Everyone ; Type=Figure ; Reflect=False
+		WaitSFXDone: SFX=Player_Attack_Vivi ; Reflect=False
+	EndThread
+	PlayAnimation: Char=Caster ; Anim=MP_ATTACK ; Reflect=False
+	WaitAnimation: Char=Caster ; Reflect=False
+	StartThread: Condition=AreCasterAndTargetsEnemies ; Sync=True
+		MoveToPosition: Char=Caster ; AbsolutePosition=Default ; Anim=MP_BACK ; Reflect=False
+		Turn: Char=Caster ; BaseAngle=Default ; Time=4 ; Reflect=False
+		WaitMove: Caster ; Reflect=False
+	EndThread
+	StartThread: Condition=!AreCasterAndTargetsEnemies ; Sync=True ; Reflect=False
+		MoveToPosition: Char=Caster ; AbsolutePosition=Default ; Time=0 ; Reflect=False
+		Turn: Char=Caster ; BaseAngle=Default ; Time=0 ; Reflect=False
+	EndThread
+	PlayAnimation: Char=Caster ; Anim=Idle ; Reflect=False
+	WaitTurn: Char=Caster
+ElseThread: Sync
+	WaitAnimation: Char=Caster
+	LoadSFX: SFX=Player_Attack_Garnet_LH_Rod
+	PlayAnimation: Char=Caster ; Anim=MP_SET
+	WaitAnimation: Char=Caster
+	StartThread: Condition=AreCasterAndTargetsEnemies ; Sync=True
+		MoveToTarget: Char=Caster ; Target=AllTargets ; Distance=630 ; UseCollisionRadius=True ; Anim=MP_RUN
+		Turn: Char=Caster ; BaseAngle=AllTargets ; Time=4
+		WaitMove: Char=Caster
+		MoveToTarget: Char=Caster ; Target=AllTargets ; Distance=50 ; UseCollisionRadius=True ; Anim=MP_RUN_TO_ATTACK
+	EndThread
+	StartThread: Condition=!AreCasterAndTargetsEnemies ; Sync=True
+		MoveToTarget: Char=Caster ; Target=AllTargets ; Offset=(0.0, 0.0, 1600) ; Time=0
+		Turn: Char=Caster ; BaseAngle=AllTargets ; Time=0
+		MoveToTarget: Char=Caster ; Target=AllTargets ; Distance=450 ; UseCollisionRadius=True ; Anim=MP_RUN_TO_ATTACK
+	EndThread
+	WaitMove: Char=Caster
+	StartThread
+		Wait: Time=7
+		WaitSFXLoaded: SFX=Player_Attack_Garnet_LH_Rod
+		PlaySFX: SFX=Player_Attack_Garnet_LH_Rod
+		EffectPoint: Char=AllTargets ; Type=Effect
+		PlaySound: Sound=WeaponAttack
+		StartThread: Condition=!IsAttackMiss
+			PlaySound: Sound=WeaponHit
+		EndThread
+		Wait: Time=4
+		EffectPoint: Char=Everyone ; Type=Figure
+		WaitSFXDone: SFX=Player_Attack_Garnet_LH_Rod
+	EndThread
+	PlayAnimation: Char=Caster ; Anim=MP_ATTACK
+	WaitAnimation: Char=Caster
+	StartThread: Condition=AreCasterAndTargetsEnemies ; Sync=True
+		MoveToPosition: Char=Caster ; AbsolutePosition=Default ; Anim=MP_BACK
+		Turn: Char=Caster ; BaseAngle=Default ; Time=4
+		WaitMove: Caster
+	EndThread
+	StartThread: Condition=!AreCasterAndTargetsEnemies ; Sync=True
+		MoveToPosition: Char=Caster ; AbsolutePosition=Default ; Time=0
+		Turn: Char=Caster ; BaseAngle=Default ; Time=0
+	EndThread
+	PlayAnimation: Char=Caster ; Anim=Idle
+	WaitTurn: Char=Caster
+EndThread
+StartThread: Condition=GetMemoriaDictionary(1050, 0) > 0
+	StartThread: Condition=CasterWeaponId == 1028
+		StartThread: Condition=CheckAnyStatus(TargetCurrentStatus, BattleStatus_Reflect)
+			StartThread: Target=AllPlayers
+				StartThread: Target=RandomTarget
+					LoadSFX: SFX=Demi__Single ; Reflect=True
+					WaitSFXLoaded: SFX=Demi__Single ; Reflect=True
+					PlaySFX: SFX=Demi__Single ; Reflect=True ; MeshColors=(0.37041, 0.07817, 0.35534)
+					WaitSFXDone: SFX=Demi__Single ; Reflect=True
+				EndThread
+			EndThread
+		ElseThread
+			LoadSFX: SFX=Demi__Single ; Reflect=True
+			WaitSFXLoaded: SFX=Demi__Single ; Reflect=True
+			PlaySFX: SFX=Demi__Single ; Reflect=True ; MeshColors=(0.37041, 0.07817, 0.35534)
+			WaitSFXDone: SFX=Demi__Single ; Reflect=True
+		EndThread
+	EndThread
+	StartThread: Condition=CasterWeaponId == 1029
+		StartThread: Condition=CheckAnyStatus(TargetCurrentStatus, BattleStatus_Reflect)
+			StartThread: Target=AllPlayers
+				StartThread: Target=RandomTarget
+					LoadSFX: SFX=Poison__Single ; Reflect=True
+					WaitSFXLoaded: SFX=Poison__Single ; Reflect=True
+					PlaySFX: SFX=Poison__Single ; Reflect=True
+					WaitSFXDone: SFX=Poison__Single ; Reflect=True
+				EndThread
+			EndThread
+		ElseThread
+			LoadSFX: SFX=Poison__Single ; Reflect=True
+			WaitSFXLoaded: SFX=Poison__Single ; Reflect=True
+			PlaySFX: SFX=Poison__Single ; Reflect=True
+			WaitSFXDone: SFX=Poison__Single ; Reflect=True
+		EndThread
+	EndThread
+	StartThread: Condition=CasterWeaponId == 1031
+		StartThread: Condition=CheckAnyStatus(TargetCurrentStatus, BattleStatus_Reflect)
+			StartThread: Target=AllPlayers
+				StartThread: Target=RandomTarget
+					LoadSFX: SFX=Comet ; Reflect=True
+					WaitSFXLoaded: SFX=Comet ; Reflect=True
+					PlaySFX: SFX=Comet ; Reflect=True
+					WaitSFXDone: SFX=Comet ; Reflect=True
+				EndThread
+			EndThread
+		ElseThread
+			LoadSFX: SFX=Comet ; Reflect=True
+			WaitSFXLoaded: SFX=Comet ; Reflect=True
+			PlaySFX: SFX=Comet ; Reflect=True
+			WaitSFXDone: SFX=Comet ; Reflect=True
+		EndThread
+	EndThread
+	StartThread: Condition=CasterWeaponId == RegularItem_FlameStaff
+		StartThread: Condition=CheckAnyStatus(TargetCurrentStatus, BattleStatus_Reflect)
+			StartThread: Target=AllPlayers
+				StartThread: Target=RandomTarget
+					LoadSFX: SFX=Fira__Single ; Reflect=True
+					WaitSFXLoaded: SFX=Fira__Single ; Reflect=True
+					PlaySFX: SFX=Fira__Single ; Reflect=True
+					WaitSFXDone: SFX=Fira__Single ; Reflect=True
+				EndThread
+			EndThread
+		ElseThread
+			LoadSFX: SFX=Fira__Single ; Reflect=True
+			WaitSFXLoaded: SFX=Fira__Single ; Reflect=True
+			PlaySFX: SFX=Fira__Single ; Reflect=True
+			WaitSFXDone: SFX=Fira__Single ; Reflect=True
+		EndThread
+	EndThread
+	StartThread: Condition=CasterWeaponId == RegularItem_IceStaff
+		StartThread: Condition=CheckAnyStatus(TargetCurrentStatus, BattleStatus_Reflect)
+			StartThread: Target=AllPlayers
+				StartThread: Target=RandomTarget
+					LoadSFX: SFX=Water__Single ; Reflect=True
+					WaitSFXLoaded: SFX=Water__Single ; Reflect=True
+					PlaySFX: SFX=Water__Single ; Reflect=True
+					WaitSFXDone: SFX=Water__Single ; Reflect=True
+				EndThread
+			EndThread
+		ElseThread
+			LoadSFX: SFX=Water__Single ; Reflect=True
+			WaitSFXLoaded: SFX=Water__Single ; Reflect=True
+			PlaySFX: SFX=Water__Single ; Reflect=True
+			WaitSFXDone: SFX=Water__Single ; Reflect=True
+		EndThread
+	EndThread
+	StartThread: Condition=CasterWeaponId == RegularItem_LightningStaff
+		StartThread: Condition=CheckAnyStatus(TargetCurrentStatus, BattleStatus_Reflect)
+			StartThread: Target=AllPlayers
+				StartThread: Target=RandomTarget
+					LoadSFX: SFX=Thundera__Single ; Reflect=True
+					WaitSFXLoaded: SFX=Thundera__Single ; Reflect=True
+					PlaySFX: SFX=Thundera__Single ; Reflect=True
+					WaitSFXDone: SFX=Thundera__Single ; Reflect=True
+				EndThread
+			EndThread
+		ElseThread
+			LoadSFX: SFX=Thundera__Single ; Reflect=True
+			WaitSFXLoaded: SFX=Thundera__Single ; Reflect=True
+			PlaySFX: SFX=Thundera__Single ; Reflect=True
+			WaitSFXDone: SFX=Thundera__Single ; Reflect=True
+		EndThread
+	EndThread
+	StartThread: Condition=CasterWeaponId == RegularItem_StardustRod
+		StartThread: Condition=CheckAnyStatus(TargetCurrentStatus, BattleStatus_Reflect)
+			StartThread: Target=AllPlayers
+				StartThread: Target=RandomTarget
+					LoadSFX: SFX=Darkside_1 ; Reflect=True
+					WaitSFXLoaded: SFX=Darkside_1 ; Reflect=True
+					PlaySFX: SFX=Darkside_1 ; Reflect=True
+					WaitSFXDone: SFX=Darkside_1 ; Reflect=True
+				EndThread
+			EndThread
+		ElseThread
+			LoadSFX: SFX=Darkside_1 ; Reflect=True
+			WaitSFXLoaded: SFX=Darkside_1 ; Reflect=True
+			PlaySFX: SFX=Darkside_1 ; Reflect=True
+			WaitSFXDone: SFX=Darkside_1 ; Reflect=True
+		EndThread
+	EndThread
+EndThread
+ActivateReflect
+WaitReflect

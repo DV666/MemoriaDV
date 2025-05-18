@@ -1,0 +1,61 @@
+// Player sequence of SFX Summon_MagicVice_Mug
+
+WaitAnimation: Char=Caster
+StartThread: Condition=IsSingleSelectedTarget
+	Turn: Char=Caster ; BaseAngle=AllTargets ; Time=5
+EndThread
+SetupReflect: Delay=SFXLoaded
+StartThread: Target=Caster ; Sync=True
+	LoadSFX: SFX=Green_Smoke ; UseCamera=False
+	WaitSFXLoaded: SFX=Green_Smoke
+	PlaySFX: SFX=Green_Smoke
+	EffectPoint: Char=Caster ; Type=Both
+	WaitSFXDone: SFX=Green_Smoke
+EndThread
+Message: Priority=1 ; Title=True ; Reflect=True ; TextFR=[STRT=47,1]Dérober ; Text=[STRT=21,1]Mug
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_059_010
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_059_011
+StartThread
+	LoadSFX: SFX=SFX_Attack_Mage_Staff ; FirstBone=0 ; Reflect=True
+	Wait: Time=7 ; Reflect=True
+	WaitSFXLoaded: Reflect=True
+	PlaySFX: SkipSequence=False ; Reflect=True
+	WaitSFXDone: Reflect=True
+EndThread
+Turn: Char=Caster ; BaseAngle=AllTargets ; Angle=0 ; Time=6
+MoveToTarget: Char=Caster ; Target=AllTargets ; Time=6 ; Distance=400
+WaitMove: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_059_012
+StartThread
+	Wait: Time=3
+	PlaySound: Sound=678 ; Volume=1 ; Once=False
+EndThread
+Wait: Time=6
+StartThread
+	Wait: Time=3
+	PlaySound: Sound=663 ; Volume=1 ; Once=False
+EndThread
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_059_013
+Turn: Char=Caster ; BaseAngle=Default ; Angle=0 ; Time=10
+MoveToPosition: Char=Caster ; Time=10 ; AbsolutePosition=Default ; MoveHeight=true
+WaitMove: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_059_014
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=Idle
+WaitMonsterSFXDone: Reflect=True
+WaitTurn: Char=Caster
+ActivateReflect
+WaitReflect
+StartThread: Target=Caster ; Sync=True
+	LoadSFX: SFX=Green_Smoke ; UseCamera=False
+	WaitSFXLoaded: SFX=Green_Smoke
+	PlaySFX: SFX=Green_Smoke
+	EffectPoint: Char=Caster ; Type=Both
+	WaitSFXDone: SFX=Green_Smoke
+EndThread
+PlayAnimation: Char=Caster ; Anim=Idle
+Turn: Char=Caster ; BaseAngle=Default ; Time=5
+WaitTurn: Char=Caster

@@ -1,0 +1,48 @@
+// Player sequence of SFX Rupture
+
+WaitAnimation: Char=Caster
+StartThread: Condition=CasterRow == 0 && AreCasterAndSelectedTargetsEnemies ; Sync=True
+	MoveToPosition: Char=Caster ; RelativePosition=(0, 0, 400) ; Anim=MP_STEP_FORWARD
+	WaitMove: Char=Caster
+EndThread
+StartThread: Condition=IsSingleSelectedTarget
+	Turn: Char=Caster ; BaseAngle=AllTargets ; Time=5
+EndThread
+Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
+SetupReflect: Delay=SFXLoaded
+StartThread: Sync=False
+	Wait: Time=64
+	LoadSFX: SFX=Break ; Reflect=True ; UseCamera=False
+	WaitSFXLoaded: SFX=Break ; Reflect=True
+	PlaySFX: SFX=Break ; Reflect=True ; MeshColors=(0.50326, 0.37692, 0.12196) ; SkipSequence
+	WaitSFXDone: SFX=Break ; Reflect=True
+EndThread
+StartThread: Condition=IsSingleTarget ; Sync=True
+	LoadSFX: SFX=Blizzaga__Single ; Reflect=True ; UseCamera=False
+	PlayAnimation: Char=Caster ; Anim=ANH_MAIN_B0_006_600
+	WaitAnimation: Char=Caster
+	Channel
+	PlayAnimation: Char=Caster ; Anim=ANH_MAIN_B0_006_601
+	WaitAnimation: Char=Caster
+	PlayAnimation: Char=Caster ; Anim=ANH_MAIN_B0_006_602 ; Loop=True
+	WaitSFXLoaded: SFX=Blizzaga__Single ; Reflect=True
+	WaitAnimation: Char=Caster
+	StopChannel
+	PlaySFX: SFX=Blizzaga__Single ; Reflect=True ; MeshColors=(0.50326, 0.37692, 0.12196) ; SkipSequence
+	PlaySound: Sound=3025
+	Wait: Time=64
+	EffectPoint: Char=AllTargets ; Type=Effect
+	Wait: Time=15
+	EffectPoint: Char=Everyone ; Type=Figure
+	Wait: Time=8
+	WaitSFXDone: SFX=Blizzaga__Single ; Reflect=True
+EndThread
+ActivateReflect
+WaitReflect
+StartThread: Condition=CasterRow == 0 && AreCasterAndSelectedTargetsEnemies ; Sync=True
+	MoveToPosition: Char=Caster ; RelativePosition=(0, 0, -400) ; Anim=MP_STEP_BACK
+	WaitMove: Char=Caster
+EndThread
+PlayAnimation: Char=Caster ; Anim=Idle
+Turn: Char=Caster ; BaseAngle=Default ; Time=5
+WaitTurn: Char=Caster

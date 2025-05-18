@@ -1,0 +1,54 @@
+// Player sequence of SFX Summon_Adamantoise_Heave
+
+WaitAnimation: Char=Caster
+StartThread: Condition=IsSingleSelectedTarget
+	Turn: Char=Caster ; BaseAngle=AllTargets ; Time=5
+EndThread
+SetupReflect: Delay=SFXLoaded
+StartThread: Target=Caster ; Sync=True
+	LoadSFX: SFX=Green_Smoke ; UseCamera=False
+	WaitSFXLoaded: SFX=Green_Smoke
+	PlaySFX: SFX=Green_Smoke
+	EffectPoint: Char=Caster ; Type=Both
+	WaitSFXDone: SFX=Green_Smoke
+EndThread
+LoadSFX: SFX=SFX_Attack_Save_The_Queen ; Reflect=True
+WaitSFXLoaded: Reflect=True
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_068_010
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_068_011
+StartThread
+	Wait: Time=7 ; Reflect=True
+	PlaySFX: SkipSequence=False ; Reflect=True
+EndThread
+StartThread
+	Wait: Time=10
+	PlaySound: Sound=679 ; Volume=1 ; Once=False
+EndThread
+Message: Priority=1 ; Title=True ; Reflect=True ; TextFR=[STRT=60,1]Sanglolong ; Text=[STRT=35,1]Heave
+Turn: Char=Caster ; BaseAngle=AllTargets ; Angle=0 ; Time=6
+MoveToTarget: Char=Caster ; Target=AllTargets ; Time=6 ; Distance=2300
+WaitMove: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_068_012
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_068_013
+Turn: Char=Caster ; BaseAngle=Default ; Angle=0 ; Time=12
+MoveToPosition: Char=Caster ; Time=12 ; AbsolutePosition=Default ; MoveHeight=true
+WaitMove: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_068_014
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=Idle
+WaitTurn: Char=Caster
+ActivateReflect
+WaitReflect
+StartThread: Target=Caster ; Sync=True
+	LoadSFX: SFX=Green_Smoke ; UseCamera=False
+	WaitSFXLoaded: SFX=Green_Smoke
+	PlaySFX: SFX=Green_Smoke
+	EffectPoint: Char=Caster ; Type=Both
+	WaitSFXDone: SFX=Green_Smoke
+EndThread
+PlayAnimation: Char=Caster ; Anim=Idle
+Turn: Char=Caster ; BaseAngle=Default ; Time=5
+WaitTurn: Char=Caster

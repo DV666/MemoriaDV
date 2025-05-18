@@ -1,0 +1,58 @@
+// Player sequence of SFX Summon_CaveImp_RustyKnife
+
+WaitAnimation: Char=Caster
+SetupReflect: Delay=60
+StartThread: Target=Caster ; Sync=True ; Reflect=False
+	WaitAnimation: Char=Caster
+	StartThread: Condition=IsSingleSelectedTarget
+		Turn: Char=Caster ; BaseAngle=AllTargets ; Time=5
+	EndThread
+	LoadSFX: SFX=Green_Smoke ; UseCamera=False ; Reflect=False
+	WaitSFXLoaded: SFX=Green_Smoke ; Reflect=False
+	PlaySFX: SFX=Green_Smoke ; Reflect=False
+	EffectPoint: Char=Caster ; Type=Both ; Reflect=False
+	WaitSFXDone: SFX=Green_Smoke ; Reflect=False
+EndThread
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_189_010
+PlayCamera: Camera=2 ; Char=AllTargets ; Alternate=True
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_189_011
+StartThread
+	LoadSFX: SFX=SFX_Attack_Broadsword ; FirstBone=0 ; Reflect=True
+	Wait: Time=9 ; Reflect=True
+	WaitSFXLoaded: Reflect=True
+	PlaySFX: SkipSequence=False ; Reflect=True
+	WaitSFXDone: Reflect=True
+EndThread
+StartThread
+	Wait: Time=11
+	PlaySound: Sound=665 ; Volume=1 ; Once=False
+EndThread
+Message: Priority=1 ; Title=True ; Reflect=False ; TextFR=[STRT=52,1]Antik-lam ; Text=[STRT=63,1]Rusty Knife
+Turn: Char=Caster ; BaseAngle=AllTargets ; Angle=0 ; Time=7
+MoveToTarget: Char=Caster ; Target=AllTargets ; Time=7 ; Distance=1000
+WaitMove: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_189_012
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_189_013
+Turn: Char=Caster ; BaseAngle=Default ; Angle=0 ; Time=7
+MoveToPosition: Char=Caster ; Time=7 ; AbsolutePosition=Default ; MoveHeight=true
+WaitMove: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_189_014
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=Idle
+WaitMonsterSFXDone: Reflect=True
+WaitTurn: Char=Caster
+ActivateReflect
+WaitReflect
+StartThread: Target=Caster ; Sync=True ; Reflect=False
+	LoadSFX: SFX=Green_Smoke ; UseCamera=False ; Reflect=False
+	WaitSFXLoaded: SFX=Green_Smoke ; Reflect=False
+	PlaySFX: SFX=Green_Smoke ; Reflect=False
+	EffectPoint: Char=Caster ; Type=Both ; Reflect=False
+	WaitSFXDone: SFX=Green_Smoke ; Reflect=False
+EndThread
+PlayAnimation: Char=Caster ; Anim=Idle
+Turn: Char=Caster ; BaseAngle=Default ; Time=5
+WaitTurn: Char=Caster

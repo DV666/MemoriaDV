@@ -1,0 +1,121 @@
+// Player sequence of SFX Spring boots
+
+WaitAnimation: Char=Caster
+StartThread: Condition=CasterRow == 0 && AreCasterAndSelectedTargetsEnemies ; Sync=True
+	MoveToPosition: Char=Caster ; RelativePosition=(0, 0, 400) ; Anim=MP_STEP_FORWARD
+	WaitMove: Char=Caster
+EndThread
+StartThread: Condition=IsSingleSelectedTarget
+	Turn: Char=Caster ; BaseAngle=AllTargets ; Time=5
+EndThread
+Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
+SetupReflect: Delay=SFXLoaded
+StartThread: Condition=IsSingleTarget ; Sync=True
+	PlayAnimation: Char=Caster ; Anim=MP_ITEM1
+	WaitAnimation: Char=Caster
+	StartThread
+		LoadSFX: SFX=Light_Float ; Reflect=True ; UseCamera=False
+		WaitSFXLoaded: SFX=Light_Float ; Reflect=True
+		PlaySFX: SFX=Light_Float ; Reflect=True ; SkipSequence
+		PlaySound: Sound=1179
+		PlaySound: Sound=1180
+		PlaySound: Sound=1181
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 97.0, 0.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(3.0, 43.0, 3.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(3.0, 42.0, 3.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(3.0, 50.0, 3.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(3.0, 62.0, 3.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(3.0, 76.0, 3.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(2.0, 87.0, 2.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(3.0, 94.0, 3.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(2.0, 96.0, 2.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(2.0, 90.0, 2.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(2.0, 76.0, 2.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(2.0, 56.0, 2.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(1.0, 31.0, 1.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(1.0, 7.0, 1.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(1.0, -19.0, 1.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, -38.0, 0.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(1.0, -49.0, 1.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(-1.0, -49.0, -1.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, -42.0, 0.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(-1.0, -28.0, -1.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(-1.0, -10.0, -1.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(-1.0, 10.0, -1.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(-2.0, 28.0, -2.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(-2.0, 41.0, -2.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(-2.0, -1.0, -2.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(-2.0, -1.0, -2.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(-3.0, -8.0, -3.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(-2.0, -22.0, -2.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(-3.0, -41.0, -3.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(-3.0, -59.0, -3.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(-3.0, -78.0, -3.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(-3.0, -91.0, -3.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(-3.0, -99.0, -3.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(-4.0, -99.0, -4.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(-3.0, -92.0, -3.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(-3.0, -78.0, -3.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(-3.0, -60.0, -3.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(-3.0, -40.0, -3.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(-2.0, -22.0, -2.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(-3.0, -9.0, -3.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; AbsolutePosition=Default ; MoveHeight=True ; Time=0
+		Wait: Time=31
+	EndThread
+	StartThread
+		LoadSFX: SFX=Haste ; Reflect=True ; UseCamera=False
+		WaitSFXLoaded: SFX=Haste ; Reflect=True
+		PlaySFX: SFX=Haste ; Reflect=True ; MeshColors=(0.24, 0.653, 0.107)
+	EndThread
+EndThread
+ActivateReflect
+WaitReflect
+StartThread: Condition=CasterRow == 0 && AreCasterAndSelectedTargetsEnemies ; Sync=True
+	MoveToPosition: Char=Caster ; RelativePosition=(0, 0, -400) ; Anim=MP_STEP_BACK
+	WaitMove: Char=Caster
+EndThread
+PlayAnimation: Char=Caster ; Anim=Idle
+Turn: Char=Caster ; BaseAngle=Default ; Time=5
+WaitTurn: Char=Caster

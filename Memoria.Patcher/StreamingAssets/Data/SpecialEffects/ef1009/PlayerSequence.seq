@@ -1,0 +1,127 @@
+// Player sequence of SFX Charge Brutos
+
+WaitAnimation: Char=Caster
+LoadSFX: SFX=SFX_Attack_Save_The_Queen
+WaitSFXLoaded: SFX=SFX_Attack_Save_The_Queen
+Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
+StartThread: Condition=AreCasterAndTargetsEnemies ; Sync=False
+	Turn: Char=Caster ; BaseAngle=AllTargets ; Time=0
+	WaitTurn: Char=Caster
+	PlayAnimation: Char=Caster ; Anim=ANH_MAIN_F0_STN_RUN ; Loop
+	StartThread: Sync=False
+		Wait: Time=4
+		PlaySound: Sound=925
+		Wait: Time=4
+		PlaySound: Sound=925
+		Wait: Time=4
+		PlaySound: Sound=925
+		Wait: Time=4
+		PlaySound: Sound=925
+		Wait: Time=4
+		PlaySound: Sound=925
+		Wait: Time=4
+		PlaySound: Sound=925
+		Wait: Time=4
+		PlaySound: Sound=925
+		Wait: Time=4
+		PlaySound: Sound=925
+	EndThread
+	ShowMesh: Char=Caster ; Enable=False ; Mesh=65535 ; Time=16
+	ShowShadow: Char=Caster ; Enable=False
+	MoveToTarget: Char=Caster ; Target=AllTargets ; Distance=-3800 ; Time=24 ; UseCollisionRadius
+	Wait: Time=15
+	MoveToTarget: Char=Caster ; Target=AllTargets ; Offset=(0.0, 0.0, 2800.0) ; Time=1
+EndThread
+Wait: Time=10
+PlaySFX: SFX=SFX_Attack_Save_The_Queen ; SkipSequence
+StartThread: Sync=False ; Condition=(TargetCategory != 128 && !CheckAnyStatus(TargetCurrentStatus, BattleStatus_Float))
+	StartThread: Sync=False
+		MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 1000.0, 0.0) ; Time=4 ; MoveHeight=True
+	EndThread
+	PlaySound: Sound=622
+	Wait: Time=1
+	Turn: BaseAngle=Default ; Angle=2.8 ; Time=0 ; Char=AllTargets
+	Wait: Time=1
+	Turn: BaseAngle=Default ; Angle=11.3 ; Time=0 ; Char=AllTargets
+	Wait: Time=1
+	Turn: BaseAngle=Default ; Angle=25.3 ; Time=0 ; Char=AllTargets
+	Wait: Time=1
+	Turn: BaseAngle=Default ; Angle=45.0 ; Time=0 ; Char=AllTargets
+	Wait: Time=1
+	Turn: BaseAngle=Default ; Angle=70.3 ; Time=0 ; Char=AllTargets
+	Wait: Time=1
+	Turn: BaseAngle=Default ; Angle=101.3 ; Time=0 ; Char=AllTargets
+	Wait: Time=1
+	Turn: BaseAngle=Default ; Angle=137.8 ; Time=0 ; Char=AllTargets
+	Wait: Time=1
+	Turn: BaseAngle=Default ; Angle=180.0 ; Time=0 ; Char=AllTargets
+	Wait: Time=1
+	Turn: BaseAngle=Default ; Angle=227.8 ; Time=0 ; Char=AllTargets
+	Wait: Time=1
+	Turn: BaseAngle=Default ; Angle=281.3 ; Time=0 ; Char=AllTargets
+	Wait: Time=1
+	Turn: BaseAngle=Default ; Angle=340.3 ; Time=0 ; Char=AllTargets
+	Wait: Time=1
+	Turn: BaseAngle=Default ; Angle=45.0 ; Time=0 ; Char=AllTargets
+	Wait: Time=1
+	Turn: BaseAngle=Default ; Angle=115.3 ; Time=0 ; Char=AllTargets
+	Wait: Time=1
+	Turn: BaseAngle=Default ; Angle=191.3 ; Time=0 ; Char=AllTargets
+	Wait: Time=1
+	Turn: BaseAngle=Default ; Angle=272.8 ; Time=0 ; Char=AllTargets
+	Wait: Time=1
+	Turn: BaseAngle=Default ; Angle=0.0 ; Time=0 ; Char=AllTargets
+	Wait: Time=1
+	Turn: BaseAngle=Default ; Angle=87.2 ; Time=0 ; Char=AllTargets
+	Wait: Time=1
+	Turn: BaseAngle=Default ; Angle=168.8 ; Time=0 ; Char=AllTargets
+	Wait: Time=1
+	Turn: BaseAngle=Default ; Angle=244.7 ; Time=0 ; Char=AllTargets
+	Wait: Time=1
+	Turn: BaseAngle=Default ; Angle=315.0 ; Time=0 ; Char=AllTargets
+	Wait: Time=1
+	Turn: BaseAngle=Default ; Angle=19.7 ; Time=0 ; Char=AllTargets
+	Wait: Time=1
+	Turn: BaseAngle=Default ; Angle=78.8 ; Time=0 ; Char=AllTargets
+	Wait: Time=1
+	Turn: BaseAngle=Default ; Angle=132.2 ; Time=0 ; Char=AllTargets
+	Wait: Time=1
+	Turn: BaseAngle=Default ; Angle=180.0 ; Time=0 ; Char=AllTargets
+	Wait: Time=1
+	Turn: BaseAngle=Default ; Angle=222.2 ; Time=0 ; Char=AllTargets
+	Wait: Time=1
+	Turn: BaseAngle=Default ; Angle=258.8 ; Time=0 ; Char=AllTargets
+	Wait: Time=1
+	Turn: BaseAngle=Default ; Angle=289.7 ; Time=0 ; Char=AllTargets
+	Wait: Time=1
+	StartThread: Sync=False
+		MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, -1000.0, 0.0) ; Time=4 ; MoveHeight=True
+	EndThread
+	Turn: BaseAngle=Default ; Angle=315.0 ; Time=0 ; Char=AllTargets
+	Wait: Time=1
+	Turn: BaseAngle=Default ; Angle=334.7 ; Time=0 ; Char=AllTargets
+	Wait: Time=1
+	Turn: BaseAngle=Default ; Angle=348.8 ; Time=0 ; Char=AllTargets
+	Wait: Time=1
+	Turn: BaseAngle=Default ; Angle=357.2 ; Time=0 ; Char=AllTargets
+	Wait: Time=1
+	Turn: BaseAngle=Default ; Time=0 ; Char=AllTargets
+	Wait: Time=2
+	EffectPoint: Char=AllTargets ; Type=Both
+	Wait: Time=2
+ElseThread
+	Wait: Time=2
+	EffectPoint: Char=AllTargets ; Type=Both
+	Wait: Time=2
+EndThread
+WaitMove: Char=Caster
+ShowMesh: Char=Caster ; Enable=True ; Mesh=65535 ; Time=1
+StartThread: Condition=AreCasterAndTargetsEnemies ; Sync=True
+	MoveToPosition: Char=Caster ; AbsolutePosition=Default ; Anim=MP_BACK
+	Turn: Char=Caster ; BaseAngle=Default ; Time=4
+	WaitMove: Caster
+EndThread
+ShowShadow: Char=Caster ; Enable=True
+PlayAnimation: Char=Caster ; Anim=Idle
+WaitSFXDone: SFX=SFX_Attack_Save_The_Queen
+WaitTurn: Char=Caster

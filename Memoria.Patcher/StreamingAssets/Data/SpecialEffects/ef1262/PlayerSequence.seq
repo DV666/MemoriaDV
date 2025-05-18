@@ -1,0 +1,62 @@
+// Player sequence of SFX Summon_Hecteyes_Lvl5Death
+
+WaitAnimation: Char=Caster
+StartThread: Condition=IsSingleSelectedTarget
+	Turn: Char=Caster ; BaseAngle=AllTargets ; Time=5
+EndThread
+SetupReflect: Delay=SFXLoaded
+StartThread: Target=Caster ; Sync=True
+	LoadSFX: SFX=Green_Smoke ; UseCamera=False
+	WaitSFXLoaded: SFX=Green_Smoke
+	PlaySFX: SFX=Green_Smoke
+	EffectPoint: Char=Caster ; Type=Both
+	WaitSFXDone: SFX=Green_Smoke
+EndThread
+WaitAnimation: Char=Caster
+PlayCamera: Camera=0 ; Char=0 ; Alternate=False
+Channel
+LoadMonsterSFX: SFX=LV5_Death ; FirstBone=0 ; SecondBone=0 ; Args=0 ; Reflect=True
+PlayTextureAnimation: Char=Caster ; Anim=2 ; Once=False ; Stop=True
+PlayTextureAnimation: Char=Caster ; Anim=0 ; Once=True ; Stop=False
+PlayTextureAnimation: Char=Caster ; Anim=5 ; Once=False ; Stop=True
+PlayTextureAnimation: Char=Caster ; Anim=3 ; Once=True ; Stop=False
+PlayTextureAnimation: Char=Caster ; Anim=8 ; Once=False ; Stop=True
+PlayTextureAnimation: Char=Caster ; Anim=6 ; Once=True ; Stop=False
+PlayTextureAnimation: Char=Caster ; Anim=11 ; Once=False ; Stop=True
+PlayTextureAnimation: Char=Caster ; Anim=9 ; Once=True ; Stop=False
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_092_020
+Message: Priority=1 ; Title=True ; Reflect=True ; TextFR=[STRT=72,1]Hadès Nv. 5 ; Text=[STRT=56,1]LV5 Death
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_092_021
+WaitMonsterSFXLoaded: Reflect=True
+WaitAnimation: Char=Caster
+PlayTextureAnimation: Char=Caster ; Anim=1 ; Once=True ; Stop=False
+PlayTextureAnimation: Char=Caster ; Anim=4 ; Once=True ; Stop=False
+PlayTextureAnimation: Char=Caster ; Anim=7 ; Once=True ; Stop=False
+PlayTextureAnimation: Char=Caster ; Anim=10 ; Once=True ; Stop=False
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_092_022
+Wait: Time=10
+PlayMonsterSFX: Reflect=True
+Wait: Time=17
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_092_000
+WaitMonsterSFXDone: Reflect=True
+PlayTextureAnimation: Char=Caster ; Anim=2 ; Once=False ; Stop=False
+PlayTextureAnimation: Char=Caster ; Anim=5 ; Once=False ; Stop=False
+PlayTextureAnimation: Char=Caster ; Anim=8 ; Once=False ; Stop=False
+PlayTextureAnimation: Char=Caster ; Anim=11 ; Once=False ; Stop=False
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=Idle
+WaitMonsterSFXDone: Reflect=True
+WaitTurn: Char=Caster
+ActivateReflect
+WaitReflect
+StartThread: Target=Caster ; Sync=True
+	LoadSFX: SFX=Green_Smoke ; UseCamera=False
+	WaitSFXLoaded: SFX=Green_Smoke
+	PlaySFX: SFX=Green_Smoke
+	EffectPoint: Char=Caster ; Type=Both
+	WaitSFXDone: SFX=Green_Smoke
+EndThread
+PlayAnimation: Char=Caster ; Anim=Idle
+Turn: Char=Caster ; BaseAngle=Default ; Time=5
+WaitTurn: Char=Caster

@@ -29,10 +29,8 @@ EffectPoint: Char=Everyone ; Type=Figure
 Wait: Time=8
 PlayAnimation: Char=AllTargets ; Anim=MP_DAMAGE2
 StartThread: TargetLoop=True
-	StartThread: Condition=TargetIsPlayer
-		WaitAnimation: Char=AllTargets
-		PlayAnimation: Char=AllTargets ; Anim=MP_DISABLE ; Loop=True
-	EndThread
+	WaitAnimation: Char=AllTargets
+	PlayAnimation: Char=AllTargets ; Anim=MP_DISABLE ; Loop=True
 EndThread
 Wait: Time=60
 SetVariable: Variable=gEventGlobal ; Index=199 ; Value=|16
