@@ -1,3 +1,4 @@
+using Memoria.Data;
 using System;
 
 namespace Memoria.Scripts.Battle
@@ -19,7 +20,14 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
+            if (_v.Target.HasSupportAbilityByIndex((SupportAbility)1026) && !_v.Caster.IsPlayer)
+                return;
+
             _v.Target.ChangeRow();
+            if (_v.Target.Row == 1)
+                btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.Special, parameters: "CanCover1"); 
+            else
+                btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.Special, parameters: "CanCover0");           
         }
     }
 }

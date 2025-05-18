@@ -1,4 +1,6 @@
+using Memoria.Data;
 using System;
+using UnityEngine;
 
 namespace Memoria.Scripts.Battle
 {
@@ -20,18 +22,35 @@ namespace Memoria.Scripts.Battle
         public void Perform()
         {
             _v.NormalPhysicalParams();
-            _v.Caster.PhysicalPenaltyAndBonusAttack();
-            _v.Target.PhysicalPenaltyAndBonusAttack();
-            _v.BonusBackstabAndPenaltyLongDistance();
-            _v.BonusElement();
-            if (!_v.CanAttackElementalCommand())
-                return;
-
-            _v.CalcHpDamage();
-            if (_v.Target.Row != 0)
-                _v.Target.ChangeRow();
-
-            _v.TryAlterMagicStatuses();
+            TranceSeekAPI.CharacterBonusPassive(_v, "PhysicalAttack");
+            TranceSeekAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
+            TranceSeekAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
+            TranceSeekAPI.BonusBackstabAndPenaltyLongDistance(_v);
+            TranceSeekAPI.BonusElement(_v);
+            if (_v.CanAttackElementalCommand())
+            {
+                _v.CalcHpDamage();
+                TranceSeekAPI.InfusedWeaponStatus(_v);
+                if (_v.Command.HitRate == 255)
+                {
+                    if ((Mathf.Abs((_v.Caster.Row - _v.Target.Row)) <= 1) && (!_v.Target.HasSupportAbilityByIndex((SupportAbility)1026))) // Stone Skin+
+                    {
+                        _v.Target.ChangeRow();
+                    }
+                }
+                else
+                {
+                    if ((_v.Target.Row > 0) && (!_v.Target.HasSupportAbilityByIndex((SupportAbility)1026))) // Stone Skin+
+                    {
+                        _v.Target.ChangeRow();
+                        if (_v.Target.Row == 1)
+                            btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.Special, parameters: "CanCover1");
+                        else
+                            btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.Special, parameters: "CanCover0");
+                    }
+                }
+                TranceSeekAPI.TryAlterMagicStatuses(_v);
+            }
         }
     }
 }

@@ -1,5 +1,5 @@
-using Memoria.Data;
 using System;
+using Memoria.Data;
 
 namespace Memoria.Scripts.Battle
 {
@@ -20,26 +20,23 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            RegularItem weaponNumber = _v.Caster.Weapon;
-            switch (weaponNumber)
+            _v.Command.AbilityStatus |= _v.Caster.WeaponStatus;
+            if (ff9item._FF9Item_Data[_v.Caster.Weapon].shape != 2 || _v.Command.AbilityStatus == 0) // Shape 1 => Dagger, Shape 2 => Thief Sword
             {
-                case RegularItem.ButterflySword:
-                case RegularItem.TheOgre:
-                case RegularItem.Exploda:
-                case RegularItem.RuneTooth:
-                case RegularItem.AngelBless:
-                case RegularItem.Sargatanas:
-                case RegularItem.Masamune:
-                case RegularItem.TheTower:
-                case RegularItem.UltimaWeapon:
-                    break;
-                default:
-                    _v.Context.Flags |= BattleCalcFlags.Miss;
-                    return;
+                _v.Context.Flags |= BattleCalcFlags.Miss;
+                return;
             }
 
-            BattleStatus status = _v.Caster.WeaponStatus;
-            _v.Target.TryAlterStatuses(status, true, _v.Caster);
+            if (!_v.Target.IsPlayer)
+            {
+                if ((_v.Command.AbilityStatus & BattleStatus.Death) == 0 || TranceSeekAPI.CheckUnsafetyOrGuard(_v))
+                    TranceSeekAPI.TryAlterCommandStatuses(_v);
+            else
+                if (_v.Target.IsUnderStatus(_v.Command.AbilityStatus))
+                    _v.Target.RemoveStatus(_v.Command.AbilityStatus);
+                else
+                    _v.Context.Flags |= BattleCalcFlags.Miss;
+            }
         }
     }
 }

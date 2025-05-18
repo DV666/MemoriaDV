@@ -20,31 +20,39 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            const BattleStatus alteringStatuses =
-            BattleStatus.Petrify | BattleStatus.Silence | BattleStatus.Blind | BattleStatus.Trouble | BattleStatus.Zombie
-             | BattleStatus.Death | BattleStatus.Confuse | BattleStatus.Berserk | BattleStatus.Stop | BattleStatus.Poison
-             | BattleStatus.Sleep | BattleStatus.Heat | BattleStatus.Freeze | BattleStatus.Doom | BattleStatus.Mini
-             | BattleStatus.LowHP;
+            UInt32 alteringStatuses = 0;
+            if (_v.Command.Power == 1) // Friendly Mu - Surprise
+            {
+                alteringStatuses = (UInt32)
+                (BattleStatus.Silence | BattleStatus.Blind | BattleStatus.Trouble | BattleStatus.Slow
+                 | BattleStatus.Death | BattleStatus.Confuse | BattleStatus.Berserk | BattleStatus.Poison
+                 | BattleStatus.Sleep | BattleStatus.Heat | BattleStatus.Freeze | BattleStatus.Doom | BattleStatus.Venom);
+            }
+            else
+            {
+                alteringStatuses = (UInt32)
+                (BattleStatus.Petrify | BattleStatus.Silence | BattleStatus.Blind | BattleStatus.Trouble | BattleStatus.Zombie
+                 | BattleStatus.Death | BattleStatus.Confuse | BattleStatus.Berserk | BattleStatus.Stop | BattleStatus.Poison
+                 | BattleStatus.Sleep | BattleStatus.Heat | BattleStatus.Freeze | BattleStatus.Doom | BattleStatus.Mini);
+            }
 
             if (!_v.Target.CanBeAttacked())
                 return;
 
-            foreach (BattleStatusId statusId in alteringStatuses.ToStatusList())
+            UInt32 status = 1;
+            for (Int32 i = 0; i < 32; i++, status <<= 1)
             {
                 if (GameRandom.Next8() >> 5 != 0)
                     continue;
 
-                if (statusId == BattleStatusId.LowHP)
+                if ((status & alteringStatuses) != 0)
                 {
-                    if (!_v.Target.IsUnderStatus(BattleStatus.Death))
-                    {
-                        _v.Context.Flags |= BattleCalcFlags.DirectHP;
-                        _v.Target.CurrentHp = (UInt32)(1 + GameRandom.Next8() % 9);
-                    }
+                    _v.Target.AlterStatus((BattleStatus)status);
                 }
-                else
+                else if ((status & (UInt32)BattleStatus.LowHP) != 0 && !_v.Target.IsUnderStatus(BattleStatus.Death))
                 {
-                    _v.Target.AlterStatus(statusId, _v.Caster);
+                    _v.Context.Flags |= BattleCalcFlags.DirectHP;
+                    _v.Target.CurrentHp = (UInt32)(1 + GameRandom.Next8() % 9);
                 }
             }
         }

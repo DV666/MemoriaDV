@@ -1,6 +1,5 @@
-using System;
-using System.Collections.Generic;
 using Memoria.Data;
+using System;
 
 namespace Memoria.Scripts.Battle
 {
@@ -21,21 +20,39 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            if (_v.IsTargetLevelMultipleOfCommandRate() && _v.Target.CanBeAttacked())
+            if (_v.Command.Power == 0)
             {
-                List<Object> parameters = new List<Object>();
-                if (_v.Target.PhysicalDefence != 0)
+                if (_v.IsTargetLevelMultipleOfCommandRate() && _v.Target.CanBeAttacked())
                 {
-                    parameters.Add("PhysicalDefence");
-                    parameters.Add(GameRandom.Next16() % _v.Target.PhysicalDefence);
+                    _v.Command.AbilityStatus |= TranceSeekStatus.Vieillissement;
+                    TranceSeekAPI.TryAlterCommandStatuses(_v);
                 }
-                if (_v.Target.PhysicalDefence != 0)
+                else
                 {
-                    parameters.Add("MagicDefence");
-                    parameters.Add(GameRandom.Next16() % _v.Target.MagicDefence);
+                    _v.Context.Flags |= BattleCalcFlags.Miss;
                 }
-                if (parameters.Count > 0)
-                    _v.Target.TryAlterSingleStatus(BattleStatusId.ChangeStat, true, _v.Caster, parameters.ToArray());
+            }
+            else
+            {
+                if (_v.Caster.IsPlayer)
+                {
+                    _v.OriginalMagicParams();
+                }
+                else
+                {
+                    _v.NormalMagicParams();
+                }
+                TranceSeekAPI.CasterPenaltyMini(_v);
+                _v.Target.PenaltyShellAttack();
+                TranceSeekAPI.PenaltyCommandDividedAttack(_v);
+                TranceSeekAPI.BonusElement(_v);
+                if (TranceSeekAPI.CanAttackMagic(_v))
+                {
+                    _v.CalcHpDamage();
+                }
+                TranceSeekAPI.TryAlterMagicStatuses(_v);
+                btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.ArmorBreak, parameters: "+2");
+                btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.MentalBreak, parameters: "+2");
             }
         }
     }

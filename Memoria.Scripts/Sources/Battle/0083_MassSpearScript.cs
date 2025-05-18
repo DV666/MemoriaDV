@@ -1,5 +1,6 @@
+﻿using System;
+using FF9;
 using Memoria.Data;
-using System;
 
 namespace Memoria.Scripts.Battle
 {
@@ -20,18 +21,57 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            _v.Target.Flags |= CalcFlag.HpAlteration;
+            if (_v.Target.PhysicalDefence == 255)
+            {
+                _v.Context.Flags |= BattleCalcFlags.Guard;
+            }
+            else if (_v.Target.IsUnderAnyStatus(BattleStatus.Vanish) || _v.Target.PhysicalEvade == 255)
+            {
+                _v.Context.Flags |= BattleCalcFlags.Miss;
+                return;
+            }
+            else
+            {
+                if (_v.Caster.HasSupportAbility(SupportAbility1.HighJump) && GameRandom.Next8() % 2 == 0 || _v.Caster.HasSupportAbilityByIndex((SupportAbility)1021))
+                {
+                    _v.Target.AlterStatus(TranceSeekStatus.Dragon, _v.Caster);
+                }
+                if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)217)) // SA Skydive
+                {
+                    int num = Comn.random16() % (1 + (_v.Caster.Level + _v.Caster.Strength >> 3));
+                    _v.Context.AttackPower = _v.Caster.WeaponPower;
+                    _v.Context.Attack = ((short)(_v.Caster.Strength + num));
+                    _v.Context.DefensePower = _v.Target.MagicDefence / 2; 
+                    TranceSeekAPI.PenaltyShellAttack(_v);
+                    if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1217)) // SA Skydive+
+                        _v.Caster.AlterStatus(TranceSeekStatus.MagicUp, _v.Caster);
+                }
+                else
+                {
+                    int num = Comn.random16() % (1 + (_v.Caster.Level + _v.Caster.Strength >> 3));
+                    _v.Context.AttackPower = _v.Caster.WeaponPower;
+                    _v.Context.Attack = ((short)(_v.Caster.Strength + num));
+                    _v.Context.DefensePower = _v.Target.PhysicalDefence / 2;
+                    TranceSeekAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
+                }
 
-            _v.WeaponPhysicalParams(CalcAttackBonus.Random);
-            ++_v.Context.DamageModifierCount;
+                _v.BonusKillerAbilities();
+                TranceSeekAPI.CasterPenaltyMini(_v);
+                TranceSeekAPI.EnemyTranceBonusAttack(_v);
+                TranceSeekAPI.BonusWeaponElement(_v);
+                if (TranceSeekAPI.CanAttackWeaponElementalCommand(_v))
+                {
+                    TranceSeekAPI.IpsenCastleMalus(_v);
+                    TranceSeekAPI.RaiseTrouble(_v);
+                    _v.CalcPhysicalHpDamage();
+                }
 
-            _v.Caster.PenaltyMini();
-            _v.Target.PhysicalPenaltyAndBonusAttack();
-
-            if (_v.Context.Attack < 4)
-                _v.Context.Attack = 4;
-            _v.CalcHpDamage();
-            _v.Target.HpDamage /= BattleState.TargetCount(false);
+                if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)216)) // SA Sky Attack 
+                {
+                    _v.Caster.Flags |= CalcFlag.HpDamageOrHeal;
+                    _v.Caster.HpDamage = _v.Target.HpDamage / (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1216) ? 4 : 8);
+                }
+            }
         }
     }
 }

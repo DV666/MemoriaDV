@@ -1,4 +1,5 @@
 using System;
+using Memoria.Data;
 
 namespace Memoria.Scripts.Battle
 {
@@ -19,16 +20,35 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            _v.WeaponPhysicalParams();
-            _v.Caster.EnemyTranceBonusAttack();
-            _v.BonusElement();
-            if (!_v.CanAttackElementalCommand())
-                return;
-
-            _v.CalcHpDamage();
-
-            _v.Caster.Flags |= CalcFlag.HpAlteration;
-            _v.Caster.HpDamage = (Int32)(_v.Caster.MaximumHp >> 3);
+            _v.PhysicalAccuracy();
+            if (_v.Caster.IsPlayer)
+            {
+                _v.WeaponPhysicalParams();
+            }
+            else
+            {
+                _v.NormalPhysicalParams();
+            }
+            TranceSeekAPI.CharacterBonusPassive(_v, "PhysicalAttack");
+            TranceSeekAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
+            TranceSeekAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
+            TranceSeekAPI.BonusBackstabAndPenaltyLongDistance(_v);
+            TranceSeekAPI.EnemyTranceBonusAttack(_v);
+            TranceSeekAPI.BonusElement(_v);
+            if (_v.CanAttackElementalCommand())
+            {
+                _v.CalcHpDamage();
+                _v.Caster.Flags |= CalcFlag.HpAlteration;
+                if (_v.Caster.IsPlayer)
+                {
+                    _v.Caster.HpDamage = (Int32)(_v.Caster.MaximumHp / 4U);
+                }
+                else
+                {
+                    _v.Caster.HpDamage = (Int32)(_v.Caster.MaximumHp >> 3);
+                }
+                TranceSeekAPI.RaiseTrouble(_v);
+            }           
         }
     }
 }

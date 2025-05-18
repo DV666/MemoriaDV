@@ -22,10 +22,11 @@ namespace Memoria.Scripts.Battle
             if (_v.IsTargetLevelMultipleOfCommandRate() && _v.Target.CanBeAttacked())
             {
                 _v.NormalMagicParams();
-                _v.Caster.EnemyTranceBonusAttack();
-                _v.Caster.PenaltyMini();
-                _v.Target.PenaltyShellAttack();
-                _v.BonusElement();
+                TranceSeekAPI.CharacterBonusPassive(_v, "MagicAttack");
+                TranceSeekAPI.EnemyTranceBonusAttack(_v);
+                TranceSeekAPI.CasterPenaltyMini(_v);
+                TranceSeekAPI.PenaltyShellAttack(_v);
+                TranceSeekAPI.BonusElement(_v);
 
                 if (_v.CanAttackElementalCommand())
                     _v.CalcHpDamage();

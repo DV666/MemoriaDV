@@ -1,4 +1,5 @@
 using System;
+using Memoria.Data;
 
 namespace Memoria.Scripts.Battle
 {
@@ -19,20 +20,41 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            if (_v.Target.TryKillFrozen())
-                return;
-
-            _v.NormalPhysicalParams();
-            _v.Caster.EnemyTranceBonusAttack();
-            _v.Caster.PhysicalPenaltyAndBonusAttack();
-            _v.Target.PhysicalPenaltyAndBonusAttack();
-            _v.BonusBackstabAndPenaltyLongDistance();
-            _v.BonusElement();
-            if (!_v.CanAttackElementalCommand())
-                return;
-
-            _v.CalcHpDamage();
-            _v.TryAlterMagicStatuses();
+            if (_v.Target.IsUnderStatus(BattleStatus.Mini) && _v.Command.HitRate == 1) // Yeti Friendly - Nom nom nom
+            {
+                _v.Target.Remove();
+            }
+            else
+            {
+                if (!_v.Target.TryKillFrozen())
+                {
+                    if (_v.Command.HitRate == 111) // Ignore physical defense
+                    {
+                        _v.SetCommandPower();
+                        _v.Caster.SetPhysicalAttack();
+                    }
+                    else
+                    {
+                        _v.NormalPhysicalParams();
+                        TranceSeekAPI.CharacterBonusPassive(_v, "PhysicalAttack");
+                    }
+                    TranceSeekAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
+                    TranceSeekAPI.EnemyTranceBonusAttack(_v);
+                    TranceSeekAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
+                    if (_v.Command.HitRate != 255)
+                    {
+                        TranceSeekAPI.BonusBackstabAndPenaltyLongDistance(_v);
+                    }
+                    TranceSeekAPI.BonusElement(_v);
+                    if (_v.CanAttackElementalCommand())
+                    {
+                        TranceSeekAPI.RaiseTrouble(_v);
+                        _v.CalcHpDamage();
+                        TranceSeekAPI.InfusedWeaponStatus(_v);
+                        TranceSeekAPI.TryAlterMagicStatuses(_v);
+                    }
+                }
+            }
         }
     }
 }
