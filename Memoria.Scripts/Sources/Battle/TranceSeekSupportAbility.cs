@@ -15,6 +15,8 @@ namespace Memoria.Scripts.Battle
         public const SupportAbility SOS_Reflect = (SupportAbility)133;
         public const SupportAbility SOS_Vanish = (SupportAbility)134;
 
+        public const SupportAbility PowerUp2 = (SupportAbility)1029;
+
         public const SupportAbility SOS_Protect2 = (SupportAbility)1103;
         public const SupportAbility SOS_Shell2 = (SupportAbility)1104;
         public const SupportAbility SOS_Regen2 = (SupportAbility)1105;

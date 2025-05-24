@@ -492,7 +492,7 @@ namespace Memoria.Scripts.Battle
                 _v.Target.RemoveStatus(BattleStatus.Mini);
                 _v.Target.Data.geo_scale_default = 16384;
             }
-            else if (_v.Caster.Data.dms_geo_id == 146)
+            else if (_v.Caster.Data.dms_geo_id == 146) // Quicksand mechanic
             {
                 if (_v.Command.Power == 10)
                 {
@@ -513,6 +513,7 @@ namespace Memoria.Scripts.Battle
                         btl_stat.MakeStatusesPermanent(_v.Target, BattleStatus.Stop, true);
                         _v.Target.Data.bi.target = 0;
                         TranceSeekAPI.MonsterMechanic[_v.Caster.Data][2] = _v.Target.Id;
+                        FF9StateSystem.EventState.gEventGlobal[1305] = (byte)_v.Target.Id;
                     }
                     else
                     {
@@ -523,6 +524,7 @@ namespace Memoria.Scripts.Battle
                                 unit.Data.bi.target = 1;
                                 btl_stat.MakeStatusesPermanent(unit, BattleStatus.Stop, false);
                                 unit.RemoveStatus(BattleStatus.Stop);
+                                FF9StateSystem.EventState.gEventGlobal[1305] = 0;
                             }
                         }
                     }

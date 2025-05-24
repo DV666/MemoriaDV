@@ -24,12 +24,6 @@ namespace Memoria.Scripts.Battle
         {
             if (_v.Caster.PlayerIndex == CharacterId.Zidane)
             {
-                //if (!TranceSeekCustomAPI.ModelMoug.TryGetValue(_v.Caster.Data, out GameObject DoubleDagger))
-                //    TranceSeekCustomAPI.ModelMoug[_v.Caster.Data] = null;
-
-                //if (TranceSeekCustomAPI.ModelMoug[_v.Caster.Data] != null)
-                //    TranceSeekCustomAPI.ModelMoug[_v.Caster.Data].SetActive(false);
-
                 switch (_v.Caster.Weapon)
                 {
                     case RegularItem.Dagger:
@@ -83,13 +77,13 @@ namespace Memoria.Scripts.Battle
                     FF9StateSystem.Common.FF9.player[(CharacterId)_v.Caster.Data.bi.slot_no].equip[0] = weaponchoose;
                 }
                 _v.Caster.Data.weapon = ff9item.GetItemWeapon(weaponchoose);
-                btl_eqp.InitWeapon(FF9StateSystem.Common.FF9.player[CharacterId.Zidane], _v.Caster.Data);
                 for (Int32 i = 0; i < 34; i++)
                     _v.Caster.Data.mot[i] = btlParam.AnimationId[i];
                 _v.Caster.Data.gameObject.transform.localPosition = position;
                 _v.Caster.Data.dms_geo_id = btl_init.GetModelID(btl_util.getSerialNumber(_v.Caster.Data));
                 _v.Caster.Data.gameObject.SetActive(true);
                 _v.Caster.Data.weapon_geo.SetActive(true);
+                btl_eqp.InitWeapon(FF9StateSystem.Common.FF9.player[CharacterId.Zidane], _v.Caster.Data);
                 btl_mot.setMotion(_v.Caster.Data, BattlePlayerCharacter.PlayerMotionIndex.MP_WIN); //MP_MAGIC
                 _v.Caster.Data.evt.animFrame = 0;
                 geo.geoScaleUpdate(_v.Caster.Data, true);

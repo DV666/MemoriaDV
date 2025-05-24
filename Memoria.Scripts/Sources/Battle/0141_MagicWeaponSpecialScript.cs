@@ -31,6 +31,7 @@ namespace Memoria.Scripts.Battle
             if (_v.Command.Data.info.effect_counter >= 2)
             {
                 int ScriptId = 0;
+                _v.Command.AbilityStatus = 0;
                 switch (_v.Caster.Weapon)
                 {
                     case RegularItem.StardustRod:

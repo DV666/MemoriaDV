@@ -42,7 +42,7 @@ namespace Memoria.Scripts.Battle
             {
                 if (_v.Caster.PlayerIndex == CharacterId.Quina)
                 {
-                    if (_v.Command.AbilityId == BattleAbilityId.Vanish) // Transfert
+                    if (_v.Command.AbilityId == BattleAbilityId.Vanish) // Transfert [TODO] => Need to improve this crappy code ?
                     {
                         byte b = 0;
                         if (_v.Caster.IsUnderAnyStatus(BattleStatus.Trance | BattleStatus.Death | BattleStatus.Petrify))

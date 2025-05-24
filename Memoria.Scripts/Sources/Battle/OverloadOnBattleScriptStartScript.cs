@@ -478,7 +478,14 @@ namespace Memoria.Scripts.Battle
             }
 
             TranceSeekAPI.SOS_SA(v);
-            TranceSeekAPI.EikoMougMechanic(v);
+            Int32 counter = 15;
+            v.Caster.AddDelayedModifier(
+                caster => (counter -= BattleState.ATBTickCount) > 0,
+                caster =>
+                {
+                    TranceSeekAPI.EikoMougMechanic(v);
+                }
+            );
             return false;
         }
 

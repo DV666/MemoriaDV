@@ -87,27 +87,24 @@ namespace Memoria.Scripts.Battle
             }
             else
             {
-                _v.Target.Flags |= (CalcFlag.HpDamageOrHeal | CalcFlag.MpDamageOrHeal);
                 if (_v.Caster.HasSupportAbilityByIndex(SupportAbility.PowerUp)) // PowerUp
+                    TranceSeekAPI.IncreaseTrance(_v.Target.Data, Comn.random16() % (_v.Caster.Will / 2));
+
+                if (_v.Caster.HasSupportAbilityByIndex(SupportAbility.PowerUp) && !_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.PowerUp2))
                 {
-                    if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1029)) // PowerUp+
-                    {
-                        _v.Target.HpDamage = (int)(_v.Target.MaximumHp * (uint)_v.Command.Power / 100U);
-                        _v.Target.MpDamage = (int)(_v.Target.MaximumMp * (uint)_v.Command.Power / 100U);
-                    }
-                    _v.Target.Trance = (byte)(_v.Target.Trance + (Comn.random16() % _v.Caster.Will));
+                    _v.Target.Flags |= (CalcFlag.HpDamageOrHeal);
+                    _v.Target.HpDamage = (int)(_v.Target.MaximumHp * (uint)_v.Command.Power / 100U);
                 }
                 else
                 {
+                    _v.Target.Flags |= (CalcFlag.HpDamageOrHeal | CalcFlag.MpDamageOrHeal);
                     _v.Target.HpDamage = (int)(_v.Target.MaximumHp * (uint)_v.Command.Power / 100U);
                     _v.Target.MpDamage = (int)(_v.Target.MaximumMp * (uint)_v.Command.Power / 100U);
                 }
-                if (_v.Caster.PlayerIndex == CharacterId.Amarant && _v.Caster.IsUnderStatus(BattleStatus.Trance))
-                {
-                    _v.Target.RemoveStatus(BattleStatus.Poison);
-                    _v.Target.RemoveStatus(BattleStatus.Silence);
-                    _v.Target.RemoveStatus(BattleStatus.Blind);
-                }
+
+                if (_v.Command.AbilityId == BattleAbilityId.Chakra2)
+                    _v.Target.RemoveStatus(BattleStatus.Poison | BattleStatus.Silence | BattleStatus.Blind);
+
                 TranceSeekAPI.TryAlterMagicStatuses(_v);
             }
         }

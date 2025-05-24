@@ -25,7 +25,7 @@ namespace Memoria.Scripts.Battle
                 _v.Caster.Flags |= CalcFlag.HpAlteration;
                 _v.Caster.HpDamage = (Int32)(_v.Caster.CurrentHp);
                 int TranceValue = (int)(_v.Caster.Trance + ((_v.Caster.CurrentHp * 255) / _v.Caster.MaximumHp) / 2);
-                _v.Caster.Trance = (byte)Math.Min(TranceValue, 254);
+                TranceSeekAPI.IncreaseTrance(_v.Caster.Data, TranceValue, 254);
                 return;
             }
 
