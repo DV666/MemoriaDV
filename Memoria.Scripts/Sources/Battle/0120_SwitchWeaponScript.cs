@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using FF9;
 using Memoria.Data;
 using UnityEngine;
@@ -24,15 +26,10 @@ namespace Memoria.Scripts.Battle
         {
             if (_v.Caster.PlayerIndex == CharacterId.Zidane)
             {
-                switch (_v.Caster.Weapon)
+                if (!Dagger_Sword_DB.ContainsKey(_v.Caster.Weapon) && !Dagger_Sword_DB.ContainsValue(_v.Caster.Weapon))
                 {
-                    case RegularItem.Dagger:
-                    case RegularItem.MageMasher:
-                    case RegularItem.MythrilDagger:
-                        _v.Context.Flags |= BattleCalcFlags.Miss;
-                        return;
-                    default:
-                        break;
+                    _v.Context.Flags |= BattleCalcFlags.Miss;
+                    return;
                 }
 
                 string ModelZidane = null;
@@ -66,7 +63,7 @@ namespace Memoria.Scripts.Battle
                 {
                     _v.Caster.Data.gameObject = ModelFactory.CreateModel(ModelZidane, true);
                 }
-                RegularItem weaponchoose = (btl_util.getWeaponNumber(_v.Caster.Data) > (RegularItem)1000) ? (btl_util.getWeaponNumber(_v.Caster.Data) - 1000) : (btl_util.getWeaponNumber(_v.Caster.Data) + 1000);
+                RegularItem weaponchoose = ff9item._FF9Item_Data[_v.Caster.Weapon].shape == 1 ? Dagger_Sword_DB[_v.Caster.Weapon] : Dagger_Sword_DB.FirstOrDefault(Dagger => Dagger.Value == _v.Caster.Weapon).Key;
                 if (weaponchoose < 0)
                 {
                     weaponchoose = btl_util.getWeaponNumber(_v.Caster.Data);
@@ -121,5 +118,22 @@ namespace Memoria.Scripts.Battle
             BattlePlayerCharacter.InitAnimation(btl);
             AnimationFactory.AddAnimToGameObject(btl.gameObject, btl_mot.BattleParameterList[serialNo].ModelId, true);
         }
+
+        public static Dictionary<RegularItem, RegularItem> Dagger_Sword_DB = new Dictionary<RegularItem, RegularItem>
+        {
+            { RegularItem.Gladius, TranceSeekRegularItem.GladiusSword },
+            { RegularItem.ZorlinShape, TranceSeekRegularItem.ZorlinSword },
+            { RegularItem.Orichalcon, TranceSeekRegularItem.OrichalconSword },
+            { TranceSeekRegularItem.ButterflyDagger, RegularItem.ButterflySword },
+            { TranceSeekRegularItem.TheOgreDagger, RegularItem.TheOgre },
+            { TranceSeekRegularItem.ExplodaDagger, RegularItem.Exploda },
+            { TranceSeekRegularItem.RuneToothDagger, RegularItem.RuneTooth },
+            { TranceSeekRegularItem.AngelBlessDagger, RegularItem.AngelBless },
+            { TranceSeekRegularItem.SargatanasDagger, RegularItem.Sargatanas },
+            { TranceSeekRegularItem.MasamuneDagger, RegularItem.Masamune },
+            { TranceSeekRegularItem.AssassinDagger, TranceSeekRegularItem.AssassinSword },
+            { TranceSeekRegularItem.TheTowerDagger, RegularItem.TheTower },
+            { TranceSeekRegularItem.UltimaWeaponDagger, RegularItem.UltimaWeapon }
+        };
     }
 }

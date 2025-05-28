@@ -132,7 +132,7 @@ namespace Memoria.Scripts.Battle
                     if (_v.Caster.HasSupportAbility(SupportAbility1.AddStatus)) // SA Add Status (to handle specific case, like Elite Monsters). Can be improved ...?
                     {
                         BattleStatus WeaponStatus = _v.Caster.WeaponStatus;
-                        if (((WeaponStatus & BattleStatus.Death) != 0 && TranceSeekAPI.EliteMonster(_v.Target.Data)) || (WeaponStatus & BattleStatus.Death) == 0) // Don't force Death status.
+                        if (((WeaponStatus & BattleStatus.Death) != 0 && !_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill)) || (WeaponStatus & BattleStatus.Death) == 0) // Don't force Death status.
                         {
                             int HitRateWeaponStatus = _v.Caster.WeaponRate + (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1025) ? (_v.Target.Will / 3) : 0);
                             if ((WeaponStatus & BattleStatus.Death) != 0 && TranceSeekAPI.EliteMonster(_v.Target.Data))
