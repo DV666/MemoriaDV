@@ -1011,11 +1011,11 @@ namespace Memoria.Scripts.Battle
 
                 BattleUnit Eiko = BattleState.GetPlayerUnit(CharacterId.Eiko);
 
-                if (StateMoug[Eiko.Data] == 0 && !Eiko.IsUnderAnyStatus(BattleStatus.Death | BattleStatus.Petrify | BattleStatus.Jump))
+                if (StateMoug[Eiko.Data] == 0 && !Eiko.IsUnderAnyStatus(BattleStatus.Death | BattleStatus.Petrify | BattleStatus.Jump | BattleStatus.Heat) && v.Caster.Data != Eiko.Data)
                 {
                     int ChanceMoug = (Eiko.HasSupportAbilityByIndex((SupportAbility)1224) ? 20 : (Eiko.HasSupportAbilityByIndex((SupportAbility)224) ? 15 : 10));
 
-                    if (Comn.random16() % 100 > ChanceMoug || Eiko.IsUnderAnyStatus(BattleStatus.Heat) || v.Caster.Data == Eiko.Data)
+                    if (Comn.random16() % 100 > ChanceMoug)
                         return;
 
                     ushort TargetId = v.Caster.Id;
