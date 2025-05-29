@@ -1,8 +1,6 @@
 ﻿using Assets.Sources.Scripts.UI.Common;
 using Memoria;
 using Memoria.Assets;
-using Memoria.Data;
-using Memoria.Prime;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -61,7 +59,7 @@ public class VoicePlayer : SoundPlayer
                 try
                 {
                     // we need to delay if we run it instantly we're at 0 = 0 which is usless
-                    Thread.Sleep(500);
+                    Thread.Sleep(1000);
                     while (true)
                     {
                         Int32 currentTime = ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_GetElapsedPlaybackTime(soundProfile.SoundID);
@@ -70,7 +68,7 @@ public class VoicePlayer : SoundPlayer
                             onFinished();
                             break;
                         }
-                        Thread.Sleep(50);
+                        Thread.Sleep(200);
                     }
                     watcherOfSound.Remove(soundProfile);
                 }
@@ -232,19 +230,6 @@ public class VoicePlayer : SoundPlayer
         soundOfDialog.Remove(dialog);
     }
 
-    private static void AfterSoundFinished_Battle(Int32 va_id, String text)
-    {
-        try
-        {
-            BattleVoice.InvokeOnBattleDialogAudioEnd(va_id, text);
-        }
-        catch (Exception e)
-        {
-            Log.Error($"[VoiceActing] Error while running BattleScript.OnBattleDialogAudioEnd");
-            Log.Error(e);
-        }
-    }
-
     public static void AfterSoundFinished(Dialog dialog)
     {
         if (dialog.ChoiceNumber > 0)
@@ -395,17 +380,7 @@ public class VoicePlayer : SoundPlayer
 
         SoundLib.VALog(String.Format("field:battle/{0}, msg:{1}, text:{2} path:{3}", btlFolder, va_id, text, vaPath));
 
-        CreateLoadThenPlayVoice(va_id, vaPath, () => AfterSoundFinished_Battle(va_id, text));
-
-        try
-        {
-            BattleVoice.InvokeOnBattleDialogAudioStart(va_id, text);
-        }
-        catch (Exception e)
-        {
-            Log.Error($"[VoiceActing] Error while running BattleScript.OnBattleDialogAudioStart");
-            Log.Error(e);
-        }
+        CreateLoadThenPlayVoice(va_id, vaPath);
     }
 
     public static Boolean HoldDialogUntilSoundEnds(Int32 zoneId, Int32 universalTextId, Int32 mapNo)

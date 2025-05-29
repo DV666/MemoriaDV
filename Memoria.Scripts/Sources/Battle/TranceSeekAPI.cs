@@ -1836,7 +1836,7 @@ namespace Memoria.Scripts.Battle
                 }
             }
 
-            if (v.Caster.HasSupportAbilityByIndex((SupportAbility)1131) && !v.Caster.InTrance && v.Caster.Trance < byte.MaxValue && (v.Target.Flags & CalcFlag.HpRecovery) != 0) // SA Altruistic+
+            if (v.Caster.HasSupportAbilityByIndex((SupportAbility)1131) && !v.Caster.InTrance && v.Target.CurrentHp < v.Target.MaximumHp && (v.Target.Flags & CalcFlag.HpRecovery) != 0) // SA Altruistic+
                 IncreaseTrance(v.Caster.Data, v.Caster.Will / 10);
 
             if (v.Target.HasSupportAbilityByIndex((SupportAbility)1201) && (v.Command.AbilityCategory & 8) != 0 && ZidanePassive[v.Target.Data][1] > Comn.random16() % 100) // SA Gorilla+
