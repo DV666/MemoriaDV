@@ -1,0 +1,34 @@
+// Player sequence of SFX Summon_Soldier_Mental_Break
+
+WaitAnimation: Char=Caster
+SetupReflect: Delay=SFXLoaded
+StartThread: Target=Caster ; Sync=True
+	LoadSFX: SFX=Green_Smoke ; UseCamera=False
+	WaitSFXLoaded: SFX=Green_Smoke
+	PlaySFX: SFX=Green_Smoke
+	EffectPoint: Char=Caster ; Type=Both
+	WaitSFXDone: SFX=Green_Smoke
+EndThread
+LoadSFX: SFX=Mental_Break ; Reflect=True
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_177_020
+WaitAnimation: Char=Caster
+Message: Priority=1 ; Title=True ; Reflect=True ; TextFR=[STRT=49,1]Déprime ; Text=[STRT=78,1]Mental Break
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_177_021
+WaitSFXLoaded: Reflect=True
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_177_022
+Wait: Time=7
+PlaySFX: Reflect=True
+WaitSFXDone: Reflect=True
+ActivateReflect
+WaitReflect
+StartThread: Target=Caster ; Sync=True
+	LoadSFX: SFX=Green_Smoke ; UseCamera=False
+	WaitSFXLoaded: SFX=Green_Smoke
+	PlaySFX: SFX=Green_Smoke
+	EffectPoint: Char=Caster ; Type=Both
+	WaitSFXDone: SFX=Green_Smoke
+EndThread
+PlayAnimation: Char=Caster ; Anim=Idle
+Turn: Char=Caster ; BaseAngle=Default ; Time=5
+WaitTurn: Char=Caster

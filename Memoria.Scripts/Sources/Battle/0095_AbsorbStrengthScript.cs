@@ -1,5 +1,5 @@
-using System;
-using Memoria.Data;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Memoria.Scripts.Battle
 {
@@ -20,9 +20,8 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            _v.Target.TryAlterSingleStatus(BattleStatusId.ChangeStat, true, _v.Caster, "Strength", _v.Target.Strength / 2);
-            if ((_v.Context.Flags & (BattleCalcFlags.Miss | BattleCalcFlags.Guard)) == 0)
-                btl_stat.AlterStatus(_v.Caster, BattleStatusId.ChangeStat, _v.Caster, false, "Strength", Math.Min(Byte.MaxValue, _v.Caster.Strength * 2));
+            _v.Caster.AlterStatus(TranceSeekStatus.PowerUp, _v.Caster);
+            _v.Target.AlterStatus(TranceSeekStatus.PowerBreak, _v.Caster);
         }
     }
 }

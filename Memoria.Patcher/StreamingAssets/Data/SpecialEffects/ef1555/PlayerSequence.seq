@@ -1,0 +1,48 @@
+// Player sequence of SFX Gravija
+
+WaitAnimation: Char=Caster
+StartThread: Condition=CasterRow == 0 && AreCasterAndSelectedTargetsEnemies ; Sync=True
+	MoveToPosition: Char=Caster ; RelativePosition=(0, 0, 400) ; Anim=MP_STEP_FORWARD
+	WaitMove: Char=Caster
+EndThread
+StartThread: Condition=IsSingleSelectedTarget
+	Turn: Char=Caster ; BaseAngle=AllTargets ; Time=5
+EndThread
+Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
+SetupReflect: Delay=SFXLoaded
+StartThread: Condition=IsSingleTarget ; Sync=True
+	LoadSFX: SFX=Demi_Shock__Single ; Reflect=True
+	PlayAnimation: Char=Caster ; Anim=ANH_MAIN_B0_006_600
+	WaitAnimation: Char=Caster
+	PlayAnimation: Char=Caster ; Anim=ANH_MAIN_B0_006_601 ; Loop=True
+	Channel
+	WaitSFXLoaded: SFX=Demi_Shock__Single ; Reflect=True
+	WaitAnimation: Char=Caster
+	StopChannel
+	PlayAnimation: Char=Caster ; Anim=ANH_MAIN_B0_006_602
+	WaitAnimation: Char=Caster
+	PlaySFX: SFX=Demi_Shock__Single ; Reflect=True ; MeshColors=(0.37041, 0.07817, 0.35534)
+	WaitSFXDone: SFX=Demi_Shock__Single ; Reflect=True
+StartThread: Condition=!IsSingleTarget ; Sync=True
+	LoadSFX: SFX=Demi_Shock__Multi ; Reflect=True
+	PlayAnimation: Char=Caster ; Anim=ANH_MAIN_B0_006_600
+	WaitAnimation: Char=Caster
+	PlayAnimation: Char=Caster ; Anim=ANH_MAIN_B0_006_601 ; Loop=True
+	Channel
+	WaitSFXLoaded: SFX=Demi_Shock__Multi ; Reflect=True
+	WaitAnimation: Char=Caster
+	StopChannel
+	PlayAnimation: Char=Caster ; Anim=ANH_MAIN_B0_006_602
+	WaitAnimation: Char=Caster
+	PlaySFX: SFX=Demi_Shock__Multi ; Reflect=True ; MeshColors=(0.37041, 0.07817, 0.35534)
+	WaitSFXDone: SFX=Demi_Shock__Multi ; Reflect=True
+EndThread
+ActivateReflect
+WaitReflect
+StartThread: Condition=CasterRow == 0 && AreCasterAndSelectedTargetsEnemies ; Sync=True
+	MoveToPosition: Char=Caster ; RelativePosition=(0, 0, -400) ; Anim=MP_STEP_BACK
+	WaitMove: Char=Caster
+EndThread
+PlayAnimation: Char=Caster ; Anim=Idle
+Turn: Char=Caster ; BaseAngle=Default ; Time=5
+WaitTurn: Char=Caster

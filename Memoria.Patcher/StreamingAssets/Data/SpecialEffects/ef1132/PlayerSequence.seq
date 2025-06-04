@@ -1,0 +1,14 @@
+// Player sequence of SFX Water__Single__Staff
+
+WaitAnimation: Char=Caster
+SetupReflect: Delay=SFXLoaded
+SetBackgroundIntensity: Intensity=0.5 ; Time=20
+LoadSFX: SFX=Water__Single ; Reflect=True
+WaitSFXLoaded: SFX=Water__Single ; Reflect=True
+PlaySFX: SFX=Water__Single ; Reflect=True
+WaitSFXDone: SFX=Water__Single ; Reflect=True
+ActivateReflect
+WaitReflect
+PlayAnimation: Char=Caster ; Anim=Idle
+Turn: Char=Caster ; BaseAngle=Default ; Time=5
+WaitTurn: Char=Caster

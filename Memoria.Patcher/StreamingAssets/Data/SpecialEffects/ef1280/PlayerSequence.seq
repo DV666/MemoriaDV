@@ -1,0 +1,59 @@
+// Player sequence of SFX Summon_Clipper_Crush
+
+WaitAnimation: Char=Caster
+SetupReflect: Delay=60
+StartThread: Target=Caster ; Sync=True
+	LoadSFX: SFX=Green_Smoke ; UseCamera=False
+	WaitSFXLoaded: SFX=Green_Smoke
+	PlaySFX: SFX=Green_Smoke
+	EffectPoint: Char=Caster ; Type=Both
+	WaitSFXDone: SFX=Green_Smoke
+EndThread
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_039_010
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_039_011
+StartThread
+	LoadSFX: SFX=SFX_Attack_Blade_Long ; FirstBone=0 ; Reflect=True
+	Wait: Time=14 ; Reflect=True
+	WaitSFXLoaded: Reflect=True
+	PlaySFX: SkipSequence=False ; Reflect=True
+	WaitSFXDone: Reflect=True
+EndThread
+Message: Priority=1 ; Title=True ; Reflect=True ; TextFR=[STRT=41,1]Crabox ; Text=[STRT=31,1]Crush
+Turn: Char=Caster ; BaseAngle=AllTargets ; Angle=0 ; Time=11
+MoveToTarget: Char=Caster ; Target=AllTargets ; Time=11 ; Distance=900
+WaitMove: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_039_012
+Wait: Time=3
+StartThread
+	Wait: Time=1
+	PlaySound: Sound=667 ; Volume=1 ; Once=False
+EndThread
+Wait: Time=4
+StartThread
+	Wait: Time=1
+	PlaySound: Sound=667 ; Volume=1 ; Once=False
+EndThread
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_039_013
+Turn: Char=Caster ; BaseAngle=Default ; Angle=0 ; Time=6
+MoveToPosition: Char=Caster ; Time=6 ; AbsolutePosition=Default ; MoveHeight=true
+WaitMove: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_039_014
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=Idle
+WaitMonsterSFXDone: Reflect=True
+WaitTurn: Char=Caster
+ActivateReflect
+WaitReflect
+StartThread: Target=Caster ; Sync=True
+	LoadSFX: SFX=Green_Smoke ; UseCamera=False
+	WaitSFXLoaded: SFX=Green_Smoke
+	PlaySFX: SFX=Green_Smoke
+	EffectPoint: Char=Caster ; Type=Both
+	WaitSFXDone: SFX=Green_Smoke
+EndThread
+PlayAnimation: Char=Caster ; Anim=Idle
+Turn: Char=Caster ; BaseAngle=Default ; Time=5
+WaitTurn: Char=Caster

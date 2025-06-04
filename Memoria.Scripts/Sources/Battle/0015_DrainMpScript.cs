@@ -1,3 +1,5 @@
+using FF9;
+using Memoria.Data;
 using System;
 
 namespace Memoria.Scripts.Battle
@@ -19,13 +21,15 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
+            _v.Context.IsDrain = true;
             if (!_v.IsCasterNotTarget() || !_v.Target.CanBeAttacked())
                 return;
 
             _v.NormalMagicParams();
-            _v.Caster.EnemyTranceBonusAttack();
-            _v.Caster.PenaltyMini();
-            _v.Target.PenaltyShellAttack();
+            TranceSeekAPI.CharacterBonusPassive(_v, "MagicAttack");
+            TranceSeekAPI.CasterPenaltyMini(_v);
+            TranceSeekAPI.EnemyTranceBonusAttack(_v);
+            TranceSeekAPI.PenaltyShellAttack(_v);
             _v.Target.Flags |= CalcFlag.MpAlteration;
             _v.Caster.Flags |= CalcFlag.MpAlteration;
             _v.Context.IsDrain = true;
@@ -35,9 +39,7 @@ namespace Memoria.Scripts.Battle
 
             if (_v.Target.IsZombie)
             {
-                _v.Target.Flags |= CalcFlag.MpRecovery;
-                if (damage > _v.Caster.CurrentMp)
-                    damage = (Int32)_v.Caster.CurrentMp;
+                damage = 0;
             }
             else
             {

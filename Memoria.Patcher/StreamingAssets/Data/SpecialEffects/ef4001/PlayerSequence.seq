@@ -1,0 +1,15 @@
+// Player sequence of SFX Player_Attack_Mogra
+
+WaitAnimation: Char=Caster
+SetupReflect: Delay=SFXLoaded
+LoadSFX: SFX=Nanoflare ; Reflect=True ; UseCamera=False
+WaitSFXLoaded: SFX=Nanoflare ; Reflect=True
+Turn: Char=Caster ; BaseAngle=AllTargets ; Angle=0 ; Time=1
+PlayAnimation: Char=Caster ; Anim=ANH_NPC_F0_MOG_BTL_ATTACK
+Wait: Time=10
+PlaySFX: SFX=Nanoflare ; Reflect=True
+WaitSFXDone: SFX=Nanoflare ; Reflect=True
+PlayAnimation: Char=Caster ; Anim=Idle
+WaitTurn: Char=Caster
+ActivateReflect
+WaitReflect

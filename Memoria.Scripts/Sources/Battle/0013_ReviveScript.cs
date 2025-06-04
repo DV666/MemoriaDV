@@ -1,5 +1,5 @@
-using Memoria.Data;
 using System;
+using Memoria.Data;
 
 namespace Memoria.Scripts.Battle
 {
@@ -21,14 +21,61 @@ namespace Memoria.Scripts.Battle
         public void Perform()
         {
             if (!_v.Target.CanBeRevived())
-                return;
-
-            if (HitRateForZombie() && !_v.TryMagicHit())
-                return;
-
-            if (_v.Target.IsZombie)
             {
-                _v.Target.Kill(_v.Caster);
+                _v.Context.Flags |= BattleCalcFlags.Miss;
+                return;
+            }
+
+            if (_v.Command.Id == BattleCommandId.SysLastPhoenix)
+            {
+                FF9StateSystem.Common.FF9.GetPlayer(CharacterId.Eiko).equip.Accessory = RegularItem.NoItem;
+            }
+
+            if (_v.Caster.PlayerIndex == CharacterId.Quina && (_v.Command.AbilityId == BattleAbilityId.AutoLife || _v.Command.AbilityId == (BattleAbilityId)1526))
+            {
+                if (_v.Target.CurrentHp == _v.Target.MaximumHp)
+                {
+                    _v.Target.AlterStatus(BattleStatus.AutoLife, _v.Caster);
+                }
+                else
+                {
+                    _v.Target.Flags |= CalcFlag.HpAlteration;
+                    if (!_v.Target.IsZombie)
+                    {
+                        _v.Target.Flags |= CalcFlag.HpRecovery;
+                    }
+
+                    if ((_v.Target.CanBeRevived() || _v.Target.Accessory != (RegularItem)1213) && _v.Target.CheckIsPlayer() && _v.Target.CurrentHp == 0U)
+                    {
+                        _v.Target.HpDamage = (int)(_v.Target.MaximumHp * 3UL / 4UL);
+                        TranceSeekAPI.TryRemoveAbilityStatuses(_v);
+                    }
+                    else
+                    {
+                        _v.Target.HpDamage = (int)(_v.Target.MaximumHp * 3UL / 4UL);
+                    }
+
+                    if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)100)) // Medecin
+                        _v.Target.HpDamage += _v.Caster.HpDamage / (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1100) ? 2 : 4);
+
+
+                    if (_v.Command.IsManyTarget)
+                    {
+                        if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1126))
+                            _v.Target.HpDamage = (_v.Target.HpDamage * 3) / 4;
+                        else
+                            _v.Target.HpDamage /= 2;
+                    }
+                }
+                return;
+            }
+
+            if (HitRateForZombie() && !TranceSeekAPI.TryMagicHit(_v))
+                return;
+
+            if (_v.Target.IsZombie && !_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill))
+            {
+                _v.Target.Kill();
                 return;
             }
 
@@ -36,15 +83,35 @@ namespace Memoria.Scripts.Battle
                 return;
 
             _v.Target.Flags |= CalcFlag.HpAlteration | CalcFlag.HpRecovery;
-            _v.Target.HpDamage = (Int32)(_v.Target.MaximumHp * (_v.Target.Will + _v.Command.Power) / 100);
-            _v.TryRemoveAbilityStatuses();
+            if (_v.Target.HasSupportAbilityByIndex((SupportAbility)1004)) // Invincible+
+            {
+                _v.Target.Flags |= CalcFlag.MpAlteration | CalcFlag.MpRecovery;
+                _v.Target.HpDamage = (int)_v.Target.MaximumHp;
+                _v.Target.MpDamage = (int)_v.Target.MaximumMp;
+            }
+            else
+            {
+                _v.Target.HpDamage = (Int32)(_v.Target.MaximumHp * (_v.Target.Will + _v.Command.Power) / 100);
+
+                if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)100)) // Medecin
+                    _v.Target.HpDamage += _v.Caster.HpDamage / (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1100) ? 2 : 4);
+
+                if (_v.Command.IsManyTarget)
+                {
+                    if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1126))
+                        _v.Target.HpDamage = (_v.Target.HpDamage * 3) / 4;
+                    else
+                        _v.Target.HpDamage /= 2;
+                }
+            }
+            TranceSeekAPI.TryRemoveAbilityStatuses(_v);
         }
 
         private Boolean HitRateForZombie()
         {
             if (_v.Target.IsZombie)
             {
-                _v.MagicAccuracy();
+                TranceSeekAPI.MagicAccuracy(_v);
                 return true;
             }
             return false;
@@ -57,7 +124,7 @@ namespace Memoria.Scripts.Battle
 
             if (_v.Target.IsZombie)
             {
-                _v.MagicAccuracy();
+                TranceSeekAPI.MagicAccuracy(_v);
 
                 Single hitRate = BattleScriptAccuracyEstimate.RatePlayerAttackHit(_v.Context.HitRate);
                 Single evaRate = BattleScriptAccuracyEstimate.RatePlayerAttackEvade(_v.Context.Evade);

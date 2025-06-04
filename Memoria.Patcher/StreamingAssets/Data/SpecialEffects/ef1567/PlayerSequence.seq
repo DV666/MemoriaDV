@@ -1,0 +1,53 @@
+// Player sequence of SFX Fracture Sword
+
+WaitAnimation: Char=Caster
+Turn: Char=Caster ; BaseAngle=AllTargets ; Time=5
+Message: Text=[MagicSword] ; Priority=1 ; Title=True ; Reflect=True
+SetupReflect: Delay=SFXLoaded
+//LoadSFX: SFX=Blizzaga__Single ; Reflect=True ; MagicCaster=Vivi ; UseCamera=False
+Turn: Char=Vivi ; BaseAngle=Caster ; Time=5
+PlayAnimation: Char=Vivi ; Anim=MP_IDLE_TO_CHANT
+WaitAnimation: Char=Vivi
+PlayAnimation: Char=Vivi ; Anim=MP_CHANT ; Loop=True
+Channel: Char=Vivi
+WaitAnimation: Char=Vivi
+StopChannel: Char=Vivi
+PlayAnimation: Char=Vivi ; Anim=MP_MAGIC
+WaitAnimation: Char=Vivi
+Turn: Char=Vivi ; BaseAngle=Default ; Time=4
+PlayAnimation: Char=Caster ; Anim=MP_SET
+WaitAnimation: Char=Caster
+MoveToTarget: Char=Caster ; Target=AllTargets ; Distance=600 ; UseCollisionRadius=True ; Anim=MP_RUN
+Turn: Char=Caster ; BaseAngle=AllTargets ; Time=10
+WaitMove: Char=Caster
+MoveToTarget: Char=Caster ; Target=AllTargets ; Distance=0 ; UseCollisionRadius=True ; Anim=MP_RUN_TO_ATTACK
+WaitMove: Char=Caster
+PlayAnimation: Char=Caster ; Anim=MP_ATTACK
+PlayAnimation: Char=Caster ; Speed=0
+StartThread: Sync=False
+	Wait: Time=35
+	LoadSFX: SFX=Break ; Reflect=True ; UseCamera=False
+	WaitSFXLoaded: SFX=Break ; Reflect=True
+	PlaySFX: SFX=Break ; Reflect=True ; MeshColors=(0.50326, 0.37692, 0.12196) ; SkipSequence
+	WaitSFXDone: SFX=Break ; Reflect=True
+EndThread
+StartThread: Sync=True
+	LoadSFX: SFX=Blizzaga__Single ; Reflect=True ; UseCamera=False
+	WaitSFXLoaded: SFX=Blizzaga__Single ; Reflect=True
+	StopChannel
+	PlaySFX: SFX=Blizzaga__Single ; Reflect=True ; MeshColors=(0.50326, 0.37692, 0.12196) ; SkipSequence
+	PlaySound: Sound=3025
+	Wait: Time=64
+	EffectPoint: Char=AllTargets ; Type=Effect
+	Wait: Time=15
+	EffectPoint: Char=Everyone ; Type=Figure
+	Wait: Time=8
+EndThread
+WaitSFXDone: SFX=Blizzaga__Single ; Reflect=True
+MoveToPosition: Char=Caster ; AbsolutePosition=Default ; Anim=MP_BACK
+Turn: Char=Caster ; BaseAngle=Default ; Time=4
+WaitMove: Caster
+PlayAnimation: Char=Caster ; Anim=Idle
+WaitTurn: Char=Caster
+ActivateReflect
+WaitReflect

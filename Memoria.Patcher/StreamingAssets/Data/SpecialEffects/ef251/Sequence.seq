@@ -1,6 +1,6 @@
 // Shared sequence of SFX Madeen__Full
 
-ShowMesh: Char=AllNonTargets ; Enable=False ; IsDisappear=True
+ShowMesh: ShowMesh: Char=MatchingCondition(!IsTargeted && IsTargetable) ; Enable=False ; IsDisappear=True
 StartThread: Condition=SFXUseCamera && AreTargetsPlayers
 	ShiftWorld: Angle=(0, 180, 0)
 EndThread
@@ -298,7 +298,7 @@ Wait: Time=1
 Turn: Char=AllTargets ; Angle=(353.3, 251.0, 124.5) ; Time=0
 Wait: Time=1
 Turn: Char=AllTargets ; Angle=(351.7, 239.4, 125.5) ; Time=0
-ShowMesh: Char=AllTargets ; Enable=False ; IsDisappear=True
+ShowMesh: Char=MatchingCondition(IsTargeted && IsTargetable) ; Enable=False ; IsDisappear=True
 PlaySound: Sound=2162
 PlaySound: Sound=2163
 PlaySound: Sound=2164
@@ -313,7 +313,7 @@ PlaySound: Sound=2169
 MoveToPosition: Char=AllTargets ; AbsolutePosition=(0.0, 4096.0, 0.0) ; MoveHeight=True ; Time=0
 Turn: Char=AllTargets ; Angle=(0.0, 0.0, 180.0) ; Time=0
 Wait: Time=29
-ShowMesh: Char=AllTargets ; Enable=True ; IsDisappear=True
+ShowMesh: Char=MatchingCondition(IsTargeted && IsTargetable) ; Enable=True ; IsDisappear=True
 Turn: Char=AllTargets ; Angle=(90.0, 37.9, 0.0) ; Time=0
 Wait: Time=1
 ChangeSize: Char=AllTargets ; Size=0.53 ; ScaleShadow=True ; Time=0
@@ -341,7 +341,7 @@ Wait: Time=1
 Turn: Char=AllTargets ; Angle=(83.6, 230.9, 195.8) ; Time=0
 Wait: Time=1
 Turn: Char=AllTargets ; Angle=(83.2, 231.9, 197.1) ; Time=0
-ShowMesh: Char=AllTargets ; Enable=False ; Time=10
+ShowMesh: Char=MatchingCondition(IsTargeted && IsTargetable) ; Enable=False ; Time=10
 Wait: Time=1
 Turn: Char=AllTargets ; Angle=(82.9, 233.0, 198.5) ; Time=0
 Wait: Time=1
@@ -408,7 +408,7 @@ Wait: Time=1
 Turn: Char=AllTargets ; Angle=(72.0, 265.7, 239.3) ; Time=0
 Wait: Time=1
 Turn: Char=AllTargets ; Angle=(71.6, 266.7, 240.6) ; Time=0
-ShowMesh: Char=AllTargets ; Enable=False ; IsDisappear=True
+ShowMesh: Char=MatchingCondition(IsTargeted && IsTargetable) ; Enable=False ; IsDisappear=True
 Wait: Time=3
 MoveToPosition: Char=AllTargets ; AbsolutePosition=Default ; RelativePosition=(0.0, 4416.0, 0.0) ; MoveHeight=True ; Time=0
 Turn: Char=AllTargets ; Angle=(0.0, 0.0, 180.0) ; Time=0
@@ -418,7 +418,7 @@ PlaySound: Sound=2171
 PlaySound: Sound=2172
 PlaySound: Sound=2173
 Wait: Time=59
-ShowMesh: Char=AllTargets ; Enable=True ; IsDisappear=True
+ShowMesh: Char=MatchingCondition(IsTargeted && IsTargetable) ; Enable=True ; IsDisappear=True
 ChangeSize: Char=AllTargets ; Size=1 ; ScaleShadow=True ; Time=0
 Wait: Time=1
 SetBackgroundIntensity: Intensity=0.5 ; Time=1 ; HoldDuration=33
@@ -482,6 +482,6 @@ Wait: Time=9
 StartThread: Condition=SFXUseCamera && AreTargetsPlayers
 	ShiftWorld: Angle=(0, 0, 0)
 EndThread
-ShowMesh: Char=Everyone ; Enable=True ; IsDisappear=True
-ShowMesh: Char=AllNonTargets ; Enable=True ; Time=12
+ShowMesh: Char=MatchingCondition(!IsTargeted && IsTargetable) ; Enable=True ; IsDisappear=True
+ShowMesh: Char=MatchingCondition(!IsTargeted && IsTargetable) ; Enable=True ; Time=12
 Wait: Time=31

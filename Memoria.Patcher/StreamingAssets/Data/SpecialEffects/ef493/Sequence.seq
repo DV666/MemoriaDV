@@ -19,7 +19,7 @@ PlaySound: Sound=2254
 Wait: Time=9
 ShowMesh: Char=AllNonTargets ; Enable=False ; Time=1
 Wait: Time=1
-ShowMesh: Char=AllNonTargets ; Enable=False ; IsDisappear=True
+ShowMesh: ShowMesh: Char=MatchingCondition(!IsTargeted && IsTargetable) ; Enable=False ; IsDisappear=True
 Wait: Time=83
 PlaySound: Sound=184
 PlaySound: Sound=171
@@ -33,8 +33,8 @@ Wait: Time=16
 EffectPoint: Char=Everyone ; Type=Figure
 Wait: Time=1
 SetBackgroundIntensity: Intensity=1 ; Time=16
-ShowMesh: Char=AllNonTargets ; Enable=True ; IsDisappear=True
-ShowMesh: Char=AllNonTargets ; Enable=True ; Time=4
+ShowMesh: Char=MatchingCondition(!IsTargeted && IsTargetable) ; Enable=True ; IsDisappear=True
+ShowMesh: Char=MatchingCondition(!IsTargeted && IsTargetable) ; Enable=True ; Time=4
 Wait: Time=16
 StartThread: Condition=SFXUseCamera && !AreTargetsPlayers
 	ShiftWorld: Angle=(0, 0, 0)

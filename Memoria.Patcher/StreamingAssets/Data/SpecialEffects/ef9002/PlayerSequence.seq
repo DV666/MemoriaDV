@@ -1,0 +1,1075 @@
+// Player sequence of Mixing Command (Bomb)
+
+WaitAnimation: Char=Caster
+StartThread: Condition=CasterRow == 0 && AreCasterAndSelectedTargetsEnemies ; Sync=True
+	MoveToPosition: Char=Caster ; RelativePosition=(0, 0, 400) ; Anim=MP_STEP_FORWARD
+	WaitMove: Char=Caster
+EndThread
+StartThread: Condition=IsSingleSelectedTarget
+	Turn: Char=Caster ; BaseAngle=AllTargets ; Time=5
+EndThread
+Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
+SetupReflect: Delay=SFXLoaded
+PlayAnimation: Char=Caster ; Anim=MP_ITEM1
+WaitAnimation: Char=Caster
+StartThread: Condition=ItemUseId == 2162 ; Sync=True
+	LoadSFX: SFX=Fire__Single ; Reflect=True
+	WaitSFXLoaded: SFX=Fire__Single ; Reflect=True
+	PlaySFX: SFX=Fire__Single ; Reflect=True
+	WaitSFXDone: SFX=Fire__Single ; Reflect=True
+ElseThread: Condition=ItemUseId == 2163 ; Sync=True
+	LoadSFX: SFX=Fira__Single ; Reflect=True
+	WaitSFXLoaded: SFX=Fira__Single ; Reflect=True
+	PlaySFX: SFX=Fira__Single ; Reflect=True
+	WaitSFXDone: SFX=Fira__Single ; Reflect=True
+ElseThread: Condition=ItemUseId == 2164 ; Sync=True
+	LoadSFX: SFX=Firaga__Single ; Reflect=True
+	WaitSFXLoaded: SFX=Firaga__Single ; Reflect=True
+	PlaySFX: SFX=Firaga__Single ; Reflect=True
+	WaitSFXDone: SFX=Firaga__Single ; Reflect=True
+ElseThread: Condition=ItemUseId == 2165 ; Sync=True
+	LoadSFX: SFX=Thunder__Single ; Reflect=True
+	WaitSFXLoaded: SFX=Thunder__Single ; Reflect=True
+	PlaySFX: SFX=Thunder__Single ; Reflect=True ; MeshColors=(0.128, 0.427, 0.446)
+	WaitSFXDone: SFX=Thunder__Single ; Reflect=True
+ElseThread: Condition=ItemUseId == 2166 ; Sync=True
+	LoadSFX: SFX=Thundaga__Single ; Reflect=True
+	WaitSFXLoaded: SFX=Thundaga__Single ; Reflect=True
+	PlaySFX: SFX=Thundaga__Single ; Reflect=True ; MeshColors=(0.128, 0.427, 0.446)
+	WaitSFXDone: SFX=Thundaga__Single ; Reflect=True
+ElseThread: Condition=ItemUseId == 2167 ; Sync=True
+	LoadSFX: SFX=Explosion ; Reflect=True
+	WaitSFXLoaded: SFX=Explosion ; Reflect=True
+	PlaySFX: SFX=Explosion ; Reflect=True
+	WaitSFXDone: SFX=Explosion ; Reflect=True
+ElseThread: Condition=ItemUseId == 2168 ; Sync=True
+	LoadSFX: SFX=Neutron_Ring ; Reflect=True
+	WaitSFXLoaded: SFX=Neutron_Ring ; Reflect=True
+	PlaySFX: SFX=Neutron_Ring ; Reflect=True
+	WaitSFXDone: SFX=Neutron_Ring ; Reflect=True
+ElseThread: Condition=ItemUseId == 2169 ; Sync=True
+	LoadSFX: SFX=Blue_Shockwave ; Reflect=True
+	WaitSFXLoaded: SFX=Blue_Shockwave ; Reflect=True
+	PlaySFX: SFX=Blue_Shockwave ; Reflect=True
+	WaitSFXDone: SFX=Blue_Shockwave ; Reflect=True
+ElseThread: Condition=ItemUseId == 2170 ; Sync=True
+	LoadSFX: SFX=Neutron_Ring ; Reflect=True
+	WaitSFXLoaded: SFX=Neutron_Ring ; Reflect=True
+	PlaySFX: SFX=Neutron_Ring ; Reflect=True
+	WaitSFXDone: SFX=Neutron_Ring ; Reflect=True
+ElseThread: Condition=ItemUseId == 2171 ; Sync=True
+	LoadSFX: SFX=Venom_Powder ; Reflect=True
+	WaitSFXLoaded: SFX=Venom_Powder ; Reflect=True
+	PlaySFX: SFX=Venom_Powder ; Reflect=True
+	WaitSFXDone: SFX=Venom_Powder ; Reflect=True
+ElseThread: Condition=ItemUseId == 2172 ; Sync=True
+	LoadSFX: SFX=Ultra_Sound_Wave ; Reflect=True
+	WaitSFXLoaded: SFX=Ultra_Sound_Wave ; Reflect=True
+	PlaySFX: SFX=Ultra_Sound_Wave ; Reflect=True
+	WaitSFXDone: SFX=Ultra_Sound_Wave ; Reflect=True
+ElseThread: Condition=ItemUseId == 2173 ; Sync=True
+	LoadSFX: SFX=Darkness ; Reflect=True
+	WaitSFXLoaded: SFX=Darkness ; Reflect=True
+	PlaySFX: SFX=Darkness ; Reflect=True
+	WaitSFXDone: SFX=Darkness ; Reflect=True
+ElseThread: Condition=ItemUseId == 2174 ; Sync=True
+	LoadSFX: SFX=Gradual_Petrify ; Reflect=True
+	WaitSFXLoaded: SFX=Gradual_Petrify ; Reflect=True
+	PlaySFX: SFX=Gradual_Petrify ; Reflect=True
+	WaitSFXDone: SFX=Gradual_Petrify ; Reflect=True
+ElseThread: Condition=ItemUseId == 2175 ; Sync=True
+	LoadSFX: SFX=Trouble_Mucus ; Reflect=True
+	WaitSFXLoaded: SFX=Trouble_Mucus ; Reflect=True
+	PlaySFX: SFX=Trouble_Mucus ; Reflect=True
+	WaitSFXDone: SFX=Trouble_Mucus ; Reflect=True
+ElseThread: Condition=ItemUseId == 2176 ; Sync=True
+	LoadSFX: SFX=Zombie_Powder ; Reflect=True
+	WaitSFXLoaded: SFX=Zombie_Powder ; Reflect=True
+	PlaySFX: SFX=Zombie_Powder ; Reflect=True
+	WaitSFXDone: SFX=Zombie_Powder ; Reflect=True
+ElseThread: Condition=ItemUseId == 2177 ; Sync=True
+	LoadSFX: SFX=Virus_Powder ; Reflect=True
+	WaitSFXLoaded: SFX=Virus_Powder ; Reflect=True
+	PlaySFX: SFX=Virus_Powder ; Reflect=True
+	WaitSFXDone: SFX=Virus_Powder ; Reflect=True
+ElseThread: Condition=ItemUseId == 2178 ; Sync=True
+	LoadSFX: SFX=Curse__Single ; Reflect=True
+	WaitSFXLoaded: SFX=Curse__Single ; Reflect=True
+	PlaySFX: SFX=Curse__Single ; Reflect=True
+	WaitSFXDone: SFX=Curse__Single ; Reflect=True
+ElseThread: Condition=ItemUseId == 2179 ; Sync=True
+	LoadSFX: SFX=Curse ; Reflect=True
+	WaitSFXLoaded: SFX=Curse ; Reflect=True
+	PlaySFX: SFX=Curse ; Reflect=True
+	WaitSFXDone: SFX=Curse ; Reflect=True
+ElseThread: Condition=ItemUseId == 2180 ; Sync=True
+	LoadSFX: SFX=Venom_Powder ; Reflect=True
+	WaitSFXLoaded: SFX=Venom_Powder ; Reflect=True
+	PlaySFX: SFX=Venom_Powder ; Reflect=True ; MeshColors=(0.454, 0.454, 0.093)
+	WaitSFXDone: SFX=Venom_Powder ; Reflect=True
+ElseThread: Condition=ItemUseId == 2181 ; Sync=True
+	LoadSFX: SFX=Ultra_Sound_Wave ; Reflect=True
+	WaitSFXLoaded: SFX=Ultra_Sound_Wave ; Reflect=True
+	PlaySFX: SFX=Ultra_Sound_Wave ; Reflect=True ; MeshColors=(0.454, 0.454, 0.093)
+	WaitSFXDone: SFX=Ultra_Sound_Wave ; Reflect=True
+ElseThread: Condition=ItemUseId == 2182 ; Sync=True
+	LoadSFX: SFX=Darkness ; Reflect=True
+	WaitSFXLoaded: SFX=Darkness ; Reflect=True
+	PlaySFX: SFX=Darkness ; Reflect=True ; MeshColors=(0.454, 0.454, 0.093)
+	WaitSFXDone: SFX=Darkness ; Reflect=True
+ElseThread: Condition=ItemUseId == 2183 ; Sync=True
+	LoadSFX: SFX=Gradual_Petrify ; Reflect=True
+	WaitSFXLoaded: SFX=Gradual_Petrify ; Reflect=True
+	PlaySFX: SFX=Gradual_Petrify ; Reflect=True ; MeshColors=(0.454, 0.454, 0.093)
+	WaitSFXDone: SFX=Gradual_Petrify ; Reflect=True
+ElseThread: Condition=ItemUseId == 2184 ; Sync=True
+	LoadSFX: SFX=Trouble_Mucus ; Reflect=True
+	WaitSFXLoaded: SFX=Trouble_Mucus ; Reflect=True
+	PlaySFX: SFX=Trouble_Mucus ; Reflect=True ; MeshColors=(0.454, 0.454, 0.093)
+	WaitSFXDone: SFX=Trouble_Mucus ; Reflect=True
+ElseThread: Condition=ItemUseId == 2185 ; Sync=True
+	LoadSFX: SFX=Zombie_Powder ; Reflect=True
+	WaitSFXLoaded: SFX=Zombie_Powder ; Reflect=True
+	PlaySFX: SFX=Zombie_Powder ; Reflect=True ; MeshColors=(0.454, 0.454, 0.093)
+	WaitSFXDone: SFX=Zombie_Powder ; Reflect=True
+ElseThread: Condition=ItemUseId == 2186 ; Sync=True
+	LoadSFX: SFX=Virus_Powder ; Reflect=True
+	WaitSFXLoaded: SFX=Virus_Powder ; Reflect=True
+	PlaySFX: SFX=Virus_Powder ; Reflect=True ; MeshColors=(0.454, 0.454, 0.093)
+	WaitSFXDone: SFX=Virus_Powder ; Reflect=True
+ElseThread: Condition=ItemUseId == 2187 ; Sync=True
+	LoadSFX: SFX=Curse__Single ; Reflect=True
+	WaitSFXLoaded: SFX=Curse__Single ; Reflect=True
+	PlaySFX: SFX=Curse__Single ; Reflect=True ; MeshColors=(0.454, 0.454, 0.093)
+	WaitSFXDone: SFX=Curse__Single ; Reflect=True
+ElseThread: Condition=ItemUseId == 2188 ; Sync=True
+	LoadSFX: SFX=Curse ; Reflect=True
+	WaitSFXLoaded: SFX=Curse ; Reflect=True
+	PlaySFX: SFX=Curse ; Reflect=True ; MeshColors=(0.454, 0.454, 0.093)
+	WaitSFXDone: SFX=Curse ; Reflect=True
+ElseThread: Condition=ItemUseId == 2189 ; Sync=True
+	LoadSFX: SFX=Venom_Powder ; Reflect=True
+	WaitSFXLoaded: SFX=Venom_Powder ; Reflect=True
+	PlaySFX: SFX=Venom_Powder ; Reflect=True ; MeshColors=(0.552, 0.277, 0.171)
+	WaitSFXDone: SFX=Venom_Powder ; Reflect=True
+ElseThread: Condition=ItemUseId == 2190 ; Sync=True
+	LoadSFX: SFX=Ultra_Sound_Wave ; Reflect=True
+	WaitSFXLoaded: SFX=Ultra_Sound_Wave ; Reflect=True
+	PlaySFX: SFX=Ultra_Sound_Wave ; Reflect=True ; MeshColors=(0.552, 0.277, 0.171)
+	WaitSFXDone: SFX=Ultra_Sound_Wave ; Reflect=True
+ElseThread: Condition=ItemUseId == 2191 ; Sync=True
+	LoadSFX: SFX=Darkness ; Reflect=True
+	WaitSFXLoaded: SFX=Darkness ; Reflect=True
+	PlaySFX: SFX=Darkness ; Reflect=True ; MeshColors=(0.552, 0.277, 0.171)
+	WaitSFXDone: SFX=Darkness ; Reflect=True
+ElseThread: Condition=ItemUseId == 2192 ; Sync=True
+	LoadSFX: SFX=Gradual_Petrify ; Reflect=True
+	WaitSFXLoaded: SFX=Gradual_Petrify ; Reflect=True
+	PlaySFX: SFX=Gradual_Petrify ; Reflect=True ; MeshColors=(0.552, 0.277, 0.171)
+	WaitSFXDone: SFX=Gradual_Petrify ; Reflect=True
+ElseThread: Condition=ItemUseId == 2193 ; Sync=True
+	LoadSFX: SFX=Trouble_Mucus ; Reflect=True
+	WaitSFXLoaded: SFX=Trouble_Mucus ; Reflect=True
+	PlaySFX: SFX=Trouble_Mucus ; Reflect=True ; MeshColors=(0.552, 0.277, 0.171)
+	WaitSFXDone: SFX=Trouble_Mucus ; Reflect=True
+ElseThread: Condition=ItemUseId == 2194 ; Sync=True
+	LoadSFX: SFX=Zombie_Powder ; Reflect=True
+	WaitSFXLoaded: SFX=Zombie_Powder ; Reflect=True
+	PlaySFX: SFX=Zombie_Powder ; Reflect=True ; MeshColors=(0.552, 0.277, 0.171)
+	WaitSFXDone: SFX=Zombie_Powder ; Reflect=True
+ElseThread: Condition=ItemUseId == 2195 ; Sync=True
+	LoadSFX: SFX=Virus_Powder ; Reflect=True
+	WaitSFXLoaded: SFX=Virus_Powder ; Reflect=True
+	PlaySFX: SFX=Virus_Powder ; Reflect=True ; MeshColors=(0.552, 0.277, 0.171)
+	WaitSFXDone: SFX=Virus_Powder ; Reflect=True
+ElseThread: Condition=ItemUseId == 2196 ; Sync=True
+	LoadSFX: SFX=Curse__Single ; Reflect=True
+	WaitSFXLoaded: SFX=Curse__Single ; Reflect=True
+	PlaySFX: SFX=Curse__Single ; Reflect=True ; MeshColors=(0.552, 0.277, 0.171)
+	WaitSFXDone: SFX=Curse__Single ; Reflect=True
+ElseThread: Condition=ItemUseId == 2197 ; Sync=True
+	LoadSFX: SFX=Curse ; Reflect=True
+	WaitSFXLoaded: SFX=Curse ; Reflect=True
+	PlaySFX: SFX=Curse ; Reflect=True ; MeshColors=(0.552, 0.277, 0.171)
+	WaitSFXDone: SFX=Curse ; Reflect=True
+ElseThread: Condition=ItemUseId == 2198 ; Sync=True
+	LoadSFX: SFX=Venom_Powder ; Reflect=True
+	WaitSFXLoaded: SFX=Venom_Powder ; Reflect=True
+	PlaySFX: SFX=Venom_Powder ; Reflect=True ; MeshColors=(0.143, 0.423, 0.434)
+	WaitSFXDone: SFX=Venom_Powder ; Reflect=True
+ElseThread: Condition=ItemUseId == 2199 ; Sync=True
+	LoadSFX: SFX=Ultra_Sound_Wave ; Reflect=True
+	WaitSFXLoaded: SFX=Ultra_Sound_Wave ; Reflect=True
+	PlaySFX: SFX=Ultra_Sound_Wave ; Reflect=True ; MeshColors=(0.143, 0.423, 0.434)
+	WaitSFXDone: SFX=Ultra_Sound_Wave ; Reflect=True
+ElseThread: Condition=ItemUseId == 2200 ; Sync=True
+	LoadSFX: SFX=Darkness ; Reflect=True
+	WaitSFXLoaded: SFX=Darkness ; Reflect=True
+	PlaySFX: SFX=Darkness ; Reflect=True ; MeshColors=(0.143, 0.423, 0.434)
+	WaitSFXDone: SFX=Darkness ; Reflect=True
+ElseThread: Condition=ItemUseId == 2201 ; Sync=True
+	LoadSFX: SFX=Gradual_Petrify ; Reflect=True
+	WaitSFXLoaded: SFX=Gradual_Petrify ; Reflect=True
+	PlaySFX: SFX=Gradual_Petrify ; Reflect=True ; MeshColors=(0.143, 0.423, 0.434)
+	WaitSFXDone: SFX=Gradual_Petrify ; Reflect=True
+ElseThread: Condition=ItemUseId == 2202 ; Sync=True
+	LoadSFX: SFX=Trouble_Mucus ; Reflect=True
+	WaitSFXLoaded: SFX=Trouble_Mucus ; Reflect=True
+	PlaySFX: SFX=Trouble_Mucus ; Reflect=True ; MeshColors=(0.143, 0.423, 0.434)
+	WaitSFXDone: SFX=Trouble_Mucus ; Reflect=True
+ElseThread: Condition=ItemUseId == 2203 ; Sync=True
+	LoadSFX: SFX=Zombie_Powder ; Reflect=True
+	WaitSFXLoaded: SFX=Zombie_Powder ; Reflect=True
+	PlaySFX: SFX=Zombie_Powder ; Reflect=True ; MeshColors=(0.143, 0.423, 0.434)
+	WaitSFXDone: SFX=Zombie_Powder ; Reflect=True
+ElseThread: Condition=ItemUseId == 2204 ; Sync=True
+	LoadSFX: SFX=Virus_Powder ; Reflect=True
+	WaitSFXLoaded: SFX=Virus_Powder ; Reflect=True
+	PlaySFX: SFX=Virus_Powder ; Reflect=True ; MeshColors=(0.143, 0.423, 0.434)
+	WaitSFXDone: SFX=Virus_Powder ; Reflect=True
+ElseThread: Condition=ItemUseId == 2205 ; Sync=True
+	LoadSFX: SFX=Curse__Single ; Reflect=True
+	WaitSFXLoaded: SFX=Curse__Single ; Reflect=True
+	PlaySFX: SFX=Curse__Single ; Reflect=True ; MeshColors=(0.143, 0.423, 0.434)
+	WaitSFXDone: SFX=Curse__Single ; Reflect=True
+ElseThread: Condition=ItemUseId == 2206 ; Sync=True
+	LoadSFX: SFX=Curse ; Reflect=True
+	WaitSFXLoaded: SFX=Curse ; Reflect=True
+	PlaySFX: SFX=Curse ; Reflect=True ; MeshColors=(0.143, 0.423, 0.434)
+	WaitSFXDone: SFX=Curse ; Reflect=True
+ElseThread: Condition=ItemUseId == 2207 ; Sync=True
+	LoadSFX: SFX=Venom_Powder ; Reflect=True
+	WaitSFXLoaded: SFX=Venom_Powder ; Reflect=True
+	PlaySFX: SFX=Venom_Powder ; Reflect=True ; MeshColors=(0.405, 0.179, 0.416)
+	WaitSFXDone: SFX=Venom_Powder ; Reflect=True
+ElseThread: Condition=ItemUseId == 2208 ; Sync=True
+	LoadSFX: SFX=Ultra_Sound_Wave ; Reflect=True
+	WaitSFXLoaded: SFX=Ultra_Sound_Wave ; Reflect=True
+	PlaySFX: SFX=Ultra_Sound_Wave ; Reflect=True ; MeshColors=(0.405, 0.179, 0.416)
+	WaitSFXDone: SFX=Ultra_Sound_Wave ; Reflect=True
+ElseThread: Condition=ItemUseId == 2209 ; Sync=True
+	LoadSFX: SFX=Darkness ; Reflect=True
+	WaitSFXLoaded: SFX=Darkness ; Reflect=True
+	PlaySFX: SFX=Darkness ; Reflect=True ; MeshColors=(0.405, 0.179, 0.416)
+	WaitSFXDone: SFX=Darkness ; Reflect=True
+ElseThread: Condition=ItemUseId == 2210 ; Sync=True
+	LoadSFX: SFX=Gradual_Petrify ; Reflect=True
+	WaitSFXLoaded: SFX=Gradual_Petrify ; Reflect=True
+	PlaySFX: SFX=Gradual_Petrify ; Reflect=True ; MeshColors=(0.405, 0.179, 0.416)
+	WaitSFXDone: SFX=Gradual_Petrify ; Reflect=True
+ElseThread: Condition=ItemUseId == 2211 ; Sync=True
+	LoadSFX: SFX=Trouble_Mucus ; Reflect=True
+	WaitSFXLoaded: SFX=Trouble_Mucus ; Reflect=True
+	PlaySFX: SFX=Trouble_Mucus ; Reflect=True ; MeshColors=(0.405, 0.179, 0.416)
+	WaitSFXDone: SFX=Trouble_Mucus ; Reflect=True
+ElseThread: Condition=ItemUseId == 2212 ; Sync=True
+	LoadSFX: SFX=Zombie_Powder ; Reflect=True
+	WaitSFXLoaded: SFX=Zombie_Powder ; Reflect=True
+	PlaySFX: SFX=Zombie_Powder ; Reflect=True ; MeshColors=(0.405, 0.179, 0.416)
+	WaitSFXDone: SFX=Zombie_Powder ; Reflect=True
+ElseThread: Condition=ItemUseId == 2213 ; Sync=True
+	LoadSFX: SFX=Virus_Powder ; Reflect=True
+	WaitSFXLoaded: SFX=Virus_Powder ; Reflect=True
+	PlaySFX: SFX=Virus_Powder ; Reflect=True ; MeshColors=(0.405, 0.179, 0.416)
+	WaitSFXDone: SFX=Virus_Powder ; Reflect=True
+ElseThread: Condition=ItemUseId == 2214 ; Sync=True
+	LoadSFX: SFX=Curse__Single ; Reflect=True
+	WaitSFXLoaded: SFX=Curse__Single ; Reflect=True
+	PlaySFX: SFX=Curse__Single ; Reflect=True ; MeshColors=(0.405, 0.179, 0.416)
+	WaitSFXDone: SFX=Curse__Single ; Reflect=True
+ElseThread: Condition=ItemUseId == 2215 ; Sync=True
+	LoadSFX: SFX=Curse ; Reflect=True
+	WaitSFXLoaded: SFX=Curse ; Reflect=True
+	PlaySFX: SFX=Curse ; Reflect=True ; MeshColors=(0.405, 0.179, 0.416)
+	WaitSFXDone: SFX=Curse ; Reflect=True
+ElseThread: Condition=ItemUseId == 2216 ; Sync=True
+	LoadSFX: SFX=Venom_Powder ; Reflect=True
+	WaitSFXLoaded: SFX=Venom_Powder ; Reflect=True
+	PlaySFX: SFX=Venom_Powder ; Reflect=True ; MeshColors=(0.22, 0.259, 0.52)
+	WaitSFXDone: SFX=Venom_Powder ; Reflect=True
+ElseThread: Condition=ItemUseId == 2217 ; Sync=True
+	LoadSFX: SFX=Ultra_Sound_Wave ; Reflect=True
+	WaitSFXLoaded: SFX=Ultra_Sound_Wave ; Reflect=True
+	PlaySFX: SFX=Ultra_Sound_Wave ; Reflect=True ; MeshColors=(0.22, 0.259, 0.52)
+	WaitSFXDone: SFX=Ultra_Sound_Wave ; Reflect=True
+ElseThread: Condition=ItemUseId == 2218 ; Sync=True
+	LoadSFX: SFX=Darkness ; Reflect=True
+	WaitSFXLoaded: SFX=Darkness ; Reflect=True
+	PlaySFX: SFX=Darkness ; Reflect=True ; MeshColors=(0.22, 0.259, 0.52)
+	WaitSFXDone: SFX=Darkness ; Reflect=True
+ElseThread: Condition=ItemUseId == 2219 ; Sync=True
+	LoadSFX: SFX=Gradual_Petrify ; Reflect=True
+	WaitSFXLoaded: SFX=Gradual_Petrify ; Reflect=True
+	PlaySFX: SFX=Gradual_Petrify ; Reflect=True ; MeshColors=(0.22, 0.259, 0.52)
+	WaitSFXDone: SFX=Gradual_Petrify ; Reflect=True
+ElseThread: Condition=ItemUseId == 2220 ; Sync=True
+	LoadSFX: SFX=Trouble_Mucus ; Reflect=True
+	WaitSFXLoaded: SFX=Trouble_Mucus ; Reflect=True
+	PlaySFX: SFX=Trouble_Mucus ; Reflect=True ; MeshColors=(0.22, 0.259, 0.52)
+	WaitSFXDone: SFX=Trouble_Mucus ; Reflect=True
+ElseThread: Condition=ItemUseId == 2221 ; Sync=True
+	LoadSFX: SFX=Zombie_Powder ; Reflect=True
+	WaitSFXLoaded: SFX=Zombie_Powder ; Reflect=True
+	PlaySFX: SFX=Zombie_Powder ; Reflect=True ; MeshColors=(0.22, 0.259, 0.52)
+	WaitSFXDone: SFX=Zombie_Powder ; Reflect=True
+ElseThread: Condition=ItemUseId == 2222 ; Sync=True
+	LoadSFX: SFX=Virus_Powder ; Reflect=True
+	WaitSFXLoaded: SFX=Virus_Powder ; Reflect=True
+	PlaySFX: SFX=Virus_Powder ; Reflect=True ; MeshColors=(0.22, 0.259, 0.52)
+	WaitSFXDone: SFX=Virus_Powder ; Reflect=True
+ElseThread: Condition=ItemUseId == 2223 ; Sync=True
+	LoadSFX: SFX=Curse__Single ; Reflect=True
+	WaitSFXLoaded: SFX=Curse__Single ; Reflect=True
+	PlaySFX: SFX=Curse__Single ; Reflect=True ; MeshColors=(0.22, 0.259, 0.52)
+	WaitSFXDone: SFX=Curse__Single ; Reflect=True
+ElseThread: Condition=ItemUseId == 2224 ; Sync=True
+	LoadSFX: SFX=Curse ; Reflect=True
+	WaitSFXLoaded: SFX=Curse ; Reflect=True
+	PlaySFX: SFX=Curse ; Reflect=True ; MeshColors=(0.22, 0.259, 0.52)
+	WaitSFXDone: SFX=Curse ; Reflect=True
+ElseThread: Condition=ItemUseId == 2225 ; Sync=True
+	LoadSFX: SFX=Venom_Powder ; Reflect=True
+	WaitSFXLoaded: SFX=Venom_Powder ; Reflect=True
+	PlaySFX: SFX=Venom_Powder ; Reflect=True ; MeshColors=(0.445, 0.366, 0.188)
+	WaitSFXDone: SFX=Venom_Powder ; Reflect=True
+ElseThread: Condition=ItemUseId == 2226 ; Sync=True
+	LoadSFX: SFX=Ultra_Sound_Wave ; Reflect=True
+	WaitSFXLoaded: SFX=Ultra_Sound_Wave ; Reflect=True
+	PlaySFX: SFX=Ultra_Sound_Wave ; Reflect=True ; MeshColors=(0.445, 0.366, 0.188)
+	WaitSFXDone: SFX=Ultra_Sound_Wave ; Reflect=True
+ElseThread: Condition=ItemUseId == 2227 ; Sync=True
+	LoadSFX: SFX=Darkness ; Reflect=True
+	WaitSFXLoaded: SFX=Darkness ; Reflect=True
+	PlaySFX: SFX=Darkness ; Reflect=True ; MeshColors=(0.445, 0.366, 0.188)
+	WaitSFXDone: SFX=Darkness ; Reflect=True
+ElseThread: Condition=ItemUseId == 2228 ; Sync=True
+	LoadSFX: SFX=Gradual_Petrify ; Reflect=True
+	WaitSFXLoaded: SFX=Gradual_Petrify ; Reflect=True
+	PlaySFX: SFX=Gradual_Petrify ; Reflect=True ; MeshColors=(0.445, 0.366, 0.188)
+	WaitSFXDone: SFX=Gradual_Petrify ; Reflect=True
+ElseThread: Condition=ItemUseId == 2229 ; Sync=True
+	LoadSFX: SFX=Trouble_Mucus ; Reflect=True
+	WaitSFXLoaded: SFX=Trouble_Mucus ; Reflect=True
+	PlaySFX: SFX=Trouble_Mucus ; Reflect=True ; MeshColors=(0.445, 0.366, 0.188)
+	WaitSFXDone: SFX=Trouble_Mucus ; Reflect=True
+ElseThread: Condition=ItemUseId == 2230 ; Sync=True
+	LoadSFX: SFX=Zombie_Powder ; Reflect=True
+	WaitSFXLoaded: SFX=Zombie_Powder ; Reflect=True
+	PlaySFX: SFX=Zombie_Powder ; Reflect=True ; MeshColors=(0.445, 0.366, 0.188)
+	WaitSFXDone: SFX=Zombie_Powder ; Reflect=True
+ElseThread: Condition=ItemUseId == 2231 ; Sync=True
+	LoadSFX: SFX=Virus_Powder ; Reflect=True
+	WaitSFXLoaded: SFX=Virus_Powder ; Reflect=True
+	PlaySFX: SFX=Virus_Powder ; Reflect=True ; MeshColors=(0.445, 0.366, 0.188)
+	WaitSFXDone: SFX=Virus_Powder ; Reflect=True
+ElseThread: Condition=ItemUseId == 2232 ; Sync=True
+	LoadSFX: SFX=Curse__Single ; Reflect=True
+	WaitSFXLoaded: SFX=Curse__Single ; Reflect=True
+	PlaySFX: SFX=Curse__Single ; Reflect=True ; MeshColors=(0.445, 0.366, 0.188)
+	WaitSFXDone: SFX=Curse__Single ; Reflect=True
+ElseThread: Condition=ItemUseId == 2233 ; Sync=True
+	LoadSFX: SFX=Curse ; Reflect=True
+	WaitSFXLoaded: SFX=Curse ; Reflect=True
+	PlaySFX: SFX=Curse ; Reflect=True ; MeshColors=(0.445, 0.366, 0.188)
+	WaitSFXDone: SFX=Curse ; Reflect=True
+ElseThread: Condition=ItemUseId == 2234 ; Sync=True
+	LoadSFX: SFX=Venom_Powder ; Reflect=True
+	WaitSFXLoaded: SFX=Venom_Powder ; Reflect=True
+	PlaySFX: SFX=Venom_Powder ; Reflect=True ; MeshColors=(0.899, 0.101, 0.0)
+	WaitSFXDone: SFX=Venom_Powder ; Reflect=True
+ElseThread: Condition=ItemUseId == 2235 ; Sync=True
+	LoadSFX: SFX=Ultra_Sound_Wave ; Reflect=True
+	WaitSFXLoaded: SFX=Ultra_Sound_Wave ; Reflect=True
+	PlaySFX: SFX=Ultra_Sound_Wave ; Reflect=True ; MeshColors=(0.899, 0.101, 0.0)
+	WaitSFXDone: SFX=Ultra_Sound_Wave ; Reflect=True
+ElseThread: Condition=ItemUseId == 2236 ; Sync=True
+	LoadSFX: SFX=Darkness ; Reflect=True
+	WaitSFXLoaded: SFX=Darkness ; Reflect=True
+	PlaySFX: SFX=Darkness ; Reflect=True ; MeshColors=(0.899, 0.101, 0.0)
+	WaitSFXDone: SFX=Darkness ; Reflect=True
+ElseThread: Condition=ItemUseId == 2237 ; Sync=True
+	LoadSFX: SFX=Gradual_Petrify ; Reflect=True
+	WaitSFXLoaded: SFX=Gradual_Petrify ; Reflect=True
+	PlaySFX: SFX=Gradual_Petrify ; Reflect=True ; MeshColors=(0.899, 0.101, 0.0)
+	WaitSFXDone: SFX=Gradual_Petrify ; Reflect=True
+ElseThread: Condition=ItemUseId == 2238 ; Sync=True
+	LoadSFX: SFX=Trouble_Mucus ; Reflect=True
+	WaitSFXLoaded: SFX=Trouble_Mucus ; Reflect=True
+	PlaySFX: SFX=Trouble_Mucus ; Reflect=True ; MeshColors=(0.899, 0.101, 0.0)
+	WaitSFXDone: SFX=Trouble_Mucus ; Reflect=True
+ElseThread: Condition=ItemUseId == 2239 ; Sync=True
+	LoadSFX: SFX=Zombie_Powder ; Reflect=True
+	WaitSFXLoaded: SFX=Zombie_Powder ; Reflect=True
+	PlaySFX: SFX=Zombie_Powder ; Reflect=True ; MeshColors=(0.899, 0.101, 0.0)
+	WaitSFXDone: SFX=Zombie_Powder ; Reflect=True
+ElseThread: Condition=ItemUseId == 2240 ; Sync=True
+	LoadSFX: SFX=Virus_Powder ; Reflect=True
+	WaitSFXLoaded: SFX=Virus_Powder ; Reflect=True
+	PlaySFX: SFX=Virus_Powder ; Reflect=True ; MeshColors=(0.899, 0.101, 0.0)
+	WaitSFXDone: SFX=Virus_Powder ; Reflect=True
+ElseThread: Condition=ItemUseId == 2241 ; Sync=True
+	LoadSFX: SFX=Curse__Single ; Reflect=True
+	WaitSFXLoaded: SFX=Curse__Single ; Reflect=True
+	PlaySFX: SFX=Curse__Single ; Reflect=True ; MeshColors=(0.899, 0.101, 0.0)
+	WaitSFXDone: SFX=Curse__Single ; Reflect=True
+ElseThread: Condition=ItemUseId == 2242 ; Sync=True
+	LoadSFX: SFX=Curse ; Reflect=True
+	WaitSFXLoaded: SFX=Curse ; Reflect=True
+	PlaySFX: SFX=Curse ; Reflect=True ; MeshColors=(0.899, 0.101, 0.0)
+	WaitSFXDone: SFX=Curse ; Reflect=True	
+ElseThread: Condition=ItemUseId == 2243 ; Sync=True
+	LoadSFX: SFX=Venom_Powder ; Reflect=True
+	WaitSFXLoaded: SFX=Venom_Powder ; Reflect=True
+	PlaySFX: SFX=Venom_Powder ; Reflect=True ; MeshColors=(0.359, 0.289, 0.352)
+	WaitSFXDone: SFX=Venom_Powder ; Reflect=True
+ElseThread: Condition=ItemUseId == 2244 ; Sync=True
+	LoadSFX: SFX=Ultra_Sound_Wave ; Reflect=True
+	WaitSFXLoaded: SFX=Ultra_Sound_Wave ; Reflect=True
+	PlaySFX: SFX=Ultra_Sound_Wave ; Reflect=True ; MeshColors=(0.359, 0.289, 0.352)
+	WaitSFXDone: SFX=Ultra_Sound_Wave ; Reflect=True
+ElseThread: Condition=ItemUseId == 2245 ; Sync=True
+	LoadSFX: SFX=Darkness ; Reflect=True
+	WaitSFXLoaded: SFX=Darkness ; Reflect=True
+	PlaySFX: SFX=Darkness ; Reflect=True ; MeshColors=(0.359, 0.289, 0.352)
+	WaitSFXDone: SFX=Darkness ; Reflect=True
+ElseThread: Condition=ItemUseId == 2246 ; Sync=True
+	LoadSFX: SFX=Gradual_Petrify ; Reflect=True
+	WaitSFXLoaded: SFX=Gradual_Petrify ; Reflect=True
+	PlaySFX: SFX=Gradual_Petrify ; Reflect=True ; MeshColors=(0.359, 0.289, 0.352)
+	WaitSFXDone: SFX=Gradual_Petrify ; Reflect=True
+ElseThread: Condition=ItemUseId == 2247 ; Sync=True
+	LoadSFX: SFX=Trouble_Mucus ; Reflect=True
+	WaitSFXLoaded: SFX=Trouble_Mucus ; Reflect=True
+	PlaySFX: SFX=Trouble_Mucus ; Reflect=True ; MeshColors=(0.359, 0.289, 0.352)
+	WaitSFXDone: SFX=Trouble_Mucus ; Reflect=True
+ElseThread: Condition=ItemUseId == 2248 ; Sync=True
+	LoadSFX: SFX=Zombie_Powder ; Reflect=True
+	WaitSFXLoaded: SFX=Zombie_Powder ; Reflect=True
+	PlaySFX: SFX=Zombie_Powder ; Reflect=True ; MeshColors=(0.359, 0.289, 0.352)
+	WaitSFXDone: SFX=Zombie_Powder ; Reflect=True
+ElseThread: Condition=ItemUseId == 2249 ; Sync=True
+	LoadSFX: SFX=Virus_Powder ; Reflect=True
+	WaitSFXLoaded: SFX=Virus_Powder ; Reflect=True
+	PlaySFX: SFX=Virus_Powder ; Reflect=True ; MeshColors=(0.359, 0.289, 0.352)
+	WaitSFXDone: SFX=Virus_Powder ; Reflect=True
+ElseThread: Condition=ItemUseId == 2250 ; Sync=True
+	LoadSFX: SFX=Curse__Single ; Reflect=True
+	WaitSFXLoaded: SFX=Curse__Single ; Reflect=True
+	PlaySFX: SFX=Curse__Single ; Reflect=True ; MeshColors=(0.359, 0.289, 0.352)
+	WaitSFXDone: SFX=Curse__Single ; Reflect=True
+ElseThread: Condition=ItemUseId == 2251 ; Sync=True
+	LoadSFX: SFX=Curse ; Reflect=True
+	WaitSFXLoaded: SFX=Curse ; Reflect=True
+	PlaySFX: SFX=Curse ; Reflect=True ; MeshColors=(0.359, 0.289, 0.352)
+	WaitSFXDone: SFX=Curse ; Reflect=True
+ElseThread: Condition=ItemUseId == 2252 ; Sync=True
+	LoadSFX: SFX=Venom_Powder ; Reflect=True
+	WaitSFXLoaded: SFX=Venom_Powder ; Reflect=True
+	PlaySFX: SFX=Venom_Powder ; Reflect=True ; MeshColors=(0.267, 0.449, 0.284)
+	WaitSFXDone: SFX=Venom_Powder ; Reflect=True
+ElseThread: Condition=ItemUseId == 2253 ; Sync=True
+	LoadSFX: SFX=Ultra_Sound_Wave ; Reflect=True
+	WaitSFXLoaded: SFX=Ultra_Sound_Wave ; Reflect=True
+	PlaySFX: SFX=Ultra_Sound_Wave ; Reflect=True ; MeshColors=(0.267, 0.449, 0.284)
+	WaitSFXDone: SFX=Ultra_Sound_Wave ; Reflect=True
+ElseThread: Condition=ItemUseId == 2254 ; Sync=True
+	LoadSFX: SFX=Darkness ; Reflect=True
+	WaitSFXLoaded: SFX=Darkness ; Reflect=True
+	PlaySFX: SFX=Darkness ; Reflect=True ; MeshColors=(0.267, 0.449, 0.284)
+	WaitSFXDone: SFX=Darkness ; Reflect=True
+ElseThread: Condition=ItemUseId == 2255 ; Sync=True
+	LoadSFX: SFX=Gradual_Petrify ; Reflect=True
+	WaitSFXLoaded: SFX=Gradual_Petrify ; Reflect=True
+	PlaySFX: SFX=Gradual_Petrify ; Reflect=True ; MeshColors=(0.267, 0.449, 0.284)
+	WaitSFXDone: SFX=Gradual_Petrify ; Reflect=True
+ElseThread: Condition=ItemUseId == 2256 ; Sync=True
+	LoadSFX: SFX=Trouble_Mucus ; Reflect=True
+	WaitSFXLoaded: SFX=Trouble_Mucus ; Reflect=True
+	PlaySFX: SFX=Trouble_Mucus ; Reflect=True ; MeshColors=(0.267, 0.449, 0.284)
+	WaitSFXDone: SFX=Trouble_Mucus ; Reflect=True
+ElseThread: Condition=ItemUseId == 2257 ; Sync=True
+	LoadSFX: SFX=Zombie_Powder ; Reflect=True
+	WaitSFXLoaded: SFX=Zombie_Powder ; Reflect=True
+	PlaySFX: SFX=Zombie_Powder ; Reflect=True ; MeshColors=(0.267, 0.449, 0.284)
+	WaitSFXDone: SFX=Zombie_Powder ; Reflect=True
+ElseThread: Condition=ItemUseId == 2258 ; Sync=True
+	LoadSFX: SFX=Virus_Powder ; Reflect=True
+	WaitSFXLoaded: SFX=Virus_Powder ; Reflect=True
+	PlaySFX: SFX=Virus_Powder ; Reflect=True ; MeshColors=(0.267, 0.449, 0.284)
+	WaitSFXDone: SFX=Virus_Powder ; Reflect=True
+ElseThread: Condition=ItemUseId == 2259 ; Sync=True
+	LoadSFX: SFX=Curse__Single ; Reflect=True
+	WaitSFXLoaded: SFX=Curse__Single ; Reflect=True
+	PlaySFX: SFX=Curse__Single ; Reflect=True ; MeshColors=(0.267, 0.449, 0.284)
+	WaitSFXDone: SFX=Curse__Single ; Reflect=True
+ElseThread: Condition=ItemUseId == 2260 ; Sync=True
+	LoadSFX: SFX=Curse ; Reflect=True
+	WaitSFXLoaded: SFX=Curse ; Reflect=True
+	PlaySFX: SFX=Curse ; Reflect=True ; MeshColors=(0.267, 0.449, 0.284)
+	WaitSFXDone: SFX=Curse ; Reflect=True
+ElseThread: Condition=ItemUseId == 2261 ; Sync=True
+	LoadSFX: SFX=Venom_Powder ; Reflect=True
+	WaitSFXLoaded: SFX=Venom_Powder ; Reflect=True
+	PlaySFX: SFX=Venom_Powder ; Reflect=True ; MeshColors=(0.481, 0.066, 0.452)
+	WaitSFXDone: SFX=Venom_Powder ; Reflect=True
+ElseThread: Condition=ItemUseId == 2262 ; Sync=True
+	LoadSFX: SFX=Ultra_Sound_Wave ; Reflect=True
+	WaitSFXLoaded: SFX=Ultra_Sound_Wave ; Reflect=True
+	PlaySFX: SFX=Ultra_Sound_Wave ; Reflect=True ; MeshColors=(0.481, 0.066, 0.452)
+	WaitSFXDone: SFX=Ultra_Sound_Wave ; Reflect=True
+ElseThread: Condition=ItemUseId == 2263 ; Sync=True
+	LoadSFX: SFX=Darkness ; Reflect=True
+	WaitSFXLoaded: SFX=Darkness ; Reflect=True
+	PlaySFX: SFX=Darkness ; Reflect=True ; MeshColors=(0.481, 0.066, 0.452)
+	WaitSFXDone: SFX=Darkness ; Reflect=True
+ElseThread: Condition=ItemUseId == 2264 ; Sync=True
+	LoadSFX: SFX=Gradual_Petrify ; Reflect=True
+	WaitSFXLoaded: SFX=Gradual_Petrify ; Reflect=True
+	PlaySFX: SFX=Gradual_Petrify ; Reflect=True ; MeshColors=(0.481, 0.066, 0.452)
+	WaitSFXDone: SFX=Gradual_Petrify ; Reflect=True
+ElseThread: Condition=ItemUseId == 2265 ; Sync=True
+	LoadSFX: SFX=Trouble_Mucus ; Reflect=True
+	WaitSFXLoaded: SFX=Trouble_Mucus ; Reflect=True
+	PlaySFX: SFX=Trouble_Mucus ; Reflect=True ; MeshColors=(0.481, 0.066, 0.452)
+	WaitSFXDone: SFX=Trouble_Mucus ; Reflect=True
+ElseThread: Condition=ItemUseId == 2266 ; Sync=True
+	LoadSFX: SFX=Zombie_Powder ; Reflect=True
+	WaitSFXLoaded: SFX=Zombie_Powder ; Reflect=True
+	PlaySFX: SFX=Zombie_Powder ; Reflect=True ; MeshColors=(0.481, 0.066, 0.452)
+	WaitSFXDone: SFX=Zombie_Powder ; Reflect=True
+ElseThread: Condition=ItemUseId == 2267 ; Sync=True
+	LoadSFX: SFX=Virus_Powder ; Reflect=True
+	WaitSFXLoaded: SFX=Virus_Powder ; Reflect=True
+	PlaySFX: SFX=Virus_Powder ; Reflect=True ; MeshColors=(0.481, 0.066, 0.452)
+	WaitSFXDone: SFX=Virus_Powder ; Reflect=True
+ElseThread: Condition=ItemUseId == 2268 ; Sync=True
+	LoadSFX: SFX=Curse__Single ; Reflect=True
+	WaitSFXLoaded: SFX=Curse__Single ; Reflect=True
+	PlaySFX: SFX=Curse__Single ; Reflect=True ; MeshColors=(0.481, 0.066, 0.452)
+	WaitSFXDone: SFX=Curse__Single ; Reflect=True
+ElseThread: Condition=ItemUseId == 2269 ; Sync=True
+	LoadSFX: SFX=Curse ; Reflect=True
+	WaitSFXLoaded: SFX=Curse ; Reflect=True
+	PlaySFX: SFX=Curse ; Reflect=True ; MeshColors=(0.481, 0.066, 0.452)
+	WaitSFXDone: SFX=Curse ; Reflect=True	
+ElseThread: Condition=ItemUseId == 2270 ; Sync=True
+	LoadSFX: SFX=Venom_Powder ; Reflect=True
+	WaitSFXLoaded: SFX=Venom_Powder ; Reflect=True
+	PlaySFX: SFX=Venom_Powder ; Reflect=True ; MeshColors=(0.368, 0.371, 0.261)
+	WaitSFXDone: SFX=Venom_Powder ; Reflect=True
+ElseThread: Condition=ItemUseId == 2271 ; Sync=True
+	LoadSFX: SFX=Ultra_Sound_Wave ; Reflect=True
+	WaitSFXLoaded: SFX=Ultra_Sound_Wave ; Reflect=True
+	PlaySFX: SFX=Ultra_Sound_Wave ; Reflect=True ; MeshColors=(0.368, 0.371, 0.261)
+	WaitSFXDone: SFX=Ultra_Sound_Wave ; Reflect=True
+ElseThread: Condition=ItemUseId == 2272 ; Sync=True
+	LoadSFX: SFX=Darkness ; Reflect=True
+	WaitSFXLoaded: SFX=Darkness ; Reflect=True
+	PlaySFX: SFX=Darkness ; Reflect=True ; MeshColors=(0.368, 0.371, 0.261)
+	WaitSFXDone: SFX=Darkness ; Reflect=True
+ElseThread: Condition=ItemUseId == 2273 ; Sync=True
+	LoadSFX: SFX=Gradual_Petrify ; Reflect=True
+	WaitSFXLoaded: SFX=Gradual_Petrify ; Reflect=True
+	PlaySFX: SFX=Gradual_Petrify ; Reflect=True ; MeshColors=(0.368, 0.371, 0.261)
+	WaitSFXDone: SFX=Gradual_Petrify ; Reflect=True
+ElseThread: Condition=ItemUseId == 2274 ; Sync=True
+	LoadSFX: SFX=Trouble_Mucus ; Reflect=True
+	WaitSFXLoaded: SFX=Trouble_Mucus ; Reflect=True
+	PlaySFX: SFX=Trouble_Mucus ; Reflect=True ; MeshColors=(0.368, 0.371, 0.261)
+	WaitSFXDone: SFX=Trouble_Mucus ; Reflect=True
+ElseThread: Condition=ItemUseId == 2275 ; Sync=True
+	LoadSFX: SFX=Zombie_Powder ; Reflect=True
+	WaitSFXLoaded: SFX=Zombie_Powder ; Reflect=True
+	PlaySFX: SFX=Zombie_Powder ; Reflect=True ; MeshColors=(0.368, 0.371, 0.261)
+	WaitSFXDone: SFX=Zombie_Powder ; Reflect=True
+ElseThread: Condition=ItemUseId == 2276 ; Sync=True
+	LoadSFX: SFX=Virus_Powder ; Reflect=True
+	WaitSFXLoaded: SFX=Virus_Powder ; Reflect=True
+	PlaySFX: SFX=Virus_Powder ; Reflect=True ; MeshColors=(0.368, 0.371, 0.261)
+	WaitSFXDone: SFX=Virus_Powder ; Reflect=True
+ElseThread: Condition=ItemUseId == 2277 ; Sync=True
+	LoadSFX: SFX=Curse__Single ; Reflect=True
+	WaitSFXLoaded: SFX=Curse__Single ; Reflect=True
+	PlaySFX: SFX=Curse__Single ; Reflect=True ; MeshColors=(0.368, 0.371, 0.261)
+	WaitSFXDone: SFX=Curse__Single ; Reflect=True
+ElseThread: Condition=ItemUseId == 2278 ; Sync=True
+	LoadSFX: SFX=Curse ; Reflect=True
+	WaitSFXLoaded: SFX=Curse ; Reflect=True
+	PlaySFX: SFX=Curse ; Reflect=True ; MeshColors=(0.368, 0.371, 0.261)
+	WaitSFXDone: SFX=Curse ; Reflect=True
+ElseThread: Condition=ItemUseId == 2279 ; Sync=True
+	LoadSFX: SFX=Thunder__Single ; Reflect=True
+	WaitSFXLoaded: SFX=Thunder__Single ; Reflect=True
+	PlaySFX: SFX=Thunder__Single ; Reflect=True
+	WaitSFXDone: SFX=Thunder__Single ; Reflect=True
+ElseThread: Condition=ItemUseId == 2280 ; Sync=True
+	LoadSFX: SFX=Thundera__Single ; Reflect=True
+	WaitSFXLoaded: SFX=Thundera__Single ; Reflect=True
+	PlaySFX: SFX=Thundera__Single ; Reflect=True
+	WaitSFXDone: SFX=Thundera__Single ; Reflect=True
+ElseThread: Condition=ItemUseId == 2281 ; Sync=True
+	LoadSFX: SFX=Thundaga__Single ; Reflect=True
+	WaitSFXLoaded: SFX=Thundaga__Single ; Reflect=True
+	PlaySFX: SFX=Thundaga__Single ; Reflect=True
+	WaitSFXDone: SFX=Thundaga__Single ; Reflect=True
+ElseThread: Condition=ItemUseId == 2282 ; Sync=True
+	LoadSFX: SFX=Osmose ; Reflect=True
+	WaitSFXLoaded: SFX=Osmose ; Reflect=True
+	PlaySFX: SFX=Osmose ; Reflect=True ; MeshColors=(0.454, 0.454, 0.093) 
+	WaitSFXDone: SFX=Osmose ; Reflect=True
+ElseThread: Condition=ItemUseId == 2283 ; Sync=True
+	LoadSFX: SFX=White_Draw ; Reflect=True ; UseCamera=False
+	WaitSFXLoaded: SFX=White_Draw ; Reflect=True
+	PlaySFX: SFX=White_Draw ; Reflect=True ; JumpToFrame=46 ; MeshColors=(0.454, 0.454, 0.093)
+	WaitSFXDone: SFX=White_Draw ; Reflect=True
+ElseThread: Condition=ItemUseId == 2284 ; Sync=True
+	LoadSFX: SFX=Thundara__Multi ; Reflect=True
+	WaitSFXLoaded: SFX=Thundara__Multi ; Reflect=True
+	PlaySFX: SFX=Thundara__Multi ; Reflect=True
+	WaitSFXDone: SFX=Thundara__Multi ; Reflect=True
+ElseThread: Condition=ItemUseId == 2285 ; Sync=True
+	LoadSFX: SFX=Thundaga__Multi ; Reflect=True
+	WaitSFXLoaded: SFX=Thundaga__Multi ; Reflect=True
+	PlaySFX: SFX=Thundaga__Multi ; Reflect=True
+	WaitSFXDone: SFX=Thundaga__Multi ; Reflect=True
+ElseThread: Condition=ItemUseId == 2286 ; Sync=True
+	LoadSFX: SFX=Fire__Single ; Reflect=True
+	WaitSFXLoaded: SFX=Fire__Single ; Reflect=True
+	PlaySFX: SFX=Fire__Single ; Reflect=True
+	WaitSFXDone: SFX=Fire__Single ; Reflect=True
+ElseThread: Condition=ItemUseId == 2287 ; Sync=True
+	LoadSFX: SFX=Fira__Single ; Reflect=True
+	WaitSFXLoaded: SFX=Fira__Single ; Reflect=True
+	PlaySFX: SFX=Fira__Single ; Reflect=True
+	WaitSFXDone: SFX=Fira__Single ; Reflect=True
+ElseThread: Condition=ItemUseId == 2288 ; Sync=True
+	LoadSFX: SFX=Firaga__Single ; Reflect=True
+	WaitSFXLoaded: SFX=Firaga__Single ; Reflect=True
+	PlaySFX: SFX=Firaga__Single ; Reflect=True
+	WaitSFXDone: SFX=Firaga__Single ; Reflect=True
+ElseThread: Condition=ItemUseId == 2289 ; Sync=True
+	LoadSFX: SFX=Osmose ; Reflect=True
+	WaitSFXLoaded: SFX=Osmose ; Reflect=True
+	PlaySFX: SFX=Osmose ; Reflect=True ; MeshColors=(0.552, 0.277, 0.171) 
+	WaitSFXDone: SFX=Osmose ; Reflect=True
+ElseThread: Condition=ItemUseId == 2290 ; Sync=True
+	LoadSFX: SFX=White_Draw ; Reflect=True ; UseCamera=False
+	WaitSFXLoaded: SFX=White_Draw ; Reflect=True
+	PlaySFX: SFX=White_Draw ; Reflect=True ; JumpToFrame=46 ; MeshColors=(0.552, 0.277, 0.171)
+	WaitSFXDone: SFX=White_Draw ; Reflect=True
+ElseThread: Condition=ItemUseId == 2291 ; Sync=True
+	LoadSFX: SFX=Fira__Multi ; Reflect=True
+	WaitSFXLoaded: SFX=Fira__Multi ; Reflect=True
+	PlaySFX: SFX=Fira__Multi ; Reflect=True
+	WaitSFXDone: SFX=Fira__Multi ; Reflect=True
+ElseThread: Condition=ItemUseId == 2292 ; Sync=True
+	LoadSFX: SFX=Firaga__Multi ; Reflect=True
+	WaitSFXLoaded: SFX=Firaga__Multi ; Reflect=True
+	PlaySFX: SFX=Firaga__Multi ; Reflect=True
+	WaitSFXDone: SFX=Firaga__Multi ; Reflect=True
+ElseThread: Condition=ItemUseId == 2293 ; Sync=True
+	LoadSFX: SFX=Blizzard__Single ; Reflect=True
+	WaitSFXLoaded: SFX=Blizzard__Single ; Reflect=True
+	PlaySFX: SFX=Blizzard__Single ; Reflect=True
+	WaitSFXDone: SFX=Blizzard__Single ; Reflect=True
+ElseThread: Condition=ItemUseId == 2294 ; Sync=True
+	LoadSFX: SFX=Blizzara__Single ; Reflect=True
+	WaitSFXLoaded: SFX=Blizzara__Single ; Reflect=True
+	PlaySFX: SFX=Blizzara__Single ; Reflect=True
+	WaitSFXDone: SFX=Blizzara__Single ; Reflect=True
+ElseThread: Condition=ItemUseId == 2295 ; Sync=True
+	LoadSFX: SFX=Blizzaga__Single ; Reflect=True
+	WaitSFXLoaded: SFX=Blizzaga__Single ; Reflect=True
+	PlaySFX: SFX=Blizzaga__Single ; Reflect=True
+	WaitSFXDone: SFX=Blizzaga__Single ; Reflect=True
+ElseThread: Condition=ItemUseId == 2296 ; Sync=True
+	LoadSFX: SFX=Osmose ; Reflect=True
+	WaitSFXLoaded: SFX=Osmose ; Reflect=True
+	PlaySFX: SFX=Osmose ; Reflect=True ; MeshColors=(0.143, 0.423, 0.434) 
+	WaitSFXDone: SFX=Osmose ; Reflect=True
+ElseThread: Condition=ItemUseId == 2297 ; Sync=True
+	LoadSFX: SFX=White_Draw ; Reflect=True ; UseCamera=False
+	WaitSFXLoaded: SFX=White_Draw ; Reflect=True
+	PlaySFX: SFX=White_Draw ; Reflect=True ; JumpToFrame=46 ; MeshColors=(0.143, 0.423, 0.434)
+	WaitSFXDone: SFX=White_Draw ; Reflect=True
+ElseThread: Condition=ItemUseId == 2298 ; Sync=True
+	LoadSFX: SFX=Blizzara__Multi ; Reflect=True
+	WaitSFXLoaded: SFX=Blizzara__Multi ; Reflect=True
+	PlaySFX: SFX=Blizzara__Multi ; Reflect=True
+	WaitSFXDone: SFX=Blizzara__Multi ; Reflect=True
+ElseThread: Condition=ItemUseId == 2299 ; Sync=True
+	LoadSFX: SFX=Blizzaga__Multi ; Reflect=True
+	WaitSFXLoaded: SFX=Blizzaga__Multi ; Reflect=True
+	PlaySFX: SFX=Blizzaga__Multi ; Reflect=True
+	WaitSFXDone: SFX=Blizzaga__Multi ; Reflect=True
+ElseThread: Condition=ItemUseId == 2300 ; Sync=True
+	LoadSFX: SFX=Heavy ; Reflect=True
+	WaitSFXLoaded: SFX=Heavy ; Reflect=True
+	PlaySFX: SFX=Heavy ; Reflect=True
+	WaitSFXDone: SFX=Heavy ; Reflect=True
+ElseThread: Condition=ItemUseId == 2301 ; Sync=True
+	LoadSFX: SFX=Demi__Single ; Reflect=True
+	WaitSFXLoaded: SFX=Demi__Single ; Reflect=True
+	PlaySFX: SFX=Demi__Single ; Reflect=True
+	WaitSFXDone: SFX=Demi__Single ; Reflect=True
+ElseThread: Condition=ItemUseId == 2302 ; Sync=True
+	LoadSFX: SFX=Demi_Shock__Single ; Reflect=True
+	WaitSFXLoaded: SFX=Demi_Shock__Single ; Reflect=True
+	PlaySFX: SFX=Demi_Shock__Single ; Reflect=True
+	WaitSFXDone: SFX=Demi_Shock__Single ; Reflect=True
+ElseThread: Condition=ItemUseId == 2303 ; Sync=True
+	LoadSFX: SFX=Osmose ; Reflect=True
+	WaitSFXLoaded: SFX=Osmose ; Reflect=True
+	PlaySFX: SFX=Osmose ; Reflect=True ; MeshColors=(0.405, 0.179, 0.416) 
+	WaitSFXDone: SFX=Osmose ; Reflect=True
+ElseThread: Condition=ItemUseId == 2304 ; Sync=True
+	LoadSFX: SFX=White_Draw ; Reflect=True ; UseCamera=False
+	WaitSFXLoaded: SFX=White_Draw ; Reflect=True
+	PlaySFX: SFX=White_Draw ; Reflect=True ; JumpToFrame=46 ; MeshColors=(0.405, 0.179, 0.416)
+	WaitSFXDone: SFX=White_Draw ; Reflect=True
+ElseThread: Condition=ItemUseId == 2305 ; Sync=True
+	LoadSFX: SFX=Demi__Multi ; Reflect=True
+	WaitSFXLoaded: SFX=Demi__Multi ; Reflect=True
+	PlaySFX: SFX=Demi__Multi ; Reflect=True
+	WaitSFXDone: SFX=Demi__Multi ; Reflect=True
+ElseThread: Condition=ItemUseId == 2306 ; Sync=True
+	LoadSFX: SFX=Demi_Shock__Multi ; Reflect=True
+	WaitSFXLoaded: SFX=Demi_Shock__Multi ; Reflect=True
+	PlaySFX: SFX=Demi_Shock__Multi ; Reflect=True
+	WaitSFXDone: SFX=Demi_Shock__Multi ; Reflect=True
+ElseThread: Condition=ItemUseId == 2307 ; Sync=True
+	LoadSFX: SFX=Bubbles ; Reflect=True
+	WaitSFXLoaded: SFX=Bubbles ; Reflect=True
+	PlaySFX: SFX=Bubbles ; Reflect=True
+	WaitSFXDone: SFX=Bubbles ; Reflect=True
+ElseThread: Condition=ItemUseId == 2308 ; Sync=True
+	LoadSFX: SFX=Water__Single ; Reflect=True
+	WaitSFXLoaded: SFX=Water__Single ; Reflect=True
+	PlaySFX: SFX=Water__Single ; Reflect=True
+	WaitSFXDone: SFX=Water__Single ; Reflect=True
+ElseThread: Condition=ItemUseId == 2309 ; Sync=True
+	LoadSFX: SFX=Waterga ; Reflect=True
+	WaitSFXLoaded: SFX=Waterga ; Reflect=True
+	PlaySFX: SFX=Waterga ; Reflect=True
+	WaitSFXDone: SFX=Waterga ; Reflect=True
+ElseThread: Condition=ItemUseId == 2310 ; Sync=True
+	LoadSFX: SFX=Osmose ; Reflect=True
+	WaitSFXLoaded: SFX=Osmose ; Reflect=True
+	PlaySFX: SFX=Osmose ; Reflect=True ; MeshColors=(0.22, 0.259, 0.52) 
+	WaitSFXDone: SFX=Osmose ; Reflect=True
+ElseThread: Condition=ItemUseId == 2311 ; Sync=True
+	LoadSFX: SFX=White_Draw ; Reflect=True ; UseCamera=False
+	WaitSFXLoaded: SFX=White_Draw ; Reflect=True
+	PlaySFX: SFX=White_Draw ; Reflect=True ; JumpToFrame=46 ; MeshColors=(0.22, 0.259, 0.52)
+	WaitSFXDone: SFX=White_Draw ; Reflect=True
+ElseThread: Condition=ItemUseId == 2312 ; Sync=True
+	LoadSFX: SFX=Water__Multi ; Reflect=True
+	WaitSFXLoaded: SFX=Water__Multi ; Reflect=True
+	PlaySFX: SFX=Water__Multi ; Reflect=True
+	WaitSFXDone: SFX=Water__Multi ; Reflect=True
+ElseThread: Condition=ItemUseId == 2313 ; Sync=True
+	LoadSFX: SFX=Waterga ; Reflect=True
+	WaitSFXLoaded: SFX=Waterga ; Reflect=True
+	PlaySFX: SFX=Waterga ; Reflect=True
+	WaitSFXDone: SFX=Waterga ; Reflect=True
+ElseThread: Condition=ItemUseId == 2314 ; Sync=True
+	LoadSFX: SFX=Stone ; Reflect=True
+	WaitSFXLoaded: SFX=Stone ; Reflect=True
+	PlaySFX: SFX=Stone ; Reflect=True
+	WaitSFXDone: SFX=Stone ; Reflect=True
+ElseThread: Condition=ItemUseId == 2315 ; Sync=True
+	LoadSFX: SFX=Break ; Reflect=True
+	WaitSFXLoaded: SFX=Break ; Reflect=True
+	PlaySFX: SFX=Break ; Reflect=True
+	WaitSFXDone: SFX=Break ; Reflect=True
+ElseThread: Condition=ItemUseId == 2316 ; Sync=True
+	LoadSFX: SFX=Earthquake ; Reflect=True
+	WaitSFXLoaded: SFX=Earthquake ; Reflect=True
+	PlaySFX: SFX=Earthquake ; Reflect=True
+	WaitSFXDone: SFX=Earthquake ; Reflect=True
+ElseThread: Condition=ItemUseId == 2317 ; Sync=True
+	LoadSFX: SFX=Osmose ; Reflect=True
+	WaitSFXLoaded: SFX=Osmose ; Reflect=True
+	PlaySFX: SFX=Osmose ; Reflect=True ; MeshColors=(0.899, 0.101, 0.0) 
+	WaitSFXDone: SFX=Osmose ; Reflect=True
+ElseThread: Condition=ItemUseId == 2318 ; Sync=True
+	LoadSFX: SFX=White_Draw ; Reflect=True ; UseCamera=False
+	WaitSFXLoaded: SFX=White_Draw ; Reflect=True
+	PlaySFX: SFX=White_Draw ; Reflect=True ; JumpToFrame=46 ; MeshColors=(0.899, 0.101, 0.0)
+	WaitSFXDone: SFX=White_Draw ; Reflect=True
+ElseThread: Condition=ItemUseId == 2319 ; Sync=True
+	StartThread: TargetLoop=True ; Chain=True ; Sync=True
+		Wait: Time=2
+		StartThread
+			LoadSFX: SFX=Break ; Reflect=True ; UseCamera=False
+			WaitSFXLoaded: SFX=Break ; Reflect=True
+			PlaySFX: SFX=Break ; Reflect=True
+		EndThread
+	EndThread
+	WaitSFXDone: SFX=Break ; Reflect=True
+ElseThread: Condition=ItemUseId == 2320 ; Sync=True
+	LoadSFX: SFX=Earthquake_Strong ; Reflect=True
+	WaitSFXLoaded: SFX=Earthquake_Strong ; Reflect=True
+	PlaySFX: SFX=Earthquake_Strong ; Reflect=True
+	WaitSFXDone: SFX=Earthquake_Strong ; Reflect=True
+ElseThread: Condition=ItemUseId == 2321 ; Sync=True
+	LoadSFX: SFX=Propeller_Wind ; Reflect=True
+	WaitSFXLoaded: SFX=Propeller_Wind ; Reflect=True
+	PlaySFX: SFX=Propeller_Wind ; Reflect=True
+	WaitSFXDone: SFX=Propeller_Wind ; Reflect=True
+ElseThread: Condition=ItemUseId == 2322 ; Sync=True
+	LoadSFX: SFX=Aera_1 ; Reflect=True
+	WaitSFXLoaded: SFX=Aera_1 ; Reflect=True
+	PlaySFX: SFX=Aera_1 ; Reflect=True
+	WaitSFXDone: SFX=Aera_1 ; Reflect=True
+ElseThread: Condition=ItemUseId == 2323 ; Sync=True
+	LoadSFX: SFX=High_Wind ; Reflect=True
+	WaitSFXLoaded: SFX=High_Wind ; Reflect=True
+	PlaySFX: SFX=High_Wind ; Reflect=True
+	WaitSFXDone: SFX=High_Wind ; Reflect=True
+ElseThread: Condition=ItemUseId == 2324 ; Sync=True
+	LoadSFX: SFX=Osmose ; Reflect=True
+	WaitSFXLoaded: SFX=Osmose ; Reflect=True
+	PlaySFX: SFX=Osmose ; Reflect=True ; MeshColors=(0.267, 0.449, 0.284) 
+	WaitSFXDone: SFX=Osmose ; Reflect=True
+ElseThread: Condition=ItemUseId == 2325 ; Sync=True
+	LoadSFX: SFX=White_Draw ; Reflect=True ; UseCamera=False
+	WaitSFXLoaded: SFX=White_Draw ; Reflect=True
+	PlaySFX: SFX=White_Draw ; Reflect=True ; JumpToFrame=46 ; MeshColors=(0.267, 0.449, 0.284)
+	WaitSFXDone: SFX=White_Draw ; Reflect=True
+ElseThread: Condition=ItemUseId == 2326 ; Sync=True
+	StartThread: TargetLoop=True ; Chain=True ; Sync=True
+		Wait: Time=2
+		StartThread
+			LoadSFX: SFX=Aera_1 ; Reflect=True ; UseCamera=False
+			WaitSFXLoaded: SFX=Aera_1 ; Reflect=True
+			PlaySFX: SFX=Aera_1 ; Reflect=True
+		EndThread
+	EndThread
+	WaitSFXDone: SFX=Aera_1 ; Reflect=True
+ElseThread: Condition=ItemUseId == 2327 ; Sync=True
+	LoadSFX: SFX=Twister ; Reflect=True
+	WaitSFXLoaded: SFX=Twister ; Reflect=True
+	PlaySFX: SFX=Twister ; Reflect=True
+	WaitSFXDone: SFX=Twister ; Reflect=True
+ElseThread: Condition=ItemUseId == 2328 ; Sync=True
+	LoadSFX: SFX=Darkness ; Reflect=True
+	WaitSFXLoaded: SFX=Darkness ; Reflect=True
+	PlaySFX: SFX=Darkness ; Reflect=True
+	WaitSFXDone: SFX=Darkness ; Reflect=True
+ElseThread: Condition=ItemUseId == 2329 ; Sync=True
+	LoadSFX: SFX=Darkside_1 ; Reflect=True
+	WaitSFXLoaded: SFX=Darkside_1 ; Reflect=True
+	PlaySFX: SFX=Darkside_1 ; Reflect=True
+	WaitSFXDone: SFX=Darkside_1 ; Reflect=True
+ElseThread: Condition=ItemUseId == 2330 ; Sync=True
+	LoadSFX: SFX=Countdown__Single ; Reflect=True
+	WaitSFXLoaded: SFX=Countdown__Single ; Reflect=True
+	PlaySFX: SFX=Countdown__Single ; Reflect=True
+	WaitSFXDone: SFX=Countdown__Single ; Reflect=True
+ElseThread: Condition=ItemUseId == 2331 ; Sync=True
+	LoadSFX: SFX=Osmose ; Reflect=True
+	WaitSFXLoaded: SFX=Osmose ; Reflect=True
+	PlaySFX: SFX=Osmose ; Reflect=True ; MeshColors=(0.481, 0.066, 0.452)
+	WaitSFXDone: SFX=Osmose ; Reflect=True
+ElseThread: Condition=ItemUseId == 2332 ; Sync=True
+	LoadSFX: SFX=White_Draw ; Reflect=True ; UseCamera=False
+	WaitSFXLoaded: SFX=White_Draw ; Reflect=True
+	PlaySFX: SFX=White_Draw ; Reflect=True ; JumpToFrame=46 ; MeshColors=(0.481, 0.066, 0.452)
+	WaitSFXDone: SFX=White_Draw ; Reflect=True
+ElseThread: Condition=ItemUseId == 2333 ; Sync=True
+	StartThread: TargetLoop=True ; Chain=True ; Sync=True
+		Wait: Time=2
+		StartThread
+			LoadSFX: SFX=Darkside_1 ; Reflect=True ; UseCamera=False
+			WaitSFXLoaded: SFX=Darkside_1 ; Reflect=True
+			PlaySFX: SFX=Darkside_1 ; Reflect=True
+		EndThread
+	EndThread
+	WaitSFXDone: SFX=Darkside_1 ; Reflect=True
+ElseThread: Condition=ItemUseId == 2334 ; Sync=True
+	LoadSFX: SFX=Countdown__Multi ; Reflect=True
+	WaitSFXLoaded: SFX=Countdown__Multi ; Reflect=True
+	PlaySFX: SFX=Countdown__Multi ; Reflect=True
+	WaitSFXDone: SFX=Countdown__Multi ; Reflect=True
+ElseThread: Condition=ItemUseId == 2335 ; Sync=True
+	LoadSFX: SFX=Poly ; Reflect=True
+	WaitSFXLoaded: SFX=Poly ; Reflect=True
+	PlaySFX: SFX=Poly ; Reflect=True
+	WaitSFXDone: SFX=Poly ; Reflect=True
+ElseThread: Condition=ItemUseId == 2336 ; Sync=True
+	LoadSFX: SFX=Rainbow_Wind ; Reflect=True
+	WaitSFXLoaded: SFX=Rainbow_Wind ; Reflect=True
+	PlaySFX: SFX=Rainbow_Wind ; Reflect=True
+	WaitSFXDone: SFX=Rainbow_Wind ; Reflect=True
+ElseThread: Condition=ItemUseId == 2337 ; Sync=True
+	LoadSFX: SFX=Holy ; Reflect=True
+	WaitSFXLoaded: SFX=Holy ; Reflect=True
+	PlaySFX: SFX=Holy ; Reflect=True
+	WaitSFXDone: SFX=Holy ; Reflect=True
+ElseThread: Condition=ItemUseId == 2338 ; Sync=True
+	LoadSFX: SFX=Osmose ; Reflect=True
+	WaitSFXLoaded: SFX=Osmose ; Reflect=True
+	PlaySFX: SFX=Osmose ; Reflect=True ; MeshColors=(0.368, 0.371, 0.261)
+	WaitSFXDone: SFX=Osmose ; Reflect=True
+ElseThread: Condition=ItemUseId == 2339 ; Sync=True
+	LoadSFX: SFX=White_Draw ; Reflect=True ; UseCamera=False
+	WaitSFXLoaded: SFX=White_Draw ; Reflect=True
+	PlaySFX: SFX=White_Draw ; Reflect=True ; JumpToFrame=46 ; MeshColors=(0.368, 0.371, 0.261)
+	WaitSFXDone: SFX=White_Draw ; Reflect=True
+ElseThread: Condition=ItemUseId == 2340 ; Sync=True
+	StartThread: TargetLoop=True ; Chain=True ; Sync=True
+		Wait: Time=2
+		StartThread
+			LoadSFX: SFX=Rainbow_Wind ; Reflect=True ; UseCamera=False
+			WaitSFXLoaded: SFX=Rainbow_Wind ; Reflect=True
+			PlaySFX: SFX=Rainbow_Wind ; Reflect=True
+		EndThread
+	EndThread
+	WaitSFXDone: SFX=Rainbow_Wind ; Reflect=True
+ElseThread: Condition=ItemUseId == 2341 ; Sync=True
+	LoadSFX: SFX=LV4_Holy ; Reflect=True
+	WaitSFXLoaded: SFX=LV4_Holy ; Reflect=True
+	PlaySFX: SFX=LV4_Holy ; Reflect=True
+	WaitSFXDone: SFX=LV4_Holy ; Reflect=True
+ElseThread: Condition=ItemUseId == 2432 ; Sync=True
+	LoadSFX: SFX=Scorch ; Reflect=True
+	WaitSFXLoaded: SFX=Scorch ; Reflect=True
+	PlaySFX: SFX=Scorch ; Reflect=True
+	WaitSFXDone: SFX=Scorch ; Reflect=True
+ElseThread: Condition=ItemUseId == 2433 ; Sync=True
+	LoadSFX: SFX=Nanoflare ; Reflect=True
+	WaitSFXLoaded: SFX=Nanoflare ; Reflect=True
+	PlaySFX: SFX=Nanoflare ; Reflect=True
+	WaitSFXDone: SFX=Nanoflare ; Reflect=True
+ElseThread: Condition=ItemUseId == 2434 ; Sync=True
+	LoadSFX: SFX=Flare ; Reflect=True
+	WaitSFXLoaded: SFX=Flare ; Reflect=True
+	PlaySFX: SFX=Flare ; Reflect=True
+	WaitSFXDone: SFX=Flare ; Reflect=True
+ElseThread: Condition=ItemUseId == 2435 ; Sync=True
+	LoadSFX: SFX=Osmose ; Reflect=True
+	WaitSFXLoaded: SFX=Osmose ; Reflect=True
+	PlaySFX: SFX=Osmose ; Reflect=True ; MeshColors=(0.445, 0.366, 0.188)
+	WaitSFXDone: SFX=Osmose ; Reflect=True
+ElseThread: Condition=ItemUseId == 2436 ; Sync=True
+	LoadSFX: SFX=White_Draw ; Reflect=True ; UseCamera=False
+	WaitSFXLoaded: SFX=White_Draw ; Reflect=True
+	PlaySFX: SFX=White_Draw ; Reflect=True ; JumpToFrame=46 ; MeshColors=(0.445, 0.366, 0.188)
+	WaitSFXDone: SFX=White_Draw ; Reflect=True
+ElseThread: Condition=ItemUseId == 2437 ; Sync=True
+	StartThread: TargetLoop=True ; Chain=True ; Sync=True
+		Wait: Time=2
+		StartThread
+			LoadSFX: SFX=Nanoflare ; Reflect=True ; UseCamera=False
+			WaitSFXLoaded: SFX=Nanoflare ; Reflect=True
+			PlaySFX: SFX=Nanoflare ; Reflect=True
+		EndThread
+	EndThread
+	WaitSFXDone: SFX=Nanoflare ; Reflect=True
+ElseThread: Condition=ItemUseId == 2438 ; Sync=True
+	LoadSFX: SFX=Flare_Star ; Reflect=True
+	WaitSFXLoaded: SFX=Flare_Star ; Reflect=True
+	PlaySFX: SFX=Flare_Star ; Reflect=True
+	WaitSFXDone: SFX=Flare_Star ; Reflect=True
+ElseThread: Condition=ItemUseId == 2466 ; Sync=True
+	LoadSFX: SFX=Venom_Powder ; Reflect=True
+	WaitSFXLoaded: SFX=Venom_Powder ; Reflect=True
+	PlaySFX: SFX=Venom_Powder ; Reflect=True ; MeshColors=(0.169, 0.29914, 0.36683)
+	WaitSFXDone: SFX=Venom_Powder ; Reflect=True
+ElseThread: Condition=ItemUseId == 2467 ; Sync=True
+	LoadSFX: SFX=Ultra_Sound_Wave ; Reflect=True
+	WaitSFXLoaded: SFX=Ultra_Sound_Wave ; Reflect=True
+	PlaySFX: SFX=Ultra_Sound_Wave ; Reflect=True ; MeshColors=(0.169, 0.29914, 0.36683)
+	WaitSFXDone: SFX=Ultra_Sound_Wave ; Reflect=True
+ElseThread: Condition=ItemUseId == 2468 ; Sync=True
+	LoadSFX: SFX=Darkness ; Reflect=True
+	WaitSFXLoaded: SFX=Darkness ; Reflect=True
+	PlaySFX: SFX=Darkness ; Reflect=True ; MeshColors=(0.169, 0.29914, 0.36683)
+	WaitSFXDone: SFX=Darkness ; Reflect=True
+ElseThread: Condition=ItemUseId == 2469 ; Sync=True
+	LoadSFX: SFX=Gradual_Petrify ; Reflect=True
+	WaitSFXLoaded: SFX=Gradual_Petrify ; Reflect=True
+	PlaySFX: SFX=Gradual_Petrify ; Reflect=True ; MeshColors=(0.169, 0.29914, 0.36683)
+	WaitSFXDone: SFX=Gradual_Petrify ; Reflect=True
+ElseThread: Condition=ItemUseId == 2470 ; Sync=True
+	LoadSFX: SFX=Trouble_Mucus ; Reflect=True
+	WaitSFXLoaded: SFX=Trouble_Mucus ; Reflect=True
+	PlaySFX: SFX=Trouble_Mucus ; Reflect=True ; MeshColors=(0.169, 0.29914, 0.36683)
+	WaitSFXDone: SFX=Trouble_Mucus ; Reflect=True
+ElseThread: Condition=ItemUseId == 2471 ; Sync=True
+	LoadSFX: SFX=Zombie_Powder ; Reflect=True
+	WaitSFXLoaded: SFX=Zombie_Powder ; Reflect=True
+	PlaySFX: SFX=Zombie_Powder ; Reflect=True ; MeshColors=(0.169, 0.29914, 0.36683)
+	WaitSFXDone: SFX=Zombie_Powder ; Reflect=True
+ElseThread: Condition=ItemUseId == 2472 ; Sync=True
+	LoadSFX: SFX=Virus_Powder ; Reflect=True
+	WaitSFXLoaded: SFX=Virus_Powder ; Reflect=True
+	PlaySFX: SFX=Virus_Powder ; Reflect=True ; MeshColors=(0.169, 0.29914, 0.36683)
+	WaitSFXDone: SFX=Virus_Powder ; Reflect=True
+ElseThread: Condition=ItemUseId == 2473 ; Sync=True
+	LoadSFX: SFX=Curse__Single ; Reflect=True
+	WaitSFXLoaded: SFX=Curse__Single ; Reflect=True
+	PlaySFX: SFX=Curse__Single ; Reflect=True ; MeshColors=(0.169, 0.29914, 0.36683)
+	WaitSFXDone: SFX=Curse__Single ; Reflect=True
+ElseThread: Condition=ItemUseId == 2474 ; Sync=True
+	LoadSFX: SFX=Curse ; Reflect=True
+	WaitSFXLoaded: SFX=Curse ; Reflect=True
+	PlaySFX: SFX=Curse ; Reflect=True ; MeshColors=(0.169, 0.29914, 0.36683)
+	WaitSFXDone: SFX=Curse ; Reflect=True
+ElseThread: Condition=ItemUseId == 2487 ; Sync=True
+	LoadSFX: SFX=Limit_Glove ; Reflect=True
+	WaitSFXLoaded: SFX=Limit_Glove ; Reflect=True
+	PlaySFX: SFX=Limit_Glove ; Reflect=True
+	WaitSFXDone: SFX=Limit_Glove ; Reflect=True	
+ElseThread: Condition=ItemUseId == 2488 ; Sync=True
+	LoadSFX: SFX=Neutron_Ring ; Reflect=True
+	WaitSFXLoaded: SFX=Neutron_Ring ; Reflect=True
+	PlaySFX: SFX=Neutron_Ring ; Reflect=True ; SkipSequence
+	PlaySound: Sound=2690
+	PlaySound: Sound=2691
+	PlaySound: Sound=2692
+	PlaySound: Sound=2693
+	Wait: Time=1
+	StartThread: Condition=!SFXUseCamera ; Sync=True
+		Wait: Time=31
+	EndThread
+	Wait: Time=19
+	SetBackgroundIntensity: Intensity=0 ; Time=32 ; HoldDuration=140
+	Wait: Time=31
+	PlaySound: Sound=2694
+	PlaySound: Sound=2695
+	PlaySound: Sound=2696
+	Wait: Time=108
+	Wait: Time=1
+	SetBackgroundIntensity: Intensity=1 ; Time=16
+	StartThread: Condition=!SFXUseCamera ; Sync=True
+		Wait: Time=15
+		EffectPoint: Char=AllTargets ; Type=Effect
+		Wait: Time=16
+	EndThread
+	Wait: Time=8
+	EffectPoint: Char=Everyone ; Type=Figure
+	Wait: Time=24
+	WaitSFXDone: SFX=Neutron_Ring ; Reflect=True	
+ElseThread: Condition=ItemUseId == 2489 ; Sync=True
+	LoadSFX: SFX=Grand_Cross ; Reflect=True
+	WaitSFXLoaded: SFX=Grand_Cross ; Reflect=True
+	PlaySFX: SFX=Grand_Cross ; Reflect=True
+	WaitSFXDone: SFX=Grand_Cross ; Reflect=True	
+ElseThread: Sync=True
+	LoadSFX: SFX=Dummy ; Reflect=True
+	WaitSFXLoaded: SFX=Dummy ; Reflect=True
+	PlaySFX: SFX=Dummy ; Reflect=True
+	WaitSFXDone: SFX=Dummy ; Reflect=True
+EndThread
+EndThread
+ActivateReflect
+WaitReflect
+StartThread: Condition=CasterRow == 0 && AreCasterAndSelectedTargetsEnemies ; Sync=True
+	MoveToPosition: Char=Caster ; RelativePosition=(0, 0, -400) ; Anim=MP_STEP_BACK
+	WaitMove: Char=Caster
+EndThread
+PlayAnimation: Char=Caster ; Anim=Idle
+Turn: Char=Caster ; BaseAngle=Default ; Time=5
+WaitTurn: Char=Caster

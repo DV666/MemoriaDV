@@ -1,0 +1,20 @@
+// Player sequence of SFX Sanction
+
+WaitAnimation: Char=Caster
+StartThread: Condition=IsSingleSelectedTarget
+	Turn: Char=Caster ; BaseAngle=AllTargets ; Time=5
+EndThread
+Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
+SetupReflect: Delay=SFXLoaded
+LoadSFX: SFX=Shock_3 ; Reflect=True
+PlayAnimation: Char=Caster ; Anim=ANH_SUB_F1_BAK_KILL ; Speed=2
+Channel
+WaitSFXLoaded: SFX=Shock_3 ; Reflect=True
+StopChannel
+PlaySFX: SFX=Shock_3 ; Reflect=True ; MeshColors=(0.89907, 0.89902, 0.3229)
+WaitSFXDone: SFX=Shock_3 ; Reflect=True
+ActivateReflect
+WaitReflect
+PlayAnimation: Char=Caster ; Anim=Idle
+Turn: Char=Caster ; BaseAngle=Default ; Time=5
+WaitTurn: Char=Caster

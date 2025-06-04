@@ -1,8 +1,9 @@
 // Shared sequence of SFX Focus
 
+Wait: Time=2
 PlaySound: Sound=2520
 PlaySound: Sound=2521
 PlaySound: Sound=2522
-Wait: Time=1
+Wait: Time=10
 EffectPoint: Char=AllTargets ; Type=Effect
 EffectPoint: Char=Everyone ; Type=Figure

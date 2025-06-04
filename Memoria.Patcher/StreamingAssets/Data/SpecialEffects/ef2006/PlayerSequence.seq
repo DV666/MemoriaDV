@@ -1,0 +1,14 @@
+// Player sequence of Mog Esuna
+
+PlaySound: Sound=1362
+SetupReflect: Delay=SFXLoaded
+EffectPoint: Char=Caster ; Type=Both
+Wait: Time=30
+EffectPoint: Char=Caster ; Type=Both
+Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
+Wait: Time=10
+LoadSFX: SFX=Esuna ; Reflect=True
+WaitSFXLoaded: SFX=Esuna ; Reflect=True
+PlaySFX: SFX=Esuna ; Reflect=True ; MeshColors=(1.0, 0.0, 0.5)
+WaitSFXDone: SFX=Esuna ; Reflect=True
+WaitAnimation: Char=Caster

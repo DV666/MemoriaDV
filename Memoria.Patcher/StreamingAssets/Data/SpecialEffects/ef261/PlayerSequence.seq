@@ -1,36 +1,103 @@
 // Player sequence of SFX Odin__Full
 
-WaitAnimation: Char=Caster
-SetVariable: Variable=cmd_status ; Value=&65533 ; Reflect=True
-StartThread: Condition=CasterRow == 0 && AreCasterAndSelectedTargetsEnemies ; Sync=True
-	MoveToPosition: Char=Caster ; RelativePosition=(0, 0, 400) ; Anim=MP_STEP_FORWARD
-	WaitMove: Char=Caster
+StartThread: Condition=AbilityId == 1533 && TargetIsPlayer
+	WaitAnimation: Char=Caster
+	StartThread: Condition=CasterRow == 0 && AreCasterAndSelectedTargetsEnemies ; Sync=True
+		MoveToPosition: Char=Caster ; RelativePosition=(0, 0, 400) ; Anim=MP_STEP_FORWARD
+		WaitMove: Char=Caster
+	EndThread
+	StartThread: Condition=IsSingleSelectedTarget
+		Turn: Char=Caster ; BaseAngle=AllTargets ; Time=5
+	EndThread
+	Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
+	SetupReflect: Delay=SFXLoaded
+	PlayAnimation: Char=Caster ; Anim=MP_IDLE_TO_CHANT
+	WaitAnimation: Char=Caster
+	PlayAnimation: Char=Caster ; Anim=MP_CHANT ; Loop=True
+	Channel
+	WaitAnimation: Char=Caster
+	StopChannel
+	PlayAnimation: Char=Caster ; Anim=MP_MAGIC
+	WaitAnimation: Char=Caster
+	StartThread: TargetLoop=True ; Chain=True ; Sync=True
+		LoadSFX: SFX=Dark_Matter ; Reflect=True ; UseCamera=False
+		WaitSFXLoaded: SFX=Dark_Matter ; Reflect=True
+		PlaySFX: SFX=Dark_Matter ; Reflect=True ; MeshColors=(0.54056, 0.02523, 0.52998)
+		Wait: Time=4
+	EndThread
+	ActivateReflect
+	WaitReflect
+	StartThread: Condition=CasterRow == 0 && AreCasterAndSelectedTargetsEnemies ; Sync=True
+		MoveToPosition: Char=Caster ; RelativePosition=(0, 0, -400) ; Anim=MP_STEP_BACK
+		WaitMove: Char=Caster
+	EndThread
+	PlayAnimation: Char=Caster ; Anim=Idle
+	WaitSFXDone: SFX=Dark_Matter ; Reflect=True
+	Turn: Char=Caster ; BaseAngle=Default ; Time=5
+	WaitTurn: Char=Caster
+ElseThread: Condition=CasterCharacterIndex == CharacterId_Garnet
+		WaitAnimation: Char=Caster
+		SetVariable: Variable=cmd_status ; Value=&65533 ; Reflect=True
+		StartThread: Condition=IsSingleSelectedTarget
+			Turn: Char=Caster ; BaseAngle=AllTargets ; Time=5
+		EndThread
+		SetupReflect: Delay=SFXLoaded
+		LoadSFX: SFX=Odin__Full ; Reflect=True ; UseCamera=True
+		ShowMesh: Char=Caster ; Mesh=Weapon ; Enable=False
+		PlayAnimation: Char=Caster ; Anim=ANH_MAIN_B0_002_600
+		WaitAnimation: Char=Caster
+		Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
+		Channel
+		PlayAnimation: Char=Caster ; Anim=ANH_MAIN_B0_002_601 ; Loop=True
+		SetBackgroundIntensity: Intensity=0.5 ; Time=20
+		WaitSFXLoaded: SFX=Odin__Full ; Reflect=True
+		WaitAnimation: Char=Caster
+		PlayAnimation: Char=Caster ; Anim=ANH_MAIN_B0_002_602
+		Wait: Time=16
+		ShowMesh: Enable=False ; Time=16 ; Char=AllPlayers
+		StopChannel
+		WaitAnimation: Char=Caster
+		PlaySFX: SFX=Odin__Full ; Reflect=True
+		WaitSFXDone: SFX=Odin__Full ; Reflect=True
+		ActivateReflect
+		WaitReflect
+		PlayAnimation: Char=Caster ; Anim=Idle
+		Turn: Char=Caster ; BaseAngle=Default ; Time=5
+		WaitTurn: Char=Caster
+		SetVariable: Variable=cmd_status ; Value=|2 ; Reflect=True
+ElseThread
+	WaitAnimation: Char=Caster
+	SetVariable: Variable=cmd_status ; Value=&65533 ; Reflect=True
+	StartThread: Condition=CasterRow == 0 && AreCasterAndSelectedTargetsEnemies ; Sync=True
+		MoveToPosition: Char=Caster ; RelativePosition=(0, 0, 400) ; Anim=MP_STEP_FORWARD
+		WaitMove: Char=Caster
+	EndThread
+	StartThread: Condition=IsSingleSelectedTarget
+		Turn: Char=Caster ; BaseAngle=AllTargets ; Time=5
+	EndThread
+	Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
+	SetupReflect: Delay=SFXLoaded
+	LoadSFX: SFX=Odin__Full ; Reflect=True ; UseCamera=True
+	PlayAnimation: Char=Caster ; Anim=MP_IDLE_TO_CHANT
+	WaitAnimation: Char=Caster
+	PlayAnimation: Char=Caster ; Anim=MP_CHANT ; Loop=True
+	Channel
+	SetBackgroundIntensity: Intensity=0 ; Time=12
+	WaitSFXLoaded: SFX=Odin__Full ; Reflect=True
+	WaitAnimation: Char=Caster
+	StopChannel
+	PlayAnimation: Char=Caster ; Anim=MP_MAGIC
+	WaitAnimation: Char=Caster
+	PlaySFX: SFX=Odin__Full ; Reflect=True
+	WaitSFXDone: SFX=Odin__Full ; Reflect=True
+	SetVariable: Variable=cmd_status ; Value=|2 ; Reflect=True
+	ActivateReflect
+	WaitReflect
+	StartThread: Condition=CasterRow == 0 && AreCasterAndSelectedTargetsEnemies ; Sync=True
+		MoveToPosition: Char=Caster ; RelativePosition=(0, 0, -400) ; Anim=MP_STEP_BACK
+		WaitMove: Char=Caster
+	EndThread
+	PlayAnimation: Char=Caster ; Anim=Idle
+	Turn: Char=Caster ; BaseAngle=Default ; Time=5
+	WaitTurn: Char=Caster
 EndThread
-StartThread: Condition=IsSingleSelectedTarget
-	Turn: Char=Caster ; BaseAngle=AllTargets ; Time=5
-EndThread
-Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
-SetupReflect: Delay=SFXLoaded
-LoadSFX: SFX=Odin__Full ; Reflect=True ; UseCamera=True
-PlayAnimation: Char=Caster ; Anim=MP_IDLE_TO_CHANT
-WaitAnimation: Char=Caster
-PlayAnimation: Char=Caster ; Anim=MP_CHANT ; Loop=True
-Channel
-SetBackgroundIntensity: Intensity=0 ; Time=12
-WaitSFXLoaded: SFX=Odin__Full ; Reflect=True
-WaitAnimation: Char=Caster
-StopChannel
-PlayAnimation: Char=Caster ; Anim=MP_MAGIC
-WaitAnimation: Char=Caster
-PlaySFX: SFX=Odin__Full ; Reflect=True
-WaitSFXDone: SFX=Odin__Full ; Reflect=True
-SetVariable: Variable=cmd_status ; Value=|2 ; Reflect=True
-ActivateReflect
-WaitReflect
-StartThread: Condition=CasterRow == 0 && AreCasterAndSelectedTargetsEnemies ; Sync=True
-	MoveToPosition: Char=Caster ; RelativePosition=(0, 0, -400) ; Anim=MP_STEP_BACK
-	WaitMove: Char=Caster
-EndThread
-PlayAnimation: Char=Caster ; Anim=Idle
-Turn: Char=Caster ; BaseAngle=Default ; Time=5
-WaitTurn: Char=Caster

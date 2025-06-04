@@ -1,0 +1,32 @@
+// Player sequence of SFX Player_Attack_Baku_3
+
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_105_040
+Turn: Char=Caster ; BaseAngle=AllTargets ; Angle=0 ; Time=1
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_105_041
+MoveToTarget: Char=Caster ; Target=AllTargets ; Time=3 ; Distance=1700
+WaitMove: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_105_042
+StartThread
+	Wait: Time=2
+	PlaySound: Sound=726 ; Volume=1 ; Once=False
+EndThread
+Wait: Time=11
+StartThread
+	Wait: Time=1
+	PlaySound: Sound=677 ; Volume=1 ; Once=False
+EndThread
+Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=False
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_105_043
+Turn: Char=Caster ; BaseAngle=Default ; Angle=0 ; Time=3
+MoveToPosition: Char=Caster ; Time=3 ; AbsolutePosition=Default ; MoveHeight=true
+WaitMove: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_105_044
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=Idle
+WaitMonsterSFXDone: Reflect=True
+WaitTurn: Char=Caster
+ActivateReflect
+WaitReflect

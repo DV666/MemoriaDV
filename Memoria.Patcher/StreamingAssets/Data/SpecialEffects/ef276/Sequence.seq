@@ -1,7 +1,7 @@
 // Shared sequence of SFX Ifrit__Full
 
 Wait: Time=16
-ShowMesh: Char=Everyone ; Enable=False ; IsDisappear=True
+ShowMesh: ShowMesh: Char=MatchingCondition(!IsTargeted && IsTargetable) ; Enable=False ; IsDisappear=True
 StartThread: Condition=SFXUseCamera && AreTargetsPlayers
 	ShiftWorld: Angle=(0, 180, 0)
 EndThread
@@ -24,11 +24,11 @@ PlaySound: Sound=1801
 Wait: Time=40
 EffectPoint: Char=AllTargets ; Type=Effect
 Wait: Time=20
-EffectPoint: Char=Everyone ; Type=Figure
+EffectPoint: ShowMesh: Char=MatchingCondition(!IsTargeted && IsTargetable) ; Type=Figure
 Wait: Time=20
 StartThread: Condition=SFXUseCamera && AreTargetsPlayers
 	ShiftWorld: Angle=(0, 0, 0)
 EndThread
-ShowMesh: Char=Everyone ; Enable=True ; IsDisappear=True
-ShowMesh: Char=AllNonTargets ; Enable=True ; Time=12
+ShowMesh: Char=MatchingCondition(!IsTargeted && IsTargetable) ; Enable=True ; IsDisappear=True
+ShowMesh: Char=MatchingCondition(!IsTargeted && IsTargetable) ; Enable=True ; Time=12
 Wait: Time=31

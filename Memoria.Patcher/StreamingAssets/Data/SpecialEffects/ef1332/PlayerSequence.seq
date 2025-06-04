@@ -1,0 +1,65 @@
+// Player sequence of SFX Summon_Python_RapidFire
+
+WaitAnimation: Char=Caster
+SetupReflect: Delay=60
+StartThread: Target=Caster ; Sync=True ; Reflect=False
+	WaitAnimation: Char=Caster
+	StartThread: Condition=IsSingleSelectedTarget
+		Turn: Char=Caster ; BaseAngle=AllTargets ; Time=5
+	EndThread
+	LoadSFX: SFX=Green_Smoke ; UseCamera=False ; Reflect=False
+	WaitSFXLoaded: SFX=Green_Smoke ; Reflect=False
+	PlaySFX: SFX=Green_Smoke ; Reflect=False
+	EffectPoint: Char=Caster ; Type=Both ; Reflect=False
+	WaitSFXDone: SFX=Green_Smoke ; Reflect=False
+EndThread
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_014_010
+PlayCamera: Camera=1 ; Char=AllTargets ; Alternate=True
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_014_011
+StartThread
+	LoadSFX: SFX=SFX_Attack_Charge_And_Strike ; FirstBone=0 ; Reflect=True
+	Wait: Time=8 ; Reflect=True
+	WaitSFXLoaded: Reflect=True
+	PlaySFX: SkipSequence=False ; Reflect=True
+	WaitSFXDone: Reflect=True
+EndThread
+Message: Priority=1 ; Title=True ; Reflect=False ; TextFR=[STRT=45,1]Mitraille ; Text=[STRT=58,1]Rapid Fire
+Turn: Char=Caster ; BaseAngle=AllTargets ; Angle=0 ; Time=7
+MoveToTarget: Char=Caster ; Target=AllTargets ; Time=7 ; Distance=700
+WaitMove: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_014_012
+Wait: Time=3
+StartThread
+	Wait: Time=1
+	PlaySound: Sound=666 ; Volume=1 ; Once=False
+EndThread
+Wait: Time=5
+StartThread
+	Wait: Time=1
+	PlaySound: Sound=666 ; Volume=1 ; Once=False
+EndThread
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_014_013
+Turn: Char=Caster ; BaseAngle=Default ; Angle=0 ; Time=7
+MoveToPosition: Char=Caster ; Time=7 ; AbsolutePosition=Default ; MoveHeight=true
+WaitMove: Char=Caster
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_014_014
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=Idle
+WaitMonsterSFXDone: Reflect=True
+WaitTurn: Char=Caster
+ActivateReflect
+WaitReflect
+StartThread: Target=Caster ; Sync=True ; Reflect=False
+	LoadSFX: SFX=Green_Smoke ; UseCamera=False ; Reflect=False
+	WaitSFXLoaded: SFX=Green_Smoke ; Reflect=False
+	PlaySFX: SFX=Green_Smoke ; Reflect=False
+	EffectPoint: Char=Caster ; Type=Both ; Reflect=False
+	WaitSFXDone: SFX=Green_Smoke ; Reflect=False
+EndThread
+PlayAnimation: Char=Caster ; Anim=Idle
+Turn: Char=Caster ; BaseAngle=Default ; Time=5
+WaitTurn: Char=Caster

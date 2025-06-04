@@ -1,13 +1,6 @@
 // Player sequence of SFX Mental_Break
 
 WaitAnimation: Char=Caster
-StartThread: Condition=AreCasterAndSelectedTargetsEnemies ; Sync=True
-	MoveToPosition: Char=Caster ; RelativePosition=(0, 0, 400) ; Anim=MP_STEP_FORWARD
-	WaitMove: Char=Caster
-EndThread
-StartThread: Condition=IsSingleSelectedTarget
-	Turn: Char=Caster ; BaseAngle=AllTargets ; Time=5
-EndThread
 Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
 SetupReflect: Delay=SFXLoaded
 LoadSFX: SFX=Mental_Break ; Reflect=True
@@ -17,15 +10,19 @@ WaitAnimation: Char=Caster
 PlaySFX: SFX=Mental_Break ; Reflect=True
 PlayAnimation: Char=Caster ; Anim=MP_CHANT ; Loop=True
 Wait: Time=26
-PlayAnimation: Char=Caster ; Anim=MP_MAGIC
-WaitAnimation: Char=Caster
+MoveToTarget: Char=Caster ; Target=AllTargets ; Distance=600 ; UseCollisionRadius=True ; Anim=MP_RUN
+Turn: Char=Caster ; BaseAngle=AllTargets ; Time=10
+WaitMove: Char=Caster
+MoveToTarget: Char=Caster ; Target=AllTargets ; Distance=0 ; UseCollisionRadius=True ; Anim=MP_RUN_TO_ATTACK
+WaitMove: Char=Caster
+PlayAnimation: Char=Caster ; Anim=MP_ATTACK
+Wait: Time=5
+PlayAnimation: Char=Caster ; Speed=0
 WaitSFXDone: SFX=Mental_Break ; Reflect=True
+MoveToPosition: Char=Caster ; AbsolutePosition=Default ; Anim=MP_BACK
+Turn: Char=Caster ; BaseAngle=Default ; Time=4
+WaitMove: Caster
+PlayAnimation: Char=Caster ; Anim=Idle
+WaitTurn: Char=Caster
 ActivateReflect
 WaitReflect
-StartThread: Condition=AreCasterAndSelectedTargetsEnemies ; Sync=True
-	MoveToPosition: Char=Caster ; RelativePosition=(0, 0, -400) ; Anim=MP_STEP_BACK
-	WaitMove: Char=Caster
-EndThread
-PlayAnimation: Char=Caster ; Anim=Idle
-Turn: Char=Caster ; BaseAngle=Default ; Time=5
-WaitTurn: Char=Caster

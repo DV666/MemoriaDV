@@ -21,12 +21,14 @@ namespace Memoria.Scripts.Battle
         public void Perform()
         {
             _v.Target.Flags |= CalcFlag.HpAlteration | CalcFlag.HpRecovery;
-            _v.Target.HpDamage = (_v.Command.ItemId != RegularItem.NoItem ? _v.Command.Item.Power : _v.Command.Power) * (ff9item.FF9Item_GetCount(_v.Command.ItemId) + 1);
+            _v.Target.HpDamage = _v.Command.Item.Power * (ff9item.FF9Item_GetCount(_v.Command.ItemId) + 1);
+            if (_v.Caster.PlayerIndex == CharacterId.Blank && _v.Command.Id == BattleCommandId.Item)
+                btl_stat.AlterStatus(_v.Caster, TranceSeekStatusId.Special, _v.Caster, true, "SoakedBlade", _v.Command.ItemId);
         }
 
         public Single RateTarget()
         {
-            Int32 recovery = (_v.Command.ItemId != RegularItem.NoItem ? _v.Command.Item.Power : _v.Command.Power) * (ff9item.FF9Item_GetCount(_v.Command.ItemId) + 1);
+            Int32 recovery = _v.Command.Item.Power * (ff9item.FF9Item_GetCount(_v.Command.ItemId) + 1);
 
             Single rate = recovery * BattleScriptDamageEstimate.RateHpMp((Int32)_v.Target.CurrentHp, (Int32)_v.Target.MaximumHp);
 

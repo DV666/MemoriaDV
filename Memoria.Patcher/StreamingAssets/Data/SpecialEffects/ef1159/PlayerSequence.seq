@@ -1,0 +1,29 @@
+// Player sequence of SFX Get over here!
+
+WaitAnimation: Char=Caster
+StartThread: Condition=IsSingleSelectedTarget
+	Turn: Char=Caster ; BaseAngle=AllTargets ; Time=5
+EndThread
+Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
+SetupReflect: Delay=SFXLoaded
+PlayAnimation: Char=Caster ; Anim=MP_IDLE_TO_CHANT
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=MP_CHANT ; Loop=True
+Channel
+WaitAnimation: Char=Caster
+WaitAnimation: Char=Caster
+StopChannel
+PlayAnimation: Char=Caster ; Anim=MP_MAGIC
+WaitAnimation: Char=Caster
+StartThread: TargetLoop=True ; Chain=True ; Sync=True
+	LoadSFX: SFX=Confuse__Single ; Reflect=True ; UseCamera=False
+	WaitSFXLoaded: SFX=Confuse__Single ; Reflect=True
+	PlaySFX: SFX=Confuse__Single ; Reflect=True ; MeshColors=(0.76649, 0.19457, 0.1844)
+	Wait: Time=2
+EndThread
+WaitSFXDone: SFX=Confuse__Single ; Reflect=True
+ActivateReflect
+WaitReflect
+PlayAnimation: Char=Caster ; Anim=Idle
+Turn: Char=Caster ; BaseAngle=Default ; Time=5
+WaitTurn: Char=Caster
