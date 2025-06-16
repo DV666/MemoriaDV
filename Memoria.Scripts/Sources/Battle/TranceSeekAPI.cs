@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.Remoting.Contexts;
 using Assets.Sources.Scripts.UI.Common;
 using FF9;
 using Global.Sound.SoLoud;
@@ -8,6 +9,7 @@ using Memoria.Database;
 using Memoria.Prime;
 using UnityEngine;
 using static Memoria.Assets.DataResources;
+using static TitleUI;
 
 namespace Memoria.Scripts.Battle
 {
@@ -443,18 +445,14 @@ namespace Memoria.Scripts.Battle
 
             if (v.Target.IsUnderAnyStatus(BattleStatus.Defend))
             {
-                v.Context.Attack >>= 1;
+                v.Context.DamageModifierCount -= 2;
                 SoundLib.PlaySoundEffect(356); //se050010
             }
 
             if (v.Target.PlayerIndex == CharacterId.Steiner && v.Target.IsUnderAnyStatus(BattleStatus.Trance)) // Steiner Trance => 25% reduce physical damage
-            {
-                v.Context.Attack = (3 * v.Context.Attack) / 4;
-            }
-
+                --v.Context.DamageModifierCount;
             if (v.Target.IsUnderAnyStatus(BattleStatus.Protect))
-                v.Context.Attack >>= 1;
-
+                v.Context.DamageModifierCount -= 2;
             if (v.Target.IsUnderAnyStatus(BattleStatus.Mini) || v.Target.IsUnderAnyStatus(BattleStatus.Sleep) && !v.Target.IsUnderAnyStatus(BattleStatus.EasyKill) || v.Target.IsUnderAnyStatus(BattleStatus.Freeze))
                 ++v.Context.DamageModifierCount;
 
@@ -488,7 +486,7 @@ namespace Memoria.Scripts.Battle
 
             if (Mathf.Abs(v.Caster.Row - v.Target.Row) > 1 && !v.Caster.HasLongRangeWeapon && v.Command.IsShortRange && v.Caster.IsPlayer)
             {
-                v.Context.Attack /= 2;
+                v.Context.DamageModifierCount -= 2;
                 return;
             }
             if (!v.Caster.IsPlayer)
@@ -506,7 +504,7 @@ namespace Memoria.Scripts.Battle
                     }
                 }
                 if (longDistance)
-                    v.Context.Attack /= 2;
+                    v.Context.DamageModifierCount -= 2;
             }
         }
 
@@ -629,13 +627,13 @@ namespace Memoria.Scripts.Battle
         public static void PenaltyCommandDividedAttack(this BattleCalculator v)
         {
             if (v.Command.IsDevided)
-                v.Context.Attack /= 2;
+                v.Context.DamageModifierCount -= 2;
         }
 
         public static void CasterPenaltyMini(this BattleCalculator v)
         {
             if (v.Caster.IsUnderAnyStatus(BattleStatus.Mini))
-                v.Context.Attack /= 2;
+                v.Context.DamageModifierCount -= 2;
         }
 
         public static void PrepareHpDraining(this BattleCalculator v)
@@ -673,13 +671,7 @@ namespace Memoria.Scripts.Battle
             if (WeaponNewElement[v.Caster.Data] != 0)
                 WeaponElement |= WeaponNewElement[v.Caster.Data];
 
-            if (v.Target.CanGuardElement(WeaponElement))
-                return false;
-
-            v.Target.PenaltyHalfElement(WeaponElement);
-            v.Target.PenaltyAbsorbElement(WeaponElement);
-            v.Target.BonusWeakElement(WeaponElement);
-            v.Target.AlterStatuses(WeaponElement);
+            CanAttackElement(v, WeaponElement);
 
             if (WeaponNewElement[v.Caster.Data] != 0 & v.Target.IsWeakElement(WeaponElement))
             {
@@ -688,7 +680,7 @@ namespace Memoria.Scripts.Battle
                     BattleAbilityId InfusedAA = ViviPreviousSpell[v.Caster.Data];
                     if (InfusedAA == (BattleAbilityId)1091 || InfusedAA == (BattleAbilityId)1092 || InfusedAA == (BattleAbilityId)1093 || InfusedAA == (BattleAbilityId)1094)
                     {
-                        ++v.Context.DamageModifierCount;
+                        v.Context.DamageModifierCount++;
                     }
                     if (InfusedAA == (BattleAbilityId)1095 || InfusedAA == (BattleAbilityId)1096 || InfusedAA == (BattleAbilityId)1097 || InfusedAA == (BattleAbilityId)1098)
                     {
@@ -712,24 +704,40 @@ namespace Memoria.Scripts.Battle
                 return false;
             }
 
+            CanAttackElement(v);
+
+            if (v.Target.PlayerIndex == CharacterId.Beatrix)
+                v.Context.DefensePower += BeatrixPassive[v.Caster.Data][1];
+
+            return true;
+        }
+
+        public static Boolean CanAttackElement(this BattleCalculator v, EffectElement Element = 0)
+        {
+            if (Element == 0)
+                Element = v.Command.Element;
+
             if (v.Target.IsLevitate && v.Command.IsGround)
             {
                 v.Context.Flags |= BattleCalcFlags.Miss;
                 return false;
             }
 
-            if (v.Target.CanGuardElement(v.Command.Element))
-                return false;
-
-            if (v.Target.IsHalfElement(v.Command.Element))
-                v.Context.Attack /= 2;
-
-            if (v.Target.IsWeakElement(v.Command.Element))
-                ++v.Context.DamageModifierCount;
-
-            if (v.Target.CanAbsorbElement(v.Command.Element))
+            if (v.Target.IsGuardElement(Element))
             {
-                if (v.Target.HasSupportAbilityByIndex((SupportAbility)241) && (v.Command.Element & EffectElement.Darkness) != 0) // SA Dark side
+                v.Context.Flags |= BattleCalcFlags.Guard;
+                return false;
+            }
+
+            if (v.Target.IsHalfElement(Element))
+                v.Context.DamageModifierCount -= 2;
+
+            if (v.Target.IsWeakElement(Element))
+                v.Context.DamageModifierCount += 2;
+
+            if (v.Target.CanAbsorbElement(Element))
+            {
+                if (v.Target.HasSupportAbilityByIndex((SupportAbility)241) && (Element & EffectElement.Darkness) != 0) // SA Dark side
                 {
                     v.Context.DefensePower = 0;
                     if (v.Target.HasSupportAbilityByIndex((SupportAbility)1241))
@@ -737,16 +745,10 @@ namespace Memoria.Scripts.Battle
                 }
             }
             if (AbsorbElement.TryGetValue(v.Target.Data, out Int32 elementprotect))
-                if ((v.Command.Element & (EffectElement)elementprotect) != 0 && elementprotect != -1)
+                if ((Element & (EffectElement)elementprotect) != 0 && elementprotect != -1)
                     v.Context.Flags |= BattleCalcFlags.Absorb;
 
-            v.Target.AlterStatuses(v.Command.Element);
-
-            if (v.Target.PlayerIndex == CharacterId.Beatrix)
-            {
-                v.Context.DefensePower += BeatrixPassive[v.Caster.Data][1];
-            }
-
+            v.Target.AlterStatuses(Element);
             return true;
         }
 

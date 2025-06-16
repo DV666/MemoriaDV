@@ -112,9 +112,7 @@ namespace Memoria.Scripts.Battle
                     }
                     TranceSeekAPI.CasterPenaltyMini(_v);
                     if (_v.Target.IsUnderStatus(BattleStatus.Defend))
-                    {
-                        _v.Context.Attack >>= 1;
-                    }
+                        _v.Context.DamageModifierCount -= 2;
                     TranceSeekAPI.PenaltyShellAttack(_v);
                     if (!_v.Caster.IsPlayer)
                     {
