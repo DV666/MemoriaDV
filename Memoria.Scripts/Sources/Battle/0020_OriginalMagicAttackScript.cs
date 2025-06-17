@@ -71,7 +71,7 @@ namespace Memoria.Scripts.Battle
                 TranceSeekAPI.PenaltyCommandDividedAttack(_v);
                 if ((_v.Command.AbilityId == BattleAbilityId.ScoopArt && GameRandom.Next8() % 4 == 0))
                 {
-                    _v.Context.Attack *= 2;
+                    _v.Context.DamageModifierCount += 4;
                     _v.Target.Flags |= CalcFlag.Critical;
                 }
             }
@@ -92,7 +92,7 @@ namespace Memoria.Scripts.Battle
                     TranceSeekAPI.PenaltyCommandDividedAttack(_v);
                     if (_v.Command.HitRate == 99 && GameRandom.Next8() % 4 == 0)
                     {
-                        _v.Context.Attack *= 2;
+                        _v.Context.DamageModifierCount += 4;
                         _v.Target.Flags |= CalcFlag.Critical;
                     }
                 }

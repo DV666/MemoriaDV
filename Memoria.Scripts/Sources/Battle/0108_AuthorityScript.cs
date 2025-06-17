@@ -33,7 +33,7 @@ namespace Memoria.Scripts.Battle
             }
             else
             {
-                _v.Context.Attack = (_v.Context.Attack * 3) / 4; // Little Malus if condition is not respected.
+                _v.Context.DamageModifierCount--; // Little Malus if condition is not respected.
             }
             TranceSeekAPI.EnemyTranceBonusAttack(_v);
             TranceSeekAPI.CasterPhysicalPenaltyAndBonusAttack(_v);

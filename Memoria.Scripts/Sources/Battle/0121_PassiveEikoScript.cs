@@ -173,13 +173,9 @@ namespace Memoria.Scripts.Battle
                                 if (TranceSeekAPI.CanAttackMagic(_v))
                                 {
                                     if (_v.Target.HasCategory(EnemyCategory.Humanoid) && (_v.Command.AbilityId == BattleAbilityId.Poison || _v.Command.AbilityId == BattleAbilityId.Bio))
-                                    {
-                                        _v.Context.Attack = _v.Context.Attack * 2;
-                                    }
+                                        _v.Context.DamageModifierCount += 4;
                                     if (_v.Target.IsZombie && (_v.Command.SpecialEffect == SpecialEffect.Poison__Single || _v.Command.SpecialEffect == SpecialEffect.Poison__Multi || _v.Command.SpecialEffect == SpecialEffect.Bio__Single || _v.Command.SpecialEffect == SpecialEffect.Bio__Multi || _v.Command.SpecialEffect == SpecialEffect.Bio_Sword))
-                                    {
                                         _v.Target.Flags |= CalcFlag.HpRecovery;
-                                    }
                                     _v.CalcHpDamage();
                                 }
                                 TranceSeekAPI.TryAlterMagicStatuses(_v);

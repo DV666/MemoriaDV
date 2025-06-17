@@ -20,7 +20,7 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            if (_v.Command.AbilityId == (BattleAbilityId)1564 || _v.Command.AbilityId == (BattleAbilityId)1565 || _v.Command.AbilityId == (BattleAbilityId)1566)
+            if (_v.Command.AbilityId == (BattleAbilityId)1564 || _v.Command.AbilityId == (BattleAbilityId)1565 || _v.Command.AbilityId == (BattleAbilityId)1566) // Gravity Sword
             {
                 SB2_PATTERN sb2Pattern = FF9StateSystem.Battle.FF9Battle.btl_scene.PatAddr[FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum];
                 for (Int32 i = 0; i < MagicGravityDamageScript.ImmuneGravity.GetLength(0); i++)
@@ -35,11 +35,9 @@ namespace Memoria.Scripts.Battle
                 _v.SetCommandAttack();
                 TranceSeekAPI.PenaltyCommandDividedAttack(_v);
                 if (_v.Target.IsUnderStatus(BattleStatus.Shell))
-                    _v.Context.Attack = _v.Context.Attack / 2;
+                    _v.Context.DamageModifierCount -= 2;
                 if (_v.Target.HasCategory(EnemyCategory.Stone) && !_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill))
-                {
-                    _v.Context.Attack = _v.Context.Attack * 2;
-                }
+                    _v.Context.DamageModifierCount += 4;
                 TranceSeekAPI.ViviFocus(_v);
                 TranceSeekAPI.BonusElement(_v);
                 if (TranceSeekAPI.CanAttackMagic(_v))
@@ -92,9 +90,7 @@ namespace Memoria.Scripts.Battle
                 if (TranceSeekAPI.CanAttackMagic(_v))
                 {
                     if (_v.Target.HasCategory(EnemyCategory.Humanoid) && (_v.Command.AbilityId == BattleAbilityId.None5 || _v.Command.AbilityId == BattleAbilityId.BioSword || _v.Command.AbilityId == (BattleAbilityId)1563)) // Poison/Arsenic/Bio Sword
-                    {
-                        _v.Context.Attack = _v.Context.Attack * 2;
-                    }
+                        _v.Context.DamageModifierCount += 4;
                     _v.CalcHpDamage();
                 }
                 TranceSeekAPI.TryAlterMagicStatuses(_v);

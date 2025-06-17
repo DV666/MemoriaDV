@@ -1,15 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.Remoting.Contexts;
 using Assets.Sources.Scripts.UI.Common;
 using FF9;
-using Global.Sound.SoLoud;
 using Memoria.Data;
 using Memoria.Database;
-using Memoria.Prime;
 using UnityEngine;
-using static Memoria.Assets.DataResources;
-using static TitleUI;
 
 namespace Memoria.Scripts.Battle
 {
@@ -661,7 +656,7 @@ namespace Memoria.Scripts.Battle
         public static void BonusElement(this BattleCalculator v)
         {
             if ((v.Command.ElementForBonus & v.Caster.BonusElement) != 0)
-                ++v.Context.DamageModifierCount;
+                v.Context.DamageModifierCount += 2;
         }
 
         public static Boolean CanAttackWeaponElementalCommand(this BattleCalculator v)

@@ -102,10 +102,8 @@ namespace Memoria.Scripts.Battle
                         TranceSeekAPI.BonusElement(_v);
                         if (TranceSeekAPI.CanAttackMagic(_v))
                         {
-                            if (_v.Target.IsLevitate)
-                            {
-                                _v.Context.Attack = _v.Context.Attack * 3;
-                            }
+                            if (_v.Target.IsLevitate) // Telekenesis (x 3 against Flying)
+                               _v.Context.DamageModifierCount += 8;
                             _v.CalcHpDamage();
                         }
                         TranceSeekAPI.TryAlterMagicStatuses(_v);

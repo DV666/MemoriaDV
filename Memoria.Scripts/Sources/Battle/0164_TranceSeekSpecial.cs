@@ -354,7 +354,7 @@ namespace Memoria.Scripts.Battle
                 _v.SetCommandAttack();
                 TranceSeekAPI.PenaltyCommandDividedAttack(_v);
                 if (_v.Target.IsUnderStatus(BattleStatus.Shell))
-                    _v.Context.Attack = _v.Context.Attack / 2;
+                    _v.Context.DamageModifierCount -= 2;
                 TranceSeekAPI.BonusElement(_v);
                 if (TranceSeekAPI.CanAttackMagic(_v))
                 {

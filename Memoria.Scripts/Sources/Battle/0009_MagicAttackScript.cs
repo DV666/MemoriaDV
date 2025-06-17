@@ -71,7 +71,7 @@ namespace Memoria.Scripts.Battle
                 {
                     if (_v.Context.sfxThread.targetId != 1 && _v.Context.sfxThread.targetId != 2 && _v.Context.sfxThread.targetId != 4 && _v.Context.sfxThread.targetId != 8)
                     {
-                        _v.Context.Attack /= 2;
+                        _v.Context.DamageModifierCount -= 2;
                         _v.Context.HitRate /= 2;
                     }
                 }
@@ -79,13 +79,9 @@ namespace Memoria.Scripts.Battle
                 if (TranceSeekAPI.CanAttackMagic(_v))
                 {
                     if (_v.Target.HasCategory(EnemyCategory.Humanoid) && (_v.Command.AbilityId == BattleAbilityId.Poison || _v.Command.AbilityId == BattleAbilityId.Bio))
-                    {
-                        _v.Context.Attack = _v.Context.Attack * 2;
-                    }
+                        _v.Context.DamageModifierCount += 4;
                     if (_v.Target.IsZombie && (_v.Command.AbilityId == BattleAbilityId.Poison || _v.Command.AbilityId == BattleAbilityId.Bio || _v.Command.AbilityId == (BattleAbilityId)1036 || _v.Command.AbilityId == (BattleAbilityId)1037))
-                    {
                         _v.Target.Flags |= CalcFlag.HpRecovery;
-                    }
                     if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)102))
                         TranceSeekAPI.TryCriticalHit(_v);
                     _v.CalcHpDamage();

@@ -34,11 +34,9 @@ namespace Memoria.Scripts.Battle
             _v.SetCommandAttack();
             TranceSeekAPI.PenaltyCommandDividedAttack(_v);
             if (_v.Target.IsUnderStatus(BattleStatus.Shell))
-                _v.Context.Attack = _v.Context.Attack / 2;
+                _v.Context.DamageModifierCount -= 2;
             if (_v.Target.HasCategory(EnemyCategory.Stone) && !_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill))
-            {
-                _v.Context.Attack = _v.Context.Attack * 2;
-            }
+                _v.Context.DamageModifierCount += 4;
             TranceSeekAPI.ViviFocus(_v);
             TranceSeekAPI.BonusElement(_v);
             if (TranceSeekAPI.CanAttackMagic(_v))

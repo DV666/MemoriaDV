@@ -63,9 +63,7 @@ namespace Memoria.Scripts.Battle
                 TranceSeekAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
                 TranceSeekAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
                 if (_v.Caster.IsUnderStatus(BattleStatus.Trance) && _v.Caster.PlayerIndex == CharacterId.Steiner)
-                {
-                    _v.Context.Attack += _v.Context.Attack / 4;
-                }
+                    _v.Context.DamageModifierCount ++;     
                 TranceSeekAPI.BonusBackstabAndPenaltyLongDistance(_v);
                 TranceSeekAPI.BonusWeaponElement(_v);
                 if (TranceSeekAPI.CanAttackWeaponElementalCommand(_v))

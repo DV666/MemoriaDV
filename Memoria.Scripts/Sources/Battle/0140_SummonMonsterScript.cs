@@ -264,7 +264,7 @@ namespace Memoria.Scripts.Battle
                                 {
                                     if (_v.Command.HitRate == 224) // Contre-attaque avec Critique
                                     {
-                                        _v.Context.Attack *= 2;
+                                        _v.Context.DamageModifierCount += 4;
                                         _v.Target.Flags |= CalcFlag.Critical;
                                     }
                                     else
@@ -566,13 +566,9 @@ namespace Memoria.Scripts.Battle
                         _v.SetCommandAttack();
                         TranceSeekAPI.PenaltyCommandDividedAttack(_v);
                         if (_v.Target.IsUnderStatus(BattleStatus.Shell))
-                        {
-                            _v.Context.Attack = _v.Context.Attack / 2;
-                        }
+                            _v.Context.DamageModifierCount -= 2;
                         if (_v.Target.HasCategory(EnemyCategory.Stone) && !_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill))
-                        {
-                            _v.Context.Attack = _v.Context.Attack * 2;
-                        }
+                            _v.Context.DamageModifierCount += 4;
                         TranceSeekAPI.ViviFocus(_v);
                         TranceSeekAPI.BonusElement(_v);
                         if (TranceSeekAPI.CanAttackMagic(_v))
@@ -789,9 +785,7 @@ namespace Memoria.Scripts.Battle
                                 if (TranceSeekAPI.CanAttackMagic(_v))
                                 {
                                     if (_v.Target.IsLevitate)
-                                    {
-                                        _v.Context.Attack = _v.Context.Attack * 3;
-                                    }
+                                        _v.Context.DamageModifierCount += 8;
                                     _v.CalcHpDamage();
                                 }
                                 TranceSeekAPI.TryAlterMagicStatuses(_v);
@@ -1237,13 +1231,9 @@ namespace Memoria.Scripts.Battle
                         if (TranceSeekAPI.CanAttackMagic(_v))
                         {
                             if (_v.Target.HasCategory(EnemyCategory.Humanoid))
-                            {
-                                _v.Context.Attack = _v.Context.Attack * 2;
-                            }
+                                _v.Context.DamageModifierCount += 4;
                             if (_v.Target.IsZombie)
-                            {
                                 _v.Target.Flags |= CalcFlag.HpRecovery;
-                            }
                             if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)102))
                                 TranceSeekAPI.TryCriticalHit(_v);
                             _v.CalcHpDamage();

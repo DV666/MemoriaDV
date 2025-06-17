@@ -88,7 +88,7 @@ namespace Memoria.Scripts.Battle
                         {
                             if (_v.Command.HitRate == 224) // Contre-attaque avec Critique
                             {
-                                _v.Context.Attack *= 2;
+                                _v.Context.DamageModifierCount += 4;
                                 _v.Target.Flags |= CalcFlag.Critical;
                             }
                             else
