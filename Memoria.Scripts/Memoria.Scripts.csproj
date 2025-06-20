@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Memoria.Scripts</RootNamespace>
-    <AssemblyName>Memoria.Scripts</AssemblyName>
+    <AssemblyName>Memoria.Scripts.ItsMorphingTime</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile>
@@ -367,6 +367,12 @@
     <Compile Include="Sources\Battle\0109_MiniScript.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
+    <Compile Include="Sources\Battle\OverloadOnBattleInitScript.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
+    <Compile Include="Sources\Battle\OverloadDamageModifierScript.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
     <Compile Include="Sources\Battle\BaseWeaponScript.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
@@ -376,6 +382,10 @@
       <Project>{3FE6492C-C2E2-48EE-9AD6-B2D9A7D43C93}</Project>
       <Name>Assembly-CSharp</Name>
       <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\Memoria.Prime\Memoria.Prime.csproj">
+      <Project>{110f557e-abff-44c5-886a-c7c7f0614558}</Project>
+      <Name>Memoria.Prime</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />
