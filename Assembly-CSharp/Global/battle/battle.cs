@@ -297,7 +297,7 @@ public static class battle
                             proceedEnd = false;
                         break;
                     case FF9StateBattleSystem.SEQ_MENU_OFF_DEFEAT:
-                        if (next.IsPlayer && !btl_mot.checkMotion(data, BattlePlayerCharacter.PlayerMotionIndex.MP_DISABLE) && !next.IsUnderAnyStatus(BattleStatusConst.BattleEnd))
+                        if (next.IsPlayer && !next.IsUnderAnyStatus(BattleStatusConst.BattleEnd) && (!next.IsMonsterTransform && !btl_mot.checkMotion(data, BattlePlayerCharacter.PlayerMotionIndex.MP_DISABLE) || next.IsMonsterTransform && !next.Data.monster_transform.is_death))
                             proceedEnd = false;
                         break;
                     case FF9StateBattleSystem.SEQ_MENU_OFF_EVENT:

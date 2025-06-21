@@ -687,7 +687,7 @@ namespace Memoria
             }
         }
 
-        public void ChangeToMonster(String btlName, Int32 monsterIndex, BattleCommandId commandToReplace, BattleCommandId commandAsMonster, Boolean cancelOnDeath, Boolean updatePts, Boolean updateStat, Boolean updateDef, Boolean updateElement, List<BattleCommandId> disableCommands = null)
+        public void ChangeToMonster(String btlName, Int32 monsterIndex, BattleCommandId commandToReplace, BattleCommandId commandAsMonster, Boolean cancelOnDeath, Boolean updatePts, Boolean updateStat, Boolean updateDef, Boolean updateElement, List<BattleCommandId> disableCommands = null, Boolean AADescription = false, Boolean updateStatus = false)
         {
             if (!IsPlayer) // In order to implement something similar for enemies, script has to be update for that enemy's entry, among other things
                 return;
@@ -743,6 +743,7 @@ namespace Memoria
             btlseq.ReadBattleSequence(btlName, ref seqreader);
             seqreader.FixBuggedAnimations(scene);
             List<AA_DATA> aaList = new List<AA_DATA>();
+            List<string> aaDescList = new List<string>();
             List<Int32> usableAbilList = new List<Int32>();
             AA_DATA[] attackAA = [null, null];
             List<Int32>[] attackAnims = [null, null];
@@ -774,7 +775,61 @@ namespace Memoria
                 else if (ability.Info.Target == TargetType.SingleEnemy)
                     ability.Info.Target = TargetType.SingleAlly;
                 if (scene.header.TypCount + i < battleRawText.Length)
+                {
                     ability.Name = battleRawText[scene.header.TypCount + i];
+                    string Description = "";
+                    if ((ability.Category & 8) != 0) // Physical
+                    {
+                        Description += "[ICON=95] ";
+                    }
+                    if ((ability.Category & 16) != 0) // Magical
+                    {
+                        Description += "[ICON=102] ";
+                    }
+                    if (ability.Ref.Power > 0)
+                    {
+                        Description += $"{Localization.Get("AttackStats")} : {ability.Ref.Power}";
+                    }
+                    if (ability.Ref.Rate > 0)
+                    {
+                        if (ability.Ref.Power > 0)
+                            Description += " / ";
+                        Description += $"{ability.Ref.Rate}%";
+                    }
+                    if (ability.Ref.Elements > 0)
+                    {
+                        Description += "\n";
+                        if (((EffectElement)ability.Ref.Elements & EffectElement.Fire) != 0)
+                            Description += $"[DF0000][HSHD]{FF9TextTool.BattleFollowText(0)}[383838][HSHD] ";
+                        if (((EffectElement)ability.Ref.Elements & EffectElement.Cold) != 0)
+                            Description += $"[028E8E][HSHD]{FF9TextTool.BattleFollowText(1)}[383838][HSHD] ";
+                        if (((EffectElement)ability.Ref.Elements & EffectElement.Thunder) != 0)
+                            Description += $"[D6D62D][HSHD]{FF9TextTool.BattleFollowText(2)}[383838][HSHD] ";
+                        if (((EffectElement)ability.Ref.Elements & EffectElement.Earth) != 0)
+                            Description += $"[783F04][HSHD]{FF9TextTool.BattleFollowText(3)}[383838][HSHD] ";
+                        if (((EffectElement)ability.Ref.Elements & EffectElement.Aqua) != 0)
+                            Description += $"[5C5CFF][HSHD]{FF9TextTool.BattleFollowText(4)}[383838][HSHD] ";
+                        if (((EffectElement)ability.Ref.Elements & EffectElement.Wind) != 0)
+                            Description += $"[2C623A][HSHD]{FF9TextTool.BattleFollowText(5)}[383838][HSHD] ";
+                        if (((EffectElement)ability.Ref.Elements & EffectElement.Holy) != 0)
+                            Description += $"[FFFFFF][HSHD]{FF9TextTool.BattleFollowText(6)}[383838][HSHD] ";
+                        if (((EffectElement)ability.Ref.Elements & EffectElement.Darkness) != 0)
+                            Description += $"[000000][HSHD]{FF9TextTool.BattleFollowText(7)}[383838][HSHD] ";                     
+                    }
+                    if ((FF9BattleDB.StatusSets.TryGetValue(ability.AddStatusNo, out BattleStatusEntry stat) ? stat.Value : 0) > 0)
+                    {
+                        string messagestatus = "\n";
+                        BattleStatus status = stat.Value;
+                        foreach (BattleStatusId statusId in status.ToStatusList())
+                            if (BattleHUD.BuffIconNames.TryGetValue(statusId, out String buffspriteName))
+                                messagestatus += ($"[SPRT={buffspriteName},48,48]");
+                        foreach (BattleStatusId statusId in status.ToStatusList())
+                            if (BattleHUD.DebuffIconNames.TryGetValue(statusId, out String debuffspriteName))
+                                messagestatus += ($"[SPRT={debuffspriteName},48,48]");
+                        Description += messagestatus;
+                    }
+                    aaDescList.Add(Description);
+                }
                 animOffset = seqreader.seq_work_set.AnmOfsList[i];
                 Int32 sequenceSfx = seqreader.GetSFXOfSequence(i, out Boolean sequenceChannel, out Boolean sequenceContact);
                 if (sequenceSfx >= 0)
@@ -804,11 +859,13 @@ namespace Memoria
             monsterTransform.new_command = commandAsMonster;
             monsterTransform.attack = attackAA;
             monsterTransform.spell = aaList;
+            monsterTransform.spell_desc = aaDescList;
             monsterTransform.replace_point = updatePts;
             monsterTransform.replace_stat = updateStat;
             monsterTransform.replace_defence = updateDef;
             monsterTransform.replace_element = updateElement;
             monsterTransform.cancel_on_death = cancelOnDeath;
+            monsterTransform.is_death = false;
             monsterTransform.death_sound = monsterParam.DieSfx;
             monsterTransform.fade_counter = 0;
             for (i = 0; i < 3; i++)
@@ -930,6 +987,17 @@ namespace Memoria
                     ChangeToMonster_SetClip(monsterTransform.motion_alternate, "ANH_" + geoName + "_081", BattlePlayerCharacter.PlayerMotionIndex.MP_CHANT);
                     ChangeToMonster_SetClip(monsterTransform.motion_alternate, "ANH_" + geoName + "_082", BattlePlayerCharacter.PlayerMotionIndex.MP_MAGIC);
                 }
+                else if (geoName.CompareTo("MON_B3_114") == 0)
+                {
+                    // Gizamaluke [MON_B3_114]
+                    ChangeToMonster_SetClip(monsterTransform.motion_normal, "ANH_" + geoName + "_000", BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_NORMAL);
+                    ChangeToMonster_SetClip(monsterTransform.motion_normal, "ANH_" + geoName + "_000", BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_CMD);
+                    ChangeToMonster_SetClip(monsterTransform.motion_normal, "ANH_" + geoName + "_003", BattlePlayerCharacter.PlayerMotionIndex.MP_DAMAGE1);
+                    ChangeToMonster_SetClip(monsterTransform.motion_normal, "ANH_" + geoName + "_003", BattlePlayerCharacter.PlayerMotionIndex.MP_DAMAGE2);
+                    ChangeToMonster_SetClip(monsterTransform.motion_alternate, "ANH_" + geoName + "_050", BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_NORMAL);
+                    ChangeToMonster_SetClip(monsterTransform.motion_alternate, "ANH_" + geoName + "_003", BattlePlayerCharacter.PlayerMotionIndex.MP_DAMAGE1);
+                    ChangeToMonster_SetClip(monsterTransform.motion_alternate, "ANH_" + geoName + "_003", BattlePlayerCharacter.PlayerMotionIndex.MP_DAMAGE2);
+                }
                 else
                 {
                     // Serpion [MON_B3_046], Torama [MON_B3_082], Lich [MON_B3_140], Crystal Lich [MON_B3_191], Deathguise [MON_B3_147], Gargoyle (?) [MON_B3_072]
@@ -980,6 +1048,12 @@ namespace Memoria
             monsterTransform.auto_added &= ~PermanentStatus;
             ResistStatus |= monsterTransform.resist_added;
             monsterTransform.auto_added &= ~ResistStatus;
+            if (updateStatus)
+            {
+                current_added |= monsterParam.InitialStatus;
+                ResistStatus |= monsterParam.ResistStatus;
+                monsterTransform.auto_added |= monsterParam.AutoStatus;
+            }
             btl_stat.AlterStatuses(this, current_added);
             btl_stat.MakeStatusesPermanent(this, monsterTransform.auto_added, true);
             // TODO: handle "partialResist" and "durationFactor" properly (now, they are most likely applied but persist after "ReleaseChangeToMonster")

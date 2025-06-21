@@ -460,6 +460,7 @@ namespace FF9
             {
                 btl.evt.animFrame = (Byte)GeoAnim.geoAnimGetNumFrames(btl);
                 btl.bi.stop_anim = 1;
+                btl.monster_transform.is_death = true;
             }
             return true;
         }

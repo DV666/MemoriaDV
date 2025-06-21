@@ -313,11 +313,13 @@ public partial class BTL_DATA
         public BattleCommandId new_command;
         public AA_DATA[] attack;
         public List<AA_DATA> spell;
+        public List<string> spell_desc;
         public Boolean replace_point;
         public Boolean replace_stat;
         public Boolean replace_defence;
         public Boolean replace_element;
         public Boolean cancel_on_death;
+        public Boolean is_death;
         public Byte[] cam_bone = new Byte[3];
         public Byte[] icon_bone = new Byte[6];
         public SByte[] icon_y = new SByte[6];
