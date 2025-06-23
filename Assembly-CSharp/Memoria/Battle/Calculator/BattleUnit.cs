@@ -743,7 +743,6 @@ namespace Memoria
             btlseq.ReadBattleSequence(btlName, ref seqreader);
             seqreader.FixBuggedAnimations(scene);
             List<AA_DATA> aaList = new List<AA_DATA>();
-            List<string> aaDescList = new List<string>();
             List<Int32> usableAbilList = new List<Int32>();
             AA_DATA[] attackAA = [null, null];
             List<Int32>[] attackAnims = [null, null];
@@ -775,60 +774,9 @@ namespace Memoria
                 else if (ability.Info.Target == TargetType.SingleEnemy)
                     ability.Info.Target = TargetType.SingleAlly;
                 if (scene.header.TypCount + i < battleRawText.Length)
-                {
+                {                 
                     ability.Name = battleRawText[scene.header.TypCount + i];
-                    string Description = "";
-                    if ((ability.Category & 8) != 0) // Physical
-                    {
-                        Description += "[ICON=95] ";
-                    }
-                    if ((ability.Category & 16) != 0) // Magical
-                    {
-                        Description += "[ICON=102] ";
-                    }
-                    if (ability.Ref.Power > 0)
-                    {
-                        Description += $"{Localization.Get("AttackStats")} : {ability.Ref.Power}";
-                    }
-                    if (ability.Ref.Rate > 0)
-                    {
-                        if (ability.Ref.Power > 0)
-                            Description += " / ";
-                        Description += $"{ability.Ref.Rate}%";
-                    }
-                    if (ability.Ref.Elements > 0)
-                    {
-                        Description += "\n";
-                        if (((EffectElement)ability.Ref.Elements & EffectElement.Fire) != 0)
-                            Description += $"[DF0000][HSHD]{FF9TextTool.BattleFollowText(0)}[383838][HSHD] ";
-                        if (((EffectElement)ability.Ref.Elements & EffectElement.Cold) != 0)
-                            Description += $"[028E8E][HSHD]{FF9TextTool.BattleFollowText(1)}[383838][HSHD] ";
-                        if (((EffectElement)ability.Ref.Elements & EffectElement.Thunder) != 0)
-                            Description += $"[D6D62D][HSHD]{FF9TextTool.BattleFollowText(2)}[383838][HSHD] ";
-                        if (((EffectElement)ability.Ref.Elements & EffectElement.Earth) != 0)
-                            Description += $"[783F04][HSHD]{FF9TextTool.BattleFollowText(3)}[383838][HSHD] ";
-                        if (((EffectElement)ability.Ref.Elements & EffectElement.Aqua) != 0)
-                            Description += $"[5C5CFF][HSHD]{FF9TextTool.BattleFollowText(4)}[383838][HSHD] ";
-                        if (((EffectElement)ability.Ref.Elements & EffectElement.Wind) != 0)
-                            Description += $"[2C623A][HSHD]{FF9TextTool.BattleFollowText(5)}[383838][HSHD] ";
-                        if (((EffectElement)ability.Ref.Elements & EffectElement.Holy) != 0)
-                            Description += $"[FFFFFF][HSHD]{FF9TextTool.BattleFollowText(6)}[383838][HSHD] ";
-                        if (((EffectElement)ability.Ref.Elements & EffectElement.Darkness) != 0)
-                            Description += $"[000000][HSHD]{FF9TextTool.BattleFollowText(7)}[383838][HSHD] ";                     
-                    }
-                    if ((FF9BattleDB.StatusSets.TryGetValue(ability.AddStatusNo, out BattleStatusEntry stat) ? stat.Value : 0) > 0)
-                    {
-                        string messagestatus = "\n";
-                        BattleStatus status = stat.Value;
-                        foreach (BattleStatusId statusId in status.ToStatusList())
-                            if (BattleHUD.BuffIconNames.TryGetValue(statusId, out String buffspriteName))
-                                messagestatus += ($"[SPRT={buffspriteName},48,48]");
-                        foreach (BattleStatusId statusId in status.ToStatusList())
-                            if (BattleHUD.DebuffIconNames.TryGetValue(statusId, out String debuffspriteName))
-                                messagestatus += ($"[SPRT={debuffspriteName},48,48]");
-                        Description += messagestatus;
-                    }
-                    aaDescList.Add(Description);
+                    //BuildDescriptionAA(ability, out string Desc);
                 }
                 animOffset = seqreader.seq_work_set.AnmOfsList[i];
                 Int32 sequenceSfx = seqreader.GetSFXOfSequence(i, out Boolean sequenceChannel, out Boolean sequenceContact);
@@ -859,13 +807,11 @@ namespace Memoria
             monsterTransform.new_command = commandAsMonster;
             monsterTransform.attack = attackAA;
             monsterTransform.spell = aaList;
-            monsterTransform.spell_desc = aaDescList;
             monsterTransform.replace_point = updatePts;
             monsterTransform.replace_stat = updateStat;
             monsterTransform.replace_defence = updateDef;
             monsterTransform.replace_element = updateElement;
             monsterTransform.cancel_on_death = cancelOnDeath;
-            monsterTransform.is_death = false;
             monsterTransform.death_sound = monsterParam.DieSfx;
             monsterTransform.fade_counter = 0;
             for (i = 0; i < 3; i++)
@@ -1129,7 +1075,7 @@ namespace Memoria
             btl_mot.HideMesh(Data, UInt16.MaxValue);
             monsterTransform.fade_counter = 2;
             UIManager.Battle.ClearCursorMemorize(Position, monsterTransform.new_command);
-        }
+        }     
 
         public Object GetPropertyByName(String propertyName)
         {

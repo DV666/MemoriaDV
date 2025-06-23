@@ -186,6 +186,7 @@
     <Compile Include="Assets\Sources\Scripts\UI\Common\CardDetailHUD.cs" />
     <Compile Include="Assets\Sources\Scripts\UI\Common\CharacterDetailHUD.cs" />
     <Compile Include="Assets\Sources\Scripts\UI\Common\EquipmentDetailHud.cs" />
+    <Compile Include="Assets\Sources\Scripts\UI\Common\DescriptionBuilder.cs" />
     <Compile Include="Assets\Sources\Scripts\UI\Common\FF9TextTool.cs" />
     <Compile Include="Assets\Sources\Scripts\UI\Common\FF9UIDataTool.cs" />
     <Compile Include="Assets\Sources\Scripts\UI\Common\ItemListDetailHUD.cs" />

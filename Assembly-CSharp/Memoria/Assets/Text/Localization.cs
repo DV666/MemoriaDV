@@ -478,6 +478,897 @@ namespace Memoria.Assets
                     { "IT", "[b]Abilità[/b]" }
                 }
             },
+            { "StatusPetrify", new Dictionary<String, String>()
+                {
+                    { "US", "Petrify" },
+                    { "UK", "Petrify" },
+                    { "JP", "石化" },
+                    { "ES", "Piedra" },
+                    { "FR", "Fossile" },
+                    { "GR", "Stein" },
+                    { "IT", "Pietra" }
+                }
+            },
+            { "StatusVenom", new Dictionary<String, String>()
+                {
+                    { "US", "Venom" },
+                    { "UK", "Venom" },
+                    { "JP", "猛毒" },
+                    { "ES", "Veneno+" },
+                    { "FR", "Toxique" },
+                    { "GR", "Toxitus" },
+                    { "IT", "Veleno" }
+                }
+            },
+            { "StatusVirus", new Dictionary<String, String>()
+                {
+                    { "US", "Virus" },
+                    { "UK", "Virus" },
+                    { "JP", "ウイルス" },
+                    { "ES", "Virus" },
+                    { "FR", "Virus" },
+                    { "GR", "Infektion" },
+                    { "IT", "Virus" }
+                }
+            },
+            { "StatusSilence", new Dictionary<String, String>()
+                {
+                    { "US", "Silence" },
+                    { "UK", "Silence" },
+                    { "JP", "沈黙" },
+                    { "ES", "Mudez" },
+                    { "FR", "Mutisme" },
+                    { "GR", "Schweigen" },
+                    { "IT", "Silenzio" }
+                }
+            },
+            { "StatusBlind", new Dictionary<String, String>()
+                {
+                    { "US", "Darkness" },
+                    { "UK", "Darkness" },
+                    { "JP", "暗闇" },
+                    { "ES", "Ceguera" },
+                    { "FR", "Obscurité" },
+                    { "GR", "Blind" },
+                    { "IT", "Blind" }
+                }
+            },
+            { "StatusTrouble", new Dictionary<String, String>()
+                {
+                    { "US", "Trouble" },
+                    { "UK", "Trouble" },
+                    { "JP", "迷惑" },
+                    { "ES", "Molestia" },
+                    { "FR", "Embrouilles" },
+                    { "GR", "Neurose" },
+                    { "IT", "Disturbo" }
+                }
+            },
+            { "StatusZombie", new Dictionary<String, String>()
+                {
+                    { "US", "Zombie" },
+                    { "UK", "Zombie" },
+                    { "JP", "ゾンビ" },
+                    { "ES", "Zombi" },
+                    { "FR", "Zombie" },
+                    { "GR", "Zombie" },
+                    { "IT", "Zombie" }
+                }
+            },
+            { "StatusEasyKill", new Dictionary<String, String>()
+                {
+                    { "US", "EasyKill" },
+                    { "UK", "EasyKill" },
+                    { "JP", "EasyKill" },
+                    { "ES", "EasyKill" },
+                    { "FR", "EasyKill" },
+                    { "GR", "EasyKill" },
+                    { "IT", "EasyKill" }
+                }
+            },
+            { "StatusDeath", new Dictionary<String, String>()
+                {
+                    { "US", "Death" },
+                    { "UK", "Death" },
+                    { "JP", "死" },
+                    { "ES", "Morte" },
+                    { "FR", "Mort" },
+                    { "GR", "Muerte" },
+                    { "IT", "TOT" }
+                }
+            },
+            { "CureDeath", new Dictionary<String, String>()
+                {
+                    { "US", "KO" },
+                    { "UK", "KO" },
+                    { "JP", "戦闘不能" },
+                    { "ES", "Fuera de combate (K. O.)" },
+                    { "FR", "KO" },
+                    { "GR", "Kampfunfähigkeit" },
+                    { "IT", "K.O." }
+                }
+            },
+            { "StatusLowHP", new Dictionary<String, String>()
+                {
+                    { "US", "Low HP" },
+                    { "UK", "Low HP" },
+                    { "JP", "HPが低い" },
+                    { "ES", "HP bajo" },
+                    { "FR", "HP faibles" },
+                    { "GR", "Niedrige HP" },
+                    { "IT", "HP bassi" }
+                }
+            },
+            { "StatusConfuse", new Dictionary<String, String>()
+                {
+                    { "US", "Confusion" },
+                    { "UK", "Confusion" },
+                    { "JP", "混乱" },
+                    { "ES", "Confusión" },
+                    { "FR", "Confusion" },
+                    { "GR", "Konfus" },
+                    { "IT", "Confusione" }
+                }
+            },
+            { "StatusBerserk", new Dictionary<String, String>()
+                {
+                    { "US", "Berserk" },
+                    { "UK", "Berserk" },
+                    { "JP", "バーサク" },
+                    { "ES", "Locura" },
+                    { "FR", "Furie" },
+                    { "GR", "Tobsucht" },
+                    { "IT", "Berserk" }
+                }
+            },
+            { "StatusStop", new Dictionary<String, String>()
+                {
+                    { "US", "Stop" },
+                    { "UK", "Stop" },
+                    { "JP", "ストップ" },
+                    { "ES", "Paro" },
+                    { "FR", "Stop" },
+                    { "GR", "Stop" },
+                    { "IT", "Stop" }
+                }
+            },
+            { "StatusAutoLife", new Dictionary<String, String>()
+                {
+                    { "US", "AutoLife" },
+                    { "UK", "AutoLife" },
+                    { "JP", "リレイズ" },
+                    { "ES", "AutoLázaro" },
+                    { "FR", "Pakaho" },
+                    { "GR", "Wiedergeburt" },
+                    { "IT", "Risveglio" }
+                }
+            },
+            { "StatusTrance", new Dictionary<String, String>()
+                {
+                    { "US", "Trance" },
+                    { "UK", "Trance" },
+                    { "JP", "トランス" },
+                    { "ES", "Trance" },
+                    { "FR", "Transe" },
+                    { "GR", "Trance" },
+                    { "IT", "Trance" }
+                }
+            },
+            { "StatusDefend", new Dictionary<String, String>()
+                {
+                    { "US", "Defend" },
+                    { "UK", "Defend" },
+                    { "JP", "防御" },
+                    { "ES", "Defensa" },
+                    { "FR", "Défense" },
+                    { "GR", "Abwehr" },
+                    { "IT", "Difesa" }
+                }
+            },
+            { "StatusPoison", new Dictionary<String, String>()
+                {
+                    { "US", "Poison" },
+                    { "UK", "Poison" },
+                    { "JP", "毒" },
+                    { "ES", "Veneno" },
+                    { "FR", "Poison" },
+                    { "GR", "Gift" },
+                    { "IT", "Fiele" }
+                }
+            },
+            { "StatusSleep", new Dictionary<String, String>()
+                {
+                    { "US", "Sleep" },
+                    { "UK", "Sleep" },
+                    { "JP", "睡眠" },
+                    { "ES", "Sueño" },
+                    { "FR", "Morphée" },
+                    { "GR", "Schlaf" },
+                    { "IT", "Sonno" }
+                }
+            },
+            { "StatusRegen", new Dictionary<String, String>()
+                {
+                    { "US", "Regen" },
+                    { "UK", "Regen" },
+                    { "JP", "リジェネ" },
+                    { "ES", "Revitalia" },
+                    { "FR", "Récup" },
+                    { "GR", "Regena" },
+                    { "IT", "Rigene" }
+                }
+            },
+            { "StatusHaste", new Dictionary<String, String>()
+                {
+                    { "US", "Haste" },
+                    { "UK", "Haste" },
+                    { "JP", "ヘイスト" },
+                    { "ES", "Prisa" },
+                    { "FR", "Booster" },
+                    { "GR", "Hast" },
+                    { "IT", "Haste" }
+                }
+            },
+            { "StatusSlow", new Dictionary<String, String>()
+                {
+                    { "US", "Slow" },
+                    { "UK", "Slow" },
+                    { "JP", "スロウ" },
+                    { "ES", "Freno" },
+                    { "FR", "Somni" },
+                    { "GR", "Gemach" },
+                    { "IT", "Lentezza" }
+                }
+            },
+            { "StatusFloat", new Dictionary<String, String>()
+                {
+                    { "US", "Float" },
+                    { "UK", "Float" },
+                    { "JP", "レビテト" },
+                    { "ES", "Lévita" },
+                    { "FR", "Lévitation" },
+                    { "GR", "Levitas" },
+                    { "IT", "Levita" }
+                }
+            },
+            { "StatusShell", new Dictionary<String, String>()
+                {
+                    { "US", "Shell" },
+                    { "UK", "Shell" },
+                    { "JP", "シェル" },
+                    { "ES", "Coraza" },
+                    { "FR", "Blindage" },
+                    { "GR", "Shell" },
+                    { "IT", "Shell" }
+                }
+            },
+            { "StatusProtect", new Dictionary<String, String>()
+                {
+                    { "US", "Protect" },
+                    { "UK", "Protect" },
+                    { "JP", "プロテス" },
+                    { "ES", "Escudo" },
+                    { "FR", "Carapace" },
+                    { "GR", "Protes" },
+                    { "IT", "Protect" }
+                }
+            },
+            { "StatusHeat", new Dictionary<String, String>()
+                {
+                    { "US", "Heat" },
+                    { "UK", "Heat" },
+                    { "JP", "ヒート" },
+                    { "ES", "Ardor" },
+                    { "FR", "Chaleur" },
+                    { "GR", "Glut" },
+                    { "IT", "Caldo" }
+                }
+            },
+            { "StatusFreeze", new Dictionary<String, String>()
+                {
+                    { "US", "Freeze" },
+                    { "UK", "Freeze" },
+                    { "JP", "フリーズ" },
+                    { "ES", "Gélido" },
+                    { "FR", "Gel" },
+                    { "GR", "Frost" },
+                    { "IT", "Freddo" }
+                }
+            },
+            { "StatusVanish", new Dictionary<String, String>()
+                {
+                    { "US", "Vanish" },
+                    { "UK", "Vanish" },
+                    { "JP", "消える" },
+                    { "ES", "Invisibilidad" },
+                    { "FR", "Invisibilité" },
+                    { "GR", "Verschwinden" },
+                    { "IT", "Invisibilità" }
+                }
+            },
+            { "StatusDoom", new Dictionary<String, String>()
+                {
+                    { "US", "Doom" },
+                    { "UK", "Doom" },
+                    { "JP", "死の宣告" },
+                    { "ES", "Condena" },
+                    { "FR", "Châtiment" },
+                    { "GR", "Todesurteil" },
+                    { "IT", "Sentenza" }
+                }
+            },
+            { "StatusMini", new Dictionary<String, String>()
+                {
+                    { "US", "Mini" },
+                    { "UK", "Mini" },
+                    { "JP", "ミニマム" },
+                    { "ES", "Minimalia" },
+                    { "FR", "Minimum" },
+                    { "GR", "Wicht" },
+                    { "IT", "Minimo" }
+                }
+            },
+            { "StatusReflect", new Dictionary<String, String>()
+                {
+                    { "US", "Reflect" },
+                    { "UK", "Reflect" },
+                    { "JP", "リフレク" },
+                    { "ES", "Espejo" },
+                    { "FR", "Boomerang" },
+                    { "GR", "Reflek" },
+                    { "IT", "Reflex" }
+                }
+            },
+            { "StatusJump", new Dictionary<String, String>()
+                {
+                    { "US", "Jump" },
+                    { "UK", "Jump" },
+                    { "JP", "ジャンプ" },
+                    { "ES", "Salto" },
+                    { "FR", "Sauter" },
+                    { "GR", "Sprung" },
+                    { "IT", "Salto" }
+                }
+            },
+            { "StatusGradualPetrify", new Dictionary<String, String>()
+                {
+                    { "US", "Gradual Petrify" },
+                    { "UK", "Gradual Petrify" },
+                    { "JP", "徐々に石化" },
+                    { "ES", "→Piedra" },
+                    { "FR", "Pétra" },
+                    { "GR", "Gips" },
+                    { "IT", "Pietrificazione" }
+                }
+            },
+            { "AADesc_Power", new Dictionary<String, String>()
+                {
+                    { "US", "Power" },
+                    { "UK", "Power" },
+                    { "JP", "力" },
+                    { "ES", "Poder" },
+                    { "FR", "Puissance" },
+                    { "GR", "Power" },
+                    { "IT", "Potere" }
+                }
+            },
+            { "AADesc_HitRate", new Dictionary<String, String>()
+                {
+                    { "US", "Hitrate" },
+                    { "UK", "Hitrate" },
+                    { "JP", "正確さ" },
+                    { "ES", "Precisión" },
+                    { "FR", "Précision" },
+                    { "GR", "Genauigkeit" },
+                    { "IT", "Precisione" }
+                }
+            },
+            { "AADesc_Physical", new Dictionary<String, String>()
+                {
+                    { "US", "physical" },
+                    { "UK", "physical" },
+                    { "JP", "物理的" },
+                    { "ES", "físico" },
+                    { "FR", "physique" },
+                    { "GR", "physisch" },
+                    { "IT", "fisico" }
+                }
+            },
+            { "AADesc_Magical", new Dictionary<String, String>()
+                {
+                    { "US", "magical" },
+                    { "UK", "magical" },
+                    { "JP", "魔法の" },
+                    { "ES", "mágico" },
+                    { "FR", "magique" },
+                    { "GR", "magisch" },
+                    { "IT", "magico" }
+                }
+            },
+            { "AADesc_SingleAlly", new Dictionary<String, String>()
+                {
+                    { "US", "an ally" },
+                    { "UK", "an ally" },
+                    { "JP", "味方" },
+                    { "ES", "un aliado" },
+                    { "FR", "un allié" },
+                    { "GR", "Fläche (Verbündete)" },
+                    { "IT", "un alleato" }
+                }
+            },
+            { "AADesc_AllAlly", new Dictionary<String, String>()
+                {
+                    { "US", "the whole team" },
+                    { "UK", "the whole team" },
+                    { "JP", "チーム全体" },
+                    { "ES", "todo el equipo" },
+                    { "FR", "toute l'équipe" },
+                    { "GR", "Fläche (Verbündete)" },
+                    { "IT", "tutta gli alleati" }
+                }
+            },
+            { "AADesc_SingleEnemy", new Dictionary<String, String>()
+                {
+                    { "US", "an enemy" },
+                    { "UK", "an enemy" },
+                    { "JP", "敵" },
+                    { "ES", "un enemigo" },
+                    { "FR", "un ennemi" },
+                    { "GR", "Einzel (Gegner)" },
+                    { "IT", "un nemico" }
+                }
+            },
+            { "AADesc_AllEnemy", new Dictionary<String, String>()
+                {
+                    { "US", "all enemies" },
+                    { "UK", "all enemies" },
+                    { "JP", "全ての敵" },
+                    { "ES", "todos los enemigos" },
+                    { "FR", "tous les ennemis" },
+                    { "GR", "Flächenvisier (Gegner)" },
+                    { "IT", "tutti i nemici" }
+                }
+            },
+            { "AADesc_Self", new Dictionary<String, String>()
+                {
+                    { "US", "self" },
+                    { "UK", "self" },
+                    { "JP", "自分自身" },
+                    { "ES", "uno mismo" },
+                    { "FR", "soi-même" },
+                    { "GR", "Einzelvisier (Verbündete)" },
+                    { "IT", "se stessi" }
+                }
+            },
+            { "AADesc_Random", new Dictionary<String, String>()
+                {
+                    { "US", "a random target" },
+                    { "UK", "a random target" },
+                    { "JP", "ランダムな対象" },
+                    { "ES", "un objetivo aleatorio" },
+                    { "FR", "une cible aléatoire" },
+                    { "GR", "Einzelvisier" },
+                    { "IT", "un bersaglio casuale" }
+                }
+            },
+            { "AADesc_RandomAlly", new Dictionary<String, String>()
+                {
+                    { "US", "a random ally" },
+                    { "UK", "a random ally" },
+                    { "JP", "ランダムな味方" },
+                    { "ES", "un aliado aleatorio" },
+                    { "FR", "un allié aléatoire" },
+                    { "GR", "Einzelvisier (Verbündete)" },
+                    { "IT", "un alleato casuale" }
+                }
+            },
+            { "AADesc_RandomEnemy", new Dictionary<String, String>()
+                {
+                    { "US", "a random enemy" },
+                    { "UK", "a random enemy" },
+                    { "JP", "ランダムな敵" },
+                    { "ES", "un enemigo aleatorio" },
+                    { "FR", "un ennemi aléatoire" },
+                    { "GR", "Einzelvisier (Gegner)" },
+                    { "IT", "un nemico casuale" }
+                }
+            },
+            { "AADesc_Everyone", new Dictionary<String, String>()
+                {
+                    { "US", "everyone" },
+                    { "UK", "everybody" },
+                    { "JP", "全員" },
+                    { "ES", "todos" },
+                    { "FR", "tout le monde" },
+                    { "GR", "Flächenvisier (Gegner/Verbündete)." },
+                    { "IT", "tutti" }
+                }
+            },
+            { "AADesc_SingleAny", new Dictionary<String, String>()
+                {
+                    { "US", "an ally or an enemy" },
+                    { "UK", "an ally or an enemy" },
+                    { "JP", "味方または敵" },
+                    { "ES", "un aliado o un enemigo" },
+                    { "FR", "un allié ou un ennemi" },
+                    { "GR", "Einzel (Gegner/Verbündete)" },
+                    { "IT", "un alleato o un nemico" }
+                }
+            },
+            { "AADesc_ManyAny", new Dictionary<String, String>()
+                {
+                    { "US", "allies or enemies" },
+                    { "UK", "allies or enemies" },
+                    { "JP", "味方または敵" },
+                    { "ES", "aliados o enemigos" },
+                    { "FR", "les alliés ou les ennemis" },
+                    { "GR", "Einzel/Flächenvisier (Gegner/Verbündete)" },
+                    { "IT", "alleati o nemici" }
+                }
+            },
+            { "AADesc_HP", new Dictionary<String, String>()
+                {
+                    { "US", "HP" },
+                    { "UK", "HP" },
+                    { "JP", "HP" },
+                    { "ES", "puntos de vitalidad" },
+                    { "FR", "HP" },
+                    { "GR", "HP" },
+                    { "IT", "HP" }
+                }
+            },
+            { "AADesc_MP", new Dictionary<String, String>()
+                {
+                    { "US", "MP" },
+                    { "UK", "MP" },
+                    { "JP", "MP" },
+                    { "ES", "puntos mágicos" },
+                    { "FR", "MP" },
+                    { "GR", "MP" },
+                    { "IT", "MP" }
+                }
+            },
+            { "AADesc_NonElemental", new Dictionary<String, String>()
+                {
+                    { "US", "[A85038][HSHD]Non-elemental[383838][HSHD]" },
+                    { "UK", "[A85038][HSHD]Non-elemental[383838][HSHD]" },
+                    { "JP", "[A85038][HSHD]無[383838][HSHD]" },
+                    { "ES", "[A85038][HSHD]no elemental[383838][HSHD]" },
+                    { "FR", "[A85038][HSHD]Neutre[383838][HSHD]" },
+                    { "GR", "[A85038][HSHD]neutrale[383838][HSHD]" },
+                    { "IT", "[A85038][HSHD]Non-elementali[383838][HSHD]" }
+                }
+            },
+            { "ClassicDamageScript", new Dictionary<String, String>()
+                {
+                    { "US", "Deals =TYPE= =ELEMENT= damage on =TARGET=." },
+                    { "UK", "Deals =TYPE= =ELEMENT= damage on =TARGET=." },
+                    { "JP", "=TARGET= に =ELEMENT= 属性の =TYPE= ダメージを与える。" },
+                    { "ES", "Inflige daño =TYPE= de elemento =ELEMENT= a =TARGET=." },
+                    { "FR", "Lance une attaque =TYPE= d'élement =ELEMENT= sur =TARGET=." },
+                    { "GR", "=TARGET=. Fügt =TYPE= Schaden vom Element =ELEMENT= zu." },
+                    { "IT", "Infligge danni =TYPE= di elemento =ELEMENT= a =TARGET=." }
+                }
+            },
+            { "MPAttackScript", new Dictionary<String, String>()
+                {
+                    { "US", "Reduce MP on =TARGET=" },
+                    { "UK", "Reduce MP on =TARGET=" },
+                    { "JP", "=TARGET=からMPを除去する" },
+                    { "ES", "Reduce puntos mágicos a =TARGET=" },
+                    { "FR", "Retire des MP sur =TARGET=" },
+                    { "GR", "=TARGET=. Entfernt MP." },
+                    { "IT", "Rimuove MP di =TARGET=" }
+                }
+            },
+            { "DarksideScript", new Dictionary<String, String>()
+                {
+                    { "US", "Reduces your HP to cause =ELEMENT= damage on =TARGET=." },
+                    { "UK", "Reduces your HP to cause =ELEMENT= damage on =TARGET=." },
+                    { "JP", "自分のHPを使って敵単体に =ELEMENT=属性のダメージを与えます。" },
+                    { "ES", "Causa daño de elemento =ELEMENT= a costa de la vitalidad del atacante." },
+                    { "FR", "Lance une attaque élémentaire =ELEMENT= grâce à vos HP." },
+                    { "GR", "=TARGET=. Opfert eigene HP u. fügt =ELEMENT=- elementaren Schaden zu." },
+                    { "IT", "Servendosi dei propri HP, provoca danni di elemento =ELEMENT= a =TARGET=." }
+                }
+            },
+            { "HealScript", new Dictionary<String, String>()
+                {
+                    { "US", "Restores =FLAGS= on =TARGET=." },
+                    { "UK", "Restores =FLAGS= on =TARGET=." },
+                    { "JP", "=TARGET= の =FLAGS= を回復する。" },
+                    { "ES", "Restaura =FLAGS= a =TARGET=." },
+                    { "FR", "Restaure les =FLAGS= sur =TARGET=." },
+                    { "GR", "=TARGET=. Heilt  =FLAGS=." },
+                    { "IT", "Ripristina =FLAGS= su =TARGET=." }
+                }
+            },
+            { "ApplyStatusScript", new Dictionary<String, String>()
+                {
+                    { "US", "Inflicts =STATUS= on =TARGET=." },
+                    { "UK", "Inflicts =STATUS= to =TARGET=." },
+                    { "JP", "=TARGET= に =STATUS= を付与する。" },
+                    { "ES", "Causa =STATUS= a =TARGET=." },
+                    { "FR", "Inflige =STATUS= sur =TARGET=." },
+                    { "GR", "=TARGET=. Erteilt =STATUS=." },
+                    { "IT", "Infligge =STATUS= su =TARGET=." }
+                }
+            },
+            { "ApplyStatusBisScript", new Dictionary<String, String>()
+                {
+                    { "US", "Causes =STATUS=." },
+                    { "UK", "Causes =STATUS=." },
+                    { "JP", "さらに=STATUS=を付与する" },
+                    { "ES", "Causa el estado =STATUS=." },
+                    { "FR", "Provoque =STATUS=." },
+                    { "GR", "Erteilt =STATUS=." },
+                    { "IT", "Provoca status =STATUS=." }
+                }
+            },
+            { "RemoveStatusScript", new Dictionary<String, String>()
+                {
+                    { "US", "Cures =STATUS=." },
+                    { "UK", "Cures =STATUS=." },
+                    { "JP", "=STATUS=を治します。" },
+                    { "ES", "Cura el estado =STATUS=." },
+                    { "FR", "Soigne =STATUS=." },
+                    { "GR", "=TARGET=. Hebt Zustandsveränderung =STATUS= auf." },
+                    { "IT", "Cura status =STATUS=." }
+                }
+            },
+            { "DrainScript", new Dictionary<String, String>()
+                {
+                    { "US", "Drain =FLAGS= on =TARGET=." },
+                    { "UK", "Drain =FLAGS= on =TARGET=." },
+                    { "JP", "=TARGET=から=FLAGS=を吸収する" },
+                    { "ES", "Absorbe =FLAGS= de =TARGET=." },
+                    { "FR", "Absorbe des =FLAGS= sur =TARGET=." },
+                    { "GR", "=TARGET=. Absorbiert =FLAGS=." },
+                    { "IT", "Assorbe =FLAGS= da =TARGET=." }
+                }
+            },
+            { "GravityScript", new Dictionary<String, String>()
+                {
+                    { "US", "Deals =TYPE= =ELEMENT= damage on =TARGET=.\nDamage depends on the target's max HP." },
+                    { "UK", "Deals =TYPE= =ELEMENT= damage on =TARGET=.\nDamage depends on the target's max HP." },
+                    { "JP", "=TARGET= に =ELEMENT= 属性の =TYPE= ダメージを与える。\nダメージは対象の最大HPに依存する" },
+                    { "ES", "Inflige daño =TYPE= de elemento =ELEMENT= a =TARGET=.\nEl daño depende de los VIT máximos del objetivo" },
+                    { "FR", "Lance une attaque =TYPE= d'élement =ELEMENT= sur =TARGET=.\nLes dégâts dépendent des HP maximum de la cible." },
+                    { "GR", "=TARGET=. Fügt =TYPE= Schaden vom Element =ELEMENT= zu.\nSchaden hängt von den maximalen HP des Ziels ab." },
+                    { "IT", "Infligge danni =TYPE= di elemento =ELEMENT= a =TARGET=.\nI danni dipendono dagli HP massimi del bersaglio." }
+                }
+            },
+            { "ReviveScript", new Dictionary<String, String>()
+                {
+                    { "US", "Recover from [A85038][HSHD]=CUREKO=[383838][HSHD] and restores =POWER=% of max HP" },
+                    { "UK", "Recover from [A85038][HSHD]=CUREKO=[383838][HSHD] and restores =POWER=% of max HP" },
+                    { "JP", "[A85038][HSHD]=CUREKO=[383838][HSHD]を解除し、最大HPの=POWER=%を回復する" },
+                    { "ES", "Cura el estado [A85038][HSHD]=CUREKO=[383838][HSHD] y restaura el =POWER=% de los HP máximos" },
+                    { "FR", "Annule un [A85038][HSHD]=CUREKO=[383838][HSHD] et restaure =POWER=% des HP maximum." },
+                    { "GR", "Kuriert [A85038][HSHD]=CUREKO=[383838][HSHD] auf und stellt =POWER=% der maximalen HP wieder her" },
+                    { "IT", "Cura [A85038][HSHD]=CUREKO=[383838][HSHD] e ripristina il =POWER=% degli HP massimi" }
+                }
+            },
+            { "LvDirectHPDamageScript", new Dictionary<String, String>()
+                {
+                    { "US", "Reduces HP to =POWER= on =TARGET= with level multiple of =HITRATE=." },
+                    { "UK", "Reduces HP to =POWER= on =TARGET= with level multiple of =HITRATE=." },
+                    { "JP", "=HITRATE=の倍数のレベルを持つ=TARGET=のHPを=POWER=に減らす" },
+                    { "ES", "Reduce los Vit a =POWER= en =TARGET= con nivel múltiplo de =HITRATE=." },
+                    { "FR", "Réduit les HP à =POWER= sur =TARGET= possèdant un niveau multiple de =HITRATE=." },
+                    { "GR", "=TARGET=. Reduziert die HP auf =POWER= mit Level Vielfaches von =HITRATE=." },
+                    { "IT", "Riduce gli HP a =POWER= su =TARGET= con livello multiplo di =HITRATE=." }
+                }
+            },
+            { "LVHolyScript", new Dictionary<String, String>()
+                {
+                    { "US", "Deals a =TYPE= element =ELEMENT= attack on =TARGET= with level multiple of =HITRATE=" },
+                    { "UK", "Deals a =TYPE= element =ELEMENT= attack on =TARGET= with level multiple of =HITRATE=" },
+                    { "JP", "=HITRATE=の倍数のレベルを持つ=TARGET=に=TYPE=属性=ELEMENT=攻撃を仕掛ける" },
+                    { "ES", "Lanza un ataque =TYPE= de elemento =ELEMENT= sobre =TARGET= con nivel múltiplo de =HITRATE=" },
+                    { "FR", "Lance une attaque =TYPE= d'élement =ELEMENT= sur =TARGET= possédant un niveau multiple de =HITRATE=." },
+                    { "GR", "=TARGET=. Startet eine =TYPE= Element =ELEMENT= Attacke mit Level Vielfaches von =HITRATE=" },
+                    { "IT", "Lancia un attacco =TYPE= di elemento =ELEMENT= su =TARGET= con livello multiplo di =HITRATE=" }
+                }
+            },
+            { "LvReduceDefence", new Dictionary<String, String>()
+                {
+                    { "US", "Reduces physical and magical defense on =TARGET= with level multiple of =HITRATE=" },
+                    { "UK", "Reduces physical and magical defence on =TARGET= with level multiple of =HITRATE=" },
+                    { "JP", "=HITRATE=の倍数のレベルを持つ=TARGET=の物理・魔法防御を減少させる" },
+                    { "ES", "Reduce la defensa física y mágica en =TARGET= con nivel múltiplo de =HITRATE=" },
+                    { "FR", "Réduit la défense physique et magique sur =TARGET= possédant un niveau multiple de =HITRATE=." },
+                    { "GR", "=TARGET=. Reduziert die physische und magische Verteidigung mit Level Vielfaches von =HITRATE=" },
+                    { "IT", "Riduce la difesa fisica e magica su =TARGET= con livello multiplo di =HITRATE=" }
+                }
+            },
+            { "PreciseDirectHPDamageScript", new Dictionary<String, String>()
+                {
+                    { "US", "Reduces HP to =POWER= on =TARGET=" },
+                    { "UK", "Reduces HP to =POWER= on =TARGET=" },
+                    { "JP", "=TARGET=のHPを=POWER=に減らす" },
+                    { "ES", "Reduce los Vit a =POWER= en =TARGET=" },
+                    { "FR", "Réduit les HP à =POWER= sur =TARGET=." },
+                    { "GR", "=TARGET=. Reduziert die HP auf =POWER=." },
+                    { "IT", "Riduce gli HP a =POWER= su =TARGET=" }
+                }
+            },
+            { "ThousandNeedlesScript", new Dictionary<String, String>()
+                {
+                    { "US", "Deals exactly =DAMAGE= HP on =TARGET=" },
+                    { "UK", "Deals exactly =DAMAGE= HP on =TARGET=" },
+                    { "JP", "=TARGET=に正確に=DAMAGE=のHPダメージを与える" },
+                    { "ES", "Inflige exactamente =DAMAGE= de puntos de vitalidad a =TARGET=" },
+                    { "FR", "Inflige exactement =DAMAGE= HP sur =TARGET=." },
+                    { "GR", "=TARGET=. Zieht =DAMAGE= HP ab." },
+                    { "IT", "Infligge esattamente =DAMAGE= HP a =TARGET=" }
+                }
+            },
+            { "DifferentCasterHPScript", new Dictionary<String, String>()
+                {
+                    { "US", "Damages with the difference between your max HP and current HP." },
+                    { "UK", "Damages with the difference between your max HP and current HP." },
+                    { "JP", "敵味方単体に 自分の最大HPから今のHPを ひいた分のダメージを与えます。" },
+                    { "ES", "Causa un daño igual a la vitalidad máxima menos la actual del atacante." },
+                    { "FR", "Inflige des dégâts égaux à la différence entre vos HP max et vos HP actuels." },
+                    { "GR", "=TARGET=. Max. HP - aktuelle HP = Schadensgröße." },
+                    { "IT", "Toglie HP a un membro pari alla differenza fra il proprio HP max e l’attuale." }
+                }
+            },
+            { "ArmourBreakScript", new Dictionary<String, String>()
+                {
+                    { "US", "Reduces [A85038][HSHD]Defense[383838][HSHD] on =TARGET=." },
+                    { "UK", "Reduces [A85038][HSHD]Defence[383838][HSHD] on =TARGET=." },
+                    { "JP", "=TARGET=の[A85038][HSHD]防御力[383838][HSHD]を減少させる" },
+                    { "ES", "Reduce la [A85038][HSHD]capacidad defensiva[383838][HSHD] de =TARGET=" },
+                    { "FR", "Réduit la [A85038][HSHD]Défense[383838][HSHD] sur =TARGET=." },
+                    { "GR", "=TARGET=. Senkt [A85038][HSHD]Verteidigungskraft[383838][HSHD]." },
+                    { "IT", "Diminuisce il [A85038][HSHD]potere di difesa[383838][HSHD] di =TARGET=" }
+                }
+            },
+            { "PowerBreakScript", new Dictionary<String, String>()
+                {
+                    { "US", "Reduces [A85038][HSHD]Attack Pwr[383838][HSHD] on =TARGET=." },
+                    { "UK", "Reduces [A85038][HSHD]Attack Pwr[383838][HSHD] on =TARGET=." },
+                    { "JP", "=TARGET=の[A85038][HSHD]攻撃力[383838][HSHD]を減少させる" },
+                    { "ES", "Reduce la [A85038][HSHD]poder de ataque[383838][HSHD] de =TARGET=" },
+                    { "FR", "Réduit la [A85038][HSHD]Force de frappe[383838][HSHD] sur =TARGET=." },
+                    { "GR", "=TARGET=. Senkt [A85038][HSHD]Angriffskraft[383838][HSHD]" },
+                    { "IT", "Diminuisce il [A85038][HSHD]potere d’attacco[383838][HSHD] di =TARGET=" }
+                }
+            },
+            { "MentalBreakScript", new Dictionary<String, String>()
+                {
+                    { "US", "Reduces [A85038][HSHD]Magic Def[383838][HSHD] on =TARGET=." },
+                    { "UK", "Reduces [A85038][HSHD]Magic Def[383838][HSHD] on =TARGET=." },
+                    { "JP", "=TARGET=の[A85038][HSHD]魔法防御力[383838][HSHD]を減少させる" },
+                    { "ES", "Reduce la [A85038][HSHD]capacidad de defensa mágica[383838][HSHD] de =TARGET=" },
+                    { "FR", "Réduit la [A85038][HSHD]Défense magique[383838][HSHD] sur =TARGET=." },
+                    { "GR", "=TARGET=. Senkt [A85038][HSHD]Zauber-Abwehrkraft[383838][HSHD]" },
+                    { "IT", "Diminuisce il [A85038][HSHD]potere di difesa magica[383838][HSHD] di =TARGET=" }
+                }
+            },
+            { "MagicBreakScript", new Dictionary<String, String>()
+                {
+                    { "US", "Reduces [A85038][HSHD]Magic[383838][HSHD] on =TARGET=." },
+                    { "UK", "Reduces [A85038][HSHD]Magic[383838][HSHD] on =TARGET=." },
+                    { "JP", "=TARGET=の[A85038][HSHD]魔法攻撃力[383838][HSHD]を減少させる" },
+                    { "ES", "Reduce la [A85038][HSHD]poder de ataque mágico[383838][HSHD] de =TARGET=" },
+                    { "FR", "Réduit la [A85038][HSHD]Défense[383838][HSHD] sur =TARGET=." },
+                    { "GR", "=TARGET=. Senkt [A85038][HSHD]Zauberkraft[383838][HSHD]." },
+                    { "IT", "Diminuisce il [A85038][HSHD]potere di attacco magico[383838][HSHD] di =TARGET=" }
+                }
+            },
+            { "SpareChangeScript", new Dictionary<String, String>()
+                {
+                    { "US", "Causes =ELEMENT= damage on =TARGET= by using Gil." },
+                    { "UK", "Causes =ELEMENT= damage on =TARGET= by using Gil." },
+                    { "JP", "=TARGET=の[A85038][HSHD]魔法攻撃力[383838][HSHD]を減少させる" },
+                    { "ES", "Reduce la [A85038][HSHD]poder de ataque mágico[383838][HSHD] de =TARGET=" },
+                    { "FR", "Réduit la [A85038][HSHD]Défense[383838][HSHD] sur =TARGET=." },
+                    { "GR", "=TARGET=. Senkt [A85038][HSHD]Zauberkraft[383838][HSHD]." },
+                    { "IT", "Diminuisce il [A85038][HSHD]potere di attacco magico[383838][HSHD] di =TARGET=" }
+                }
+            },
+            { "MightScript", new Dictionary<String, String>()
+                {
+                    { "US", "Increases =STRENGTH= on =TARGET= (stackable)" },
+                    { "UK", "Increases =STRENGTH= on =TARGET= (stackable)" },
+                    { "JP", "=TARGET=の=STRENGTH=を増加させる（重複可）" },
+                    { "ES", "Aumenta =STRENGTH= en =TARGET= (acumulable)" },
+                    { "FR", "Augmente la =STRENGTH= sur =TARGET= (cumulable)." },
+                    { "GR", "=TARGET=. Erhöht =STRENGTH= (stapelbar)" },
+                    { "IT", "Aumenta =STRENGTH= su =TARGET= (cumulabile)" }
+                }
+            },
+            { "FocusScript", new Dictionary<String, String>()
+                {
+                    { "US", "Increases =MAGIC= on =TARGET= (stackable)" },
+                    { "UK", "Increases =MAGIC= on =TARGET= (stackable)" },
+                    { "JP", "=TARGET=の=MAGIC=を増加させる（重複可）" },
+                    { "ES", "Aumenta =MAGIC= en =TARGET= (acumulable)" },
+                    { "FR", "Augmente la =MAGIC= sur =TARGET= (cumulable)." },
+                    { "GR", "=TARGET=. Erhöht =MAGIC= (stapelbar)" },
+                    { "IT", "Aumenta =MAGIC= su =TARGET= (cumulabile)" }
+                }
+            },
+            { "SacrificeScript", new Dictionary<String, String>()
+                {
+                    { "US", "Sacrifice yourself to restore HP and MP on =TARGET=." },
+                    { "UK", "Sacrifice yourself to restore HP and MP on =TARGET=." },
+                    { "JP", "自分を犠牲にして=TARGET=のHPとMPを回復する" },
+                    { "ES", "El guerrero se sacrifica para devolver VIT y PM en =TARGET=." },
+                    { "FR", "Restaure les HP et MP sur =TARGET= grâce aux vôtres." },
+                    { "GR", "=TARGET=. Zielobjekt opfert sich undheilt HP, MP der Gruppe." },
+                    { "IT", "Recupera HP e MP a =TARGET= sacrificando i propri." }
+                }
+            },
+            { "MaelstromScript", new Dictionary<String, String>()
+                {
+                    { "US", "Reduces HP to a single digit on =TARGET=" },
+                    { "UK", "Reduces HP to a single digit on =TARGET=" },
+                    { "JP", "=TARGET=のHPを一桁まで減らす" },
+                    { "ES", "Reduce la Vit a un solo dígito en =TARGET=" },
+                    { "FR", "Réduit les HP à un seul chiffre sur =TARGET=." },
+                    { "GR", "=TARGET=. Reduziert die HP auf eine einzelne Ziffer" },
+                    { "IT", "Riduce gli HP a una sola cifra su =TARGET=" }
+                }
+            },
+            { "SixDragonsScript", new Dictionary<String, String>()
+                {
+                    { "US", "See for yourself." },
+                    { "UK", "See for yourself." },
+                    { "JP", "何がおこるかわかりません…。" },
+                    { "ES", "Su efecto es desconocido..." },
+                    { "FR", "Il faut le voir pour le savoir..." },
+                    { "GR", "Probieren geht über Studieren." },
+                    { "IT", "Effetto sconosciuto!" }
+                }
+            },
+            { "CurseScript", new Dictionary<String, String>()
+                {
+                    { "US", "Makes =TARGET= weak against some elemental property." },
+                    { "UK", "Makes =TARGET= weak against some elemental property." },
+                    { "JP", "=TARGET=をなにかの属性に弱くします。" },
+                    { "ES", "Hace a =TARGET= vulnerable a algún elemento." },
+                    { "FR", "Fragilise =TARGET= vis-à-vis d’un élément." },
+                    { "GR", "=TARGET=. Schwächt Elementarabwehr." },
+                    { "IT", "Indebolisce un elemento di =TARGET=." }
+                }
+            },
+            { "AngelSnackScript", new Dictionary<String, String>()
+                {
+                    { "US", "Uses =ITEM= on =TARGET=." },
+                    { "UK", "Uses =ITEM= on =TARGET=." },
+                    { "JP", "=TARGET=全体に=ITEM=を使います。" },
+                    { "ES", "Usa =ITEM= en =TARGET=." },
+                    { "FR", "Utilise =ITEM= sur =TARGET=." },
+                    { "GR", "Verwendet =ITEM= bei =TARGET=." },
+                    { "IT", "Usa =ITEM= su =TARGET=." }
+                }
+            },
+            { "LuckySevenScript", new Dictionary<String, String>()
+                {
+                    { "US", "Deals physical damage by luck on =TARGET=." },
+                    { "UK", "Deals physical damage by luck on =TARGET=." },
+                    { "JP", "=TARGET=運による物理ダメージを与えます。" },
+                    { "ES", "Causa un daño físico en =TARGET=, que depende de la suerte del atacante." },
+                    { "FR", "Inflige des dégâts sur =TARGET= en fonction de la chance du personnage." },
+                    { "GR", "=TARGET=. Mit viel Glück erteilt man physischen Schaden." },
+                    { "IT", "Provoca danni fisici su =TARGET=, ma è un terno al lotto!" }
+                }
+            },
+            { "CannonScript", new Dictionary<String, String>()
+                {
+                    { "US", "Deals =TYPE= =ELEMENT= damage on =TARGET=.\nDamage depends on the target's current HP." },
+                    { "UK", "Deals =TYPE= =ELEMENT= damage on =TARGET=.\nDamage depends on the target's current HP." },
+                    { "JP", "=TARGET= に =ELEMENT= 属性の =TYPE= ダメージを与える。\nダメージは対象の現在のHPに依存する" },
+                    { "ES", "Inflige daño =TYPE= de elemento =ELEMENT= a =TARGET=.\nEl daño depende de los VIT actuales del objetivo" },
+                    { "FR", "Lance une attaque =TYPE= d'élement =ELEMENT= sur =TARGET=.\nLes dégâts dépendent des HP actuels de la cible." },
+                    { "GR", "=TARGET=. Fügt =TYPE= Schaden vom Element =ELEMENT= zu.\nSchaden hängt von den aktuellen HP des Ziels ab." },
+                    { "IT", "Infligge danni =TYPE= di elemento =ELEMENT= a =TARGET=.\nI danni dipendono dagli HP attuali del bersaglio." }
+                }
+            }
         };
     }
 }

@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Networking;
 
 public partial class BattleHUD : UIScene
 {
@@ -833,7 +834,7 @@ public partial class BattleHUD : UIScene
                 AA_DATA aaData = transform.spell[battleAbilityListData.Id];
                 mp = GetActionMpCost(aaData, curUnit);
                 itemListDetailHud.NameLabel.rawText = aaData.Name;
-                itemListDetailHud.Button.Help.Text = transform.spell_desc[battleAbilityListData.Id];
+                itemListDetailHud.Button.Help.Text = DescriptionBuilder.BuildDescriptionAA(aaData);
             }
             else
             {
