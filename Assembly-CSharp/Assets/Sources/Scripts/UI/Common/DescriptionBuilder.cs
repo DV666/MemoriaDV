@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Remoting.Contexts;
 using System.Text.RegularExpressions;
+using FF9;
 using Memoria.Assets;
 using Memoria.Data;
 
@@ -13,7 +14,7 @@ namespace Assets.Sources.Scripts.UI.Common
         // Maybe doing a Dictionary for that ? To add custom script.
         public static Dictionary<string, HashSet<int>> DescriptionTextfromScriptId = new Dictionary<string, HashSet<int>>
         {
-            { "ClassicDamageScript", new HashSet<int> { 1, 2, 3, 4, 5, 7, 8, 9, 18, 19, 20, 21, 28, 39, 48, 49, 63, 75, 77, 83, 85, 99, 100, 107 } }, // 77 => DarkMatterScript ?
+            { "ClassicDamageScript", new HashSet<int> { 1, 2, 3, 4, 5, 7, 8, 9, 18, 19, 20, 21, 28, 39, 48, 49, 63, 67, 68, 75, 77, 83, 85, 99, 100, 107 } }, // 77 => DarkMatterScript ?
             { "MPAttackScript", new HashSet<int> { 31 } },
             { "DarksideScript", new HashSet<int> { 32 } },
             { "HealScript", new HashSet<int> { 10, 30, 37, 41, 69, 70, 71, 74, 76 } },
@@ -44,18 +45,17 @@ namespace Assets.Sources.Scripts.UI.Common
             { "ChangeRowScript", new HashSet<int> { 55 } },
             { "FleeScript", new HashSet<int> { 56, 57 } }, // I think 56 is not used (specific)
             { "StealScript", new HashSet<int> { 58, 101 } },
-            { "MugScript", new HashSet<int> { 102 } },
+            { "MugScript", new HashSet<int> { 102 } }, // No description on this one, i mix ClassicDamageScript + StealScript
             { "ScanScript", new HashSet<int> { 59 } },
             { "DetectScript", new HashSet<int> { 60 } },
             { "ChargeScript", new HashSet<int> { 61 } },
             { "EatScript", new HashSet<int> { 65 } },
             { "FrogDropScript", new HashSet<int> { 66 } },
-            { "ThieveryScript", new HashSet<int> { 67 } },
-            { "DragonCrestScript", new HashSet<int> { 68 } },
-            { "DeadPepperScript", new HashSet<int> { 75 } },
+            // { "ThieveryScript", new HashSet<int> { 67 } }, Present in ClassicDamageScript but maybe we can give a more detailed one.
+            // { "DragonCrestScript", new HashSet<int> { 68 } }, Present in ClassicDamageScript but maybe we can give a more detailed one.
             { "DoubleCastScript", new HashSet<int> { 80, 84 } },
             { "KamikazeScript", new HashSet<int> { 88 } }, // Melt
-            { "HPSwitchingtScript", new HashSet<int> { 89 } },
+            { "HPSwitchingScript", new HashSet<int> { 89 } },
             { "HalfDefenceScript", new HashSet<int> { 90 } },
             { "CannonScript", new HashSet<int> { 91 } },
             { "ItemAddScript", new HashSet<int> { 92 } },
@@ -84,10 +84,17 @@ namespace Assets.Sources.Scripts.UI.Common
                 Description += $"{Localization.GetWithDefault("AADesc_HitRate")} : {ability.Ref.Rate}%\n";
             }
             var result = DescriptionTextfromScriptId.FirstOrDefault(kvp => kvp.Value.Contains(ability.Ref.ScriptId)); // Search the good description...
-            if (!string.IsNullOrEmpty(result.Key))
+            if (result.Key == "MugScript")
+            {
+                Description += $"{Localization.GetWithDefault("ClassicDamageScript")}";
+                Description += $"\n{Localization.GetWithDefault("StealScript")}";
+            }
+            else if (!string.IsNullOrEmpty(result.Key))
                 Description += $"{Localization.GetWithDefault(result.Key)}";
             else //... or else, use a "generic" description
                 Description += $"{Localization.GetWithDefault("GeneralScript")}";
+
+
 
             if (ability.Ref.ScriptId == 10 || ability.Ref.ScriptId == 30 || ability.Ref.ScriptId == 69) // Magic Heal, Potion, White Wind
                 Description = Regex.Replace(Description, "=HEAL=", "HP");
@@ -182,6 +189,12 @@ namespace Assets.Sources.Scripts.UI.Common
                 Description = Regex.Replace(Description, "=MAGIC=", Localization.Get("Magic"));
             if (Description.Contains("=ITEM="))
                 Description = Regex.Replace(Description, "=ITEM=", FF9TextTool.ItemName((RegularItem)ability.Ref.Power));
+
+            if (result.Key == "DoubleCastScript")
+            {
+                Description = Regex.Replace(Description, "=SPELL1=", FF9TextTool.ActionAbilityName((BattleAbilityId)ability.Ref.Power));
+                Description = Regex.Replace(Description, "=SPELL2=", FF9TextTool.ActionAbilityName((BattleAbilityId)ability.Ref.Rate));
+            }
 
             return Description;
         }

@@ -53,7 +53,6 @@ namespace Memoria.DefaultScripts
             btl.bi.stop_anim = 0;
             btl.escape_key = 0;
             btl.killer_track = null;
-            btl.monster_transform.is_death = false;
             if (btl_mot.checkMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_DISABLE) || btl_mot.checkMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_DOWN_DISABLE))
             {
                 GeoTexAnim.geoTexAnimPlay(btl.texanimptr, 2);

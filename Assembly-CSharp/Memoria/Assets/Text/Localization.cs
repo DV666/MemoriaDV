@@ -1162,8 +1162,8 @@ namespace Memoria.Assets
             },
             { "LVHolyScript", new Dictionary<String, String>()
                 {
-                    { "US", "Deals a =TYPE= element =ELEMENT= attack on =TARGET= with level multiple of =HITRATE=" },
-                    { "UK", "Deals a =TYPE= element =ELEMENT= attack on =TARGET= with level multiple of =HITRATE=" },
+                    { "US", "Deals a =TYPE= =ELEMENT= attack on =TARGET= with level multiple of =HITRATE=" },
+                    { "UK", "Deals a =TYPE= =ELEMENT= attack on =TARGET= with level multiple of =HITRATE=" },
                     { "JP", "=HITRATE=の倍数のレベルを持つ=TARGET=に=TYPE=属性=ELEMENT=攻撃を仕掛ける" },
                     { "ES", "Lanza un ataque =TYPE= de elemento =ELEMENT= sobre =TARGET= con nivel múltiplo de =HITRATE=" },
                     { "FR", "Lance une attaque =TYPE= d'élement =ELEMENT= sur =TARGET= possédant un niveau multiple de =HITRATE=." },
@@ -1303,17 +1303,6 @@ namespace Memoria.Assets
                     { "IT", "Recupera HP e MP a =TARGET= sacrificando i propri." }
                 }
             },
-            { "MaelstromScript", new Dictionary<String, String>()
-                {
-                    { "US", "Reduces HP to a single digit on =TARGET=" },
-                    { "UK", "Reduces HP to a single digit on =TARGET=" },
-                    { "JP", "=TARGET=のHPを一桁まで減らす" },
-                    { "ES", "Reduce la Vit a un solo dígito en =TARGET=" },
-                    { "FR", "Réduit les HP à un seul chiffre sur =TARGET=." },
-                    { "GR", "=TARGET=. Reduziert die HP auf eine einzelne Ziffer" },
-                    { "IT", "Riduce gli HP a una sola cifra su =TARGET=" }
-                }
-            },
             { "SixDragonsScript", new Dictionary<String, String>()
                 {
                     { "US", "See for yourself." },
@@ -1349,13 +1338,156 @@ namespace Memoria.Assets
             },
             { "LuckySevenScript", new Dictionary<String, String>()
                 {
-                    { "US", "Deals physical damage by luck on =TARGET=." },
-                    { "UK", "Deals physical damage by luck on =TARGET=." },
-                    { "JP", "=TARGET=運による物理ダメージを与えます。" },
-                    { "ES", "Causa un daño físico en =TARGET=, que depende de la suerte del atacante." },
-                    { "FR", "Inflige des dégâts sur =TARGET= en fonction de la chance du personnage." },
-                    { "GR", "=TARGET=. Mit viel Glück erteilt man physischen Schaden." },
-                    { "IT", "Provoca danni fisici su =TARGET=, ma è un terno al lotto!" }
+                    { "US", "Deals =TYPE= damage by luck on =TARGET=." },
+                    { "UK", "Deals =TYPE= damage by luck on =TARGET=." },
+                    { "JP", "=TARGET=運による=TYPE=ダメージを与えます。" },
+                    { "ES", "Causa un daño =TYPE= en =TARGET=, que depende de la suerte del atacante." },
+                    { "FR", "Inflige des dégâts =TYPE= sur =TARGET= en fonction de la chance du personnage." },
+                    { "GR", "=TARGET=. Mit viel Glück erteilt man =TYPE= Schaden." },
+                    { "IT", "Provoca danni =TYPE= su =TARGET=, ma è un terno al lotto!" }
+                }
+            },
+            { "WhatIsThatScript", new Dictionary<String, String>()
+                {
+                    { "US", "Allows back attack." },
+                    { "UK", "Allows back attack." },
+                    { "JP", "先制攻撃の状態にします。" },
+                    { "ES", "Permite atacar primero." },
+                    { "FR", "Permet d’attaquer le premier." },
+                    { "GR", "Man ist im Angriffsvorteil." },
+                    { "IT", "Permette attacco prioritario." }
+                }
+            },
+            { "ChangeRowScript", new Dictionary<String, String>()
+                {
+                    { "US", "Toggle between front row and back row." },
+                    { "UK", "Toggle between front row and back row." },
+                    { "JP", "前列と後列がいれかわります。" },
+                    { "ES", "Cambia entre vanguardia y retaguardia." },
+                    { "FR", "Change la position avant/arrière." },
+                    { "GR", "Charakter wechselt zw. vorderer/ hinterer Reihe." },
+                    { "IT", "Inverte 1a e 2a linea." }
+                }
+            },
+            { "FleeScript", new Dictionary<String, String>()
+                {
+                    { "US", "Escape from battle." },
+                    { "UK", "Escape from battle." },
+                    { "JP", "戦闘から脱出します。" },
+                    { "ES", "Escapa de la batalla." },
+                    { "FR", "Escape from battle." },
+                    { "GR", "Tritt die Flucht nach hinten an." },
+                    { "IT", "Scappa dalla battaglia." }
+                }
+            },
+            { "StealScript", new Dictionary<String, String>()
+                {
+                    { "US", "Steal items from enemy." },
+                    { "UK", "Steal items from enemy." },
+                    { "JP", "相手の持ち物をぬすみます。" },
+                    { "ES", "Roba objetos al enemigo." },
+                    { "FR", "Vole des possessions à l’adversaire." },
+                    { "GR", "Klaut gegnerische Items." },
+                    { "IT", "Scappa dalla battaglia." }
+                }
+            },
+            { "ScanScript", new Dictionary<String, String>()
+                {
+                    { "US", "Scan =TARGET= to determine HP, MP, and weaknesses." },
+                    { "UK", "Scan =TARGET= to determine HP, MP, and weaknesses." },
+                    { "JP", "=TARGET=のHP、MP、弱い属性がわかります。" },
+                    { "ES", "Muestra la VIT, los PM y la debilidad elemental de =TARGET=" },
+                    { "FR", "Donne les HP, MP et les points faibles =TARGET=" },
+                    { "GR", "=TARGET=. Analysiert gegnerische Parameter." },
+                    { "IT", "Individua HP, MP e elemento debole =TARGET=." }
+                }
+            },
+            { "DetectScript", new Dictionary<String, String>()
+                {
+                    { "US", "See the enemy’s items." },
+                    { "UK", "See the enemy’s items." },
+                    { "JP", "敵単体の持っているアイテムがわかります。" },
+                    { "ES", "Muestra los objetos en poder de un enemigo." },
+                    { "FR", "Affiche les possessions d’un adversaire." },
+                    { "GR", "=TARGET=. Manerfährt, was für Items der Gegner mit sich trägt." },
+                    { "IT", "Individua gli oggetti posseduti da un nemico." }
+                }
+            },
+            { "ChargeScript", new Dictionary<String, String>()
+                {
+                    { "US", "Makes all Near Death party members ‘Attack.’" },
+                    { "UK", "Makes all Near Death party members ‘Attack.’." },
+                    { "JP", "味方全体が『たたかう』を行います。" },
+                    { "ES", "Todos los aliados atacan sucesivamente." },
+                    { "FR", "Fait utiliser ”Attaquer” à toute l’équipe." },
+                    { "GR", "=TARGET=. Alle rücken aus." },
+                    { "IT", "Gli alleati attaccano tutti insieme." }
+                }
+            },
+            { "EatScript", new Dictionary<String, String>()
+                {
+                    { "US", "Learn enemy skill." },
+                    { "UK", "Learn enemy skill." },
+                    { "JP", "敵のわざをおぼえます。" },
+                    { "ES", "Aprende una técnica del enemigo." },
+                    { "FR", "Apprend une technique de l’ennemi." },
+                    { "GR", "Erlernt gegnerische Ability." },
+                    { "IT", "Apprende una tecnica dell’avversario." }
+                }
+            },
+            { "FrogDropScript", new Dictionary<String, String>()
+                {
+                    { "US", "Amount of damage depends on the number of frogs you have caught." },
+                    { "UK", "Amount of damage depends on the number of frogs you have caught." },
+                    { "JP", "カエルをとった分の物理ダメージを与えます。" },
+                    { "ES", "Causa un daño físico proporcional al número de ranas atrapadas." },
+                    { "FR", "Inflige des dégâts en fonction du nombre de grenouilles attrapées." },
+                    { "GR", "Je nach Anzahl gefangener Frösche ändert sich die Schadensgröße." },
+                    { "IT", "Provoca danni fisici in proporzione al livello della rana." }
+                }
+            },
+            { "DoubleCastScript", new Dictionary<String, String>()
+                {
+                    { "US", "Casts =SPELL1= and =SPELL2= in the same turn" },
+                    { "UK", "Casts =SPELL1= and =SPELL2= in the same turn" },
+                    { "JP", "同じターンに=SPELL1=と=SPELL2=を使用する" },
+                    { "ES", "Lanza =SPELL1= y =SPELL2= en el mismo turno" },
+                    { "FR", "Lance =SPELL1= et =SPELL2= sur le même tour." },
+                    { "GR", "Wirkt =SPELL1= und =SPELL2= in derselben Runde" },
+                    { "IT", "Lancia =SPELL1= e =SPELL2= nello stesso turno" }
+                }
+            },
+            { "KamikazeScript", new Dictionary<String, String>()
+                {
+                    { "US", "Sacrifices yourself to deal damage based on your current HP" },
+                    { "UK", "Sacrifices yourself to deal damage based on your current HP" },
+                    { "JP", "自身の現在のHPに応じたダメージを与えるために自分を犠牲にする" },
+                    { "ES", "Te sacrificas para infligir daño según tu Vit actual" },
+                    { "FR", "Vous sacrifie pour infliger des dégâts, basés sur vos HP actuels." },
+                    { "GR", "Opfert sich, um Schaden basierend auf den aktuellen HP zu verursachen" },
+                    { "IT", "Si sacrifica per infliggere danni in base agli HP attuali" }
+                }
+            },
+            { "HPSwitchingScript", new Dictionary<String, String>()
+                {
+                    { "US", "Swaps your current HP with =TARGET=." },
+                    { "UK", "Swaps your current HP with =TARGET=." },
+                    { "JP", "自分の現在のHPと=TARGET=のHPを入れ替える." },
+                    { "ES", "Intercambia tu Vit actual con =TARGET=." },
+                    { "FR", "Inverse vos HP actuels avec =TARGET=." },
+                    { "GR", "=TARGET=. Tauscht deine aktuellen HP." },
+                    { "IT", "Scambia i tuoi HP attuali con =TARGET=." }
+                }
+            },
+            { "HalfDefenceScript", new Dictionary<String, String>()
+                {
+                { "US", "Reduces physical and magical defense by 50% on =TARGET=." },
+                { "UK", "Reduces physical and magical defence by 50% on =TARGET=." },
+                { "JP", "=TARGET=の物理防御と魔法防御を50%下げる" },
+                { "ES", "Reduce la defensa física y mágica en un 50% en =TARGET=." },
+                { "FR", "Réduit la défense physique et magique de 50% sur =TARGET=." },
+                { "GR", "=TARGET=. Reduziert physische und magische Abwehr um 50 %." },
+                { "IT", "Riduce la difesa fisica e magica del 50% su =TARGET=." }
                 }
             },
             { "CannonScript", new Dictionary<String, String>()
@@ -1367,6 +1499,116 @@ namespace Memoria.Assets
                     { "FR", "Lance une attaque =TYPE= d'élement =ELEMENT= sur =TARGET=.\nLes dégâts dépendent des HP actuels de la cible." },
                     { "GR", "=TARGET=. Fügt =TYPE= Schaden vom Element =ELEMENT= zu.\nSchaden hängt von den aktuellen HP des Ziels ab." },
                     { "IT", "Infligge danni =TYPE= di elemento =ELEMENT= a =TARGET=.\nI danni dipendono dagli HP attuali del bersaglio." }
+                }
+            },
+            { "ItemAddScript", new Dictionary<String, String>()
+                {
+                    { "US", "Adds a =ITEM= to your inventory." },
+                    { "UK", "Adds a =ITEM= to your inventory." },
+                    { "JP", "=ITEM=をインベントリに追加する" },
+                    { "ES", "Añade un =ITEM= a tu inventario." },
+                    { "FR", "Ajoute un =ITEM= dans votre inventaire." },
+                    { "GR", "Fügt ein =ITEM= dem Inventar hinzu." },
+                    { "IT", "Aggiunge un =ITEM= al tuo inventario." }
+                }
+            },
+            { "MaelstromScript", new Dictionary<String, String>()
+                {
+                    { "US", "Reduces HP to a single digit on =TARGET=" },
+                    { "UK", "Reduces HP to a single digit on =TARGET=" },
+                    { "JP", "=TARGET=のHPを一桁まで減らす" },
+                    { "ES", "Reduce la Vit a un solo dígito en =TARGET=" },
+                    { "FR", "Réduit les HP à un seul chiffre sur =TARGET=." },
+                    { "GR", "=TARGET=. Reduziert die HP auf eine einzelne Ziffer" },
+                    { "IT", "Riduce gli HP a una sola cifra su =TARGET=" }
+                }
+            },
+            { "AbsorbMagicScript", new Dictionary<String, String>()
+                {
+                    { "US", "Absorbs magic from =TARGET=." },
+                    { "UK", "Absorbs magic from =TARGET=." },
+                    { "JP", "=TARGET=から魔力を吸収する" },
+                    { "ES", "Absorbe magia de =TARGET=." },
+                    { "FR", "Absorbe de la magie sur =TARGET=." },
+                    { "GR", "=TARGET=. Absorbiert Magie." },
+                    { "IT", "Assorbe magia da =TARGET=." }
+                }
+            },
+            { "AbsorbStrengthScript", new Dictionary<String, String>()
+                {
+                    { "US", "Absorbs strength from =TARGET=." },
+                    { "UK", "Absorbs strength from =TARGET=." },
+                    { "JP", "=TARGET=から力を吸収する" },
+                    { "ES", "Absorbe fuerza de =TARGET=." },
+                    { "FR", "Absorbe de la force sur =TARGET=." },
+                    { "GR", "=TARGET=. Absorbiert Stärke." },
+                    { "IT", "Assorbe forza da =TARGET=." }
+                }
+            },
+            { "TranceFullScript", new Dictionary<String, String>()
+                {
+                    { "US", "Forces Trance on =TARGET=." },
+                    { "UK", "Forces Trance on =TARGET=." },
+                    { "JP", "=TARGET=にトランスを強制する" },
+                    { "ES", "Fuerza Trance en =TARGET=." },
+                    { "FR", "Force la Trance sur =TARGET=." },
+                    { "GR", "=TARGET=. Erzwingt Trance." },
+                    { "IT", "Forza Trance su =TARGET=." }
+                }
+            },
+            { "EnticeScript", new Dictionary<String, String>()
+                {
+                    { "US", "Guaranteed to inflict =STATUS= on =TARGET= (fails on females)." },
+                    { "UK", "Guaranteed to inflict =STATUS= on =TARGET= (fails on females)." },
+                    { "JP", "=TARGET=に=STATUS=を確実に付与する（女性には無効）" },
+                    { "ES", "Inflige con seguridad =STATUS= a =TARGET= (falla en mujeres)." },
+                    { "FR", "Inflige à coup sûr =STATUS= sur =TARGET= (échoue sur les femmes)." },
+                    { "GR", "Verursacht garantiert =STATUS= bei =TARGET= (wirkt nicht bei Frauen)." },
+                    { "IT", "Infligge automaticamente =STATUS= su =TARGET= (fallisce sulle donne)." }
+                }
+            },
+            { "SimpleAttackGaiaScript", new Dictionary<String, String>()
+                {
+                    { "US", "Deals =TYPE= =ELEMENT= damage on =TARGET=. Ineffective against inhabitants of Terra." },
+                    { "UK", "Deals =TYPE= =ELEMENT= damage on =TARGET=. Ineffective against inhabitants of Terra." },
+                    { "JP", "=TARGET= に =ELEMENT= 属性の =TYPE= ダメージを与える（テラの住人には効果がない）" },
+                    { "ES", "Inflige daño =TYPE= de elemento =ELEMENT= a =TARGET=. Ineficaz contra los habitantes de Terra." },
+                    { "FR", "Lance une attaque =TYPE= d'élement =ELEMENT= sur =TARGET=. Inefficace contre les habitants de Terra." },
+                    { "GR", "=TARGET=. Fügt =TYPE= Schaden vom Element =ELEMENT= zu. Keine Wirkung gegen Bewohner von Terra." },
+                    { "IT", "Infligge danni =TYPE= di elemento =ELEMENT= a =TARGET=. Inefficace contro gli abitanti di Tera." }
+                }
+            },
+            { "TonberryKarmaScript", new Dictionary<String, String>()
+                {
+                    { "US", "Deals damage based on the number of Tonberry defeated." },
+                    { "UK", "Deals damage based on the number of Tonberry defeated." },
+                    { "JP", "倒したトンベリの数に応じてダメージを与える。" },
+                    { "ES", "Inflige daño según el número de Tomberi derrotados." },
+                    { "FR", "Inflige des dégâts selon le nombre de Tomberry vaincus." },
+                    { "GR", "Verursacht Schaden basierend auf der Anzahl besiegter Tombery." },
+                    { "IT", "Infligge danni in base al numero di Tomberry sconfitti." }
+                }
+            },
+            { "SwallowScript", new Dictionary<String, String>()
+                {
+                    { "US", "Guaranteed to inflict =STATUS= on =TARGET= (fails on females)." },
+                    { "UK", "Guaranteed to inflict =STATUS= on =TARGET= (fails on females)." },
+                    { "JP", "=TARGET=に=STATUS=を確実に付与する（女性には無効）" },
+                    { "ES", "Inflige con seguridad =STATUS= a =TARGET= (falla en mujeres)." },
+                    { "FR", "Inflige à coup sûr =STATUS= sur =TARGET= (échoue sur les femmes)." },
+                    { "GR", "Verursacht garantiert =STATUS= bei =TARGET= (wirkt nicht bei Frauen)." },
+                    { "IT", "Infligge automaticamente =STATUS= su =TARGET= (fallisce sulle donne)." }
+                }
+            },
+            { "GeneralScript", new Dictionary<String, String>()
+                {
+                    { "US", "Guaranteed to inflict =STATUS= on =TARGET= (fails on females)." },
+                    { "UK", "Guaranteed to inflict =STATUS= on =TARGET= (fails on females)." },
+                    { "JP", "=TARGET=に=STATUS=を確実に付与する（女性には無効）" },
+                    { "ES", "Inflige con seguridad =STATUS= a =TARGET= (falla en mujeres)." },
+                    { "FR", "Inflige à coup sûr =STATUS= sur =TARGET= (échoue sur les femmes)." },
+                    { "GR", "Verursacht garantiert =STATUS= bei =TARGET= (wirkt nicht bei Frauen)." },
+                    { "IT", "Infligge automaticamente =STATUS= su =TARGET= (fallisce sulle donne)." }
                 }
             }
         };
