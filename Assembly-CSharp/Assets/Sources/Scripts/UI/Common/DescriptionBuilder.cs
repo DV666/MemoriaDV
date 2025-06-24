@@ -83,6 +83,9 @@ namespace Assets.Sources.Scripts.UI.Common
                     Description += "\n";
                 Description += $"{Localization.GetWithDefault("AADesc_HitRate")} : {ability.Ref.Rate}%\n";
             }
+            if (!String.IsNullOrEmpty(Description))
+                Description += "\n";
+
             var result = DescriptionTextfromScriptId.FirstOrDefault(kvp => kvp.Value.Contains(ability.Ref.ScriptId)); // Search the good description...
             if (result.Key == "MugScript")
             {
@@ -93,8 +96,6 @@ namespace Assets.Sources.Scripts.UI.Common
                 Description += $"{Localization.GetWithDefault(result.Key)}";
             else //... or else, use a "generic" description
                 Description += $"{Localization.GetWithDefault("GeneralScript")}";
-
-
 
             if (ability.Ref.ScriptId == 10 || ability.Ref.ScriptId == 30 || ability.Ref.ScriptId == 69) // Magic Heal, Potion, White Wind
                 Description = Regex.Replace(Description, "=HEAL=", "HP");
