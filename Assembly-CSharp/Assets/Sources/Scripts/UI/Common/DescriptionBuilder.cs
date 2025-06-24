@@ -98,11 +98,11 @@ namespace Assets.Sources.Scripts.UI.Common
                 Description += $"{Localization.GetWithDefault("GeneralScript")}";
 
             if (ability.Ref.ScriptId == 10 || ability.Ref.ScriptId == 30 || ability.Ref.ScriptId == 69) // Magic Heal, Potion, White Wind
-                Description = Regex.Replace(Description, "=HEAL=", "HP");
+                Description = Regex.Replace(Description, "=FLAGS=", "HP");
             else if (ability.Ref.ScriptId == 70) // Ether
-                Description = Regex.Replace(Description, "=HEAL=", "MP");
+                Description = Regex.Replace(Description, "=FLAGS=", "MP");
             else if (ability.Ref.ScriptId == 37 || ability.Ref.ScriptId == 71) // Chakra, Elixir
-                Description = Regex.Replace(Description, "=HEAL=", "HP/MP");
+                Description = Regex.Replace(Description, "=FLAGS=", "HP/MP");
             else if (ability.Ref.ScriptId == 6 || ability.Ref.ScriptId == 16) // Drain HP
                 Description = Regex.Replace(Description, "=FLAGS=", Localization.GetWithDefault("AADesc_HP"));
             else if (ability.Ref.ScriptId == 15) // Drain MP
@@ -140,12 +140,14 @@ namespace Assets.Sources.Scripts.UI.Common
                     Description += " ";
 
                 Description += $"{Localization.GetWithDefault("ApplyStatusBisScript")}";
-
+            }
+            if (Description.Contains("=STATUS="))
+            {
                 string StatusText = "";
                 BattleStatus status = stat.Value;
                 foreach (BattleStatusId statusId in status.ToStatusList())
                 {
-                    StatusText += ($"{Localization.GetWithDefault("Status"+statusId.ToString())}");
+                    StatusText += ($"[A85038][HSHD]{Localization.GetWithDefault("Status"+statusId.ToString())}[383838][HSHD]");
                     if (BattleHUD.BuffIconNames.TryGetValue(statusId, out String buffspriteName))
                         StatusText += ($" [SPRT={buffspriteName},48,48] ");
                     if (BattleHUD.DebuffIconNames.TryGetValue(statusId, out String debuffspriteName))
