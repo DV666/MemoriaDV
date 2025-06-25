@@ -1591,24 +1591,24 @@ namespace Memoria.Assets
             },
             { "SwallowScript", new Dictionary<String, String>()
                 {
-                    { "US", "Guaranteed to inflict =STATUS= on =TARGET= (fails on females)." },
-                    { "UK", "Guaranteed to inflict =STATUS= on =TARGET= (fails on females)." },
-                    { "JP", "=TARGET=に=STATUS=を確実に付与する（女性には無効）" },
-                    { "ES", "Inflige con seguridad =STATUS= a =TARGET= (falla en mujeres)." },
-                    { "FR", "Inflige à coup sûr =STATUS= sur =TARGET= (échoue sur les femmes)." },
-                    { "GR", "Verursacht garantiert =STATUS= bei =TARGET= (wirkt nicht bei Frauen)." },
-                    { "IT", "Infligge automaticamente =STATUS= su =TARGET= (fallisce sulle donne)." }
+                    { "US", "Removes =TARGET= from battle." },
+                    { "UK", "Removes =TARGET= from battle." },
+                    { "JP", "=TARGET=を戦闘から除外する" },
+                    { "ES", "Elimina a =TARGET= del combate." },
+                    { "FR", "Supprime =TARGET= du combat." },
+                    { "GR", "=TARGET=. Entfernt aus dem Kampf." },
+                    { "IT", "Rimuove =TARGET= dalla battaglia." }
                 }
             },
             { "GeneralScript", new Dictionary<String, String>()
                 {
-                    { "US", "Guaranteed to inflict =STATUS= on =TARGET= (fails on females)." },
-                    { "UK", "Guaranteed to inflict =STATUS= on =TARGET= (fails on females)." },
-                    { "JP", "=TARGET=に=STATUS=を確実に付与する（女性には無効）" },
-                    { "ES", "Inflige con seguridad =STATUS= a =TARGET= (falla en mujeres)." },
-                    { "FR", "Inflige à coup sûr =STATUS= sur =TARGET= (échoue sur les femmes)." },
-                    { "GR", "Verursacht garantiert =STATUS= bei =TARGET= (wirkt nicht bei Frauen)." },
-                    { "IT", "Infligge automaticamente =STATUS= su =TARGET= (fallisce sulle donne)." }
+                    { "US", "Uses skill =AA= on =TARGET=." },
+                    { "UK", "Uses skill =AA= on =TARGET=." },
+                    { "JP", "=TARGET=に=AA=を使用する" },
+                    { "ES", "Usa la habilidad =AA= sobre =TARGET=." },
+                    { "FR", "Utilise la compétence =AA= sur =TARGET=." },
+                    { "GR", "=TARGET=. Verwendet Fähigkeit =AA=" },
+                    { "IT", "Usa l'abilità =AA= su =TARGET=." }
                 }
             }
         };

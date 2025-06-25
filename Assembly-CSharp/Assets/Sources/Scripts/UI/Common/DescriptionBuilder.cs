@@ -70,18 +70,30 @@ namespace Assets.Sources.Scripts.UI.Common
             { "GeneralScript", new HashSet<int> { 0 } } // Description by "default" if the script ID is not found here.
         };
 
-        public static string BuildDescriptionAA(AA_DATA ability)
+        public static string BuildDescriptionAA(AA_DATA ability, Boolean aa_stat = false)
         {
             string Description = "";
-            if (ability.Ref.Power > 0)
+            if (aa_stat)
             {
-                Description += $"{Localization.GetWithDefault("AADesc_Power")} : {ability.Ref.Power}";
-            }
-            if (ability.Ref.Rate > 0 && false)
-            {
+                if ((ability.Category & 8) != 0 || (ability.Category & 8) != 0)
+                {
+                    if ((ability.Category & 8) != 0) // Physical
+                        Description += "[ICON=95] ";
+                    if ((ability.Category & 16) != 0) // Magical
+                        Description += "[ICON=102] ";
+
+                    Description += " / ";
+                }
                 if (ability.Ref.Power > 0)
-                    Description += "\n";
-                Description += $"{Localization.GetWithDefault("AADesc_HitRate")} : {ability.Ref.Rate}%\n";
+                {
+                    Description += $"{Localization.GetWithDefault("AADesc_Power")} : {ability.Ref.Power}";
+                }
+                if (ability.Ref.Rate > 0 && false)
+                {
+                    if (ability.Ref.Power > 0)
+                        Description += " / ";
+                    Description += $"{Localization.GetWithDefault("AADesc_HitRate")} : {ability.Ref.Rate}%\n";
+                }
             }
             if (!String.IsNullOrEmpty(Description))
                 Description += "\n";
@@ -95,7 +107,10 @@ namespace Assets.Sources.Scripts.UI.Common
             else if (!string.IsNullOrEmpty(result.Key))
                 Description += $"{Localization.GetWithDefault(result.Key)}";
             else //... or else, use a "generic" description
+            {
                 Description += $"{Localization.GetWithDefault("GeneralScript")}";
+                Description = Regex.Replace(Description, "=AA=", ability.Name);
+            }
 
             if (ability.Ref.ScriptId == 10 || ability.Ref.ScriptId == 30 || ability.Ref.ScriptId == 69) // Magic Heal, Potion, White Wind
                 Description = Regex.Replace(Description, "=FLAGS=", "HP");
