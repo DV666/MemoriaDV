@@ -58,6 +58,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Sources\Battle\0102_EnemyMugScript.cs" />
+    <Compile Include="Sources\Battle\0101_EnemyStealScript.cs" />
     <Compile Include="Sources\Battle\0106_SwallowScript.cs" />
     <Compile Include="Sources\Battle\OverloadOnBattleInitScript.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -80,7 +82,9 @@
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>"$(SolutionDir)\References\pdb2mdb.exe" "$(TargetPath)"</PostBuildEvent>
+    <PostBuildEvent>"$(SolutionDir)\References\pdb2mdb.exe" "$(TargetPath)"
+robocopy "C:\Users\Robin\Documents\Hades Workshop\Memoria\Output\StreamingAssets\Scripts" "C:\SteamLibrary\steamapps\common\FINAL FANTASY IX\ItsMorphingTime\StreamingAssets\Scripts" "Memoria.Scripts.ItsMorphingTime.dll"
+if %25errorlevel%25 leq 1 exit 0 else exit %25errorlevel%25</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

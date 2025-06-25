@@ -1,4 +1,5 @@
 using Assets.Sources.Scripts.UI.Common;
+using FF9;
 using Memoria.Assets;
 using Memoria.Data;
 using Memoria.Database;
@@ -6,6 +7,7 @@ using Memoria.Prime;
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using UnityEngine;
 using static UIManager;
 
 namespace Memoria.Scripts.Battle
@@ -50,6 +52,10 @@ namespace Memoria.Scripts.Battle
             }
             if (v.Caster.IsPlayer && (!v.Target.IsPlayer && HPMob <= v.Target.HpDamage && (v.Target.Flags & CalcFlag.HpRecovery) == 0) || (v.Target.IsPlayer && (v.Target.Flags & CalcFlag.HpRecovery) != 0 && v.Target.Data != v.Caster.Data && v.Caster.IsNonMorphedPlayer))
             {
+                //Transform builtInBone = v.Caster.Data.gameObject.transform.GetChildByName($"bone{v.Caster.Data.weapon_bone:D3}");
+                //Log.Message("v.Caster.Data.weapon_bone = " + v.Caster.Data.weapon_bone);
+                //Log.Message("builtInBone.localScale = " + builtInBone.localScale);
+
                 int CustomCharacterId = (int)(10000 + v.Caster.PlayerIndex);
                 if (FF9StateSystem.EventState.gScriptDictionary.TryGetValue(CustomCharacterId, out Dictionary<Int32, Int32> dict))
                 {
@@ -84,7 +90,32 @@ namespace Memoria.Scripts.Battle
                             Dictionary<Int32, String> fieldText = new Dictionary<Int32, String>();
                             String path = EmbadedTextResources.GetCurrentPath("/Battle/" + dict[0] + ".mes");
                             FF9TextTool.ImportStrtWithCumulativeModFiles<Int32>(path, fieldText);
-                            caster.Player.Name = Regex.Replace(fieldText[dict[1]], @"\[.*?\]", ""); ;
+                            caster.Player.Name = Regex.Replace(fieldText[dict[1]], @"\[.*?\]", "");
+                            if (true) // TO DELETE ! (Change Level)
+                            {
+                                BTL_SCENE scene = new BTL_SCENE();
+                                scene.ReadBattleScene(btlName);
+                                if (scene.header.TypCount <= 0)
+                                    return;
+                                if (dict[1] < 0)
+                                    dict[1] = Comn.random8() % scene.header.TypCount;
+                                if (dict[1] >= scene.header.TypCount)
+                                    return;
+                                SB2_MON_PARM monsterParam = scene.MonAddr[dict[1]];
+                                v.Caster.Level = monsterParam.Level;
+                                ff9play.FF9Play_ChangeLevel(v.Caster.Player, v.Caster.Level, true);
+                            }
+                            dict[3] = (int)v.Caster.MaximumHp; // MaxHP
+                            dict[4] = (int)v.Caster.MaximumMp; // MaxMP
+                            dict[5] = v.Caster.Level; // Level
+                            dict[6] = v.Caster.Dexterity; // Speed
+                            dict[7] = v.Caster.Strength; // Strength
+                            dict[8] = v.Caster.Magic; // Magic
+                            dict[9] = v.Caster.Will; // Spirit
+                            dict[10] = v.Caster.PhysicalDefence; // PDefence
+                            dict[11] = v.Caster.PhysicalEvade; // PEvade
+                            dict[12] = v.Caster.MagicDefence; // MDefence
+                            dict[13] = v.Caster.MagicEvade; // MEvade
                         }
                     );
                 }

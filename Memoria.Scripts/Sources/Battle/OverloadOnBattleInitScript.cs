@@ -19,11 +19,13 @@ namespace Memoria.Scripts.Battle
 
         public void OnBattleInit()
         {
-            // Reset
+            // Reset custom variables for killing boss (in OverloadDamage)
             FF9StateSystem.EventState.gScriptDictionary.Remove(10104);
             FF9StateSystem.EventState.gScriptDictionary.Remove(10105);
             FF9StateSystem.EventState.gScriptDictionary.Remove(10106);
             FF9StateSystem.EventState.gScriptDictionary.Remove(10107);
+
+            btl_eqp.EnemyBuiltInWeaponTable.Add(427, [16]);
 
             foreach (BattleUnit PlayerUnit in BattleState.EnumerateUnits())
             {
@@ -37,6 +39,17 @@ namespace Memoria.Scripts.Battle
                     dict[0] = -1; // ID Battle (for Scene) 
                     dict[1] = -1; // ID Monster 
                     dict[2] = -1; // Boss ?
+                    dict[3] = -1; // MaxHP
+                    dict[4] = -1; // MaxMP
+                    dict[5] = -1; // Level
+                    dict[6] = -1; // Speed
+                    dict[7] = -1; // Strength
+                    dict[8] = -1; // Magic
+                    dict[9] = -1; // Spirit
+                    dict[10] = -1; // PDefence
+                    dict[11] = -1; // PEvade
+                    dict[12] = -1; // MDefence
+                    dict[13] = -1; // MEvade
                     FF9StateSystem.EventState.gScriptDictionary.Add(CustomCharacterId, dict);
                 }
                 if (dict[0] != -1 && dict[1] != -1)
@@ -45,19 +58,9 @@ namespace Memoria.Scripts.Battle
                     FF9BattleDB.SceneData.TryGetKey(dict[0], out string btlName);
                     btlName = btlName.Replace("BSC_", "");
                     CharacterPresetId presetId = PlayerUnit.Player.PresetId;
-                    PlayerUnit.ChangeToMonster(btlName, dict[1], CharacterCommands.CommandSets[presetId].Regular[2], CMDMonster, false, true, true, true, true, AADescription: true, updateStatus:true);
+                    PlayerUnit.Data.weaponModels.Clear();
+                    PlayerUnit.ChangeToMonster(btlName, dict[1], CharacterCommands.CommandSets[presetId].Regular[2], CMDMonster, false, false, false, true, true, AADescription: true, updateStatus:true);
                     CharacterCommands.CommandSets[presetId].Regular[3] = BattleCommandId.None;
-                    if (dict[2] > 0 || PlayerUnit.Data.dms_geo_id == 347 || PlayerUnit.Data.dms_geo_id == 125)
-                    {
-                        PlayerUnit.MaximumHp -= 10000;
-                        PlayerUnit.CurrentHp = Math.Max(1, PlayerUnit.MaximumHp);
-                        PlayerUnit.CurrentMp = Math.Max(1, PlayerUnit.MaximumMp);
-                    }
-                    else
-                    {
-                        PlayerUnit.CurrentHp = PlayerUnit.MaximumHp;
-                        PlayerUnit.CurrentMp = PlayerUnit.MaximumMp;
-                    }
                     if (PlayerUnit.Data.dms_geo_id == 427) // Beatrix (Stock Break & ClimHazard nerfed)
                     {
                         if (dict[0] == 4)
@@ -78,12 +81,15 @@ namespace Memoria.Scripts.Battle
                             PlayerUnit.Data.monster_transform.spell[5].Ref.Power = 50;
                             PlayerUnit.Data.monster_transform.spell[5].Ref.Rate = 0;
                         }
-                        string Description = "";
                         int Power = dict[0] == 73 ? PlayerUnit.Data.monster_transform.spell[5].Ref.Power : PlayerUnit.Data.monster_transform.spell[4].Ref.Power;
-                        Description += "[ICON=95] ";
-                        Description += $"{Localization.Get("AttackStats")} : {Power}";
-                        PlayerUnit.Data.monster_transform.spell_desc[4] = Description;
+                        //if (PlayerUnit.Data.weaponModels.Count == 0)
+                            //PlayerUnit.Data.weaponModels.Add(new WEAPON_MODEL());
+                        //PlayerUnit.Data.weaponModels[0].geo = ModelFactory.CreateDefaultWeaponForCharacterWhenUseAsEnemy("GEO_MON_B3_155");
+                        //PlayerUnit.Data.weaponModels[0].builtin_mode = true;
                     }
+                    if (dict.Count > 5)
+                        if (dict[5] != -1)
+                            ff9play.FF9Play_ChangeLevel(PlayerUnit.Player, dict[5], true);
                     Dictionary<Int32, String> fieldText = new Dictionary<Int32, String>();
                     String path = EmbadedTextResources.GetCurrentPath("/Battle/" + dict[0] + ".mes");
                     FF9TextTool.ImportStrtWithCumulativeModFiles<Int32>(path, fieldText);
