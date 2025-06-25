@@ -559,14 +559,15 @@ namespace Memoria
                 {
                     // eg.: CreateDescriptionFromBuilder 1000 False => Create a new description for AA n°1000
                     // eg.: CreateDescriptionFromBuilder 27 True => Create a new description for Firaga spell from the builder, with stats.
-                    Log.Message("entry[1] = " + entry[1]);
-                    Log.Message("entry[2] = " + entry[2]);
 
-                    if (!Int32.TryParse(entry[1], out Int32 aaId))
-                        continue;
-                    Boolean aastats = String.Equals(entry[2], "True");
-                    Log.Message("aastats = " + aastats);
-                    DescriptionBuilder.AADescriptionFromBuilder.Add((BattleAbilityId)aaId, aastats);
+                    for (Int32 i = 1; i < (entry.Length - 1); i++)
+                    {
+                        if (!Int32.TryParse(entry[i], out Int32 aaId))
+                            continue;
+                        Boolean aastats = String.Equals(entry[entry.Length - 1], "True");
+                        if (!DescriptionBuilder.AADescriptionFromBuilder.ContainsKey((BattleAbilityId)aaId))
+                            DescriptionBuilder.AADescriptionFromBuilder.Add((BattleAbilityId)aaId, aastats);
+                    }
                 }
             }
             if (shouldUpdateBattleStatus)

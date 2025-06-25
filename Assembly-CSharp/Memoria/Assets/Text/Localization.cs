@@ -997,13 +997,13 @@ namespace Memoria.Assets
             },
             { "AADesc_ManyAny", new Dictionary<String, String>()
                 {
-                    { "US", "allies or enemies" },
-                    { "UK", "allies or enemies" },
-                    { "JP", "味方または敵" },
-                    { "ES", "aliados o enemigos" },
-                    { "FR", "les alliés ou les ennemis" },
-                    { "GR", "Einzel/Flächenvisier (Gegner/Verbündete)" },
-                    { "IT", "alleati o nemici" }
+                    { "US", "single/multiple targets" },
+                    { "UK", "single/multiple targets" },
+                    { "JP", "敵味方単体または全体に" },
+                    { "ES", "uno o todos los enemigos o aliados" },
+                    { "FR", "une ou plusieurs cible(s)" },
+                    { "GR", "Einzel/Fläche" },
+                    { "IT", "uno o tutti, alleati o nemici" }
                 }
             },
             { "AADesc_HP", new Dictionary<String, String>()
