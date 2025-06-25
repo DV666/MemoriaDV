@@ -495,6 +495,8 @@ namespace Assets.Sources.Scripts.UI.Common
 
         public static String ActionAbilityHelpDescription(BattleAbilityId id)
         {
+            if (DescriptionBuilder.AADescriptionFromBuilder.ContainsKey(id))
+                return DescriptionBuilder.BuildDescriptionAA(FF9StateSystem.Battle.FF9Battle.aa_data[id], DescriptionBuilder.AADescriptionFromBuilder[id]);
             return DisplayBatch.actionAbilityHelpDesc.TryGetValue(id, out String result) ? result : String.Empty;
         }
 

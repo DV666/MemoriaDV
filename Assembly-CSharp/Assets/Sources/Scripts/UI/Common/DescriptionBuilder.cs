@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Remoting.Contexts;
 using System.Text.RegularExpressions;
-using FF9;
 using Memoria.Assets;
 using Memoria.Data;
 
@@ -70,11 +68,11 @@ namespace Assets.Sources.Scripts.UI.Common
             { "GeneralScript", new HashSet<int> { 0 } }, // Description by "default" if the script ID is not found here.
 
             // Not used for description but to detect if physical or magical (=TYPE=) : can be present in both.
-            { "PhysicalTypeScript", new HashSet<int> { 1, 2, 3, 4, 5, 6, 7, 8, 19, 39, 42, 48, 83, 100, 102, 107 } }, // Description by "default" if the script ID is not found here.
-            { "MagicalTypeScript", new HashSet<int> { 9, 15, 16, 18, 20, 21, 23, 85 } } // Based on "PenaltyShellAttack"
+            { "PhysicalTypeScript", new HashSet<int> { 1, 2, 3, 4, 5, 6, 7, 8, 19, 39, 42, 48, 83, 100, 102, 107 } }, // Based on "PhysicalPenaltyAndBonusAttack"
+            { "MagicalTypeScript", new HashSet<int> { 9, 11, 15, 16, 17, 18, 20, 21, 23, 27, 33, 34, 35, 36, 84, 85, 91, 99, 108, 109 } } // Based on "PenaltyShellAttack" and "PenaltyShellHitRate"
         };
 
-        public static string BuildDescriptionAA(AA_DATA ability, Boolean aa_stat = false)
+        public static string BuildDescriptionAA(AA_DATA ability, Boolean aa_stat = true)
         {
             string Description = "";
             Boolean AACategoryPhysical = (ability.Category & 8) != 0;
@@ -88,7 +86,7 @@ namespace Assets.Sources.Scripts.UI.Common
                     if (AACategoryMagical) // Magical
                         Description += "[ICON=102] ";
 
-                    Description += " / ";
+                    Description += " ";
                 }
                 if (ability.Ref.Power > 0)
                 {
@@ -222,5 +220,8 @@ namespace Assets.Sources.Scripts.UI.Common
 
             return Description;
         }
+
+        public static Dictionary<BattleAbilityId, Boolean> AADescriptionFromBuilder = new Dictionary<BattleAbilityId, Boolean>();
+
     }
 }

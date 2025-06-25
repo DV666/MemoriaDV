@@ -519,7 +519,7 @@ namespace Memoria
                         FF9BattleDB.Animation[ID[idindex]] = entry[entry.Length - 1];
                     }
                 }
-                else if (String.Equals(entry[0], "SwapFieldModelTexture"))
+                else if (String.Equals(entry[0], "SwapFieldModelTexture")) // [DV] TODO => Need to improve, need to add a condition based on actor.uid or something like that...
                 {
                     // eg.: SwapFieldModelTexture 2250 GEO_MON_B3_093 CustomTextures/OeilvertGuardian/342_0.png CustomTextures/OeilvertGuardian/342_1.png CustomTextures/OeilvertGuardian/342_2.png CustomTextures/OeilvertGuardian/342_3.png CustomTextures/OeilvertGuardian/342_4.png CustomTextures/OeilvertGuardian/342_5.png
                     List<string> TexturesList = new List<string>();
@@ -529,6 +529,44 @@ namespace Memoria
                         TexturesList.Add(entry[i]);
                     String[] TexturesCustomModel = TexturesList.ToArray();
                     ModelFactory.CustomModelField.Add(new KeyValuePair<Int32, String>(fieldID, entry[2]), TexturesCustomModel);
+                }
+                else if (String.Equals(entry[0], "DescriptionBuilder"))
+                {
+                    // eg.: DescriptionBuilder ClassicDamageScript Add 200
+                    // eg.: DescriptionBuilder ClassicDamageScript Remove 100
+                    // eg.: DescriptionBuilder CustomAttackForModScript Add 150
+                    Boolean add = String.Equals(entry[2], "Add");
+                    Boolean remove = String.Equals(entry[2], "Remove");
+                    if (!Int32.TryParse(entry[3], out Int32 scriptId))
+                        continue;
+
+                    HashSet<int> hashscriptid = new HashSet<int> { scriptId };
+                    if (add)
+                    {
+                        if (!DescriptionBuilder.DescriptionTextfromScriptId.ContainsKey(entry[1]))
+                            DescriptionBuilder.DescriptionTextfromScriptId.Add(entry[1], hashscriptid);
+                        else
+                            DescriptionBuilder.DescriptionTextfromScriptId[entry[1]].Add(scriptId);
+                    }
+                    else if (remove)
+                    {
+                        if (DescriptionBuilder.DescriptionTextfromScriptId.ContainsKey(entry[1]))
+                            DescriptionBuilder.DescriptionTextfromScriptId[entry[1]].Remove(scriptId);
+                    }
+
+                }
+                else if (String.Equals(entry[0], "CreateDescriptionFromBuilder"))
+                {
+                    // eg.: CreateDescriptionFromBuilder 1000 False => Create a new description for AA n°1000
+                    // eg.: CreateDescriptionFromBuilder 27 True => Create a new description for Firaga spell from the builder, with stats.
+                    Log.Message("entry[1] = " + entry[1]);
+                    Log.Message("entry[2] = " + entry[2]);
+
+                    if (!Int32.TryParse(entry[1], out Int32 aaId))
+                        continue;
+                    Boolean aastats = String.Equals(entry[2], "True");
+                    Log.Message("aastats = " + aastats);
+                    DescriptionBuilder.AADescriptionFromBuilder.Add((BattleAbilityId)aaId, aastats);
                 }
             }
             if (shouldUpdateBattleStatus)
