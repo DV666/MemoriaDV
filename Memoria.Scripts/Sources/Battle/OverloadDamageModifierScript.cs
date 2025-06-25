@@ -52,10 +52,6 @@ namespace Memoria.Scripts.Battle
             }
             if (v.Caster.IsPlayer && (!v.Target.IsPlayer && HPMob <= v.Target.HpDamage && (v.Target.Flags & CalcFlag.HpRecovery) == 0) || (v.Target.IsPlayer && (v.Target.Flags & CalcFlag.HpRecovery) != 0 && v.Target.Data != v.Caster.Data && v.Caster.IsNonMorphedPlayer))
             {
-                //Transform builtInBone = v.Caster.Data.gameObject.transform.GetChildByName($"bone{v.Caster.Data.weapon_bone:D3}");
-                //Log.Message("v.Caster.Data.weapon_bone = " + v.Caster.Data.weapon_bone);
-                //Log.Message("builtInBone.localScale = " + builtInBone.localScale);
-
                 int CustomCharacterId = (int)(10000 + v.Caster.PlayerIndex);
                 if (FF9StateSystem.EventState.gScriptDictionary.TryGetValue(CustomCharacterId, out Dictionary<Int32, Int32> dict))
                 {

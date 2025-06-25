@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using Assets.Sources.Scripts.UI.Common;
 using FF9;
@@ -7,8 +8,6 @@ using Memoria.Assets;
 using Memoria.Data;
 using Memoria.Database;
 using Memoria.Prime;
-using static BTL_DATA;
-using static UIManager;
 
 namespace Memoria.Scripts.Battle
 {
@@ -58,7 +57,6 @@ namespace Memoria.Scripts.Battle
                     FF9BattleDB.SceneData.TryGetKey(dict[0], out string btlName);
                     btlName = btlName.Replace("BSC_", "");
                     CharacterPresetId presetId = PlayerUnit.Player.PresetId;
-                    PlayerUnit.Data.weaponModels.Clear();
                     PlayerUnit.ChangeToMonster(btlName, dict[1], CharacterCommands.CommandSets[presetId].Regular[2], CMDMonster, false, false, false, true, true, AADescription: true, updateStatus:true);
                     CharacterCommands.CommandSets[presetId].Regular[3] = BattleCommandId.None;
                     if (PlayerUnit.Data.dms_geo_id == 427) // Beatrix (Stock Break & ClimHazard nerfed)
@@ -82,11 +80,17 @@ namespace Memoria.Scripts.Battle
                             PlayerUnit.Data.monster_transform.spell[5].Ref.Rate = 0;
                         }
                         int Power = dict[0] == 73 ? PlayerUnit.Data.monster_transform.spell[5].Ref.Power : PlayerUnit.Data.monster_transform.spell[4].Ref.Power;
-                        //if (PlayerUnit.Data.weaponModels.Count == 0)
-                            //PlayerUnit.Data.weaponModels.Add(new WEAPON_MODEL());
-                        //PlayerUnit.Data.weaponModels[0].geo = ModelFactory.CreateDefaultWeaponForCharacterWhenUseAsEnemy("GEO_MON_B3_155");
-                        //PlayerUnit.Data.weaponModels[0].builtin_mode = true;
+                        PlayerUnit.Data.weaponModels[0].geo = ModelFactory.CreateModel("GEO_WEP_B1_037", true, true, Configuration.Graphics.ElementsSmoothTexture);
+                        geo.geoAttach(PlayerUnit.Data.weaponModels[0].geo, PlayerUnit.Data.gameObject, 16);
                     }
+                    else if (PlayerUnit.Data.dms_geo_id == 573)
+                    {
+                        PlayerUnit.Data.weaponModels[0].geo = ModelFactory.CreateModel("GEO_WEP_B1_052", true, true, Configuration.Graphics.ElementsSmoothTexture);
+                        geo.geoAttach(PlayerUnit.Data.weaponModels[0].geo, PlayerUnit.Data.gameObject, 16);
+                    }
+                    else
+                        PlayerUnit.Data.weaponModels.Clear();
+
                     if (dict.Count > 5)
                         if (dict[5] != -1)
                             ff9play.FF9Play_ChangeLevel(PlayerUnit.Player, dict[5], true);
