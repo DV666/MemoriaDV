@@ -206,6 +206,8 @@ public static class btl_eqp
         { 278, [26] }, // Black Waltz 3 (normal) - GEO_MON_B3_115
         { 593, [16] }, // Black Waltz 3 (broken) - GEO_MON_B3_116
         { 410, [31] }, // Lani - GEO_MON_B3_122 or GEO_MON_UP3_122
+        { 427, [16] }, // Beatrix - GEO_MON_B3_155
+        { 573, [16] }, // Scarlet Hair (Amarant) - GEO_MON_B3_182
         { 38, [36, 41, 46, 65, 70, 75] }, // Maliris - GEO_MON_B3_141
         { 619, [36, 41, 46, 65, 70, 75] }, // Maliris (crystal) - GEO_MON_B3_192
         { 576, [9] }, // Hades - GEO_MON_B3_146
