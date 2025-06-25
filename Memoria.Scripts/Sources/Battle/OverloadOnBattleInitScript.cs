@@ -24,8 +24,6 @@ namespace Memoria.Scripts.Battle
             FF9StateSystem.EventState.gScriptDictionary.Remove(10106);
             FF9StateSystem.EventState.gScriptDictionary.Remove(10107);
 
-            btl_eqp.EnemyBuiltInWeaponTable.Add(427, [16]);
-
             foreach (BattleUnit PlayerUnit in BattleState.EnumerateUnits())
             {
                 if (!PlayerUnit.IsPlayer)
