@@ -67,19 +67,25 @@ namespace Assets.Sources.Scripts.UI.Common
             { "SimpleAttackGaiaScript", new HashSet<int> { 98 } },
             { "TonberryKarmaScript", new HashSet<int> { 104 } },
             { "SwallowScript", new HashSet<int> { 106 } },
-            { "GeneralScript", new HashSet<int> { 0 } } // Description by "default" if the script ID is not found here.
+            { "GeneralScript", new HashSet<int> { 0 } }, // Description by "default" if the script ID is not found here.
+
+            // Not used for description but to detect if physical or magical (=TYPE=) : can be present in both.
+            { "PhysicalTypeScript", new HashSet<int> { 1, 2, 3, 4, 5, 6, 7, 8, 19, 39, 42, 48, 83, 100, 102, 107 } }, // Description by "default" if the script ID is not found here.
+            { "MagicalTypeScript", new HashSet<int> { 9, 15, 16, 18, 20, 21, 23, 85 } } // Based on "PenaltyShellAttack"
         };
 
         public static string BuildDescriptionAA(AA_DATA ability, Boolean aa_stat = false)
         {
             string Description = "";
+            Boolean AACategoryPhysical = (ability.Category & 8) != 0;
+            Boolean AACategoryMagical = (ability.Category & 16) != 0;
             if (aa_stat)
             {
-                if ((ability.Category & 8) != 0 || (ability.Category & 8) != 0)
+                if (AACategoryPhysical || AACategoryMagical)
                 {
-                    if ((ability.Category & 8) != 0) // Physical
+                    if (AACategoryPhysical) // Physical
                         Description += "[ICON=95] ";
-                    if ((ability.Category & 16) != 0) // Magical
+                    if (AACategoryMagical) // Magical
                         Description += "[ICON=102] ";
 
                     Description += " / ";
@@ -174,17 +180,17 @@ namespace Assets.Sources.Scripts.UI.Common
             }
             if (Description.Contains("=TYPE="))
             {
-                string TypeText = "";
-                if ((ability.Category & 8) != 0) // Physical
-                {
+                string TypeText = "";              
+                if (DescriptionTextfromScriptId["PhysicalTypeScript"].Contains(ability.Ref.ScriptId) && DescriptionTextfromScriptId["MagicalTypeScript"].Contains(ability.Ref.ScriptId))
+                    TypeText += Localization.GetWithDefault("AADesc_Physical") + " and " + Localization.GetWithDefault("AADesc_Magical");
+                else if (DescriptionTextfromScriptId["PhysicalTypeScript"].Contains(ability.Ref.ScriptId))
                     TypeText += Localization.GetWithDefault("AADesc_Physical");
-                    //TypeText += "[ICON=95] ";
-                }
-                if ((ability.Category & 16) != 0) // Magical
-                {
+                else if (DescriptionTextfromScriptId["MagicalTypeScript"].Contains(ability.Ref.ScriptId)) 
                     TypeText += Localization.GetWithDefault("AADesc_Magical");
-                    //TypeText += "[ICON=102] ";
-                }
+                else if (AACategoryPhysical)
+                    TypeText += Localization.GetWithDefault("AADesc_Physical");
+                else if (AACategoryMagical)
+                    TypeText += Localization.GetWithDefault("AADesc_Magical");
                 Description = Regex.Replace(Description, "=TYPE=", TypeText);
             }
             if (Description.Contains("=TARGET="))
