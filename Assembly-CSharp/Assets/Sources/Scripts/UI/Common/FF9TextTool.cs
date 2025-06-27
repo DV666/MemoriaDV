@@ -9,6 +9,7 @@ using Memoria.Assets;
 using Memoria.Data;
 using Memoria.Prime;
 using UnityEngine;
+using FF9;
 
 namespace Assets.Sources.Scripts.UI.Common
 {

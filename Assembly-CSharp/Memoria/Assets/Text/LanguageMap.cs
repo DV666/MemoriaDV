@@ -141,6 +141,14 @@ namespace Memoria.Assets
             return key;
         }
 
+        public String GetFromLang(String key, String lang)
+        {
+            if (_languages.TryGetValue(lang, out var dictfromlang))
+                if (dictfromlang.TryGetValue(key, out var value))
+                    return value;
+            return key;
+        }
+
         private void ReadText(TextCSVReader reader, Dictionary<Int32, String> cellLanguages, Boolean init)
         {
             Boolean firstEntry = true;

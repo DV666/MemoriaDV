@@ -113,6 +113,22 @@ namespace Memoria.Assets
             return key;
         }
 
+        /// <summary>For keys not present in vanilla, with lang choosen</summary>
+        public static String GetWithDefaultAndLang(String key, String lang)
+        {
+            String value = Provider.GetFromLang(key, Provider.SymbolToLanguage(lang));
+            if (!String.Equals(value, key))
+                return value;
+            if (_defaultDictionary.TryGetValue(key, out Dictionary<String, String> defaultValue))
+            {
+                if (defaultValue.TryGetValue(lang, out value))
+                    return value;
+                else if (defaultValue.TryGetValue(GetFallbackSymbol(), out value))
+                    return value;
+            }
+            return key;
+        }
+
         private static Dictionary<String, Dictionary<String, String>> _defaultDictionary = new Dictionary<String, Dictionary<String, String>>()
         {
             // The base reading direction of the language
@@ -841,6 +857,94 @@ namespace Memoria.Assets
                     { "IT", "Pietrificazione" }
                 }
             },
+            { "AADesc_Element_Fire", new Dictionary<String, String>()
+                {
+                    { "US", "[DF0000][HSHD]Fire[383838][HSHD]" },
+                    { "UK", "[DF0000][HSHD]Fire[383838][HSHD]" },
+                    { "JP", "[DF0000][HSHD]火[383838][HSHD]" },
+                    { "ES", "[DF0000][HSHD]Fuego[383838][HSHD]" },
+                    { "FR", "[DF0000][HSHD]Feu[383838][HSHD]" },
+                    { "GR", "[DF0000][HSHD]Hitze[383838][HSHD]" },
+                    { "IT", "[DF0000][HSHD]Fuoco[383838][HSHD]" }
+                }
+            },
+            { "AADesc_Element_Cold", new Dictionary<String, String>()
+                {
+                    { "US", "[028E8E][HSHD]Ice[383838][HSHD]" },
+                    { "UK", "[028E8E][HSHD]Ice[383838][HSHD]" },
+                    { "JP", "[028E8E][HSHD]冷[383838][HSHD]" },
+                    { "ES", "[028E8E][HSHD]Frío[383838][HSHD]" },
+                    { "FR", "[028E8E][HSHD]Glace[383838][HSHD]" },
+                    { "GR", "[028E8E][HSHD]Kälte[383838][HSHD]" },
+                    { "IT", "[028E8E][HSHD]Gelo[383838][HSHD]" }
+                }
+            },
+            { "AADesc_Element_Thunder", new Dictionary<String, String>()
+                {
+                    { "US", "[D6D62D][HSHD]Thunder[383838][HSHD]" },
+                    { "UK", "[D6D62D][HSHD]Thunder[383838][HSHD]" },
+                    { "JP", "[D6D62D][HSHD]雷[383838][HSHD]" },
+                    { "ES", "[D6D62D][HSHD]Rayo[383838][HSHD]" },
+                    { "FR", "[D6D62D][HSHD]Tonnerre[383838][HSHD]" },
+                    { "GR", "[D6D62D][HSHD]Donner[383838][HSHD]" },
+                    { "IT", "[D6D62D][HSHD]Tuono[383838][HSHD]" }
+                }
+            },
+            { "AADesc_Element_Earth", new Dictionary<String, String>()
+                {
+                    { "US", "[783F04][HSHD]Earth[383838][HSHD]" },
+                    { "UK", "[783F04][HSHD]Earth[383838][HSHD]" },
+                    { "JP", "[783F04][HSHD]土[383838][HSHD]" },
+                    { "ES", "[783F04][HSHD]Tierra[383838][HSHD]" },
+                    { "FR", "[783F04][HSHD]Terre[383838][HSHD]" },
+                    { "GR", "[783F04][HSHD]Erde[383838][HSHD]" },
+                    { "IT", "[783F04][HSHD]Terra[383838][HSHD]" }
+                }
+            },
+            { "AADesc_Element_Aqua", new Dictionary<String, String>()
+                {
+                    { "US", "[5C5CFF][HSHD]Water[383838][HSHD]" },
+                    { "UK", "[5C5CFF][HSHD]Water[383838][HSHD]" },
+                    { "JP", "[5C5CFF][HSHD]水[383838][HSHD]" },
+                    { "ES", "[5C5CFF][HSHD]Agua[383838][HSHD]" },
+                    { "FR", "[5C5CFF][HSHD]Eau[383838][HSHD]" },
+                    { "GR", "[5C5CFF][HSHD]Wasser[383838][HSHD]" },
+                    { "IT", "[5C5CFF][HSHD]Acqua[383838][HSHD]" }
+                }
+            },
+            { "AADesc_Element_Wind", new Dictionary<String, String>()
+                {
+                    { "US", "[2C623A][HSHD]Wind[383838][HSHD]" },
+                    { "UK", "[2C623A][HSHD]Wind[383838][HSHD]" },
+                    { "JP", "[2C623A][HSHD]風[383838][HSHD]" },
+                    { "ES", "[2C623A][HSHD]Aire[383838][HSHD]" },
+                    { "FR", "[2C623A][HSHD]Vent[383838][HSHD]" },
+                    { "GR", "[2C623A][HSHD]Wind[383838][HSHD]" },
+                    { "IT", "[2C623A][HSHD]Vento[383838][HSHD]" }
+                }
+            },
+            { "AADesc_Element_Holy", new Dictionary<String, String>()
+                {
+                    { "US", "[FFFFFF][HSHD]Holy[383838][HSHD]" },
+                    { "UK", "[FFFFFF][HSHD]Holy[383838][HSHD]" },
+                    { "JP", "[FFFFFF][HSHD]聖[383838][HSHD]" },
+                    { "ES", "[FFFFFF][HSHD]Sacro[383838][HSHD]" },
+                    { "FR", "[FFFFFF][HSHD]Sacré[383838][HSHD]" },
+                    { "GR", "[FFFFFF][HSHD]Himmel[383838][HSHD]" },
+                    { "IT", "[FFFFFF][HSHD]Sacro[383838][HSHD]" }
+                }
+            },
+            { "AADesc_Element_Darkness", new Dictionary<String, String>()
+                {
+                    { "US", "[000000][HSHD]Shadow[383838][HSHD]" },
+                    { "UK", "[000000][HSHD]Shadow[383838][HSHD]" },
+                    { "JP", "[000000][HSHD]闇[383838][HSHD]" },
+                    { "ES", "[000000][HSHD]Sombra[383838][HSHD]" },
+                    { "FR", "[000000][HSHD]Ténèbres[383838][HSHD]" },
+                    { "GR", "[000000][HSHD]Schatten[383838][HSHD]" },
+                    { "IT", "[000000][HSHD]Buio[383838][HSHD]" }
+                }
+            },
             { "AADesc_Power", new Dictionary<String, String>()
                 {
                     { "US", "Power" },
@@ -861,6 +965,39 @@ namespace Memoria.Assets
                     { "FR", "Précision" },
                     { "GR", "Genauigkeit" },
                     { "IT", "Precisione" }
+                }
+            },
+            { "AADesc_WeakSpell", new Dictionary<String, String>() // Unused but it's here :)
+                {
+                    { "US", "" },
+                    { "UK", "" },
+                    { "JP", "" },
+                    { "ES", "" },
+                    { "FR", "" },
+                    { "GR", "" },
+                    { "IT", "" }
+                }
+            },
+            { "AADesc_NormalSpell", new Dictionary<String, String>()
+                {
+                    { "US", "a lot of" },
+                    { "UK", "a lot of" },
+                    { "JP", "中程度の" },
+                    { "ES", "(medio)" },
+                    { "FR", "(moyenne)" },
+                    { "GR", "mittleren" },
+                    { "IT", "(medio)" }
+                }
+            },
+            { "AADesc_StrongSpell", new Dictionary<String, String>()
+                {
+                    { "US", "big-time" },
+                    { "UK", "max" },
+                    { "JP", "強力な" },
+                    { "ES", "(fuerte)" },
+                    { "FR", "(forte)" },
+                    { "GR", "starken" },
+                    { "IT", "(medio)" }
                 }
             },
             { "AADesc_Physical", new Dictionary<String, String>()
@@ -1041,24 +1178,24 @@ namespace Memoria.Assets
             },
             { "ClassicDamageScript", new Dictionary<String, String>()
                 {
-                    { "US", "Deals =TYPE= =ELEMENT= damage on =TARGET=." },
-                    { "UK", "Deals =TYPE= =ELEMENT= damage on =TARGET=." },
-                    { "JP", "=TARGET= に =ELEMENT= 属性の =TYPE= ダメージを与える。" },
-                    { "ES", "Inflige daño =TYPE= de elemento =ELEMENT= a =TARGET=." },
-                    { "FR", "Lance une attaque =TYPE= d'élement =ELEMENT= sur =TARGET=." },
-                    { "GR", "=TARGET=. Fügt =TYPE= Schaden vom Element =ELEMENT= zu." },
-                    { "IT", "Infligge danni =TYPE= di elemento =ELEMENT= a =TARGET=." }
+                    { "US", "Causes =SPELLPWR= =TYPE= =ELEMENT= damage on =TARGET=." },
+                    { "UK", "Causes =SPELLPWR= =TYPE= =ELEMENT= damage on =TARGET=." },
+                    { "JP", "=TARGET= に =SPELLPWR==ELEMENT= 属性の =TYPE= ダメージを与える。" },
+                    { "ES", "Inflige daño =TYPE= de elemento =ELEMENT= =SPELLPWR= a =TARGET=." },
+                    { "FR", "Lance une attaque =TYPE= d'élement =ELEMENT= =SPELLPWR= sur =TARGET=." },
+                    { "GR", "=TARGET=. Fügt =SPELLPWR==TYPE= Schaden vom Element =ELEMENT= zu." },
+                    { "IT", "Infligge danni =TYPE= di elemento =ELEMENT= =SPELLPWR= a =TARGET=." }
                 }
             },
             { "MPAttackScript", new Dictionary<String, String>()
                 {
-                    { "US", "Reduce MP on =TARGET=" },
-                    { "UK", "Reduce MP on =TARGET=" },
+                    { "US", "Reduce MP on =TARGET=." },
+                    { "UK", "Reduce MP on =TARGET=." },
                     { "JP", "=TARGET=からMPを除去する" },
-                    { "ES", "Reduce puntos mágicos a =TARGET=" },
-                    { "FR", "Retire des MP sur =TARGET=" },
-                    { "GR", "=TARGET=. Entfernt MP." },
-                    { "IT", "Rimuove MP di =TARGET=" }
+                    { "ES", "Reduce puntos mágicos a =TARGET=." },
+                    { "FR", "Retire des MP sur =TARGET=." },
+                    { "GR", "=TARGET=. Senkt MP." },
+                    { "IT", "Rimuove MP di =TARGET=." }
                 }
             },
             { "DarksideScript", new Dictionary<String, String>()
@@ -1074,13 +1211,13 @@ namespace Memoria.Assets
             },
             { "HealScript", new Dictionary<String, String>()
                 {
-                    { "US", "Restores =FLAGS= on =TARGET=." },
-                    { "UK", "Restores =FLAGS= on =TARGET=." },
-                    { "JP", "=TARGET= の =FLAGS= を回復する。" },
-                    { "ES", "Restaura =FLAGS= a =TARGET=." },
-                    { "FR", "Restaure les =FLAGS= sur =TARGET=." },
-                    { "GR", "=TARGET=. Heilt  =FLAGS=." },
-                    { "IT", "Ripristina =FLAGS= su =TARGET=." }
+                    { "US", "Restores =SPELLPWR= =FLAGS= on =TARGET=." },
+                    { "UK", "Restores =SPELLPWR= =FLAGS= on =TARGET=." },
+                    { "JP", "=TARGET= の =SPELLPWR==FLAGS= を回復する。" },
+                    { "ES", "Restaura =FLAGS= =SPELLPWR= a =TARGET=." },
+                    { "FR", "Restaure les =FLAGS= =SPELLPWR= sur =TARGET=." },
+                    { "GR", "=TARGET=. Heilt =SPELLPWR= =FLAGS=." },
+                    { "IT", "Ripristina =FLAGS= =SPELLPWR= su =TARGET=." }
                 }
             },
             { "ApplyStatusScript", new Dictionary<String, String>()
@@ -1140,13 +1277,13 @@ namespace Memoria.Assets
             },
             { "ReviveScript", new Dictionary<String, String>()
                 {
-                    { "US", "Recover from [A85038][HSHD]=CUREKO=[383838][HSHD] and restores =POWER=% of max HP" },
-                    { "UK", "Recover from [A85038][HSHD]=CUREKO=[383838][HSHD] and restores =POWER=% of max HP" },
-                    { "JP", "[A85038][HSHD]=CUREKO=[383838][HSHD]を解除し、最大HPの=POWER=%を回復する" },
-                    { "ES", "Cura el estado [A85038][HSHD]=CUREKO=[383838][HSHD] y restaura el =POWER=% de los HP máximos" },
-                    { "FR", "Annule un [A85038][HSHD]=CUREKO=[383838][HSHD] et restaure =POWER=% des HP maximum." },
-                    { "GR", "Kuriert [A85038][HSHD]=CUREKO=[383838][HSHD] auf und stellt =POWER=% der maximalen HP wieder her" },
-                    { "IT", "Cura [A85038][HSHD]=CUREKO=[383838][HSHD] e ripristina il =POWER=% degli HP massimi" }
+                    { "US", "Recover from [A85038][HSHD]=CUREKO=[383838][HSHD] and restores at least =POWER=% of max HP" },
+                    { "UK", "Recover from [A85038][HSHD]=CUREKO=[383838][HSHD] and restores at least =POWER=% of max HP" },
+                    { "JP", "[A85038][HSHD]=CUREKO=[383838][HSHD]を解除し、最大HPの=POWER=%以上を回復する" },
+                    { "ES", "Cura el estado [A85038][HSHD]=CUREKO=[383838][HSHD] y restaura al menos el =POWER=% de los HP máximos" },
+                    { "FR", "Annule un [A85038][HSHD]=CUREKO=[383838][HSHD] et restaure au moins =POWER=% des HP maximum." },
+                    { "GR", "Kuriert [A85038][HSHD]=CUREKO=[383838][HSHD] auf und stellt mindestens =POWER=% der maximalen HP wieder her" },
+                    { "IT", "Cura [A85038][HSHD]=CUREKO=[383838][HSHD] e ripristina almeno il =POWER=% degli HP massimi" }
                 }
             },
             { "LvDirectHPDamageScript", new Dictionary<String, String>()
@@ -1268,6 +1405,17 @@ namespace Memoria.Assets
                     { "FR", "Réduit la [A85038][HSHD]Défense[383838][HSHD] sur =TARGET=." },
                     { "GR", "=TARGET=. Senkt [A85038][HSHD]Zauberkraft[383838][HSHD]." },
                     { "IT", "Diminuisce il [A85038][HSHD]potere di attacco magico[383838][HSHD] di =TARGET=" }
+                }
+            },
+            { "LancerScript", new Dictionary<String, String>()
+                {
+                    { "US", "Reduce HP and MP on =TARGET=." },
+                    { "UK", "Reduce HP and MP on =TARGET=." },
+                    { "JP", "=TARGET=HPとMPにダメージを与えます。" },
+                    { "ES", "Reduce la vitalidad y los puntos mágicos de =TARGET=." },
+                    { "FR", "Retire des HP et MP sur =TARGET=." },
+                    { "GR", "=TARGET=. Zieht HP und MP ab." },
+                    { "IT", "Rimuove HP e MP di =TARGET=." }
                 }
             },
             { "MightScript", new Dictionary<String, String>()

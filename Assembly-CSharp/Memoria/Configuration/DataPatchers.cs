@@ -2,6 +2,7 @@
 using FF9;
 using Memoria.Assets;
 using Memoria.Data;
+using Memoria.Database;
 using Memoria.Prime;
 using Memoria.Prime.Text;
 using System;
@@ -530,11 +531,11 @@ namespace Memoria
                     String[] TexturesCustomModel = TexturesList.ToArray();
                     ModelFactory.CustomModelField.Add(new KeyValuePair<Int32, String>(fieldID, entry[2]), TexturesCustomModel);
                 }
-                else if (String.Equals(entry[0], "DescriptionBuilder"))
+                else if (String.Equals(entry[0], "DescriptionTemplate"))
                 {
-                    // eg.: DescriptionBuilder ClassicDamageScript Add 200
-                    // eg.: DescriptionBuilder ClassicDamageScript Remove 100
-                    // eg.: DescriptionBuilder CustomAttackForModScript Add 150
+                    // eg.: DescriptionTemplate ClassicDamageScript Add 200
+                    // eg.: DescriptionTemplate ClassicDamageScript Remove 100
+                    // eg.: DescriptionTemplate CustomAttackForModScript Add 150
                     Boolean add = String.Equals(entry[2], "Add");
                     Boolean remove = String.Equals(entry[2], "Remove");
                     if (!Int32.TryParse(entry[3], out Int32 scriptId))
@@ -555,18 +556,30 @@ namespace Memoria
                     }
 
                 }
-                else if (String.Equals(entry[0], "CreateDescriptionFromBuilder"))
+                else if (String.Equals(entry[0], "GenerateAbilityHelp"))
                 {
-                    // eg.: CreateDescriptionFromBuilder 1000 False => Create a new description for AA n°1000
-                    // eg.: CreateDescriptionFromBuilder 27 True => Create a new description for Firaga spell from the builder, with stats.
+                    // eg.: GenerateAbilityHelp 1000 False => Create a new description for AA n°1000
+                    // eg.: GenerateAbilityHelp 27 True => Create a new description for Firaga spell from the builder, with stats.
+
+                    Boolean aastats = String.Equals(entry[entry.Length - 1], "True");
 
                     for (Int32 i = 1; i < (entry.Length - 1); i++)
                     {
-                        if (!Int32.TryParse(entry[i], out Int32 aaId))
-                            continue;
-                        Boolean aastats = String.Equals(entry[entry.Length - 1], "True");
-                        if (!DescriptionBuilder.AADescriptionFromBuilder.ContainsKey((BattleAbilityId)aaId))
+                        if (entry[i].Contains("CMD_"))
+                        {
+                            entry[i] = entry[i].Replace("CMD_", "");
+                            if (!Int32.TryParse(entry[i], out Int32 cmdId))
+                                continue;
+                            CharacterCommand ff9Command = CharacterCommands.Commands[(BattleCommandId)cmdId];
+                            foreach (BattleAbilityId abilId in ff9Command.EnumerateAbilities())
+                                DescriptionBuilder.AADescriptionFromBuilder.Add(abilId, aastats);
+                        }
+                        else
+                        {
+                            if (!Int32.TryParse(entry[i], out Int32 aaId))
+                                continue;                       
                             DescriptionBuilder.AADescriptionFromBuilder.Add((BattleAbilityId)aaId, aastats);
+                        }
                     }
                 }
             }

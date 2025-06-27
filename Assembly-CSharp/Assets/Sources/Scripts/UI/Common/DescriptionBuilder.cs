@@ -2,18 +2,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Memoria;
 using Memoria.Assets;
 using Memoria.Data;
 using Memoria.Prime;
+using UnityEngine;
 
 namespace Assets.Sources.Scripts.UI.Common
 {
     public static class DescriptionBuilder
     {
-        // Maybe doing a Dictionary for that ? To add custom script.
         public static Dictionary<string, HashSet<int>> DescriptionTextfromScriptId = new Dictionary<string, HashSet<int>>
         {
-            { "ClassicDamageScript", new HashSet<int> { 1, 2, 3, 4, 5, 7, 8, 9, 18, 19, 20, 21, 28, 39, 48, 49, 63, 67, 68, 75, 77, 83, 85, 99, 100, 107 } }, // 77 => DarkMatterScript ?
+            { "ClassicDamageScript", new HashSet<int> { 1, 2, 3, 4, 5, 7, 8, 9, 18, 19, 20, 21, 28, 48, 49, 63, 67, 68, 75, 77, 83, 85, 99, 100, 107 } }, // 77 => DarkMatterScript ?
             { "MPAttackScript", new HashSet<int> { 31 } },
             { "DarksideScript", new HashSet<int> { 32 } },
             { "HealScript", new HashSet<int> { 10, 30, 37, 41, 69, 70, 71, 74, 76 } },
@@ -33,6 +34,7 @@ namespace Assets.Sources.Scripts.UI.Common
             { "MentalBreakScript", new HashSet<int> { 35 } },
             { "MagicBreakScript", new HashSet<int> { 36 } },
             { "SpareChangeScript", new HashSet<int> { 38 } },
+            { "LancerScript", new HashSet<int> { 39 } },
             { "MightScript", new HashSet<int> { 43 } },
             { "FocusScript", new HashSet<int> { 44 } },
             { "SacrificeScript", new HashSet<int> { 45 } },
@@ -68,13 +70,18 @@ namespace Assets.Sources.Scripts.UI.Common
             { "SwallowScript", new HashSet<int> { 106 } },
             { "GeneralScript", new HashSet<int> { 0 } }, // Description by "default" if the script ID is not found here.
 
-            // Not used for description but to detect if physical or magical (=TYPE=) : can be present in both.
+            // Not used to build a description
             { "PhysicalTypeScript", new HashSet<int> { 1, 2, 3, 4, 5, 6, 7, 8, 19, 39, 42, 48, 83, 100, 102, 107 } }, // Based on "PhysicalPenaltyAndBonusAttack"
-            { "MagicalTypeScript", new HashSet<int> { 9, 11, 15, 16, 17, 18, 20, 21, 23, 27, 33, 34, 35, 36, 84, 85, 91, 99, 108, 109 } } // Based on "PenaltyShellAttack" and "PenaltyShellHitRate"
+            { "MagicalTypeScript", new HashSet<int> { 9, 11, 15, 16, 17, 18, 20, 21, 23, 27, 33, 34, 35, 36, 84, 85, 91, 99, 108, 109 } }, // Based on "PenaltyShellAttack" and "PenaltyShellHitRate"
+            { "NoApplyStatusScript", new HashSet<int> { 11, 12, 13, 14, 22, 46, 62, 72, 73, 87, 103, 105, 108, 109 } }, // Prevent ApplyStatusScript on specific ScriptId.
+            { "UseSpellPowerScript", new HashSet<int> { 9, 10 } } // Prevent ApplyStatusScript on specific ScriptId.
         };
 
-        public static string BuildDescriptionAA(AA_DATA ability, Boolean aa_stat = true)
+        public static string BuildDescriptionAA(AA_DATA ability, Boolean aa_stat = false, string lang = "")
         {
+            if (string.IsNullOrEmpty(lang))
+                lang = Localization.CurrentDisplaySymbol;
+
             string Description = "";
             Boolean AACategoryPhysical = (ability.Category & 8) != 0;
             Boolean AACategoryMagical = (ability.Category & 16) != 0;
@@ -91,13 +98,13 @@ namespace Assets.Sources.Scripts.UI.Common
                 }
                 if (ability.Ref.Power > 0)
                 {
-                    Description += $"{Localization.GetWithDefault("AADesc_Power")} : {ability.Ref.Power}";
+                    Description += $"{Localization.GetWithDefaultAndLang("AADesc_Power", lang)} : {ability.Ref.Power}";
                 }
                 if (ability.Ref.Rate > 0 && false)
                 {
                     if (ability.Ref.Power > 0)
                         Description += " / ";
-                    Description += $"{Localization.GetWithDefault("AADesc_HitRate")} : {ability.Ref.Rate}%\n";
+                    Description += $"{Localization.GetWithDefaultAndLang("AADesc_HitRate", lang)} : {ability.Ref.Rate}%\n";
                 }
             }
             if (!String.IsNullOrEmpty(Description))
@@ -106,60 +113,60 @@ namespace Assets.Sources.Scripts.UI.Common
             var result = DescriptionTextfromScriptId.FirstOrDefault(kvp => kvp.Value.Contains(ability.Ref.ScriptId)); // Search the good description...
             if (result.Key == "MugScript")
             {
-                Description += $"{Localization.GetWithDefault("ClassicDamageScript")}";
-                Description += $"\n{Localization.GetWithDefault("StealScript")}";
+                Description += $"{Localization.GetWithDefaultAndLang("ClassicDamageScript", lang)}";
+                Description += $"\n{Localization.GetWithDefaultAndLang("StealScript", lang)}";
             }
             else if (!string.IsNullOrEmpty(result.Key))
-                Description += $"{Localization.GetWithDefault(result.Key)}";
+                Description += $"{Localization.GetWithDefaultAndLang(result.Key, lang)}";
             else //... or else, use a "generic" description
             {
-                Description += $"{Localization.GetWithDefault("GeneralScript")}";
+                Description += $"{Localization.GetWithDefaultAndLang("GeneralScript", lang)}";
                 Description = Regex.Replace(Description, "=AA=", ability.Name);
             }
 
             if (ability.Ref.ScriptId == 10 || ability.Ref.ScriptId == 30 || ability.Ref.ScriptId == 69) // Magic Heal, Potion, White Wind
                 Description = Regex.Replace(Description, "=FLAGS=", "HP");
-            else if (ability.Ref.ScriptId == 70) // Ether
+            else if (ability.Ref.ScriptId == 41 || ability.Ref.ScriptId == 70) // Ether, White Draw
                 Description = Regex.Replace(Description, "=FLAGS=", "MP");
             else if (ability.Ref.ScriptId == 37 || ability.Ref.ScriptId == 71) // Chakra, Elixir
                 Description = Regex.Replace(Description, "=FLAGS=", "HP/MP");
             else if (ability.Ref.ScriptId == 6 || ability.Ref.ScriptId == 16) // Drain HP
-                Description = Regex.Replace(Description, "=FLAGS=", Localization.GetWithDefault("AADesc_HP"));
+                Description = Regex.Replace(Description, "=FLAGS=", Localization.GetWithDefaultAndLang("AADesc_HP", lang));
             else if (ability.Ref.ScriptId == 15) // Drain MP
-                Description = Regex.Replace(Description, "=FLAGS=", Localization.GetWithDefault("AADesc_MP"));
+                Description = Regex.Replace(Description, "=FLAGS=", Localization.GetWithDefaultAndLang("AADesc_MP", lang));
 
             if (Description.Contains("=ELEMENT="))
             {
                 string ElementText = "";
                 if (ability.Ref.Elements == 0)
-                    ElementText += $"{Localization.GetWithDefault("AADesc_NonElemental")}";
+                    ElementText += $"{Localization.GetWithDefaultAndLang("AADesc_NonElemental", lang)}";
                 else
                 {
                     if (((EffectElement)ability.Ref.Elements & EffectElement.Fire) != 0)
-                        ElementText += $"[DF0000][HSHD]{FF9TextTool.BattleFollowText(0)}[383838][HSHD]";
+                        ElementText += $"{Localization.GetWithDefaultAndLang("AADesc_Element_Fire", lang)}";
                     if (((EffectElement)ability.Ref.Elements & EffectElement.Cold) != 0)
-                        ElementText += (!String.IsNullOrEmpty(ElementText) ? " / " : "") + $"[028E8E][HSHD]{FF9TextTool.BattleFollowText(1)}[383838][HSHD]";
+                        ElementText += (!String.IsNullOrEmpty(ElementText) ? " / " : "") + $"{Localization.GetWithDefaultAndLang("AADesc_Element_Cold", lang)}";
                     if (((EffectElement)ability.Ref.Elements & EffectElement.Thunder) != 0)
-                        ElementText += (!String.IsNullOrEmpty(ElementText) ? " / " : "") + $"[D6D62D][HSHD]{FF9TextTool.BattleFollowText(2)}[383838][HSHD]";
+                        ElementText += (!String.IsNullOrEmpty(ElementText) ? " / " : "") + $"{Localization.GetWithDefaultAndLang("AADesc_Element_Thunder", lang)}";
                     if (((EffectElement)ability.Ref.Elements & EffectElement.Earth) != 0)
-                        ElementText += (!String.IsNullOrEmpty(ElementText) ? " / " : "") + $"[783F04][HSHD]{FF9TextTool.BattleFollowText(3)}[383838][HSHD]";
+                        ElementText += (!String.IsNullOrEmpty(ElementText) ? " / " : "") + $"{Localization.GetWithDefaultAndLang("AADesc_Element_Earth", lang)}";
                     if (((EffectElement)ability.Ref.Elements & EffectElement.Aqua) != 0)
-                        ElementText += (!String.IsNullOrEmpty(ElementText) ? " / " : "") + $"[5C5CFF][HSHD]{FF9TextTool.BattleFollowText(4)}[383838][HSHD]";
+                        ElementText += (!String.IsNullOrEmpty(ElementText) ? " / " : "") + $"{Localization.GetWithDefaultAndLang("AADesc_Element_Aqua", lang)}";
                     if (((EffectElement)ability.Ref.Elements & EffectElement.Wind) != 0)
-                        ElementText += (!String.IsNullOrEmpty(ElementText) ? " / " : "") + $"[2C623A][HSHD]{FF9TextTool.BattleFollowText(5)}[383838][HSHD]";
+                        ElementText += (!String.IsNullOrEmpty(ElementText) ? " / " : "") + $"{Localization.GetWithDefaultAndLang("AADesc_Element_Wind", lang)}";
                     if (((EffectElement)ability.Ref.Elements & EffectElement.Holy) != 0)
-                        ElementText += (!String.IsNullOrEmpty(ElementText) ? " / " : "") + $"[FFFFFF][HSHD]{FF9TextTool.BattleFollowText(6)}[383838][HSHD]";
+                        ElementText += (!String.IsNullOrEmpty(ElementText) ? " / " : "") + $"{Localization.GetWithDefaultAndLang("AADesc_Element_Holy", lang)}";
                     if (((EffectElement)ability.Ref.Elements & EffectElement.Darkness) != 0)
-                        ElementText += (!String.IsNullOrEmpty(ElementText) ? " / " : "") + $"[000000][HSHD]{FF9TextTool.BattleFollowText(7)}[383838][HSHD]";
+                        ElementText += (!String.IsNullOrEmpty(ElementText) ? " / " : "") + $"{Localization.GetWithDefaultAndLang("AADesc_Element_Darkness", lang)}";
                 }
                 Description = Regex.Replace(Description, "=ELEMENT=", ElementText);
             }
-            if ((FF9BattleDB.StatusSets.TryGetValue(ability.AddStatusNo, out BattleStatusEntry stat) ? stat.Value : 0) > 0 && result.Key != "ApplyStatusScript")
+            if ((FF9BattleDB.StatusSets.TryGetValue(ability.AddStatusNo, out BattleStatusEntry stat) ? stat.Value : 0) > 0 && !DescriptionTextfromScriptId["NoApplyStatusScript"].Contains(ability.Ref.ScriptId))
             {
                 if (!String.IsNullOrEmpty(Description))
                     Description += " ";
 
-                Description += $"{Localization.GetWithDefault("ApplyStatusBisScript")}";
+                Description += $"\n{Localization.GetWithDefaultAndLang("ApplyStatusBisScript", lang)}";
             }
             if (Description.Contains("=STATUS="))
             {
@@ -167,13 +174,15 @@ namespace Assets.Sources.Scripts.UI.Common
                 BattleStatus status = stat.Value;
                 foreach (BattleStatusId statusId in status.ToStatusList())
                 {
-                    StatusText += ($"[A85038][HSHD]{Localization.GetWithDefault("Status"+statusId.ToString())}[383838][HSHD]");
+                    if (!String.IsNullOrEmpty(StatusText))
+                        StatusText += " / ";
+                    StatusText += ($"[A85038][HSHD]{Localization.GetWithDefaultAndLang("Status"+statusId.ToString(), lang)}[383838][HSHD]");
                     if (BattleHUD.BuffIconNames.TryGetValue(statusId, out String buffspriteName))
                         StatusText += ($" [SPRT={buffspriteName},48,48] ");
                     if (BattleHUD.DebuffIconNames.TryGetValue(statusId, out String debuffspriteName))
                         StatusText += ($" [SPRT={debuffspriteName},48,48] ");
                 }
-                if (ability.Ref.Rate > 0)
+                if (ability.Ref.Rate > 0 && ability.Ref.Rate < 255)
                     StatusText += $" ({ability.Ref.Rate}%)";
                 Description = Regex.Replace(Description, "=STATUS=", StatusText);
             }
@@ -181,25 +190,41 @@ namespace Assets.Sources.Scripts.UI.Common
             {
                 string TypeText = "";              
                 if (DescriptionTextfromScriptId["PhysicalTypeScript"].Contains(ability.Ref.ScriptId) && DescriptionTextfromScriptId["MagicalTypeScript"].Contains(ability.Ref.ScriptId))
-                    TypeText += Localization.GetWithDefault("AADesc_Physical") + " and " + Localization.GetWithDefault("AADesc_Magical");
+                    TypeText += Localization.GetWithDefaultAndLang("AADesc_Physical", lang) + " and " + Localization.GetWithDefaultAndLang("AADesc_Magical", lang);
                 else if (DescriptionTextfromScriptId["PhysicalTypeScript"].Contains(ability.Ref.ScriptId))
-                    TypeText += Localization.GetWithDefault("AADesc_Physical");
+                    TypeText += Localization.GetWithDefaultAndLang("AADesc_Physical", lang);
                 else if (DescriptionTextfromScriptId["MagicalTypeScript"].Contains(ability.Ref.ScriptId)) 
-                    TypeText += Localization.GetWithDefault("AADesc_Magical");
+                    TypeText += Localization.GetWithDefaultAndLang("AADesc_Magical", lang);
                 else if (AACategoryPhysical)
-                    TypeText += Localization.GetWithDefault("AADesc_Physical");
+                    TypeText += Localization.GetWithDefaultAndLang("AADesc_Physical", lang);
                 else if (AACategoryMagical)
-                    TypeText += Localization.GetWithDefault("AADesc_Magical");
+                    TypeText += Localization.GetWithDefaultAndLang("AADesc_Magical", lang);
                 Description = Regex.Replace(Description, "=TYPE=", TypeText);
             }
             if (Description.Contains("=TARGET="))
             {
                 string TargetText = "";
-                TargetText = Localization.GetWithDefault($"AADesc_{ability.Info.Target}");
-                if (string.IsNullOrEmpty(TargetText)) // By Default
-                    TargetText = Localization.GetWithDefault("AADesc_SingleAny");
+                TargetText = Localization.GetWithDefaultAndLang($"AADesc_{ability.Info.Target}", lang);
+                if (ability.Ref.ScriptId == 41) // Edit target for WhiteDraw (the true target is the player team)
+                    TargetText = Localization.GetWithDefaultAndLang("AADesc_AllAlly", lang);
+                else if (string.IsNullOrEmpty(TargetText)) // By Default
+                    TargetText = Localization.GetWithDefaultAndLang("AADesc_SingleAny", lang);
 
                 Description = Regex.Replace(Description, "=TARGET=", TargetText);
+            }
+            if (Description.Contains("=SPELLPWR="))
+            {
+                string SpellPwrText = "";
+                if (DescriptionTextfromScriptId["UseSpellPowerScript"].Contains(ability.Ref.ScriptId))
+                {
+                    if (ability.Ref.Power >= 70)
+                        SpellPwrText = Localization.GetWithDefaultAndLang("AADesc_StrongSpell", lang);
+                    else if (ability.Ref.Power >= 25)
+                        SpellPwrText = Localization.GetWithDefaultAndLang("AADesc_NormalSpell", lang);
+                    else
+                        SpellPwrText = Localization.GetWithDefaultAndLang("AADesc_WeakSpell", lang);
+                }
+                Description = Regex.Replace(Description, "=SPELLPWR=", SpellPwrText);
             }
             if (Description.Contains("=DAMAGE="))
             {
@@ -207,12 +232,18 @@ namespace Assets.Sources.Scripts.UI.Common
                     Description = Regex.Replace(Description, "=DAMAGE=", (ability.Ref.Power * 100 + ability.Ref.Rate).ToString());
             }
             if (Description.Contains("=STRENGTH="))
-                Description = Regex.Replace(Description, "=STRENGTH=", Localization.Get("Strength"));
+                Description = Regex.Replace(Description, "=STRENGTH=", Localization.GetWithDefaultAndLang("Strength", lang));
             if (Description.Contains("=MAGIC="))
-                Description = Regex.Replace(Description, "=MAGIC=", Localization.Get("Magic"));
+                Description = Regex.Replace(Description, "=MAGIC=", Localization.GetWithDefaultAndLang("Magic", lang));
+            if (Description.Contains("=POWER="))
+                Description = Regex.Replace(Description, "=POWER=", ability.Ref.Power.ToString());
+            if (Description.Contains("=HITRATE="))
+                Description = Regex.Replace(Description, "=HITRATE=", ability.Ref.Rate.ToString());
             if (Description.Contains("=ITEM="))
                 Description = Regex.Replace(Description, "=ITEM=", FF9TextTool.ItemName((RegularItem)ability.Ref.Power));
-
+            if (Description.Contains("=CUREKO="))
+                Description = Regex.Replace(Description, "=CUREKO=", Localization.GetWithDefaultAndLang("CureDeath", lang));
+            
             if (result.Key == "DoubleCastScript")
             {
                 Description = Regex.Replace(Description, "=SPELL1=", FF9TextTool.ActionAbilityName((BattleAbilityId)ability.Ref.Power));
@@ -222,7 +253,32 @@ namespace Assets.Sources.Scripts.UI.Common
             return Description;
         }
 
+        public static void BuildAndAddDescriptionInDict(BattleAbilityId ability, Boolean aa_stat = false) // [DV] See with Tir, not really necessary.
+        {
+            string MainDescription = "";
+            string SecondDescription = "";
+            Dictionary<String, String> descriptioncreated = new Dictionary<String, String>();
+
+            if (!AADescriptionBuildedFromBuilder.ContainsKey(ability))
+            {
+                MainDescription = BuildDescriptionAA(FF9StateSystem.Battle.FF9Battle.aa_data[ability], aa_stat, Localization.CurrentSymbol);
+                if (!String.IsNullOrEmpty(MainDescription))
+                    descriptioncreated.Add(Localization.CurrentDisplaySymbol, MainDescription);
+
+                if (Configuration.Lang.DualLanguageMode != 0)
+                {
+                    SecondDescription = BuildDescriptionAA(FF9StateSystem.Battle.FF9Battle.aa_data[ability], aa_stat, Configuration.Lang.DualLanguage);
+                    if (!String.IsNullOrEmpty(SecondDescription))
+                        descriptioncreated.Add(Configuration.Lang.DualLanguage, SecondDescription);
+                }
+                if (descriptioncreated.Count > 0)
+                    AADescriptionBuildedFromBuilder.Add(ability, descriptioncreated);
+            }
+        }
+
         public static Dictionary<BattleAbilityId, Boolean> AADescriptionFromBuilder = new Dictionary<BattleAbilityId, Boolean>();
 
+        public static Dictionary<BattleAbilityId, Dictionary<String, String>> AADescriptionBuildedFromBuilder = new Dictionary<BattleAbilityId, Dictionary<String, String>>();
+        public static Dictionary<KeyValuePair<BattleCommandId, int>, Dictionary<String, String>> MonsterAADescriptionBuildedFromBuilder = new Dictionary<KeyValuePair<BattleCommandId, int>, Dictionary<String, String>>();
     }
 }
