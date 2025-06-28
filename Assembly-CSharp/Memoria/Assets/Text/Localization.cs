@@ -980,24 +980,24 @@ namespace Memoria.Assets
             },
             { "AADesc_NormalSpell", new Dictionary<String, String>()
                 {
-                    { "US", "a lot of" },
-                    { "UK", "a lot of" },
+                    { "US", "a lot of " },
+                    { "UK", "a lot of " },
                     { "JP", "中程度の" },
-                    { "ES", "(medio)" },
-                    { "FR", "(moyenne)" },
-                    { "GR", "mittleren" },
-                    { "IT", "(medio)" }
+                    { "ES", "(medio) " },
+                    { "FR", "(moyenne) " },
+                    { "GR", " mittleren" },
+                    { "IT", "(medio) " }
                 }
             },
             { "AADesc_StrongSpell", new Dictionary<String, String>()
                 {
-                    { "US", "big-time" },
-                    { "UK", "max" },
+                    { "US", "big-time " },
+                    { "UK", "max " },
                     { "JP", "強力な" },
-                    { "ES", "(fuerte)" },
-                    { "FR", "(forte)" },
-                    { "GR", "starken" },
-                    { "IT", "(medio)" }
+                    { "ES", "(fuerte) " },
+                    { "FR", "(forte) " },
+                    { "GR", " starken" },
+                    { "IT", "(medio) " }
                 }
             },
             { "AADesc_Physical", new Dictionary<String, String>()
@@ -1178,13 +1178,13 @@ namespace Memoria.Assets
             },
             { "ClassicDamageScript", new Dictionary<String, String>()
                 {
-                    { "US", "Causes =SPELLPWR= =TYPE= =ELEMENT= damage on =TARGET=." },
-                    { "UK", "Causes =SPELLPWR= =TYPE= =ELEMENT= damage on =TARGET=." },
+                    { "US", "Causes =SPELLPWR==TYPE= =ELEMENT= damage on =TARGET=." },
+                    { "UK", "Causes =SPELLPWR==TYPE= =ELEMENT= damage on =TARGET=." },
                     { "JP", "=TARGET= に =SPELLPWR==ELEMENT= 属性の =TYPE= ダメージを与える。" },
-                    { "ES", "Inflige daño =TYPE= de elemento =ELEMENT= =SPELLPWR= a =TARGET=." },
-                    { "FR", "Lance une attaque =TYPE= d'élement =ELEMENT= =SPELLPWR= sur =TARGET=." },
+                    { "ES", "Inflige daño =TYPE= de elemento =ELEMENT==SPELLPWR= a =TARGET=." },
+                    { "FR", "Lance une attaque =TYPE= d'élement =ELEMENT==SPELLPWR= sur =TARGET=." },
                     { "GR", "=TARGET=. Fügt =SPELLPWR==TYPE= Schaden vom Element =ELEMENT= zu." },
-                    { "IT", "Infligge danni =TYPE= di elemento =ELEMENT= =SPELLPWR= a =TARGET=." }
+                    { "IT", "Infligge danni =TYPE= di elemento =ELEMENT==SPELLPWR= a =TARGET=." }
                 }
             },
             { "MPAttackScript", new Dictionary<String, String>()
@@ -1211,13 +1211,13 @@ namespace Memoria.Assets
             },
             { "HealScript", new Dictionary<String, String>()
                 {
-                    { "US", "Restores =SPELLPWR= =FLAGS= on =TARGET=." },
-                    { "UK", "Restores =SPELLPWR= =FLAGS= on =TARGET=." },
+                    { "US", "Restores =SPELLPWR==FLAGS= on =TARGET=." },
+                    { "UK", "Restores =SPELLPWR==FLAGS= on =TARGET=." },
                     { "JP", "=TARGET= の =SPELLPWR==FLAGS= を回復する。" },
                     { "ES", "Restaura =FLAGS= =SPELLPWR= a =TARGET=." },
-                    { "FR", "Restaure les =FLAGS= =SPELLPWR= sur =TARGET=." },
-                    { "GR", "=TARGET=. Heilt =SPELLPWR= =FLAGS=." },
-                    { "IT", "Ripristina =FLAGS= =SPELLPWR= su =TARGET=." }
+                    { "FR", "Restaure les =FLAGS==SPELLPWR= sur =TARGET=." },
+                    { "GR", "=TARGET=. Heilt =SPELLPWR==FLAGS=." },
+                    { "IT", "Ripristina =FLAGS==SPELLPWR= su =TARGET=." }
                 }
             },
             { "ApplyStatusScript", new Dictionary<String, String>()
