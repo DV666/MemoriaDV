@@ -115,7 +115,7 @@ public partial class BattleHUD : UIScene
         {
             AA_DATA aaData = btl_util.GetCommandMonsterAttack(pCmd);
             if (aaData != null)
-                return aaData.Name;
+                return Localization.UseSecondaryLanguage ? aaData.AltName : aaData.Name;
             return String.Empty;
         }
         if (MixCommandSet.ContainsKey(pCmd.cmd_no) && ff9mixitem.MixItemsData.TryGetValue(pCmd.sub_no, out MixItems MixChoosen))

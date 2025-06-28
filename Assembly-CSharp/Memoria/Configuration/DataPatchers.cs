@@ -565,9 +565,9 @@ namespace Memoria
 
                     for (Int32 i = 1; i < (entry.Length - 1); i++)
                     {
-                        if (entry[i].Contains("CMD_"))
+                        if (entry[i].Contains("CMD:"))
                         {
-                            entry[i] = entry[i].Replace("CMD_", "");
+                            entry[i] = entry[i].Replace("CMD:", "");
                             if (!Int32.TryParse(entry[i], out Int32 cmdId))
                                 continue;
                             CharacterCommand ff9Command = CharacterCommands.Commands[(BattleCommandId)cmdId];

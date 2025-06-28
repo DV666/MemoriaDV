@@ -49,4 +49,7 @@ public class AA_DATA
 
     // Delayed initialization
     public String Name;
+
+    // Second Name (for DualLanguageMode)
+    public String AltName;
 }

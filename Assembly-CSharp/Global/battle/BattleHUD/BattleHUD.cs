@@ -833,7 +833,7 @@ public partial class BattleHUD : UIScene
             {
                 AA_DATA aaData = transform.spell[battleAbilityListData.Id];
                 mp = GetActionMpCost(aaData, curUnit);
-                itemListDetailHud.NameLabel.rawText = aaData.Name;
+                itemListDetailHud.NameLabel.rawText = Localization.UseSecondaryLanguage ? aaData.AltName : aaData.Name;
                 itemListDetailHud.Button.Help.Text = DescriptionBuilder.BuildDescriptionAA(aaData);
             }
             else

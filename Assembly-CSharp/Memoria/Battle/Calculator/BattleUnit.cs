@@ -748,6 +748,13 @@ namespace Memoria
             List<Int32>[] attackAnims = [null, null];
             Int32 animOffset = 0;
             String[] battleRawText = FF9TextTool.GetBattleText(FF9BattleDB.SceneData["BSC_" + btlName]);
+            String[] battleRawTextAlt = null;
+            if (Configuration.Lang.DualLanguageMode != 0)
+            {
+                EmbadedTextResources.CurrentSymbol = Configuration.Lang.DualLanguage;
+                battleRawTextAlt = FF9TextTool.GetBattleText(FF9BattleDB.SceneData["BSC_" + btlName]);
+                EmbadedTextResources.CurrentSymbol = Localization.CurrentSymbol;
+            }
             if (battleRawText == null)
                 battleRawText = [];
             for (i = 0; i < scene.header.AtkCount; i++)
@@ -774,10 +781,12 @@ namespace Memoria
                 else if (ability.Info.Target == TargetType.SingleEnemy)
                     ability.Info.Target = TargetType.SingleAlly;
                 if (scene.header.TypCount + i < battleRawText.Length)
-                {                 
+                {
                     ability.Name = battleRawText[scene.header.TypCount + i];
-                    //BuildDescriptionAA(ability, out string Desc);
+                    if (battleRawTextAlt != null)
+                        ability.AltName = battleRawTextAlt[scene.header.TypCount + i];
                 }
+
                 animOffset = seqreader.seq_work_set.AnmOfsList[i];
                 Int32 sequenceSfx = seqreader.GetSFXOfSequence(i, out Boolean sequenceChannel, out Boolean sequenceContact);
                 if (sequenceSfx >= 0)
