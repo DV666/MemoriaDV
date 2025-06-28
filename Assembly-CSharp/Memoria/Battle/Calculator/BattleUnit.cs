@@ -760,7 +760,9 @@ namespace Memoria
             for (i = 0; i < scene.header.AtkCount; i++)
             {
                 if (seqreader.GetEnemyIndexOfSequence(i) != monsterIndex)
-                    continue;
+                    if (monsterIndex == 1 && seqreader.GetEnemyIndexOfSequence(i) != 0 && (btlName == "IF_R010" || btlName == "IF_R011" ||
+                        btlName == "IF_R012" || btlName == "IF_R013" || btlName == "IF_R014" || btlName == "WM_1600")) // Hotfix for Zombie.
+                        continue;
                 AA_DATA ability = scene.atk[i];
                 aaList.Add(ability);
                 // Swap the TargetType but keep the DefaultAlly flag since it is on by default only for curative/buffing enemy spells
@@ -786,7 +788,6 @@ namespace Memoria
                     if (battleRawTextAlt != null)
                         ability.AltName = battleRawTextAlt[scene.header.TypCount + i];
                 }
-
                 animOffset = seqreader.seq_work_set.AnmOfsList[i];
                 Int32 sequenceSfx = seqreader.GetSFXOfSequence(i, out Boolean sequenceChannel, out Boolean sequenceContact);
                 if (sequenceSfx >= 0)

@@ -293,7 +293,7 @@ public static class battle
                 {
                     case FF9StateBattleSystem.SEQ_MENU_OFF_VICTORY:
                         btl_para.CheckPointData(next);
-                        if ((!next.IsPlayer && !next.IsUnderAnyStatus(BattleStatusConst.BattleEnd)) || (next.IsPlayer && next.IsUnderStatus(BattleStatus.Death) && !btl_mot.checkMotion(data, BattlePlayerCharacter.PlayerMotionIndex.MP_DISABLE)))
+                        if ((!next.IsPlayer && !next.IsUnderAnyStatus(BattleStatusConst.BattleEnd)) || (next.IsPlayer && next.IsUnderAnyStatus(BattleStatus.Death) && (!next.IsMonsterTransform && !btl_mot.checkMotion(data, BattlePlayerCharacter.PlayerMotionIndex.MP_DISABLE) || next.IsMonsterTransform && !btl_mot.checkMotion(next, BattlePlayerCharacter.PlayerMotionIndex.MP_DOWN_DISABLE) && next.Data.bi.stop_anim != 1 && next.Data.evt.animFrame > 0)))
                             proceedEnd = false;
                         break;
                     case FF9StateBattleSystem.SEQ_MENU_OFF_DEFEAT:
