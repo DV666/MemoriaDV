@@ -174,7 +174,7 @@ namespace Memoria
             Command = command;
             Caster = new BattleCaster(caster, Context);
             Target = new BattleTarget(target, Context);
-            Context.TranceIncrease = (Int16)(Comn.random16() % Target.Will);
+            Context.TranceIncrease = (Int16)(Target.Will > 0 ? (Comn.random16() % Target.Will) : 0);
         }
 
         public void NormalMagicParams()

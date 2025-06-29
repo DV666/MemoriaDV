@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
+using static Memoria.Assets.DataResources;
 
 namespace Memoria
 {
@@ -558,12 +559,15 @@ namespace Memoria
                 }
                 else if (String.Equals(entry[0], "GenerateAbilityHelp"))
                 {
-                    // eg.: GenerateAbilityHelp 1000 False => Create a new description for AA n°1000
-                    // eg.: GenerateAbilityHelp 27 True => Create a new description for Firaga spell from the builder, with stats.
+                    // eg.: GenerateAbilityHelp 1000 => Create a new description for AA n°1000
+                    // eg.: GenerateAbilityHelp 13 14 15 16 17 18 19 20 CONCATAFTER => Add the description from the DescriptionBuilder after these AA.
+                    // eg.: GenerateAbilityHelp CMD:22 CMD:23 ONLYSTATS NOHITRATESTAT => Create a new description for all AA in Black Magic and DoubleBlackMagic, and adding stat at the begin (without Hitrate stat)
+                    // eg.: GenerateAbilityHelp ITEM:236 ITEM:239 ITEM:247 => Create a new description for
 
-                    Boolean aastats = String.Equals(entry[entry.Length - 1], "True");
-
-                    for (Int32 i = 1; i < (entry.Length - 1); i++)
+                    DescriptionBuilder.DescriptionCategory aastats = 0;
+                    HashSet<BattleAbilityId> listAA = new HashSet<BattleAbilityId>();
+                    HashSet<RegularItem> listItem = new HashSet<RegularItem>();
+                    for (Int32 i = 1; i < entry.Length; i++)
                     {
                         if (entry[i].Contains("CMD:"))
                         {
@@ -572,15 +576,49 @@ namespace Memoria
                                 continue;
                             CharacterCommand ff9Command = CharacterCommands.Commands[(BattleCommandId)cmdId];
                             foreach (BattleAbilityId abilId in ff9Command.EnumerateAbilities())
-                                DescriptionBuilder.AADescriptionFromBuilder.Add(abilId, aastats);
+                                listAA.Add(abilId);
+                        }
+                        else if (entry[i].Contains("ITEM:"))
+                        {
+                            entry[i] = entry[i].Replace("ITEM:", "");
+                            if (entry[i].Contains("ALL"))
+                            {
+                                Log.Message("ff9item._FF9Item_Data.Keys = " + ff9item._FF9Item_Data.Count);
+                                foreach (RegularItem allitemId in ff9item._FF9Item_Data.Keys)
+                                    listItem.Add(allitemId);
+                            }
+                            else
+                            {
+                                if (!Int32.TryParse(entry[i], out Int32 itemId))
+                                    continue;
+                                listItem.Add((RegularItem)itemId);
+                            }
+
+                        }
+                        else if (Int32.TryParse(entry[i], out Int32 aaId))
+                        {
+                            if (aaId == -1)
+                                foreach (BattleAbilityId allaaId in FF9BattleDB.CharacterActions.Keys)
+                                    listAA.Add(allaaId);
+                            else
+                                listAA.Add((BattleAbilityId)aaId);
                         }
                         else
                         {
-                            if (!Int32.TryParse(entry[i], out Int32 aaId))
-                                continue;                       
-                            DescriptionBuilder.AADescriptionFromBuilder.Add((BattleAbilityId)aaId, aastats);
+                            aastats += (byte)(String.Equals(entry[i], ("ADDSTATS")) ? 1 : 0);
+                            aastats += (byte)(String.Equals(entry[i], ("CONCATBEFORE")) ? 2 : 0);
+                            aastats += (byte)(String.Equals(entry[i], ("CONCATAFTER")) ? 4 : 0);
+                            aastats += (byte)(String.Equals(entry[i], ("ONLYSTATS")) ? 8 : 0);
+                            aastats += (byte)(String.Equals(entry[i], ("NOPOWERSTAT")) ? 16 : 0);
+                            aastats += (byte)(String.Equals(entry[i], ("NOHITRATESTAT")) ? 32 : 0);
+                            aastats += (byte)(String.Equals(entry[i], ("NOCATEGORYSTAT")) ? 64 : 0);
                         }
                     }
+                    foreach (BattleAbilityId descforabilId in listAA)
+                        DescriptionBuilder.AADescriptionFromBuilder.Add(descforabilId, aastats);
+
+                    foreach (RegularItem descforitemId in listItem)
+                        DescriptionBuilder.ItemDescriptionFromBuilder.Add(descforitemId, aastats);
                 }
             }
             if (shouldUpdateBattleStatus)

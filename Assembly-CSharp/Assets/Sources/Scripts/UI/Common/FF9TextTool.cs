@@ -458,7 +458,11 @@ namespace Assets.Sources.Scripts.UI.Common
 
         public static String ItemHelpDescription(RegularItem id)
         {
-            return DisplayBatch.itemHelpDesc.TryGetValue(id, out String result) ? result : String.Empty;
+            string description = DisplayBatch.itemHelpDesc.TryGetValue(id, out String result) ? result : String.Empty;
+            if (DescriptionBuilder.ItemDescriptionFromBuilder.ContainsKey(id))
+                return DescriptionBuilder.BuildDescriptionItem(id, DescriptionBuilder.ItemDescriptionFromBuilder[id], description);
+
+            return description;
         }
 
         public static String ItemBattleDescription(RegularItem id)
@@ -496,9 +500,11 @@ namespace Assets.Sources.Scripts.UI.Common
 
         public static String ActionAbilityHelpDescription(BattleAbilityId id)
         {
+            string description = DisplayBatch.actionAbilityHelpDesc.TryGetValue(id, out String result) ? result : String.Empty;
             if (DescriptionBuilder.AADescriptionFromBuilder.ContainsKey(id))
-                return DescriptionBuilder.BuildDescriptionAA(FF9StateSystem.Battle.FF9Battle.aa_data[id], DescriptionBuilder.AADescriptionFromBuilder[id]);
-            return DisplayBatch.actionAbilityHelpDesc.TryGetValue(id, out String result) ? result : String.Empty;
+                return DescriptionBuilder.BuildDescriptionAA(FF9StateSystem.Battle.FF9Battle.aa_data[id], DescriptionBuilder.AADescriptionFromBuilder[id], description);
+
+            return description;
         }
 
         public static String SupportAbilityName(SupportAbility id)

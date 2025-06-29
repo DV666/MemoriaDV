@@ -966,8 +966,8 @@ namespace Memoria.Assets
                     { "GR", "Genauigkeit" },
                     { "IT", "Precisione" }
                 }
-            },
-            { "AADesc_WeakSpell", new Dictionary<String, String>() // Unused but it's here :)
+            }, // Unused but it's here :)
+            { "AADesc_WeakSpell", new Dictionary<String, String>() 
                 {
                     { "US", "" },
                     { "UK", "" },
@@ -983,10 +983,10 @@ namespace Memoria.Assets
                     { "US", "a lot of " },
                     { "UK", "a lot of " },
                     { "JP", "中程度の" },
-                    { "ES", "(medio) " },
-                    { "FR", "(moyenne) " },
+                    { "ES", " (medio)" },
+                    { "FR", " (moyenne)" },
                     { "GR", " mittleren" },
-                    { "IT", "(medio) " }
+                    { "IT", " (medio)" }
                 }
             },
             { "AADesc_StrongSpell", new Dictionary<String, String>()
@@ -994,10 +994,10 @@ namespace Memoria.Assets
                     { "US", "big-time " },
                     { "UK", "max " },
                     { "JP", "強力な" },
-                    { "ES", "(fuerte) " },
-                    { "FR", "(forte) " },
+                    { "ES", " (fuerte)" },
+                    { "FR", " (forte)" },
                     { "GR", " starken" },
-                    { "IT", "(medio) " }
+                    { "IT", " (medio)" }
                 }
             },
             { "AADesc_Physical", new Dictionary<String, String>()
@@ -1332,13 +1332,13 @@ namespace Memoria.Assets
             },
             { "ThousandNeedlesScript", new Dictionary<String, String>()
                 {
-                    { "US", "Deals exactly =DAMAGE= HP on =TARGET=" },
-                    { "UK", "Deals exactly =DAMAGE= HP on =TARGET=" },
-                    { "JP", "=TARGET=に正確に=DAMAGE=のHPダメージを与える" },
-                    { "ES", "Inflige exactamente =DAMAGE= de puntos de vitalidad a =TARGET=" },
-                    { "FR", "Inflige exactement =DAMAGE= HP sur =TARGET=." },
-                    { "GR", "=TARGET=. Zieht =DAMAGE= HP ab." },
-                    { "IT", "Infligge esattamente =DAMAGE= HP a =TARGET=" }
+                    { "US", "Deals exactly =DAMAGE= on =TARGET=" },
+                    { "UK", "Deals exactly =DAMAGE= on =TARGET=" },
+                    { "JP", "=TARGET=に正確に=DAMAGE=ダメージを与える" },
+                    { "ES", "Inflige exactamente =DAMAGE= a =TARGET=" },
+                    { "FR", "Inflige exactement =DAMAGE= sur =TARGET=." },
+                    { "GR", "=TARGET=. Zieht =DAMAGE= ab." },
+                    { "IT", "Infligge esattamente =DAMAGE= a =TARGET=" }
                 }
             },
             { "DifferentCasterHPScript", new Dictionary<String, String>()
@@ -1572,6 +1572,17 @@ namespace Memoria.Assets
                     { "IT", "Gli alleati attaccano tutti insieme." }
                 }
             },
+            { "SpecialScript", new Dictionary<String, String>()
+                {
+                    { "US", "Uses a special attack on =TARGET=." },
+                    { "UK", "Uses a special attack on =TARGET=." },
+                    { "JP", "=TARGET= に特殊攻撃を使う" },
+                    { "ES", "Usa un ataque especial en =TARGET=." },
+                    { "FR", "Utilise une attaque spéciale sur =TARGET=." },
+                    { "GR", "=TARGET=. Setzt einen Spezialangriff." },
+                    { "IT", "Usa un attacco speciale su =TARGET=." }
+                }
+            },
             { "EatScript", new Dictionary<String, String>()
                 {
                     { "US", "Learn enemy skill." },
@@ -1594,15 +1605,48 @@ namespace Memoria.Assets
                     { "IT", "Provoca danni fisici in proporzione al livello della rana." }
                 }
             },
+            { "ItemHealScript", new Dictionary<String, String>()
+                {
+                    { "US", "Restores =DAMAGE= on =TARGET=.\nThe effect decreases if used in the field." },
+                    { "UK", "Restores =DAMAGE= on =TARGET=.\nThe effect decreases if used in the field." },
+                    { "JP", "=TARGET==DAMAGE=回復します。フィールドでは効果が下がります。" },
+                    { "ES", "Devuelve =DAMAGE= a =TARGET=.\nEs menos eficaz si se usa fuera de la batalla." },
+                    { "FR", "Redonne =DAMAGE= sur =TARGET=.\nMoins efficace hors des combats." },
+                    { "GR", "=TARGET=. Heilt =DAMAGE= Punkte.\nEffektivität fällt im Normalmodus." },
+                    { "IT", "Recupera =DAMAGE= su =TARGET=.\nÈ meno efficace se usata fuori dalla battaglia." }
+                }
+            },
+            { "ItemReviveScript", new Dictionary<String, String>()
+                {
+                    { "US", "Recover from [A85038][HSHD]=CUREKO=[383838][HSHD]." },
+                    { "UK", "Recover from [A85038][HSHD]=CUREKO=[383838][HSHD]." },
+                    { "JP", "[A85038][HSHD]=CUREKO=[383838][HSHD]を治します。" },
+                    { "ES", "Cura el estado [A85038][HSHD]=CUREKO=[383838][HSHD]." },
+                    { "FR", "Annule un [A85038][HSHD]=CUREKO=[383838][HSHD]." },
+                    { "GR", "Kuriert [A85038][HSHD]=CUREKO=[383838][HSHD]." },
+                    { "IT", "Cura status [A85038][HSHD]=CUREKO=[383838][HSHD]." }
+                }
+            },
+            { "ItemElixirScript", new Dictionary<String, String>()
+                {
+                    { "US", "Fully restores =FLAGS= on =TARGET=." },
+                    { "UK", "Fully restores =FLAGS= on =TARGET=." },
+                    { "JP", "=TARGET==FLAGS=が全回復します。" },
+                    { "ES", "Restablece por completo =FLAGS= en =TARGET=." },
+                    { "FR", "Rétablit intégralement les =FLAGS= sur =TARGET=." },
+                    { "GR", "=TARGET=. Komplettheilung der =FLAGS=." },
+                    { "IT", "Ripristina max =FLAGS= su =TARGET=." }
+                }
+            },
             { "DoubleCastScript", new Dictionary<String, String>()
                 {
-                    { "US", "Casts =SPELL1= and =SPELL2= in the same turn" },
-                    { "UK", "Casts =SPELL1= and =SPELL2= in the same turn" },
+                    { "US", "Casts =SPELL1= and =SPELL2= in the same turn." },
+                    { "UK", "Casts =SPELL1= and =SPELL2= in the same turn." },
                     { "JP", "同じターンに=SPELL1=と=SPELL2=を使用する" },
                     { "ES", "Lanza =SPELL1= y =SPELL2= en el mismo turno" },
                     { "FR", "Lance =SPELL1= et =SPELL2= sur le même tour." },
-                    { "GR", "Wirkt =SPELL1= und =SPELL2= in derselben Runde" },
-                    { "IT", "Lancia =SPELL1= e =SPELL2= nello stesso turno" }
+                    { "GR", "Wirkt =SPELL1= und =SPELL2= in derselben Runde." },
+                    { "IT", "Lancia =SPELL1= e =SPELL2= nello stesso turno." }
                 }
             },
             { "KamikazeScript", new Dictionary<String, String>()
@@ -1618,13 +1662,13 @@ namespace Memoria.Assets
             },
             { "HPSwitchingScript", new Dictionary<String, String>()
                 {
-                    { "US", "Swaps your current HP with =TARGET=." },
-                    { "UK", "Swaps your current HP with =TARGET=." },
+                    { "US", "Swaps your current HP on =TARGET=." },
+                    { "UK", "Swaps your current HP on =TARGET=." },
                     { "JP", "自分の現在のHPと=TARGET=のHPを入れ替える." },
-                    { "ES", "Intercambia tu Vit actual con =TARGET=." },
-                    { "FR", "Inverse vos HP actuels avec =TARGET=." },
+                    { "ES", "Intercambia tu Vit actual en =TARGET=." },
+                    { "FR", "Inverse vos HP actuels sur =TARGET=." },
                     { "GR", "=TARGET=. Tauscht deine aktuellen HP." },
-                    { "IT", "Scambia i tuoi HP attuali con =TARGET=." }
+                    { "IT", "Scambia i tuoi HP attuali su =TARGET=." }
                 }
             },
             { "HalfDefenceScript", new Dictionary<String, String>()

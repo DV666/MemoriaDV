@@ -76,7 +76,8 @@ namespace FF9
             SupportAbility globalLast = (SupportAbility)(btl.bi.player != 0 ? -2 : -4);
             if (_FF9Abil_SaFeature.ContainsKey(global))
                 result.Add(_FF9Abil_SaFeature[global]);
-            result.AddRange(btl.saMonster);
+            if (btl.saMonster != null)
+                result.AddRange(btl.saMonster);
             foreach (SupportAbility saIndex in saExtended)
                 result.Add(_FF9Abil_SaFeature[saIndex]);
             if (_FF9Abil_SaFeature.ContainsKey(globalLast))

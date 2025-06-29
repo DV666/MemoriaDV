@@ -751,9 +751,10 @@ namespace Memoria
             String[] battleRawTextAlt = null;
             if (Configuration.Lang.DualLanguageMode != 0)
             {
+                string currentSymbolUsed = EmbadedTextResources.CurrentSymbol;
                 EmbadedTextResources.CurrentSymbol = Configuration.Lang.DualLanguage;
                 battleRawTextAlt = FF9TextTool.GetBattleText(FF9BattleDB.SceneData["BSC_" + btlName]);
-                EmbadedTextResources.CurrentSymbol = Localization.CurrentSymbol;
+                EmbadedTextResources.CurrentSymbol = currentSymbolUsed;
             }
             if (battleRawText == null)
                 battleRawText = [];
