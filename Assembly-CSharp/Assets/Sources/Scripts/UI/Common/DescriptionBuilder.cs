@@ -120,7 +120,7 @@ namespace Assets.Sources.Scripts.UI.Common
                     return Description_stats + desc_base;
             }
 
-            var result = DescriptionTextfromScriptId.FirstOrDefault(kvp => kvp.Value.Contains(ScriptId)); // Search the good description...
+            var result = DescriptionTextfromScriptId.FirstOrDefault(kvp => kvp.Value.Contains(ScriptId)); // Search for the description model.
             if (result.Key == "MugScript")
             {
                 Description += $"{Localization.GetWithDefaultAndLang("ClassicDamageScript", lang)}";
@@ -393,7 +393,7 @@ namespace Assets.Sources.Scripts.UI.Common
             }
             // if (itemData.armor_id >= 0 && ff9armor.ArmorData.TryGetValue(itemData.armor_id, out ItemDefence armor_data)) [DV] Not useful
 
-            if (itemData.weapon_id >= 0 && ff9weap.WeaponData.TryGetValue(itemData.weapon_id, out ItemAttack weapon_data))
+            if (itemData.weapon_id >= 0 && ff9weap.WeaponData.TryGetValue(itemData.weapon_id, out ItemAttack weapon_data)) // [DV] Not yet designed for weapons.
             {
                 itempower = weapon_data.Ref.Power;
                 itemhitrate = weapon_data.Ref.Rate;

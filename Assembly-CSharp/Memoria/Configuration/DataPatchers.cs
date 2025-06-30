@@ -567,23 +567,32 @@ namespace Memoria
                     DescriptionBuilder.DescriptionCategory aastats = 0;
                     HashSet<BattleAbilityId> listAA = new HashSet<BattleAbilityId>();
                     HashSet<RegularItem> listItem = new HashSet<RegularItem>();
-                    for (Int32 i = 1; i < entry.Length; i++)
+                    for (Int32 i = 2; i < entry.Length; i++)
                     {
-                        if (entry[i].Contains("CMD:"))
+                        if (entry[1].Contains("AA"))
                         {
-                            entry[i] = entry[i].Replace("CMD:", "");
+                            if (entry[i].Contains("ALL"))
+                                foreach (BattleAbilityId allaaId in FF9BattleDB.CharacterActions.Keys)
+                                    listAA.Add(allaaId);
+                            else
+                            {
+                                if (!Int32.TryParse(entry[i], out Int32 aaId))
+                                    continue;
+                                listAA.Add((BattleAbilityId)aaId);
+                            }
+                        }
+                        else if (entry[1].Contains("CMD"))
+                        {
                             if (!Int32.TryParse(entry[i], out Int32 cmdId))
                                 continue;
                             CharacterCommand ff9Command = CharacterCommands.Commands[(BattleCommandId)cmdId];
                             foreach (BattleAbilityId abilId in ff9Command.EnumerateAbilities())
                                 listAA.Add(abilId);
                         }
-                        else if (entry[i].Contains("ITEM:"))
+                        else if (entry[1].Contains("ITEM"))
                         {
-                            entry[i] = entry[i].Replace("ITEM:", "");
                             if (entry[i].Contains("ALL"))
                             {
-                                Log.Message("ff9item._FF9Item_Data.Keys = " + ff9item._FF9Item_Data.Count);
                                 foreach (RegularItem allitemId in ff9item._FF9Item_Data.Keys)
                                     listItem.Add(allitemId);
                             }
@@ -594,14 +603,6 @@ namespace Memoria
                                 listItem.Add((RegularItem)itemId);
                             }
 
-                        }
-                        else if (Int32.TryParse(entry[i], out Int32 aaId))
-                        {
-                            if (aaId == -1)
-                                foreach (BattleAbilityId allaaId in FF9BattleDB.CharacterActions.Keys)
-                                    listAA.Add(allaaId);
-                            else
-                                listAA.Add((BattleAbilityId)aaId);
                         }
                         else
                         {
