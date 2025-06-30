@@ -413,11 +413,11 @@ Coming soon : For the next version, I will try to make a mini .dll file so that 
 
 <Mod>
 	<Name>Playable Character Pack</Name>
-	<Version>1.6.3</Version>
+	<Version>1.7.0</Version>
 	<Priority>-20</Priority>
 	<InstallationPath>PlayableCharacterPack</InstallationPath>
 	<ReleaseDateOriginal>9 Nov 2022</ReleaseDateOriginal>
-	<ReleaseDate>25 June 2025</ReleaseDate>
+	<ReleaseDate>27 June 2025</ReleaseDate>
 	<MinimumMemoriaVersion>2025-05-11</MinimumMemoriaVersion>
 	<Author>Tirlititi / WarpedEdge</Author>
 	<Description>Adds new playable characters to the roster.
@@ -439,10 +439,10 @@ Currently, these characters are added:
 - Dan
 - Jeame (Cleyra dancer)
 - Puck
-- Mikoto *NEW*
-- Gerome (Genome) *NEW*
-- Ruby *NEW*
-- Baku *NEW*
+- Mikoto
+- Gerome (Genome)
+- Ruby
+- Baku
 
 You can press Alt+F2 or Ctrl+Alt+Shift+F2 if on Linux in-game to access the party menu (changing the party at any time is a feature of Memoria, not related to this mod).
 
@@ -457,6 +457,9 @@ Special Thanks for their important help:
 
 You should set the priority of this mod to be higher than the priority of the Moguri mod but lower than other mods, but until Alternate Fantasy's next update, put this mod's priority above it</Description>
 	<PatchNotes>
+------[1.7.0]------
+	
+- Translation support for English (US), English (UK), Japanese, German, French, Italian, and Spanish
 ------[1.6.3]------
 
 - Fixed Puck learning Aero/Aera, but not having it in command window
@@ -480,7 +483,7 @@ Bug Fixes:
 - Puck not being able to learn Aero/Aera; Added to Stardust and Asura's Rod</PatchNotes>
 	<Category>Gameplay</Category>
 	<Website>https://steamcommunity.com/app/377840/discussions/0/3497635791229563331/</Website>
-	<DownloadUrl>https://github.com/WarpedEdge/ffix-mod-projects/releases/download/PCP-v1.6.3/PlayableCharacterPack.zip</DownloadUrl>
+	<DownloadUrl>https://github.com/WarpedEdge/ffix-mod-projects/releases/download/PCP-v1.7.0/PlayableCharacterPack.zip</DownloadUrl>
 	<PreviewFile>Preview.png</PreviewFile>
 	<PreviewFileUrl>https://i.imgur.com/LdMuKh1.png</PreviewFileUrl>
 	<Header>Costumes</Header>
@@ -708,23 +711,30 @@ This mod was initially introduced as the Exp challenge tweaks within Kupo Mods, 
 
 <Mod>
 	<Name>Kupo Heroes Pack</Name>
-	<Version>4.1.8</Version>
+	<Version>4.2</Version>
 	<Priority>-13</Priority>
 	<InstallationPath>KupoHeroPack</InstallationPath>
-	<ReleaseDate>2025-06-03</ReleaseDate>
+	<ReleaseDate>2025-06-30</ReleaseDate>
 	<ReleaseDateOriginal>2024-05-10</ReleaseDateOriginal>
 	<Author>faospark</Author>
-	<Description>A set of Character enhancements that powers up characters and reduces grind. Ideal for players seeking 
-a fresh character experience without changing the story, flow, or core gameplay mechanics.
-See the readme.txt for more details.
-Mod Order:
-- Place above Beatrix and Tantalus mods.
+	<Description>
+A set of character enhancements that empower your party and reduce grinding. Ideal for players seeking a fresh character experience without significantly altering the core game.
 
-Part of Kupo Mods formerly Mog Add-ons.
+See the readme.txt for more details.
+
+Mod Order:
+- Place above the Beatrix (Compatible), Tantalus (Compatible), Alternate Fantasy (Compatible), and Playable Character Pack (Compatible) mods.
+- Must be placed below FernySupportTweaks (Compatible).
+
+Part of Kupo Mods, formerly Mog Add-ons.
 	</Description>
-	<PatchNotes>
-	- Fixed mod group issue to ensure modularity. 
-	- Added Compatibility with Alternate fantasy and playable character pack </PatchNotes>
+	<PatchNotes>- Expanded Photons: Now known as the Lumi spells for Garnet (Holy single-target spells).
+- Enhanced Quina's abilities in Alternate Fantasy: Eat now works at 90% enemy HP; Cook is not included in AF.
+- Fixed Save the Queen abilities for Alternate Fantasy compatibility.
+- Added status effects for Wind (Confusion) and Earth (Trouble) spells in Alternate Fantasy.
+- Corrected Italian translation for Vivi's spells.
+- Special: Visit Daguerreo and speak to the character name changer for new features (note: not all users utilize Kupo modern labels). 
+	</PatchNotes>
 	<Category>Gameplay</Category>
 	<IncompatibleWith>Trance Seek</IncompatibleWith>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/78</Website>
@@ -737,7 +747,7 @@ Part of Kupo Mods formerly Mog Add-ons.
 		<Name>Add Resistance to Zombie and Virus </Name>
 		<InstallationPath>Features/All</InstallationPath>
 		<Description>Auto-life resists Zombie, Anti-body Resists Virus </Description>
-		<Default/>		
+		<Default/>
 	</SubMod>
 	<SubMod>
 		<Name>Bye Auto-Potion </Name>
@@ -774,11 +784,10 @@ Part of Kupo Mods formerly Mog Add-ons.
 		<Group>g-wm</Group>
 	</SubMod>
 	<Header>Character Tweaks</Header>
-	<Header>Eiko</Header>
 	<SubMod>
 		<Name>[Eiko] The Summoner  </Name>
 		<InstallationPath>Features/Eiko</InstallationPath>
-		<Description>Splits Titan and Fenrir as their won independent summon</Description>
+		<Description>Splits Titan and Fenrir as their own independent summon</Description>
 		<Group>g-eiko</Group>
 	</SubMod>
 	<SubMod>
@@ -809,7 +818,7 @@ Part of Kupo Mods formerly Mog Add-ons.
 		<Name>[Garnet] The White Mage</Name>
 		<InstallationPath>Features/Garnet</InstallationPath>
 		<Description>Adds A White Magic Ability to Garnet that causes damage</Description>
-		<Group>g-garnet</Group>		
+		<Group>g-garnet</Group>
 	</SubMod>
 	<SubMod>
 		<Name>[Amaranth] The Genius Nomad </Name>
@@ -829,57 +838,57 @@ Part of Kupo Mods formerly Mog Add-ons.
 		<Description>Add Basic stat Support for Beatrix based of the Beatrix mod  </Description>
 		<Group>g-beatrix</Group>
 	</SubMod>
-	<Header>Compatability for Alternate Fantasy</Header>
+	<Header>Compatibility for Alternate Fantasy</Header>
 	<SubMod>
-		<Name>[Eiko] The Summoner</Name>
+		<Name>[Eiko-AF] The Summoner</Name>
 		<InstallationPath>Features/Eiko-AF</InstallationPath>
 		<Description>Splits Titan and Fenrir as their own independent summon</Description>
 		<Group>g-eiko</Group>
 	</SubMod>
 	<SubMod>
-		<Name>[Freya] The Dragoon  </Name>
+		<Name>[Freya-AF] The Dragoon  </Name>
 		<InstallationPath>Features/Freya-AF</InstallationPath>
 		<Description>Make Freya's High Jump do 3x damage, Early Access to High Jump and Taharka drops Kain Lance </Description>
 		<Group>g-freya</Group>
 	</SubMod>
 	<SubMod>
-		<Name>[Quina] The Chef</Name>
+		<Name>[Quina-AF] The Chef</Name>
 		<InstallationPath>Features/Quina-AF</InstallationPath>
-		<Description>Easy Eat with Gastro Fork. WARNING simply cant be identical as the feature above</Description>
+		<Description>Easy Eat with all Forks. WARNING simply cant be identical as the Vanilla Version</Description>
 		<Group>g-quina</Group>
 	</SubMod>
 	<SubMod>
-		<Name>[Steiner] The Queens Knight</Name>
+		<Name>[Steiner-AF] The Queens Knight</Name>
 		<InstallationPath>Features/Steiner-AF</InstallationPath>
 		<Description>Steiner can Equip Save the Queen, has access to all Vivi's additional spell </Description>
 		<Group>g-steiner</Group>
 	</SubMod>
 	<SubMod>
-		<Name>[Vivi] The Warlock</Name>
+		<Name>[Vivi-AF] The Warlock</Name>
 		<InstallationPath>Features/Vivi-AF</InstallationPath>
 		<Description>Vivi and Steiner can Cast Aero, Quake, Water to RA to AGA spells </Description>
 		<Group>g-vivi</Group>
 	</SubMod>
 	<SubMod>
-		<Name>[Garnet] The White Mage</Name>
+		<Name>[Garnet-AF] The White Mage</Name>
 		<InstallationPath>Features/Garnet-AF</InstallationPath>
 		<Description>Adds A White Magic Ability to Garnet that causes damage</Description>
 		<Group>g-garnet</Group>
 	</SubMod>
 	<SubMod>
-		<Name>[Amaranth] The Genius Nomad</Name>
+		<Name>[Amaranth-AF] The Genius Nomad</Name>
 		<InstallationPath>Features/Amaranth-AF</InstallationPath>
 		<Description>Amaranth learns the Passive Tensai which makes him Learn and Level UP fast</Description>
 		<Group>g-amaranth</Group>
 	</SubMod>
 	<SubMod>
-		<Name>[Zidane] The Pillager</Name>
+		<Name>[Zidane-AF] The Pillager</Name>
 		<InstallationPath>Features/Zidane-AF</InstallationPath>
 		<Description>Boosts damage of thievery, Doubles items received after battle</Description>
 		<Group>g-zidane</Group>
-	</SubMod>	
+	</SubMod>
 	<SubMod>
-		<Name>[Beatrix] The Paladin </Name>
+		<Name>[Beatrix-AF] The Paladin </Name>
 		<InstallationPath>Features/Beatrix-AF</InstallationPath>
 		<Description>Add Basic stat Support for Beatrix based of the Beatrix mod  </Description>
 		<Group>g-beatrix</Group>
@@ -2537,10 +2546,10 @@ Idea by Snouz and made by DV.</Description>
 
 <Mod>
 	<Name>Modern Labels + </Name>
-	<Version>4.1.7</Version>
+	<Version>4.1.8</Version>
 	<Priority>15</Priority>	
 	<InstallationPath>KupoModernLabels</InstallationPath>
-	<ReleaseDate>2025-05-31</ReleaseDate>
+	<ReleaseDate>2025-06-27</ReleaseDate>
 	<ReleaseDateOriginal>2024-10-01</ReleaseDateOriginal>
 	<Author>faospark</Author>
 	<Description>A mod that replaces old item, spell and UI names / labels to their modern counterparts or their now known consistent naming convention 
@@ -2548,7 +2557,7 @@ Ideal for those who were introduced to the series post final fantasy 12. Simply 
 For now the primary focus of the mod is the US and UK translation of the game so non english language players feel free to message me if you have something you want to change in your 
 Language of choice. 
 	</Description>
-	<PatchNotes>Now uses the new TextPatch.txt</PatchNotes>
+	<PatchNotes>Added Intended default names of Amarant and Freya</PatchNotes>
 	<Category>Translation</Category>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/74</Website>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/mi4qmy3h2qqoa57bf8wzu/KupoModernLabels.zip?rlkey=hfbawmgaiijosth1u6wcomwbk&amp;st=zcvbfu94&amp;dl=1</DownloadUrl>
@@ -2560,6 +2569,13 @@ Language of choice.
 		<InstallationPath>extended</InstallationPath>
 		<Description>Mainly Additional Icons on some menus</Description>
 		<Priority>1</Priority>
+		<Default/>
+	</SubMod>
+		<SubMod>
+		<Name>Freija and Salamander</Name>
+		<InstallationPath>Names</InstallationPath>
+		<Description>Changes the default names of Freya and Amarant for both English Translations</Description>
+		<Priority>2</Priority>
 		<Default/>
 	</SubMod>
 </Mod>
