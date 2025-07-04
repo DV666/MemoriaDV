@@ -115,6 +115,10 @@ namespace Memoria.Scripts.Battle
                     MonsterMechanic[unit.Data][1] = 10;
                     btl_stat.AlterStatus(unit, TranceSeekStatusId.MechanicalArmor, parameters: MonsterMechanic[unit.Data][1]);
                 }
+                if (unit.Accessory == (RegularItem)1253) // Ishgard Scarf
+                {
+                    btl_stat.AlterStatus(btl_scrp.FindBattleUnit(btl_util.GetRandomBtlID(0U, false)), TranceSeekStatusId.Dragon);
+                }
                 if (unit.IsUnderAnyStatus(BattleStatus.EasyKill))
                 {
                     MonsterMechanic[unit.Data][4] = 100; // Reduce time for Sleep/Freeze/Stop
