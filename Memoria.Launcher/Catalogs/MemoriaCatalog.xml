@@ -3,7 +3,7 @@
 <Mod>
 	<Name>Moguri Mod</Name>
 	<Version>9.0</Version>
-	<Priority>-25</Priority>
+	<Priority>-28</Priority>
 	<InstallationPath>MoguriMain</InstallationPath>
 	<ReleaseDateOriginal>2019-01-01</ReleaseDateOriginal>
 	<ReleaseDate>2024-08-11</ReleaseDate>
@@ -31,7 +31,7 @@ Note: 30fps videos and the alternative soundtrack are now separate mods</Descrip
 <Mod>
 	<Name>Moguri 30fps videos</Name>
 	<Version>8.3.0</Version>
-	<Priority>-24</Priority>
+	<Priority>-27</Priority>
 	<InstallationPath>MoguriVideo</InstallationPath>
 	<ReleaseDate>2020-08-01</ReleaseDate>
 	<Author>Lykon, Snouz</Author>
@@ -47,7 +47,7 @@ Snouz - syncronization</Description>
 <Mod>
 	<Name>Alternate Fantasy</Name>
 	<Version>6.8</Version>
-	<Priority>-15</Priority>
+	<Priority>-17</Priority>
 	<InstallationPath>AlternateFantasy</InstallationPath>
 	<Author>Tirlititi</Author>
 	<ReleaseDateOriginal>4 Aug 2016</ReleaseDateOriginal>
@@ -74,7 +74,7 @@ More informations can be found on the mod's webpage.</Description>
 <Mod>
 	<Name>Beatrix Mod</Name>
 	<Version>5.2</Version>
-	<Priority>-17</Priority>
+	<Priority>-19</Priority>
 	<InstallationPath>BeatrixMod</InstallationPath>
 	<Author>Tirlititi</Author>
 	<ReleaseDate>10 May 2021</ReleaseDate>
@@ -92,7 +92,7 @@ This is actually a lighter version of Alternate Fantasy, to benefit from its add
 <Mod>
 	<Name>Trance Seek</Name>
 	<Version>0.3.35</Version>
-	<Priority>2</Priority>
+	<Priority>4</Priority>
 	<InstallationPath>TranceSeek</InstallationPath>
 	<ReleaseDateOriginal>28 Jan 2022</ReleaseDateOriginal>
 	<ReleaseDate>30 May 2025</ReleaseDate>
@@ -157,7 +157,7 @@ Not supported language : Japanese (a lot of things get deleted... need to wait u
 <Mod>
 	<Name>NoHardcodedBattles</Name>
 	<Version>1.0</Version>
-	<Priority>1</Priority>
+	<Priority>3</Priority>
 	<Author>DV</Author>
 	<ReleaseDateOriginal>29 May 2025</ReleaseDateOriginal>
 	<ReleaseDate>29 May 2025</ReleaseDate>
@@ -176,6 +176,7 @@ The goal is to make these fights compatible with any characters in battle, in or
 <Mod>
 	<Name>Quality Of L'Ifa</Name>
 	<Version>1.0</Version>
+	<Priority>-23</Priority>
 	<InstallationPath>Quality Of L'Ifa</InstallationPath>
 	<ReleaseDate>14 June 2025</ReleaseDate>
 	<ReleaseDateOriginal>14 June 2025</ReleaseDateOriginal>
@@ -292,6 +293,7 @@ More models to come later when i get time.
 <Mod>
 	<Name>Doppelgängers</Name>
 	<Version>1.0</Version>
+	<Priority>-15</Priority>
 	<InstallationPath>Doppelgängers</InstallationPath>
 	<ReleaseDate>21 Jun 2025</ReleaseDate>
 	<ReleaseDateOriginal>21 Jun 2025</ReleaseDateOriginal>
@@ -414,7 +416,7 @@ Coming soon : For the next version, I will try to make a mini .dll file so that 
 <Mod>
 	<Name>Playable Character Pack</Name>
 	<Version>1.7.0</Version>
-	<Priority>-20</Priority>
+	<Priority>-22</Priority>
 	<InstallationPath>PlayableCharacterPack</InstallationPath>
 	<ReleaseDateOriginal>9 Nov 2022</ReleaseDateOriginal>
 	<ReleaseDate>27 June 2025</ReleaseDate>
@@ -507,7 +509,7 @@ Bug Fixes:
 <Mod>
 	<Name>Support Ability Cost</Name>
 	<Version>4.1.5</Version>
-	<Priority>-2</Priority>	
+	<Priority>-3</Priority>	
 	<InstallationPath>KupoGemSATweak</InstallationPath>
 	<ReleaseDate>2025-05-31</ReleaseDate>
 	<ReleaseDateOriginal>2022-4-14</ReleaseDateOriginal>
@@ -555,7 +557,7 @@ Corrected website links and preview url	</PatchNotes>
 <Mod>
 	<Name>Exp, AP, Gil, Rewards Tweaks</Name>
 	<Version>4.1.3</Version>
-	<Priority>-3</Priority>	
+	<Priority>-4</Priority>	
 	<InstallationPath>KupoTweaks</InstallationPath>
 	<ReleaseDate>2025-01-13</ReleaseDate>
 	<ReleaseDateOriginal>2022-08-14</ReleaseDateOriginal>
@@ -658,7 +660,7 @@ Originally released as the tweaks component of Kupo Mods Formerly Mog Add-ons</D
 <Mod>
 	<Name>No Exp Plus</Name>
 	<Version>4.1.3</Version>
-	<Priority>-4</Priority>	
+	<Priority>-5</Priority>	
 	<InstallationPath>KupoNoEXP</InstallationPath>
 	<ReleaseDate>2024-12-06</ReleaseDate>
 	<ReleaseDateOriginal>2023-07-20</ReleaseDateOriginal>
@@ -712,7 +714,7 @@ This mod was initially introduced as the Exp challenge tweaks within Kupo Mods, 
 <Mod>
 	<Name>Kupo Heroes Pack</Name>
 	<Version>4.2</Version>
-	<Priority>-13</Priority>
+	<Priority>-14</Priority>
 	<InstallationPath>KupoHeroPack</InstallationPath>
 	<ReleaseDate>2025-06-30</ReleaseDate>
 	<ReleaseDateOriginal>2024-05-10</ReleaseDateOriginal>
@@ -898,7 +900,7 @@ Part of Kupo Mods, formerly Mog Add-ons.
 <Mod>
 	<Name>Tantalus</Name>
 	<Version>3.6</Version>
-	<Priority>-14</Priority>
+	<Priority>-16</Priority>
 	<InstallationPath>PlayableTantalus</InstallationPath>
 	<ReleaseDateOriginal>2024-06-14</ReleaseDateOriginal>
 	<ReleaseDate>2025-05-29</ReleaseDate>
@@ -942,7 +944,7 @@ Compatible with Alternate Fantasy v6.8 only.</Description>
 <Mod>
 	<Name>Perfect Stats</Name>
 	<Version>1.1</Version>
-	<Priority>-1</Priority>
+	<Priority>-2</Priority>
 	<Author>Emeiru</Author>
 	<InstallationPath>PerfectStats</InstallationPath>
 	<ReleaseDateOriginal>2024-10-25</ReleaseDateOriginal>
@@ -1006,7 +1008,7 @@ Optional: Fixed Magic Stones
 <Mod>
 	<Name>Black Cat - Endgame Shop</Name>
 	<Version>2.1</Version>
-	<Priority>-5</Priority>
+	<Priority>-6</Priority>
 	<InstallationPath>BlackCat</InstallationPath>
 	<ReleaseDateOriginal>2024-07-13</ReleaseDateOriginal>
 	<ReleaseDate>2024-12-09</ReleaseDate>
@@ -1049,7 +1051,7 @@ Alternate Fantasy
 <Mod>
 	<Name>Artifacts</Name>
 	<Version>1.1</Version>
-	<Priority>-12</Priority>
+	<Priority>-13</Priority>
 	<Author>Emeiru</Author>
 	<Category>Gameplay</Category>
 	<ReleaseDateOriginal>2025-04-01</ReleaseDateOriginal>
@@ -1070,7 +1072,7 @@ Alternate Fantasy
 <Mod>
 	<Name>Amazing Abilities</Name>
 	<Version>1.0</Version>
-	<Priority>-6</Priority>
+	<Priority>-7</Priority>
 	<Author>Emeiru</Author>
 	<ReleaseDateOriginal>2025-01-21</ReleaseDateOriginal>
 	<ReleaseDate>2025-01-21</ReleaseDate>
@@ -1110,7 +1112,7 @@ Flee-Gil - Now only costs 1 magic stone
 <Mod>
 	<Name>Amazing Freya</Name>
 	<Version>1.0</Version>
-	<Priority>-7</Priority>
+	<Priority>-8</Priority>
 	<Author>Emeiru</Author>
 	<Category>Gameplay</Category>
 	<ReleaseDateOriginal>2024-10-04</ReleaseDateOriginal>
@@ -1154,7 +1156,7 @@ Alternate Fantasy only
 <Mod>
 	<Name>Amazing Garnet</Name>
 	<Version>1.2</Version>
-	<Priority>-8</Priority>
+	<Priority>-9</Priority>
 	<Author>Emeiru</Author>
 	<Category>Gameplay</Category>
 	<ReleaseDateOriginal>2025-03-29</ReleaseDateOriginal>
@@ -1217,7 +1219,7 @@ Compatible with Alternate Fantasy v6.8 only</Description>
 <Mod>
 	<Name>Amazing Quina</Name>
 	<Version>2.2</Version>
-	<Priority>-9</Priority>
+	<Priority>-10</Priority>
 	<InstallationPath>AmazingQuina</InstallationPath>
 	<ReleaseDateOriginal>2024-08-18</ReleaseDateOriginal>
 	<ReleaseDate>2025-05-29</ReleaseDate>
@@ -1260,7 +1262,7 @@ Compatible with Alternate Fantasy v6.8 only</Description>
 <Mod>
 	<Name>Amazing Steiner</Name>
 	<Version>1.2</Version>
-	<Priority>-10</Priority>
+	<Priority>-11</Priority>
 	<Author>Emeiru</Author>
 	<Category>Gameplay</Category>
 	<ReleaseDateOriginal>2024-11-18</ReleaseDateOriginal>
@@ -1306,7 +1308,7 @@ Compatible with Alternate Fantasy v6.8 only</Description>
 <Mod>
 	<Name>Amazing Vivi</Name>
 	<Version>1.1</Version>
-	<Priority>-11</Priority>
+	<Priority>-12</Priority>
 	<InstallationPath>AmazingVivi</InstallationPath>
 	<ReleaseDateOriginal>2024-12-26</ReleaseDateOriginal>
 	<ReleaseDate>2025-05-29</ReleaseDate>
@@ -1351,57 +1353,69 @@ Compatible with Alternate Fantasy v6.8 only</Description>
 
 <Mod>
 	<Name>FernySupportTweaks</Name>
-	<Version>1.4.3</Version>
+	<Version>1.4.4</Version>
+	<Priority>2</Priority>
 	<Author>FernyFer</Author>
 	<InstallationPath>FernySupportTweaks</InstallationPath>
-	<ReleaseDate>June 4, 2025</ReleaseDate>
+	<ReleaseDate>July 2, 2025</ReleaseDate>
 	<ReleaseDateOriginal>June 2, 2025</ReleaseDateOriginal>
 	<MinimumMemoriaVersion>2025-05-11</MinimumMemoriaVersion>
 	<Description>Changes some Support Abilities to be "subjectively" more useful! You can enable as many as you want. 
 
+
 Divine Light - (Replaces "Auto-Reflect" Support Ability)
-- Completely drains the Trance bar to stop a character from being KO'd and returning them to 25% of their MaxHP if the Trance bar is at least 50% full.
+- Completely drains the Trance bar to stop a character from being KO'd if the Trance bar is at least 50% full.
+
 
 Trancer - (Replaces "Ability Up" Support Ability)
 - All attacks now slightly increase the Trance gauge.
 - High Tide increases the amount of Trance gained.
 - HIGHLY suggested you use this option with "Kupo Tweaks or Exp , AP, Gil , Rewards Modifier" mod to alter AP gains from losing the Ability Up support ability.
 
+
 Gambling Strikes - (Replaces Zidane's "Bandit" Support Ability)
 - Zidane's damage output randomly ranges from 50% to 200%.
 - HIGHLY suggested you enable "100% Steal Rate" cheat in Memoria engine to offset losing the Bandit support ability.
 
+
 Glass Cannon - (Replaces "Auto-Float" Support Ability)
 - Increases all damage dealt by 60%, but reduces MaxHP by 40%.
+
 
 Dyne Booster - (Zidane Only)
 - All of Zidane's Trance abilities deals 2x damage when his HP falls below 20%.
 - Damage at endgame will easily hit 9,999 damage cap when this triggers.
 - (OPTIONAL) Enable "Break Damage Limit" cheat in Memoria Engine to allow damage to break 9,999 cap.
 
+
 Defence+ - (Replaces "Gambler Defense" Support Ability)
 - Gambler Defense was an abysmally useless Special Ability.
 - Now increases Defence and Magic Defence by 5%.
+
 
 Lucky! - (Replaces "Level Up" Support Ability)
 - There are a few mods out there that allow you that alter your EXP gain... so, I figured the "Level Up" support ability could get a facelift. 
 - Now increases Critical Strike Chance by 10!
 
+
 HP Leech - (Replaces "Add Status" Support Ability)
 - Attacks will now leech a small amount of HP from the target to heal the user.
 - The "Add Status" is now a global passive - no longer needing to be equipped for the effect to be active. Always found it kinda pointless to add Status Effects to weapons and then making them moot if you didn't have this Support Ability equipped. 
+
 
 MP Leech - (Replaces "MP Attack" Support Ability)
 - Attacks will now leech a small amount of MP from the target to heal the user.
 - This ability makes sense in my game because I'm playing the Alternate Fantasy mod and almost all my characters now have skills that deal damage and use MP, so there is no reason to drain my MP to use a regular attack when I could just use one of my skills and do the same thing.
 
+
 Speed+ - (Replaces "Flee-Gil" Support Ability)
 - Flee-Gil is actual doodoo, now it's actually useful!
 - Now increases Speed by 10%.
 
+
 Note/Credit: "Divine Light" idea and code adapted from the Memoria Engine wiki:
 https://github.com/Albeoris/Memoria/wiki/Supporting-ability-features</Description>
-	<PatchNotes>v1.4.3 - "LUCKY!"- had a typo in the code making it not work - this has been fixed. Enjoy your 10 Crit!.</PatchNotes>
+	<PatchNotes>v1.4.4 - Fixed a bug causing Divine Light to not trigger properly.</PatchNotes>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/102</Website>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/32n1c5svgac8qlll3k5ez/FernySupportTweaks.zip?rlkey=3bxlf6cefiuwtuc30bueqlsb7&amp;st=qf88pwn4&amp;dl=1</DownloadUrl>
 	<PreviewFileUrl>https://i.imgur.com/SNFuHb9.jpeg</PreviewFileUrl>
@@ -1480,21 +1494,24 @@ https://github.com/Albeoris/Memoria/wiki/Supporting-ability-features</Descriptio
 
 <Mod>
 	<Name>FernyDifficultyTweaks</Name>
-	<Version>3.1</Version>
+	<Version>3.2</Version>
+	<Priority>1</Priority>
 	<Author>FernyFer</Author>
 	<InstallationPath>FernyDifficultyTweaks</InstallationPath>
-	<ReleaseDate>June 13, 2025</ReleaseDate>
-	<ReleaseDateOriginal>June 2, 2025</ReleaseDateOriginal>
+	<ReleaseDate>2025-07-02</ReleaseDate>
+	<ReleaseDateOriginal>2025-06-02</ReleaseDateOriginal>
 	<MinimumMemoriaVersion>2025-05-11</MinimumMemoriaVersion>
 	<Description>Increase or Decrease game difficulty!
 Allows the player to select all damage dealt and taken in a modular fashion! Fine-tune the balance of the game to your liking, all in one mod!
 
+
 Player Damage Dealt:
 - Modular scaling allowing the player to deal anywhere from 25% less damage all the way up to 150% more damage to enemies.
 
+
 Player Damage Taken:
 - Modular scaling allowing the player to take anywhere from 20% less damage all the way up to 180% more damage from enemies.</Description>
-	<PatchNotes>v3.1: Damage DEALT was not properly calculating and has been fixed. Enjoy nerfing yourself!</PatchNotes>
+	<PatchNotes>v3.2: Added failsafe so that Prison Cage does not 1-shot Vivi or Garnet in the Evil Forest.</PatchNotes>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/101</Website>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/xjer5n2fw39h5kyapyoza/FernyDifficultyTweaks.zip?rlkey=jlt9wczd4irv8qeljd9xj1zbn&amp;st=0xfgnplu&amp;dl=1</DownloadUrl>
 	<PreviewFileUrl>https://i.imgur.com/t3GdBdB.jpeg</PreviewFileUrl>
@@ -1591,7 +1608,7 @@ Player Damage Taken:
 <Mod>
 	<Name>David Bowie Edition</Name>
 	<Version>2.0</Version>
-	<Priority>-16</Priority>
+	<Priority>-18</Priority>
 	<InstallationPath>DavidBowie</InstallationPath>
 	<Author>Clem Fandango</Author>
 	<ReleaseDateOriginal>2020-02-01</ReleaseDateOriginal>
@@ -1605,6 +1622,7 @@ Player Damage Taken:
 <Mod>
 	<Name>[Tsunamods] Scavenger 9</Name>
 	<Version>1.0</Version>
+	<Priority>-1</Priority>
 	<InstallationPath>Scavenger 9</InstallationPath>
 	<Author>Tsunamix, death_unites_us</Author>
 	<ReleaseDateOriginal>2025-05-23</ReleaseDateOriginal>
@@ -1631,7 +1649,7 @@ Good luck!</Description>
 <Mod>
 	<Name>Garnet is Main Character</Name>
 	<Version>1.1</Version>
-	<Priority>-19</Priority>
+	<Priority>-21</Priority>
 	<InstallationPath>GarnetIsMainCharacter</InstallationPath>
 	<Author>piano221</Author>
 	<ReleaseDateOriginal>2021-04-05</ReleaseDateOriginal>
@@ -1651,7 +1669,7 @@ Currently, this mod must be installed manually from its website:
 <Mod>
 	<Name>Freya Game+</Name>
 	<Version>0.5</Version>
-	<Priority>-18</Priority>
+	<Priority>-20</Priority>
 	<InstallationPath>FreyaGamePlus</InstallationPath>
 	<Author>ChikoLad</Author>
 	<ReleaseDateOriginal>2020-07-30</ReleaseDateOriginal>
@@ -1686,7 +1704,7 @@ You should better use the Playable Characters Pack instead. This later one doesn
 <Mod>
 	<Name>Kupo UI Suite</Name>
 	<Version>4.2.1</Version>
-	<Priority>3</Priority>
+	<Priority>6</Priority>
 	<InstallationPath>KupoUISuite</InstallationPath>
 	<ReleaseDate>2025-05-31</ReleaseDate>
 	<ReleaseDateOriginal>2021-08-14</ReleaseDateOriginal>
@@ -1928,6 +1946,7 @@ added another frame option	</PatchNotes>
 <Mod>
 	<Name>Mistwake UI</Name>
 	<Version>1.0</Version>
+	<Priority>5</Priority>
 	<InstallationPath>MistwakeUI</InstallationPath>
 	<Author>Daniel Vilela / dkPsycho</Author>
 	<ReleaseDate>2025-06-23</ReleaseDate>
@@ -1994,7 +2013,7 @@ New portraits for all characters, including supporting and background characters
 <Mod>
 	<Name>Playstation Sounds</Name>
 	<Version>2.2</Version>
-	<Priority>-22</Priority>
+	<Priority>-25</Priority>
 	<InstallationPath>PlaystationSounds</InstallationPath>
 	<ReleaseDateOriginal>19 Mar 2022</ReleaseDateOriginal>
 	<ReleaseDate>27 Jun 2024</ReleaseDate>
@@ -2010,7 +2029,7 @@ New portraits for all characters, including supporting and background characters
 <Mod>
 	<Name>Moguri Alt Soundtrack</Name>
 	<Version>8.3</Version>
-	<Priority>-23</Priority>
+	<Priority>-26</Priority>
 	<InstallationPath>MoguriSoundtrack</InstallationPath>
 	<ReleaseDateOriginal>2019-01-01</ReleaseDateOriginal>
 	<Author>Pontus Hultgren, Ze_PilOt</Author>
@@ -2025,7 +2044,7 @@ New portraits for all characters, including supporting and background characters
 <Mod>
 	<Name>Moguri Mod (2020)</Name>
 	<Version>8.4</Version>
-	<Priority>-26</Priority>
+	<Priority>-29</Priority>
 	<InstallationPath>MoguriMain8</InstallationPath>
 	<ReleaseDateOriginal>2019-01-01</ReleaseDateOriginal>
 	<ReleaseDate>2024-08-12</ReleaseDate>
@@ -2055,7 +2074,7 @@ Note: 30fps videos and the alternative soundtrack are now separate mods</Descrip
 <Mod>
 	<Name>Cursors Mod</Name>
 	<Version>4.1.4</Version>
-	<Priority>4</Priority>	
+	<Priority>7</Priority>	
 	<InstallationPath>KupoCursors</InstallationPath>
 	<ReleaseDate>2025-05-31</ReleaseDate>
 	<ReleaseDateOriginal>2024-10-01</ReleaseDateOriginal>
@@ -2140,7 +2159,7 @@ Defaults to smaller cursor but has several options Dagger, Ultima Blade, Staff
 <Mod>
 	<Name>PSX Buttons</Name>
 	<Version>1.0</Version>
-	<Priority>7</Priority>
+	<Priority>10</Priority>
 	<InstallationPath>PSXButtons</InstallationPath>
 	<Author>gdi</Author>
 	<ReleaseDate>2017-05-22</ReleaseDate>
@@ -2155,7 +2174,7 @@ Defaults to smaller cursor but has several options Dagger, Ultima Blade, Staff
 <Mod>
 	<Name>Kupo Controller Pack</Name>
 	<Version>4.1.3</Version>
-	<Priority>8</Priority>	
+	<Priority>11</Priority>	
 	<InstallationPath>KupoButtonsPack</InstallationPath>
 	<ReleaseDate>2024-12-06</ReleaseDate>
 	<ReleaseDateOriginal>2021-08-27</ReleaseDateOriginal>
@@ -2228,7 +2247,7 @@ Available Themes:
 <Mod>
 	<Name>Dualsense Buttons</Name>
 	<Version>1.1</Version>
-	<Priority>6</Priority>
+	<Priority>9</Priority>
 	<InstallationPath>DualsenseButtons</InstallationPath>
 	<ReleaseDate>2025-06-04</ReleaseDate>
 	<ReleaseDateOriginal>2023-07-19</ReleaseDateOriginal>
@@ -2245,7 +2264,7 @@ Available Themes:
 <Mod>
 	<Name>Switch Buttons</Name>
 	<Version>1.1</Version>
-	<Priority>5</Priority>
+	<Priority>8</Priority>
 	<InstallationPath>SwitchButtons</InstallationPath>
 	<ReleaseDate>2025-06-04</ReleaseDate>
 	<ReleaseDateOriginal>2024-04-28</ReleaseDateOriginal>
@@ -2263,7 +2282,7 @@ Available Themes:
 	<Name>High-Res Chocographs</Name>
 	<InstallationPath>HDChocographs</InstallationPath>
 	<Version>1.0</Version>
-	<Priority>-27</Priority>
+	<Priority>-30</Priority>
 	<Author>Caledor</Author>
 	<ReleaseDateOriginal>2021-05-12</ReleaseDateOriginal>
 	<Description>[Already integrated in Moguri 9.0] Chocographs remade from scratch by taking actual screenshots in FF9 Steam modded with Moguri Mod 8.2.</Description>
@@ -2278,7 +2297,7 @@ Available Themes:
 	<Name>Tweaked Portraits</Name>
 	<InstallationPath>TweakedPortraits</InstallationPath>
 	<Version>1.0</Version>
-	<Priority>9</Priority>
+	<Priority>12</Priority>
 	<Author>Lykon</Author>
 	<ReleaseDateOriginal>2020-05-16</ReleaseDateOriginal>
 	<Description>This is a simple mod that slightly tweaks the portrait shown in the main menu.</Description>
@@ -2292,7 +2311,7 @@ Available Themes:
 <Mod>
 	<Name>Portraits Pack</Name>
 	<Version>4.2.6</Version>
-	<Priority>10</Priority>	
+	<Priority>13</Priority>	
 	<InstallationPath>KupoPortraits</InstallationPath>
 	<ReleaseDate>2025-06-19</ReleaseDate>
 	<ReleaseDateOriginal>2021-10-18</ReleaseDateOriginal>
@@ -2363,7 +2382,7 @@ Part of Kupo Mods formerly Mog Add-ons.
 <Mod>
 	<Name>Anniversary Portraits</Name>
 	<Version>0.9.3</Version>
-	<Priority>11</Priority>
+	<Priority>14</Priority>
 	<InstallationPath>AnniversaryPortraits</InstallationPath>
 	<ReleaseDate>2025-06-10</ReleaseDate>
 	<ReleaseDateOriginal>2025-05-21</ReleaseDateOriginal>
@@ -2383,7 +2402,7 @@ Placeholder art - Marcus by nanpou0406 &amp; Cinna Concept Art.
 <Mod>
 	<Name>No Cutscene</Name>
 	<Version>0.5</Version>
-	<Priority>-21</Priority>
+	<Priority>-24</Priority>
 	<InstallationPath>NoCutsceneMemoria</InstallationPath>
 	<Author>Tirlititi</Author>
 	<Description>Removes most of cutscenes from the game for speedrunning purpose.</Description>
@@ -2394,7 +2413,7 @@ Placeholder art - Marcus by nanpou0406 &amp; Cinna Concept Art.
 <Mod>
 	<Name>Triple Triad</Name>
 	<Version>1.0</Version>
-	<Priority>13</Priority>
+	<Priority>16</Priority>
 	<InstallationPath>TripleTriad</InstallationPath>
 	<ReleaseDateOriginal>25 Jul 2023</ReleaseDateOriginal>
 	<Author>DV</Author>
@@ -2408,15 +2427,14 @@ Change some card textures (add boss + characters)</Description>
 
 <Mod>
 	<Name>Launcher Themes</Name>
-	<Version>1.0.1</Version>
-	<Priority>21</Priority>
+	<Version>1.0.2</Version>
+	<Priority>25</Priority>	
 	<InstallationPath>MemoriaLauncherThemes</InstallationPath>
-	<ReleaseDate>2025-5-12</ReleaseDate>
+	<ReleaseDate>2025-07-02</ReleaseDate>
 	<ReleaseDateOriginal>2024-12-07</ReleaseDateOriginal>
 	<Author>faospark, SamsamTS</Author>
 	<Description>Alternate Themes to Memoria Launcher</Description>
-	<PatchNotes>First Public Release
-Special citation to SamsamTS  for making this possible	</PatchNotes>
+	<PatchNotes>Added Toshiyuki Itahana' Party Artwork, A Callback to one of the OG BGs and Moguri Launcher	</PatchNotes>
 	<Category>Launcher</Category>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/96</Website>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/gvyh8otf7exe99x008mxh/MemoriaLauncherThemes.zip?rlkey=h3fhorrmmvr6nzip9uyrv6kpk&amp;st=h3ec8vdk&amp;dl=1</DownloadUrl>
@@ -2492,14 +2510,36 @@ Special citation to SamsamTS  for making this possible	</PatchNotes>
 		<LauncherBackground>Themes/theme-10.png</LauncherBackground>
 		<LauncherColor>2c5e5f</LauncherColor>
 		<Group>Theme</Group>
-		<Default/>
 	</SubMod>
+	<SubMod>
+		<Name>Theme 11 : The Callback  </Name>
+		<InstallationPath>11</InstallationPath>
+		<LauncherBackground>Themes/theme-11.png</LauncherBackground>
+		<LauncherColor>667daf</LauncherColor>
+		<Group>Theme</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Theme 12 : Moguri..ish </Name>
+		<InstallationPath>12</InstallationPath>
+		<LauncherBackground>Themes/theme-12.png</LauncherBackground>
+		<LauncherColor>b8af9c</LauncherColor>
+		<Group>Theme</Group>
+	</SubMod>
+		<SubMod>
+		<Name>Theme 13 : The Party </Name>
+		<InstallationPath>13</InstallationPath>
+		<LauncherBackground>Themes/theme-13.png</LauncherBackground>
+		<LauncherColor>1c222c</LauncherColor>
+		<Group>Theme</Group>
+		<Default/>
+	</SubMod>					
 </Mod>
+
 
 <Mod>
 	<Name>Better Card Drops</Name>
 	<Version>1.1</Version>
-	<Priority>12</Priority>
+	<Priority>15</Priority>
 	<InstallationPath>BetterCardDrop</InstallationPath>
 	<ReleaseDateOriginal>2024-06-27</ReleaseDateOriginal>
 	<Author>DV</Author>
@@ -2547,7 +2587,7 @@ Idea by Snouz and made by DV.</Description>
 <Mod>
 	<Name>Modern Labels + </Name>
 	<Version>4.1.8</Version>
-	<Priority>15</Priority>	
+	<Priority>18</Priority>	
 	<InstallationPath>KupoModernLabels</InstallationPath>
 	<ReleaseDate>2025-06-27</ReleaseDate>
 	<ReleaseDateOriginal>2024-10-01</ReleaseDateOriginal>
@@ -2583,7 +2623,7 @@ Language of choice.
 <Mod>
 	<Name>Ukrainian Translation</Name>
 	<Version>1.0</Version>
-	<Priority>20</Priority>
+	<Priority>24</Priority>
 	<Author>Дракон Сходу (DragonOfTheEast)</Author>
 	<InstallationPath>TranslationUkr</InstallationPath>
 	<ReleaseDateOriginal>2024-05-02</ReleaseDateOriginal>
@@ -2600,7 +2640,7 @@ Language of choice.
 <Mod>
 	<Name>Hungarian Translation</Name>
 	<Version>1.0</Version>
-	<Priority>19</Priority>
+	<Priority>23</Priority>
 	<InstallationPath>TranslationHun</InstallationPath>
 	<ReleaseDate>2025-01-23</ReleaseDate>
 	<ReleaseDateOriginal>2016-09-21</ReleaseDateOriginal>
@@ -2619,7 +2659,7 @@ Eredeti telepítő: Evin</Description>
 <Mod>
 	<Name>Tradução Português Brasil</Name>
 	<Version>3.0</Version>
-	<Priority>18</Priority>
+	<Priority>22</Priority>
 	<PreviewFile>preview/pt1.png</PreviewFile>
 	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/82/82-1748996941-950777641.png</PreviewFileUrl>
 	<Author>dkPsycho/Brtraducoes</Author>
@@ -2659,7 +2699,7 @@ Eredeti telepítő: Evin</Description>
 <Mod>
 	<Name>Modern German</Name>
 	<Version>1.0</Version>
-	<Priority>14</Priority>
+	<Priority>17</Priority>
 	<Author>Plasquar</Author>
 	<InstallationPath>ModernGerman</InstallationPath>
 	<Category>Translation</Category>
@@ -2675,6 +2715,7 @@ Eredeti telepítő: Evin</Description>
 <Mod>
 	<Name>ReTrad FR</Name>
 	<Version>7.0</Version>
+	<Priority>19</Priority>
 	<InstallationPath>ReTradFr</InstallationPath>
 	<Author>Lunalesca</Author>
 	<ReleaseDate>23 June 2025</ReleaseDate>
@@ -2748,7 +2789,7 @@ Note: this mod doesn't support automatic installation yet. Download it from its 
 <Mod>
 	<Name>Russian Translation</Name>
 	<Version>1.0</Version>
-	<Priority>17</Priority>
+	<Priority>21</Priority>
 	<InstallationPath>TranslationRu</InstallationPath>
 	<ReleaseDate>2024-11-22</ReleaseDate>
 	<ReleaseDateOriginal>2013-12-27</ReleaseDateOriginal>
@@ -2788,7 +2829,7 @@ Check them out at https://www.nexusmods.com/finalfantasy9/mods/</Description>
 <Mod>
 	<Name>Chinese (FFSky Rebirth)</Name>
 	<Version>0.9</Version>
-	<Priority>16</Priority>
+	<Priority>20</Priority>
 	<InstallationPath>Chinese (FFSky Rebirth)</InstallationPath>
 	<ReleaseDate>2025-03-24</ReleaseDate>
 	<ReleaseDateOriginal>2025-03-24</ReleaseDateOriginal>
