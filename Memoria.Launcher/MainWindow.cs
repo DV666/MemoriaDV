@@ -114,7 +114,7 @@ namespace Memoria.Launcher
                     // Set FPS to auto
                     FPSDropboxChoice = 0;
                 }
-                else if (date < new DateTime(2025, 07, 05))
+                else if (date < new DateTime(2025, 07, 04))
                 {
                     // Enable check update
                     IniFile.SettingsIni.SetSetting("Version", "CheckUpdates", "True");
