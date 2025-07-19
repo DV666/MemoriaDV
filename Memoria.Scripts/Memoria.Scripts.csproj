@@ -383,7 +383,7 @@
     <Compile Include="Sources\Battle\0120_SwitchWeaponScript.cs" />
     <Compile Include="Sources\Battle\0121_PassiveEikoScript.cs" />
     <Compile Include="Sources\Battle\0122_MechanicalArmorScript.cs" />
-    <Compile Include="Sources\Battle\0123_InfuseWeaponScript.cs" />
+    <Compile Include="Sources\Battle\0123_InfusedWeaponScript.cs" />
     <Compile Include="Sources\Battle\0124_BloodyStrikeScript.cs" />
     <Compile Include="Sources\Battle\0125_ShockMagicalScript.cs" />
     <Compile Include="Sources\Battle\0126_SpecialScript.cs" />
