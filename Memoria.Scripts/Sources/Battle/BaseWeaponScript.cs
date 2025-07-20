@@ -179,7 +179,7 @@ namespace Memoria.Scripts.Battle
                 // Prière X
                 case RegularItem.WizardRod:
                 case RegularItem.WhaleWhisker:
-                    _v.Context.AttackPower = 20;
+                    _v.Context.AttackPower = 15;
                     break;
             }
             TranceSeekAPI.CharacterBonusPassive(_v, "MagicAttack");

@@ -15,6 +15,7 @@ namespace Memoria.Scripts.Battle
     {
         public Boolean InitHUDMessageChild;
         public HUDMessageChild HUDToReset = null;
+        public Int32 magiclampcooldown;
 
         public void OnBattleInit()
         {
@@ -147,6 +148,11 @@ namespace Memoria.Scripts.Battle
                     TranceSeekStatusId.PerfectDodge, TranceSeekStatusId.PerfectCrit };
 
                     btl_stat.AlterStatus(unit, statuschoosen[Comn.random16() % statuschoosen.Count]);
+                }
+                else if (unit.Accessory == (RegularItem)1256) // Magic Lamp
+                {
+                    magiclampcooldown = (60 - unit.Will) * UnityEngine.Random.Range(1, 11) * 100;
+                    unit.AddDelayedModifier(ProcessMagicLampRecast, null);
                 }
                 if (unit.IsUnderAnyStatus(BattleStatus.EasyKill))
                 {
@@ -308,6 +314,10 @@ namespace Memoria.Scripts.Battle
                 }
                 else
                 {
+                    int ID = 2000 + (int)unit.PlayerIndex;
+                    if (FF9StateSystem.EventState.gScriptDictionary.ContainsKey(ID)) // Reset infused weapon.
+                        FF9StateSystem.EventState.gScriptDictionary.Remove(ID);
+
                     if (Configuration.TetraMaster.TripleTriad >= 16388 && Configuration.TetraMaster.TripleTriad != 16390)
                     {
                         unit.MagicDefence = 254;
@@ -346,6 +356,32 @@ namespace Memoria.Scripts.Battle
                         btl_stat.AlterStatus(unit, TranceSeekStatusId.Special, parameters: "CanCover0");
                 }
             }
+        }
+
+        private Boolean ProcessMagicLampRecast(BattleUnit caster)
+        {
+            if (magiclampcooldown <= 0)
+            {
+                List<BattleAbilityId> MagicLampSummon = new List<BattleAbilityId> { BattleAbilityId.DiamondDust, BattleAbilityId.FlamesofHell, BattleAbilityId.JudgementBolt, BattleAbilityId.WormHole,
+                BattleAbilityId.Zantetsuken, BattleAbilityId.Tsunami, BattleAbilityId.MegaFlare, BattleAbilityId.EternalDarkness, (BattleAbilityId)1576, (BattleAbilityId)1577, (BattleAbilityId)1578,
+                (BattleAbilityId)1579, (BattleAbilityId)1580, (BattleAbilityId)1581, (BattleAbilityId)1582, (BattleAbilityId)1583};
+
+                BattleAbilityId SummonChoosen = MagicLampSummon[Comn.random16() % MagicLampSummon.Count];
+                ushort target = 0;
+
+                if (SummonChoosen == (BattleAbilityId)1578 || SummonChoosen == (BattleAbilityId)1579 || SummonChoosen == (BattleAbilityId)1580 || SummonChoosen == (BattleAbilityId)1581) // Carbuncle
+                    target = btl_util.GetStatusBtlID(0u, 0);
+                else
+                    target = btl_util.GetStatusBtlID(1u, 0);
+
+                btl_cmd.SetCommand(caster.Data.cmd[3], BattleCommandId.SysPhantom, (Int32)SummonChoosen, target, 8u);
+                return false;
+            }
+            else
+            {
+                magiclampcooldown -= caster.Data.cur.at_coef * BattleState.ATBTickCount;
+            }
+            return true;
         }
 
         public void ChangeBBG(string BBGNameID)

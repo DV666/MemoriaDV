@@ -135,6 +135,10 @@ namespace Memoria.Scripts.Battle
                 case BattleAbilityId.Carbuncle2:
                 case BattleAbilityId.Carbuncle3:
                 case BattleAbilityId.Carbuncle4:
+                case (BattleAbilityId)1578:
+                case (BattleAbilityId)1579:
+                case (BattleAbilityId)1580:
+                case (BattleAbilityId)1581:
                 {  
                     byte will = _v.Caster.Will; // TODO - To improve ? Move in Memoria.ini
                     if (ff9item.FF9Item_GetCount(RegularItem.Ruby) > 0)
@@ -151,12 +155,15 @@ namespace Memoria.Scripts.Battle
                 }
                 case BattleAbilityId.Fenrir1:
                 case BattleAbilityId.Fenrir2:
+                case (BattleAbilityId)1576:
+                case (BattleAbilityId)1577:
                 {
                     _v.Context.AttackPower += _v.Caster.Level;
                     _v.Context.HitRate += ((ff9item.FF9Item_GetCount(RegularItem.Sapphire) + 1)) / 2;
                     break;
                 }
                 case BattleAbilityId.Madeen:
+                case (BattleAbilityId)1583:
                     _v.Context.AttackPower += _v.Caster.Level;
                     break;
             }

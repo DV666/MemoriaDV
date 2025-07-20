@@ -31,13 +31,14 @@ namespace Memoria.Scripts.Battle
 
             if (_v.Target.IsPlayer)
             {
-                int ID = 1100 + (int)_v.Target.PlayerIndex;
+                int ID = 2000 + (int)_v.Target.PlayerIndex;
                 if (!FF9StateSystem.EventState.gScriptDictionary.TryGetValue(ID, out Dictionary<Int32, Int32> dict))
                 {
                     dict = new Dictionary<Int32, Int32>();
                     FF9StateSystem.EventState.gScriptDictionary.Add(ID, dict);
                 }
                 dict[0] = 1;
+                dict[1] = (int)_v.Command.AbilityId;
 
                 string ElementText = "";
                 string StatusText = "";
@@ -52,7 +53,7 @@ namespace Memoria.Scripts.Battle
                     if (BattleHUD.BuffIconNames.TryGetValue(infusedstatus, out spriteName) || BattleHUD.DebuffIconNames.TryGetValue(infusedstatus, out spriteName))
                         StatusText += $" [SPRT={spriteName},48,48]";
               
-                FF9TextTool.SetCommandName((BattleCommandId)1056, ElementText + InfusedAttackCMDName[Localization.CurrentSymbol] + StatusText);
+                FF9TextTool.SetCommandName((BattleCommandId)ID, ElementText + InfusedAttackCMDName[Localization.CurrentSymbol] + StatusText);
             }
         }
 
@@ -75,7 +76,7 @@ namespace Memoria.Scripts.Battle
             { EffectElement.Aqua, "[5C5CFF]" },
             { EffectElement.Wind, "[2C623A]" },
             { EffectElement.Earth, "[783F04]" },
-            { EffectElement.Holy, "[FFFFFF]" },
+            { EffectElement.Holy, "[FFFFB8]" },
             { EffectElement.Darkness, "[000000]" },
             { EffectElement.None, "[A85038]" }
         };
