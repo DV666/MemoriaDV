@@ -1417,7 +1417,7 @@ namespace Memoria.Scripts.Battle
 
         public static void SOS_SA(this BattleCalculator v)
         {
-            if (v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.SOS_Protect2))
+            if (v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.SOS_Protect_Boosted))
             {
                 v.Target.AddDelayedModifier(
                     target => target.CurrentHp > (target.MaximumHp / 2),
@@ -1437,7 +1437,7 @@ namespace Memoria.Scripts.Battle
                     }
                 );
             }
-            if (v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.SOS_Shell2))
+            if (v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.SOS_Shell_Boosted))
             {
                 v.Target.AddDelayedModifier(
                     target => target.CurrentHp > (target.MaximumHp / 2),
@@ -1457,7 +1457,7 @@ namespace Memoria.Scripts.Battle
                     }
                 );
             }
-            if (v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.SOS_Regen2))
+            if (v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.SOS_Regen_Boosted))
             {
                 v.Target.AddDelayedModifier(
                     target => target.CurrentHp > (target.MaximumHp / 2),
@@ -1477,7 +1477,7 @@ namespace Memoria.Scripts.Battle
                     }
                 );
             }
-            if (v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.SOS_Haste2))
+            if (v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.SOS_Haste_Boosted))
             {
                 v.Target.AddDelayedModifier(
                     target => target.CurrentHp > (target.MaximumHp / 2),
@@ -1499,7 +1499,7 @@ namespace Memoria.Scripts.Battle
             }
             if (!v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.SOS_Vanish))
             {
-                if (v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.SOS_Reflect2))
+                if (v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.SOS_Reflect_Boosted))
                 {
                     v.Target.AddDelayedModifier(
                         target => target.CurrentHp > (target.MaximumHp / 2),
@@ -1522,7 +1522,7 @@ namespace Memoria.Scripts.Battle
             }
             if (!v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.SOS_Reflect))
             {
-                if (v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.SOS_Vanish2))
+                if (v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.SOS_Vanish_Boosted))
                 {
                     v.Target.AddDelayedModifier(
                         target => target.CurrentHp > (target.MaximumHp / 2),

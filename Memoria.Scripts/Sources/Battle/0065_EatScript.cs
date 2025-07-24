@@ -30,6 +30,12 @@ namespace Memoria.Scripts.Battle
         {
             BattleEnemyPrototype enemyPrototype = BattleEnemyPrototype.Find(_v.Target);
             Int32 blueMagicId = enemyPrototype.BlueMagicId;
+            int PowerCMD = _v.Command.Power;
+            if (_v.Caster.Head == TranceSeekRegularItem.ChefHat)
+                PowerCMD = _v.Command.AbilityId == BattleAbilityId.Eat ? 4 : (_v.Command.AbilityId == BattleAbilityId.Cook ? 2 : PowerCMD);
+            else if (_v.Caster.Head == TranceSeekRegularItem.StarredChefHat)
+                PowerCMD = _v.Command.AbilityId == BattleAbilityId.Eat ? 2 : (_v.Command.AbilityId == BattleAbilityId.Cook ? 1 : PowerCMD);
+
             if (_v.Caster.InTrance || _v.Caster.HasSupportAbilityByIndex((SupportAbility)220) || _v.Caster.HasSupportAbilityByIndex((SupportAbility)221))
             {
                 if (!_v.Caster.InTrance && _v.Caster.HasSupportAbilityByIndex((SupportAbility)220) && _v.Caster.HasSupportAbilityByIndex((SupportAbility)221)) // SA Appetite AND Gourmandise

@@ -35,7 +35,7 @@ namespace Memoria.Scripts.Battle
                     _v.Context.HitRate += ((ff9item.FF9Item_GetCount(RegularItem.Opal) + 1)) / 2;
                     if (_v.Target.IsPlayer)
                     {
-                        _v.Command.AbilityCategory -= 16; // Remove Magical effect to prevent Vanish to dissapear.
+                        _v.Command.AbilityCategory -= 16; // Remove Magical effect to prevent Vanish to disappear.
                         _v.Target.TryRemoveStatuses(_v.Command.AbilityStatus);
                         _v.Target.AlterStatus(TranceSeekStatus.MentalUp);
                     }
@@ -52,7 +52,7 @@ namespace Memoria.Scripts.Battle
                     _v.Context.HitRate += ((ff9item.FF9Item_GetCount(RegularItem.Topaz) + 1)) / 2;
                     if (_v.Target.IsPlayer)
                     {
-                        _v.Command.AbilityCategory -= 16; // Remove Magical effect to prevent Vanish to dissapear.
+                        _v.Command.AbilityCategory -= 16; // Remove Magical effect to prevent Vanish to disappear.
                         _v.Target.TryRemoveStatuses(_v.Command.AbilityStatus);
                         _v.Target.AlterStatus(TranceSeekStatus.ArmorUp);
                     }
@@ -69,7 +69,7 @@ namespace Memoria.Scripts.Battle
                     _v.Context.HitRate += ((ff9item.FF9Item_GetCount(RegularItem.Peridot) + 1)) / 2;
                     if (_v.Target.IsPlayer)
                     {
-                        _v.Command.AbilityCategory -= 16; // Remove Magical effect to prevent Vanish to dissapear.
+                        _v.Command.AbilityCategory -= 16; // Remove Magical effect to prevent Vanish to disappear.
                         _v.Target.TryRemoveStatuses(_v.Command.AbilityStatus);
                         _v.Target.AlterStatus(TranceSeekStatus.MagicUp);
                     }
@@ -86,7 +86,7 @@ namespace Memoria.Scripts.Battle
                     _v.Context.HitRate += ((ff9item.FF9Item_GetCount(RegularItem.Aquamarine) + 1)) / 2;
                     if (_v.Target.IsPlayer)
                     {
-                        _v.Command.AbilityCategory -= 16; // Remove Magical effect to prevent Vanish to dissapear.
+                        _v.Command.AbilityCategory -= 16; // Remove Magical effect to prevent Vanish to disappear.
                         _v.Target.TryRemoveStatuses(_v.Command.AbilityStatus);
                         _v.Target.AlterStatus(BattleStatus.Regen);
                     }
@@ -103,7 +103,7 @@ namespace Memoria.Scripts.Battle
                     _v.Context.HitRate += ((ff9item.FF9Item_GetCount(RegularItem.Garnet) + 1)) / 2;
                     if (_v.Target.IsPlayer)
                     {
-                        _v.Command.AbilityCategory -= 16; // Remove Magical effect to prevent Vanish to dissapear.
+                        _v.Command.AbilityCategory -= 16; // Remove Magical effect to prevent Vanish to disappear.
                         _v.Target.TryRemoveStatuses(_v.Command.AbilityStatus);
                         _v.Target.Flags = CalcFlag.MpDamageOrHeal;
                         _v.Target.MpDamage = _v.Caster.Magic + Comn.random16() % (1 + (_v.Caster.Level + _v.Caster.Magic) / 4);
@@ -121,7 +121,7 @@ namespace Memoria.Scripts.Battle
                     _v.Context.HitRate = ((ff9item.FF9Item_GetCount(RegularItem.LapisLazuli) + 1)) / 2;
                     if (_v.Target.IsPlayer)
                     {
-                        _v.Command.AbilityCategory -= 16; // Remove Magical effect to prevent Vanish to dissapear.
+                        _v.Command.AbilityCategory -= 16; // Remove Magical effect to prevent Vanish to disappear.
                         _v.Target.TryRemoveStatuses(_v.Command.AbilityStatus);
                         _v.Target.AlterStatus(TranceSeekStatus.PowerUp | TranceSeekStatus.MagicUp | TranceSeekStatus.ArmorUp | TranceSeekStatus.MentalUp);
                     }
