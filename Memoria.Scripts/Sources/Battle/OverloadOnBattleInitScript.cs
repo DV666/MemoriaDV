@@ -154,6 +154,15 @@ namespace Memoria.Scripts.Battle
                     magiclampcooldown = (60 - unit.Will) * UnityEngine.Random.Range(1, 11) * 100;
                     unit.AddDelayedModifier(ProcessMagicLampRecast, null);
                 }
+                else if (unit.Accessory == (RegularItem)1257) // Cursed Coin
+                {
+                    if (DarkBBG.Contains(battlebg.nf_BbgNumber))
+                    {
+                        CharacterPresetId presetId = unit.Player.PresetId;
+                        unit.ChangeToMonster("GZ_R002", 0, CharacterCommands.CommandSets[presetId].Regular[2], (BattleCommandId)1111, false, false, false, false, false);
+                        CharacterCommands.CommandSets[presetId].Regular[3] = BattleCommandId.None;
+                    }
+                }
                 if (unit.IsUnderAnyStatus(BattleStatus.EasyKill))
                 {
                     MonsterMechanic[unit.Data][4] = 100; // Reduce time for Sleep/Freeze/Stop
@@ -465,5 +474,8 @@ namespace Memoria.Scripts.Battle
             { new KeyValuePair<Int32, Int32>(299, 1), "BBG_B023" }, // Lindblum boss (Steiner Quest)
             { new KeyValuePair<Int32, Int32>(838, 1), "BBG_B042" } // Golden Pidove
         };
+
+        private static readonly HashSet<Int32> DarkBBG = new HashSet<Int32>(new[] { 4, 5, 6, 8, 9, 12, 13, 14, 15, 16, 32, 36, 37, 38, 39, 40, 41, 42, 45, 46, 67, 68, 69, 70, 71, 72,
+        80, 84, 85, 86, 87, 88, 89, 90, 100, 114, 116, 117, 118, 119, 121, 122, 128, 131, 152, 153, 155, 156, 158, 162, 163, 164, 165, 167, 168, 169, 174, 175 });
     }
 }
