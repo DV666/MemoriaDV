@@ -35,6 +35,9 @@ namespace Memoria.Scripts.Battle
         public static Dictionary<BTL_DATA, Int32[]> SpecialItemEffect = new Dictionary<BTL_DATA, Int32[]>();
         // [0] => Emergency Satchel ; [1] => Magical Satchel
 
+        public static Dictionary<BTL_DATA, Int32[]> ElementAffinitiesItem = new Dictionary<BTL_DATA, Int32[]>(); // 0 = None, 1 = Weak, 2 = Half, 4 = Immune, 8 = Absorb
+        // [0] => Poison ; [1] => Gravity
+
         public static Dictionary<BTL_DATA, Int32[]> RollBackStats = new Dictionary<BTL_DATA, Int32[]>();
         public static Dictionary<BTL_DATA, Boolean> TriggerSPSResistStatus = new Dictionary<BTL_DATA, Boolean>();
         public static Dictionary<BTL_DATA, BattleStatus> RollBackBattleStatus = new Dictionary<BTL_DATA, BattleStatus>();
@@ -718,16 +721,16 @@ namespace Memoria.Scripts.Battle
                 return false;
             }
 
-            if (v.Target.IsGuardElement(Element))
+            if (v.Target.IsGuardElement(Element) || ((v.Command.ScriptId == 118 || v.Command.ScriptId == 119) && (ElementAffinitiesItem[v.Target.Data][0] & 4) != 0) || ((v.Command.ScriptId == 17 || v.Command.ScriptId == 86) && (ElementAffinitiesItem[v.Target.Data][1] & 4) != 0))
             {
                 v.Context.Flags |= BattleCalcFlags.Guard;
                 return false;
             }
 
-            if (v.Target.IsHalfElement(Element))
+            if (v.Target.IsHalfElement(Element) || ((v.Command.ScriptId == 118 || v.Command.ScriptId == 119) && (ElementAffinitiesItem[v.Target.Data][0] & 2) != 0) || ((v.Command.ScriptId == 17 || v.Command.ScriptId == 86) && (ElementAffinitiesItem[v.Target.Data][1] & 2) != 0))
                 v.Context.DamageModifierCount -= 2;
 
-            if (v.Target.IsWeakElement(Element))
+            if (v.Target.IsWeakElement(Element) || ((v.Command.ScriptId == 118 || v.Command.ScriptId == 119) && (ElementAffinitiesItem[v.Target.Data][0] & 1) != 0) || ((v.Command.ScriptId == 17 || v.Command.ScriptId == 86) && (ElementAffinitiesItem[v.Target.Data][1] & 1) != 0))
                 v.Context.DamageModifierCount += 2;
 
             if (v.Target.CanAbsorbElement(Element))
@@ -742,6 +745,8 @@ namespace Memoria.Scripts.Battle
             if (AbsorbElement.TryGetValue(v.Target.Data, out Int32 elementprotect))
                 if ((Element & (EffectElement)elementprotect) != 0 && elementprotect != -1)
                     v.Context.Flags |= BattleCalcFlags.Absorb;
+            else if (((v.Command.ScriptId == 118 || v.Command.ScriptId == 119) && (ElementAffinitiesItem[v.Target.Data][0] & 8) != 0) || ((v.Command.ScriptId == 17 || v.Command.ScriptId == 86) && (ElementAffinitiesItem[v.Target.Data][1] & 8) != 0))
+                v.Context.Flags |= BattleCalcFlags.Absorb;
 
             v.Target.AlterStatuses(Element);
             return true;

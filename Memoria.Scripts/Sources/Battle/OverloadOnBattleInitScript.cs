@@ -66,78 +66,116 @@ namespace Memoria.Scripts.Battle
 
             foreach (BattleUnit unit in BattleState.EnumerateUnits())
             {
-                    ZidanePassive[unit.Data] = [0, 0, 0, 0, 0, 255, 255, 0, 0, 0, 0, 0 ];
-                    ViviPreviousSpell[unit.Data] = BattleAbilityId.Void;
-                    ViviPassive[unit.Data] = [0, 0, 0];
-                    BeatrixPassive[unit.Data] = [0, 0, 0, 0];
-                    ProtectStatus[unit.Data] = new Dictionary<BattleStatus, Int32> { { 0, 0 } };
-                    AbsorbElement[unit.Data] = -1;
-                    StackBreakOrUpStatus[unit.Data] = [0, 0, 0, 0];
-                    MonsterMechanic[unit.Data] = [ 0, 0, 0, 0, 100, 1, 0 ];
-                    SpecialSAEffect[unit.Data] = [ 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ];
-                    SpecialItemEffect[unit.Data] = [3, 3];
-                    TriggerSPSResistStatus[unit.Data] = false;
-                    RollBackStats[unit.Data] = [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ];
-                    RollBackBattleStatus[unit.Data] = 0;
-                    WeaponNewElement[unit.Data] = EffectElement.None;
-                    WeaponNewStatus[unit.Data] = 0;
-                    StateMoug[unit.Data] = 0;
-                    ModelMoug[unit.Data] = null;
+                ZidanePassive[unit.Data] = [0, 0, 0, 0, 0, 255, 255, 0, 0, 0, 0, 0 ];
+                ViviPreviousSpell[unit.Data] = BattleAbilityId.Void;
+                ViviPassive[unit.Data] = [0, 0, 0];
+                BeatrixPassive[unit.Data] = [0, 0, 0, 0];
+                ProtectStatus[unit.Data] = new Dictionary<BattleStatus, Int32> { { 0, 0 } };
+                AbsorbElement[unit.Data] = -1;
+                StackBreakOrUpStatus[unit.Data] = [0, 0, 0, 0];
+                MonsterMechanic[unit.Data] = [ 0, 0, 0, 0, 100, 1, 0 ];
+                SpecialSAEffect[unit.Data] = [ 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ];
+                SpecialItemEffect[unit.Data] = [3, 3];
+                ElementAffinitiesItem[unit.Data] = [0, 0];
+                TriggerSPSResistStatus[unit.Data] = false;
+                RollBackStats[unit.Data] = [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ];
+                RollBackBattleStatus[unit.Data] = 0;
+                WeaponNewElement[unit.Data] = EffectElement.None;
+                WeaponNewStatus[unit.Data] = 0;
+                StateMoug[unit.Data] = 0;
+                ModelMoug[unit.Data] = null;
 
-                if ((FF9StateSystem.Battle.battleMapIndex == 334 || FF9StateSystem.Battle.battleMapIndex == 335) && unit.IsPlayer) // Add Steal command for Zidane/Marcus against Steiner 2nd
+                if (unit.IsPlayer)
                 {
-                    if (unit.PlayerIndex == CharacterId.Zidane || unit.PlayerIndex == CharacterId.Marcus)
+                    if ((FF9StateSystem.Battle.battleMapIndex == 334 || FF9StateSystem.Battle.battleMapIndex == 335)) // Add Steal command for Zidane/Marcus against Steiner 2nd
                     {
-                        CharacterPresetId presetId = unit.Player.PresetId;
-                        CharacterCommands.CommandSets[presetId].Regular[2] = BattleCommandId.Steal;
-                        CharacterCommands.CommandSets[presetId].Regular[3] = unit.PlayerIndex == CharacterId.Zidane ? BattleCommandId.StageMagicZidane : BattleCommandId.StageMagicMarcus;
+                        if (unit.PlayerIndex == CharacterId.Zidane || unit.PlayerIndex == CharacterId.Marcus)
+                        {
+                            CharacterPresetId presetId = unit.Player.PresetId;
+                            CharacterCommands.CommandSets[presetId].Regular[2] = BattleCommandId.Steal;
+                            CharacterCommands.CommandSets[presetId].Regular[3] = unit.PlayerIndex == CharacterId.Zidane ? BattleCommandId.StageMagicZidane : BattleCommandId.StageMagicMarcus;
+                        }
                     }
-                }
-                if (unit.HasSupportAbilityByIndex((SupportAbility)1041)) // Alert+
-                {
-                    btl_stat.AlterStatus(unit, TranceSeekStatusId.PerfectDodge, parameters: "+2");
-                }
-                if (unit.HasSupportAbilityByIndex((SupportAbility)52)) // Last Stand
-                {
-                    SpecialSAEffect[unit.Data][1] = unit.HasSupportAbilityByIndex((SupportAbility)1052) ? 2 : 1;
-                }
-                if (unit.HasSupportAbilityByIndex((SupportAbility)1252)) // SA I'm all set
-                {
-                    unit.AlterStatus(TranceSeekStatus.ArmorUp, unit);
-                    unit.AlterStatus(TranceSeekStatus.MentalUp, unit);
-                }
-                if (unit.Weapon == RegularItem.Defender)
-                {
-                    unit.AlterStatus(TranceSeekStatus.ArmorUp, unit);
-                    unit.AlterStatus(TranceSeekStatus.MentalUp, unit);
-                }
-                if (unit.Armor == (RegularItem)1220) // Mechanical Armor
-                {
-                    MonsterMechanic[unit.Data][1] = 10;
-                    btl_stat.AlterStatus(unit, TranceSeekStatusId.MechanicalArmor, parameters: MonsterMechanic[unit.Data][1]);
-                }
-                if (unit.Accessory == (RegularItem)1253) // Ishgard Scarf
-                {
-                    btl_stat.AlterStatus(btl_scrp.FindBattleUnit(btl_util.GetRandomBtlID(0U, false)), TranceSeekStatusId.Dragon);
-                }
-                else if (unit.Accessory == (RegularItem)1254) // Strange Cube
-                {
-                    unit.MaximumHp = (uint)UnityEngine.Random.Range(unit.MaximumHp - (unit.MaximumHp / 2), unit.MaximumHp + (unit.MaximumHp / 2));
-                    unit.CurrentHp = unit.MaximumHp;
-                    unit.MaximumMp = (uint)UnityEngine.Random.Range(unit.MaximumMp - (unit.MaximumMp / 2), unit.MaximumMp + (unit.MaximumMp / 2));
-                    unit.CurrentMp = unit.MaximumMp;
-                    unit.Dexterity = (byte)UnityEngine.Random.Range(unit.Dexterity - (unit.Dexterity / 2), unit.Dexterity + (unit.Dexterity / 2));
-                    unit.Strength = (byte)UnityEngine.Random.Range(unit.Strength - (unit.Strength / 2), unit.Strength + (unit.Strength / 2));
-                    unit.Magic = (byte)UnityEngine.Random.Range(unit.Magic - (unit.Magic / 2), unit.Magic + (unit.Magic / 2));
-                    unit.Will = (byte)UnityEngine.Random.Range(unit.Will - (unit.Will / 2), unit.Will + (unit.Will / 2));
-                    unit.PhysicalDefence = (byte)UnityEngine.Random.Range(unit.PhysicalDefence - (unit.PhysicalDefence / 2), unit.PhysicalDefence + (unit.PhysicalDefence / 2));
-                    unit.MagicDefence = (byte)UnityEngine.Random.Range(unit.MagicDefence - (unit.MagicDefence / 2), unit.MagicDefence + (unit.MagicDefence / 2));
-                    unit.PhysicalEvade = (byte)UnityEngine.Random.Range(unit.PhysicalEvade - (unit.PhysicalEvade / 2), unit.PhysicalEvade + (unit.PhysicalEvade / 2));
-                    unit.MagicEvade = (byte)UnityEngine.Random.Range(unit.MagicEvade - (unit.MagicEvade / 2), unit.MagicEvade + (unit.MagicEvade / 2));
-                    unit.WeakElement = (EffectElement)(1 << Comn.random16() % 8);
-                    unit.HalfElement = (EffectElement)(1 << Comn.random16() % 8);
-                    unit.GuardElement = (EffectElement)(1 << Comn.random16() % 8);
-                    unit.AbsorbElement = (EffectElement)(1 << Comn.random16() % 8);
+
+                    // Poison element
+                    if (ItemAffinitiesPoison.ContainsKey(unit.Weapon))
+                        if (ElementAffinitiesItem[unit.Data][0] < ItemAffinitiesPoison[unit.Weapon])
+                            ElementAffinitiesItem[unit.Data][0] = ItemAffinitiesPoison[unit.Weapon];
+                    if (ItemAffinitiesPoison.ContainsKey(unit.Head))
+                        if (ElementAffinitiesItem[unit.Data][0] < ItemAffinitiesPoison[unit.Head])
+                         ElementAffinitiesItem[unit.Data][0] = ItemAffinitiesPoison[unit.Head];
+                    if (ItemAffinitiesPoison.ContainsKey(unit.Armor))
+                        if (ElementAffinitiesItem[unit.Data][0] < ItemAffinitiesPoison[unit.Armor])
+                            ElementAffinitiesItem[unit.Data][0] = ItemAffinitiesPoison[unit.Armor];
+                    if (ItemAffinitiesPoison.ContainsKey(unit.Wrist))
+                        if (ElementAffinitiesItem[unit.Data][0] < ItemAffinitiesPoison[unit.Wrist])
+                            ElementAffinitiesItem[unit.Data][0] = ItemAffinitiesPoison[unit.Wrist];
+                    if (ItemAffinitiesPoison.ContainsKey(unit.Accessory))
+                        if (ElementAffinitiesItem[unit.Data][0] < ItemAffinitiesPoison[unit.Accessory])
+                            ElementAffinitiesItem[unit.Data][0] = ItemAffinitiesPoison[unit.Accessory];
+
+                    // Gravity element
+                    if (ItemAffinitiesGravity.ContainsKey(unit.Weapon))
+                        if (ElementAffinitiesItem[unit.Data][1] < ItemAffinitiesGravity[unit.Weapon])
+                            ElementAffinitiesItem[unit.Data][1] = ItemAffinitiesGravity[unit.Weapon];
+                    if (ItemAffinitiesGravity.ContainsKey(unit.Head))
+                        if (ElementAffinitiesItem[unit.Data][1] < ItemAffinitiesGravity[unit.Head])
+                            ElementAffinitiesItem[unit.Data][1] = ItemAffinitiesGravity[unit.Head];
+                    if (ItemAffinitiesGravity.ContainsKey(unit.Armor))
+                        if (ElementAffinitiesItem[unit.Data][1] < ItemAffinitiesGravity[unit.Armor])
+                            ElementAffinitiesItem[unit.Data][1] = ItemAffinitiesGravity[unit.Armor];
+                    if (ItemAffinitiesGravity.ContainsKey(unit.Wrist))
+                        if (ElementAffinitiesItem[unit.Data][1] < ItemAffinitiesGravity[unit.Wrist])
+                            ElementAffinitiesItem[unit.Data][1] = ItemAffinitiesGravity[unit.Wrist];
+                    if (ItemAffinitiesGravity.ContainsKey(unit.Accessory))
+                        if (ElementAffinitiesItem[unit.Data][1] < ItemAffinitiesGravity[unit.Accessory])
+                            ElementAffinitiesItem[unit.Data][1] = ItemAffinitiesGravity[unit.Accessory];
+
+                    if (unit.HasSupportAbilityByIndex((SupportAbility)1041)) // Alert+
+                    {
+                        btl_stat.AlterStatus(unit, TranceSeekStatusId.PerfectDodge, parameters: "+2");
+                    }
+                    if (unit.HasSupportAbilityByIndex((SupportAbility)52)) // Last Stand
+                    {
+                        SpecialSAEffect[unit.Data][1] = unit.HasSupportAbilityByIndex((SupportAbility)1052) ? 2 : 1;
+                    }
+                    if (unit.HasSupportAbilityByIndex((SupportAbility)1252)) // SA I'm all set
+                    {
+                        unit.AlterStatus(TranceSeekStatus.ArmorUp, unit);
+                        unit.AlterStatus(TranceSeekStatus.MentalUp, unit);
+                    }
+                    if (unit.Weapon == RegularItem.Defender)
+                    {
+                        unit.AlterStatus(TranceSeekStatus.ArmorUp, unit);
+                        unit.AlterStatus(TranceSeekStatus.MentalUp, unit);
+                    }
+                    if (unit.Armor == (RegularItem)1220) // Mechanical Armor
+                    {
+                        MonsterMechanic[unit.Data][1] = 10;
+                        btl_stat.AlterStatus(unit, TranceSeekStatusId.MechanicalArmor, parameters: MonsterMechanic[unit.Data][1]);
+                    }
+                    if (unit.Accessory == (RegularItem)1253) // Ishgard Scarf
+                    {
+                        btl_stat.AlterStatus(btl_scrp.FindBattleUnit(btl_util.GetRandomBtlID(0U, false)), TranceSeekStatusId.Dragon);
+                    }
+                    else if (unit.Accessory == (RegularItem)1254) // Strange Cube
+                    {
+                        unit.MaximumHp = (uint)UnityEngine.Random.Range(unit.MaximumHp - (unit.MaximumHp / 2), unit.MaximumHp + (unit.MaximumHp / 2));
+                        unit.CurrentHp = unit.MaximumHp;
+                        unit.MaximumMp = (uint)UnityEngine.Random.Range(unit.MaximumMp - (unit.MaximumMp / 2), unit.MaximumMp + (unit.MaximumMp / 2));
+                        unit.CurrentMp = unit.MaximumMp;
+                        unit.Dexterity = (byte)UnityEngine.Random.Range(unit.Dexterity - (unit.Dexterity / 2), unit.Dexterity + (unit.Dexterity / 2));
+                        unit.Strength = (byte)UnityEngine.Random.Range(unit.Strength - (unit.Strength / 2), unit.Strength + (unit.Strength / 2));
+                        unit.Magic = (byte)UnityEngine.Random.Range(unit.Magic - (unit.Magic / 2), unit.Magic + (unit.Magic / 2));
+                        unit.Will = (byte)UnityEngine.Random.Range(unit.Will - (unit.Will / 2), unit.Will + (unit.Will / 2));
+                        unit.PhysicalDefence = (byte)UnityEngine.Random.Range(unit.PhysicalDefence - (unit.PhysicalDefence / 2), unit.PhysicalDefence + (unit.PhysicalDefence / 2));
+                        unit.MagicDefence = (byte)UnityEngine.Random.Range(unit.MagicDefence - (unit.MagicDefence / 2), unit.MagicDefence + (unit.MagicDefence / 2));
+                        unit.PhysicalEvade = (byte)UnityEngine.Random.Range(unit.PhysicalEvade - (unit.PhysicalEvade / 2), unit.PhysicalEvade + (unit.PhysicalEvade / 2));
+                        unit.MagicEvade = (byte)UnityEngine.Random.Range(unit.MagicEvade - (unit.MagicEvade / 2), unit.MagicEvade + (unit.MagicEvade / 2));
+                        unit.WeakElement = (EffectElement)(1 << Comn.random16() % 8);
+                        unit.HalfElement = (EffectElement)(1 << Comn.random16() % 8);
+                        unit.GuardElement = (EffectElement)(1 << Comn.random16() % 8);
+                        unit.AbsorbElement = (EffectElement)(1 << Comn.random16() % 8);
 
                     List<BattleStatusId> statuschoosen = new List<BattleStatusId>{ BattleStatusId.Poison, BattleStatusId.Venom, BattleStatusId.Blind, BattleStatusId.Silence, BattleStatusId.Trouble,
                     BattleStatusId.Sleep, BattleStatusId.Freeze, BattleStatusId.Heat, BattleStatusId.Doom, BattleStatusId.Mini, BattleStatusId.Petrify, BattleStatusId.GradualPetrify,
@@ -147,55 +185,96 @@ namespace Memoria.Scripts.Battle
                     TranceSeekStatusId.MagicUp, TranceSeekStatusId.ArmorUp, TranceSeekStatusId.MentalUp, TranceSeekStatusId.PowerBreak, TranceSeekStatusId.Dragon, TranceSeekStatusId.Bulwark,
                     TranceSeekStatusId.PerfectDodge, TranceSeekStatusId.PerfectCrit };
 
-                    btl_stat.AlterStatus(unit, statuschoosen[Comn.random16() % statuschoosen.Count]);
-                }
-                else if (unit.Accessory == (RegularItem)1256) // Magic Lamp
-                {
-                    magiclampcooldown = (60 - unit.Will) * UnityEngine.Random.Range(1, 11) * 100;
-                    unit.AddDelayedModifier(ProcessMagicLampRecast, null);
-                }
-                else if (unit.Accessory == (RegularItem)1257) // Cursed Coin
-                {
-                    if (DarkBBG.Contains(battlebg.nf_BbgNumber))
-                    {
-                        CharacterPresetId presetId = unit.Player.PresetId;
-                        unit.ChangeToMonster("GZ_R002", 0, CharacterCommands.CommandSets[presetId].Regular[2], (BattleCommandId)1111, false, false, false, false, false);
-                        CharacterCommands.CommandSets[presetId].Regular[3] = BattleCommandId.None;
+                        btl_stat.AlterStatus(unit, statuschoosen[Comn.random16() % statuschoosen.Count]);
                     }
-                }
-                if (unit.IsUnderAnyStatus(BattleStatus.EasyKill))
-                {
-                    MonsterMechanic[unit.Data][4] = 100; // Reduce time for Sleep/Freeze/Stop
-                    MonsterMechanic[unit.Data][5] = 4; // Reduce gravity damage (start at 1 for Elite)
-                }
-
-                if (unit.PlayerIndex == (CharacterId)14)
-                {
-                    unit.SummonCount = 1; // Used for SA Take that!
-                    SpecialSAEffect[unit.Data][13] = unit.PhysicalDefence; // In top form!
-                }
-
-                if (unit.PlayerIndex == (CharacterId)15) // Reset CMD Komrade
-                {
-                    List <BattleAbilityId> ListAAKomrade = CharacterCommands.Commands[(BattleCommandId)1030].EnumerateAbilities().ToList();
-                    int TotalAAKomrade = 2 * ListAAKomrade.Count;
-                    int FirstAAKomradeId = (Int32)ListAAKomrade[0];
-                    if (!FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1030, out Dictionary<Int32, Int32> dict))
+                    else if (unit.Accessory == (RegularItem)1256) // Magic Lamp
                     {
-                        dict = new Dictionary<Int32, Int32>();
-                        for (Int32 i = 0; i < TotalAAKomrade; i++)
-                            dict[FirstAAKomradeId + i] = 1;
-
-                        FF9StateSystem.EventState.gScriptDictionary.Add(1030, dict);
+                        magiclampcooldown = (60 - unit.Will) * UnityEngine.Random.Range(1, 11) * 100;
+                        unit.AddDelayedModifier(ProcessMagicLampRecast, null);
                     }
+                    else if (unit.Accessory == (RegularItem)1257) // Cursed Coin
+                    {
+                        if (DarkBBG.Contains(battlebg.nf_BbgNumber))
+                        {
+                            CharacterPresetId presetId = unit.Player.PresetId;
+                            unit.ChangeToMonster("GZ_R002", 0, CharacterCommands.CommandSets[presetId].Regular[2], (BattleCommandId)1111, false, false, false, false, false);
+                            CharacterCommands.CommandSets[presetId].Regular[3] = BattleCommandId.None;
+                        }
+                    }
+                    if (unit.IsUnderAnyStatus(BattleStatus.EasyKill))
+                    {
+                        MonsterMechanic[unit.Data][4] = 100; // Reduce time for Sleep/Freeze/Stop
+                        MonsterMechanic[unit.Data][5] = 4; // Reduce gravity damage (start at 1 for Elite)
+                    }
+
+                    if (unit.PlayerIndex == (CharacterId)14)
+                    {
+                        unit.SummonCount = 1; // [TODO] Change to Memoria Dict : Used for SA Take that!
+                        SpecialSAEffect[unit.Data][13] = unit.PhysicalDefence; // In top form!
+                    }
+
+                    if (unit.PlayerIndex == (CharacterId)15) // Reset CMD Komrade
+                    {
+                        List<BattleAbilityId> ListAAKomrade = CharacterCommands.Commands[(BattleCommandId)1030].EnumerateAbilities().ToList();
+                        int TotalAAKomrade = 2 * ListAAKomrade.Count;
+                        int FirstAAKomradeId = (Int32)ListAAKomrade[0];
+                        if (!FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1030, out Dictionary<Int32, Int32> dict))
+                        {
+                            dict = new Dictionary<Int32, Int32>();
+                            for (Int32 i = 0; i < TotalAAKomrade; i++)
+                                dict[FirstAAKomradeId + i] = 1;
+
+                            FF9StateSystem.EventState.gScriptDictionary.Add(1030, dict);
+                        }
+                        else
+                        {
+                            for (Int32 i = 0; i < TotalAAKomrade; i++)
+                                dict[FirstAAKomradeId + i] = 1;
+                        }
+                    }
+
+                    int ID = 2000 + (int)unit.PlayerIndex;
+                    if (FF9StateSystem.EventState.gScriptDictionary.ContainsKey(ID)) // Reset infused weapon.
+                        FF9StateSystem.EventState.gScriptDictionary.Remove(ID);
+
+                    if (Configuration.TetraMaster.TripleTriad >= 16388 && Configuration.TetraMaster.TripleTriad != 16390)
+                    {
+                        unit.MagicDefence = 254;
+                        unit.PhysicalDefence = 254;
+                    }
+                    if (FF9StateSystem.EventState.ScenarioCounter >= 11100 && FF9StateSystem.EventState.gEventGlobal[1500] == 0)
+                    {
+                        unit.AlterStatus(BattleStatus.Death, unit);
+                        unit.CurrentHp = 0;
+                    }
+                    if (unit.HasSupportAbilityByIndex((SupportAbility)132)) // SA Anastrophe
+                    {
+                        int factor = unit.HasSupportAbilityByIndex((SupportAbility)1132) ? 1 : 2;
+                        uint UnitOldMaximumHP = unit.MaximumHp;
+                        uint UnitOldMaximumMP = unit.MaximumMp;
+                        unit.MaximumHp = (uint)(UnitOldMaximumMP / factor);
+                        unit.MaximumMp = (uint)(UnitOldMaximumHP / factor);
+                        unit.CurrentHp = unit.MaximumHp;
+                        unit.CurrentMp = unit.MaximumMp;
+                    }
+
+                    if (unit.HasSupportAbilityByIndex((SupportAbility)1212)) // SA Protector+
+                    {
+                        btl_stat.AlterStatus(unit, TranceSeekStatusId.PowerBreak, parameters: "+2");
+                        btl_stat.AlterStatus(unit, TranceSeekStatusId.ArmorUp, parameters: "+2");
+                    }
+                    else if (unit.HasSupportAbilityByIndex((SupportAbility)212)) // SA Protector
+                    {
+                        btl_stat.AlterStatus(unit, TranceSeekStatusId.PowerBreak, parameters: "+1");
+                        btl_stat.AlterStatus(unit, TranceSeekStatusId.ArmorUp, parameters: "+1");
+                    }
+
+                    if (unit.Row == 1)
+                        btl_stat.AlterStatus(unit, TranceSeekStatusId.Special, parameters: "CanCover1");
                     else
-                    {
-                        for (Int32 i = 0; i < TotalAAKomrade; i++)
-                            dict[FirstAAKomradeId + i] = 1;
-                    }
+                        btl_stat.AlterStatus(unit, TranceSeekStatusId.Special, parameters: "CanCover0");
                 }
-
-                if (!unit.IsPlayer)
+                else // Monsters init
                 {
                     BattleEnemy battleEnemy = BattleEnemy.Find(unit);
                     Boolean ChangeStats = true;
@@ -321,49 +400,6 @@ namespace Memoria.Scripts.Battle
                         TranceSeekSpecial.PolaritySPS[unit] = sps;
                     }
                 }
-                else
-                {
-                    int ID = 2000 + (int)unit.PlayerIndex;
-                    if (FF9StateSystem.EventState.gScriptDictionary.ContainsKey(ID)) // Reset infused weapon.
-                        FF9StateSystem.EventState.gScriptDictionary.Remove(ID);
-
-                    if (Configuration.TetraMaster.TripleTriad >= 16388 && Configuration.TetraMaster.TripleTriad != 16390)
-                    {
-                        unit.MagicDefence = 254;
-                        unit.PhysicalDefence = 254;
-                    }
-                    if (FF9StateSystem.EventState.ScenarioCounter >= 11100 && FF9StateSystem.EventState.gEventGlobal[1500] == 0 && false)
-                    {
-                        unit.AlterStatus(BattleStatus.Death, unit);
-                        unit.CurrentHp = 0;
-                    }
-                    if (unit.HasSupportAbilityByIndex((SupportAbility)132)) // SA Anastrophe
-                    {
-                        int factor = unit.HasSupportAbilityByIndex((SupportAbility)1132) ? 1 : 2;
-                        uint UnitOldMaximumHP = unit.MaximumHp;
-                        uint UnitOldMaximumMP = unit.MaximumMp;
-                        unit.MaximumHp = (uint)(UnitOldMaximumMP / factor);
-                        unit.MaximumMp = (uint)(UnitOldMaximumHP / factor);
-                        unit.CurrentHp = unit.MaximumHp;
-                        unit.CurrentMp = unit.MaximumMp;
-                    }
-
-                    if (unit.HasSupportAbilityByIndex((SupportAbility)1212)) // SA Protector+
-                    {
-                        btl_stat.AlterStatus(unit, TranceSeekStatusId.PowerBreak, parameters: "+2");
-                        btl_stat.AlterStatus(unit, TranceSeekStatusId.ArmorUp, parameters: "+2");
-                    }
-                    else if (unit.HasSupportAbilityByIndex((SupportAbility)212)) // SA Protector
-                    {
-                        btl_stat.AlterStatus(unit, TranceSeekStatusId.PowerBreak, parameters: "+1");
-                        btl_stat.AlterStatus(unit, TranceSeekStatusId.ArmorUp, parameters: "+1");
-                    }
-
-                    if (unit.Row == 1)
-                        btl_stat.AlterStatus(unit, TranceSeekStatusId.Special, parameters: "CanCover1");
-                    else
-                        btl_stat.AlterStatus(unit, TranceSeekStatusId.Special, parameters: "CanCover0");
-                }
             }
         }
 
@@ -477,5 +513,15 @@ namespace Memoria.Scripts.Battle
 
         private static readonly HashSet<Int32> DarkBBG = new HashSet<Int32>(new[] { 4, 5, 6, 8, 9, 12, 13, 14, 15, 16, 32, 36, 37, 38, 39, 40, 41, 42, 45, 46, 67, 68, 69, 70, 71, 72,
         80, 84, 85, 86, 87, 88, 89, 90, 100, 114, 116, 117, 118, 119, 121, 122, 128, 131, 152, 153, 155, 156, 158, 162, 163, 164, 165, 167, 168, 169, 174, 175 });
+
+        private static readonly Dictionary<RegularItem, Int32> ItemAffinitiesPoison = new Dictionary<RegularItem, Int32>
+        {
+            { (RegularItem)1257, 4 } // Cursed Coin
+        };
+
+        private static readonly Dictionary<RegularItem, Int32> ItemAffinitiesGravity = new Dictionary<RegularItem, Int32>()
+        {
+
+        };
     }
 }
