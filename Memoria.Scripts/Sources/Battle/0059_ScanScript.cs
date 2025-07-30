@@ -166,7 +166,7 @@ namespace Memoria.Scripts.Battle
             return true;
         }
 
-        public static Boolean ShowATBBar(BattleUnit mob)
+        public static Boolean ShowHPBar(BattleUnit mob)
         {
             if (mob.IsUnderAnyStatus(BattleStatusConst.BattleEndFull) || btl_para.IsNonDyingVanillaBoss(mob) && mob.CurrentHp <= 10000)
             {
