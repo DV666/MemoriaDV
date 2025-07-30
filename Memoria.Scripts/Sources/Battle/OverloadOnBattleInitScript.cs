@@ -6,7 +6,6 @@ using Memoria.Data;
 using Memoria.Database;
 using Memoria.DefaultScripts;
 using UnityEngine;
-using static Memoria.Assets.DataResources;
 using static Memoria.Scripts.Battle.TranceSeekAPI;
 
 namespace Memoria.Scripts.Battle
@@ -63,6 +62,8 @@ namespace Memoria.Scripts.Battle
                     }
                 }
             }
+
+            Boolean RefinedMonocleTrigger = false;
 
             foreach (BattleUnit unit in BattleState.EnumerateUnits())
             {
@@ -200,6 +201,19 @@ namespace Memoria.Scripts.Battle
                             unit.ChangeToMonster("GZ_R002", 0, CharacterCommands.CommandSets[presetId].Regular[2], (BattleCommandId)1111, false, false, false, false, false);
                             CharacterCommands.CommandSets[presetId].Regular[3] = BattleCommandId.None;
                         }
+                    }
+                    else if (unit.Accessory == (RegularItem)1261 && !RefinedMonocleTrigger) // Refined Monocle
+                    {
+                        RefinedMonocleTrigger = true;
+                        foreach (BattleUnit monsteratb in BattleState.EnumerateUnits())
+                            if (!monsteratb.IsPlayer)
+                            {
+                                ScanScript.TriggerOneTime[monsteratb.Data] = false;
+                                ScanScript.HPBarHidden[monsteratb.Data] = false;
+                                ScanScript.ATBGreenBarHUD[monsteratb.Data] = null;
+                                ScanScript.ATBRedBarHUD[monsteratb.Data] = null;
+                                monsteratb.AddDelayedModifier(ScanScript.ShowATBBar, null);
+                            }
                     }
                     if (unit.IsUnderAnyStatus(BattleStatus.EasyKill))
                     {
@@ -514,14 +528,19 @@ namespace Memoria.Scripts.Battle
         private static readonly HashSet<Int32> DarkBBG = new HashSet<Int32>(new[] { 4, 5, 6, 8, 9, 12, 13, 14, 15, 16, 32, 36, 37, 38, 39, 40, 41, 42, 45, 46, 67, 68, 69, 70, 71, 72,
         80, 84, 85, 86, 87, 88, 89, 90, 100, 114, 116, 117, 118, 119, 121, 122, 128, 131, 152, 153, 155, 156, 158, 162, 163, 164, 165, 167, 168, 169, 174, 175 });
 
-        private static readonly Dictionary<RegularItem, Int32> ItemAffinitiesPoison = new Dictionary<RegularItem, Int32>
+        private static readonly Dictionary<RegularItem, Int32> ItemAffinitiesPoison = new Dictionary<RegularItem, Int32> // 0 = None, 1 = Weak, 2 = Half, 4 = Immune, 8 = Absorb
         {
+            { RegularItem.MythrilArmlet, 2 },
+            { RegularItem.GoldHelm, 2 },
+            { (RegularItem)121, 8 }, // Umbrella Shoes
             { (RegularItem)1257, 4 } // Cursed Coin
         };
 
-        private static readonly Dictionary<RegularItem, Int32> ItemAffinitiesGravity = new Dictionary<RegularItem, Int32>()
+        private static readonly Dictionary<RegularItem, Int32> ItemAffinitiesGravity = new Dictionary<RegularItem, Int32>
         {
-
+            { RegularItem.PlatinaArmor, 2 },
+            { RegularItem.DarkGear, 4 },
+            { RegularItem.BlackBelt, 8 }
         };
     }
 }
