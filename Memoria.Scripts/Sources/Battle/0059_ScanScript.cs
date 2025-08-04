@@ -50,12 +50,12 @@ namespace Memoria.Scripts.Battle
                     else
                         HPBarValue[_v.Target.Data] = _v.Target.CurrentHp;
 
-                    HPBarHidden[_v.Target.Data] = false;
-                    TriggerOneTime[_v.Target.Data] = false;
-                    HPGreenBarHUD[_v.Target.Data] = null;
-                    HPRedBarHUD[_v.Target.Data] = null;
-                    ATBGreenBarHUD[_v.Target.Data] = null;
-                    ATBRedBarHUD[_v.Target.Data] = null;
+                    //HPBarHidden[_v.Target.Data] = false;
+                    //TriggerOneTime[_v.Target.Data] = false;
+                    //HPGreenBarHUD[_v.Target.Data] = null;
+                    //HPRedBarHUD[_v.Target.Data] = null;
+                    //ATBGreenBarHUD[_v.Target.Data] = null;
+                    //ATBRedBarHUD[_v.Target.Data] = null;
                     _v.Target.AddDelayedModifier(ShowScan, null);
                 }
                 else if (_v.Target.IsUnderStatus(BattleStatus.EasyKill) && !TranceSeekAPI.EliteMonster(_v.Target.Data)) // Boss

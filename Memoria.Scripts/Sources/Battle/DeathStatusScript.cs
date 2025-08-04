@@ -44,11 +44,15 @@ namespace Memoria.DefaultScripts
                 SpecialSAEffect[target][3] = 0;
                 target.Trance = 254;
             }          
-            if (target.PlayerIndex == CharacterId.Beatrix)
+            if (target.IsPlayer)
             {
-                if (!BeatrixPassive.TryGetValue(target.Data, out Int32[] beatrixpassive))
-                    BeatrixPassive[target.Data] = [0, 0, 0, 0];
-                BeatrixPassive[target.Data][2] = 0;
+                SpecialSAEffect[target.Data][14] = 0; // Reset SOS trigger
+                if (target.PlayerIndex == CharacterId.Beatrix)
+                {
+                    if (!BeatrixPassive.TryGetValue(target.Data, out Int32[] beatrixpassive))
+                        BeatrixPassive[target.Data] = [0, 0, 0, 0];
+                    BeatrixPassive[target.Data][2] = 0;
+                }
             }
             if (!target.HasSupportAbilityByIndex((SupportAbility)1232)) // SA Expiation+
                 btl_stat.RemoveStatus(target, TranceSeekStatusId.Redemption);

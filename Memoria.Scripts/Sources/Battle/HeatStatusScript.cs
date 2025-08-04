@@ -1,7 +1,5 @@
 ﻿using System;
-using FF9;
 using Memoria.Data;
-using Memoria.Prime;
 using Memoria.Scripts.Battle;
 using Object = System.Object;
 
@@ -29,9 +27,9 @@ namespace Memoria.DefaultScripts
         {
             if (Target.IsUnderAnyStatus(BattleStatus.Heat) && Target.IsUnderAnyStatus(BattleStatus.EasyKill) && Target.CurrentHp > 1) // Heat Damage
             {
-                UInt32 heat_damage = Target.MaximumHp / 64;
+                UInt32 heat_damage = Target.MaximumHp / 128;
                 if (TranceSeekAPI.MonsterMechanic[Target.Data][3] > 0)
-                    heat_damage = (Target.MaximumHp - 10000) / 64;
+                    heat_damage = (Target.MaximumHp - 10000) / 128;
                 if (heat_damage > 9999)
                     heat_damage = Math.Max(Target.CurrentHp, 9999);
 

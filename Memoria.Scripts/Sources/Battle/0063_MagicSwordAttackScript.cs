@@ -38,7 +38,6 @@ namespace Memoria.Scripts.Battle
                     _v.Context.DamageModifierCount -= 2;
                 if (_v.Target.HasCategory(EnemyCategory.Stone) && !_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill))
                     _v.Context.DamageModifierCount += 4;
-                TranceSeekAPI.ViviFocus(_v);
                 TranceSeekAPI.BonusElement(_v);
                 if (TranceSeekAPI.CanAttackMagic(_v))
                 {

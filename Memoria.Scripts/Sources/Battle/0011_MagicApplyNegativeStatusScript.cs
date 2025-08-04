@@ -47,7 +47,6 @@ namespace Memoria.Scripts.Battle
             else
             {
                 TranceSeekAPI.MagicAccuracy(_v);
-                TranceSeekAPI.ViviFocus(_v);
                 _v.Target.PenaltyShellHitRate();
                 _v.PenaltyCommandDividedHitRate();
                 if (_v.Caster.Data.dms_geo_id == 5 || _v.Caster.Data.dms_geo_id == 267) // Kuja (multiple target malus)

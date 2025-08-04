@@ -57,6 +57,13 @@ namespace Memoria.DefaultScripts
                 Target.CurrentHp = Target.MaximumHp;
                 Target.CurrentMp = Target.MaximumMp;
             }
+
+            if (target.HasSupportAbilityByIndex(TranceSeekSupportAbility.High_Tide_Boosted))
+            {
+                Target.CurrentHp = Target.MaximumHp;
+                Target.CurrentMp = Target.MaximumMp;
+            }
+
             if (target.PlayerIndex == CharacterId.Garnet)
                 target.AddDelayedModifier(ProcessPhantomRecast, ClearPhantomRecast);
 

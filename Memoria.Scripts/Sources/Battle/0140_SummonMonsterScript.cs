@@ -395,7 +395,6 @@ namespace Memoria.Scripts.Battle
                     case (BattleAbilityId)1373: // Malboro - Bad Breath
                     {
                         TranceSeekAPI.MagicAccuracy(_v);
-                        TranceSeekAPI.ViviFocus(_v);
                         _v.Target.PenaltyShellHitRate();
                         _v.PenaltyCommandDividedHitRate();
                         if (_v.Command.AbilityId == (BattleAbilityId)1175) // Ahriman - Blaster
@@ -569,7 +568,6 @@ namespace Memoria.Scripts.Battle
                             _v.Context.DamageModifierCount -= 2;
                         if (_v.Target.HasCategory(EnemyCategory.Stone) && !_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill))
                             _v.Context.DamageModifierCount += 4;
-                        TranceSeekAPI.ViviFocus(_v);
                         TranceSeekAPI.BonusElement(_v);
                         if (TranceSeekAPI.CanAttackMagic(_v))
                         {

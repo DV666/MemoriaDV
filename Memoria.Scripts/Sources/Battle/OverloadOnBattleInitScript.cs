@@ -75,7 +75,7 @@ namespace Memoria.Scripts.Battle
                 AbsorbElement[unit.Data] = -1;
                 StackBreakOrUpStatus[unit.Data] = [0, 0, 0, 0];
                 MonsterMechanic[unit.Data] = [ 0, 0, 0, 0, 100, 1, 0 ];
-                SpecialSAEffect[unit.Data] = [ 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ];
+                SpecialSAEffect[unit.Data] = [ 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ];
                 SpecialItemEffect[unit.Data] = [3, 3];
                 ElementAffinitiesItem[unit.Data] = [0, 0];
                 TriggerSPSResistStatus[unit.Data] = false;
