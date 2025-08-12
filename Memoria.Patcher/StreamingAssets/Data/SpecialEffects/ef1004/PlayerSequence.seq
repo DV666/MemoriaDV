@@ -1,0 +1,33 @@
+// Player sequence of SFX Echauffement
+
+WaitAnimation: Char=Caster
+StartThread: Condition=CasterRow == 0 && AreCasterAndSelectedTargetsEnemies ; Sync=True
+	MoveToPosition: Char=Caster ; RelativePosition=(0, 0, 400) ; Anim=MP_STEP_FORWARD
+	WaitMove: Char=Caster
+EndThread
+StartThread: Condition=IsSingleSelectedTarget
+	Turn: Char=Caster ; BaseAngle=AllTargets ; Time=5
+EndThread
+Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
+StartThread: Condition=IsSingleTarget ; Sync=True
+	LoadSFX: SFX=Absorb_Prison_Cage ; Reflect=True ; Target=Caster
+	PlayAnimation: Char=Caster ; Anim=MP_IDLE_TO_CHANT
+	WaitAnimation: Char=Caster
+	PlayAnimation: Char=Caster ; Anim=MP_CHANT ; Loop=True
+	WaitSFXLoaded: SFX=Absorb_Prison_Cage ; Reflect=True
+	WaitAnimation: Char=Caster
+	PlayAnimation: Char=Caster ; Anim=MP_MAGIC
+	PlaySFX: SFX=Absorb_Prison_Cage ; Reflect=True ; HideMeshes=0, 1, 2, 3, 5, 6, 7, 8, 9, 10 ; JumpToFrame=20 ; SkipSequence
+	PlaySound: Sound=3974
+	WaitAnimation: Char=Caster
+	Wait: Time=15
+	EffectPoint: Char=Caster ; Type=Both
+	Wait: Time=10
+EndThread
+StartThread: Condition=CasterRow == 0 && AreCasterAndSelectedTargetsEnemies ; Sync=True
+	MoveToPosition: Char=Caster ; RelativePosition=(0, 0, -400) ; Anim=MP_STEP_BACK
+	WaitMove: Char=Caster
+EndThread
+PlayAnimation: Char=Caster ; Anim=Idle
+Turn: Char=Caster ; BaseAngle=Default ; Time=5
+WaitTurn: Char=Caster

@@ -1,10 +1,25 @@
 // Shared sequence of SFX Elixir
 
-PlaySound: Sound=2929
-PlaySound: Sound=2930
-PlaySound: Sound=2931
-Wait: Time=20
-EffectPoint: Char=AllTargets ; Type=Effect
-Wait: Time=22
-EffectPoint: Char=Everyone ; Type=Figure
-Wait: Time=1
+StartThread: Condition=ItemUseId == 228 ; Sync=True
+	StartThread: TargetLoop=True ; Chain=True ; Sync=True	
+	PlaySound: Sound=2929
+	PlaySound: Sound=2930
+	PlaySound: Sound=2931
+	Wait: Time=20
+    EndThread
+	Wait: Time=5
+	EffectPoint: Char=AllTargets ; Type=Effect
+	Wait: Time=5
+	EffectPoint: Char=Everyone ; Type=Figure
+	Wait: Time=5
+EndThread
+StartThread: Condition=ItemUseId != 228 ; Sync=True
+	PlaySound: Sound=2929
+	PlaySound: Sound=2930
+	PlaySound: Sound=2931
+	Wait: Time=20
+	EffectPoint: Char=AllTargets ; Type=Effect
+	Wait: Time=22
+	EffectPoint: Char=Everyone ; Type=Figure
+	Wait: Time=1
+EndThread

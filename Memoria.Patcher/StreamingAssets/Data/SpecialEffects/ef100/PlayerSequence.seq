@@ -1,4 +1,4 @@
-// Player sequence of SFX Player_Attack_Zidane_Dagger
+﻿// Player sequence of SFX Player_Attack_Zidane_Dagger
 
 WaitAnimation: Char=Caster
 LoadSFX: SFX=Player_Attack_Zidane_Dagger
@@ -26,7 +26,11 @@ StartThread
 		PlaySound: Sound=WeaponHit
 	EndThread
 	Wait: Time=4
-	EffectPoint: Char=Everyone ; Type=Figure
+	EffectPoint: Char=AllTargets ; Type=Figure
+	StartThread: Sync=False ; Target=MatchingCondition(IsTargeted && !CheckAnyStatus(CurrentStatus, BattleStatus_Death))
+		Wait: Time=2
+		EffectPoint: Char=AllTargets ; Type=Both
+	EndThread
 	WaitSFXDone: SFX=Player_Attack_Zidane_Dagger
 EndThread
 PlayAnimation: Char=Caster ; Anim=MP_ATTACK

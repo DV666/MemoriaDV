@@ -1,0 +1,42 @@
+// Player sequence of SFX Player_Attack_Baku_1
+
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_105_010
+Turn: Char=Caster ; BaseAngle=AllTargets ; Angle=0 ; Time=1
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_105_011
+MoveToTarget: Char=Caster ; Target=AllTargets ; Time=12 ; Distance=1000
+WaitMove: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_105_012
+StartThread
+	SetupReflect
+	LoadSFX: SFX=Player_Attack_Blank_Pluto ; FirstBone=0 ; Reflect=True
+	Wait: Time=8 ; Reflect=True
+	WaitSFXLoaded: Reflect=True
+	PlaySFX: SFX=Player_Attack_Blank_Pluto
+	WaitSFXDone: Reflect=True
+EndThread
+StartThread
+	Wait: Time=9
+	EffectPoint: Char=AllTargets ; Type=Effect
+	PlaySound: Sound=WeaponAttack
+	StartThread: Condition=!IsAttackMiss
+		PlaySound: Sound=WeaponHit
+	EndThread
+	Wait: Time=4
+	EffectPoint: Char=Everyone ; Type=Figure
+EndThread
+Wait: Time=10
+Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=False
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_105_013
+Turn: Char=Caster ; BaseAngle=Default ; Angle=0 ; Time=4
+MoveToPosition: Char=Caster ; Time=4 ; AbsolutePosition=Default ; MoveHeight=true
+WaitMove: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_105_014
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=Idle
+WaitMonsterSFXDone: Reflect=True
+WaitTurn: Char=Caster
+ActivateReflect
+WaitReflect

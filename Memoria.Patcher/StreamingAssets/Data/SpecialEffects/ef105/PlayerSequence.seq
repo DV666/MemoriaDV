@@ -1,44 +1,127 @@
 // Player sequence of SFX Player_Attack_Garnet_SH_Rod
 
 WaitAnimation: Char=Caster
-LoadSFX: SFX=Player_Attack_Garnet_SH_Rod
-PlayAnimation: Char=Caster ; Anim=MP_SET
-WaitAnimation: Char=Caster
-StartThread: Condition=AreCasterAndTargetsEnemies ; Sync=True
-	MoveToTarget: Char=Caster ; Target=AllTargets ; Distance=630 ; UseCollisionRadius=True ; Anim=MP_RUN
-	Turn: Char=Caster ; BaseAngle=AllTargets ; Time=4
-	WaitMove: Char=Caster
-	MoveToTarget: Char=Caster ; Target=AllTargets ; Distance=50 ; UseCollisionRadius=True ; Anim=MP_RUN_TO_ATTACK
-EndThread
-StartThread: Condition=!AreCasterAndTargetsEnemies ; Sync=True
-	MoveToTarget: Char=Caster ; Target=AllTargets ; Offset=(0.0, 0.0, 1600) ; Time=0
-	Turn: Char=Caster ; BaseAngle=AllTargets ; Time=0
-	MoveToTarget: Char=Caster ; Target=AllTargets ; Distance=450 ; UseCollisionRadius=True ; Anim=MP_RUN_TO_ATTACK
-EndThread
-WaitMove: Char=Caster
-StartThread
-	Wait: Time=7
-	WaitSFXLoaded: SFX=Player_Attack_Garnet_SH_Rod
-	PlaySFX: SFX=Player_Attack_Garnet_SH_Rod
-	EffectPoint: Char=AllTargets ; Type=Effect
-	PlaySound: Sound=WeaponAttack
-	StartThread: Condition=!IsAttackMiss
-		PlaySound: Sound=WeaponHit
+StartThread: Condition=(CasterWeaponId == 57 || CasterWeaponId == 58) && TargetCharacterIndex == CharacterId_Garnet ; Sync
+	PlayAnimation: Char=Caster ; Anim=MP_IDLE_TO_CHANT
+	WaitAnimation: Char=Caster
+	Message: Priority=4 ; Title=True ; Reflect=False ; TextUS=[STRT=28,1]Pray ; TextUK=[STRT=28,1]Pray ; TextJP=[STRT=28,1]Pray ; TextES=[STRT=28,1]Pray ; TextFR=[STRT=36,1]Prière ; TextGR=[STRT=28,1]Pray ; TextIT=[STRT=28,1]Pray
+	PlayAnimation: Char=Caster ; Anim=MP_CHANT ; Loop=True
+	WaitAnimation: Char=Caster
+	PlayAnimation: Char=Caster ; Anim=MP_MAGIC
+	WaitAnimation: Char=Caster
+	StartThread: Target=AllPlayers ; Sync
+		StartThread: TargetLoop=True ; Chain=True ; Sync=True
+			LoadSFX: SFX=Cure__Single ; Reflect=True ; UseCamera=False
+			WaitSFXLoaded: SFX=Cure__Single ; Reflect=True
+			PlaySFX: SFX=Cure__Single ; Reflect=True ; MeshColors=(0.0, 0.0, 0.5); SkipSequence
+			PlaySound: Sound=16
+			PlaySound: Sound=6
+			PlaySound: Sound=78
+			StartThread: Condition=TargetCharacterIndex == CharacterId_Garnet ; Sync=False
+				Wait: Time=5
+				EffectPoint: Char=AllTargets ; Type=Effect
+				Wait: Time=22
+				EffectPoint: Char=Everyone ; Type=Figure
+			ElseThread: Sync=False
+				Wait: Time=22
+			EndThread
+		EndThread
 	EndThread
-	Wait: Time=4
-	EffectPoint: Char=Everyone ; Type=Figure
-	WaitSFXDone: SFX=Player_Attack_Garnet_SH_Rod
-EndThread
-PlayAnimation: Char=Caster ; Anim=MP_ATTACK
-WaitAnimation: Char=Caster
-StartThread: Condition=AreCasterAndTargetsEnemies ; Sync=True
-	MoveToPosition: Char=Caster ; AbsolutePosition=Default ; Anim=MP_BACK
-	Turn: Char=Caster ; BaseAngle=Default ; Time=4
-	WaitMove: Caster
-EndThread
-StartThread: Condition=!AreCasterAndTargetsEnemies ; Sync=True
-	MoveToPosition: Char=Caster ; AbsolutePosition=Default ; Time=0
-	Turn: Char=Caster ; BaseAngle=Default ; Time=0
+	WaitSFXDone: SFX=Cure__Single
+ElseThread: Condition=(CasterWeaponId == 60 || CasterWeaponId == 61) && TargetCharacterIndex == CharacterId_Garnet ; Sync
+	PlayAnimation: Char=Caster ; Anim=MP_IDLE_TO_CHANT
+	WaitAnimation: Char=Caster
+	Message: Priority=4 ; Title=True ; Reflect=False ; TextUS=[STRT=28,1]Prayara ; TextUK=[STRT=28,1]Prayara ; TextJP=[STRT=28,1]Prayara ; TextES=[STRT=28,1]Prayara ; TextFR=[STRT=36,1]Prière + ; TextGR=[STRT=28,1]Prayara ; TextIT=[STRT=28,1]Prayara
+	PlayAnimation: Char=Caster ; Anim=MP_CHANT ; Loop=True
+	WaitAnimation: Char=Caster
+	PlayAnimation: Char=Caster ; Anim=MP_MAGIC
+	WaitAnimation: Char=Caster
+	StartThread: Target=AllPlayers ; Sync
+		StartThread: TargetLoop=True ; Chain=True ; Sync=True
+			LoadSFX: SFX=Cura__Single ; Reflect=True ; UseCamera=False
+			WaitSFXLoaded: SFX=Cura__Single ; Reflect=True
+			PlaySFX: SFX=Cura__Single ; Reflect=True ; MeshColors=(0.0, 0.0, 0.5) ; SkipSequence
+			PlaySound: Sound=448
+			PlaySound: Sound=442
+			PlaySound: Sound=434
+			StartThread: Condition=TargetCharacterIndex == CharacterId_Garnet ; Sync=False
+				Wait: Time=25
+				EffectPoint: Char=AllTargets ; Type=Effect
+				Wait: Time=32
+				EffectPoint: Char=Everyone ; Type=Figure
+			ElseThread: Sync=False
+				Wait: Time=32
+			EndThread
+		EndThread
+	EndThread
+	WaitSFXDone: SFX=Cura__Single
+ElseThread: Condition=(CasterWeaponId == 62 || CasterWeaponId == 63) && TargetCharacterIndex == CharacterId_Garnet ; Sync
+	PlayAnimation: Char=Caster ; Anim=MP_IDLE_TO_CHANT
+	WaitAnimation: Char=Caster
+	Message: Priority=4 ; Title=True ; Reflect=False ; TextUS=[STRT=28,1]Prayaga ; TextUK=[STRT=28,1]Prayaga ; TextJP=[STRT=28,1]Prayaga ; TextES=[STRT=28,1]Prayaga ; TextFR=[STRT=36,1]Prière X ; TextGR=[STRT=28,1]Prayaga ; TextIT=[STRT=28,1]Prayaga
+	PlayAnimation: Char=Caster ; Anim=MP_CHANT ; Loop=True
+	WaitAnimation: Char=Caster
+	PlayAnimation: Char=Caster ; Anim=MP_MAGIC
+	WaitAnimation: Char=Caster
+	StartThread: Target=AllPlayers ; Sync		
+		StartThread: TargetLoop=True ; Chain=True ; Sync=True
+			LoadSFX: SFX=Curaga__Single ; Reflect=True ; UseCamera=False ; Args=10
+			WaitSFXLoaded: SFX=Curaga__Single ; Reflect=True
+			PlaySFX: SFX=Curaga__Single ; Reflect=True ; MeshColors=(0.0, 0.0, 0.5) ; SkipSequence
+			PlaySound: Sound=473
+			PlaySound: Sound=468
+			PlaySound: Sound=461
+			StartThread: Condition=TargetCharacterIndex == CharacterId_Garnet ; Sync=False
+				Wait: Time=40
+				EffectPoint: Char=AllTargets ; Type=Effect
+				Wait: Time=17
+				EffectPoint: Char=Everyone ; Type=Figure
+			ElseThread: Sync=False
+				Wait: Time=17
+			EndThread
+		EndThread		
+	EndThread
+	WaitSFXDone: SFX=Curaga__Single
+ElseThread: Sync
+	LoadSFX: SFX=Player_Attack_Garnet_SH_Rod
+	PlayAnimation: Char=Caster ; Anim=MP_SET
+	WaitAnimation: Char=Caster
+	StartThread: Condition=AreCasterAndTargetsEnemies ; Sync=True
+		MoveToTarget: Char=Caster ; Target=AllTargets ; Distance=630 ; UseCollisionRadius=True ; Anim=MP_RUN
+		Turn: Char=Caster ; BaseAngle=AllTargets ; Time=4
+		WaitMove: Char=Caster
+		MoveToTarget: Char=Caster ; Target=AllTargets ; Distance=50 ; UseCollisionRadius=True ; Anim=MP_RUN_TO_ATTACK
+	EndThread
+	StartThread: Condition=!AreCasterAndTargetsEnemies ; Sync=True
+		MoveToTarget: Char=Caster ; Target=AllTargets ; Offset=(0.0, 0.0, 1600) ; Time=0
+		Turn: Char=Caster ; BaseAngle=AllTargets ; Time=0
+		MoveToTarget: Char=Caster ; Target=AllTargets ; Distance=450 ; UseCollisionRadius=True ; Anim=MP_RUN_TO_ATTACK
+	EndThread
+	WaitMove: Char=Caster
+	StartThread
+		Wait: Time=7
+		WaitSFXLoaded: SFX=Player_Attack_Garnet_SH_Rod
+		PlaySFX: SFX=Player_Attack_Garnet_SH_Rod
+		EffectPoint: Char=AllTargets ; Type=Effect
+		PlaySound: Sound=WeaponAttack
+		StartThread: Condition=!IsAttackMiss
+			PlaySound: Sound=WeaponHit
+		EndThread
+		Wait: Time=4
+		EffectPoint: Char=Everyone ; Type=Figure
+		WaitSFXDone: SFX=Player_Attack_Garnet_SH_Rod
+	EndThread
+	PlayAnimation: Char=Caster ; Anim=MP_ATTACK
+	WaitAnimation: Char=Caster
+	StartThread: Condition=AreCasterAndTargetsEnemies ; Sync=True
+		MoveToPosition: Char=Caster ; AbsolutePosition=Default ; Anim=MP_BACK
+		Turn: Char=Caster ; BaseAngle=Default ; Time=4
+		WaitMove: Caster
+	EndThread
+	StartThread: Condition=!AreCasterAndTargetsEnemies ; Sync=True
+		MoveToPosition: Char=Caster ; AbsolutePosition=Default ; Time=0
+		Turn: Char=Caster ; BaseAngle=Default ; Time=0
+	EndThread
 EndThread
 PlayAnimation: Char=Caster ; Anim=Idle
 WaitTurn: Char=Caster

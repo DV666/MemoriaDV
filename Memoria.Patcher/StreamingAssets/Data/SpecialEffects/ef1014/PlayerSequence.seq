@@ -1,0 +1,59 @@
+// Player sequence of SFX TriChoc
+
+WaitAnimation: Char=Caster
+StartThread: Condition=AreCasterAndSelectedTargetsEnemies ; Sync=True
+	MoveToPosition: Char=Caster ; RelativePosition=(0, 0, 400) ; Anim=MP_STEP_FORWARD
+	WaitMove: Char=Caster
+EndThread
+StartThread: Condition=IsSingleSelectedTarget
+	Turn: Char=Caster ; BaseAngle=AllTargets ; Time=5
+EndThread
+Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
+LoadSFX: SFX=Shock_1 ; Reflect=True ; UseCamera=False
+WaitSFXLoaded: SFX=Shock_1 ; Reflect=True
+PlayAnimation: Char=Caster ; Anim=MP_IDLE_TO_CHANT
+WaitAnimation: Char=Caster
+PlaySFX: SFX=Shock_1 ; Reflect=True ; SkipSequence ; HideMeshes=3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
+PlaySound: Sound=547
+PlaySound: Sound=539
+PlaySound: Sound=598
+PlayAnimation: Char=Caster ; Anim=MP_CHANT ; Loop=True
+Wait: Time=24
+StartThread: Target=MatchingCondition(IsTargeted && !CheckAnyStatus(CurrentStatus, BattleStatus_Death)) ; Sync=True
+    StartThread: Target=RandomTarget ; Sync=True
+		LoadSFX: SFX=Shock_1 ; Reflect=True ; UseCamera=False
+		WaitSFXLoaded: SFX=Shock_1 ; Reflect=True
+		PlaySFX: SFX=Shock_1 ; Reflect=True ; JumpToFrame=27 ; HideMeshes=0, 1, 2
+		Wait: Time=1
+		PlayAnimation: Char=Caster ; Anim=MP_MAGIC
+		WaitAnimation: Char=Caster
+	EndThread
+EndThread
+StartThread: Target=MatchingCondition(IsTargeted && !CheckAnyStatus(CurrentStatus, BattleStatus_Death)) ; Sync=True
+    StartThread: Target=RandomTarget ; Sync=True
+		LoadSFX: SFX=Shock_1 ; Reflect=True ; UseCamera=False
+		WaitSFXLoaded: SFX=Shock_1 ; Reflect=True
+		PlaySFX: SFX=Shock_1 ; Reflect=True ; JumpToFrame=27 ; HideMeshes=0, 1, 2
+		Wait: Time=1
+		PlayAnimation: Char=Caster ; Anim=MP_MAGIC
+		WaitAnimation: Char=Caster
+	EndThread
+EndThread
+StartThread: Target=MatchingCondition(IsTargeted && !CheckAnyStatus(CurrentStatus, BattleStatus_Death)) ; Sync=True
+    StartThread: Target=RandomTarget ; Sync=True
+		LoadSFX: SFX=Shock_1 ; Reflect=True ; UseCamera=False
+		WaitSFXLoaded: SFX=Shock_1 ; Reflect=True
+		PlaySFX: SFX=Shock_1 ; Reflect=True ; JumpToFrame=27 ; HideMeshes=0, 1, 2
+		Wait: Time=1
+		PlayAnimation: Char=Caster ; Anim=MP_MAGIC
+		WaitAnimation: Char=Caster
+	EndThread
+EndThread
+WaitSFXDone: SFX=Shock_1 ; Reflect=True
+StartThread: Condition=AreCasterAndSelectedTargetsEnemies ; Sync=True
+	MoveToPosition: Char=Caster ; RelativePosition=(0, 0, -400) ; Anim=MP_STEP_BACK
+	WaitMove: Char=Caster
+EndThread
+PlayAnimation: Char=Caster ; Anim=Idle
+Turn: Char=Caster ; BaseAngle=Default ; Time=5
+WaitTurn: Char=Caster

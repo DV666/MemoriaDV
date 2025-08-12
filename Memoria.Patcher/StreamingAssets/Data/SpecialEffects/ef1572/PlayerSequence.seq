@@ -1,0 +1,80 @@
+// Player sequence of SFX Aera Sword
+
+StartThread: Condition=IsAbilityMultiTarget
+	WaitAnimation: Char=Caster
+	Turn: Char=Caster ; BaseAngle=AllTargets ; Time=5
+	Message: Text=[MagicSword] ; Priority=1 ; Title=True ; Reflect=True
+	SetupReflect: Delay=SFXLoaded
+	LoadSFX: SFX=Aera_1 ; MagicCaster=Dagger ; Reflect=True ; UseCamera=False
+	Turn: Char=Dagger ; BaseAngle=Caster ; Time=5
+	PlayAnimation: Char=Dagger ; Anim=MP_IDLE_TO_CHANT
+	WaitAnimation: Char=Dagger
+	PlayAnimation: Char=Dagger ; Anim=MP_CHANT ; Loop=True
+	Channel: Char=Dagger
+	WaitSFXLoaded: SFX=Aera_1 ; Reflect=True
+	WaitAnimation: Char=Dagger
+	StopChannel: Char=Dagger
+	PlayAnimation: Char=Dagger ; Anim=MP_MAGIC
+	WaitAnimation: Char=Dagger
+	Turn: Char=Dagger ; BaseAngle=Default ; Time=4
+	PlayAnimation: Char=Caster ; Anim=MP_SET
+	WaitAnimation: Char=Caster
+	MoveToTarget: Char=Caster ; Target=AllTargets ; Distance=600 ; UseCollisionRadius=True ; Anim=MP_RUN
+	Turn: Char=Caster ; BaseAngle=AllTargets ; Time=10
+	WaitMove: Char=Caster
+	MoveToTarget: Char=Caster ; Target=AllTargets ; Distance=0 ; UseCollisionRadius=True ; Anim=MP_RUN_TO_ATTACK
+	WaitMove: Char=Caster
+	PlayAnimation: Char=Caster ; Anim=MP_ATTACK
+	PlayAnimation: Char=Caster ; Speed=0
+	StartThread: TargetLoop=True ; Chain=True ; Sync=True
+		Wait: Time=2
+		LoadSFX: SFX=Aera_1 ; Reflect=True ; UseCamera=False
+		WaitSFXLoaded: SFX=Aera_1 ; Reflect=True
+		PlaySFX: SFX=Aera_1 ; Reflect=True
+	EndThread
+	Wait: Time=25
+	WaitSFXDone: SFX=Aera_1 ; Reflect=True
+	MoveToPosition: Char=Caster ; AbsolutePosition=Default ; Anim=MP_BACK
+	Turn: Char=Caster ; BaseAngle=Default ; Time=4
+	WaitMove: Caster
+	PlayAnimation: Char=Caster ; Anim=Idle
+	WaitTurn: Char=Caster
+	ActivateReflect
+	WaitReflect
+ElseThread
+	WaitAnimation: Char=Caster
+	Turn: Char=Caster ; BaseAngle=AllTargets ; Time=5
+	Message: Text=[MagicSword] ; Priority=1 ; Title=True ; Reflect=True
+	SetupReflect: Delay=SFXLoaded
+	LoadSFX: SFX=Aera_1 ; MagicCaster=Dagger ; Reflect=True
+	Turn: Char=Dagger ; BaseAngle=Caster ; Time=5
+	PlayAnimation: Char=Dagger ; Anim=MP_IDLE_TO_CHANT
+	WaitAnimation: Char=Dagger
+	PlayAnimation: Char=Dagger ; Anim=MP_CHANT ; Loop=True
+	Channel: Char=Dagger
+	WaitSFXLoaded: SFX=Aera_1 ; Reflect=True
+	WaitAnimation: Char=Dagger
+	StopChannel: Char=Dagger
+	PlayAnimation: Char=Dagger ; Anim=MP_MAGIC
+	WaitAnimation: Char=Dagger
+	Turn: Char=Dagger ; BaseAngle=Default ; Time=4
+	PlayAnimation: Char=Caster ; Anim=MP_SET
+	WaitAnimation: Char=Caster
+	MoveToTarget: Char=Caster ; Target=AllTargets ; Distance=600 ; UseCollisionRadius=True ; Anim=MP_RUN
+	Turn: Char=Caster ; BaseAngle=AllTargets ; Time=10
+	WaitMove: Char=Caster
+	MoveToTarget: Char=Caster ; Target=AllTargets ; Distance=0 ; UseCollisionRadius=True ; Anim=MP_RUN_TO_ATTACK
+	WaitMove: Char=Caster
+	PlayAnimation: Char=Caster ; Anim=MP_ATTACK
+	PlaySFX: SFX=Aera_1 ; Reflect=True
+	Wait: Time=5
+	PlayAnimation: Char=Caster ; Speed=0
+	WaitSFXDone: SFX=Aera_1 ; Reflect=True
+	MoveToPosition: Char=Caster ; AbsolutePosition=Default ; Anim=MP_BACK
+	Turn: Char=Caster ; BaseAngle=Default ; Time=4
+	WaitMove: Caster
+	PlayAnimation: Char=Caster ; Anim=Idle
+	WaitTurn: Char=Caster
+	ActivateReflect
+	WaitReflect
+EndThread

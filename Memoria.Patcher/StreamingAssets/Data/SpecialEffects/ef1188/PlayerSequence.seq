@@ -1,0 +1,55 @@
+// Player sequence of SFX Summon_Carve_Spider_Antenna
+
+WaitAnimation: Char=Caster
+StartThread: Condition=IsSingleSelectedTarget
+	Turn: Char=Caster ; BaseAngle=AllTargets ; Time=5
+EndThread
+SetupReflect: Delay=SFXLoaded
+StartThread: Target=Caster ; Sync=True
+	LoadSFX: SFX=Green_Smoke ; UseCamera=False
+	WaitSFXLoaded: SFX=Green_Smoke
+	PlaySFX: SFX=Green_Smoke
+	EffectPoint: Char=Caster ; Type=Both
+	ChangeSize: Char=Caster ; Size=2 ; ScaleShadow=True
+	WaitSFXDone: SFX=Green_Smoke
+EndThread
+LoadSFX: SFX=SFX_Attack_Butterfly_Sword ; FirstBone=0 ; Reflect=True
+WaitSFXLoaded: Reflect=True
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_021_010
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_021_011
+Message: Priority=1 ; Title=True ; Reflect=True ; TextFR=[STRT=55,1]Tentacule ; Text=[STRT=44,1]Antenna
+Turn: Char=Caster ; BaseAngle=AllTargets ; Angle=0 ; Time=6
+MoveToTarget: Char=Caster ; Target=AllTargets ; Time=6 ; Distance=1500
+WaitMove: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_021_012
+StartThread
+	Wait: Time=12 ; Reflect=True
+	PlaySFX: SkipSequence=False ; Reflect=True
+EndThread
+StartThread
+	Wait: Time=14
+	PlaySound: Sound=678 ; Volume=1 ; Once=False
+EndThread
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_021_013
+Turn: Char=Caster ; BaseAngle=Default ; Angle=0 ; Time=10
+MoveToPosition: Char=Caster ; Time=10 ; AbsolutePosition=Default ; MoveHeight=true
+WaitMove: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_021_014
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=Idle
+WaitSFXDone: Reflect=True
+ActivateReflect
+WaitReflect
+StartThread: Target=Caster ; Sync=True
+	LoadSFX: SFX=Green_Smoke ; UseCamera=False
+	WaitSFXLoaded: SFX=Green_Smoke
+	PlaySFX: SFX=Green_Smoke
+	EffectPoint: Char=Caster ; Type=Both
+	ChangeSize: Char=Caster ; Size=1 ; ScaleShadow=True
+	WaitSFXDone: SFX=Green_Smoke
+EndThread
+PlayAnimation: Char=Caster ; Anim=Idle
+Turn: Char=Caster ; BaseAngle=Default ; Time=5
+WaitTurn: Char=Caster

@@ -20,12 +20,28 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            if (_v.Target.CheckUnsafetyOrGuard())
+            if (_v.Target.IsPlayer && _v.Command.AbilityId == (BattleAbilityId)1533)
             {
-                _v.MagicAccuracy();
-                _v.Context.HitRate += (Int16)(ff9item.FF9Item_GetCount(RegularItem.Ore) >> 1);
-                if (_v.TryMagicHit())
-                    _v.TryAlterCommandStatuses();
+                _v.Command.AbilityCategory -= 16; // Remove Magical effect to prevent Vanish to dissapear.
+                btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.PowerUp, parameters: "+2");
+                if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)208) && _v.Target.IsPlayer)
+                {
+                    if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1208))
+                    {
+                        _v.CalcHpMagicRecovery();
+                        _v.Target.HpDamage /= 3;
+                    }
+                }
+            }
+            else
+            {
+                if (TranceSeekAPI.CheckUnsafetyOrGuard(_v))
+                {
+                    TranceSeekAPI.MagicAccuracy(_v);
+                    _v.Context.HitRate += (Int16)(ff9item.FF9Item_GetCount(RegularItem.Ore) >> 1);
+                    if (TranceSeekAPI.TryMagicHit(_v))
+                        TranceSeekAPI.TryAlterCommandStatuses(_v);
+                }
             }
 
             // The effect of OdinSword is now coded in AbilityFeatures.txt

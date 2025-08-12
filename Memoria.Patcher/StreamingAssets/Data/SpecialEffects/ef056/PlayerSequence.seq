@@ -1,67 +1,106 @@
 // Player sequence of SFX Comet
 
-WaitAnimation: Char=Caster
-StartThread: Condition=CasterRow == 0 && AreCasterAndSelectedTargetsEnemies ; Sync=True
-	MoveToPosition: Char=Caster ; RelativePosition=(0, 0, 400) ; Anim=MP_STEP_FORWARD
-	WaitMove: Char=Caster
-EndThread
-StartThread: Condition=IsSingleSelectedTarget
+StartThread: Condition=AbilityId == 167
+	WaitAnimation: Char=Caster
 	Turn: Char=Caster ; BaseAngle=AllTargets ; Time=5
-EndThread
-Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
-SetupReflect: Delay=SFXLoaded
-SetBackgroundIntensity: Intensity=0.5 ; Time=20
-StartThread: Condition=IsSingleTarget ; Sync=True
-	LoadSFX: SFX=Comet ; Reflect=True
-	StartThread: Condition=ItemUseId == 255 ; Sync=True
-		PlayAnimation: Char=Caster ; Anim=MP_IDLE_TO_CHANT
-		WaitAnimation: Char=Caster
-		PlayAnimation: Char=Caster ; Anim=MP_CHANT ; Loop=True
-		Channel
-		WaitSFXLoaded: SFX=Comet ; Reflect=True
-		WaitAnimation: Char=Caster
-		StopChannel
-		PlayAnimation: Char=Caster ; Anim=MP_MAGIC
-		WaitAnimation: Char=Caster
-	EndThread
-	StartThread: Condition=ItemUseId != 255 ; Sync=True
-		PlayAnimation: Char=Caster ; Anim=MP_ITEM1
-		WaitAnimation: Char=Caster
-		WaitSFXLoaded: SFX=Comet ; Reflect=True
-	EndThread
-	PlaySFX: SFX=Comet ; Reflect=True
-	WaitSFXDone: SFX=Comet ; Reflect=True
-EndThread
-StartThread: Condition=!IsSingleTarget ; Sync=True
-	StartThread: Condition=ItemUseId == 255 ; Sync=True
-		PlayAnimation: Char=Caster ; Anim=MP_IDLE_TO_CHANT
-		WaitAnimation: Char=Caster
-		PlayAnimation: Char=Caster ; Anim=MP_CHANT ; Loop=True
-		Channel
-		WaitAnimation: Char=Caster
-		WaitAnimation: Char=Caster
-		StopChannel
-		PlayAnimation: Char=Caster ; Anim=MP_MAGIC
-		WaitAnimation: Char=Caster
-	EndThread
-	StartThread: Condition=ItemUseId != 255 ; Sync=True
-		PlayAnimation: Char=Caster ; Anim=MP_ITEM1
-		WaitAnimation: Char=Caster
-	EndThread
-	StartThread: TargetLoop=True ; Chain=True ; Sync=True
-		LoadSFX: SFX=Comet ; Reflect=True ; UseCamera=False
-		WaitSFXLoaded: SFX=Comet ; Reflect=True
-		PlaySFX: SFX=Comet ; Reflect=True
-		Wait: Time=10
-	EndThread
-	WaitSFXDone: SFX=Comet ; Reflect=True
-EndThread
-ActivateReflect
-WaitReflect
-StartThread: Condition=CasterRow == 0 && AreCasterAndSelectedTargetsEnemies ; Sync=True
-	MoveToPosition: Char=Caster ; RelativePosition=(0, 0, -400) ; Anim=MP_STEP_BACK
+	Message: Text=[MagicSword] ; Priority=1 ; Title=True ; Reflect=True
+	SetupReflect: Delay=SFXLoaded
+	LoadSFX: SFX=Comet ; MagicCaster=Vivi ; Reflect=True
+	Turn: Char=Vivi ; BaseAngle=Caster ; Time=5
+	PlayAnimation: Char=Vivi ; Anim=MP_IDLE_TO_CHANT
+	WaitAnimation: Char=Vivi
+	PlayAnimation: Char=Vivi ; Anim=MP_CHANT ; Loop=True
+	Channel: Char=Vivi
+	WaitSFXLoaded: SFX=Comet ; Reflect=True
+	WaitAnimation: Char=Vivi
+	StopChannel: Char=Vivi
+	PlayAnimation: Char=Vivi ; Anim=MP_MAGIC
+	WaitAnimation: Char=Vivi
+	Turn: Char=Vivi ; BaseAngle=Default ; Time=4
+	PlayAnimation: Char=Caster ; Anim=MP_SET
+	WaitAnimation: Char=Caster
+	MoveToTarget: Char=Caster ; Target=AllTargets ; Distance=600 ; UseCollisionRadius=True ; Anim=MP_RUN
+	Turn: Char=Caster ; BaseAngle=AllTargets ; Time=10
 	WaitMove: Char=Caster
+	MoveToTarget: Char=Caster ; Target=AllTargets ; Distance=0 ; UseCollisionRadius=True ; Anim=MP_RUN_TO_ATTACK
+	WaitMove: Char=Caster
+	PlayAnimation: Char=Caster ; Anim=MP_ATTACK
+	PlaySFX: SFX=Comet ; Reflect=True
+	Wait: Time=5
+	PlayAnimation: Char=Caster ; Speed=0
+	WaitSFXDone: SFX=Comet ; Reflect=True
+	MoveToPosition: Char=Caster ; AbsolutePosition=Default ; Anim=MP_BACK
+	Turn: Char=Caster ; BaseAngle=Default ; Time=4
+	WaitMove: Caster
+	PlayAnimation: Char=Caster ; Anim=Idle
+	WaitTurn: Char=Caster
+	ActivateReflect
+	WaitReflect
 EndThread
-PlayAnimation: Char=Caster ; Anim=Idle
-Turn: Char=Caster ; BaseAngle=Default ; Time=5
-WaitTurn: Char=Caster
+StartThread: Condition=AbilityId != 167
+	WaitAnimation: Char=Caster
+	StartThread: Condition=CasterRow == 0 && AreCasterAndSelectedTargetsEnemies ; Sync=True
+		MoveToPosition: Char=Caster ; RelativePosition=(0, 0, 400) ; Anim=MP_STEP_FORWARD
+		WaitMove: Char=Caster
+	EndThread
+	StartThread: Condition=IsSingleSelectedTarget
+		Turn: Char=Caster ; BaseAngle=AllTargets ; Time=5
+	EndThread
+	Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
+	SetupReflect: Delay=SFXLoaded
+	SetBackgroundIntensity: Intensity=0.5 ; Time=20
+	StartThread: Condition=IsSingleTarget ; Sync=True
+		LoadSFX: SFX=Comet ; Reflect=True
+		StartThread: Condition=ItemUseId == 255 ; Sync=True
+			PlayAnimation: Char=Caster ; Anim=MP_IDLE_TO_CHANT
+			WaitAnimation: Char=Caster
+			PlayAnimation: Char=Caster ; Anim=MP_CHANT ; Loop=True
+			Channel
+			WaitSFXLoaded: SFX=Comet ; Reflect=True
+			WaitAnimation: Char=Caster
+			StopChannel
+			PlayAnimation: Char=Caster ; Anim=MP_MAGIC
+			WaitAnimation: Char=Caster
+		EndThread
+		StartThread: Condition=ItemUseId != 255 ; Sync=True
+			PlayAnimation: Char=Caster ; Anim=MP_ITEM1
+			WaitAnimation: Char=Caster
+			WaitSFXLoaded: SFX=Comet ; Reflect=True
+		EndThread
+		PlaySFX: SFX=Comet ; Reflect=True
+		WaitSFXDone: SFX=Comet ; Reflect=True
+	EndThread
+	StartThread: Condition=!IsSingleTarget ; Sync=True
+		StartThread: Condition=ItemUseId == 255 ; Sync=True
+			PlayAnimation: Char=Caster ; Anim=MP_IDLE_TO_CHANT
+			WaitAnimation: Char=Caster
+			PlayAnimation: Char=Caster ; Anim=MP_CHANT ; Loop=True
+			Channel
+			WaitAnimation: Char=Caster
+			WaitAnimation: Char=Caster
+			StopChannel
+			PlayAnimation: Char=Caster ; Anim=MP_MAGIC
+			WaitAnimation: Char=Caster
+		EndThread
+		StartThread: Condition=ItemUseId != 255 ; Sync=True
+			PlayAnimation: Char=Caster ; Anim=MP_ITEM1
+			WaitAnimation: Char=Caster
+		EndThread
+		StartThread: TargetLoop=True ; Chain=True ; Sync=True
+			LoadSFX: SFX=Comet ; Reflect=True ; UseCamera=False
+			WaitSFXLoaded: SFX=Comet ; Reflect=True
+			PlaySFX: SFX=Comet ; Reflect=True
+			Wait: Time=10
+		EndThread
+		WaitSFXDone: SFX=Comet ; Reflect=True
+	EndThread
+	ActivateReflect
+	WaitReflect
+	StartThread: Condition=CasterRow == 0 && AreCasterAndSelectedTargetsEnemies ; Sync=True
+		MoveToPosition: Char=Caster ; RelativePosition=(0, 0, -400) ; Anim=MP_STEP_BACK
+		WaitMove: Char=Caster
+	EndThread
+	PlayAnimation: Char=Caster ; Anim=Idle
+	Turn: Char=Caster ; BaseAngle=Default ; Time=5
+	WaitTurn: Char=Caster
+EndThread

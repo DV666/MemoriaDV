@@ -1,0 +1,43 @@
+// Player sequence of SFX Summon_RedDragon_AerialSlash
+
+WaitAnimation: Char=Caster
+SetupReflect: Delay=60
+StartThread: Target=Caster ; Sync=True ; Reflect=False
+	WaitAnimation: Char=Caster
+	StartThread: Condition=IsSingleSelectedTarget
+		Turn: Char=Caster ; BaseAngle=AllTargets ; Time=5
+	EndThread
+	LoadSFX: SFX=Green_Smoke ; UseCamera=False ; Reflect=False
+	WaitSFXLoaded: SFX=Green_Smoke ; Reflect=False
+	PlaySFX: SFX=Green_Smoke ; Reflect=False
+	EffectPoint: Char=Caster ; Type=Both ; Reflect=False
+	WaitSFXDone: SFX=Green_Smoke ; Reflect=False
+EndThread
+WaitAnimation: Char=Caster
+PlayCamera: Camera=1 ; Char=0 ; Alternate=False
+Channel
+LoadMonsterSFX: SFX=Aerial_Slash_Red_Dragon ; FirstBone=0 ; SecondBone=0 ; Args=0 ; Reflect=True
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_176_030
+WaitAnimation: Char=Caster
+Message: Priority=1 ; Title=True ; Reflect=False ; TextFR=[STRT=40,1]Vacuum ; Text=[STRT=66,1]Aerial Slash
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_176_031
+WaitMonsterSFXLoaded: Reflect=True
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_176_032
+PlayMonsterSFX: Reflect=True
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=Idle
+WaitMonsterSFXDone: Reflect=True
+WaitTurn: Char=Caster
+ActivateReflect
+WaitReflect
+StartThread: Target=Caster ; Sync=True ; Reflect=False
+	LoadSFX: SFX=Green_Smoke ; UseCamera=False ; Reflect=False
+	WaitSFXLoaded: SFX=Green_Smoke ; Reflect=False
+	PlaySFX: SFX=Green_Smoke ; Reflect=False
+	EffectPoint: Char=Caster ; Type=Both ; Reflect=False
+	WaitSFXDone: SFX=Green_Smoke ; Reflect=False
+EndThread
+PlayAnimation: Char=Caster ; Anim=Idle
+Turn: Char=Caster ; BaseAngle=Default ; Time=5
+WaitTurn: Char=Caster

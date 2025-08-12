@@ -1,6 +1,41 @@
 // Player sequence of SFX Ifrit__Short
 
-StartThread: Condition=CommandId != 57
+StartThread: Condition=AbilityId == 1530 && TargetIsPlayer
+	WaitAnimation: Char=Caster
+	StartThread: Condition=CasterRow == 0 && AreCasterAndSelectedTargetsEnemies ; Sync=True
+		MoveToPosition: Char=Caster ; RelativePosition=(0, 0, 400) ; Anim=MP_STEP_FORWARD
+		WaitMove: Char=Caster
+	EndThread
+	StartThread: Condition=IsSingleSelectedTarget
+		Turn: Char=Caster ; BaseAngle=AllTargets ; Time=5
+	EndThread
+	Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
+	SetupReflect: Delay=SFXLoaded
+	PlayAnimation: Char=Caster ; Anim=MP_IDLE_TO_CHANT
+	WaitAnimation: Char=Caster
+	PlayAnimation: Char=Caster ; Anim=MP_CHANT ; Loop=True
+	Channel
+	WaitAnimation: Char=Caster
+	StopChannel
+	PlayAnimation: Char=Caster ; Anim=MP_MAGIC
+	WaitAnimation: Char=Caster
+	StartThread: TargetLoop=True ; Chain=True ; Sync=True
+		LoadSFX: SFX=Shell ; Reflect=True ; UseCamera=False
+		WaitSFXLoaded: SFX=Shell ; Reflect=True
+		PlaySFX: SFX=Shell ; Reflect=True ; MeshColors=(0.80437, 0.5287, 0.2044)
+		Wait: Time=4
+	EndThread
+	ActivateReflect
+	WaitReflect
+	StartThread: Condition=CasterRow == 0 && AreCasterAndSelectedTargetsEnemies ; Sync=True
+		MoveToPosition: Char=Caster ; RelativePosition=(0, 0, -400) ; Anim=MP_STEP_BACK
+		WaitMove: Char=Caster
+	EndThread
+	PlayAnimation: Char=Caster ; Anim=Idle
+	WaitSFXDone: SFX=Shell ; Reflect=True
+	Turn: Char=Caster ; BaseAngle=Default ; Time=5
+	WaitTurn: Char=Caster
+ElseThread: Condition=CommandId != 57
 	WaitAnimation: Char=Caster
 	SetVariable: Variable=cmd_status ; Value=&65533 ; Reflect=True
 	StartThread: Condition=CasterRow == 0 && AreCasterAndSelectedTargetsEnemies ; Sync=True

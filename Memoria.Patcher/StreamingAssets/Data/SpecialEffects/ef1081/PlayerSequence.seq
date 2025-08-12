@@ -1,0 +1,31 @@
+// Player sequence of SFX Super Muscles
+
+WaitAnimation: Char=Caster
+StartThread: Condition=CasterRow == 0 && AreCasterAndSelectedTargetsEnemies ; Sync=True
+	MoveToPosition: Char=Caster ; RelativePosition=(0, 0, 400) ; Anim=MP_STEP_FORWARD
+	WaitMove: Char=Caster
+EndThread
+StartThread: Condition=IsSingleSelectedTarget
+	Turn: Char=Caster ; BaseAngle=AllTargets ; Time=5
+EndThread
+Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
+SetupReflect: Delay=SFXLoaded
+LoadSFX: SFX=Electrocute ; Reflect=True
+PlayAnimation: Char=Caster ; Anim=MP_IDLE_TO_CHANT
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=MP_CHANT ; Loop=True
+WaitSFXLoaded: SFX=Electrocute ; Reflect=True
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=MP_MAGIC
+WaitAnimation: Char=Caster
+PlaySFX: SFX=Electrocute ; Reflect=True ; MeshColors=(1.917, 0.041, 0.041)
+WaitSFXDone: SFX=Electrocute ; Reflect=True
+ActivateReflect
+WaitReflect
+StartThread: Condition=CasterRow == 0 && AreCasterAndSelectedTargetsEnemies ; Sync=True
+	MoveToPosition: Char=Caster ; RelativePosition=(0, 0, -400) ; Anim=MP_STEP_BACK
+	WaitMove: Char=Caster
+EndThread
+PlayAnimation: Char=Caster ; Anim=Idle
+Turn: Char=Caster ; BaseAngle=Default ; Time=5
+WaitTurn: Char=Caster

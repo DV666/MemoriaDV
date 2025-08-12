@@ -1,0 +1,1388 @@
+// Player sequence of Mixing Command (Ores)
+
+WaitAnimation: Char=Caster
+StartThread: Condition=CasterRow == 0 && AreCasterAndSelectedTargetsEnemies ; Sync=True
+	MoveToPosition: Char=Caster ; RelativePosition=(0, 0, 400) ; Anim=MP_STEP_FORWARD
+	WaitMove: Char=Caster
+EndThread
+StartThread: Condition=IsSingleSelectedTarget
+	Turn: Char=Caster ; BaseAngle=AllTargets ; Time=5
+EndThread
+Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
+SetupReflect: Delay=SFXLoaded
+PlayAnimation: Char=Caster ; Anim=MP_ITEM1
+WaitAnimation: Char=Caster
+StartThread: Condition=ItemUseId == 2342 ; Sync=True
+	LoadSFX: SFX=Elixir ; Reflect=True
+	WaitSFXLoaded: SFX=Elixir ; Reflect=True
+	PlaySFX: SFX=Elixir ; Reflect=True ; MeshColors=(0.454, 0.454, 0.093)
+	WaitSFXDone: SFX=Elixir ; Reflect=True
+ElseThread: Condition=ItemUseId == 2343 ; Sync=True
+	LoadSFX: SFX=Elixir ; Reflect=True
+	WaitSFXLoaded: SFX=Elixir ; Reflect=True
+	PlaySFX: SFX=Elixir ; Reflect=True ; MeshColors=(0.552, 0.277, 0.171)
+	WaitSFXDone: SFX=Elixir ; Reflect=True
+ElseThread: Condition=ItemUseId == 2344 ; Sync=True
+	LoadSFX: SFX=Elixir ; Reflect=True
+	WaitSFXLoaded: SFX=Elixir ; Reflect=True
+	PlaySFX: SFX=Elixir ; Reflect=True ; MeshColors=(0.143, 0.423, 0.434)
+	WaitSFXDone: SFX=Elixir ; Reflect=True
+ElseThread: Condition=ItemUseId == 2345 ; Sync=True
+	LoadSFX: SFX=Elixir ; Reflect=True
+	WaitSFXLoaded: SFX=Elixir ; Reflect=True
+	PlaySFX: SFX=Elixir ; Reflect=True ; MeshColors=(0.405, 0.179, 0.416)
+	WaitSFXDone: SFX=Elixir ; Reflect=True
+ElseThread: Condition=ItemUseId == 2346 ; Sync=True
+	LoadSFX: SFX=Elixir ; Reflect=True
+	WaitSFXLoaded: SFX=Elixir ; Reflect=True
+	PlaySFX: SFX=Elixir ; Reflect=True ; MeshColors=(0.22, 0.259, 0.52)
+	WaitSFXDone: SFX=Elixir ; Reflect=True
+ElseThread: Condition=ItemUseId == 2347 ; Sync=True
+	LoadSFX: SFX=Elixir ; Reflect=True
+	WaitSFXLoaded: SFX=Elixir ; Reflect=True
+	PlaySFX: SFX=Elixir ; Reflect=True ; MeshColors=(0.445, 0.366, 0.188)
+	WaitSFXDone: SFX=Elixir ; Reflect=True
+ElseThread: Condition=ItemUseId == 2348 ; Sync=True
+	LoadSFX: SFX=Elixir ; Reflect=True
+	WaitSFXLoaded: SFX=Elixir ; Reflect=True
+	PlaySFX: SFX=Elixir ; Reflect=True ; MeshColors=(0.899, 0.101, 0.0)
+	WaitSFXDone: SFX=Elixir ; Reflect=True
+ElseThread: Condition=ItemUseId == 2350 ; Sync=True
+	LoadSFX: SFX=Elixir ; Reflect=True
+	WaitSFXLoaded: SFX=Elixir ; Reflect=True
+	PlaySFX: SFX=Elixir ; Reflect=True ; MeshColors=(0.267, 0.449, 0.284)
+	WaitSFXDone: SFX=Elixir ; Reflect=True
+ElseThread: Condition=ItemUseId == 2351 ; Sync=True
+	LoadSFX: SFX=Elixir ; Reflect=True
+	WaitSFXLoaded: SFX=Elixir ; Reflect=True
+	PlaySFX: SFX=Elixir ; Reflect=True ; MeshColors=(0.481, 0.066, 0.452)
+	WaitSFXDone: SFX=Elixir ; Reflect=True
+ElseThread: Condition=ItemUseId == 2352 ; Sync=True
+	LoadSFX: SFX=Elixir ; Reflect=True
+	WaitSFXLoaded: SFX=Elixir ; Reflect=True
+	PlaySFX: SFX=Elixir ; Reflect=True ; MeshColors=(0.368, 0.371, 0.261)
+	WaitSFXDone: SFX=Elixir ; Reflect=True
+ElseThread: Condition=ItemUseId == 2353 ; Sync=True
+	StartThread: TargetLoop=True ; Chain=True ; Sync=True
+		Wait: Time=2
+		StartThread
+			LoadSFX: SFX=Elixir ; Reflect=True ; UseCamera=False
+			WaitSFXLoaded: SFX=Elixir ; Reflect=True
+			PlaySFX: SFX=Elixir ; Reflect=True ; MeshColors=(0.454, 0.454, 0.093)
+		EndThread
+	EndThread
+	WaitSFXDone: SFX=Elixir ; Reflect=True
+ElseThread: Condition=ItemUseId == 2354 ; Sync=True
+	StartThread: TargetLoop=True ; Chain=True ; Sync=True
+		Wait: Time=2
+		StartThread
+			LoadSFX: SFX=Elixir ; Reflect=True ; UseCamera=False
+			WaitSFXLoaded: SFX=Elixir ; Reflect=True
+			PlaySFX: SFX=Elixir ; Reflect=True ; MeshColors=(0.552, 0.277, 0.171)
+		EndThread
+	EndThread
+	WaitSFXDone: SFX=Elixir ; Reflect=True
+ElseThread: Condition=ItemUseId == 2355 ; Sync=True
+	StartThread: TargetLoop=True ; Chain=True ; Sync=True
+		Wait: Time=2
+		StartThread
+			LoadSFX: SFX=Elixir ; Reflect=True ; UseCamera=False
+			WaitSFXLoaded: SFX=Elixir ; Reflect=True
+			PlaySFX: SFX=Elixir ; Reflect=True ; MeshColors=(0.143, 0.423, 0.434)
+		EndThread
+	EndThread
+	WaitSFXDone: SFX=Elixir ; Reflect=True
+ElseThread: Condition=ItemUseId == 2356 ; Sync=True
+	StartThread: TargetLoop=True ; Chain=True ; Sync=True
+		Wait: Time=2
+		StartThread
+			LoadSFX: SFX=Elixir ; Reflect=True ; UseCamera=False
+			WaitSFXLoaded: SFX=Elixir ; Reflect=True
+			PlaySFX: SFX=Elixir ; Reflect=True ; MeshColors=(0.405, 0.179, 0.416)
+		EndThread
+	EndThread
+	WaitSFXDone: SFX=Elixir ; Reflect=True
+ElseThread: Condition=ItemUseId == 2357 ; Sync=True
+	StartThread: TargetLoop=True ; Chain=True ; Sync=True
+		Wait: Time=2
+		StartThread
+			LoadSFX: SFX=Elixir ; Reflect=True ; UseCamera=False
+			WaitSFXLoaded: SFX=Elixir ; Reflect=True
+			PlaySFX: SFX=Elixir ; Reflect=True ; MeshColors=(0.22, 0.259, 0.52)
+		EndThread
+	EndThread
+	WaitSFXDone: SFX=Elixir ; Reflect=True
+ElseThread: Condition=ItemUseId == 2358 ; Sync=True
+	StartThread: TargetLoop=True ; Chain=True ; Sync=True
+		Wait: Time=2
+		StartThread
+			LoadSFX: SFX=Elixir ; Reflect=True ; UseCamera=False
+			WaitSFXLoaded: SFX=Elixir ; Reflect=True
+			PlaySFX: SFX=Elixir ; Reflect=True ; MeshColors=(0.445, 0.366, 0.188)
+		EndThread
+	EndThread
+	WaitSFXDone: SFX=Elixir ; Reflect=True
+ElseThread: Condition=ItemUseId == 2359 ; Sync=True
+	StartThread: TargetLoop=True ; Chain=True ; Sync=True
+		Wait: Time=2
+		StartThread
+			LoadSFX: SFX=Elixir ; Reflect=True ; UseCamera=False
+			WaitSFXLoaded: SFX=Elixir ; Reflect=True
+			PlaySFX: SFX=Elixir ; Reflect=True ; MeshColors=(0.899, 0.101, 0.0)
+		EndThread
+	EndThread
+	WaitSFXDone: SFX=Elixir ; Reflect=True
+ElseThread: Condition=ItemUseId == 2361 ; Sync=True
+	StartThread: TargetLoop=True ; Chain=True ; Sync=True
+		Wait: Time=2
+		StartThread
+			LoadSFX: SFX=Elixir ; Reflect=True ; UseCamera=False
+			WaitSFXLoaded: SFX=Elixir ; Reflect=True
+			PlaySFX: SFX=Elixir ; Reflect=True ; MeshColors=(0.267, 0.449, 0.284)
+		EndThread
+	EndThread
+	WaitSFXDone: SFX=Elixir ; Reflect=True
+ElseThread: Condition=ItemUseId == 2362 ; Sync=True
+	StartThread: TargetLoop=True ; Chain=True ; Sync=True
+		Wait: Time=2
+		StartThread
+			LoadSFX: SFX=Elixir ; Reflect=True ; UseCamera=False
+			WaitSFXLoaded: SFX=Elixir ; Reflect=True
+			PlaySFX: SFX=Elixir ; Reflect=True ; MeshColors=(0.481, 0.066, 0.452)
+		EndThread
+	EndThread
+	WaitSFXDone: SFX=Elixir ; Reflect=True
+ElseThread: Condition=ItemUseId == 2363 ; Sync=True
+	StartThread: TargetLoop=True ; Chain=True ; Sync=True
+		Wait: Time=2
+		StartThread
+			LoadSFX: SFX=Elixir ; Reflect=True ; UseCamera=False
+			WaitSFXLoaded: SFX=Elixir ; Reflect=True
+			PlaySFX: SFX=Elixir ; Reflect=True ; MeshColors=(0.368, 0.371, 0.261)
+		EndThread
+	EndThread
+	WaitSFXDone: SFX=Elixir ; Reflect=True
+ElseThread: Condition=ItemUseId == 2349 ; Sync=True
+	StartThread
+		LoadSFX: SFX=Protect ; Reflect=True ; UseCamera=False
+		WaitSFXLoaded: SFX=Protect ; Reflect=True
+		PlaySFX: SFX=Protect ; Reflect=True ; SkipSequence
+		PlaySound: Sound=156
+		PlaySound: Sound=140
+		PlaySound: Sound=250
+	EndThread
+	StartThread
+		LoadSFX: SFX=Shell ; Reflect=True ; UseCamera=False
+		WaitSFXLoaded: SFX=Shell ; Reflect=True
+		PlaySFX: SFX=Shell ; Reflect=True ; SkipSequence
+		PlaySound: Sound=184
+		PlaySound: Sound=171
+		PlaySound: Sound=152
+	EndThread
+	StartThread
+		LoadSFX: SFX=Regen ; Reflect=True ; UseCamera=False
+		WaitSFXLoaded: SFX=Regen ; Reflect=True
+		PlaySFX: SFX=Regen ; Reflect=True ; SkipSequence
+		PlaySound: Sound=324
+		PlaySound: Sound=321
+		PlaySound: Sound=310
+	EndThread
+	StartThread
+		LoadSFX: SFX=Haste ; Reflect=True ; UseCamera=False
+		WaitSFXLoaded: SFX=Haste ; Reflect=True
+		PlaySFX: SFX=Haste ; Reflect=True ; SkipSequence
+		PlaySound: Sound=336
+		PlaySound: Sound=332
+		PlaySound: Sound=344
+	EndThread
+	StartThread
+		LoadSFX: SFX=Auto_Life ; Reflect=True ; UseCamera=False
+		WaitSFXLoaded: SFX=Auto_Life ; Reflect=True
+		PlaySFX: SFX=Auto_Life ; Reflect=True
+	EndThread
+ElseThread: Condition=ItemUseId == 2360 ; Sync=True
+	StartThread: TargetLoop=True ; Chain=True ; Sync=True
+		Wait: Time=2
+		StartThread
+			LoadSFX: SFX=Protect ; Reflect=True ; UseCamera=False
+			WaitSFXLoaded: SFX=Protect ; Reflect=True
+			PlaySFX: SFX=Protect ; Reflect=True ; SkipSequence
+			PlaySound: Sound=156
+			PlaySound: Sound=140
+			PlaySound: Sound=250
+		EndThread
+		StartThread
+			LoadSFX: SFX=Shell ; Reflect=True ; UseCamera=False
+			WaitSFXLoaded: SFX=Shell ; Reflect=True
+			PlaySFX: SFX=Shell ; Reflect=True ; SkipSequence
+			PlaySound: Sound=184
+			PlaySound: Sound=171
+			PlaySound: Sound=152
+		EndThread
+		StartThread
+			LoadSFX: SFX=Regen ; Reflect=True ; UseCamera=False
+			WaitSFXLoaded: SFX=Regen ; Reflect=True
+			PlaySFX: SFX=Regen ; Reflect=True ; SkipSequence
+			PlaySound: Sound=324
+			PlaySound: Sound=321
+			PlaySound: Sound=310
+		EndThread
+		StartThread
+			LoadSFX: SFX=Haste ; Reflect=True ; UseCamera=False
+			WaitSFXLoaded: SFX=Haste ; Reflect=True
+			PlaySFX: SFX=Haste ; Reflect=True ; SkipSequence
+			PlaySound: Sound=336
+			PlaySound: Sound=332
+			PlaySound: Sound=344
+		EndThread
+		StartThread
+			LoadSFX: SFX=Auto_Life ; Reflect=True ; UseCamera=False
+			WaitSFXLoaded: SFX=Auto_Life ; Reflect=True
+			PlaySFX: SFX=Auto_Life ; Reflect=True
+		EndThread
+	EndThread
+ElseThread: Condition=ItemUseId == 2364 ; Sync=True
+	LoadSFX: SFX=Ore ; Reflect=True
+	WaitSFXLoaded: SFX=Ore ; Reflect=True
+	PlaySFX: SFX=Ore ; Reflect=True ; MeshColors=(0.454, 0.454, 0.093)
+	WaitSFXDone: SFX=Ore ; Reflect=True
+ElseThread: Condition=ItemUseId == 2365 ; Sync=True
+	LoadSFX: SFX=Ore ; Reflect=True
+	WaitSFXLoaded: SFX=Ore ; Reflect=True
+	PlaySFX: SFX=Ore ; Reflect=True ; MeshColors=(0.552, 0.277, 0.171)
+	WaitSFXDone: SFX=Ore ; Reflect=True
+ElseThread: Condition=ItemUseId == 2366 ; Sync=True
+	LoadSFX: SFX=Ore ; Reflect=True
+	WaitSFXLoaded: SFX=Ore ; Reflect=True
+	PlaySFX: SFX=Ore ; Reflect=True ; MeshColors=(0.143, 0.423, 0.434)
+	WaitSFXDone: SFX=Ore ; Reflect=True
+ElseThread: Condition=ItemUseId == 2367 ; Sync=True
+	LoadSFX: SFX=Ore ; Reflect=True
+	WaitSFXLoaded: SFX=Ore ; Reflect=True
+	PlaySFX: SFX=Ore ; Reflect=True ; MeshColors=(0.405, 0.179, 0.416)
+	WaitSFXDone: SFX=Ore ; Reflect=True
+ElseThread: Condition=ItemUseId == 2368 ; Sync=True
+	LoadSFX: SFX=Ore ; Reflect=True
+	WaitSFXLoaded: SFX=Ore ; Reflect=True
+	PlaySFX: SFX=Ore ; Reflect=True ; MeshColors=(0.22, 0.259, 0.52)
+	WaitSFXDone: SFX=Ore ; Reflect=True
+ElseThread: Condition=ItemUseId == 2369 ; Sync=True
+	LoadSFX: SFX=Ore ; Reflect=True
+	WaitSFXLoaded: SFX=Ore ; Reflect=True
+	PlaySFX: SFX=Ore ; Reflect=True ; MeshColors=(0.445, 0.366, 0.188)
+	WaitSFXDone: SFX=Ore ; Reflect=True
+ElseThread: Condition=ItemUseId == 2370 ; Sync=True
+	LoadSFX: SFX=Ore ; Reflect=True
+	WaitSFXLoaded: SFX=Ore ; Reflect=True
+	PlaySFX: SFX=Ore ; Reflect=True ; MeshColors=(0.899, 0.101, 0.0)
+	WaitSFXDone: SFX=Ore ; Reflect=True
+ElseThread: Condition=ItemUseId == 2371 ; Sync=True
+	LoadSFX: SFX=Ore ; Reflect=True
+	WaitSFXLoaded: SFX=Ore ; Reflect=True
+	PlaySFX: SFX=Ore ; Reflect=True ; MeshColors=(0.359, 0.289, 0.352)
+	WaitSFXDone: SFX=Ore ; Reflect=True
+ElseThread: Condition=ItemUseId == 2372 ; Sync=True
+	LoadSFX: SFX=Ore ; Reflect=True
+	WaitSFXLoaded: SFX=Ore ; Reflect=True
+	PlaySFX: SFX=Ore ; Reflect=True ; MeshColors=(0.267, 0.449, 0.284)
+	WaitSFXDone: SFX=Ore ; Reflect=True
+ElseThread: Condition=ItemUseId == 2373 ; Sync=True
+	LoadSFX: SFX=Ore ; Reflect=True
+	WaitSFXLoaded: SFX=Ore ; Reflect=True
+	PlaySFX: SFX=Ore ; Reflect=True ; MeshColors=(0.481, 0.066, 0.452)
+	WaitSFXDone: SFX=Ore ; Reflect=True
+ElseThread: Condition=ItemUseId == 2374 ; Sync=True
+	LoadSFX: SFX=Ore ; Reflect=True
+	WaitSFXLoaded: SFX=Ore ; Reflect=True
+	PlaySFX: SFX=Ore ; Reflect=True ; MeshColors=(0.368, 0.371, 0.261)
+	WaitSFXDone: SFX=Ore ; Reflect=True
+ElseThread: Condition=ItemUseId == 2375 ; Sync=True
+	LoadSFX: SFX=Ore ; Reflect=True
+	WaitSFXLoaded: SFX=Ore ; Reflect=True
+	PlaySFX: SFX=Ore ; Reflect=True ; MeshColors=0:(0.454, 0.454, 0.093), 1:(0.552, 0.277, 0.171), 2:(0.454, 0.454, 0.093), 3:(0.552, 0.277, 0.171)
+	WaitSFXDone: SFX=Ore ; Reflect=True
+ElseThread: Condition=ItemUseId == 2376 ; Sync=True
+	LoadSFX: SFX=Ore ; Reflect=True
+	WaitSFXLoaded: SFX=Ore ; Reflect=True
+	PlaySFX: SFX=Ore ; Reflect=True ; MeshColors=0:(0.454, 0.454, 0.093), 1:(0.143, 0.423, 0.434), 2:(0.454, 0.454, 0.093), 3:(0.143, 0.423, 0.434)
+	WaitSFXDone: SFX=Ore ; Reflect=True
+ElseThread: Condition=ItemUseId == 2377 ; Sync=True
+	LoadSFX: SFX=Ore ; Reflect=True
+	WaitSFXLoaded: SFX=Ore ; Reflect=True
+	PlaySFX: SFX=Ore ; Reflect=True ; MeshColors=0:(0.454, 0.454, 0.093), 1:(0.405, 0.179, 0.416), 2:(0.454, 0.454, 0.093), 3:(0.405, 0.179, 0.416)
+	WaitSFXDone: SFX=Ore ; Reflect=True
+ElseThread: Condition=ItemUseId == 2378 ; Sync=True
+	LoadSFX: SFX=Ore ; Reflect=True
+	WaitSFXLoaded: SFX=Ore ; Reflect=True
+	PlaySFX: SFX=Ore ; Reflect=True ; MeshColors=0:(0.454, 0.454, 0.093), 1:(0.22, 0.259, 0.52), 2:(0.454, 0.454, 0.093), 3:(0.22, 0.259, 0.52)
+	WaitSFXDone: SFX=Ore ; Reflect=True
+ElseThread: Condition=ItemUseId == 2379 ; Sync=True
+	LoadSFX: SFX=Ore ; Reflect=True
+	WaitSFXLoaded: SFX=Ore ; Reflect=True
+	PlaySFX: SFX=Ore ; Reflect=True ; MeshColors=0:(0.454, 0.454, 0.093), 1:(0.445, 0.366, 0.188), 2:(0.454, 0.454, 0.093), 3:(0.445, 0.366, 0.188)
+	WaitSFXDone: SFX=Ore ; Reflect=True
+ElseThread: Condition=ItemUseId == 2380 ; Sync=True
+	LoadSFX: SFX=Ore ; Reflect=True
+	WaitSFXLoaded: SFX=Ore ; Reflect=True
+	PlaySFX: SFX=Ore ; Reflect=True ; MeshColors=0:(0.454, 0.454, 0.093), 1:(0.899, 0.101, 0.0), 2:(0.454, 0.454, 0.093), 3:(0.899, 0.101, 0.0)
+	WaitSFXDone: SFX=Ore ; Reflect=True
+ElseThread: Condition=ItemUseId == 2381 ; Sync=True
+	LoadSFX: SFX=Ore ; Reflect=True
+	WaitSFXLoaded: SFX=Ore ; Reflect=True
+	PlaySFX: SFX=Ore ; Reflect=True ; MeshColors=0:(0.454, 0.454, 0.093), 1:(0.267, 0.449, 0.284), 2:(0.454, 0.454, 0.093), 3:(0.267, 0.449, 0.284)
+	WaitSFXDone: SFX=Ore ; Reflect=True
+ElseThread: Condition=ItemUseId == 2382 ; Sync=True
+	LoadSFX: SFX=Ore ; Reflect=True
+	WaitSFXLoaded: SFX=Ore ; Reflect=True
+	PlaySFX: SFX=Ore ; Reflect=True ; MeshColors=0:(0.454, 0.454, 0.093), 1:(0.481, 0.066, 0.452), 2:(0.454, 0.454, 0.093), 3:(0.481, 0.066, 0.452)
+	WaitSFXDone: SFX=Ore ; Reflect=True
+ElseThread: Condition=ItemUseId == 2383 ; Sync=True
+	LoadSFX: SFX=Ore ; Reflect=True
+	WaitSFXLoaded: SFX=Ore ; Reflect=True
+	PlaySFX: SFX=Ore ; Reflect=True ; MeshColors=0:(0.454, 0.454, 0.093), 1:(0.368, 0.371, 0.261), 2:(0.454, 0.454, 0.093), 3:(0.368, 0.371, 0.261)
+	WaitSFXDone: SFX=Ore ; Reflect=True
+ElseThread: Condition=ItemUseId == 2384 ; Sync=True
+	LoadSFX: SFX=Ore ; Reflect=True
+	WaitSFXLoaded: SFX=Ore ; Reflect=True
+	PlaySFX: SFX=Ore ; Reflect=True ; MeshColors=0:(0.552, 0.277, 0.171), 1:(0.143, 0.423, 0.434), 2:(0.552, 0.277, 0.171), 3:(0.143, 0.423, 0.434)
+	WaitSFXDone: SFX=Ore ; Reflect=True
+ElseThread: Condition=ItemUseId == 2385 ; Sync=True
+	LoadSFX: SFX=Ore ; Reflect=True
+	WaitSFXLoaded: SFX=Ore ; Reflect=True
+	PlaySFX: SFX=Ore ; Reflect=True ; MeshColors=0:(0.552, 0.277, 0.171), 1:(0.405, 0.179, 0.416), 2:(0.552, 0.277, 0.171), 3:(0.405, 0.179, 0.416)
+	WaitSFXDone: SFX=Ore ; Reflect=True
+ElseThread: Condition=ItemUseId == 2386 ; Sync=True
+	LoadSFX: SFX=Ore ; Reflect=True
+	WaitSFXLoaded: SFX=Ore ; Reflect=True
+	PlaySFX: SFX=Ore ; Reflect=True ; MeshColors=0:(0.552, 0.277, 0.171), 1:(0.22, 0.259, 0.52), 2:(0.552, 0.277, 0.171), 3:(0.22, 0.259, 0.52)
+	WaitSFXDone: SFX=Ore ; Reflect=True
+ElseThread: Condition=ItemUseId == 2387 ; Sync=True
+	LoadSFX: SFX=Ore ; Reflect=True
+	WaitSFXLoaded: SFX=Ore ; Reflect=True
+	PlaySFX: SFX=Ore ; Reflect=True ; MeshColors=0:(0.552, 0.277, 0.171), 1:(0.445, 0.366, 0.188), 2:(0.552, 0.277, 0.171), 3:(0.445, 0.366, 0.188)
+	WaitSFXDone: SFX=Ore ; Reflect=True
+ElseThread: Condition=ItemUseId == 2388 ; Sync=True
+	LoadSFX: SFX=Ore ; Reflect=True
+	WaitSFXLoaded: SFX=Ore ; Reflect=True
+	PlaySFX: SFX=Ore ; Reflect=True ; MeshColors=0:(0.552, 0.277, 0.171), 1:(0.899, 0.101, 0.0), 2:(0.552, 0.277, 0.171), 3:(0.899, 0.101, 0.0)
+	WaitSFXDone: SFX=Ore ; Reflect=True
+ElseThread: Condition=ItemUseId == 2389 ; Sync=True
+	LoadSFX: SFX=Ore ; Reflect=True
+	WaitSFXLoaded: SFX=Ore ; Reflect=True
+	PlaySFX: SFX=Ore ; Reflect=True ; MeshColors=0:(0.552, 0.277, 0.171), 1:(0.267, 0.449, 0.284), 2:(0.552, 0.277, 0.171), 3:(0.267, 0.449, 0.284)
+	WaitSFXDone: SFX=Ore ; Reflect=True
+ElseThread: Condition=ItemUseId == 2390 ; Sync=True
+	LoadSFX: SFX=Ore ; Reflect=True
+	WaitSFXLoaded: SFX=Ore ; Reflect=True
+	PlaySFX: SFX=Ore ; Reflect=True ; MeshColors=0:(0.552, 0.277, 0.171), 1:(0.481, 0.066, 0.452), 2:(0.552, 0.277, 0.171), 3:(0.481, 0.066, 0.452)
+	WaitSFXDone: SFX=Ore ; Reflect=True
+ElseThread: Condition=ItemUseId == 2391 ; Sync=True
+	LoadSFX: SFX=Ore ; Reflect=True
+	WaitSFXLoaded: SFX=Ore ; Reflect=True
+	PlaySFX: SFX=Ore ; Reflect=True ; MeshColors=0:(0.552, 0.277, 0.171), 1:(0.368, 0.371, 0.261), 2:(0.552, 0.277, 0.171), 3:(0.368, 0.371, 0.261)
+	WaitSFXDone: SFX=Ore ; Reflect=True
+ElseThread: Condition=ItemUseId == 2392 ; Sync=True
+	LoadSFX: SFX=Ore ; Reflect=True
+	WaitSFXLoaded: SFX=Ore ; Reflect=True
+	PlaySFX: SFX=Ore ; Reflect=True ; MeshColors=0:(0.143, 0.423, 0.434), 1:(0.405, 0.179, 0.416), 2:(0.143, 0.423, 0.434), 3:(0.405, 0.179, 0.416)
+	WaitSFXDone: SFX=Ore ; Reflect=True
+ElseThread: Condition=ItemUseId == 2393 ; Sync=True
+	LoadSFX: SFX=Ore ; Reflect=True
+	WaitSFXLoaded: SFX=Ore ; Reflect=True
+	PlaySFX: SFX=Ore ; Reflect=True ; MeshColors=0:(0.143, 0.423, 0.434), 1:(0.22, 0.259, 0.52), 2:(0.143, 0.423, 0.434), 3:(0.22, 0.259, 0.52)
+	WaitSFXDone: SFX=Ore ; Reflect=True
+ElseThread: Condition=ItemUseId == 2394 ; Sync=True
+	LoadSFX: SFX=Ore ; Reflect=True
+	WaitSFXLoaded: SFX=Ore ; Reflect=True
+	PlaySFX: SFX=Ore ; Reflect=True ; MeshColors=0:(0.143, 0.423, 0.434), 1:(0.445, 0.366, 0.188), 2:(0.143, 0.423, 0.434), 3:(0.445, 0.366, 0.188)
+	WaitSFXDone: SFX=Ore ; Reflect=True
+ElseThread: Condition=ItemUseId == 2395 ; Sync=True
+	LoadSFX: SFX=Ore ; Reflect=True
+	WaitSFXLoaded: SFX=Ore ; Reflect=True
+	PlaySFX: SFX=Ore ; Reflect=True ; MeshColors=0:(0.143, 0.423, 0.434), 1:(0.899, 0.101, 0.0), 2:(0.143, 0.423, 0.434), 3:(0.899, 0.101, 0.0)
+	WaitSFXDone: SFX=Ore ; Reflect=True
+ElseThread: Condition=ItemUseId == 2396 ; Sync=True
+	LoadSFX: SFX=Ore ; Reflect=True
+	WaitSFXLoaded: SFX=Ore ; Reflect=True
+	PlaySFX: SFX=Ore ; Reflect=True ; MeshColors=0:(0.143, 0.423, 0.434), 1:(0.267, 0.449, 0.284), 2:(0.143, 0.423, 0.434), 3:(0.267, 0.449, 0.284)
+	WaitSFXDone: SFX=Ore ; Reflect=True
+ElseThread: Condition=ItemUseId == 2397 ; Sync=True
+	LoadSFX: SFX=Ore ; Reflect=True
+	WaitSFXLoaded: SFX=Ore ; Reflect=True
+	PlaySFX: SFX=Ore ; Reflect=True ; MeshColors=0:(0.143, 0.423, 0.434), 1:(0.481, 0.066, 0.452), 2:(0.143, 0.423, 0.434), 3:(0.481, 0.066, 0.452)
+	WaitSFXDone: SFX=Ore ; Reflect=True
+ElseThread: Condition=ItemUseId == 2398 ; Sync=True
+	LoadSFX: SFX=Ore ; Reflect=True
+	WaitSFXLoaded: SFX=Ore ; Reflect=True
+	PlaySFX: SFX=Ore ; Reflect=True ; MeshColors=0:(0.143, 0.423, 0.434), 1:(0.368, 0.371, 0.261), 2:(0.143, 0.423, 0.434), 3:(0.368, 0.371, 0.261)
+	WaitSFXDone: SFX=Ore ; Reflect=True
+ElseThread: Condition=ItemUseId == 2399 ; Sync=True
+	LoadSFX: SFX=Ore ; Reflect=True
+	WaitSFXLoaded: SFX=Ore ; Reflect=True
+	PlaySFX: SFX=Ore ; Reflect=True ; MeshColors=0:(0.405, 0.179, 0.416), 1:(0.22, 0.259, 0.52), 2:(0.405, 0.179, 0.416), 3:(0.22, 0.259, 0.52)
+	WaitSFXDone: SFX=Ore ; Reflect=True
+ElseThread: Condition=ItemUseId == 2400 ; Sync=True
+	LoadSFX: SFX=Ore ; Reflect=True
+	WaitSFXLoaded: SFX=Ore ; Reflect=True
+	PlaySFX: SFX=Ore ; Reflect=True ; MeshColors=0:(0.405, 0.179, 0.416), 1:(0.445, 0.366, 0.188), 2:(0.405, 0.179, 0.416), 3:(0.445, 0.366, 0.188)
+	WaitSFXDone: SFX=Ore ; Reflect=True
+ElseThread: Condition=ItemUseId == 2401 ; Sync=True
+	LoadSFX: SFX=Ore ; Reflect=True
+	WaitSFXLoaded: SFX=Ore ; Reflect=True
+	PlaySFX: SFX=Ore ; Reflect=True ; MeshColors=0:(0.405, 0.179, 0.416), 1:(0.899, 0.101, 0.0), 2:(0.405, 0.179, 0.416), 3:(0.899, 0.101, 0.0)
+	WaitSFXDone: SFX=Ore ; Reflect=True
+ElseThread: Condition=ItemUseId == 2402 ; Sync=True
+	LoadSFX: SFX=Ore ; Reflect=True
+	WaitSFXLoaded: SFX=Ore ; Reflect=True
+	PlaySFX: SFX=Ore ; Reflect=True ; MeshColors=0:(0.405, 0.179, 0.416), 1:(0.267, 0.449, 0.284), 2:(0.405, 0.179, 0.416), 3:(0.267, 0.449, 0.284)
+	WaitSFXDone: SFX=Ore ; Reflect=True
+ElseThread: Condition=ItemUseId == 2403 ; Sync=True
+	LoadSFX: SFX=Ore ; Reflect=True
+	WaitSFXLoaded: SFX=Ore ; Reflect=True
+	PlaySFX: SFX=Ore ; Reflect=True ; MeshColors=0:(0.405, 0.179, 0.416), 1:(0.481, 0.066, 0.452), 2:(0.405, 0.179, 0.416), 3:(0.481, 0.066, 0.452)
+	WaitSFXDone: SFX=Ore ; Reflect=True
+ElseThread: Condition=ItemUseId == 2404 ; Sync=True
+	LoadSFX: SFX=Ore ; Reflect=True
+	WaitSFXLoaded: SFX=Ore ; Reflect=True
+	PlaySFX: SFX=Ore ; Reflect=True ; MeshColors=0:(0.405, 0.179, 0.416), 1:(0.368, 0.371, 0.261), 2:(0.405, 0.179, 0.416), 3:(0.368, 0.371, 0.261)
+	WaitSFXDone: SFX=Ore ; Reflect=True
+ElseThread: Condition=ItemUseId == 2405 ; Sync=True
+	LoadSFX: SFX=Ore ; Reflect=True
+	WaitSFXLoaded: SFX=Ore ; Reflect=True
+	PlaySFX: SFX=Ore ; Reflect=True ; MeshColors=0:(0.22, 0.259, 0.52), 1:(0.445, 0.366, 0.188), 2:(0.22, 0.259, 0.52), 3:(0.445, 0.366, 0.188)
+	WaitSFXDone: SFX=Ore ; Reflect=True
+ElseThread: Condition=ItemUseId == 2406 ; Sync=True
+	LoadSFX: SFX=Ore ; Reflect=True
+	WaitSFXLoaded: SFX=Ore ; Reflect=True
+	PlaySFX: SFX=Ore ; Reflect=True ; MeshColors=0:(0.22, 0.259, 0.52), 1:(0.899, 0.101, 0.0), 2:(0.22, 0.259, 0.52), 3:(0.899, 0.101, 0.0)
+	WaitSFXDone: SFX=Ore ; Reflect=True
+ElseThread: Condition=ItemUseId == 2407 ; Sync=True
+	LoadSFX: SFX=Ore ; Reflect=True
+	WaitSFXLoaded: SFX=Ore ; Reflect=True
+	PlaySFX: SFX=Ore ; Reflect=True ; MeshColors=0:(0.22, 0.259, 0.52), 1:(0.267, 0.449, 0.284), 2:(0.22, 0.259, 0.52), 3:(0.267, 0.449, 0.284)
+	WaitSFXDone: SFX=Ore ; Reflect=True
+ElseThread: Condition=ItemUseId == 2408 ; Sync=True
+	LoadSFX: SFX=Ore ; Reflect=True
+	WaitSFXLoaded: SFX=Ore ; Reflect=True
+	PlaySFX: SFX=Ore ; Reflect=True ; MeshColors=0:(0.22, 0.259, 0.52), 1:(0.481, 0.066, 0.452), 2:(0.22, 0.259, 0.52), 3:(0.481, 0.066, 0.452)
+	WaitSFXDone: SFX=Ore ; Reflect=True
+ElseThread: Condition=ItemUseId == 2409 ; Sync=True
+	LoadSFX: SFX=Ore ; Reflect=True
+	WaitSFXLoaded: SFX=Ore ; Reflect=True
+	PlaySFX: SFX=Ore ; Reflect=True ; MeshColors=0:(0.22, 0.259, 0.52), 1:(0.368, 0.371, 0.261), 2:(0.22, 0.259, 0.52), 3:(0.368, 0.371, 0.261)
+	WaitSFXDone: SFX=Ore ; Reflect=True
+ElseThread: Condition=ItemUseId == 2410 ; Sync=True
+	LoadSFX: SFX=Ore ; Reflect=True
+	WaitSFXLoaded: SFX=Ore ; Reflect=True
+	PlaySFX: SFX=Ore ; Reflect=True ; MeshColors=0:(0.445, 0.366, 0.188), 1:(0.899, 0.101, 0.0), 2:(0.445, 0.366, 0.188), 3:(0.899, 0.101, 0.0)
+	WaitSFXDone: SFX=Ore ; Reflect=True
+ElseThread: Condition=ItemUseId == 2411 ; Sync=True
+	LoadSFX: SFX=Ore ; Reflect=True
+	WaitSFXLoaded: SFX=Ore ; Reflect=True
+	PlaySFX: SFX=Ore ; Reflect=True ; MeshColors=0:(0.445, 0.366, 0.188), 1:(0.267, 0.449, 0.284), 2:(0.445, 0.366, 0.188), 3:(0.267, 0.449, 0.284)
+	WaitSFXDone: SFX=Ore ; Reflect=True
+ElseThread: Condition=ItemUseId == 2412 ; Sync=True
+	LoadSFX: SFX=Ore ; Reflect=True
+	WaitSFXLoaded: SFX=Ore ; Reflect=True
+	PlaySFX: SFX=Ore ; Reflect=True ; MeshColors=0:(0.445, 0.366, 0.188), 1:(0.481, 0.066, 0.452), 2:(0.445, 0.366, 0.188), 3:(0.481, 0.066, 0.452)
+	WaitSFXDone: SFX=Ore ; Reflect=True
+ElseThread: Condition=ItemUseId == 2413 ; Sync=True
+	LoadSFX: SFX=Ore ; Reflect=True
+	WaitSFXLoaded: SFX=Ore ; Reflect=True
+	PlaySFX: SFX=Ore ; Reflect=True ; MeshColors=0:(0.445, 0.366, 0.188), 1:(0.368, 0.371, 0.261), 2:(0.445, 0.366, 0.188), 3:(0.368, 0.371, 0.261)
+	WaitSFXDone: SFX=Ore ; Reflect=True
+ElseThread: Condition=ItemUseId == 2414 ; Sync=True
+	LoadSFX: SFX=Ore ; Reflect=True
+	WaitSFXLoaded: SFX=Ore ; Reflect=True
+	PlaySFX: SFX=Ore ; Reflect=True ; MeshColors=0:(0.899, 0.101, 0.0), 1:(0.267, 0.449, 0.284), 2:(0.899, 0.101, 0.0), 3:(0.267, 0.449, 0.284)
+	WaitSFXDone: SFX=Ore ; Reflect=True
+ElseThread: Condition=ItemUseId == 2415 ; Sync=True
+	LoadSFX: SFX=Ore ; Reflect=True
+	WaitSFXLoaded: SFX=Ore ; Reflect=True
+	PlaySFX: SFX=Ore ; Reflect=True ; MeshColors=0:(0.899, 0.101, 0.0), 1:(0.267, 0.449, 0.284), 2:(0.899, 0.101, 0.0), 3:(0.267, 0.449, 0.284)
+	WaitSFXDone: SFX=Ore ; Reflect=True
+ElseThread: Condition=ItemUseId == 2416 ; Sync=True
+	LoadSFX: SFX=Ore ; Reflect=True
+	WaitSFXLoaded: SFX=Ore ; Reflect=True
+	PlaySFX: SFX=Ore ; Reflect=True ; MeshColors=0:(0.899, 0.101, 0.0), 1:(0.267, 0.449, 0.284), 2:(0.899, 0.101, 0.0), 3:(0.267, 0.449, 0.284)
+	WaitSFXDone: SFX=Ore ; Reflect=True
+ElseThread: Condition=ItemUseId == 2417 ; Sync=True
+	LoadSFX: SFX=Ore ; Reflect=True
+	WaitSFXLoaded: SFX=Ore ; Reflect=True
+	PlaySFX: SFX=Ore ; Reflect=True ; MeshColors=0:(0.267, 0.449, 0.284), 1:(0.481, 0.066, 0.452), 2:(0.267, 0.449, 0.284), 3:(0.481, 0.066, 0.452)
+	WaitSFXDone: SFX=Ore ; Reflect=True
+ElseThread: Condition=ItemUseId == 2418 ; Sync=True
+	LoadSFX: SFX=Ore ; Reflect=True
+	WaitSFXLoaded: SFX=Ore ; Reflect=True
+	PlaySFX: SFX=Ore ; Reflect=True ; MeshColors=0:(0.267, 0.449, 0.284), 1:(0.368, 0.371, 0.261), 2:(0.267, 0.449, 0.284), 3:(0.368, 0.371, 0.261)
+	WaitSFXDone: SFX=Ore ; Reflect=True
+ElseThread: Condition=ItemUseId == 2419 ; Sync=True
+	LoadSFX: SFX=Ore ; Reflect=True
+	WaitSFXLoaded: SFX=Ore ; Reflect=True
+	PlaySFX: SFX=Ore ; Reflect=True ; MeshColors=0:(0.481, 0.066, 0.452), 1:(0.368, 0.371, 0.261), 2:(0.481, 0.066, 0.452), 3:(0.368, 0.371, 0.261)
+	WaitSFXDone: SFX=Ore ; Reflect=True
+ElseThread: Condition=ItemUseId == 2420 ; Sync=True
+	StartThread: LoopCount=6 ; Chain ; Sync
+		StartThread: Target=RandomTarget ; Sync=True
+			Wait: Time=2
+			LoadSFX: SFX=Ore ; UseCamera=False
+			WaitSFXLoaded: SFX=Ore
+			PlaySFX: SFX=Ore
+		EndThread
+		Wait: Time=5
+	EndThread
+	StartThread: Condition=GetRandom(0, 2) == 0 ; Sync=True
+		StartThread: Target=RandomTarget ; Sync=True
+			Wait: Time=2
+			LoadSFX: SFX=Ore ; UseCamera=False
+			WaitSFXLoaded: SFX=Ore
+			PlaySFX: SFX=Ore
+		EndThread
+		Wait: Time=5
+	EndThread
+	StartThread: Condition=GetRandom(0, 2) == 0 ; Sync=True
+		StartThread: Target=RandomTarget ; Sync=True
+			Wait: Time=2
+			LoadSFX: SFX=Ore ; UseCamera=False
+			WaitSFXLoaded: SFX=Ore
+			PlaySFX: SFX=Ore
+		EndThread
+		Wait: Time=5
+	EndThread
+	StartThread: Condition=GetRandom(0, 2) == 0 ; Sync=True
+		StartThread: Target=RandomTarget ; Sync=True
+			Wait: Time=2
+			LoadSFX: SFX=Ore ; UseCamera=False
+			WaitSFXLoaded: SFX=Ore
+			PlaySFX: SFX=Ore
+		EndThread
+		Wait: Time=5
+	EndThread
+	StartThread: Condition=GetRandom(0, 2) == 0 ; Sync=True
+		StartThread: Target=RandomTarget ; Sync=True
+			Wait: Time=2
+			LoadSFX: SFX=Ore ; UseCamera=False
+			WaitSFXLoaded: SFX=Ore
+			PlaySFX: SFX=Ore
+		EndThread
+		Wait: Time=5
+	EndThread
+ElseThread: Condition=ItemUseId == 2421 ; Sync=True
+	StartThread: LoopCount=6 ; Chain ; Sync
+		StartThread: Target=RandomTarget ; Sync=True
+			Wait: Time=2
+			LoadSFX: SFX=Ore ; UseCamera=False
+			WaitSFXLoaded: SFX=Ore
+			PlaySFX: SFX=Ore ; MeshColors=(0.454, 0.454, 0.093)
+		EndThread
+		Wait: Time=5
+	EndThread
+	StartThread: Condition=GetRandom(0, 2) == 0 ; Sync=True
+		StartThread: Target=RandomTarget ; Sync=True
+			Wait: Time=2
+			LoadSFX: SFX=Ore ; UseCamera=False
+			WaitSFXLoaded: SFX=Ore
+			PlaySFX: SFX=Ore ; MeshColors=(0.454, 0.454, 0.093)
+		EndThread
+		Wait: Time=5
+	EndThread
+	StartThread: Condition=GetRandom(0, 2) == 0 ; Sync=True
+		StartThread: Target=RandomTarget ; Sync=True
+			Wait: Time=2
+			LoadSFX: SFX=Ore ; UseCamera=False
+			WaitSFXLoaded: SFX=Ore
+			PlaySFX: SFX=Ore ; MeshColors=(0.454, 0.454, 0.093)
+		EndThread
+		Wait: Time=5
+	EndThread
+	StartThread: Condition=GetRandom(0, 2) == 0 ; Sync=True
+		StartThread: Target=RandomTarget ; Sync=True
+			Wait: Time=2
+			LoadSFX: SFX=Ore ; UseCamera=False
+			WaitSFXLoaded: SFX=Ore
+			PlaySFX: SFX=Ore ; MeshColors=(0.454, 0.454, 0.093)
+		EndThread
+		Wait: Time=5
+	EndThread
+	StartThread: Condition=GetRandom(0, 2) == 0 ; Sync=True
+		StartThread: Target=RandomTarget ; Sync=True
+			Wait: Time=2
+			LoadSFX: SFX=Ore ; UseCamera=False
+			WaitSFXLoaded: SFX=Ore
+			PlaySFX: SFX=Ore ; MeshColors=(0.454, 0.454, 0.093)
+		EndThread
+		Wait: Time=5
+	EndThread
+ElseThread: Condition=ItemUseId == 2422 ; Sync=True
+	StartThread: LoopCount=6 ; Chain ; Sync
+		StartThread: Target=RandomTarget ; Sync=True
+			Wait: Time=2
+			LoadSFX: SFX=Ore ; UseCamera=False
+			WaitSFXLoaded: SFX=Ore
+			PlaySFX: SFX=Ore ; MeshColors=(0.552, 0.277, 0.171)
+		EndThread
+		Wait: Time=5
+	EndThread
+	StartThread: Condition=GetRandom(0, 2) == 0 ; Sync=True
+		StartThread: Target=RandomTarget ; Sync=True
+			Wait: Time=2
+			LoadSFX: SFX=Ore ; UseCamera=False
+			WaitSFXLoaded: SFX=Ore
+			PlaySFX: SFX=Ore ; MeshColors=(0.552, 0.277, 0.171)
+		EndThread
+		Wait: Time=5
+	EndThread
+	StartThread: Condition=GetRandom(0, 2) == 0 ; Sync=True
+		StartThread: Target=RandomTarget ; Sync=True
+			Wait: Time=2
+			LoadSFX: SFX=Ore ; UseCamera=False
+			WaitSFXLoaded: SFX=Ore
+			PlaySFX: SFX=Ore ; MeshColors=(0.552, 0.277, 0.171)
+		EndThread
+		Wait: Time=5
+	EndThread
+	StartThread: Condition=GetRandom(0, 2) == 0 ; Sync=True
+		StartThread: Target=RandomTarget ; Sync=True
+			Wait: Time=2
+			LoadSFX: SFX=Ore ; UseCamera=False
+			WaitSFXLoaded: SFX=Ore
+			PlaySFX: SFX=Ore ; MeshColors=(0.552, 0.277, 0.171)
+		EndThread
+		Wait: Time=5
+	EndThread
+	StartThread: Condition=GetRandom(0, 2) == 0 ; Sync=True
+		StartThread: Target=RandomTarget ; Sync=True
+			Wait: Time=2
+			LoadSFX: SFX=Ore ; UseCamera=False
+			WaitSFXLoaded: SFX=Ore
+			PlaySFX: SFX=Ore ; MeshColors=(0.552, 0.277, 0.171)
+		EndThread
+		Wait: Time=5
+	EndThread
+ElseThread: Condition=ItemUseId == 2423 ; Sync=True
+	StartThread: LoopCount=6 ; Chain ; Sync
+		StartThread: Target=RandomTarget ; Sync=True
+			Wait: Time=2
+			LoadSFX: SFX=Ore ; UseCamera=False
+			WaitSFXLoaded: SFX=Ore
+			PlaySFX: SFX=Ore ; MeshColors=(0.143, 0.423, 0.434)
+		EndThread
+		Wait: Time=5
+	EndThread
+	StartThread: Condition=GetRandom(0, 2) == 0 ; Sync=True
+		StartThread: Target=RandomTarget ; Sync=True
+			Wait: Time=2
+			LoadSFX: SFX=Ore ; UseCamera=False
+			WaitSFXLoaded: SFX=Ore
+			PlaySFX: SFX=Ore ; MeshColors=(0.143, 0.423, 0.434)
+		EndThread
+		Wait: Time=5
+	EndThread
+	StartThread: Condition=GetRandom(0, 2) == 0 ; Sync=True
+		StartThread: Target=RandomTarget ; Sync=True
+			Wait: Time=2
+			LoadSFX: SFX=Ore ; UseCamera=False
+			WaitSFXLoaded: SFX=Ore
+			PlaySFX: SFX=Ore ; MeshColors=(0.143, 0.423, 0.434)
+		EndThread
+		Wait: Time=5
+	EndThread
+	StartThread: Condition=GetRandom(0, 2) == 0 ; Sync=True
+		StartThread: Target=RandomTarget ; Sync=True
+			Wait: Time=2
+			LoadSFX: SFX=Ore ; UseCamera=False
+			WaitSFXLoaded: SFX=Ore
+			PlaySFX: SFX=Ore ; MeshColors=(0.143, 0.423, 0.434)
+		EndThread
+		Wait: Time=5
+	EndThread
+	StartThread: Condition=GetRandom(0, 2) == 0 ; Sync=True
+		StartThread: Target=RandomTarget ; Sync=True
+			Wait: Time=2
+			LoadSFX: SFX=Ore ; UseCamera=False
+			WaitSFXLoaded: SFX=Ore
+			PlaySFX: SFX=Ore ; MeshColors=(0.143, 0.423, 0.434)
+		EndThread
+		Wait: Time=5
+	EndThread
+ElseThread: Condition=ItemUseId == 2424 ; Sync=True
+	StartThread: LoopCount=6 ; Chain ; Sync
+		StartThread: Target=RandomTarget ; Sync=True
+			Wait: Time=2
+			LoadSFX: SFX=Ore ; UseCamera=False
+			WaitSFXLoaded: SFX=Ore
+			PlaySFX: SFX=Ore ; MeshColors=(0.405, 0.179, 0.416)
+		EndThread
+		Wait: Time=5
+	EndThread
+	StartThread: Condition=GetRandom(0, 2) == 0 ; Sync=True
+		StartThread: Target=RandomTarget ; Sync=True
+			Wait: Time=2
+			LoadSFX: SFX=Ore ; UseCamera=False
+			WaitSFXLoaded: SFX=Ore
+			PlaySFX: SFX=Ore ; MeshColors=(0.405, 0.179, 0.416)
+		EndThread
+		Wait: Time=5
+	EndThread
+	StartThread: Condition=GetRandom(0, 2) == 0 ; Sync=True
+		StartThread: Target=RandomTarget ; Sync=True
+			Wait: Time=2
+			LoadSFX: SFX=Ore ; UseCamera=False
+			WaitSFXLoaded: SFX=Ore
+			PlaySFX: SFX=Ore ; MeshColors=(0.405, 0.179, 0.416)
+		EndThread
+		Wait: Time=5
+	EndThread
+	StartThread: Condition=GetRandom(0, 2) == 0 ; Sync=True
+		StartThread: Target=RandomTarget ; Sync=True
+			Wait: Time=2
+			LoadSFX: SFX=Ore ; UseCamera=False
+			WaitSFXLoaded: SFX=Ore
+			PlaySFX: SFX=Ore ; MeshColors=(0.405, 0.179, 0.416)
+		EndThread
+		Wait: Time=5
+	EndThread
+	StartThread: Condition=GetRandom(0, 2) == 0 ; Sync=True
+		StartThread: Target=RandomTarget ; Sync=True
+			Wait: Time=2
+			LoadSFX: SFX=Ore ; UseCamera=False
+			WaitSFXLoaded: SFX=Ore
+			PlaySFX: SFX=Ore ; MeshColors=(0.405, 0.179, 0.416)
+		EndThread
+		Wait: Time=5
+	EndThread
+ElseThread: Condition=ItemUseId == 2425 ; Sync=True
+	StartThread: LoopCount=6 ; Chain ; Sync
+		StartThread: Target=RandomTarget ; Sync=True
+			Wait: Time=2
+			LoadSFX: SFX=Ore ; UseCamera=False
+			WaitSFXLoaded: SFX=Ore
+			PlaySFX: SFX=Ore ; MeshColors=(0.22, 0.259, 0.52)
+		EndThread
+		Wait: Time=5
+	EndThread
+	StartThread: Condition=GetRandom(0, 2) == 0 ; Sync=True
+		StartThread: Target=RandomTarget ; Sync=True
+			Wait: Time=2
+			LoadSFX: SFX=Ore ; UseCamera=False
+			WaitSFXLoaded: SFX=Ore
+			PlaySFX: SFX=Ore ; MeshColors=(0.22, 0.259, 0.52)
+		EndThread
+		Wait: Time=5
+	EndThread
+	StartThread: Condition=GetRandom(0, 2) == 0 ; Sync=True
+		StartThread: Target=RandomTarget ; Sync=True
+			Wait: Time=2
+			LoadSFX: SFX=Ore ; UseCamera=False
+			WaitSFXLoaded: SFX=Ore
+			PlaySFX: SFX=Ore ; MeshColors=(0.22, 0.259, 0.52)
+		EndThread
+		Wait: Time=5
+	EndThread
+	StartThread: Condition=GetRandom(0, 2) == 0 ; Sync=True
+		StartThread: Target=RandomTarget ; Sync=True
+			Wait: Time=2
+			LoadSFX: SFX=Ore ; UseCamera=False
+			WaitSFXLoaded: SFX=Ore
+			PlaySFX: SFX=Ore ; MeshColors=(0.22, 0.259, 0.52)
+		EndThread
+		Wait: Time=5
+	EndThread
+	StartThread: Condition=GetRandom(0, 2) == 0 ; Sync=True
+		StartThread: Target=RandomTarget ; Sync=True
+			Wait: Time=2
+			LoadSFX: SFX=Ore ; UseCamera=False
+			WaitSFXLoaded: SFX=Ore
+			PlaySFX: SFX=Ore ; MeshColors=(0.22, 0.259, 0.52)
+		EndThread
+		Wait: Time=5
+	EndThread
+ElseThread: Condition=ItemUseId == 2426 ; Sync=True
+	StartThread: LoopCount=6 ; Chain ; Sync
+		StartThread: Target=RandomTarget ; Sync=True
+			Wait: Time=2
+			LoadSFX: SFX=Ore ; UseCamera=False
+			WaitSFXLoaded: SFX=Ore
+			PlaySFX: SFX=Ore ; MeshColors=(0.445, 0.366, 0.188)
+		EndThread
+		Wait: Time=5
+	EndThread
+	StartThread: Condition=GetRandom(0, 2) == 0 ; Sync=True
+		StartThread: Target=RandomTarget ; Sync=True
+			Wait: Time=2
+			LoadSFX: SFX=Ore ; UseCamera=False
+			WaitSFXLoaded: SFX=Ore
+			PlaySFX: SFX=Ore ; MeshColors=(0.445, 0.366, 0.188)
+		EndThread
+		Wait: Time=5
+	EndThread
+	StartThread: Condition=GetRandom(0, 2) == 0 ; Sync=True
+		StartThread: Target=RandomTarget ; Sync=True
+			Wait: Time=2
+			LoadSFX: SFX=Ore ; UseCamera=False
+			WaitSFXLoaded: SFX=Ore
+			PlaySFX: SFX=Ore ; MeshColors=(0.445, 0.366, 0.188)
+		EndThread
+		Wait: Time=5
+	EndThread
+	StartThread: Condition=GetRandom(0, 2) == 0 ; Sync=True
+		StartThread: Target=RandomTarget ; Sync=True
+			Wait: Time=2
+			LoadSFX: SFX=Ore ; UseCamera=False
+			WaitSFXLoaded: SFX=Ore
+			PlaySFX: SFX=Ore ; MeshColors=(0.445, 0.366, 0.188)
+		EndThread
+		Wait: Time=5
+	EndThread
+	StartThread: Condition=GetRandom(0, 2) == 0 ; Sync=True
+		StartThread: Target=RandomTarget ; Sync=True
+			Wait: Time=2
+			LoadSFX: SFX=Ore ; UseCamera=False
+			WaitSFXLoaded: SFX=Ore
+			PlaySFX: SFX=Ore ; MeshColors=(0.445, 0.366, 0.188)
+		EndThread
+		Wait: Time=5
+	EndThread
+ElseThread: Condition=ItemUseId == 2427 ; Sync=True
+	StartThread: LoopCount=6 ; Chain ; Sync
+		StartThread: Target=RandomTarget ; Sync=True
+			Wait: Time=2
+			LoadSFX: SFX=Ore ; UseCamera=False
+			WaitSFXLoaded: SFX=Ore
+			PlaySFX: SFX=Ore ; MeshColors=(0.899, 0.101, 0.0)
+		EndThread
+		Wait: Time=5
+	EndThread
+	StartThread: Condition=GetRandom(0, 2) == 0 ; Sync=True
+		StartThread: Target=RandomTarget ; Sync=True
+			Wait: Time=2
+			LoadSFX: SFX=Ore ; UseCamera=False
+			WaitSFXLoaded: SFX=Ore
+			PlaySFX: SFX=Ore ; MeshColors=(0.899, 0.101, 0.0)
+		EndThread
+		Wait: Time=5
+	EndThread
+	StartThread: Condition=GetRandom(0, 2) == 0 ; Sync=True
+		StartThread: Target=RandomTarget ; Sync=True
+			Wait: Time=2
+			LoadSFX: SFX=Ore ; UseCamera=False
+			WaitSFXLoaded: SFX=Ore
+			PlaySFX: SFX=Ore ; MeshColors=(0.899, 0.101, 0.0)
+		EndThread
+		Wait: Time=5
+	EndThread
+	StartThread: Condition=GetRandom(0, 2) == 0 ; Sync=True
+		StartThread: Target=RandomTarget ; Sync=True
+			Wait: Time=2
+			LoadSFX: SFX=Ore ; UseCamera=False
+			WaitSFXLoaded: SFX=Ore
+			PlaySFX: SFX=Ore ; MeshColors=(0.899, 0.101, 0.0)
+		EndThread
+		Wait: Time=5
+	EndThread
+	StartThread: Condition=GetRandom(0, 2) == 0 ; Sync=True
+		StartThread: Target=RandomTarget ; Sync=True
+			Wait: Time=2
+			LoadSFX: SFX=Ore ; UseCamera=False
+			WaitSFXLoaded: SFX=Ore
+			PlaySFX: SFX=Ore ; MeshColors=(0.899, 0.101, 0.0)
+		EndThread
+		Wait: Time=5
+	EndThread
+ElseThread: Condition=ItemUseId == 2428 ; Sync=True
+	StartThread: LoopCount=6 ; Chain ; Sync
+		StartThread: Target=RandomTarget ; Sync=True
+			Wait: Time=2
+			LoadSFX: SFX=Ore ; UseCamera=False
+			WaitSFXLoaded: SFX=Ore
+			PlaySFX: SFX=Ore ; MeshColors=(0.359, 0.289, 0.352)
+		EndThread
+		Wait: Time=5
+	EndThread
+	StartThread: Condition=GetRandom(0, 2) == 0 ; Sync=True
+		StartThread: Target=RandomTarget ; Sync=True
+			Wait: Time=2
+			LoadSFX: SFX=Ore ; UseCamera=False
+			WaitSFXLoaded: SFX=Ore
+			PlaySFX: SFX=Ore ; MeshColors=(0.359, 0.289, 0.352)
+		EndThread
+		Wait: Time=5
+	EndThread
+	StartThread: Condition=GetRandom(0, 2) == 0 ; Sync=True
+		StartThread: Target=RandomTarget ; Sync=True
+			Wait: Time=2
+			LoadSFX: SFX=Ore ; UseCamera=False
+			WaitSFXLoaded: SFX=Ore
+			PlaySFX: SFX=Ore ; MeshColors=(0.359, 0.289, 0.352)
+		EndThread
+		Wait: Time=5
+	EndThread
+	StartThread: Condition=GetRandom(0, 2) == 0 ; Sync=True
+		StartThread: Target=RandomTarget ; Sync=True
+			Wait: Time=2
+			LoadSFX: SFX=Ore ; UseCamera=False
+			WaitSFXLoaded: SFX=Ore
+			PlaySFX: SFX=Ore ; MeshColors=(0.359, 0.289, 0.352)
+		EndThread
+		Wait: Time=5
+	EndThread
+	StartThread: Condition=GetRandom(0, 2) == 0 ; Sync=True
+		StartThread: Target=RandomTarget ; Sync=True
+			Wait: Time=2
+			LoadSFX: SFX=Ore ; UseCamera=False
+			WaitSFXLoaded: SFX=Ore
+			PlaySFX: SFX=Ore ; MeshColors=(0.359, 0.289, 0.352)
+		EndThread
+		Wait: Time=5
+	EndThread
+ElseThread: Condition=ItemUseId == 2429 ; Sync=True
+	StartThread: LoopCount=6 ; Chain ; Sync
+		StartThread: Target=RandomTarget ; Sync=True
+			Wait: Time=2
+			LoadSFX: SFX=Ore ; UseCamera=False
+			WaitSFXLoaded: SFX=Ore
+			PlaySFX: SFX=Ore ; MeshColors=(0.267, 0.449, 0.284)
+		EndThread
+		Wait: Time=5
+	EndThread
+	StartThread: Condition=GetRandom(0, 2) == 0 ; Sync=True
+		StartThread: Target=RandomTarget ; Sync=True
+			Wait: Time=2
+			LoadSFX: SFX=Ore ; UseCamera=False
+			WaitSFXLoaded: SFX=Ore
+			PlaySFX: SFX=Ore ; MeshColors=(0.267, 0.449, 0.284)
+		EndThread
+		Wait: Time=5
+	EndThread
+	StartThread: Condition=GetRandom(0, 2) == 0 ; Sync=True
+		StartThread: Target=RandomTarget ; Sync=True
+			Wait: Time=2
+			LoadSFX: SFX=Ore ; UseCamera=False
+			WaitSFXLoaded: SFX=Ore
+			PlaySFX: SFX=Ore ; MeshColors=(0.267, 0.449, 0.284)
+		EndThread
+		Wait: Time=5
+	EndThread
+	StartThread: Condition=GetRandom(0, 2) == 0 ; Sync=True
+		StartThread: Target=RandomTarget ; Sync=True
+			Wait: Time=2
+			LoadSFX: SFX=Ore ; UseCamera=False
+			WaitSFXLoaded: SFX=Ore
+			PlaySFX: SFX=Ore ; MeshColors=(0.267, 0.449, 0.284)
+		EndThread
+		Wait: Time=5
+	EndThread
+	StartThread: Condition=GetRandom(0, 2) == 0 ; Sync=True
+		StartThread: Target=RandomTarget ; Sync=True
+			Wait: Time=2
+			LoadSFX: SFX=Ore ; UseCamera=False
+			WaitSFXLoaded: SFX=Ore
+			PlaySFX: SFX=Ore ; MeshColors=(0.267, 0.449, 0.284)
+		EndThread
+		Wait: Time=5
+	EndThread
+ElseThread: Condition=ItemUseId == 2430 ; Sync=True
+	StartThread: LoopCount=6 ; Chain ; Sync
+		StartThread: Target=RandomTarget ; Sync=True
+			Wait: Time=2
+			LoadSFX: SFX=Ore ; UseCamera=False
+			WaitSFXLoaded: SFX=Ore
+			PlaySFX: SFX=Ore ; MeshColors=(0.481, 0.066, 0.452)
+		EndThread
+		Wait: Time=5
+	EndThread
+	StartThread: Condition=GetRandom(0, 2) == 0 ; Sync=True
+		StartThread: Target=RandomTarget ; Sync=True
+			Wait: Time=2
+			LoadSFX: SFX=Ore ; UseCamera=False
+			WaitSFXLoaded: SFX=Ore
+			PlaySFX: SFX=Ore ; MeshColors=(0.481, 0.066, 0.452)
+		EndThread
+		Wait: Time=5
+	EndThread
+	StartThread: Condition=GetRandom(0, 2) == 0 ; Sync=True
+		StartThread: Target=RandomTarget ; Sync=True
+			Wait: Time=2
+			LoadSFX: SFX=Ore ; UseCamera=False
+			WaitSFXLoaded: SFX=Ore
+			PlaySFX: SFX=Ore ; MeshColors=(0.481, 0.066, 0.452)
+		EndThread
+		Wait: Time=5
+	EndThread
+	StartThread: Condition=GetRandom(0, 2) == 0 ; Sync=True
+		StartThread: Target=RandomTarget ; Sync=True
+			Wait: Time=2
+			LoadSFX: SFX=Ore ; UseCamera=False
+			WaitSFXLoaded: SFX=Ore
+			PlaySFX: SFX=Ore ; MeshColors=(0.481, 0.066, 0.452)
+		EndThread
+		Wait: Time=5
+	EndThread
+	StartThread: Condition=GetRandom(0, 2) == 0 ; Sync=True
+		StartThread: Target=RandomTarget ; Sync=True
+			Wait: Time=2
+			LoadSFX: SFX=Ore ; UseCamera=False
+			WaitSFXLoaded: SFX=Ore
+			PlaySFX: SFX=Ore ; MeshColors=(0.481, 0.066, 0.452)
+		EndThread
+		Wait: Time=5
+	EndThread
+ElseThread: Condition=ItemUseId == 2431 ; Sync=True
+	StartThread: LoopCount=6 ; Chain ; Sync
+		StartThread: Target=RandomTarget ; Sync=True
+			Wait: Time=2
+			LoadSFX: SFX=Ore ; UseCamera=False
+			WaitSFXLoaded: SFX=Ore
+			PlaySFX: SFX=Ore ; MeshColors=(0.368, 0.371, 0.261)
+		EndThread
+		Wait: Time=5
+	EndThread
+	StartThread: Condition=GetRandom(0, 2) == 0 ; Sync=True
+		StartThread: Target=RandomTarget ; Sync=True
+			Wait: Time=2
+			LoadSFX: SFX=Ore ; UseCamera=False
+			WaitSFXLoaded: SFX=Ore
+			PlaySFX: SFX=Ore ; MeshColors=(0.368, 0.371, 0.261)
+		EndThread
+		Wait: Time=5
+	EndThread
+	StartThread: Condition=GetRandom(0, 2) == 0 ; Sync=True
+		StartThread: Target=RandomTarget ; Sync=True
+			Wait: Time=2
+			LoadSFX: SFX=Ore ; UseCamera=False
+			WaitSFXLoaded: SFX=Ore
+			PlaySFX: SFX=Ore ; MeshColors=(0.368, 0.371, 0.261)
+		EndThread
+		Wait: Time=5
+	EndThread
+	StartThread: Condition=GetRandom(0, 2) == 0 ; Sync=True
+		StartThread: Target=RandomTarget ; Sync=True
+			Wait: Time=2
+			LoadSFX: SFX=Ore ; UseCamera=False
+			WaitSFXLoaded: SFX=Ore
+			PlaySFX: SFX=Ore ; MeshColors=(0.368, 0.371, 0.261)
+		EndThread
+		Wait: Time=5
+	EndThread
+	StartThread: Condition=GetRandom(0, 2) == 0 ; Sync=True
+		StartThread: Target=RandomTarget ; Sync=True
+			Wait: Time=2
+			LoadSFX: SFX=Ore ; UseCamera=False
+			WaitSFXLoaded: SFX=Ore
+			PlaySFX: SFX=Ore ; MeshColors=(0.368, 0.371, 0.261)
+		EndThread
+		Wait: Time=5
+	EndThread
+ElseThread: Condition=ItemUseId == 2439 ; Sync=True
+	LoadSFX: SFX=Protect ; Reflect=True
+	WaitSFXLoaded: SFX=Protect ; Reflect=True
+	PlaySFX: SFX=Protect ; Reflect=True ; MeshColors=(0.143, 0.423, 0.434)
+	WaitSFXDone: SFX=Protect ; Reflect=True
+ElseThread: Condition=ItemUseId == 2440 ; Sync=True
+	LoadSFX: SFX=Shell ; Reflect=True
+	WaitSFXLoaded: SFX=Shell ; Reflect=True
+	PlaySFX: SFX=Shell ; Reflect=True ; MeshColors=(0.481, 0.066, 0.452)
+	WaitSFXDone: SFX=Shell ; Reflect=True
+ElseThread: Condition=ItemUseId == 2441 ; Sync=True
+	LoadSFX: SFX=Reflect ; Reflect=True
+	WaitSFXLoaded: SFX=Reflect ; Reflect=True
+	PlaySFX: SFX=Reflect ; Reflect=True
+	WaitSFXDone: SFX=Reflect ; Reflect=True
+ElseThread: Condition=ItemUseId == 2442 ; Sync=True
+	LoadSFX: SFX=Osmose ; Reflect=True
+	WaitSFXLoaded: SFX=Osmose ; Reflect=True
+	PlaySFX: SFX=Osmose ; Reflect=True ; MeshColors=(0.445, 0.366, 0.188)
+	WaitSFXDone: SFX=Osmose ; Reflect=True
+ElseThread: Condition=ItemUseId == 2443 ; Sync=True
+	LoadSFX: SFX=White_Draw ; Reflect=True ; UseCamera=False
+	WaitSFXLoaded: SFX=White_Draw ; Reflect=True
+	PlaySFX: SFX=White_Draw ; Reflect=True ; JumpToFrame=46 ; MeshColors=(0.445, 0.366, 0.188)
+	WaitSFXDone: SFX=White_Draw ; Reflect=True
+ElseThread: Condition=ItemUseId == 2444 ; Sync=True
+	LoadSFX: SFX=Mighty_Guard ; Reflect=True
+	WaitSFXLoaded: SFX=Mighty_Guard ; Reflect=True
+	PlaySFX: SFX=Mighty_Guard ; Reflect=True
+	WaitSFXDone: SFX=Mighty_Guard ; Reflect=True
+ElseThread: Condition=ItemUseId == 2445 ; Sync=True
+	StartThread
+		LoadSFX: SFX=Protect ; Reflect=True ; UseCamera=False
+		WaitSFXLoaded: SFX=Protect ; Reflect=True
+		PlaySFX: SFX=Protect ; Reflect=True ; SkipSequence
+	EndThread
+	StartThread
+		LoadSFX: SFX=Shell ; Reflect=True ; UseCamera=False
+		WaitSFXLoaded: SFX=Shell ; Reflect=True
+		PlaySFX: SFX=Shell ; Reflect=True ; SkipSequence
+	EndThread
+	StartThread
+		LoadSFX: SFX=Reflect ; Reflect=True ; UseCamera=False
+		WaitSFXLoaded: SFX=Reflect ; Reflect=True
+		PlaySFX: SFX=Reflect ; Reflect=True
+	EndThread
+ElseThread: Condition=ItemUseId == 2446 ; Sync=True
+	StartThread
+		LoadSFX: SFX=Reflect ; Reflect=True ; UseCamera=False
+		WaitSFXLoaded: SFX=Reflect ; Reflect=True
+		PlaySFX: SFX=Reflect ; Reflect=True ; SkipSequence
+	EndThread
+	StartThread
+		LoadSFX: SFX=Thundera__Single ; Reflect=True ; UseCamera=False
+		WaitSFXLoaded: SFX=Thundera__Single ; Reflect=True
+		PlaySFX: SFX=Thundera__Single ; Reflect=True
+	EndThread
+ElseThread: Condition=ItemUseId == 2447 ; Sync=True
+	StartThread
+		LoadSFX: SFX=Reflect ; Reflect=True ; UseCamera=False
+		WaitSFXLoaded: SFX=Reflect ; Reflect=True
+		PlaySFX: SFX=Reflect ; Reflect=True ; SkipSequence
+	EndThread
+	StartThread
+		LoadSFX: SFX=Fira__Single ; Reflect=True ; UseCamera=False
+		WaitSFXLoaded: SFX=Fira__Single ; Reflect=True
+		PlaySFX: SFX=Fira__Single ; Reflect=True
+	EndThread
+ElseThread: Condition=ItemUseId == 2448 ; Sync=True
+	StartThread
+		LoadSFX: SFX=Reflect ; Reflect=True ; UseCamera=False
+		WaitSFXLoaded: SFX=Reflect ; Reflect=True
+		PlaySFX: SFX=Reflect ; Reflect=True ; SkipSequence
+	EndThread
+	StartThread
+		LoadSFX: SFX=Blizzara__Single ; Reflect=True ; UseCamera=False
+		WaitSFXLoaded: SFX=Blizzara__Single ; Reflect=True
+		PlaySFX: SFX=Blizzara__Single ; Reflect=True
+	EndThread
+ElseThread: Condition=ItemUseId == 2449 ; Sync=True
+	StartThread
+		LoadSFX: SFX=Reflect ; Reflect=True ; UseCamera=False
+		WaitSFXLoaded: SFX=Reflect ; Reflect=True
+		PlaySFX: SFX=Reflect ; Reflect=True ; SkipSequence
+	EndThread
+	StartThread
+		LoadSFX: SFX=Demi__Single ; Reflect=True ; UseCamera=False
+		WaitSFXLoaded: SFX=Demi__Single ; Reflect=True
+		PlaySFX: SFX=Demi__Single ; Reflect=True
+	EndThread
+ElseThread: Condition=ItemUseId == 2450 ; Sync=True
+	StartThread
+		LoadSFX: SFX=Reflect ; Reflect=True ; UseCamera=False
+		WaitSFXLoaded: SFX=Reflect ; Reflect=True
+		PlaySFX: SFX=Reflect ; Reflect=True ; SkipSequence
+	EndThread
+	StartThread
+		LoadSFX: SFX=Water__Single ; Reflect=True ; UseCamera=False
+		WaitSFXLoaded: SFX=Water__Single ; Reflect=True
+		PlaySFX: SFX=Water__Single ; Reflect=True
+	EndThread
+ElseThread: Condition=ItemUseId == 2451 ; Sync=True
+	StartThread
+		LoadSFX: SFX=Reflect ; Reflect=True ; UseCamera=False
+		WaitSFXLoaded: SFX=Reflect ; Reflect=True
+		PlaySFX: SFX=Reflect ; Reflect=True ; SkipSequence
+	EndThread
+	StartThread
+		LoadSFX: SFX=Nanoflare ; Reflect=True ; UseCamera=False
+		WaitSFXLoaded: SFX=Nanoflare ; Reflect=True
+		PlaySFX: SFX=Nanoflare ; Reflect=True
+	EndThread
+ElseThread: Condition=ItemUseId == 2452 ; Sync=True
+	StartThread
+		LoadSFX: SFX=Reflect ; Reflect=True ; UseCamera=False
+		WaitSFXLoaded: SFX=Reflect ; Reflect=True
+		PlaySFX: SFX=Reflect ; Reflect=True ; SkipSequence
+	EndThread
+	StartThread
+		LoadSFX: SFX=Earthquake ; Reflect=True ; UseCamera=False
+		WaitSFXLoaded: SFX=Earthquake ; Reflect=True
+		PlaySFX: SFX=Earthquake ; Reflect=True
+	EndThread
+ElseThread: Condition=ItemUseId == 2453 ; Sync=True
+	StartThread
+		LoadSFX: SFX=Reflect ; Reflect=True ; UseCamera=False
+		WaitSFXLoaded: SFX=Reflect ; Reflect=True
+		PlaySFX: SFX=Reflect ; Reflect=True ; SkipSequence
+	EndThread
+	StartThread
+		LoadSFX: SFX=Aera_2 ; Reflect=True ; UseCamera=False
+		WaitSFXLoaded: SFX=Aera_2 ; Reflect=True
+		PlaySFX: SFX=Aera_2 ; Reflect=True
+	EndThread
+ElseThread: Condition=ItemUseId == 2454 ; Sync=True
+	StartThread
+		LoadSFX: SFX=Reflect ; Reflect=True ; UseCamera=False
+		WaitSFXLoaded: SFX=Reflect ; Reflect=True
+		PlaySFX: SFX=Reflect ; Reflect=True ; SkipSequence
+	EndThread
+	StartThread
+		LoadSFX: SFX=Darkside_2 ; Reflect=True ; UseCamera=False
+		WaitSFXLoaded: SFX=Darkside_2 ; Reflect=True
+		PlaySFX: SFX=Darkside_2 ; Reflect=True
+	EndThread
+ElseThread: Condition=ItemUseId == 2455 ; Sync=True
+	StartThread
+		LoadSFX: SFX=Reflect ; Reflect=True ; UseCamera=False
+		WaitSFXLoaded: SFX=Reflect ; Reflect=True
+		PlaySFX: SFX=Reflect ; Reflect=True ; SkipSequence
+	EndThread
+	StartThread
+		LoadSFX: SFX=Rainbow_Storm ; Reflect=True ; UseCamera=False
+		WaitSFXLoaded: SFX=Rainbow_Storm ; Reflect=True
+		PlaySFX: SFX=Rainbow_Storm ; Reflect=True
+	EndThread
+ElseThread: Condition=ItemUseId == 2456 ; Sync=True
+	LoadSFX: SFX=Ore ; Reflect=True
+	WaitSFXLoaded: SFX=Ore ; Reflect=True
+	PlaySFX: SFX=Ore ; Reflect=True ; MeshColors=(0.169, 0.29914, 0.36683)
+	WaitSFXDone: SFX=Ore ; Reflect=True
+ElseThread: Condition=ItemUseId == 2457 ; Sync=True
+	LoadSFX: SFX=Protect ; Reflect=True
+	WaitSFXLoaded: SFX=Protect ; Reflect=True
+	PlaySFX: SFX=Protect ; Reflect=True ; MeshColors=(0.169, 0.29914, 0.36683)
+ElseThread: Condition=ItemUseId == 2458 ; Sync=True
+	LoadSFX: SFX=Protect ; Reflect=True
+	WaitSFXLoaded: SFX=Protect ; Reflect=True
+	PlaySFX: SFX=Protect ; Reflect=True ; MeshColors=(0.169, 0.29914, 0.36683)
+ElseThread: Condition=ItemUseId == 2459 ; Sync=True
+	LoadSFX: SFX=Protect ; Reflect=True
+	WaitSFXLoaded: SFX=Protect ; Reflect=True
+	PlaySFX: SFX=Protect ; Reflect=True ; MeshColors=(0.169, 0.29914, 0.36683)
+ElseThread: Condition=ItemUseId == 2460 ; Sync=True
+	LoadSFX: SFX=Shell ; Reflect=True
+	WaitSFXLoaded: SFX=Shell ; Reflect=True
+	PlaySFX: SFX=Shell ; Reflect=True ; MeshColors=(0.169, 0.29914, 0.36683)
+ElseThread: Condition=ItemUseId == 2461 ; Sync=True
+	LoadSFX: SFX=Shell ; Reflect=True
+	WaitSFXLoaded: SFX=Shell ; Reflect=True
+	PlaySFX: SFX=Shell ; Reflect=True ; MeshColors=(0.169, 0.29914, 0.36683)
+ElseThread: Condition=ItemUseId == 2462 ; Sync=True
+	LoadSFX: SFX=Reflect ; Reflect=True
+	WaitSFXLoaded: SFX=Reflect ; Reflect=True
+	PlaySFX: SFX=Reflect ; Reflect=True ; MeshColors=(0.169, 0.29914, 0.36683)
+ElseThread: Condition=ItemUseId == 2463 ; Sync=True
+	LoadSFX: SFX=Reflect ; Reflect=True
+	WaitSFXLoaded: SFX=Reflect ; Reflect=True
+	PlaySFX: SFX=Reflect ; Reflect=True ; MeshColors=(0.169, 0.29914, 0.36683)
+ElseThread: Condition=ItemUseId == 2464 ; Sync=True
+	LoadSFX: SFX=Mighty_Guard ; Reflect=True
+	WaitSFXLoaded: SFX=Mighty_Guard ; Reflect=True
+	PlaySFX: SFX=Mighty_Guard ; Reflect=True ; MeshColors=(0.169, 0.29914, 0.36683)
+ElseThread: Condition=ItemUseId == 2465 ; Sync=True
+	LoadSFX: SFX=Mighty_Guard ; Reflect=True
+	WaitSFXLoaded: SFX=Mighty_Guard ; Reflect=True
+	PlaySFX: SFX=Mighty_Guard ; Reflect=True ; MeshColors=(0.169, 0.29914, 0.36683)
+ElseThread: Condition=ItemUseId == 2475 ; Sync=True
+	LoadSFX: SFX=Ore ; Reflect=True
+	WaitSFXLoaded: SFX=Ore ; Reflect=True
+	PlaySFX: SFX=Ore ; Reflect=True ; MeshColors=0:(0.169, 0.29914, 0.36683), 1:(0.454, 0.454, 0.093), 2:(0.169, 0.29914, 0.36683), 3:(0.454, 0.454, 0.093)
+	WaitSFXDone: SFX=Ore ; Reflect=True
+ElseThread: Condition=ItemUseId == 2476 ; Sync=True
+	LoadSFX: SFX=Ore ; Reflect=True
+	WaitSFXLoaded: SFX=Ore ; Reflect=True
+	PlaySFX: SFX=Ore ; Reflect=True ; MeshColors=0:(0.169, 0.29914, 0.36683), 1:(0.552, 0.277, 0.171), 2:(0.169, 0.29914, 0.36683), 3:(0.552, 0.277, 0.171)
+	WaitSFXDone: SFX=Ore ; Reflect=True
+ElseThread: Condition=ItemUseId == 2477 ; Sync=True
+	LoadSFX: SFX=Ore ; Reflect=True
+	WaitSFXLoaded: SFX=Ore ; Reflect=True
+	PlaySFX: SFX=Ore ; Reflect=True ; MeshColors=0:(0.169, 0.29914, 0.36683), 1:(0.143, 0.423, 0.434), 2:(0.169, 0.29914, 0.36683), 3:(0.143, 0.423, 0.434)
+	WaitSFXDone: SFX=Ore ; Reflect=True
+ElseThread: Condition=ItemUseId == 2478 ; Sync=True
+	LoadSFX: SFX=Ore ; Reflect=True
+	WaitSFXLoaded: SFX=Ore ; Reflect=True
+	PlaySFX: SFX=Ore ; Reflect=True ; MeshColors=0:(0.169, 0.29914, 0.36683), 1:(0.405, 0.179, 0.416), 2:(0.169, 0.29914, 0.36683), 3:(0.405, 0.179, 0.416)
+	WaitSFXDone: SFX=Ore ; Reflect=True
+ElseThread: Condition=ItemUseId == 2479 ; Sync=True
+	LoadSFX: SFX=Ore ; Reflect=True
+	WaitSFXLoaded: SFX=Ore ; Reflect=True
+	PlaySFX: SFX=Ore ; Reflect=True ; MeshColors=0:(0.169, 0.29914, 0.36683), 1:(0.22, 0.259, 0.52), 2:(0.169, 0.29914, 0.36683), 3:(0.22, 0.259, 0.52)
+	WaitSFXDone: SFX=Ore ; Reflect=True
+ElseThread: Condition=ItemUseId == 2480 ; Sync=True
+	LoadSFX: SFX=Ore ; Reflect=True
+	WaitSFXLoaded: SFX=Ore ; Reflect=True
+	PlaySFX: SFX=Ore ; Reflect=True ; MeshColors=0:(0.169, 0.29914, 0.36683), 1:(0.445, 0.366, 0.188), 2:(0.169, 0.29914, 0.36683), 3:(0.445, 0.366, 0.188)
+	WaitSFXDone: SFX=Ore ; Reflect=True
+ElseThread: Condition=ItemUseId == 2481 ; Sync=True
+	LoadSFX: SFX=Ore ; Reflect=True
+	WaitSFXLoaded: SFX=Ore ; Reflect=True
+	PlaySFX: SFX=Ore ; Reflect=True ; MeshColors=0:(0.169, 0.29914, 0.36683), 1:(0.899, 0.101, 0.0), 2:(0.169, 0.29914, 0.36683), 3:(0.899, 0.101, 0.0)
+	WaitSFXDone: SFX=Ore ; Reflect=True
+ElseThread: Condition=ItemUseId == 2482 ; Sync=True
+	LoadSFX: SFX=Ore ; Reflect=True
+	WaitSFXLoaded: SFX=Ore ; Reflect=True
+	PlaySFX: SFX=Ore ; Reflect=True ; MeshColors=0:(0.169, 0.29914, 0.36683), 1:(0.359, 0.289, 0.352), 2:(0.169, 0.29914, 0.36683), 3:(0.359, 0.289, 0.352)
+	WaitSFXDone: SFX=Ore ; Reflect=True
+ElseThread: Condition=ItemUseId == 2483 ; Sync=True
+	LoadSFX: SFX=Ore ; Reflect=True
+	WaitSFXLoaded: SFX=Ore ; Reflect=True
+	PlaySFX: SFX=Ore ; Reflect=True ; MeshColors=0:(0.169, 0.29914, 0.36683), 1:(0.267, 0.449, 0.284), 2:(0.169, 0.29914, 0.36683), 3:(0.267, 0.449, 0.284)
+	WaitSFXDone: SFX=Ore ; Reflect=True
+ElseThread: Condition=ItemUseId == 2484 ; Sync=True
+	LoadSFX: SFX=Ore ; Reflect=True
+	WaitSFXLoaded: SFX=Ore ; Reflect=True
+	PlaySFX: SFX=Ore ; Reflect=True ; MeshColors=0:(0.169, 0.29914, 0.36683), 1:(0.481, 0.066, 0.452), 2:(0.169, 0.29914, 0.36683), 3:(0.481, 0.066, 0.452)
+	WaitSFXDone: SFX=Ore ; Reflect=True
+ElseThread: Condition=ItemUseId == 2485 ; Sync=True
+	LoadSFX: SFX=Ore ; Reflect=True
+	WaitSFXLoaded: SFX=Ore ; Reflect=True
+	PlaySFX: SFX=Ore ; Reflect=True ; MeshColors=0:(0.169, 0.29914, 0.36683), 1:(0.368, 0.371, 0.261), 2:(0.169, 0.29914, 0.36683), 3:(0.368, 0.371, 0.261)
+	WaitSFXDone: SFX=Ore ; Reflect=True
+ElseThread: Condition=ItemUseId == 2486 ; Sync=True
+	StartThread: LoopCount=6 ; Chain ; Sync
+		StartThread: Target=RandomTarget ; Sync=True
+			Wait: Time=2
+			LoadSFX: SFX=Ore ; UseCamera=False
+			WaitSFXLoaded: SFX=Ore
+			PlaySFX: SFX=Ore ; MeshColors=(0.169, 0.29914, 0.36683)
+		EndThread
+		Wait: Time=5
+	EndThread
+	StartThread: Condition=GetRandom(0, 2) == 0 ; Sync=True
+		StartThread: Target=RandomTarget ; Sync=True
+			Wait: Time=2
+			LoadSFX: SFX=Ore ; UseCamera=False
+			WaitSFXLoaded: SFX=Ore
+			PlaySFX: SFX=Ore ; MeshColors=(0.169, 0.29914, 0.36683)
+		EndThread
+		Wait: Time=5
+	EndThread
+	StartThread: Condition=GetRandom(0, 2) == 0 ; Sync=True
+		StartThread: Target=RandomTarget ; Sync=True
+			Wait: Time=2
+			LoadSFX: SFX=Ore ; UseCamera=False
+			WaitSFXLoaded: SFX=Ore
+			PlaySFX: SFX=Ore ; MeshColors=(0.169, 0.29914, 0.36683)
+		EndThread
+		Wait: Time=5
+	EndThread
+	StartThread: Condition=GetRandom(0, 2) == 0 ; Sync=True
+		StartThread: Target=RandomTarget ; Sync=True
+			Wait: Time=2
+			LoadSFX: SFX=Ore ; UseCamera=False
+			WaitSFXLoaded: SFX=Ore
+			PlaySFX: SFX=Ore ; MeshColors=(0.169, 0.29914, 0.36683)
+		EndThread
+		Wait: Time=5
+	EndThread
+	StartThread: Condition=GetRandom(0, 2) == 0 ; Sync=True
+		StartThread: Target=RandomTarget ; Sync=True
+			Wait: Time=2
+			LoadSFX: SFX=Ore ; UseCamera=False
+			WaitSFXLoaded: SFX=Ore
+			PlaySFX: SFX=Ore ; MeshColors=(0.169, 0.29914, 0.36683)
+		EndThread
+		Wait: Time=5
+	EndThread
+ElseThread: Sync=True
+	LoadSFX: SFX=Dummy ; Reflect=True
+	WaitSFXLoaded: SFX=Dummy ; Reflect=True
+	PlaySFX: SFX=Dummy ; Reflect=True
+	WaitSFXDone: SFX=Dummy ; Reflect=True
+EndThread
+ActivateReflect
+WaitReflect
+StartThread: Condition=CasterRow == 0 && AreCasterAndSelectedTargetsEnemies ; Sync=True
+	MoveToPosition: Char=Caster ; RelativePosition=(0, 0, -400) ; Anim=MP_STEP_BACK
+	WaitMove: Char=Caster
+EndThread
+PlayAnimation: Char=Caster ; Anim=Idle
+Turn: Char=Caster ; BaseAngle=Default ; Time=5
+WaitTurn: Char=Caster

@@ -1,0 +1,23 @@
+// Player sequence of Mog Flare
+
+StartThread: Condition=IsSpellReflected
+	LoadSFX: SFX=Nanoflare ; Reflect=True
+	WaitSFXLoaded: SFX=Nanoflare ; Reflect=True
+	PlaySFX: SFX=Nanoflare ; Reflect=True ; MeshColors=(1.0, 0.0, 0.5)
+	WaitSFXDone: SFX=Nanoflare ; Reflect=True
+ElseThread
+	PlaySound: Sound=1362
+	SetupReflect: Delay=SFXLoaded
+	EffectPoint: Char=Caster ; Type=Both
+	Wait: Time=30
+	EffectPoint: Char=Caster ; Type=Both
+	Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
+	Wait: Time=30
+	LoadSFX: SFX=Nanoflare ; Reflect=True
+	WaitSFXLoaded: SFX=Nanoflare ; Reflect=True
+	PlaySFX: SFX=Nanoflare ; Reflect=True ; MeshColors=(1.0, 0.0, 0.5)
+	WaitSFXDone: SFX=Nanoflare ; Reflect=True
+	WaitAnimation: Char=Caster
+	ActivateReflect
+	WaitReflect
+EndThread

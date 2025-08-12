@@ -1,0 +1,45 @@
+// Player sequence of SFX Summon_Mistodon_Mist
+
+WaitAnimation: Char=Caster
+SetupReflect: Delay=30
+StartThread: Target=Caster ; Sync=True
+	LoadSFX: SFX=Green_Smoke ; UseCamera=False
+	WaitSFXLoaded: SFX=Green_Smoke
+	PlaySFX: SFX=Green_Smoke
+	EffectPoint: Char=Caster ; Type=Both
+	WaitSFXDone: SFX=Green_Smoke
+EndThread
+WaitAnimation: Char=Caster
+Channel
+LoadSFX: SFX=Mist ; Reflect=True
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_127_030
+Turn: Char=Caster ; BaseAngle=AllTargets ; Angle=0 ; Time=8
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_127_031
+WaitSFXLoaded: Reflect=True
+WaitAnimation: Char=Caster
+Message: Priority=1 ; Title=True ; Reflect=True ; TextFR=[STRT=33,1]Brume ; Text=[STRT=22,1]Mist
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_127_032
+Wait: Time=17
+PlaySFX: Reflect=True
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_127_033
+Wait: Time=27
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_127_034
+Turn: Char=Caster ; BaseAngle=Default ; Angle=0 ; Time=11
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=Idle
+WaitSFXDone: SFX=Mist ; Reflect=True
+WaitTurn: Char=Caster
+ActivateReflect
+WaitReflect
+StartThread: Target=Caster ; Sync=True
+	LoadSFX: SFX=Green_Smoke ; UseCamera=False
+	WaitSFXLoaded: SFX=Green_Smoke
+	PlaySFX: SFX=Green_Smoke
+	EffectPoint: Char=Caster ; Type=Both
+	WaitSFXDone: SFX=Green_Smoke
+EndThread
+PlayAnimation: Char=Caster ; Anim=Idle
+Turn: Char=Caster ; BaseAngle=Default ; Time=5
+WaitTurn: Char=Caster

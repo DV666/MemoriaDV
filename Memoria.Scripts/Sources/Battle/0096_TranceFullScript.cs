@@ -1,5 +1,5 @@
-using Memoria.Data;
 using System;
+using Memoria.Data;
 
 namespace Memoria.Scripts.Battle
 {
@@ -20,13 +20,22 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            if (!_v.Target.HasTrance)
+            if (!_v.Target.IsPlayer)
             {
-                _v.Context.Flags |= BattleCalcFlags.Miss;
-                return;
+                _v.Target.ResistStatus &= ~BattleStatus.Trance;
+                btl_stat.MakeStatusesPermanent(_v.Target, _v.Target.PermanentStatus | BattleStatus.Trance, true);
+                _v.Target.Trance = Byte.MaxValue;
             }
-            _v.Target.Trance = Byte.MaxValue;
-            _v.Target.AlterStatus(BattleStatusId.Trance);
+            else
+            {
+                if (!_v.Target.HasTrance)
+                {
+                    _v.Context.Flags |= BattleCalcFlags.Miss;
+                    return;
+                }
+                _v.Target.Trance = Byte.MaxValue;
+            }
+            _v.Target.AlterStatus(BattleStatus.Trance);
         }
     }
 }

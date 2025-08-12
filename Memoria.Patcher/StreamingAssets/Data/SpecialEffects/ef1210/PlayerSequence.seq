@@ -1,0 +1,59 @@
+// Player sequence of SFX Summon_Cerberus_IncandescentClaws
+
+WaitAnimation: Char=Caster
+StartThread: Condition=IsSingleSelectedTarget
+	Turn: Char=Caster ; BaseAngle=AllTargets ; Time=5
+EndThread
+SetupReflect: Delay=SFXLoaded
+StartThread: Target=Caster ; Sync=True
+	LoadSFX: SFX=Green_Smoke ; UseCamera=False
+	WaitSFXLoaded: SFX=Green_Smoke
+	PlaySFX: SFX=Green_Smoke
+	EffectPoint: Char=Caster ; Type=Both
+	WaitSFXDone: SFX=Green_Smoke
+EndThread
+WaitAnimation: Char=Caster
+LoadMonsterSFX: SFX=Scorch ; FirstBone=0 ; SecondBone=0 ; Args=0 ; Reflect=True
+WaitMonsterSFXLoaded: Reflect=True
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_045_010
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_045_011
+Message: Priority=1 ; Title=True ; Reflect=True ; TextFR=[STRT=137,1]Griffes Incandescentes ; Text=[STRT=116,1]Incandescent Claws
+Turn: Char=Caster ; BaseAngle=AllTargets ; Angle=0 ; Time=6
+MoveToTarget: Char=Caster ; Target=AllTargets ; Time=6 ; Distance=675
+WaitMove: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_045_012
+Wait: Time=1
+StartThread
+	Wait: Time=1
+	PlaySound: Sound=668 ; Volume=1 ; Once=False
+EndThread
+Wait: Time=2
+PlayMonsterSFX: Reflect=True
+Wait: Time=7
+StartThread
+	Wait: Time=1
+	PlaySound: Sound=668 ; Volume=1 ; Once=False
+EndThread
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_045_013
+Turn: Char=Caster ; BaseAngle=Default ; Angle=0 ; Time=5
+MoveToPosition: Char=Caster ; Time=5 ; AbsolutePosition=Default ; MoveHeight=true
+WaitMove: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_045_014
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=Idle
+WaitMonsterSFXDone: Reflect=True
+WaitTurn: Char=Caster
+ActivateReflect
+WaitReflect
+StartThread: Target=Caster ; Sync=True
+	LoadSFX: SFX=Green_Smoke ; UseCamera=False
+	WaitSFXLoaded: SFX=Green_Smoke
+	PlaySFX: SFX=Green_Smoke
+	EffectPoint: Char=Caster ; Type=Both
+	WaitSFXDone: SFX=Green_Smoke
+EndThread
+PlayAnimation: Char=Caster ; Anim=Idle
+Turn: Char=Caster ; BaseAngle=Default ; Time=5
+WaitTurn: Char=Caster

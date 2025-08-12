@@ -40,5 +40,5 @@ ChangeSize: Char=AllTargets ; Size=(0.9, 1.1, 0.9) ; ScaleShadow=True ; Time=0
 Wait: Time=1
 ChangeSize: Char=AllTargets ; Size=(1.0, 1.0, 1.0) ; ScaleShadow=True ; Time=0
 Wait: Time=4
-EffectPoint: Char=AllTargets ; Type=Figure
+EffectPoint: Char=Everyone ; Type=Figure
 Wait: Time=20

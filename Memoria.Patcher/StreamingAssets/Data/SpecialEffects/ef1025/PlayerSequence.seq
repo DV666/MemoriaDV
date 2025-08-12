@@ -1,0 +1,53 @@
+// Player sequence of Magic Weapon (normal)
+
+SetupReflect: Delay=SFXLoaded
+StartThread: Condition=CasterWeaponId == 1028
+	LoadSFX: SFX=Demi__Single
+	WaitSFXLoaded: SFX=Demi__Single
+	PlaySFX: SFX=Demi__Single
+	WaitSFXDone: SFX=Demi__Single
+EndThread
+StartThread: Condition=CasterWeaponId == 1029
+	LoadSFX: SFX=Poison__Single
+	WaitSFXLoaded: SFX=Poison__Single
+	PlaySFX: SFX=Poison__Single
+	WaitSFXDone: SFX=Poison__Single
+EndThread
+StartThread: Condition=CasterWeaponId == 1030
+	LoadSFX: SFX=Death
+	WaitSFXLoaded: SFX=Death
+	PlaySFX: SFX=Death
+	WaitSFXDone: SFX=Death
+EndThread
+StartThread: Condition=CasterWeaponId == 1031
+	LoadSFX: SFX=Comet
+	WaitSFXLoaded: SFX=Comet
+	PlaySFX: SFX=Comet
+	WaitSFXDone: SFX=Comet
+EndThread
+StartThread: Condition=CasterWeaponId == RegularItem_FlameStaff
+	LoadSFX: SFX=Fira__Single
+	WaitSFXLoaded: SFX=Fira__Single
+	PlaySFX: SFX=Fira__Single
+	WaitSFXDone: SFX=Fira__Single
+EndThread
+StartThread: Condition=CasterWeaponId == RegularItem_IceStaff
+	LoadSFX: SFX=Water__Single
+	WaitSFXLoaded: SFX=Water__Single
+	PlaySFX: SFX=Water__Single
+	WaitSFXDone: SFX=Water__Single
+EndThread
+StartThread: Condition=CasterWeaponId == RegularItem_LightningStaff
+	LoadSFX: SFX=Thundera__Single
+	WaitSFXLoaded: SFX=Thundera__Single
+	PlaySFX: SFX=Thundera__Single
+	WaitSFXDone: SFX=Thundera__Single
+EndThread
+StartThread: Condition=CasterWeaponId == RegularItem_StardustRod
+	LoadSFX: SFX=Darkside_1
+	WaitSFXLoaded: SFX=Darkside_1
+	PlaySFX: SFX=Darkside_1
+	WaitSFXDone: SFX=Darkside_1
+EndThread
+ActivateReflect
+WaitReflect

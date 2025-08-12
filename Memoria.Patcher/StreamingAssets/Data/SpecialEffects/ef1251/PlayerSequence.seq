@@ -1,0 +1,51 @@
+// Player sequence of SFX Summon_Goblin_GoblinPunch
+
+WaitAnimation: Char=Caster
+SetupReflect: Delay=60
+StartThread: Target=Caster ; Sync=True
+	LoadSFX: SFX=Green_Smoke ; UseCamera=False
+	WaitSFXLoaded: SFX=Green_Smoke
+	PlaySFX: SFX=Green_Smoke
+	EffectPoint: Char=Caster ; Type=Both
+	WaitSFXDone: SFX=Green_Smoke
+EndThread
+WaitAnimation: Char=Caster
+Channel
+LoadMonsterSFX: SFX=Goblin_Punch ; FirstBone=0 ; SecondBone=0 ; Args=0 ; Reflect=True
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_001_030
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_001_031
+WaitMonsterSFXLoaded: Reflect=True
+WaitAnimation: Char=Caster
+Message: Priority=1 ; Title=True ; Reflect=True ; TextFR=[STRT=79,1]Gobelinpunch ; Text=[STRT=78,1]Goblin Punch
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_001_032
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_001_011
+Turn: Char=Caster ; BaseAngle=AllTargets ; Angle=0 ; Time=6
+MoveToTarget: Char=Caster ; Target=AllTargets ; Time=6 ; Distance=1250
+WaitMove: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_001_033
+Wait: Time=4
+PlayMonsterSFX: Reflect=True
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_001_013
+Turn: Char=Caster ; BaseAngle=Default ; Angle=0 ; Time=4
+MoveToPosition: Char=Caster ; Time=4 ; AbsolutePosition=Default ; MoveHeight=true
+WaitMove: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_001_014
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=Idle
+WaitMonsterSFXDone: Reflect=True
+WaitTurn: Char=Caster
+ActivateReflect
+WaitReflect
+StartThread: Target=Caster ; Sync=True
+	LoadSFX: SFX=Green_Smoke ; UseCamera=False
+	WaitSFXLoaded: SFX=Green_Smoke
+	PlaySFX: SFX=Green_Smoke
+	EffectPoint: Char=Caster ; Type=Both
+	WaitSFXDone: SFX=Green_Smoke
+EndThread
+PlayAnimation: Char=Caster ; Anim=Idle
+Turn: Char=Caster ; BaseAngle=Default ; Time=5
+WaitTurn: Char=Caster

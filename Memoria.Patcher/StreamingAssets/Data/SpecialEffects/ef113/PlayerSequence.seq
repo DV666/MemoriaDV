@@ -1,44 +1,69 @@
 // Player sequence of SFX Player_Attack_Amarant
 
-WaitAnimation: Char=Caster
-LoadSFX: SFX=Player_Attack_Amarant
-PlayAnimation: Char=Caster ; Anim=MP_SET
-WaitAnimation: Char=Caster
-StartThread: Condition=AreCasterAndTargetsEnemies ; Sync=True
-	MoveToTarget: Char=Caster ; Target=AllTargets ; Distance=630 ; UseCollisionRadius=True ; Anim=MP_RUN
-	Turn: Char=Caster ; BaseAngle=AllTargets ; Time=2
-	WaitMove: Char=Caster
-	MoveToTarget: Char=Caster ; Target=AllTargets ; Distance=50 ; UseCollisionRadius=True ; Anim=MP_RUN_TO_ATTACK
-EndThread
-StartThread: Condition=!AreCasterAndTargetsEnemies ; Sync=True
-	MoveToTarget: Char=Caster ; Target=AllTargets ; Offset=(0.0, 0.0, 1600) ; Time=0
-	Turn: Char=Caster ; BaseAngle=AllTargets ; Time=0
-	MoveToTarget: Char=Caster ; Target=AllTargets ; Distance=450 ; UseCollisionRadius=True ; Anim=MP_RUN_TO_ATTACK
-EndThread
-WaitMove: Char=Caster
-StartThread
-	Wait: Time=4
-	WaitSFXLoaded: SFX=Player_Attack_Amarant
-	PlaySFX: SFX=Player_Attack_Amarant
-	EffectPoint: Char=AllTargets ; Type=Effect
-	PlaySound: Sound=WeaponAttack
-	StartThread: Condition=!IsAttackMiss
-		PlaySound: Sound=WeaponHit
+StartThread: Condition=CasterWeaponId == 1025 || CasterWeaponId == 1026 || CasterWeaponId == 1027
+	WaitAnimation: Char=Caster
+	Message: Text=[CastName] ; Priority=1 ; Title=True
+	Turn: Char=Caster ; BaseAngle=AllTargets ; Time=5
+	LoadSFX: SFX=Throw_Disc
+	WaitSFXLoaded: SFX=Throw_Disc
+	WaitAnimation: Char=Caster
+	PlayAnimation: Char=Caster ; Anim=MP_SPECIAL1
+	StartThread
+		WaitAnimation: Char=Caster
+		PlayAnimation: Char=Caster ; Anim=MP_IDLE_NORMAL
+		PlayAnimation: Char=Caster ; Anim=Idle
+		Turn: Char=Caster ; BaseAngle=Default ; Time=5
 	EndThread
-	Wait: Time=4
-	EffectPoint: Char=Everyone ; Type=Figure
-	WaitSFXDone: SFX=Player_Attack_Amarant
+	Wait: Time=6
+	PlaySFX: SFX=Throw_Disc
+	StartThread: Sync=False
+		LoadSFX: SFX=Throw_Disc ; UseCamera=False ; Char=AllTargets ; Target=Caster
+		WaitSFXLoaded: SFX=Throw_Disc
+		PlaySFX: SFX=Throw_Disc ; SkipSequence ; HideMeshes=2, 3, 4
+	EndThread
+	Wait: Time=50
 EndThread
-PlayAnimation: Char=Caster ; Anim=MP_ATTACK
-WaitAnimation: Char=Caster
-StartThread: Condition=AreCasterAndTargetsEnemies ; Sync=True
-	MoveToPosition: Char=Caster ; AbsolutePosition=Default ; Anim=MP_BACK
-	Turn: Char=Caster ; BaseAngle=Default ; Time=4
-	WaitMove: Caster
+StartThread: Condition=CasterWeaponId != 1025 && CasterWeaponId != 1026 && CasterWeaponId != 1027
+	WaitAnimation: Char=Caster
+	LoadSFX: SFX=Player_Attack_Amarant
+	PlayAnimation: Char=Caster ; Anim=MP_SET
+	WaitAnimation: Char=Caster
+	StartThread: Condition=AreCasterAndTargetsEnemies ; Sync=True
+		MoveToTarget: Char=Caster ; Target=AllTargets ; Distance=630 ; UseCollisionRadius=True ; Anim=MP_RUN
+		Turn: Char=Caster ; BaseAngle=AllTargets ; Time=2
+		WaitMove: Char=Caster
+		MoveToTarget: Char=Caster ; Target=AllTargets ; Distance=50 ; UseCollisionRadius=True ; Anim=MP_RUN_TO_ATTACK
+	EndThread
+	StartThread: Condition=!AreCasterAndTargetsEnemies ; Sync=True
+		MoveToTarget: Char=Caster ; Target=AllTargets ; Offset=(0.0, 0.0, 1600) ; Time=0
+		Turn: Char=Caster ; BaseAngle=AllTargets ; Time=0
+		MoveToTarget: Char=Caster ; Target=AllTargets ; Distance=450 ; UseCollisionRadius=True ; Anim=MP_RUN_TO_ATTACK
+	EndThread
+	WaitMove: Char=Caster
+	StartThread
+		Wait: Time=4
+		WaitSFXLoaded: SFX=Player_Attack_Amarant
+		PlaySFX: SFX=Player_Attack_Amarant
+		EffectPoint: Char=AllTargets ; Type=Effect
+		PlaySound: Sound=WeaponAttack
+		StartThread: Condition=!IsAttackMiss
+			PlaySound: Sound=WeaponHit
+		EndThread
+		Wait: Time=4
+		EffectPoint: Char=Everyone ; Type=Figure
+		WaitSFXDone: SFX=Player_Attack_Amarant
+	EndThread
+	PlayAnimation: Char=Caster ; Anim=MP_ATTACK
+	WaitAnimation: Char=Caster
+	StartThread: Condition=AreCasterAndTargetsEnemies ; Sync=True
+		MoveToPosition: Char=Caster ; AbsolutePosition=Default ; Anim=MP_BACK
+		Turn: Char=Caster ; BaseAngle=Default ; Time=4
+		WaitMove: Caster
+	EndThread
+	StartThread: Condition=!AreCasterAndTargetsEnemies ; Sync=True
+		MoveToPosition: Char=Caster ; AbsolutePosition=Default ; Time=0
+		Turn: Char=Caster ; BaseAngle=Default ; Time=0
+	EndThread
+	PlayAnimation: Char=Caster ; Anim=Idle
+	WaitTurn: Char=Caster
 EndThread
-StartThread: Condition=!AreCasterAndTargetsEnemies ; Sync=True
-	MoveToPosition: Char=Caster ; AbsolutePosition=Default ; Time=0
-	Turn: Char=Caster ; BaseAngle=Default ; Time=0
-EndThread
-PlayAnimation: Char=Caster ; Anim=Idle
-WaitTurn: Char=Caster

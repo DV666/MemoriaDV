@@ -49,5 +49,5 @@ StartThread: Condition=SFXUseCamera && AreTargetsPlayers
 	ShiftWorld: Angle=(0, 0, 0)
 EndThread
 ShowMesh: Char=Everyone ; Enable=True ; IsDisappear=True
-ShowMesh: Char=AllNonTargets ; Enable=True ; Time=12
+ShowMesh: Char=MatchingCondition(!IsTargeted && IsTargetable) ; Enable=True ; Time=12
 Wait: Time=32

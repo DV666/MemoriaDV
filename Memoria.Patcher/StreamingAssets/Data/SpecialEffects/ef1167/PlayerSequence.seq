@@ -1,0 +1,25 @@
+// Player sequence of SFX Divine hand
+
+WaitAnimation: Char=Caster
+StartThread: Condition=IsSingleSelectedTarget
+	Turn: Char=Caster ; BaseAngle=AllTargets ; Time=5
+EndThread
+Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
+SetupReflect: Delay=SFXLoaded
+LoadSFX: SFX=Revive__Multi ; Reflect=True
+PlayAnimation: Char=Caster ; Anim=MP_IDLE_TO_CHANT
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=MP_CHANT ; Loop=True
+Channel
+WaitSFXLoaded: SFX=Revive__Multi ; Reflect=True
+WaitAnimation: Char=Caster
+StopChannel
+PlayAnimation: Char=Caster ; Anim=MP_MAGIC
+WaitAnimation: Char=Caster
+PlaySFX: SFX=Revive__Multi ; Reflect=True ; MeshColors=(0.89907, 0.89902, 0.3229)
+WaitSFXDone: SFX=Revive__Multi ; Reflect=True
+ActivateReflect
+WaitReflect
+PlayAnimation: Char=Caster ; Anim=Idle
+Turn: Char=Caster ; BaseAngle=Default ; Time=5
+WaitTurn: Char=Caster

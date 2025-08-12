@@ -1,0 +1,17 @@
+// Player sequence of Moga Support
+
+PlaySound: Sound=1362
+SetupReflect: Delay=SFXLoaded
+EffectPoint: Char=Caster ; Type=Both
+Wait: Time=30
+EffectPoint: Char=Caster ; Type=Both
+Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
+Wait: Time=10
+StartThread: TargetLoop=True ; Chain=True ; Sync=True
+	Wait: Time=1
+	LoadSFX: SFX=Vaccine ; Reflect=True ; UseCamera=False
+	WaitSFXLoaded: SFX=Vaccine ; Reflect=True
+	PlaySFX: SFX=Vaccine ; Reflect=True ; MeshColors=(1.0, 0.0, 0.5)
+EndThread
+WaitSFXDone: SFX=Vaccine ; Reflect=True
+WaitAnimation: Char=Caster

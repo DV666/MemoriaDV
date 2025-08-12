@@ -1,0 +1,19 @@
+// Player sequence of SFX Ironclad
+
+WaitAnimation: Char=Caster
+Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
+SetupReflect: Delay=SFXLoaded
+LoadSFX: SFX=Protect ; Reflect=True
+WaitSFXLoaded: SFX=Protect ; Reflect=True
+PlayAnimation: Char=Caster ; Anim=MP_IDLE_TO_CHANT
+WaitAnimation: Char=Caster
+PlaySFX: SFX=Protect ; Reflect=True ; MeshColors=(0.0, 1.0, 2.0)
+PlayAnimation: Char=Caster ; Anim=MP_CHANT ; Loop=True
+WaitSFXDone: SFX=Protect ; Reflect=True
+PlayAnimation: Char=Caster ; Anim=MP_IDLE_TO_CHANT ; Speed=-1 ; Frame=-1
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=MP_IDLE_CMD ; Speed=-1 ; Frame=-1
+WaitAnimation: Char=Caster
+ActivateReflect
+PlayAnimation: Char=Caster ; Anim=Idle
+WaitTurn: Char=Caster

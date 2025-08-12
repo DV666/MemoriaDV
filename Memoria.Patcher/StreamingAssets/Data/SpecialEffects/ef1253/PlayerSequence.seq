@@ -1,0 +1,50 @@
+// Player sequence of SFX Summon_Golem_Sandstorm
+
+WaitAnimation: Char=Caster
+StartThread: Condition=IsSingleSelectedTarget
+	Turn: Char=Caster ; BaseAngle=AllTargets ; Time=5
+EndThread
+SetupReflect: Delay=SFXLoaded
+StartThread: Target=Caster ; Sync=True
+	LoadSFX: SFX=Green_Smoke ; UseCamera=False
+	WaitSFXLoaded: SFX=Green_Smoke
+	PlaySFX: SFX=Green_Smoke
+	EffectPoint: Char=Caster ; Type=Both
+	WaitSFXDone: SFX=Green_Smoke
+EndThread
+WaitAnimation: Char=Caster
+Turn: Char=Caster ; BaseAngle=AllTargets ; Angle=0 ; Time=16
+PlayCamera: Camera=1 ; Char=0 ; Alternate=False
+Channel
+LoadMonsterSFX: SFX=Sandstorm ; FirstBone=4 ; SecondBone=0 ; Args=0 ; Reflect=True
+WaitMonsterSFXLoaded: Reflect=True
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_084_030
+PlayMonsterSFX: Reflect=True
+WaitAnimation: Char=Caster
+Message: Priority=1 ; Title=True ; Reflect=True ; TextFR=[STRT=105,1]Tempête de sable ; Text=[STRT=64,1]Sandstorm
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_084_031
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_084_032
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_084_033
+Wait: Time=60
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_084_034
+Turn: Char=Caster ; BaseAngle=Default ; Angle=0 ; Time=8
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=Idle
+WaitMonsterSFXDone: Reflect=True
+WaitTurn: Char=Caster
+ActivateReflect
+WaitReflect
+StartThread: Target=Caster ; Sync=True
+	LoadSFX: SFX=Green_Smoke ; UseCamera=False
+	WaitSFXLoaded: SFX=Green_Smoke
+	PlaySFX: SFX=Green_Smoke
+	EffectPoint: Char=Caster ; Type=Both
+	WaitSFXDone: SFX=Green_Smoke
+EndThread
+PlayAnimation: Char=Caster ; Anim=Idle
+Turn: Char=Caster ; BaseAngle=Default ; Time=5
+WaitTurn: Char=Caster

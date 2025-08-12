@@ -1,0 +1,94 @@
+// Player sequence of SFX Summon_Grenade_Fireballs
+
+WaitAnimation: Char=Caster
+StartThread: Condition=IsSingleSelectedTarget
+	Turn: Char=Caster ; BaseAngle=AllTargets ; Time=5
+EndThread
+SetupReflect: Delay=SFXLoaded
+StartThread: Target=Caster ; Sync=True
+	LoadSFX: SFX=Green_Smoke ; UseCamera=False
+	WaitSFXLoaded: SFX=Green_Smoke
+	PlaySFX: SFX=Green_Smoke
+	EffectPoint: Char=Caster ; Type=Both
+	WaitSFXDone: SFX=Green_Smoke
+EndThread
+WaitAnimation: Char=Caster
+LoadMonsterSFX: SFX=Lava_Gun_x6 ; FirstBone=0 ; SecondBone=0 ; Args=0 ; Reflect=True
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_079_030
+Turn: Char=Caster ; BaseAngle=AllTargets ; Angle=0 ; Time=4
+Message: Priority=1 ; Title=True ; Reflect=True ; TextFR=[STRT=81,1]Boules de feu ; Text=[STRT=54,1]Fire balls
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_079_031
+WaitMonsterSFXLoaded: Reflect=True
+WaitAnimation: Char=Caster
+Wait: Time=6
+PlayMonsterSFX: Reflect=True ; SkipSequence
+PlaySound: Sound=2374
+PlaySound: Sound=2375
+PlaySound: Sound=2376
+Wait: Time=5
+PlayAnimation: Char=AllTargets ; Anim=MP_DAMAGE1
+EffectPoint: Char=AllTargets ; Type=Both
+Wait: Time=1
+PlaySound: Sound=2377
+PlaySound: Sound=2378
+PlaySound: Sound=2379
+Wait: Time=2
+PlaySound: Sound=2374
+PlaySound: Sound=2375
+PlaySound: Sound=2376
+Wait: Time=5
+PlayAnimation: Char=AllTargets ; Anim=MP_DAMAGE1
+EffectPoint: Char=AllTargets ; Type=Both
+Wait: Time=1
+PlaySound: Sound=2377
+PlaySound: Sound=2378
+PlaySound: Sound=2379
+Wait: Time=2
+PlaySound: Sound=2374
+PlaySound: Sound=2375
+PlaySound: Sound=2376
+Wait: Time=5
+PlayAnimation: Char=AllTargets ; Anim=MP_DAMAGE1
+EffectPoint: Char=AllTargets ; Type=Both
+Wait: Time=1
+PlaySound: Sound=2377
+PlaySound: Sound=2378
+PlaySound: Sound=2379
+Wait: Time=2
+PlaySound: Sound=2374
+PlaySound: Sound=2375
+PlaySound: Sound=2376
+Wait: Time=5
+PlayAnimation: Char=AllTargets ; Anim=MP_DAMAGE1
+EffectPoint: Char=AllTargets ; Type=Both
+Wait: Time=1
+PlaySound: Sound=2377
+PlaySound: Sound=2378
+PlaySound: Sound=2379
+Wait: Time=2
+PlaySound: Sound=2374
+PlaySound: Sound=2375
+PlaySound: Sound=2376
+Wait: Time=6
+PlayAnimation: Char=AllTargets ; Anim=MP_DAMAGE1
+EffectPoint: Char=AllTargets ; Type=Both
+PlaySound: Sound=2377
+PlaySound: Sound=2378
+PlaySound: Sound=2379
+Wait: Time=35
+WaitMonsterSFXDone: Reflect=True
+Turn: Char=Caster ; BaseAngle=Default ; Angle=0 ; Time=4
+WaitTurn: Char=Caster
+ActivateReflect
+WaitReflect
+StartThread: Target=Caster ; Sync=True
+	LoadSFX: SFX=Green_Smoke ; UseCamera=False
+	WaitSFXLoaded: SFX=Green_Smoke
+	PlaySFX: SFX=Green_Smoke
+	EffectPoint: Char=Caster ; Type=Both
+	WaitSFXDone: SFX=Green_Smoke
+EndThread
+PlayAnimation: Char=Caster ; Anim=Idle
+Turn: Char=Caster ; BaseAngle=Default ; Time=5
+WaitTurn: Char=Caster

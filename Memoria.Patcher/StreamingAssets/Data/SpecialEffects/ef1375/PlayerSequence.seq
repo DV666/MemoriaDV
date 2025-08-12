@@ -1,0 +1,60 @@
+// Player sequence of SFX Summon_Yeti_BlindTail
+
+WaitAnimation: Char=Caster
+SetupReflect: Delay=60
+StartThread: Target=Caster ; Sync=True ; Reflect=False
+	WaitAnimation: Char=Caster
+	StartThread: Condition=IsSingleSelectedTarget
+		Turn: Char=Caster ; BaseAngle=AllTargets ; Time=5
+	EndThread
+	LoadSFX: SFX=Green_Smoke ; UseCamera=False ; Reflect=False
+	WaitSFXLoaded: SFX=Green_Smoke ; Reflect=False
+	PlaySFX: SFX=Green_Smoke ; Reflect=False
+	EffectPoint: Char=Caster ; Type=Both ; Reflect=False
+	WaitSFXDone: SFX=Green_Smoke ; Reflect=False
+EndThread
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_074_030
+PlayCamera: Camera=2 ; Char=AllTargets ; Alternate=True
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_074_031
+StartThread
+	LoadSFX: SFX=SFX_Attack_Save_The_Queen ; FirstBone=0 ; Reflect=True
+	Wait: Time=11 ; Reflect=True
+	WaitSFXLoaded: Reflect=True
+	PlaySFX: SkipSequence=False ; Reflect=True
+	WaitSFXDone: Reflect=True
+EndThread
+StartThread
+	Wait: Time=12
+	PlaySound: Sound=1556 ; Volume=1 ; Once=False
+EndThread
+Message: Priority=1 ; Title=True ; Reflect=False ; TextFR=[STRT=57,1]Céciqueue ; Text=[STRT=50,1]Blind Tail
+Turn: Char=Caster ; BaseAngle=AllTargets ; Angle=0 ; Time=10
+MoveToTarget: Char=Caster ; Target=AllTargets ; Time=10 ; Distance=200
+WaitMove: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_074_032
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_074_013
+Turn: Char=Caster ; BaseAngle=Default ; Angle=0 ; Time=6
+MoveToPosition: Char=Caster ; Time=6 ; AbsolutePosition=Default ; MoveHeight=true
+WaitMove: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_074_014
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=Idle
+WaitMonsterSFXDone: Reflect=True
+WaitTurn: Char=Caster
+ActivateReflect
+WaitReflect
+StartThread: Target=Caster ; Sync=True ; Reflect=False
+	LoadSFX: SFX=Green_Smoke ; UseCamera=False ; Reflect=False
+	WaitSFXLoaded: SFX=Green_Smoke ; Reflect=False
+	PlaySFX: SFX=Green_Smoke ; Reflect=False
+	EffectPoint: Char=Caster ; Type=Both ; Reflect=False
+	ShowShadow: Char=Caster ; Enable=True
+	ShowMesh: Char=Caster ; Mesh=1 ; Enable=True ; IsPermanent=True
+	WaitSFXDone: SFX=Green_Smoke ; Reflect=False
+EndThread
+PlayAnimation: Char=Caster ; Anim=Idle
+Turn: Char=Caster ; BaseAngle=Default ; Time=5
+WaitTurn: Char=Caster

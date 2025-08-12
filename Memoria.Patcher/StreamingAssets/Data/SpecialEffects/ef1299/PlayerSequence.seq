@@ -1,0 +1,43 @@
+// Player sequence of SFX Summon_Mimic_Death
+
+WaitAnimation: Char=Caster
+SetupReflect: Delay=60
+StartThread: Target=Caster ; Sync=True ; Reflect=False
+	WaitAnimation: Char=Caster
+	StartThread: Condition=IsSingleSelectedTarget
+		Turn: Char=Caster ; BaseAngle=AllTargets ; Time=5
+	EndThread
+	LoadSFX: SFX=Green_Smoke ; UseCamera=False ; Reflect=False
+	WaitSFXLoaded: SFX=Green_Smoke ; Reflect=False
+	PlaySFX: SFX=Green_Smoke ; Reflect=False
+	EffectPoint: Char=Caster ; Type=Both ; Reflect=False
+	WaitSFXDone: SFX=Green_Smoke ; Reflect=False
+EndThread
+WaitAnimation: Char=Caster
+Channel
+LoadMonsterSFX: SFX=Death ; FirstBone=0 ; SecondBone=0 ; Args=0 ; Reflect=True
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_058_020
+Message: Priority=1 ; Title=True ; Reflect=True ; TextFR=[STRT=37,1]Hades ; Text=[STRT=34,1]Death
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_058_021
+WaitMonsterSFXLoaded: Reflect=True
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_058_022
+Wait: Time=6
+PlayMonsterSFX: Reflect=True
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=Idle
+WaitMonsterSFXDone: Reflect=True
+WaitTurn: Char=Caster
+ActivateReflect
+WaitReflect
+StartThread: Target=Caster ; Sync=True ; Reflect=False
+	LoadSFX: SFX=Green_Smoke ; UseCamera=False ; Reflect=False
+	WaitSFXLoaded: SFX=Green_Smoke ; Reflect=False
+	PlaySFX: SFX=Green_Smoke ; Reflect=False
+	EffectPoint: Char=Caster ; Type=Both ; Reflect=False
+	WaitSFXDone: SFX=Green_Smoke ; Reflect=False
+EndThread
+PlayAnimation: Char=Caster ; Anim=Idle
+Turn: Char=Caster ; BaseAngle=Default ; Time=5
+WaitTurn: Char=Caster

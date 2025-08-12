@@ -1,0 +1,16 @@
+// Player sequence of SFX Koutrol
+
+WaitAnimation: Char=Caster
+SetupReflect: Delay=SFXLoaded
+LoadSFX: SFX=Tent ; Reflect=True ; UseCamera=False
+Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
+WaitSFXLoaded: SFX=Tent ; Reflect=True
+Turn: Char=Caster ; BaseAngle=AllTargets ; Angle=0 ; Time=1
+PlayAnimation: Char=Caster ; Anim=ANH_NPC_F0_MOG_BTL_ATTACK
+Wait: Time=10
+PlaySFX: SFX=Tent ; Reflect=True
+WaitSFXDone: SFX=Tent ; Reflect=True
+PlayAnimation: Char=Caster ; Anim=Idle
+WaitTurn: Char=Caster
+ActivateReflect
+WaitReflect

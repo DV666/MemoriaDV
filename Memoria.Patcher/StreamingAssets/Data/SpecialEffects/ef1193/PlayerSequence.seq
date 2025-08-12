@@ -1,0 +1,62 @@
+// Player sequence of SFX Summon_Blazer_Beetle_Charge
+
+WaitAnimation: Char=Caster
+StartThread: Condition=IsSingleSelectedTarget
+	Turn: Char=Caster ; BaseAngle=AllTargets ; Time=5
+EndThread
+SetupReflect: Delay=SFXLoaded
+StartThread: Target=Caster ; Sync=True
+	LoadSFX: SFX=Green_Smoke ; UseCamera=False
+	WaitSFXLoaded: SFX=Green_Smoke
+	PlaySFX: SFX=Green_Smoke
+	EffectPoint: Char=Caster ; Type=Both
+	WaitSFXDone: SFX=Green_Smoke
+EndThread
+LoadSFX: SFX=SFX_Attack_Mage_Staff ; FirstBone=0 ; Reflect=True
+WaitSFXLoaded: Reflect=True
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_042_030
+PlayCamera: Camera=1 ; Char=AllTargets ; Alternate=True
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_042_031
+Message: Priority=1 ; Title=True ; Reflect=True ; Text=[STRT=40,1]Charge
+Turn: Char=Caster ; BaseAngle=AllTargets ; Angle=0 ; Time=2
+MoveToTarget: Char=Caster ; Target=AllTargets ; Time=2 ; Distance=700
+WaitMove: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_042_032
+StartThread
+	Wait: Time=2
+	PlaySound: Sound=691 ; Volume=1 ; Once=False
+EndThread
+StartThread
+	Wait: Time=7 ; Reflect=True
+	PlaySFX: SkipSequence=False ; Reflect=True
+	WaitSFXDone: Reflect=True
+EndThread
+Wait: Time=9
+StartThread
+	Wait: Time=1
+	PlaySound: Sound=679 ; Volume=1 ; Once=False
+EndThread
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_042_033
+Turn: Char=Caster ; BaseAngle=Default ; Angle=0 ; Time=11
+MoveToPosition: Char=Caster ; Time=11 ; AbsolutePosition=Default ; MoveHeight=true
+WaitMove: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_042_034
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=Idle
+WaitMonsterSFXDone: Reflect=True
+WaitTurn: Char=Caster
+ActivateReflect
+WaitReflect
+StartThread: Target=Caster ; Sync=True
+	LoadSFX: SFX=Green_Smoke ; UseCamera=False
+	WaitSFXLoaded: SFX=Green_Smoke
+	PlaySFX: SFX=Green_Smoke
+	EffectPoint: Char=Caster ; Type=Both
+	WaitSFXDone: SFX=Green_Smoke
+EndThread
+PlayAnimation: Char=Caster ; Anim=Idle
+Turn: Char=Caster ; BaseAngle=Default ; Time=5
+WaitTurn: Char=Caster

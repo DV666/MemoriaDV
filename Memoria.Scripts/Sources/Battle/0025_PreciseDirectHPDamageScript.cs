@@ -19,7 +19,7 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            if (_v.Target.CheckUnsafetyOrMiss() && _v.Target.CanBeAttacked())
+            if (TranceSeekAPI.CheckUnsafetyOrGuard(_v) && _v.Target.CanBeAttacked())
                 _v.TryDirectHPDamage();
         }
     }

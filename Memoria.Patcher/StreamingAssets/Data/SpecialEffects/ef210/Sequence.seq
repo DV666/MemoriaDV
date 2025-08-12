@@ -2,7 +2,7 @@
 
 SetBackgroundIntensity: Intensity=0 ; Time=14 ; HoldDuration=174
 Wait: Time=17
-ShowMesh: Char=Everyone ; Enable=False ; IsDisappear=True
+ShowMesh: Char=MatchingCondition(!IsTargeted && IsTargetable) ; Enable=False ; IsDisappear=True
 StartThread: Condition=SFXUseCamera && AreTargetsPlayers
 	ShiftWorld: Angle=(0, 180, 0)
 EndThread
@@ -21,16 +21,16 @@ PlaySound: Sound=2822
 Wait: Time=1
 SetBackgroundIntensity: Intensity=0.5 ; Time=16 ; HoldDuration=217
 Wait: Time=27
-ShowMesh: Char=AllTargets ; Enable=True ; IsDisappear=True
+ShowMesh: Char=MatchingCondition(IsTargeted && IsTargetable) ; Enable=True ; IsDisappear=True
 Wait: Time=51
 PlaySound: Sound=2823
 PlaySound: Sound=2824
 PlaySound: Sound=2825
 PlaySound: Sound=2826
 Wait: Time=1
-ShowMesh: Char=AllTargets ; Enable=False ; IsDisappear=True
+ShowMesh: Char=MatchingCondition(IsTargeted && IsTargetable) ; Enable=False ; IsDisappear=True
 Wait: Time=39
-ShowMesh: Char=AllTargets ; Enable=True ; IsDisappear=True
+ShowMesh: Char=MatchingCondition(IsTargeted && IsTargetable) ; Enable=True ; IsDisappear=True
 Wait: Time=1
 ChangeSize: Char=AllTargets ; Size=0.67 ; Time=3 ; ScaleShadow=True
 MoveToPosition: Char=AllTargets ; RelativePosition=(475.0, 1670.0, 261.0) ; MoveHeight=True ; Time=0
@@ -97,6 +97,6 @@ SetBackgroundIntensity: Intensity=1 ; Time=12
 StartThread: Condition=SFXUseCamera && AreTargetsPlayers
 	ShiftWorld: Angle=(0, 0, 0)
 EndThread
-ShowMesh: Char=Everyone ; Enable=True ; IsDisappear=True
-ShowMesh: Char=AllNonTargets ; Enable=True ; Time=12
+ShowMesh: Char=MatchingCondition(!IsTargeted && IsTargetable) ; Enable=True ; IsDisappear=True
+ShowMesh: Char=MatchingCondition(!IsTargeted && IsTargetable) ; Enable=True ; Time=12
 Wait: Time=31

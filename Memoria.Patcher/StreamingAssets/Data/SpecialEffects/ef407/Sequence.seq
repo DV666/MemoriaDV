@@ -1,7 +1,7 @@
 // Shared sequence of SFX Shiva__Short
 
 SetBackgroundIntensity: Intensity=0.5 ; Time=4 ; HoldDuration=39
-ShowMesh: Char=AllNonTargets ; Enable=False ; IsDisappear=True
+ShowMesh: ShowMesh: Char=MatchingCondition(!IsTargeted && IsTargetable) ; Enable=False ; IsDisappear=True
 StartThread: Condition=SFXUseCamera && AreTargetsPlayers
 	ShiftWorld: Angle=(0, 180, 0)
 EndThread
@@ -24,5 +24,5 @@ Wait: Time=24
 StartThread: Condition=SFXUseCamera && AreTargetsPlayers
 	ShiftWorld: Angle=(0, 0, 0)
 EndThread
-ShowMesh: Char=AllNonTargets ; Enable=True ; IsDisappear=True
-ShowMesh: Char=AllNonTargets ; Enable=True ; Time=12
+ShowMesh: Char=MatchingCondition(!IsTargeted && IsTargetable) ; Enable=True ; IsDisappear=True
+ShowMesh: Char=MatchingCondition(!IsTargeted && IsTargetable) ; Enable=True ; Time=12

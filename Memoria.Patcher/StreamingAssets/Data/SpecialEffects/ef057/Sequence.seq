@@ -3,7 +3,7 @@
 PlaySound: Sound=220
 PlaySound: Sound=204
 PlaySound: Sound=287
-Wait: Time=67
+Wait: Time=20
 EffectPoint: Char=AllTargets ; Type=Effect
 Wait: Time=20
 EffectPoint: Char=Everyone ; Type=Figure

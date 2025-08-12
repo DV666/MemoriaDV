@@ -23,7 +23,16 @@ namespace Memoria.Scripts.Battle
         {
             btl_sys.CheckEscape(false);
             if (_v.CanEscape())
-                BattleState.EnqueueCommand(BattleState.EscapeCommand, BattleCommandId.SysEscape, 0, 15, true);
+            {
+                if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1046)) // Flee-Gil +
+                {
+                    btl_cmd.SetCommand(FF9StateSystem.Battle.FF9Battle.cmd_escape, BattleCommandId.SysEscape, 1, 15, 1U);
+                }
+                else
+                {
+                    BattleState.EnqueueCommand(BattleState.EscapeCommand, BattleCommandId.SysEscape, 0U, 15, true);
+                }
+            }
         }
     }
 }

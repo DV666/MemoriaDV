@@ -1,0 +1,97 @@
+// Player sequence of SFX Summon_Zombie_Roulette
+
+WaitAnimation: Char=Caster
+SetupReflect: Delay=60
+StartThread: Target=Caster ; Sync=True ; Reflect=False
+	WaitAnimation: Char=Caster
+	StartThread: Condition=IsSingleSelectedTarget
+		Turn: Char=Caster ; BaseAngle=AllTargets ; Time=5
+	EndThread
+	LoadSFX: SFX=Green_Smoke ; UseCamera=False ; Reflect=False
+	WaitSFXLoaded: SFX=Green_Smoke ; Reflect=False
+	PlaySFX: SFX=Green_Smoke ; Reflect=False
+	EffectPoint: Char=Caster ; Type=Both ; Reflect=False
+	WaitSFXDone: SFX=Green_Smoke ; Reflect=False
+EndThread
+WaitAnimation: Char=Caster
+PlayCamera: Camera=1 ; Char=0 ; Alternate=False
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_093_030
+WaitAnimation: Char=Caster
+Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=False
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_093_031
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_093_032
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_093_033
+Turn: Char=Caster ; BaseAngle=AllTargets ; Angle=0 ; Time=3
+MoveToTarget: Char=Caster ; Target=AllTargets ; Time=3 ; Distance=1300
+WaitMove: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_093_034
+StartThread: LoopCount=2 ; Sync=True ; Chain=True
+	Wait: Time=4
+	LoadSFX: SFX=SFX_Attack_Cat_Claws ; UseCamera=False
+	WaitSFXLoaded: SFX=SFX_Attack_Cat_Claws
+	PlaySFX: SFX=SFX_Attack_Cat_Claws ; SkipSequence
+	PlaySound: Sound=668 ; Volume=1 ; Once=False
+EndThread
+Wait: Time=5
+EffectPoint: Char=AllTargets ; Type=Both
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_093_011
+StartThread
+	LoadSFX: SFX=SFX_Attack_Fairy_Flute ; FirstBone=0
+	Wait: Time=6
+	WaitSFXLoaded: SFX=SFX_Attack_Fairy_Flute
+	PlaySFX: SkipSequence=False
+	WaitSFXDone: SFX=SFX_Attack_Fairy_Flute
+EndThread
+StartThread
+	Wait: Time=9
+	PlaySound: Sound=675 ; Volume=1 ; Once=False
+EndThread
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_093_012
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_093_034
+StartThread: LoopCount=4 ; Sync=True ; Chain=True
+	Wait: Time=4
+	LoadSFX: SFX=SFX_Attack_Cat_Claws ; UseCamera=False
+	WaitSFXLoaded: SFX=SFX_Attack_Cat_Claws
+	PlaySFX: SFX=SFX_Attack_Cat_Claws ; SkipSequence
+	PlaySound: Sound=668 ; Volume=1 ; Once=False
+EndThread
+Wait: Time=8
+EffectPoint: Char=AllTargets ; Type=Both
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_093_011
+StartThread
+	LoadSFX: SFX=SFX_Attack_Fairy_Flute ; FirstBone=0
+	Wait: Time=6
+	WaitSFXLoaded: SFX=SFX_Attack_Fairy_Flute
+	PlaySFX: SkipSequence=False
+	WaitSFXDone: SFX=SFX_Attack_Fairy_Flute
+EndThread
+StartThread
+	Wait: Time=9
+	PlaySound: Sound=675 ; Volume=1 ; Once=False
+EndThread
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_093_012
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_093_035
+Turn: Char=Caster ; BaseAngle=Default ; Angle=0 ; Time=3
+MoveToPosition: Char=Caster ; Time=3 ; AbsolutePosition=Default ; MoveHeight=true
+WaitMove: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_093_036
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=Idle
+WaitSFXDone: 
+WaitTurn: Char=Caster
+StartThread: Target=Caster ; Sync=True ; Reflect=False
+	LoadSFX: SFX=Green_Smoke ; UseCamera=False ; Reflect=False
+	WaitSFXLoaded: SFX=Green_Smoke ; Reflect=False
+	PlaySFX: SFX=Green_Smoke ; Reflect=False
+	EffectPoint: Char=Caster ; Type=Both ; Reflect=False
+	ShowShadow: Char=Caster ; Enable=True
+	ShowMesh: Char=Caster ; Mesh=1 ; Enable=True ; IsPermanent=True
+	WaitSFXDone: SFX=Green_Smoke ; Reflect=False
+EndThread
+PlayAnimation: Char=Caster ; Anim=Idle
+Turn: Char=Caster ; BaseAngle=Default ; Time=5
+WaitTurn: Char=Caster

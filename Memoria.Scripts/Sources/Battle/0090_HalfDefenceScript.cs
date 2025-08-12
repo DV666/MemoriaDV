@@ -1,5 +1,5 @@
 using System;
-using Memoria.Data;
+using static Memoria.Scripts.Battle.TranceSeekAPI;
 
 namespace Memoria.Scripts.Battle
 {
@@ -20,7 +20,8 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            _v.Target.TryAlterSingleStatus(BattleStatusId.ChangeStat, true, _v.Caster, "PhysicalDefence", _v.Target.PhysicalDefence / 2, "MagicDefence", _v.Target.MagicDefence / 2);
+            btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.ArmorBreak, parameters: "+4");
+            btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.MentalBreak, parameters: "+4");
         }
     }
 }

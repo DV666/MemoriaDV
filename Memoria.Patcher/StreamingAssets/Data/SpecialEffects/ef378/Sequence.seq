@@ -7,7 +7,7 @@ Wait: Time=1
 ShowMesh: Char=AllNonTargets ; Enable=False ; Time=8
 SetBackgroundIntensity: Intensity=0 ; Time=7 ; HoldDuration=110
 Wait: Time=7
-ShowMesh: Char=AllNonTargets ; Enable=False ; IsDisappear=True
+ShowMesh: ShowMesh: Char=MatchingCondition(!IsTargeted && IsTargetable) ; Enable=False ; IsDisappear=True
 StartThread: Condition=SFXUseCamera && AreTargetsPlayers
 	ShiftWorld: Angle=(0, 180, 0)
 EndThread
@@ -34,5 +34,5 @@ StartThread: Condition=SFXUseCamera && AreTargetsPlayers
 	ShiftWorld: Angle=(0, 0, 0)
 EndThread
 ShowMesh: Char=Everyone ; Enable=True ; IsDisappear=True
-ShowMesh: Char=AllNonTargets ; Enable=True ; Time=12
+ShowMesh: Char=MatchingCondition(!IsTargeted && IsTargetable) ; Enable=True ; Time=12
 Wait: Time=12

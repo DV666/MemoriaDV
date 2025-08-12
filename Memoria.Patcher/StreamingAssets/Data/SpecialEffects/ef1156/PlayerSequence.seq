@@ -1,0 +1,19 @@
+// Player sequence of SFX A gift for you!
+
+WaitAnimation: Char=Caster
+StartThread: Condition=IsSingleSelectedTarget
+	Turn: Char=Caster ; BaseAngle=AllTargets ; Time=5
+EndThread
+Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
+SetupReflect: Delay=SFXLoaded
+LoadSFX: SFX=Sacrifice ; Reflect=True
+PlayAnimation: Char=Caster ; Anim=MP_ITEM1
+WaitAnimation: Char=Caster
+WaitSFXLoaded: SFX=Sacrifice ; Reflect=True
+PlaySFX: SFX=Sacrifice ; Reflect=True ; MeshColors=(0.75694, 0.13529, 0.14851)
+WaitSFXDone: SFX=Sacrifice ; Reflect=True
+ActivateReflect
+WaitReflect
+PlayAnimation: Char=Caster ; Anim=Idle
+Turn: Char=Caster ; BaseAngle=Default ; Time=5
+WaitTurn: Char=Caster

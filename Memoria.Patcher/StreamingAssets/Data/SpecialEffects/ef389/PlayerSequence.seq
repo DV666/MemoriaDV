@@ -5,4 +5,21 @@ SetupReflect: Delay=SFXLoaded
 LoadSFX: SFX=Spear_Trance ; Reflect=True
 WaitSFXLoaded: SFX=Spear_Trance ; Reflect=True
 PlaySFX: SFX=Spear_Trance ; Reflect=True
+Wait: Time=17
+ShowMesh: Char=Caster ; Enable=True ; IsDisappear=True ; Priority=2
+ShowMesh: Char=Caster ; Mesh=Weapon ; Enable=False
+MoveToPosition: Char=Caster ; AbsolutePosition=Default ; RelativePosition=(0.0, 2000.0, 0.0) ; MoveHeight=True ; Time=0
+MoveToTarget: Char=Caster ; Target=AllTargets ; Offset=(0.0, 0.0, -1400.0) ; MoveHeight=True ; Time=6
+PlayAnimation: Char=Caster ; Anim=ANH_MAIN_B0_011_112 ; Loop=True
+Wait: Time=6
+ShowMesh: Char=Caster ; Mesh=Weapon ; Enable=True
+PlayAnimation: Char=Caster ; Anim=MP_SPECIAL1
+WaitAnimation: Char=Caster
+MoveToPosition: Char=Caster ; AbsolutePosition=Default ; Anim=MP_BACK
+Turn: Char=Caster ; BaseAngle=Default ; Time=2
+WaitMove: Caster
+PlayAnimation: Char=Caster ; Anim=Idle
+WaitTurn: Char=Caster
 WaitSFXDone: SFX=Spear_Trance ; Reflect=True
+ActivateReflect
+WaitReflect

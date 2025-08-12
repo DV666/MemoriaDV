@@ -1,5 +1,15 @@
 // Shared sequence of SFX Poison__Single
 
+StartThread: Condition=AbilityId == 165
+PlaySound: Sound=95
+PlaySound: Sound=85
+PlaySound: Sound=36
+Wait: Time=32
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=14
+EffectPoint: Char=Everyone ; Type=Figure
+EndThread
+StartThread: Condition=AbilityId != 165
 PlaySound: Sound=95
 PlaySound: Sound=85
 PlaySound: Sound=36
@@ -8,3 +18,4 @@ EffectPoint: Char=AllTargets ; Type=Effect
 Wait: Time=22
 EffectPoint: Char=Everyone ; Type=Figure
 Wait: Time=15
+EndThread

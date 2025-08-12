@@ -1,0 +1,39 @@
+// Player sequence of SFX Player_Attack_KingLeo
+
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_106_010
+Turn: Char=Caster ; BaseAngle=AllTargets ; Angle=0 ; Time=1
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_106_011
+MoveToTarget: Char=Caster ; Target=AllTargets ; Time=18 ; Distance=1012
+WaitMove: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_106_012
+StartThread
+	SetupReflect
+	LoadSFX: SFX=SFX_Attack_Kain_Lance ; FirstBone=0 ; Reflect=True
+	Wait: Time=8 ; Reflect=True
+	WaitSFXLoaded: Reflect=True
+	PlaySFX: SkipSequence=False ; Reflect=True
+	WaitSFXDone: Reflect=True
+EndThread
+StartThread
+	Wait: Time=9
+	PlaySound: Sound=WeaponAttack
+	StartThread: Condition=!IsAttackMiss
+		PlaySound: Sound=WeaponHit
+	EndThread
+EndThread
+Wait: Time=10
+Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=False
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_106_013
+Turn: Char=Caster ; BaseAngle=Default ; Angle=0 ; Time=6
+MoveToPosition: Char=Caster ; Time=6 ; AbsolutePosition=Default ; MoveHeight=true
+WaitMove: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_106_014
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=Idle
+WaitMonsterSFXDone: Reflect=True
+WaitTurn: Char=Caster
+ActivateReflect
+WaitReflect

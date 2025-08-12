@@ -1,0 +1,323 @@
+// Player sequence of SFX Throw_TranceSeek
+
+StartThread: Condition=GetItemProperty(ItemUseId, 'Shape') == 43 && GetItemProperty(ItemUseId, 'Color') == 1
+	WaitAnimation: Char=Caster
+	Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
+	LoadSFX: SFX=Flame_2
+	WaitSFXLoaded: SFX=Flame_2 ; Reflect=True
+	Turn: Char=Caster ; BaseAngle=AllTargets ; Time=5
+	WaitAnimation: Char=Caster
+	PlayAnimation: Char=Caster ; Anim=MP_SPECIAL1
+	StartThread
+		WaitAnimation: Char=Caster
+		PlayAnimation: Char=Caster ; Anim=MP_IDLE_NORMAL
+		PlayAnimation: Char=Caster ; Anim=Idle
+		Turn: Char=Caster ; BaseAngle=Default ; Time=5
+		WaitTurn: Char=Caster
+	EndThread
+	Wait: Time=6
+	StartThread: Target=AllEnemies ; Sync
+		Wait: Time=2
+		WaitSFXLoaded: SFX=Flame_2
+		PlaySFX: SFX=Flame_2
+	EndThread
+	WaitSFXDone: SFX=Flame_2 ; Reflect=True
+ElseThread: Condition=GetItemProperty(ItemUseId, 'Shape') == 43 && GetItemProperty(ItemUseId, 'Color') == 2
+	WaitAnimation: Char=Caster
+	Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
+	LoadSFX: SFX=Tsunami
+	WaitSFXLoaded: SFX=Tsunami ; Reflect=True
+	Turn: Char=Caster ; BaseAngle=AllTargets ; Time=5
+	WaitAnimation: Char=Caster
+	PlayAnimation: Char=Caster ; Anim=MP_SPECIAL1
+	StartThread
+		WaitAnimation: Char=Caster
+		PlayAnimation: Char=Caster ; Anim=MP_IDLE_NORMAL
+		PlayAnimation: Char=Caster ; Anim=Idle
+		Turn: Char=Caster ; BaseAngle=Default ; Time=5
+		WaitTurn: Char=Caster
+	EndThread
+	Wait: Time=6
+	StartThread: Target=AllEnemies ; Sync
+		Wait: Time=2
+		WaitSFXLoaded: SFX=Tsunami
+		PlaySFX: SFX=Tsunami
+	EndThread
+	WaitSFXDone: SFX=Tsunami ; Reflect=True
+ElseThread: Condition=GetItemProperty(ItemUseId, 'Shape') == 43 && GetItemProperty(ItemUseId, 'Color') == 3
+	WaitAnimation: Char=Caster
+	Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
+	Turn: Char=Caster ; BaseAngle=AllTargets ; Time=5
+	WaitAnimation: Char=Caster
+	PlayAnimation: Char=Caster ; Anim=MP_SPECIAL1
+	StartThread
+		WaitAnimation: Char=Caster
+		PlayAnimation: Char=Caster ; Anim=MP_IDLE_NORMAL
+		PlayAnimation: Char=Caster ; Anim=Idle
+		Turn: Char=Caster ; BaseAngle=Default ; Time=5
+		WaitTurn: Char=Caster
+	EndThread
+	Wait: Time=6
+	StartThread: Target=MatchingCondition(IsTargeted && !CheckAnyStatus(CurrentStatus, BattleStatus_Death)); Sync
+		Wait: Time=2
+		StartThread: TargetLoop=True ; Chain=True ; Sync=True
+			LoadSFX: SFX=Lightning ; Reflect=True ; UseCamera=False
+			WaitSFXLoaded: SFX=Lightning ; Reflect=True
+			PlaySFX: SFX=Lightning ; Reflect=True
+			Wait: Time=4
+		EndThread
+	EndThread
+	WaitSFXDone: SFX=Lightning ; Reflect=True
+ElseThread: Condition=GetItemProperty(ItemUseId, 'Shape') == 43 && GetItemProperty(ItemUseId, 'Color') == 4
+	WaitAnimation: Char=Caster
+	Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
+	Turn: Char=Caster ; BaseAngle=AllTargets ; Time=5
+	WaitAnimation: Char=Caster
+	PlayAnimation: Char=Caster ; Anim=MP_SPECIAL1
+	StartThread
+		WaitAnimation: Char=Caster
+		PlayAnimation: Char=Caster ; Anim=MP_IDLE_NORMAL
+		PlayAnimation: Char=Caster ; Anim=Idle
+		Turn: Char=Caster ; BaseAngle=Default ; Time=5
+		WaitTurn: Char=Caster
+	EndThread
+	Wait: Time=6
+	StartThread: Target=AllPlayers ; Sync
+		Wait: Time=2
+		StartThread: TargetLoop=True ; Chain=True ; Sync=True
+			LoadSFX: SFX=Red_Smoke ; Reflect=True ; UseCamera=False
+			WaitSFXLoaded: SFX=Red_Smoke ; Reflect=True
+			PlaySFX: SFX=Red_Smoke ; Reflect=True
+			Wait: Time=8
+		EndThread
+	EndThread
+	WaitSFXDone: SFX=Lightning ; Reflect=True
+ElseThread: Condition=GetItemProperty(ItemUseId, 'Shape') == 43 && GetItemProperty(ItemUseId, 'Color') == 5
+	WaitAnimation: Char=Caster
+	Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
+	LoadSFX: SFX=Vanish
+	WaitSFXLoaded: SFX=Vanish ; Reflect=True
+	Turn: Char=Caster ; BaseAngle=AllTargets ; Time=5
+	WaitAnimation: Char=Caster
+	PlayAnimation: Char=Caster ; Anim=MP_SPECIAL1
+	StartThread
+		WaitAnimation: Char=Caster
+		PlayAnimation: Char=Caster ; Anim=MP_IDLE_NORMAL
+		PlayAnimation: Char=Caster ; Anim=Idle
+		Turn: Char=Caster ; BaseAngle=Default ; Time=5
+		WaitTurn: Char=Caster
+	EndThread
+	Wait: Time=8
+	WaitSFXLoaded: SFX=Vanish
+	PlaySFX: SFX=Vanish
+	WaitSFXDone: SFX=Vanish ; Reflect=True
+ElseThread: Condition=GetItemProperty(ItemUseId, 'Shape') == 12	
+	WaitAnimation: Char=Caster
+	Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
+	SetupReflect: Delay=SFXLoaded
+	Turn: Char=Caster ; BaseAngle=AllTargets ; Time=5
+	LoadSFX: SFX=Throw_Disc ; Reflect=True
+	WaitSFXLoaded: SFX=Throw_Disc ; Reflect=True
+	WaitAnimation: Char=Caster
+	PlayAnimation: Char=Caster ; Anim=MP_SPECIAL1
+	StartThread
+		WaitAnimation: Char=Caster
+		PlayAnimation: Char=Caster ; Anim=MP_IDLE_NORMAL
+		PlayAnimation: Char=Caster ; Anim=Idle
+		Turn: Char=Caster ; BaseAngle=Default ; Time=5
+		WaitTurn: Char=Caster
+	EndThread
+	Wait: Time=6
+	PlaySFX: SFX=Throw_Disc ; Reflect=True
+	WaitSFXDone: SFX=Throw_Disc ; Reflect=True
+	ActivateReflect
+	WaitReflect
+ElseThread: Condition=GetItemProperty(ItemUseId, 'Shape') == 11
+	WaitAnimation: Char=Caster
+	Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
+	SetupReflect: Delay=SFXLoaded
+	Turn: Char=Caster ; BaseAngle=AllTargets ; Time=5
+	LoadSFX: SFX=Throw_Fork ; Reflect=True
+	WaitSFXLoaded: SFX=Throw_Fork ; Reflect=True
+	WaitAnimation: Char=Caster
+	PlayAnimation: Char=Caster ; Anim=MP_SPECIAL1
+	StartThread
+		WaitAnimation: Char=Caster
+		PlayAnimation: Char=Caster ; Anim=MP_IDLE_NORMAL
+		PlayAnimation: Char=Caster ; Anim=Idle
+		Turn: Char=Caster ; BaseAngle=Default ; Time=5
+		WaitTurn: Char=Caster
+	EndThread
+	Wait: Time=6
+	PlaySFX: SFX=Throw_Fork ; Reflect=True
+	WaitSFXDone: SFX=Throw_Fork ; Reflect=True
+	ActivateReflect
+	WaitReflect
+ElseThread: Condition=(GetItemProperty(ItemUseId, 'Shape') == 8 || GetItemProperty(ItemUseId, 'Shape') == 9 || GetItemProperty(ItemUseId, 'Shape') == 10)
+	WaitAnimation: Char=Caster
+	Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
+	SetupReflect: Delay=SFXLoaded
+	Turn: Char=Caster ; BaseAngle=AllTargets ; Time=5
+	LoadSFX: SFX=Throw_Rod ; Reflect=True
+	WaitSFXLoaded: SFX=Throw_Rod ; Reflect=True
+	WaitAnimation: Char=Caster
+	PlayAnimation: Char=Caster ; Anim=MP_SPECIAL1
+	StartThread
+		WaitAnimation: Char=Caster
+		PlayAnimation: Char=Caster ; Anim=MP_IDLE_NORMAL
+		PlayAnimation: Char=Caster ; Anim=Idle
+		Turn: Char=Caster ; BaseAngle=Default ; Time=5
+		WaitTurn: Char=Caster
+	EndThread
+	Wait: Time=6
+	PlaySFX: SFX=Throw_Rod ; Reflect=True
+	WaitSFXDone: SFX=Throw_Rod ; Reflect=True
+	ActivateReflect
+	WaitReflect
+ElseThread: Condition=GetItemProperty(ItemUseId, 'Shape') == 7
+	WaitAnimation: Char=Caster
+	Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
+	SetupReflect: Delay=SFXLoaded
+	Turn: Char=Caster ; BaseAngle=AllTargets ; Time=5
+	LoadSFX: SFX=Throw_Racket ; Reflect=True
+	WaitSFXLoaded: SFX=Throw_Racket ; Reflect=True
+	WaitAnimation: Char=Caster
+	PlayAnimation: Char=Caster ; Anim=MP_SPECIAL1
+	StartThread
+		WaitAnimation: Char=Caster
+		PlayAnimation: Char=Caster ; Anim=MP_IDLE_NORMAL
+		PlayAnimation: Char=Caster ; Anim=Idle
+		Turn: Char=Caster ; BaseAngle=Default ; Time=5
+		WaitTurn: Char=Caster
+	EndThread
+	Wait: Time=6
+	PlaySFX: SFX=Throw_Racket ; Reflect=True
+	WaitSFXDone: SFX=Throw_Racket ; Reflect=True
+	ActivateReflect
+	WaitReflect
+ElseThread: Condition=GetItemProperty(ItemUseId, 'Shape') == 6
+	WaitAnimation: Char=Caster
+	Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
+	SetupReflect: Delay=SFXLoaded
+	Turn: Char=Caster ; BaseAngle=AllTargets ; Time=5
+	LoadSFX: SFX=Throw_Claw ; Reflect=True
+	WaitSFXLoaded: SFX=Throw_Claw ; Reflect=True
+	WaitAnimation: Char=Caster
+	PlayAnimation: Char=Caster ; Anim=MP_SPECIAL1
+	StartThread
+		WaitAnimation: Char=Caster
+		PlayAnimation: Char=Caster ; Anim=MP_IDLE_NORMAL
+		PlayAnimation: Char=Caster ; Anim=Idle
+		Turn: Char=Caster ; BaseAngle=Default ; Time=5
+		WaitTurn: Char=Caster
+	EndThread
+	Wait: Time=6
+	PlaySFX: SFX=Throw_Claw ; Reflect=True
+	WaitSFXDone: SFX=Throw_Claw ; Reflect=True
+	ActivateReflect
+	WaitReflect
+ElseThread: Condition=GetItemProperty(ItemUseId, 'Shape') == 5
+	WaitAnimation: Char=Caster
+	Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
+	SetupReflect: Delay=SFXLoaded
+	Turn: Char=Caster ; BaseAngle=AllTargets ; Time=5
+	LoadSFX: SFX=Throw_Spear ; Reflect=True
+	WaitSFXLoaded: SFX=Throw_Spear ; Reflect=True
+	WaitAnimation: Char=Caster
+	PlayAnimation: Char=Caster ; Anim=MP_SPECIAL1
+	StartThread
+		WaitAnimation: Char=Caster
+		PlayAnimation: Char=Caster ; Anim=MP_IDLE_NORMAL
+		PlayAnimation: Char=Caster ; Anim=Idle
+		Turn: Char=Caster ; BaseAngle=Default ; Time=5
+		WaitTurn: Char=Caster
+	EndThread
+	Wait: Time=6
+	PlaySFX: SFX=Throw_Spear ; Reflect=True
+	WaitSFXDone: SFX=Throw_Spear ; Reflect=True
+	ActivateReflect
+ElseThread: Condition=GetItemProperty(ItemUseId, 'Shape') == 3
+	WaitAnimation: Char=Caster
+	Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
+	SetupReflect: Delay=SFXLoaded
+	Turn: Char=Caster ; BaseAngle=AllTargets ; Time=5
+	LoadSFX: SFX=Throw_Sword ; Reflect=True
+	WaitSFXLoaded: SFX=Throw_Sword ; Reflect=True
+	WaitAnimation: Char=Caster
+	PlayAnimation: Char=Caster ; Anim=MP_SPECIAL1
+	StartThread
+		WaitAnimation: Char=Caster
+		PlayAnimation: Char=Caster ; Anim=MP_IDLE_NORMAL
+		PlayAnimation: Char=Caster ; Anim=Idle
+		Turn: Char=Caster ; BaseAngle=Default ; Time=5
+		WaitTurn: Char=Caster
+	EndThread
+	Wait: Time=6
+	PlaySFX: SFX=Throw_Sword ; Reflect=True
+	WaitSFXDone: SFX=Throw_Sword ; Reflect=True
+	ActivateReflect
+	WaitReflect
+ElseThread: Condition=GetItemProperty(ItemUseId, 'Shape') == 2
+	WaitAnimation: Char=Caster
+	Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
+	SetupReflect: Delay=SFXLoaded
+	Turn: Char=Caster ; BaseAngle=AllTargets ; Time=5
+	LoadSFX: SFX=Throw_Thief_Sword ; Reflect=True
+	WaitSFXLoaded: SFX=Throw_Thief_Sword ; Reflect=True
+	WaitAnimation: Char=Caster
+	PlayAnimation: Char=Caster ; Anim=MP_SPECIAL1
+	StartThread
+		WaitAnimation: Char=Caster
+		PlayAnimation: Char=Caster ; Anim=MP_IDLE_NORMAL
+		PlayAnimation: Char=Caster ; Anim=Idle
+		Turn: Char=Caster ; BaseAngle=Default ; Time=5
+		WaitTurn: Char=Caster
+	EndThread
+	Wait: Time=6
+	PlaySFX: SFX=Throw_Thief_Sword ; Reflect=True
+	WaitSFXDone: SFX=Throw_Thief_Sword ; Reflect=True
+	ActivateReflect
+	WaitReflect
+ElseThread: Condition=GetItemProperty(ItemUseId, 'Shape') == 1
+	WaitAnimation: Char=Caster
+	Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
+	SetupReflect: Delay=SFXLoaded
+	Turn: Char=Caster ; BaseAngle=AllTargets ; Time=5
+	LoadSFX: SFX=Throw_Dagger ; Reflect=True
+	WaitSFXLoaded: SFX=Throw_Dagger ; Reflect=True
+	WaitAnimation: Char=Caster
+	PlayAnimation: Char=Caster ; Anim=MP_SPECIAL1
+	StartThread
+		WaitAnimation: Char=Caster
+		PlayAnimation: Char=Caster ; Anim=MP_IDLE_NORMAL
+		PlayAnimation: Char=Caster ; Anim=Idle
+		Turn: Char=Caster ; BaseAngle=Default ; Time=5
+		WaitTurn: Char=Caster
+	EndThread
+	Wait: Time=6
+	PlaySFX: SFX=Throw_Dagger ; Reflect=True
+	WaitSFXDone: SFX=Throw_Dagger ; Reflect=True
+	ActivateReflect
+	WaitReflect
+ElseThread
+	WaitAnimation: Char=Caster
+	Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
+	SetupReflect: Delay=SFXLoaded
+	Turn: Char=Caster ; BaseAngle=AllTargets ; Time=5
+	LoadSFX: SFX=Cannon ; Reflect=True
+	WaitSFXLoaded: SFX=Cannon ; Reflect=True
+	WaitAnimation: Char=Caster
+	PlayAnimation: Char=Caster ; Anim=MP_SPECIAL1
+	StartThread
+		WaitAnimation: Char=Caster
+		PlayAnimation: Char=Caster ; Anim=MP_IDLE_NORMAL
+		PlayAnimation: Char=Caster ; Anim=Idle
+		Turn: Char=Caster ; BaseAngle=Default ; Time=5
+		WaitTurn: Char=Caster
+	EndThread
+	Wait: Time=6
+	PlaySFX: SFX=Cannon ; Reflect=True
+	WaitSFXDone: SFX=Cannon ; Reflect=True
+	ActivateReflect
+	WaitReflect
+EndThread

@@ -1,5 +1,5 @@
-using FF9;
 using System;
+using UnityEngine;
 
 namespace Memoria.Scripts.Battle
 {
@@ -20,21 +20,24 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            if (!_v.Target.CheckUnsafetyOrMiss())
-                return;
-
-            _v.MagicAccuracy();
-            _v.Target.PenaltyShellHitRate();
-            _v.PenaltyCommandDividedHitRate();
-            if (!_v.TryMagicHit())
-                return;
-
-            _v.SetCommandAttack();
-            _v.BonusElement();
-            if (!_v.CanAttackMagic())
-                return;
-
-            _v.CalcCannonProportionDamage();
+            _v.PhysicalAccuracy();
+            if (TranceSeekAPI.TryPhysicalHit(_v))
+            {
+                _v.NormalPhysicalParams();
+                TranceSeekAPI.CharacterBonusPassive(_v, "PhysicalAttack");
+                TranceSeekAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
+                TranceSeekAPI.EnemyTranceBonusAttack(_v);
+                TranceSeekAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
+                if (Mathf.Abs((_v.Caster.Row - _v.Target.Row)) > 1)
+                    ++_v.Context.DamageModifierCount;
+                TranceSeekAPI.BonusElement(_v);
+                if (_v.CanAttackElementalCommand())
+                {
+                    _v.CalcPhysicalHpDamage();
+                    TranceSeekAPI.RaiseTrouble(_v);
+                    TranceSeekAPI.TryAlterMagicStatuses(_v);
+                }
+            }
         }
     }
 }

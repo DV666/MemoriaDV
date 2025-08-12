@@ -1,0 +1,27 @@
+// Player sequence of SFX Blood Pact
+
+LoadSFX: SFX=Player_Attack_Marcus
+WaitAnimation: Char=Caster
+Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
+SetupReflect: Delay=SFXLoaded
+PlayAnimation: Char=Caster ; Anim=ANH_SUB_F0_MRC_BTL_SWORD_HARAKIRI
+Wait: Time=20
+StartThread
+	Wait: Time=3
+	WaitSFXLoaded: SFX=Player_Attack_Marcus
+	PlaySFX: SFX=Player_Attack_Marcus ; MeshColors=(0.5, 0.0, 0.0)
+	EffectPoint: Char=AllTargets ; Type=Effect
+	PlaySound: Sound=WeaponAttack
+	StartThread: Condition=!IsAttackMiss
+		PlaySound: Sound=WeaponHit
+	EndThread
+	Wait: Time=4
+	EffectPoint: Char=Everyone ; Type=Figure
+	WaitSFXDone: SFX=Player_Attack_Marcus
+EndThread
+ActivateReflect
+WaitReflect
+Wait: Time=26
+PlayAnimation: Char=Caster ; Speed=0
+ToggleStandAnimation: Char=Caster ; Alternate=True
+PlayAnimation: Char=Caster ; Anim=Idle

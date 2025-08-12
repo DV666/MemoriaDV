@@ -1,0 +1,21 @@
+// Player sequence of SFX Metronome
+
+WaitAnimation: Char=Caster
+Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
+SetupReflect: Delay=SFXLoaded
+PlayAnimation: Char=Caster ; Anim=MP_SPECIAL1
+StartThread
+	WaitAnimation: Char=Caster
+	PlayAnimation: Char=Caster ; Anim=Idle
+EndThread
+Wait: Time=9
+LoadSFX: SFX=Charge ; Reflect=True ; FirstBone=0 ; SecondBone=0
+WaitSFXLoaded: SFX=Charge ; Reflect=True
+PlaySound: Sound=1362
+PlaySFX: SFX=Charge ; Reflect=True ; MeshColors=(1.0, 0.0, 1.0) ; SkipSequence
+PlaySound: Sound=1683 ; Pitch=1.5
+PlaySound: Sound=1684 ; Pitch=1.5
+PlaySound: Sound=1685 ; Pitch=1.5
+EffectPoint: Char=AllTargets ; Type=Effect
+EffectPoint: Char=Everyone ; Type=Figure
+WaitSFXDone: SFX=Charge ; Reflect=True

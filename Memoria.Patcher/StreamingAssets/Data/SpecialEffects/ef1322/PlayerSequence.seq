@@ -1,0 +1,59 @@
+// Player sequence of SFX Summon_Wraith_Devil’sCandle
+
+WaitAnimation: Char=Caster
+SetupReflect: Delay=60
+StartThread: Target=Caster ; Sync=True ; Reflect=False
+	WaitAnimation: Char=Caster
+	StartThread: Condition=IsSingleSelectedTarget
+		Turn: Char=Caster ; BaseAngle=AllTargets ; Time=5
+	EndThread
+	LoadSFX: SFX=Green_Smoke ; UseCamera=False ; Reflect=False
+	WaitSFXLoaded: SFX=Green_Smoke ; Reflect=False
+	PlaySFX: SFX=Green_Smoke ; Reflect=False
+	EffectPoint: Char=Caster ; Type=Both ; Reflect=False
+	WaitSFXDone: SFX=Green_Smoke ; Reflect=False
+EndThread
+WaitAnimation: Char=Caster
+PlayCamera: Camera=1 ; Char=0 ; Alternate=False
+Channel
+LoadMonsterSFX: SFX=Snowflakes ; FirstBone=15 ; SecondBone=0 ; Args=0 ; Reflect=True
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_034_010
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_034_011
+WaitMonsterSFXLoaded: Reflect=True
+WaitAnimation: Char=Caster
+Message: Priority=1 ; Title=True ; Reflect=False ; TextFR=[STRT=98,1]Cierge de la mort ; Text=[STRT=78,1]Devil’s Candle
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_034_012
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_034_013
+Turn: Char=Caster ; BaseAngle=AllTargets ; Angle=0 ; Time=9
+MoveToTarget: Char=Caster ; Target=AllTargets ; Time=9 ; Distance=700
+WaitMove: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_034_014
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_034_015
+PlayMonsterSFX: Reflect=True
+Wait: Time=36
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_034_016
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_034_017
+Turn: Char=Caster ; BaseAngle=Default ; Angle=0 ; Time=8
+MoveToPosition: Char=Caster ; Time=8 ; AbsolutePosition=Default ; MoveHeight=true
+WaitMove: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_034_018
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=Idle
+WaitMonsterSFXDone: Reflect=True
+WaitTurn: Char=Caster
+ActivateReflect
+WaitReflect
+StartThread: Target=Caster ; Sync=True ; Reflect=False
+	LoadSFX: SFX=Green_Smoke ; UseCamera=False ; Reflect=False
+	WaitSFXLoaded: SFX=Green_Smoke ; Reflect=False
+	PlaySFX: SFX=Green_Smoke ; Reflect=False
+	EffectPoint: Char=Caster ; Type=Both ; Reflect=False
+	WaitSFXDone: SFX=Green_Smoke ; Reflect=False
+EndThread
+PlayAnimation: Char=Caster ; Anim=Idle
+Turn: Char=Caster ; BaseAngle=Default ; Time=5
+WaitTurn: Char=Caster

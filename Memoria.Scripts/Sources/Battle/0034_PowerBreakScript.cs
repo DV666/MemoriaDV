@@ -1,5 +1,5 @@
+﻿using System;
 using Memoria.Data;
-using System;
 
 namespace Memoria.Scripts.Battle
 {
@@ -7,6 +7,7 @@ namespace Memoria.Scripts.Battle
     /// Power Break
     /// </summary>
     [BattleScript(Id)]
+
     public sealed class PowerBreakScript : IBattleScript, IEstimateBattleScript
     {
         public const Int32 Id = 0034;
@@ -20,27 +21,64 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            _v.MagicAccuracy();
-            _v.Target.PenaltyShellHitRate();
-            if (_v.TryMagicHit())
-                _v.Target.TryAlterSingleStatus(BattleStatusId.ChangeStat, true, _v.Caster, "Strength", _v.Target.Strength * 3 / 4);
+            if (!_v.Target.TryKillFrozen())
+            {
+                if (_v.Target.PhysicalDefence == 255)
+                {
+                    _v.Context.Flags |= BattleCalcFlags.Guard;
+                    return;
+                }
+                if (_v.Target.IsUnderAnyStatus(BattleStatus.Vanish) || _v.Target.PhysicalEvade == 255)
+                {
+                    _v.Context.Flags |= BattleCalcFlags.Miss;
+                    return;
+                }
+
+                if (_v.Caster.IsPlayer)
+                {
+                    _v.WeaponPhysicalParams();
+                    TranceSeekAPI.CharacterBonusPassive(_v, "LowPhysicalAttack");
+                }
+                else
+                {
+                    _v.NormalPhysicalParams();
+                }
+                TranceSeekAPI.MagicAccuracy(_v);
+                TranceSeekAPI.EnemyTranceBonusAttack(_v);
+                TranceSeekAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
+                TranceSeekAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
+                TranceSeekAPI.BonusElement(_v);
+                _v.CalcHpDamage();
+                _v.Command.AbilityStatus |= TranceSeekStatus.PowerBreak;
+                TranceSeekAPI.TryAlterMagicStatuses(_v);
+            }
         }
 
         public Single RateTarget()
         {
-            Int32 strengthDiff = _v.Target.Strength - _v.Target.Strength * 3 / 4;
+            _v.NormalMagicParams();
+            TranceSeekAPI.CharacterBonusPassive(_v, "MagicAttack");
+            TranceSeekAPI.CasterPenaltyMini(_v);
+            TranceSeekAPI.PenaltyShellAttack(_v);
+            TranceSeekAPI.PenaltyCommandDividedAttack(_v);
+            TranceSeekAPI.BonusElement(_v);
 
-            Single result = strengthDiff * BattleScriptAccuracyEstimate.RatePlayerAttackEvade(_v.Context.Evade);
+            if (!TranceSeekAPI.CanAttackMagic(_v))
+                return 0;
 
-            if (_v.Target.IsUnderAnyStatus(BattleStatus.Shell))
-                result *= BattleScriptAccuracyEstimate.RatePlayerAttackHit(_v.Context.HitRate >> 1);
-            else
-                result *= BattleScriptAccuracyEstimate.RatePlayerAttackHit(_v.Context.HitRate);
+            if (_v.Target.IsUnderAnyStatus(BattleStatus.Reflect) && !_v.Command.IsReflectNull)
+                return 0;
 
+            _v.CalcHpDamage();
+
+            Single rate = Math.Min(_v.Target.HpDamage, _v.Target.CurrentHp);
+
+            if ((_v.Target.Flags & CalcFlag.HpRecovery) == CalcFlag.HpRecovery)
+                rate *= -1;
             if (_v.Target.IsPlayer)
-                result *= -1;
+                rate *= -1;
 
-            return result;
+            return rate;
         }
     }
 }

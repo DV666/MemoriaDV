@@ -1,0 +1,3200 @@
+#####################################################################################################
+## 
+##  The format for coding Supporting Ability features is the following:
+##  >SA {ID} {Comment}
+##  {Feature Type 1} {Feature Arguments 1 (possibly on multiple lines)}
+##  {Feature Type 2} {Feature Arguments 2 (possibly on multiple lines)}
+##  etc...
+##  
+#####################################################################################################
+ 
+##  The format for coding Active Ability features is the following:
+##  >AA {ID} {Comment}
+##  {Feature 1}
+##  {Feature 2}
+##  etc...
+##  
+#####################################################################################################
+##  
+##  Generic comments should be placed at the beginning of the file
+##  The 64 supporting abilities must be defined in the main AbilityFeatures.txt
+##  However, only a part of them can be present in AbilityFeatures.txt of mod folders
+##  
+##  A special group of features can be optionally defined using ">SA Global" or ">SA GlobalLast"
+##  Features in these global blocks will always apply, even when no Supporting Ability is active
+##  These Global feature blocks can be used to link features with pieces of equipment
+##  The "Global" block applies before other supporting abilities while "GlobalLast" applies after
+##  
+##  Similarly, other specialfeatures can be optionally defined using ">SA GlobalEnemy" or ">SA GlobalEnemyLast"
+##  Features in these global blocks will be used by enemies instead of player characters
+##  Enemy features can be only of type "StatusInit", "Ability" or "Command"
+##  
+##  Features of active abilities are optional; there can be features for each one of them or for none
+##  
+#####################################################################################################
+##  
+##  It is important for the keywords ">SA", ">AA" and for the feature types to be at the start of a new line
+##  The ID of a ">SA" must be a number corresponding to the supporting ability
+##  (0 is the first one, Auto-Reflect by default; 63 is Void, unused by default)
+##  The ID of a ">AA" must be a number corresponding to the active ability
+##  (0 is Void; 191 is Doomsday Sword, the last one that is used by default)
+##  
+##  Optionally, writing "+" after the ID cumulates the features across mods:
+##  Without "+", all the features tied to that ability's ID that are defined in mods of lower priorities are cleared
+##  With "+", the features defined are added on top of the base features
+##  Generally, it is better to use this option for ">SA Global+"
+##  (eg. to keep Healing Rod's effect when adding an unrelated global effect)
+##  
+##  Everything on the same line after the ID and the optional "+" is ignored
+##  
+#####################################################################################################
+##                                                                                                 ##
+##                                       SUPPORTING ABILITIES                                      ##
+##                                                                                                 ##
+#####################################################################################################
+##  
+##  There are 6 different feature types for supporting abilities:
+##  
+##  Permanent -> Applies as soon as the ability is enabled (refreshes when equipment changes),
+##    typically for stat modifications of a player character
+##    Arguments:
+##      [code=Condition] {Formula} [/code] -> Define a condition for the feature to apply
+##      [code={Prop.}] {Formula} [/code]   -> Modify the property according to the formula
+##  
+##  BattleStart -> Applies when a battle is triggered, at the moment of picking the start type,
+##    typically for changing the chances to have a back attack or preemptive start type
+##    Arguments:
+##      [code=Condition] {Formula} [/code] -> Define a condition for the feature to apply
+##      [code={Prop.}] {Formula} [/code]   -> Modify the property according to the formula
+##      PreemptivePriority {DELTA}         -> Use "PreemptivePriority +1" for letting preemptive have
+##                                        priority over back attacks (in case both random checks pass)
+##  
+##  StatusInit -> Applies a status modification at the start of each battle
+##    Arguments:
+##      [code=Condition] {Formula} [/code]                   -> Define a condition for the feature to apply
+##      AutoStatus {Status Name}                             -> Let the character have a permanent status
+##      InitialStatus {Status Name}                          -> Let the character start the battle with a status
+##      ResistStatus {Status Name}                           -> Let the character be immune to a status
+##      InitialATB {ATB Pourcent}                            -> Fill the character's ATB at start (100 for a full gauge)
+##      [code=PartialResist{Status Name}] {Formula} [/code]  -> Let the character have a status-specific evasion
+##                                                          0.0: no bonus evasion -- 1.0: always evade that status
+##      [code=DurationFactor{Status Name}] {Formula} [/code] -> Change the duration of specific statuses for the character
+##                                                          1.0: normal duration
+##  
+##  Ability -> Apply an effect at some point during an ability's effect calculation
+##    typically for increasing the power of some attacks or triggering a reaction
+##    Arguments:
+##      EvenImmobilized                    -> (Try to) apply the feature even if the SA user has a
+##                                        status amongst Death, Petrify, Venom, Stop, Freeze, Jump
+##      AsTarget                           -> Apply the feature if the SA user is one of the target(s)
+##                                        instead of being the caster (default)
+##      When{Moment}                       -> Pick the moment to apply the feature amongst these:
+##                                        WhenBattleScriptStart (before the CS script is called)
+##                                        WhenHitRateSetup (right before hit rate/evasion checks)
+##                                        WhenCalcDamage (right before calculating HPDamage using
+##                                                        Attack, AttackPower and DefensePower)
+##                                        WhenSteal (when a successful steal occurs)
+##                                        WhenBattleScriptEnd (right after the CS script is called)
+##                                        WhenEffectDone (default option - after the damage are dealt)
+##      [code=Condition] {Formula} [/code] -> Define a condition for the feature to apply
+##      [code={Prop.}] {Formula} [/code]   -> Modify the property according to the formula
+##      DisableSA {ID 1} {ID 2}...         -> Disable the "Ability" features of the specified SA
+##                                        for the rest of the ability's effect calculation
+##                                        (even for a different moment but not for a different target)
+##  
+##  Command -> Apply an effect when a battle command is executed by anyone on anywho
+##    typically for letting a character cover an ally or modifying a flag before visual effect
+##    Arguments:
+##      EvenImmobilized                    -> (Try to) apply the feature even if the SA user has a
+##                                        status amongst Death, Petrify, Venom, Stop, Freeze, Jump
+##      [code=Condition] {Formula} [/code] -> Define a condition for the feature to apply
+##      [code={Prop.}] {Formula} [/code]   -> Modify the property according to the formula
+##  
+##  BattleResult -> Apply an effect at the end of a battle
+##    typically for improving the rewards of a battle
+##    Arguments:
+##      When{Moment}                       -> Pick the moment to apply the feature amongst these:
+##                                        WhenBattleEnd (applies even if there is no reward screen)
+##                                        WhenRewardAll (modifies rewards of the whole team)
+##                                        WhenRewardSingle (default - modifies rewards of the SA user)
+##                                          (Note that "WhenRewardAll" only applies once even if
+##                                           there are several users of the same SA in the team)
+##      [code=Condition] {Formula} [/code] -> Define a condition for the feature to apply
+##      [code={Prop.}] {Formula} [/code]   -> Modify the property according to the formula
+##  
+#####################################################################################################
+##  
+##  The properties that can be modified are the following ones:
+##  
+##  Permanent:
+##    MaxHP, MaxMP, Speed, Strength, Magic, Spirit, Defence, Evade,
+##    MagicDefence, MagicEvade, PlayerCategory, MPCostFactor,
+##    MaxHPLimit, MaxMPLimit, MaxDamageLimit, MaxMPDamageLimit,
+##    PlayerPermanentStatus
+##  
+##  BattleStart:
+##    BackAttack (chances of having a back attack, with 0 for 0% and 255 for 100%)
+##    Preemptive (chances of having a back attack, with 0 for 0% and 255 for 100%)
+##  
+##  Ability:
+##    CasterHP, CasterMP, CasterATB, CasterTrance, CasterCurrentStatus, CasterPermanentStatus,
+##    CasterResistStatus, CasterHalfElement, CasterGuardElement, CasterAbsorbElement, CasterWeakElement,
+##    CasterBonusElement, CasterRow, CasterSpeed, CasterStrength, CasterMagic, CasterSpirit, CasterDefence,
+##    CasterEvade, CasterMagicDefence, CasterMagicEvade, CasterIsStrengthModified, CasterIsMagicModified,
+##    CasterIsDefenceModified, CasterIsEvadeModified, CasterIsMagicDefenceModified,
+##    CasterIsMagicEvadeModified, CasterCriticalRateBonus, CasterCriticalRateWeakening,
+##    CasterMaxDamageLimit, CasterMaxMPDamageLimit, CasterBonusExp, CasterBonusGil, CasterBonusCard,
+##    (+ same as above for the target, eg. TargetHP),
+##    EffectCasterFlags, CasterHPDamage, CasterMPDamage, EffectTargetFlags, HPDamage, MPDamage,
+##    FigureInfo, Power, AbilityStatus, AbilityElement, AbilityElementForBonus, IsShortRanged,
+##    AbilityCategory, AbilityFlags, Attack, AttackPower, DefencePower, StatusRate, HitRate,
+##    Evade, EffectFlags, DamageModifierCount, TranceIncrease, ItemSteal, Gil, IsDrain,
+##    BattleBonusAP,
+##    Counter (formula defines the Ability ID of the counter),
+##    ReturnMagic (formula should return 0),
+##    AutoItem (formula defines the Item ID of the counter)
+##  
+##  Command:
+##    Power, AbilityStatus, AbilityElement, AbilityElementForBonus, IsShortRanged, AbilityCategory,
+##    AbilityFlags, IsReflectNull, IsMeteorMiss, IsShortSummon, TryCover, ScriptId, HitRate,
+##    CommandTargetId,
+##    (+ same as Ability modifiable properties for the ability user, eg. HP or CurrentStatus)
+##  
+##  BattleResult:
+##    HP, MP, Status, BonusAP, BonusCard, BonusExp, BonusGil, BonusItem1, BonusItemCount1,
+##    BonusItem2, BonusItemCount2, BonusItem3, BonusItemCount3, BonusItem4, BonusItemCount4,
+##    BonusItem5, BonusItemCount5, BonusItem6, BonusItemCount6,
+##    FleeGil (Gil reward of all the enemies, even not killed, divided by 10)
+##  
+#####################################################################################################
+##  
+##  The formulas can include these variables and functions
+##  
+##  Common:
+##    GetRandom(min, max)              -> Return a random number between min and max-1
+##    GetRandom()                      -> Same as GetRandom(0, 256)
+##    GetRandomBit(number)             -> Return a random bit of the number seen as a binary number
+##    GetAbilityUsageCount(ability ID) -> Return the number of times the player used an ability
+##    GetItemCount(item ID)            -> Return the number of items owned by the player (works also on cards and key items)
+##    CheckAnyStatus(list, condition)  -> Check if any status of the conditions is in the list (same as "(list & condition) != 0")
+##    CheckAllStatus(list, condition)  -> Check if all the statuses of the conditions are in the list (same as "(list & condition) == condition")
+##    CombineStatuses(list, addition)  -> Add all the additional statuses to the list (same as "list | addition")
+##    RemoveStatuses(list, removal)    -> Remove all the statuses from the list (same as "list & ~removal")
+##                                   Note that "condition", "addition" or "removal" above can be a comma-separated list
+##    BattleFilter(characters, player flag, targetable flag, status filter)
+##                                     └> Filter all the existing battle units by different kinds of filters
+##                                   "characters" is a bit flags identifying the units
+##                                    eg. 1 for the first player character, 16 for the first enemy, 17 for both
+##                                   "player flag" must be 0 for keeping only enemies, 1 for allies or -1 for both
+##                                   "targetable" must be 1 for keeping only targetable units
+##                                   "status filter" must be a list of filtering out statuses (eg. BattleStatus_Death will filter out dead units)
+##    GetPartyMemberLevel(number)      -> Return the level of the n-th party member, with n being between 0 and 3 inclusively
+##    GetPartyMemberIndex(number)      -> Return the Character Index of the n-th party member (see the different "CharacterId" below)
+##    GetCategoryKillCount(category)   -> Return the number of enemies of the specified category that were defeated by the player
+##    GetModelKillCount(model ID)      -> Return the number of enemies with a specific model that were defeated by the player
+##    Gil                              -> The number of gil owned by the player
+##    DragonCount                      -> The number of dragon-type enemies killed
+##    FrogCount                        -> The number of frogs catched
+##    StealCount                       -> The number of successful steals
+##    EscapeCount                      -> The number of successful flees (either way)
+##    TonberryCount                    -> The number of Tonberries killed
+##    TetraMasterWinCount              -> The number of Tetra Master wins
+##    TetraMasterLossCount             -> The number of Tetra Master losses
+##    TetraMasterDrawCount             -> The number of Tetra Master draws
+##    GameTime                         -> The total duration of the played game, in seconds
+##    BattleId                         -> The ID of the current battle
+##    FieldId                          -> The ID of the current field
+##    IsRandomBattle                   -> Whether the current battle is a random battle (excluding friendly and Ragtime encounters)
+##    IsFriendlyBattle                 -> Whether the current battle is a friendly battle
+##    IsRagtimeBattle                  -> Whether the current battle is a Ragtime encounter
+##    CurrentPartyCount                -> The total number of player characters in the battle
+##    CurrentEnemyCount                -> The total number of enemies in the battle
+##    CurrentPartyAverageLevel         -> The average level of the fighting party members
+##    IsBattlePreemptive               -> Whether the current battle started as a preemptive
+##    IsBattleBackAttack               -> Whether the current battle started as a back attack
+##    ScenarioCounter                  -> The scenario counter, see https://github.com/Albeoris/Memoria/wiki/Scenario-counter
+##    IsGarnetDepressed                -> Whether Garnet is in a depression state
+##    BattleBonusAP                    -> The AP given by the current battle
+##    UseSFXRework                     -> Whether the SFX Rework system is activated or not
+##  
+##  Permanent:
+##    HP, MP, Level, Exp, CharacterIndex, SerialNumber, WeaponId, HeadId, WristId, ArmorId, AccessoryId
+##    HasSA(support ability ID),
+##    (+ modifiable properties)
+##  
+##  BattleStart: only the common informations
+##  
+##  StatusInit:
+##    MaxHP, MaxMP, MaxATB, HP, MP, ATB, Trance, InTrance, ModelId, CurrentStatus, PermanentStatus,
+##    ResistStatus, HalfElement, GuardElement, AbsorbElement, WeakElement, BonusElement, WeaponPower,
+##    WeaponRate, WeaponElement, WeaponStatus, WeaponCategory, WeaponId, HeadId, WristId, ArmorId,
+##    AccessoryId, SerialNumber, Row, Position, SummonCount, IsPlayer, IsSlave, IsOutOfReach, Level, Exp,
+##    Speed, Strength, Magic, Spirit, Defence, Evade, MagicDefence, MagicEvade, PlayerCategory, Category,
+##    CharacterIndex, IsStrengthModified, IsMagicModified, IsEvadeModified, IsDefenceModified,
+##    IsMagicDefenceModified, IsMagicEvadeModified, CriticalRateBonus, CriticalRateWeakening,
+##    IsAlternateStand,
+##    HasSA(support ability ID)
+##  
+##  Ability:
+##    All those of "StatusInit" for both the caster and the target (eg. CasterMaxHP or TargetMaxHP),
+##    ReflectFactor, StatusesInflicted, CommandId, AbilityId, ScriptId, ItemUseId, WeaponThrowShape,
+##    SpecialEffectId, TargetType, IsATBCommand, IsAbilityMultiTarget, IsShortSummon, IsSpellReflected,
+##    IsCovered, IsDodged, IsReflectNull, MPCost, CalcMainCounter, CommandTargetCount,
+##    (+ the other modifiable properties, except for "ClearStatus" and "ClearAutoStatus")
+##  
+##  Command:
+##    All those of "StatusInit" for both the caster and the target, except in the condition formula,
+##    All those of "StatusInit" for the SA user (that can be neither the caster nor a target),
+##    CommandId, AbilityId, ItemUseId, WeaponThrowShape, SpecialEffectId, TargetType, IsATBCommand,
+##    IsAbilityMultiTarget, IsSpellReflected, IsCovered, IsDodged, IsCounterableCommand, MPCost, CalcMainCounter,
+##    IsCasterWellDefined, IsTargeted, IsSingleTarget, IsSelfTarget, IsTheCaster, IsAllyOfTarget,
+##    IsAllyOfCaster, IsEnemyOfTarget, IsEnemyOfCaster, AreCasterAndTargetEnemies, AreCasterAndTargetAllies,
+##    (+ the other modifiable properties)
+##    Note that:
+##      "CasterMaxHP" and such should only be used in formulas if "IsCasterWellDefined" is true
+##      "TargetMaxHP" and such should only be used in formulas if "IsSingleTarget" is true
+##  
+##  BattleResult:
+##    Level, Exp, CharacterIndex, MaxHP, MaxMP, Speed, Strength, Magic, Spirit, Defence, Evade,
+##    MagicDefence, MagicEvade, PlayerCategory, MPCostFactor, WeaponId, HeadId, WristId, ArmorId,
+##    AccessoryId, IsFlee, IsFleeByLuck,
+##    HasSA(support ability ID),
+##    (+ modifiable properties)
+##  
+#####################################################################################################
+##  
+##  Examples:
+##  
+##  
+##  Make the claws Avenger start the battle with Doom
+##  Also triggers a counter-attack with the sword Defender when the character is defending
+##  Also make the staff Mace of Zeus reduce MP cost of all spells to 0
+##  Also make blinded characters be mistaken on their single-target actions
+##  Also make the Rosetta Ring give a partial protection against Heat (50% bonus evasion and reduce duration to 50%)
+##  
+##  >SA Global+
+##  StatusInit [code=Condition] WeaponId == RegularItem_Avenger [/code] InitialStatus Doom
+##  Ability AsTarget
+##   [code=Condition] TargetWeaponId == RegularItem_Defender && CheckAnyStatus(TargetCurrentStatus, BattleStatus_Defend) && IsCounterableCommand && CasterIsPlayer != TargetIsPlayer && (AbilityCategory & 8) != 0 [/code]
+##   [code=Counter] BattleAbilityId_Attack [/code]
+##   DisableSA 36 54 56
+##  Permanent [code=Condition] WeaponId == RegularItem_MaceOfZeus [/code] [code=MPCostFactor] 0 [/code]
+##  Command EvenImmobilized
+##   [code=Condition] IsTheCaster && IsSingleTarget && !IsSelfTarget && CheckAnyStatus(CurrentStatus | PermanentStatus, BattleStatus_Blind) [/code]
+##   [code=CommandTargetId] TargetPosition < CasterPosition ? GetRandomBit(BattleFilter((1 << CasterPosition) - 1, TargetIsPlayer ? 1 : 0, 1, BattleStatus_Jump)) : GetRandomBit(BattleFilter(256 - 2 * (1 << CasterPosition), TargetIsPlayer ? 1 : 0, 1, BattleStatus_Jump)) [/code]
+##  StatusInit [code=Condition] AccessoryId == RegularItem_RosettaRing [/code] [code=PartialResistHeat] 0.5 [/code] [code=DurationFactorHeat] 0.5 [/code]
+##  
+##  
+##  Make all the enemies start with Haste if the party average level is above 50
+##  Also scale their damage according to the number of enemies of the same kind that were defeated by the player
+##  
+##  >SA GlobalEnemy+
+##  StatusInit [code=Condition] CurrentPartyAverageLevel >= 50.0 [/code] InitialStatus Haste
+##  Ability WhenCalcDamage EvenImmobilized
+##   [code=Condition] CasterIsPlayer != TargetIsPlayer [/code]
+##   [code=Attack] Attack + Attack * GetModelKillCount(CasterModelId) / 50 [/code]
+##  
+##  
+##  Give Auto-Shell or Auto-Protect depending on which one is the most useful
+##  and give both if Defence == MagicDefence
+##  
+##  >SA 0
+##  StatusInit [code=Condition] Defence <= MagicDefence [/code] AutoStatus Protect
+##  StatusInit [code=Condition] MagicDefence <= Defence [/code] AutoStatus Shell
+##  
+##  
+##  Save the user from fatal damage at the cost of half of the trance gauge (max is 255),
+##  and add Berserk, Vanish and Reflect permanently when doing so
+##  Note how the "EffectTargetFlags" check verifies that the ability deals damage but doesn't heal
+##  Also note that the effect triggers both if the user is in trance and if s/he is not
+##  
+##  >SA 1
+##  Ability AsTarget WhenBattleScriptEnd
+##  [code=Condition] HPDamage >= TargetHP && TargetTrance >= 128 && CasterIsPlayer != TargetIsPlayer
+##                && (EffectTargetFlags & CalcFlag_HpDamageOrHeal) == CalcFlag_HpAlteration [/code]
+##  [code=TranceIncrease] -128 [/code]
+##  [code=TargetPermanentStatus] CombineStatuses(TargetPermanentStatus, BattleStatus_Berserk | BattleStatus_Vanish | BattleStatus_Reflect) [/code]
+##  [code=HPDamage] 0 [/code]
+##  
+##  
+##  Make battles 1/2 preemptives, 1/4 back attacks (the preemptive check has to fail)
+##  and also give Long Reach to all the player's characters
+##  
+##  >SA 2
+##  BattleStart PreemptivePriority +1
+##  [code=Preemptive] 128 [/code]
+##  [code=BackAttack] 128 [/code]
+##  Command EvenImmobilized
+##  [code=Condition] IsAllyOfCaster [/code]
+##  [code=IsShortRanged] false [/code]
+##  
+##  
+##  Cast Cura as a counter on an ally that uses an ability on the SA user
+##  Note that the user doesn't need to know the spell to use it as a counter (but it costs MP)
+##  Note also that it will trigger on any command, including counters, thus potentially looping
+##  
+##  >SA 3
+##  Ability AsTarget
+##  [code=Condition] CasterIsPlayer == TargetIsPlayer && CasterHP < CasterMaxHP
+##                && CasterCharacterIndex != TargetCharacterIndex [/code]
+##  [code=Counter] BattleAbilityId_Cura [/code]
+##  
+##  
+##  Give a 1.5x, 2.5x or 5x bonus experience depending on the user's level
+##  Note that using floating point arithmetic instead of integer arithmetic
+##  will round the result to the closest integral value instead of flooring it
+##  The format "{condition} ? {formula 1} : {formula 2}" uses the 1st formula
+##  if the condition is satisfied and uses the 2nd formula if not
+##  
+##  >SA 4
+##  BattleResult [code=BonusExp] Level < 40 ? 1.5 * BonusExp :
+##                              (Level < 80 ? 2.5 * BonusExp
+##                                          : 5 * BonusExp) [/code]
+##  
+#####################################################################################################
+##  
+##  Constants
+##  
+##  The different statuses are:
+##   BattleStatus_Petrify		BattleStatus_Venom		BattleStatus_Virus			BattleStatus_Silence
+##   BattleStatus_Blind			BattleStatus_Trouble	BattleStatus_Zombie			BattleStatus_EasyKill
+##   BattleStatus_Death			BattleStatus_LowHP		BattleStatus_Confuse		BattleStatus_Berserk
+##   BattleStatus_Stop			BattleStatus_AutoLife	BattleStatus_Trance			BattleStatus_Defend
+##   BattleStatus_Poison		BattleStatus_Sleep		BattleStatus_Regen			BattleStatus_Haste
+##   BattleStatus_Slow			BattleStatus_Float		BattleStatus_Shell			BattleStatus_Protect
+##   BattleStatus_Heat			BattleStatus_Freeze		BattleStatus_Vanish			BattleStatus_Doom
+##   BattleStatus_Mini			BattleStatus_Reflect	BattleStatus_Jump			BattleStatus_GradualPetrify
+##   + several shorthands for multiple statuses (eg. BattleStatus_PreventCounter)
+##   see https://github.com/Albeoris/Memoria/blob/main/Assembly-CSharp/Memoria/Data/Battle/BattleStatus.cs
+##  
+##  The different elements are:
+##   EffectElement_Fire			EffectElement_Cold		EffectElement_Thunder		EffectElement_Earth
+##   EffectElement_Aqua			EffectElement_Wind		EffectElement_Holy			EffectElement_Darkness
+##  
+##  The followings can be used for "CharacterIndex":
+##   CharacterId_Zidane			CharacterId_Vivi		CharacterId_Garnet			CharacterId_Steiner
+##   CharacterId_Freya			CharacterId_Quina		CharacterId_Eiko			CharacterId_Amarant
+##   CharacterId_Cinna			CharacterId_Marcus		CharacterId_Blank			CharacterId_Beatrix
+##  
+##  The followings can be used for "PlayerCategory":
+##   CharacterCategory_Male				CharacterCategory_Female
+##   CharacterCategory_Terra			CharacterCategory_Gaia
+##   CharacterCategory_Subpc
+##  
+##  The followings can be used for "Category" (most likely "TargetCategory"):
+##   EnemyCategory_Humanoid		EnemyCategory_Beast		EnemyCategory_Devil			EnemyCategory_Dragon
+##   EnemyCategory_Undead		EnemyCategory_Stone		EnemyCategory_Soul			EnemyCategory_Flight
+##  
+##  The followings can be used for "CommandId":
+##   BattleCommandId_Attack		BattleCommandId_Steal	BattleCommandId_Item		BattleCommandId_SummonGarnet
+##   etc...
+##   see https://github.com/Albeoris/Memoria/blob/main/Assembly-CSharp/Memoria/Data/Battle/BattleCommandId.cs
+##  
+##  The followings can be used for "AbilityId":
+##   BattleAbilityId_Void		BattleAbilityId_Cure	BattleAbilityId_Cura		BattleAbilityId_Curaga
+##   etc...
+##   see https://github.com/Albeoris/Memoria/blob/main/Assembly-CSharp/Memoria/Data/Battle/BattleAbilityId.cs
+##  
+##  The different items are:
+##   RegularItem_Hammer			RegularItem_Dagger		RegularItem_MageMasher		RegularItem_MythrilDagger
+##   etc...
+##   see https://github.com/Albeoris/Memoria/blob/main/Assembly-CSharp/Memoria/Data/Battle/RegularItem.cs
+##  
+##  The different Tetra Master (or Triple Triad) cards are:
+##   TetraMasterCardId_Goblin	TetraMasterCardId_Fang	TetraMasterCardId_Skeleton	TetraMasterCardId_Flan
+##   etc...
+##   see https://github.com/Albeoris/Memoria/blob/main/Assembly-CSharp/Memoria/Data/TetraMaster/TetraMasterCardId.cs
+##  
+##  The different "EffectCasterFlags" and "EffectTargetFlags" are:
+##   CalcFlag_HpAlteration	-> Ability deals HP damage
+##   CalcFlag_HpRecovery	-> Ability heals HP instead of damaging (both bits are set)
+##   CalcFlag_Critical		-> Critical strike connected
+##   CalcFlag_MpAlteration	-> Ability deals MP damage
+##   CalcFlag_MpRecovery	-> Ability heals MP instead of damaging (both bits are set)
+##   CalcFlag_HpDamageOrHeal -> Shorthand for CalcFlag_HpAlteration | CalcFlag_HpRecovery
+##   CalcFlag_MpDamageOrHeal -> Shorthand for CalcFlag_MpAlteration | CalcFlag_MpRecovery
+##  
+##  The different "EffectFlags" are:
+##   BattleCalcFlags_Miss		-> Ability has missed
+##   BattleCalcFlags_Dodge		-> Ability is dodged (usually together with miss)
+##   BattleCalcFlags_MpAttack	-> MP Attack, consume 1/8 of CasterMaxMP at the end of the effect
+##   BattleCalcFlags_Absorb		-> Target absorbs the element
+##   BattleCalcFlags_TrueFB		-> Unknown/unused
+##   BattleCalcFlags_FalseFB	-> Unknown/unused
+##   BattleCalcFlags_Guard		-> Target is guarded
+##   BattleCalcFlags_DirectHP	-> Direct HP damage, such as Matra Magic that brings HP to a specific number (and doesn't show damage numbers)
+##   BattleCalcFlags_AddStat	-> Add Status, add the caster's weapon status at the end of the effect, before damage
+##  
+#####################################################################################################
+##                                                                                                 ##
+##                                        ACTIVE ABILITIES                                         ##
+##                                                                                                 ##
+#####################################################################################################
+##  
+##  Active ability features work similarly as supporting ability features but consist of [code][/code] tags only
+##  Most of the time, formulas should use the format "{condition} ? {formula 1} : {formula 2}" in order to be efficient
+##  
+##  There are 10 possible different tags:
+##  
+##  [code=Patch] {Formula} [/code]              -> Swap the ability with another one
+##                                             This affects the ability in battles but also in the menu
+##  
+##  [code=Priority] {Formula} [/code]           -> Change the command's priority, to make it trigger as soon as inputted
+##  
+##  [code=GilCost] {Formula} [/code]            -> Add a gil cost to the cast of the ability
+##  
+##  [code=ItemRequirement] {Formulas} [/code]   -> Add item requirement(s) to the cast of the ability, without using it (them) directly
+##                                             There can be several formulas separated by a semi-colon ;
+##                                             Formulas go 2 by 2, with the 1st one defining the item ID and the 2nd one defining the item amount (default: 1)
+##  
+##  [code=Power] {Formula} [/code]              -> Dynamically change the ability's power
+##  
+##  [code=HitRate] {Formula} [/code]            -> Dynamically change the ability's hit rate
+##  
+##  [code=Element] {Formula} [/code]            -> Dynamically change the ability's element
+##  
+##  [code=Status] {Formula} [/code]             -> Dynamically change the ability's status
+##  
+##  [code=Target] {Formula} [/code]             -> Redefine the command's target(s)
+##  
+##  [code=SpecialEffect] {Formula} [/code]      -> Dynamically change the ability's special effect
+##  
+#####################################################################################################
+##  
+##  The feature "Patch" applies at any time
+##  Its formula may include the same variables and functions as a "Permanent" supporting ability feature
+##  
+##  The feature "Priority" applies as soon as a command is sent (either as a player input or as a reaction)
+##  Its formula may include the same variables and functions as below for the other features
+##  
+##  The other features apply when the command starts, on the tick before the "Command" supporting ability features take effect
+##  before the setup of a few informations ("IsCovered" will always return false, for example)
+##  Their formulas may include these variables and functions:
+##    Common variables and functions, IsSingleTarget, IsSelfTarget, AreCasterAndTargetEnemies, AreCasterAndTargetAllies,
+##    CasterMaxHP, CasterMaxMP, CasterMaxATB, CasterHP, CasterMP, CasterATB, CasterTrance, CasterInTrance, CasterModelId,
+##    CasterCurrentStatus, CasterPermanentStatus, CasterResistStatus, CasterHalfElement, CasterGuardElement, CasterAbsorbElement,
+##    CasterWeakElement, CasterBonusElement, CasterWeaponPower, CasterWeaponRate, CasterWeaponElement, CasterWeaponStatus,
+##    CasterWeaponCategory, CasterWeaponId, CasterHeadId, CasterWristId, CasterArmorId, CasterAccessoryId,
+##    CasterSerialNumber, CasterRow, CasterPosition, CasterSummonCount, CasterIsPlayer, CasterIsSlave, CasterIsOutOfReach,
+##    CasterLevel, CasterExp, CasterSpeed, CasterStrength, CasterMagic, CasterSpirit, CasterDefence, CasterEvade,
+##    CasterMagicDefence, CasterMagicEvade, CasterPlayerCategory, CasterCategory, CasterCharacterIndex,
+##    CasterIsStrengthModified, CasterIsMagicModified, CasterIsEvadeModified, CasterIsDefenceModified,
+##    CasterIsMagicDefenceModified, CasterIsMagicEvadeModified, CasterCriticalRateBonus, CasterCriticalRateWeakening,
+##    CasterMaxDamageLimit, CasterMaxMPDamageLimit,
+##    CasterHasSA(support ability ID)
+##    CommandId, AbilityId, ScriptId, Power, AbilityStatus, AbilityElement, AbilityElementForBonus,
+##    ItemUseId, WeaponThrowShape, SpecialEffectId, TargetType, IsATBCommand, IsAbilityMultiTarget, IsShortSummon,
+##    IsSpellReflected, IsCovered, IsDodged, IsShortRanged, IsReflectNull, IsMeteorMiss, AbilityCategory, MPCost,
+##    AbilityFlags, CommandTargetId, CalcMainCounter
+##  
+#####################################################################################################
+##  
+##  Examples:
+##  
+##  
+##  Alternate between Fenrir (Earth) and Fenrir (Wind) when casting it, 
+##  instead of patching the ability depending on Eiko's accessory
+##  
+##  >AA 66 Fenrir
+##  [code=Patch] GetAbilityUsageCount(66) <= GetAbilityUsageCount(67) ? 66 : 67 [/code]
+##  
+##  
+##  Curse elemental weaknesses using Amarant's weapon element when applicable,
+##  and a random element if Amarant's weapon has none
+##  Both of these formulas are valid for picking a random element
+##  
+##  >AA 129 Curse (single)
+##  [code=Element] CasterWeaponElement != 0 ? CasterWeaponElement : (1 << GetRandom(0, 8)) [/code]
+##  >AA 137 Curse (multi)
+##  [code=Element] CasterWeaponElement != 0 ? CasterWeaponElement : GetRandomBit(255) [/code]
+##  
+##  
+##  Have summons take priority over the other commands, once per character per battle
+##  
+##  >AA 49 Shiva
+##  [code=Priority] CasterSummonCount <= 1 ? 1 : -1 [/code]
+##  >AA 51 Ifrit
+##  [code=Priority] CasterSummonCount <= 1 ? 1 : -1 [/code]
+##  >AA 53 Ramuh
+##  [code=Priority] CasterSummonCount <= 1 ? 1 : -1 [/code]
+##  etc...
+##  
+##  
+##  Have Shell upgrade to Mighty Guard if Concentrate is equipped
+##  Note that returning the value -1 will not apply any change
+##  
+##  >AA 11 Shell
+##  [code=Patch] HasSA(33) ? BattleAbilityId_MightyGuard : -1 [/code]
+##  
+##  
+##  Have Haste upgrade to a party-wide spell if Concentrate is equipped
+##  Note that the SFX Rework system allows to use the special effect Haste (89) on multiple targets
+##  but it has to be switched to Carbuncle's Emerald effect (506) if that system is deactivated
+##  
+##  >AA 13 Haste
+##  [code=Target] HasSA(33) ? BattleFilter(255, 1, 1, BattleStatus_Death | BattleStatus_Jump) : -1 [/code]
+##  [code=SpecialEffect] HasSA(33) ? (UseSFXRework ? 89 : 506) : -1 [/code]
+##  
+##  
+##  Have a custom Mix ability requiring 2 Ores + 1 other random jewel
+##  The actual ability effect has to be coded in a custom battle script
+##  (see https://github.com/Albeoris/Memoria/wiki/External-Battle-scripts)
+##  
+##  >AA 200 Mix Jewels
+##  [code=Power] RegularItem_Garnet + GetRandom(0, 12) [/code]
+##  [code=ItemRequirement] RegularItem_Ore ; 2 ; Power ; 1 [/code]
+##  
+#####################################################################################################
+
+>SA Global+
+Permanent [code=Condition] WeaponId == 1237 [/code] [code=ActivateSA] 19 [/code]
+Permanent [code=Condition] WeaponId == 1237 [/code] [code=HiddenSA] 19 [/code]
+Permanent [code=Condition] WeaponShape != 4 [/code] [code=HiddenSA] 1019 [/code]
+Permanent [code=Condition] WeaponId == 12370 [/code] [code=ActivateSA] 14 [/code]
+Permanent [code=Condition] WeaponId == 12370 [/code] [code=ActivateSA] 1014 [/code]
+Permanent [code=Condition] WeaponShape != 4 [/code] [code=HiddenSA] 1014 [/code]
+Permanent [code=Condition] CharacterIndex == CharacterId_Garnet [/code] [code=PlayerPermanentStatus] IsGarnetDepressed ? BattleStatus_Silence : 0 [/code]
+StatusInit [code=Condition] CharacterIndex == CharacterId_Garnet && IsGarnetDepressed [/code] AutoStatus Silence
+StatusInit [code=Condition] HeadId == 1218 [/code] AutoStatus Zombie
+StatusInit [code=Condition] AccessoryId == RegularItem_MagicianShoes [/code] ResistStatus Confuse
+StatusInit [code=Condition] AccessoryId == RegularItem_RunningShoes [/code] InitialStatus Haste
+StatusInit [code=Condition] AccessoryId == RegularItem_RunningShoes [/code] ResistStatus Stop
+StatusInit [code=Condition] AccessoryId == RegularItem_GerminasBoots [/code] ResistStatus GradualPetrify
+StatusInit [code=Condition] AccessoryId == RegularItem_FeatherBoots [/code] AutoStatus Float
+StatusInit [code=Condition] AccessoryId == RegularItem_BattleBoots [/code] ResistStatus Mini
+StatusInit [code=Condition] AccessoryId == RegularItem_Anklet [/code] ResistStatus Trouble
+StatusInit [code=Condition] AccessoryId == RegularItem_PowerBelt [/code] ResistStatus Venom
+StatusInit [code=Condition] AccessoryId == RegularItem_BlackBelt [/code] ResistStatus Blind
+StatusInit [code=Condition] AccessoryId == RegularItem_GlassBuckle [/code] ResistStatus Poison
+StatusInit [code=Condition] AccessoryId == RegularItem_MadainRing [/code] ResistStatus Freeze
+StatusInit [code=Condition] AccessoryId == RegularItem_RosettaRing [/code] ResistStatus Heat
+StatusInit [code=Condition] AccessoryId == RegularItem_ReflectRing [/code] AutoStatus Reflect
+StatusInit [code=Condition] AccessoryId == RegularItem_CoralRing [/code] ResistStatus Slow
+StatusInit [code=Condition] AccessoryId == RegularItem_PromistRing [/code] ResistStatus Virus
+StatusInit [code=Condition] AccessoryId == RegularItem_RebirthRing [/code] ResistStatus Doom
+StatusInit [code=Condition] AccessoryId == RegularItem_GoldChoker [/code] ResistStatus Sleep
+StatusInit [code=Condition] AccessoryId == RegularItem_FairyEarrings [/code] ResistStatus Berserk
+StatusInit [code=Condition] AccessoryId == RegularItem_AngelEarrings [/code] ResistStatus Zombie
+StatusInit [code=Condition] AccessoryId == RegularItem_Extension [/code] ResistStatus Silence
+StatusInit [code=Condition] AccessoryId == RegularItem_Ribbon [/code] InitialStatus Regen
+StatusInit [code=Condition] AccessoryId == 1200 [/code] InitialStatus Vanish
+StatusInit [code=Condition] AccessoryId == 1201 [/code] AutoStatus Berserk
+StatusInit [code=Condition] AccessoryId == 1204 [/code] AutoStatus Protect
+StatusInit [code=Condition] AccessoryId == 1210 [/code] ResistStatus Poison
+StatusInit [code=Condition] AccessoryId == 1210 [/code] ResistStatus Blind
+StatusInit [code=Condition] AccessoryId == 1210 [/code] ResistStatus Zombie
+StatusInit [code=Condition] AccessoryId == 1213 [/code] AutoStatus Doom
+StatusInit [code=Condition] AccessoryId == 1215 [/code] AutoStatus Haste
+StatusInit [code=Condition] AccessoryId == 1217 [/code] ResistStatus Silence
+StatusInit [code=Condition] AccessoryId == 1217 [/code] ResistStatus Mini
+StatusInit [code=Condition] AccessoryId == 1242 [/code] AutoStatus Shell
+
+BattleStart
+[code=Condition] (BattleId == 1 && BattleGroupIndex == 2) || (BattleId == 128 && BattleGroupIndex == 2) || (BattleId == 169 && BattleGroupIndex == 1) || (BattleId == 600 && BattleGroupIndex == 1) || (BattleId == 849 && BattleGroupIndex == 2) || (BattleId == 849 && BattleGroupIndex == 3) || (BattleId == 849 && BattleGroupIndex == 4) || (BattleId == 849 && BattleGroupIndex == 5) || (BattleId == 849 && BattleGroupIndex == 2) || (BattleId == 850 && BattleGroupIndex == 2) || (BattleId == 851 && BattleGroupIndex == 2) [/code]
+[code=BackAttack] 0 [/code]
+[code=Preemptive] 0 [/code]
+
+############# Special mechanics/features #################
+
+#### Sentinel Steiner ####
+Command
+[code=Condition] CharacterIndex == CharacterId_Steiner && !IsTargeted && IsAllyOfTarget && CommandId == BattleCommandId_EnemyAtk && (AbilityCategory & 8) != 0 && IsSingleTarget && !CheckAnyStatus(CurrentStatus, BattleStatus_Heat) && CheckAnyStatus(CurrentStatus, BattleStatus_Defend) && PropertyByName('StatusProperty Defend Gardien') == 1 && PropertyByName('StatusProperty CustomStatus21 CanCover') == 1 [/code]
+[code=TryCover] !CheckAnyStatus(TargetCurrentStatus, BattleStatus_Death | BattleStatus_Petrify) [/code]
+
+#### Duel Amarant ####
+Ability AsTarget
+[code=Condition] TargetCharacterIndex == CharacterId_Amarant && CommandId < BattleCommandId_BoundaryCheck && CasterIsPlayer != TargetIsPlayer && (AbilityCategory & 8) != 0 && !CheckAnyStatus(TargetCurrentStatus, BattleStatus_Heat) && TargetPropertyByName('StatusProperty Defend Duel') == 1 [/code]
+[code=Counter] 176 [/code]
+DisableSA 1036 36 1054 54 1056 56
+
+### Komrade ###
+Command
+[code=Condition] CommandId == 1030 && AbilityId != 1205 [/code]
+[code=CommandTargetId] ((AbilityCategory & 32) != 0 && (AbilityCategory & 128) != 0) ? CasterUnitId : ((AbilityCategory & 32) != 0 ? BattleFilter(255, 1, 1, BattleStatus_Death | BattleStatus_Jump) : ((AbilityCategory & 4) != 0 ? BattleFilter(255, 0, 1, BattleStatus_Death | BattleStatus_Jump) : ((AbilityCategory & 128) != 0 ? GetRandomBit(BattleFilter(255, 1, 1, BattleStatus_Death | BattleStatus_Jump)) : GetRandomBit(BattleFilter(255, 0, 1, BattleStatus_Death | BattleStatus_Jump))))) [/code]
+
+Command
+[code=Condition] CommandId == 1030 && (AbilityId == 1263 || AbilityId == 1377) [/code]
+[code=CommandTargetId] GetRandomBit(BattleFilter(255, GetRandom(0, 2), 1, BattleStatus_Death)) [/code]
+
+############# Garnet Passive (Gems) #################
+Ability AsTarget WhenBattleScriptEnd EvenImmobilized
+[code=Condition] TargetCharacterIndex == CharacterId_Garnet && (AbilityElement & EffectElement_Thunder) != 0 && (TargetAccessoryId == RegularItem_Peridot || (CheckAnyStatus(TargetCurrentStatus, BattleStatus_Trance) && GetItemCount(RegularItem_Peridot) > 0)) [/code]
+[code=EffectTargetFlags] EffectTargetFlags | CalcFlag_HpDamageOrHeal [/code]
+[code=HPDamage] (HPDamage * (1 + GetItemCount(RegularItem_Peridot)) / 100) * (TargetHasSA(1210) ? 1.5 : (TargetHasSA(210) ? 1.25 : 1)) [/code]
+
+Ability AsTarget WhenBattleScriptEnd EvenImmobilized
+[code=Condition] TargetCharacterIndex == CharacterId_Garnet && (AbilityElement & EffectElement_Fire) != 0 && (TargetAccessoryId == RegularItem_Topaz || (CheckAnyStatus(TargetCurrentStatus, BattleStatus_Trance) && GetItemCount(RegularItem_Topaz) > 0)) [/code]
+[code=EffectTargetFlags] EffectTargetFlags | CalcFlag_HpDamageOrHeal [/code]
+[code=HPDamage] (HPDamage * (1 + GetItemCount(RegularItem_Topaz)) / 100) * (TargetHasSA(1210) ? 1.5 : (TargetHasSA(210) ? 1.25 : 1)) [/code]
+
+Ability AsTarget WhenBattleScriptEnd EvenImmobilized
+[code=Condition] TargetCharacterIndex == CharacterId_Garnet && (AbilityElement & EffectElement_Cold) != 0 && (TargetAccessoryId == RegularItem_Opal || (CheckAnyStatus(TargetCurrentStatus, BattleStatus_Trance) && GetItemCount(RegularItem_Opal) > 0)) [/code]
+[code=EffectTargetFlags] EffectTargetFlags | CalcFlag_HpDamageOrHeal [/code]
+[code=HPDamage] (HPDamage * (1 + GetItemCount(RegularItem_Opal)) / 100) * (TargetHasSA(1210) ? 1.5 : (TargetHasSA(210) ? 1.25 : 1)) [/code]
+
+Ability AsTarget WhenBattleScriptEnd EvenImmobilized
+[code=Condition] TargetCharacterIndex == CharacterId_Garnet && (AbilityElement & EffectElement_Aqua) != 0 && (TargetAccessoryId == RegularItem_Aquamarine || (CheckAnyStatus(TargetCurrentStatus, BattleStatus_Trance) && GetItemCount(RegularItem_Aquamarine) > 0)) [/code]
+[code=EffectTargetFlags] EffectTargetFlags | CalcFlag_HpDamageOrHeal [/code]
+[code=HPDamage] (HPDamage * (1 + GetItemCount(RegularItem_Aquamarine)) / 100) * (TargetHasSA(1210) ? 1.5 : (TargetHasSA(210) ? 1.25 : 1)) [/code]
+
+Ability AsTarget WhenBattleScriptEnd EvenImmobilized
+[code=Condition] TargetCharacterIndex == CharacterId_Garnet && (AbilityElement & EffectElement_Wind) != 0 && (TargetAccessoryId == RegularItem_Emerald || (CheckAnyStatus(TargetCurrentStatus, BattleStatus_Trance) && GetItemCount(RegularItem_Emerald) > 0)) [/code]
+[code=EffectTargetFlags] EffectTargetFlags | CalcFlag_HpDamageOrHeal [/code]
+[code=HPDamage] (HPDamage * (1 + GetItemCount(RegularItem_Emerald)) / 100) * (TargetHasSA(1210) ? 1.5 : (TargetHasSA(210) ? 1.25 : 1)) [/code]
+
+Ability AsTarget WhenBattleScriptEnd EvenImmobilized
+[code=Condition] TargetCharacterIndex == CharacterId_Garnet && (AbilityElement & EffectElement_Earth) != 0 && (TargetAccessoryId == RegularItem_Sapphire || (CheckAnyStatus(TargetCurrentStatus, BattleStatus_Trance) && GetItemCount(RegularItem_Sapphire) > 0)) [/code]
+[code=EffectTargetFlags] EffectTargetFlags | CalcFlag_HpDamageOrHeal [/code]
+[code=HPDamage] (HPDamage * (1 + GetItemCount(RegularItem_Sapphire)) / 100) * (TargetHasSA(1210) ? 1.5 : (TargetHasSA(210) ? 1.25 : 1)) [/code]
+
+Ability AsTarget WhenHitRateSetup EvenImmobilized
+[code=Condition] TargetCharacterIndex == CharacterId_Garnet && (TargetAccessoryId == RegularItem_Amethyst || (CheckAnyStatus(TargetCurrentStatus, BattleStatus_Trance) && GetItemCount(RegularItem_Amethyst) > 0)) [/code]
+[code=Evade] (Evade + ((1 + GetItemCount(RegularItem_Sapphire)) / 4)) * (TargetHasSA(1210) ? 1.5 : (TargetHasSA(210) ? 1.25 : 1)) [/code]
+
+Ability AsTarget WhenHitRateSetup EvenImmobilized
+[code=Condition] TargetCharacterIndex == CharacterId_Garnet && (TargetAccessoryId == RegularItem_LapisLazuli || (CheckAnyStatus(TargetCurrentStatus, BattleStatus_Trance) && GetItemCount(RegularItem_LapisLazuli) > 0)) [/code]
+[code=MagicEvade] (MagicEvade + ((1 + GetItemCount(RegularItem_LapisLazuli)) / 4)) * (TargetHasSA(1210) ? 1.5 : (TargetHasSA(210) ? 1.25 : 1)) [/code]
+
+Ability WhenCalcDamage EvenImmobilized
+[code=Condition] CasterCharacterIndex == CharacterId_Garnet && ScriptId == 10 && (CasterAccessoryId == RegularItem_Moonstone || (CheckAnyStatus(CasterCurrentStatus, BattleStatus_Trance) && GetItemCount(RegularItem_Moonstone) > 0)) [/code]
+[code=Attack] (Attack + (Attack * (1 + GetItemCount(RegularItem_Moonstone)) / 200)) * (CasterHasSA(1210) ? 1.5 : (CasterHasSA(210) ? 1.25 : 1))  [/code]
+
+Ability AsTarget WhenBattleScriptEnd
+[code=Condition] TargetCharacterIndex == CharacterId_Garnet && ((AbilityCategory & 16) != 0 || (AbilityCategory & 128) != 0) && (TargetAccessoryId == RegularItem_Garnet || (CheckAnyStatus(TargetCurrentStatus, BattleStatus_Trance) && GetItemCount(RegularItem_Garnet) > 0)) [/code]
+[code=HPDamage] (HPDamage - (HPDamage * (1 + GetItemCount(RegularItem_Garnet)) / 400)) * (TargetHasSA(1210) ? 1.5 : (TargetHasSA(210) ? 1.25 : 1)) [/code]
+
+Ability AsTarget WhenBattleScriptEnd
+[code=Condition] TargetCharacterIndex == CharacterId_Garnet && CommandId < BattleCommandId_BoundaryCheck && (AbilityCategory & 8) != 0 && (TargetAccessoryId == RegularItem_Diamond || (CheckAnyStatus(TargetCurrentStatus, BattleStatus_Trance) && GetItemCount(RegularItem_Diamond) > 0)) [/code]
+[code=HPDamage] (HPDamage - (HPDamage * (1 + GetItemCount(RegularItem_Diamond)) / 400)) * (TargetHasSA(1210) ? 1.5 : (TargetHasSA(210) ? 1.25 : 1)) [/code]
+
+############# Special Weapons #################
+
+##### Freyja - Heavy Lance #####
+Ability WhenHitRateSetup EvenImmobilized
+[code=Condition] AbilityId == BattleAbilityId_Attack && (CasterWeaponId == 1022 || CasterWeaponId == 1023 || CasterWeaponId == 1024) [/code]
+[code=HitRate] HitRate / 2 [/code]
+
+Ability WhenCalcDamage EvenImmobilized
+[code=Condition] (ScriptId == 48 || ScriptId == 83) && CasterWeaponId == 1022 [/code]
+[code=Attack] Attack + ((10 * Attack) / 100) [/code]
+
+Ability WhenCalcDamage EvenImmobilized
+[code=Condition] (ScriptId == 48 || ScriptId == 83) && CasterWeaponId == 1023 [/code]
+[code=Attack] Attack + ((20 * Attack) / 100) [/code]
+
+Ability WhenCalcDamage EvenImmobilized
+[code=Condition] (ScriptId == 48 || ScriptId == 83) && CasterWeaponId == 1024 [/code]
+[code=Attack] Attack + ((30 * Attack) / 100) [/code]
+
+##### Amarant - Claws Weapon #####
+Ability WhenHitRateSetup EvenImmobilized
+[code=Condition] CasterCharacterIndex == CharacterId_Amarant && CasterWeaponId == 42 [/code]
+[code=HitRate] HitRate + 5 [/code]
+
+Ability WhenHitRateSetup EvenImmobilized
+[code=Condition] CasterCharacterIndex == CharacterId_Amarant && CasterWeaponId == 43 [/code]
+[code=HitRate] HitRate + 10 [/code]
+
+Ability WhenHitRateSetup EvenImmobilized
+[code=Condition] CasterCharacterIndex == CharacterId_Amarant && CasterWeaponId == 44 [/code]
+[code=HitRate] HitRate + 15 [/code]
+
+Ability WhenHitRateSetup EvenImmobilized
+[code=Condition] CasterCharacterIndex == CharacterId_Amarant && CasterWeaponId == 45 [/code]
+[code=HitRate] HitRate + 20 [/code]
+
+Ability WhenHitRateSetup EvenImmobilized
+[code=Condition] CasterCharacterIndex == CharacterId_Amarant && CasterWeaponId == 46 [/code]
+[code=HitRate] HitRate + 25 [/code]
+
+Ability WhenHitRateSetup EvenImmobilized
+[code=Condition] CasterCharacterIndex == CharacterId_Amarant && CasterWeaponId == 47 [/code]
+[code=HitRate] HitRate + 30 [/code]
+
+Ability WhenHitRateSetup EvenImmobilized
+[code=Condition] CasterCharacterIndex == CharacterId_Amarant && CasterWeaponId == 48 [/code]
+[code=HitRate] HitRate + 35 [/code]
+
+Ability WhenHitRateSetup EvenImmobilized
+[code=Condition] CasterCharacterIndex == CharacterId_Amarant && CasterWeaponId == 49 [/code]
+[code=HitRate] HitRate + 40 [/code]
+
+Ability WhenHitRateSetup EvenImmobilized
+[code=Condition] CasterCharacterIndex == CharacterId_Amarant && CasterWeaponId == 50 [/code]
+[code=HitRate] HitRate + 50 [/code]
+
+##### Amarant - Throw Weapon #####
+Ability WhenHitRateSetup EvenImmobilized
+[code=Condition] AbilityId == BattleAbilityId_Attack && (CasterWeaponId == 1025 || CasterWeaponId == 1026 || CasterWeaponId == 1027) [/code]
+[code=HitRate] HitRate + HitRate / 2 [/code]
+[code=Evade] Evade / 4 [/code]
+
+Ability WhenBattleScriptStart EvenImmobilized
+[code=Condition] AbilityId == BattleAbilityId_Attack && (CasterWeaponId == 1025 || CasterWeaponId == 1026 || CasterWeaponId == 1027) [/code]
+[code=IsShortRanged] false [/code]
+
+Ability WhenCalcDamage EvenImmobilized
+[code=Condition] AbilityId == BattleAbilityId_Attack && (TargetCategory & EnemyCategory_Flight) != 0 && CasterIsPlayer != TargetIsPlayer && (CasterWeaponId == 1025 || CasterWeaponId == 1026 || CasterWeaponId == 1027) [/code]
+[code=DamageModifierCount] DamageModifierCount + 1 [/code]
+
+############# Special Items #################
+Ability WhenCalcDamage EvenImmobilized
+[code=Condition] CasterWeaponId == RegularItem_HealingRod && AbilityId == BattleAbilityId_Attack && (TargetCategory & EnemyCategory_Undead) == 0 && !CheckAnyStatus(TargetCurrentStatus, BattleStatus_Zombie) [/code]
+[code=EffectTargetFlags] EffectTargetFlags | CalcFlag_HpRecovery [/code]
+
+Ability WhenCalcDamage EvenImmobilized
+[code=Condition] AbilityId == BattleAbilityId_Attack && CasterAccessoryId == 1213 [/code]
+[code=DamageModifierCount] DamageModifierCount + 1 [/code]
+
+Ability WhenCalcDamage EvenImmobilized
+[code=Condition] CasterWeaponId == RegularItem_HealingRod && (AbilityId == BattleAbilityId_Attack && TargetIsPlayer) [/code]
+[code=DefencePower] 0 [/code]
+
+Ability WhenHitRateSetup EvenImmobilized
+[code=Condition] CasterWeaponId == RegularItem_HealingRod && TargetIsPlayer [/code]
+[code=HitRate] 255 [/code]
+[code=Evade] 0 [/code]
+
+Ability AsTarget WhenHitRateSetup
+[code=Condition] CommandId < BattleCommandId_BoundaryCheck && CasterIsPlayer != TargetIsPlayer && (AbilityCategory & 8) != 0 && TargetAccessoryId == 1203 && GetRandom(0, 4) == 0 [/code]
+[code=Evade] 255 [/code]
+
+BattleResult WhenRewardAll
+[code=Condition] AccessoryId == 1212 [/code]
+[code=BonusGil] BonusGil + BonusGil / 4 [/code]
+
+BattleResult WhenRewardAll
+[code=Condition] AccessoryId == 1216 [/code]
+[code=BonusExp] BonusExp + BonusExp / 2 [/code]
+
+BattleResult WhenRewardAll
+[code=Condition] AccessoryId == 1239 [/code]
+[code=BonusAP] BonusAP * 2 [/code]
+
+BattleResult WhenRewardAll
+[code=Condition] HeadId == 1241 [/code]
+[code=BonusItemCount1] GetItemProperty(BonusItem1, 'Shape') == 21 ? (BonusItemCount1 + (GetUnitProperty(GetPartyMemberIndex(0), 'HeadId') == 1241 ? 1 : 0) + (GetUnitProperty(GetPartyMemberIndex(1), 'HeadId') == 1241 ? 1 : 0) + (GetUnitProperty(GetPartyMemberIndex(2), 'HeadId') == 1241 ? 1 : 0) + (GetUnitProperty(GetPartyMemberIndex(3), 'HeadId') == 1241 ? 1 : 0)) : BonusItemCount1 [/code]
+[code=BonusItemCount2] GetItemProperty(BonusItem2, 'Shape') == 21 ? (BonusItemCount2 + (GetUnitProperty(GetPartyMemberIndex(0), 'HeadId') == 1241 ? 1 : 0) + (GetUnitProperty(GetPartyMemberIndex(1), 'HeadId') == 1241 ? 1 : 0) + (GetUnitProperty(GetPartyMemberIndex(2), 'HeadId') == 1241 ? 1 : 0) + (GetUnitProperty(GetPartyMemberIndex(3), 'HeadId') == 1241 ? 1 : 0)) : BonusItemCount2 [/code]
+[code=BonusItemCount3] GetItemProperty(BonusItem3, 'Shape') == 21 ? (BonusItemCount3 + (GetUnitProperty(GetPartyMemberIndex(0), 'HeadId') == 1241 ? 1 : 0) + (GetUnitProperty(GetPartyMemberIndex(1), 'HeadId') == 1241 ? 1 : 0) + (GetUnitProperty(GetPartyMemberIndex(2), 'HeadId') == 1241 ? 1 : 0) + (GetUnitProperty(GetPartyMemberIndex(3), 'HeadId') == 1241 ? 1 : 0)) : BonusItemCount3 [/code]
+[code=BonusItemCount4] GetItemProperty(BonusItem4, 'Shape') == 21 ? (BonusItemCount4 + (GetUnitProperty(GetPartyMemberIndex(0), 'HeadId') == 1241 ? 1 : 0) + (GetUnitProperty(GetPartyMemberIndex(1), 'HeadId') == 1241 ? 1 : 0) + (GetUnitProperty(GetPartyMemberIndex(2), 'HeadId') == 1241 ? 1 : 0) + (GetUnitProperty(GetPartyMemberIndex(3), 'HeadId') == 1241 ? 1 : 0)) : BonusItemCount4 [/code]
+
+Permanent 
+[code=Condition] AccessoryId == 1250  [/code]
+[code=MaxHP] MaxHP - (MaxHP / 10) [/code]
+[code=MaxMP] MaxMP - (MaxMP / 10) [/code]
+
+
+############# Enemy #################
+>SA GlobalEnemy+
+StatusInit [code=Condition] CheckAnyStatus(CurrentStatus, BattleStatus_EasyKill) [/code] [code=DurationFactorCustomStatus17] 0.20 [/code]
+StatusInit [code=Condition] CheckAnyStatus(CurrentStatus, BattleStatus_EasyKill) [/code] [code=DurationFactorFreeze] 0.20 [/code]
+StatusInit [code=Condition] CheckAnyStatus(CurrentStatus, BattleStatus_EasyKill) [/code] [code=DurationFactorSlow] 0.30 [/code]
+
+############# Taunt Mechanic ##############
+Command EvenImmobilized
+[code=Condition] IsTheCaster && IsSingleTarget && !IsSelfTarget && PropertyByName('StatusProperty CustomStatus22 ForcedTargetId') > 0 [/code]
+[code=CommandTargetId] CasterPropertyByName('StatusProperty CustomStatus22 ForcedTargetId') [/code]
+
+Command
+[code=Condition] (GetModelKillCount(ModelId) % 10) == 9 && !CheckAnyStatus(CurrentStatus, BattleStatus_Trance) && BattleFilter(255, 0, -1, BattleStatus_Trance) == BattleFilter(255, 0, -1, 0) && !CheckAnyStatus(CurrentStatus, BattleStatus_EasyKill) [/code]
+[code=ResistStatus] RemoveStatuses(ResistStatus, BattleStatus_Trance) [/code]
+[code=PermanentStatus] CombineStatuses(PermanentStatus, BattleStatus_Trance) [/code]
+[code=BonusExp] 2 * BonusExp [/code]
+[code=BonusGil] BonusGil + (BonusGil / 2) [/code]
+[code=BattleBonusAP] BattleBonusAP * 2 [/code]
+
+_____________________________________________________________________________________________________
+
+>AA 66 Fenrir (swap to the wind version if Maiden's Prayer is equipped)
+[code=Patch] AccessoryId == 1214 ? 67 : -1 [/code]
+
+>AA 68 Carbuncle (swap to different versions depending on the jewel equipped)
+[code=Patch] AccessoryId == 1200 ? 71 : (AccessoryId == 1204 ? 70 : (AccessoryId == 198 ? 69 : -1)) [/code]
+
+>AA 82 Roulette (now Maelstorm, to disable Roulette effect from Memoria)
+
+>AA 93 Angel's Snack (coded in 0052_AngelSnackScript.cs)
+
+>AA 126 Spare Change (single)
+[code=GilCost] Power * CasterLevel [/code]
+
+>AA 134 Spare Change (multi)
+[code=GilCost] Power * CasterLevel [/code]
+
+>AA 129 Curse (single)
+[code=Element] 1 << GetRandom(0, 8) [/code]
+
+>AA 137 Curse (multi)
+[code=Element] 1 << GetRandom(0, 8) [/code]
+
+############# Special mechanics/features #################
+
+#### Basic commands ###
+>CMD 1 Attack
+[code=Patch] CharacterIndex == CharacterId_Marcus && CheckAnyStatus(CurrentStatus, BattleStatus_Trance) ? 1028 : ((WeaponId == 59 || WeaponId == 71 || WeaponId == 72 || WeaponId == 73 || WeaponId == 1028 || WeaponId == 1029 || WeaponId == 1030 || WeaponId == 1031 ) ? (GetRandom(0, 3) != 0 ? ((WeaponId == 59 || WeaponId == 71 || WeaponId == 72 || WeaponId == 73) ? 1050 : 1051) : ((WeaponId == 59 || WeaponId == 71 || WeaponId == 72 || WeaponId == 73) ? 1051 : 1052)) : -1) [/code]
+
+>CMD 2 Steal
+[code=Patch] (((CharacterIndex == CharacterId_Blank && ScenarioCounter >= 11100 && Trance > 128) || PropertyByName('StatusProperty CustomStatus21 MasterofAlchemy') != 0)) ? 1020 : (HasSA(1247) ? 1037 : (HasSA(247) ? 1036 : 2)) [/code]
+
+#### Zidane (switch weapons) ####
+>CMD 25 Replace Skill by Bandit
+[code=Patch] SerialNumber != 0 ? 1001 : 25 [/code]
+
+>AA 1001 Disable Bandit ! for early daggers
+[code=Disable] CasterWeaponId == RegularItem_Dagger || CasterWeaponId == RegularItem_MageMasher || CasterWeaponId == RegularItem_MythrilDagger [/code]
+
+#### Sentinel Steiner + Dual Amarant ####
+>CMD 4
+[code=Patch] (HasSA(223) && GetMemoriaDictionary(1035, 0) > 0) ? 1035 : ((SerialNumber == 7 || SerialNumber == 8) ? 1015 : (SerialNumber == 13 ? 1016 : (InTrance && CharacterIndex == 14 ? 1027 : 4))) [/code]
+
+#### SA CMD for Steiner ####
+
+>AA 142 Deathblow
+[code=Patch] HasSA(1213) && GetUnitProperty(CharacterId_Steiner, 'StatusProperty CustomStatus21 Duelist') >= 2 ? 1551 : (HasSA(213) && GetUnitProperty(CharacterId_Steiner, 'StatusProperty CustomStatus21 Duelist') > 0 ? 1550 : -1) [/code]
+
+#### SA CMD for Vivi ####
+>CMD 13
+[code=Patch] HasSA(1206) ? 10034 : (HasSA(206) ? 1033 : -1) [/code]
+
+>CMD 22
+[code=Patch] (HasSA(205) || HasSA(1205)) ? 1032 : -1 [/code]
+
+#### SA AA for Dagga ####
+>AA 49
+[code=Patch] (HasSA(208) || HasSA(1208)) ? 1529 : -1 [/code]
+
+>AA 51
+[code=Patch] (HasSA(208) || HasSA(1208)) ? 1530 : -1 [/code]
+
+>AA 53
+[code=Patch] (HasSA(208) || HasSA(1208)) ? 1531 : -1 [/code]
+
+>AA 55
+[code=Patch] (HasSA(208) || HasSA(1208)) ? 1532 : -1 [/code]
+
+>AA 58
+[code=Patch] (HasSA(208) || HasSA(1208)) ? 1533 : -1 [/code]
+
+>AA 60
+[code=Patch] (HasSA(208) || HasSA(1208)) ? 1534 : -1 [/code]
+
+>AA 62
+[code=Patch] (HasSA(208) || HasSA(1208)) ? 1535 : -1 [/code]
+
+>AA 64
+[code=Patch] (HasSA(208) || HasSA(1208)) ? 1536 : -1 [/code]
+
+#### Beatrix (redemption) ####
+
+>AA 149
+[code=MPCost] ((4 - CasterPropertyByName('StatusProperty CustomStatus12 Stack')) * MPCost) / 4 [/code]
+
+>AA 150
+[code=MPCost] ((4 - CasterPropertyByName('StatusProperty CustomStatus12 Stack')) * MPCost) / 4 [/code]
+
+>AA 151
+[code=MPCost] ((4 - CasterPropertyByName('StatusProperty CustomStatus12 Stack')) * MPCost) / 4 [/code]
+
+>AA 152
+[code=MPCost] ((4 - CasterPropertyByName('StatusProperty CustomStatus12 Stack')) * MPCost) / 4 [/code]
+
+>AA 1011
+[code=MPCost] ((4 - CasterPropertyByName('StatusProperty CustomStatus12 Stack')) * MPCost) / 4 [/code]
+
+>AA 1012
+[code=MPCost] ((4 - CasterPropertyByName('StatusProperty CustomStatus12 Stack')) * MPCost) / 4 [/code]
+
+>AA 1013
+[code=MPCost] ((4 - CasterPropertyByName('StatusProperty CustomStatus12 Stack')) * MPCost) / 4 [/code]
+
+>AA 1014
+[code=MPCost] ((4 - CasterPropertyByName('StatusProperty CustomStatus12 Stack')) * MPCost) / 4 [/code]
+
+>AA 1041
+[code=MPCost] ((4 - CasterPropertyByName('StatusProperty CustomStatus12 Stack')) * MPCost) / 4 [/code]
+
+>AA 1042
+[code=MPCost] ((4 - CasterPropertyByName('StatusProperty CustomStatus12 Stack')) * MPCost) / 4 [/code]
+
+>AA 1043
+[code=MPCost] ((4 - CasterPropertyByName('StatusProperty CustomStatus12 Stack')) * MPCost) / 4 [/code]
+
+>AA 1044
+[code=MPCost] ((4 - CasterPropertyByName('StatusProperty CustomStatus12 Stack')) * MPCost) / 4 [/code]
+
+>AA 1054
+[code=MPCost] ((4 - CasterPropertyByName('StatusProperty CustomStatus12 Stack')) * MPCost) / 4 [/code]
+
+>AA 1055
+[code=MPCost] ((4 - CasterPropertyByName('StatusProperty CustomStatus12 Stack')) * MPCost) / 4 [/code]
+
+>AA 1056
+[code=MPCost] ((4 - CasterPropertyByName('StatusProperty CustomStatus12 Stack')) * MPCost) / 4 [/code]
+
+>AA 1057
+[code=MPCost] ((4 - CasterPropertyByName('StatusProperty CustomStatus12 Stack')) * MPCost) / 4 [/code]
+
+#### Lani (rage) ####
+
+>AA 1060
+[code=Patch] HasSA(1237) && IsCharacterInParty(CharacterId_Vivi) ? 1095 : (HasSA(237) && IsCharacterInParty(CharacterId_Vivi) ? 1091 : -1) [/code]
+
+>AA 1061
+[code=Patch] HasSA(1237) && IsCharacterInParty(CharacterId_Vivi) ? 1096 : (HasSA(237) && IsCharacterInParty(CharacterId_Vivi) ? 1092 : -1) [/code]
+
+>AA 1062
+[code=Patch] HasSA(1237) && IsCharacterInParty(CharacterId_Vivi) ? 1097 : (HasSA(237) && IsCharacterInParty(CharacterId_Vivi) ? 1093 : -1) [/code]
+
+>AA 1063
+[code=Patch] HasSA(1237) && IsCharacterInParty(CharacterId_Vivi) ? 1098 : (HasSA(237) && IsCharacterInParty(CharacterId_Vivi) ? 1094 : -1) [/code]
+
+>AA 1076
+[code=Disable] CasterPropertyByName('StatusProperty CustomStatus19 Stack') < 1 [/code]
+
+>AA 1077
+[code=Disable] CasterPropertyByName('StatusProperty CustomStatus19 Stack') < 2 [/code]
+
+>AA 1078
+[code=Disable] CasterPropertyByName('StatusProperty CustomStatus19 Stack') < 3 [/code]
+
+>AA 1079
+[code=Disable] CasterPropertyByName('StatusProperty CustomStatus19 Stack') < 1 [/code]
+
+>AA 1080
+[code=Disable] CasterPropertyByName('StatusProperty CustomStatus19 Stack') < 2 [/code]
+
+>AA 1081
+[code=Disable] CasterPropertyByName('StatusProperty CustomStatus19 Stack') < 3 [/code]
+
+>AA 1082
+[code=Disable] CasterPropertyByName('StatusProperty CustomStatus19 Stack') < 1 [/code]
+
+>AA 1083
+[code=Disable] CasterPropertyByName('StatusProperty CustomStatus19 Stack') < 1 [/code]
+
+>AA 1084
+[code=Disable] CasterPropertyByName('StatusProperty CustomStatus19 Stack') < 1 [/code]
+
+>AA 1085
+[code=Disable] CasterPropertyByName('StatusProperty CustomStatus19 Stack') < 1 [/code]
+
+>AA 1086
+[code=Disable] CasterPropertyByName('StatusProperty CustomStatus19 Stack') < 2 [/code]
+
+>AA 1087
+[code=Disable] CasterPropertyByName('StatusProperty CustomStatus19 Stack') < 2 [/code]
+
+>AA 1088
+[code=Disable] CasterPropertyByName('StatusProperty CustomStatus19 Stack') < 2 [/code]
+
+>AA 1089
+[code=Disable] CasterPropertyByName('StatusProperty CustomStatus19 Stack') < 2 [/code]
+
+>AA 1090
+[code=Disable] CasterPropertyByName('StatusProperty CustomStatus19 Stack') < 3 [/code]
+
+>CMD 31 Magic Sword
+[code=HardDisable] !IsCharacterInParty(CharacterId_Vivi) && !IsCharacterInParty(CharacterId_Garnet) && !IsCharacterInParty(CharacterId_Eiko) [/code]
+
+>CMD 1021
+[code=HardDisable] ScenarioCounter < 11100 [/code]
+
+>CMD 1023
+[code=Disable] MP < 32 [/code]
+[code=Patch] HasSA(1255) ? 1047 : (HasSA(255) ? 1046 : -1) [/code]
+
+>CMD 1029
+[code=Patch] HasSA(1256) ? 1054 : (HasSA(256) ? 1053 : -1) [/code]
+
+>AA 1107
+[code=MPCost] CasterHasSA(1243) ? MPCost / 2 : (CasterHasSA(243) ? MPCost / 4 : MPCost) [/code]
+
+>AA 1108
+[code=MPCost] CasterHasSA(1243) ? MPCost / 2 : (CasterHasSA(243) ? MPCost / 4 : MPCost) [/code]
+
+>AA 1109
+[code=MPCost] CasterHasSA(1243) ? MPCost / 2 : (CasterHasSA(243) ? MPCost / 4 : MPCost) [/code]
+
+>AA 1110
+[code=MPCost] CasterHasSA(1243) ? MPCost / 2 : (CasterHasSA(243) ? MPCost / 4 : MPCost) [/code]
+
+>AA 1111
+[code=MPCost] CasterHasSA(1243) ? MPCost / 2 : (CasterHasSA(243) ? MPCost / 4 : MPCost) [/code]
+
+>AA 1112
+[code=MPCost] CasterHasSA(1243) ? MPCost / 2 : (CasterHasSA(243) ? MPCost / 4 : MPCost) [/code]
+
+>AA 1113
+[code=MPCost] CasterHasSA(1243) ? MPCost / 2 : (CasterHasSA(243) ? MPCost / 4 : MPCost) [/code]
+
+>AA 1114
+[code=MPCost] CasterHasSA(1243) ? MPCost / 2 : (CasterHasSA(243) ? MPCost / 4 : MPCost) [/code]
+
+>AA 1115
+[code=MPCost] CasterHasSA(1243) ? MPCost / 2 : (CasterHasSA(243) ? MPCost / 4 : MPCost) [/code]
+
+>AA 1116
+[code=MPCost] CasterHasSA(1243) ? MPCost / 2 : (CasterHasSA(243) ? MPCost / 4 : MPCost) [/code]
+
+>AA 1117
+[code=MPCost] CasterHasSA(1243) ? MPCost / 2 : (CasterHasSA(243) ? MPCost / 4 : MPCost) [/code]
+
+>AA 1118
+[code=MPCost] CasterHasSA(1243) ? MPCost / 2 : (CasterHasSA(243) ? MPCost / 4 : MPCost) [/code]
+
+>AA 1119
+[code=MPCost] CasterHasSA(1243) ? MPCost / 2 : (CasterHasSA(243) ? MPCost / 4 : MPCost) [/code]
+
+>AA 1120
+[code=MPCost] CasterHasSA(1243) ? MPCost / 2 : (CasterHasSA(243) ? MPCost / 4 : MPCost) [/code]
+
+>AA 1121
+[code=MPCost] CasterHasSA(1243) ? MPCost / 2 : (CasterHasSA(243) ? MPCost / 4 : MPCost) [/code]
+
+>AA 1122
+[code=MPCost] CasterHasSA(1243) ? MPCost / 2 : (CasterHasSA(243) ? MPCost / 4 : MPCost) [/code]
+
+>AA 1123
+[code=MPCost] CasterHasSA(1243) ? MPCost / 2 : (CasterHasSA(243) ? MPCost / 4 : MPCost) [/code]
+
+>AA 1124
+[code=MPCost] CasterHasSA(1243) ? MPCost / 2 : (CasterHasSA(243) ? MPCost / 4 : MPCost) [/code]
+
+>AA 1125
+[code=MPCost] CasterHasSA(1243) ? MPCost / 2 : (CasterHasSA(243) ? MPCost / 4 : MPCost) [/code]
+
+>AA 1126
+[code=MPCost] CasterHasSA(1243) ? MPCost / 2 : (CasterHasSA(243) ? MPCost / 4 : MPCost) [/code]
+
+>AA 1127
+[code=MPCost] CasterHasSA(1243) ? MPCost / 2 : (CasterHasSA(243) ? MPCost / 4 : MPCost) [/code]
+
+>AA 1128
+[code=MPCost] CasterHasSA(1243) ? MPCost / 2 : (CasterHasSA(243) ? MPCost / 4 : MPCost) [/code]
+
+>AA 1129
+[code=MPCost] CasterHasSA(1243) ? MPCost / 2 : (CasterHasSA(243) ? MPCost / 4 : MPCost) [/code]
+
+>AA 1130
+[code=MPCost] CasterHasSA(1243) ? MPCost / 2 : (CasterHasSA(243) ? MPCost / 4 : MPCost) [/code]
+
+>AA 1136
+[code=Disable] CasterHasSA(1246) && CasterMP > (CasterMaxMP / 2) && MPCost > 0 ? 0 : (CasterHasSA(246) && CasterMP == CasterMaxMP && MPCost > 0 ? 0 : (MPCost > 0 ? 1 : 0)) [/code]
+
+>AA 1137
+[code=Disable] CasterHasSA(1246) && CasterMP > (CasterMaxMP / 2) && MPCost > 0 ? 0 : (CasterHasSA(246) && CasterMP == CasterMaxMP && MPCost > 0 ? 0 : (MPCost > 0 ? 1 : 0)) [/code]
+
+>AA 1138
+[code=Disable] CasterHasSA(1246) && CasterMP > (CasterMaxMP / 2) && MPCost > 0 ? 0 : (CasterHasSA(246) && CasterMP == CasterMaxMP && MPCost > 0 ? 0 : (MPCost > 0 ? 1 : 0)) [/code]
+
+>AA 1139
+[code=Disable] CasterHasSA(1246) && CasterMP > (CasterMaxMP / 2) && MPCost > 0 ? 0 : (CasterHasSA(246) && CasterMP == CasterMaxMP && MPCost > 0 ? 0 : (MPCost > 0 ? 1 : 0)) [/code]
+
+>AA 1140
+[code=Disable] CasterHasSA(1246) && CasterMP > (CasterMaxMP / 2) && MPCost > 0 ? 0 : (CasterHasSA(246) && CasterMP == CasterMaxMP && MPCost > 0 ? 0 : (MPCost > 0 ? 1 : 0)) [/code]
+
+>AA 1141
+[code=Disable] CasterHasSA(1246) && CasterMP > (CasterMaxMP / 2) && MPCost > 0 ? 0 : (CasterHasSA(246) && CasterMP == CasterMaxMP && MPCost > 0 ? 0 : (MPCost > 0 ? 1 : 0)) [/code]
+
+>AA 1142
+[code=Disable] CasterHasSA(1246) && CasterMP > (CasterMaxMP / 2) && MPCost > 0 ? 0 : (CasterHasSA(246) && CasterMP == CasterMaxMP && MPCost > 0 ? 0 : (MPCost > 0 ? 1 : 0)) [/code]
+
+>AA 1143
+[code=Disable] CasterHasSA(1246) && CasterMP > (CasterMaxMP / 2) && MPCost > 0 ? 0 : (CasterHasSA(246) && CasterMP == CasterMaxMP && MPCost > 0 ? 0 : (MPCost > 0 ? 1 : 0)) [/code]
+
+>AA 1538
+[code=Disable] CasterHasSA(1246) && CasterMP > (CasterMaxMP / 2) && MPCost > 0 ? 0 : (CasterHasSA(246) && CasterMP == CasterMaxMP && MPCost > 0 ? 0 : (MPCost > 0 ? 1 : 0)) [/code]
+
+>AA 1539
+[code=Disable] CasterHasSA(1246) && CasterMP > (CasterMaxMP / 2) && MPCost > 0 ? 0 : (CasterHasSA(246) && CasterMP == CasterMaxMP && MPCost > 0 ? 0 : (MPCost > 0 ? 1 : 0)) [/code]
+
+############# QoL for Eiko passive (AA visible in the menu) #################
+
+>AA 2000
+[code=Patch] GetAbilityUsageCount(2000) == 0 ? 1552 : -1 [/code]
+
+>AA 2001
+[code=Patch] GetAbilityUsageCount(2001) == 0 ? 1552 : -1 [/code]
+
+>AA 2002
+[code=Patch] GetAbilityUsageCount(2002) == 0 ? 1552 : -1 [/code]
+
+>AA 2003
+[code=Patch] GetAbilityUsageCount(2003) == 0 ? 1552 : -1 [/code]
+
+>AA 2004
+[code=Patch] GetAbilityUsageCount(2004) == 0 ? 1552 : -1 [/code]
+
+>AA 2005
+[code=Patch] GetAbilityUsageCount(2005) == 0 ? 1552 : -1 [/code]
+
+>AA 2006
+[code=Patch] GetAbilityUsageCount(2006) == 0 ? 1552 : -1 [/code]
+
+>AA 2007
+[code=Patch] GetAbilityUsageCount(2007) == 0 ? 1552 : -1 [/code]
+
+>AA 2008
+[code=Patch] GetAbilityUsageCount(2008) == 0 ? 1552 : -1 [/code]
+
+>AA 2009
+[code=Patch] GetAbilityUsageCount(2009) == 0 ? 1552 : -1 [/code]
+
+>AA 2010
+[code=Patch] GetAbilityUsageCount(2010) == 0 ? 1552 : -1 [/code]
+
+>AA 2011
+[code=Patch] GetAbilityUsageCount(2011) == 0 ? 1552 : -1 [/code]
+
+>AA 2012
+[code=Patch] GetAbilityUsageCount(2012) == 0 ? 1552 : -1 [/code]
+
+>AA 2013
+[code=Patch] GetAbilityUsageCount(2013) == 0 ? 1552 : -1 [/code]
+
+>AA 2014
+[code=Patch] GetAbilityUsageCount(2014) == 0 ? 1552 : -1 [/code]
+
+>AA 2015
+[code=Patch] GetAbilityUsageCount(2015) == 0 ? 1552 : -1 [/code]
+
+>AA 2016
+[code=Patch] GetAbilityUsageCount(2016) == 0 ? 1552 : -1 [/code]
+
+>AA 2017
+[code=Patch] GetAbilityUsageCount(2017) == 0 ? 1552 : -1 [/code]
+
+>AA 2018
+[code=Patch] GetAbilityUsageCount(2018) == 0 ? 1552 : -1 [/code]
+
+>AA 2019
+[code=Patch] GetAbilityUsageCount(2019) == 0 ? 1552 : -1 [/code]
+
+############# SA Propagation + Flutes + Blue Magic Quina #################
+
+>AA 4 Regen
+[code=Patch] HasSA(126) ? 1500 : -1 [/code]
+[code=MPCost] CasterWeaponId == 67 ? 0 : MPCost [/code]
+
+>AA 1500 Regen (Propagation)
+[code=MPCost] CasterWeaponId == 67 ? 0 : MPCost [/code]
+
+>AA 5 Life
+[code=Patch] HasSA(126) ? 1501 : -1 [/code]
+[code=MPCost] CasterWeaponId == 68 ? 0 : MPCost [/code]
+
+>AA 1501 Life (Propagation)
+[code=MPCost] CasterWeaponId == 68 ? 0 : MPCost [/code]
+
+>AA 8 Panacea
+[code=Patch] HasSA(126) ? 1502 : -1 [/code]
+
+>AA 11 Shell
+[code=Patch] HasSA(126) ? 1503 : -1 [/code]
+
+>AA 12 Protect
+[code=Patch] HasSA(126) ? 1504 : -1 [/code]
+[code=MPCost] CasterWeaponId == 64 ? 0 : MPCost [/code]
+
+>AA 1504 Protect (Propagation)
+[code=MPCost] CasterWeaponId == 64 ? 0 : MPCost [/code]
+
+>AA 13 Haste
+[code=Patch] HasSA(126) ? 1505 : -1 [/code]
+[code=MPCost] CasterWeaponId == 66 ? 0 : MPCost [/code]
+
+>AA 1504 Haste (Propagation)
+[code=MPCost] CasterWeaponId == 66 ? 0 : MPCost [/code]
+
+>AA 16 Reflect
+[code=Patch] HasSA(126) ? 1506 : -1 [/code]
+
+>AA 18 Berserk
+[code=MPCost] CasterWeaponId == 65 ? 0 : MPCost [/code]
+
+>AA 32 Slow
+[code=Patch] HasSA(126) ? 1507 : -1 [/code]
+
+>AA 36 Stop
+[code=Patch] HasSA(126) ? 1508 : -1 [/code]
+
+>AA 40 Drain
+[code=Patch] HasSA(126) ? 1509 : -1 [/code]
+
+>AA 42 Comet
+[code=Patch] HasSA(126) ? 1510 : -1 [/code]
+
+>AA 43 Death
+[code=Patch] HasSA(126) ? 1511 : -1 [/code]
+
+>AA 44 Break
+[code=Patch] HasSA(126) ? 1512 : -1 [/code]
+
+>AA 47 Flare
+[code=Patch] HasSA(126) ? 1513 : -1 [/code]
+
+>AA 24 Holy
+[code=Patch] HasSA(126) ? 1514 : -1 [/code]
+
+>AA 77 Psychokinesis
+[code=Patch] WeaponId == 1017 ? 1028 : (HasSA(126) ? 1515 : -1) [/code]
+
+>AA 79 Zombie Breath
+[code=Patch] HasSA(126) ? 1516 : -1 [/code]
+
+>AA 81 Doom
+[code=Patch] HasSA(126) ? 1517 : -1 [/code]
+
+>AA 82 Maelstrom
+[code=Patch] HasSA(126) ? 1518 : -1 [/code]
+
+>AA 83 Matra Magic
+[code=Patch] HasSA(126) ? 1519 : -1 [/code]
+
+>AA 85 Matraga Magic
+[code=Patch] WeaponId == 1019 ? 1030 : -1 [/code]
+
+>AA 86 Bad Breath
+[code=Patch] HasSA(126) ? 1520 : -1 [/code]
+
+>AA 88 1000 Needles
+[code=Patch] WeaponId == 1018 ? 1029 : (HasSA(126) ? 1521 : -1) [/code]
+
+>AA 89 Pumpkin Head
+[code=Patch] HasSA(126) ? 1522 : -1 [/code]
+
+>AA 94 Discharge+
+[code=Patch] WeaponId == 1016 ? 1027 : -1 [/code]
+
+>AA 96 Sacrifice
+[code=Patch] WeaponId == 1021 ? 1033 : -1 [/code]
+
+>AA 97 Frost
+[code=Patch] WeaponId == 1020 ? 1032 : (HasSA(126) ? 1523 : -1) [/code]
+
+>AA 98 Mustard Bomb
+[code=Patch] WeaponId == 1020 ? 1031 : (HasSA(126) ? 1524 : -1) [/code]
+
+>AA 99 Magic Hammer
+[code=Patch] HasSA(126) ? 1525 : -1 [/code]
+
+>AA 100 Angel Whisper
+[code=Patch] HasSA(126) ? 1526 : -1 [/code]
+
+############# SA Flexible #################
+
+>AA 101 Flee
+[code=MPCost] CasterPropertyByName('StatusProperty CustomStatus21 Flexible') == 2 ? 0 : (CasterPropertyByName('StatusProperty CustomStatus21 Flexible') == 1 ? (MPCost / 2) : MPCost) [/code]
+
+>AA 102 Eye of the thief
+[code=MPCost] CasterPropertyByName('StatusProperty CustomStatus21 Flexible') == 2 ? 0 : (CasterPropertyByName('StatusProperty CustomStatus21 Flexible') == 1 ? (MPCost / 2) : MPCost) [/code]
+
+>AA 103 What’s That!?
+[code=MPCost] CasterPropertyByName('StatusProperty CustomStatus21 Flexible') == 2 ? 0 : (CasterPropertyByName('StatusProperty CustomStatus21 Flexible') == 1 ? (MPCost / 2) : MPCost) [/code]
+
+>AA 104 Soul Blade
+[code=MPCost] CasterPropertyByName('StatusProperty CustomStatus21 Flexible') == 2 ? 0 : (CasterPropertyByName('StatusProperty CustomStatus21 Flexible') == 1 ? (MPCost / 2) : MPCost) [/code]
+
+>AA 105 Trickery
+[code=MPCost] CasterPropertyByName('StatusProperty CustomStatus21 Flexible') == 2 ? 0 : (CasterPropertyByName('StatusProperty CustomStatus21 Flexible') == 1 ? (MPCost / 2) : MPCost) [/code]
+
+>AA 106 Annoy
+[code=MPCost] CasterPropertyByName('StatusProperty CustomStatus21 Flexible') == 2 ? 0 : (CasterPropertyByName('StatusProperty CustomStatus21 Flexible') == 1 ? (MPCost / 2) : MPCost) [/code]
+
+>AA 107 Extort
+[code=MPCost] CasterPropertyByName('StatusProperty CustomStatus21 Flexible') == 2 ? 0 : (CasterPropertyByName('StatusProperty CustomStatus21 Flexible') == 1 ? (MPCost / 2) : MPCost) [/code]
+
+>AA 108 Thievery
+[code=MPCost] CasterPropertyByName('StatusProperty CustomStatus21 Flexible') == 2 ? 0 : (CasterPropertyByName('StatusProperty CustomStatus21 Flexible') == 1 ? (MPCost / 2) : MPCost) [/code]
+
+>AA 1002 Windy Blade
+[code=MPCost] CasterPropertyByName('StatusProperty CustomStatus21 Flexible') == 2 ? 0 : (CasterPropertyByName('StatusProperty CustomStatus21 Flexible') == 1 ? (MPCost / 2) : MPCost) [/code]
+
+>AA 1003 Extreme Speed
+[code=MPCost] CasterPropertyByName('StatusProperty CustomStatus21 Flexible') == 2 ? 0 : (CasterPropertyByName('StatusProperty CustomStatus21 Flexible') == 1 ? (MPCost / 2) : MPCost) [/code]
+
+>AA 1004 Warm-Up
+[code=MPCost] CasterPropertyByName('StatusProperty CustomStatus21 Flexible') == 2 ? 0 : (CasterPropertyByName('StatusProperty CustomStatus21 Flexible') == 1 ? (MPCost / 2) : MPCost) [/code]
+
+>AA 1005 Quick Attack
+[code=MPCost] CasterPropertyByName('StatusProperty CustomStatus21 Flexible') == 2 ? 0 : (CasterPropertyByName('StatusProperty CustomStatus21 Flexible') == 1 ? (MPCost / 2) : MPCost) [/code]
+
+>AA 1006 Bandit
+[code=MPCost] CasterPropertyByName('StatusProperty CustomStatus21 Flexible') == 2 ? 0 : (CasterPropertyByName('StatusProperty CustomStatus21 Flexible') == 1 ? (MPCost / 2) : MPCost) [/code]
+
+#### ??? ####
+
+>AA 1172
+[code=Patch] ((GetMemoriaDictionary(1030, 1172) + GetMemoriaDictionary(1030, 1173) - 1)) % 2 == 0 ? 1173 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1172) + GetMemoriaDictionary(1030, 1173) - 1) [/code]
+
+>AA 1173
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1172) + GetMemoriaDictionary(1030, 1173) - 1) [/code]
+
+>AA 1174
+[code=Patch] ((GetMemoriaDictionary(1030, 1174) + GetMemoriaDictionary(1030, 1175) - 1)) % 2 == 0 ? 1175 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1174) + GetMemoriaDictionary(1030, 1175) - 1) [/code]
+
+>AA 1175
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1174) + GetMemoriaDictionary(1030, 1175) - 1) [/code]
+
+>AA 1176
+[code=Patch] ((GetMemoriaDictionary(1030, 1176) + GetMemoriaDictionary(1030, 1177) - 1)) % 2 == 0 ? 1177 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1176) + GetMemoriaDictionary(1030, 1177) - 1) [/code]
+
+>AA 1177
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1176) + GetMemoriaDictionary(1030, 1177) - 1) [/code]
+
+>AA 1178
+[code=Patch] ((GetMemoriaDictionary(1030, 1178) + GetMemoriaDictionary(1030, 1179) - 1)) % 2 == 0 ? 1179 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1178) + GetMemoriaDictionary(1030, 1179) - 1) [/code]
+
+>AA 1179
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1178) + GetMemoriaDictionary(1030, 1179) - 1) [/code]
+
+>AA 1180
+[code=Patch] ((GetMemoriaDictionary(1030, 1180) + GetMemoriaDictionary(1030, 1181) - 1)) % 2 == 0 ? 1181 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1180) + GetMemoriaDictionary(1030, 1181) - 1) [/code]
+
+>AA 1181
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1180) + GetMemoriaDictionary(1030, 1181) - 1) [/code]
+
+>AA 1182
+[code=Patch] ((GetMemoriaDictionary(1030, 1182) + GetMemoriaDictionary(1030, 1183) - 1)) % 2 == 0 ? 1183 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1182) + GetMemoriaDictionary(1030, 1183) - 1) [/code]
+
+>AA 1183
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1182) + GetMemoriaDictionary(1030, 1183) - 1) [/code]
+
+>AA 1184
+[code=Patch] ((GetMemoriaDictionary(1030, 1184) + GetMemoriaDictionary(1030, 1185) - 1)) % 2 == 0 ? 1185 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1184) + GetMemoriaDictionary(1030, 1185) - 1) [/code]
+
+>AA 1185
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1184) + GetMemoriaDictionary(1030, 1185) - 1) [/code]
+
+>AA 1186
+[code=Patch] ((GetMemoriaDictionary(1030, 1186) + GetMemoriaDictionary(1030, 1187) - 1)) % 2 == 0 ? 1187 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1186) + GetMemoriaDictionary(1030, 1187) - 1) [/code]
+
+>AA 1187
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1186) + GetMemoriaDictionary(1030, 1187) - 1) [/code]
+
+>AA 1188
+[code=Patch] ((GetMemoriaDictionary(1030, 1188) + GetMemoriaDictionary(1030, 1189) - 1)) % 2 == 0 ? 1189 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1188) + GetMemoriaDictionary(1030, 1189) - 1) [/code]
+
+>AA 1189
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1188) + GetMemoriaDictionary(1030, 1189) - 1) [/code]
+
+>AA 1190
+[code=Patch] ((GetMemoriaDictionary(1030, 1190) + GetMemoriaDictionary(1030, 1191) - 1)) % 2 == 0 ? 1191 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1190) + GetMemoriaDictionary(1030, 1191) - 1) [/code]
+
+>AA 1191
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1190) + GetMemoriaDictionary(1030, 1191) - 1) [/code]
+
+>AA 1192
+[code=Patch] ((GetMemoriaDictionary(1030, 1192) + GetMemoriaDictionary(1030, 1193) - 1)) % 2 == 0 ? 1193 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1192) + GetMemoriaDictionary(1030, 1193) - 1) [/code]
+
+>AA 1193
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1192) + GetMemoriaDictionary(1030, 1193) - 1) [/code]
+
+>AA 1194
+[code=Patch] ((GetMemoriaDictionary(1030, 1194) + GetMemoriaDictionary(1030, 1195) - 1)) % 2 == 0 ? 1195 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1194) + GetMemoriaDictionary(1030, 1195) - 1) [/code]
+
+>AA 1195
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1194) + GetMemoriaDictionary(1030, 1195) - 1) [/code]
+
+>AA 1196
+[code=Patch] ((GetMemoriaDictionary(1030, 1196) + GetMemoriaDictionary(1030, 1197) - 1)) % 2 == 0 ? 1197 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1196) + GetMemoriaDictionary(1030, 1197) - 1) [/code]
+
+>AA 1197
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1196) + GetMemoriaDictionary(1030, 1197) - 1) [/code]
+
+>AA 1198
+[code=Patch] ((GetMemoriaDictionary(1030, 1198) + GetMemoriaDictionary(1030, 1199) - 1)) % 2 == 0 ? 1199 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1198) + GetMemoriaDictionary(1030, 1199) - 1) [/code]
+
+>AA 1199
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1198) + GetMemoriaDictionary(1030, 1199) - 1) [/code]
+
+>AA 1200
+[code=Patch] ((GetMemoriaDictionary(1030, 1200) + GetMemoriaDictionary(1030, 1201) - 1)) % 2 == 0 ? 1201 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1200) + GetMemoriaDictionary(1030, 1201) - 1) [/code]
+
+>AA 1201
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1200) + GetMemoriaDictionary(1030, 1201) - 1) [/code]
+
+>AA 1202
+[code=Patch] ((GetMemoriaDictionary(1030, 1202) + GetMemoriaDictionary(1030, 1203) - 1)) % 2 == 0 ? 1203 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1202) + GetMemoriaDictionary(1030, 1203) - 1) [/code]
+
+>AA 1203
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1202) + GetMemoriaDictionary(1030, 1203) - 1) [/code]
+
+>AA 1204
+[code=Patch] ((GetMemoriaDictionary(1030, 1204) + GetMemoriaDictionary(1030, 1205) - 1)) % 2 == 0 ? 1205 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1204) + GetMemoriaDictionary(1030, 1205) - 1) [/code]
+
+>AA 1205
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1204) + GetMemoriaDictionary(1030, 1205) - 1) [/code]
+
+>AA 1206
+[code=Patch] ((GetMemoriaDictionary(1030, 1206) + GetMemoriaDictionary(1030, 1207) - 1)) % 2 == 0 ? 1207 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1206) + GetMemoriaDictionary(1030, 1207) - 1) [/code]
+
+>AA 1207
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1206) + GetMemoriaDictionary(1030, 1207) - 1) [/code]
+
+>AA 1208
+[code=Patch] ((GetMemoriaDictionary(1030, 1208) + GetMemoriaDictionary(1030, 1209) - 1)) % 2 == 0 ? 1209 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1208) + GetMemoriaDictionary(1030, 1209) - 1) [/code]
+
+>AA 1209
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1208) + GetMemoriaDictionary(1030, 1209) - 1) [/code]
+
+>AA 1210
+[code=Patch] ((GetMemoriaDictionary(1030, 1210) + GetMemoriaDictionary(1030, 1211) - 1)) % 2 == 0 ? 1211 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1210) + GetMemoriaDictionary(1030, 1211) - 1) [/code]
+
+>AA 1211
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1210) + GetMemoriaDictionary(1030, 1211) - 1) [/code]
+
+>AA 1212
+[code=Patch] ((GetMemoriaDictionary(1030, 1212) + GetMemoriaDictionary(1030, 1213) - 1)) % 2 == 0 ? 1213 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1212) + GetMemoriaDictionary(1030, 1213) - 1) [/code]
+
+>AA 1213
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1212) + GetMemoriaDictionary(1030, 1213) - 1) [/code]
+
+>AA 1214
+[code=Patch] ((GetMemoriaDictionary(1030, 1214) + GetMemoriaDictionary(1030, 1215) - 1)) % 2 == 0 ? 1215 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1214) + GetMemoriaDictionary(1030, 1215) - 1) [/code]
+
+>AA 1215
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1214) + GetMemoriaDictionary(1030, 1215) - 1) [/code]
+
+>AA 1216
+[code=Patch] ((GetMemoriaDictionary(1030, 1216) + GetMemoriaDictionary(1030, 1217) - 1)) % 2 == 0 ? 1217 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1216) + GetMemoriaDictionary(1030, 1217) - 1) [/code]
+
+>AA 1217
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1216) + GetMemoriaDictionary(1030, 1217) - 1) [/code]
+
+>AA 1218
+[code=Patch] ((GetMemoriaDictionary(1030, 1218) + GetMemoriaDictionary(1030, 1219) - 1)) % 2 == 0 ? 1219 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1218) + GetMemoriaDictionary(1030, 1219) - 1) [/code]
+
+>AA 1219
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1218) + GetMemoriaDictionary(1030, 1219) - 1) [/code]
+
+>AA 1220
+[code=Patch] ((GetMemoriaDictionary(1030, 1220) + GetMemoriaDictionary(1030, 1221) - 1)) % 2 == 0 ? 1221 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1220) + GetMemoriaDictionary(1030, 1221) - 1) [/code]
+
+>AA 1221
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1220) + GetMemoriaDictionary(1030, 1221) - 1) [/code]
+
+>AA 1222
+[code=Patch] ((GetMemoriaDictionary(1030, 1222) + GetMemoriaDictionary(1030, 1223) - 1)) % 2 == 0 ? 1223 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1222) + GetMemoriaDictionary(1030, 1223) - 1) [/code]
+
+>AA 1223
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1222) + GetMemoriaDictionary(1030, 1223) - 1) [/code]
+
+>AA 1224
+[code=Patch] ((GetMemoriaDictionary(1030, 1224) + GetMemoriaDictionary(1030, 1225) - 1)) % 2 == 0 ? 1225 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1224) + GetMemoriaDictionary(1030, 1225) - 1) [/code]
+
+>AA 1225
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1224) + GetMemoriaDictionary(1030, 1225) - 1) [/code]
+
+>AA 1226
+[code=Patch] ((GetMemoriaDictionary(1030, 1226) + GetMemoriaDictionary(1030, 1227) - 1)) % 2 == 0 ? 1227 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1226) + GetMemoriaDictionary(1030, 1227) - 1) [/code]
+
+>AA 1227
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1226) + GetMemoriaDictionary(1030, 1227) - 1) [/code]
+
+>AA 1228
+[code=Patch] ((GetMemoriaDictionary(1030, 1228) + GetMemoriaDictionary(1030, 1229) - 1)) % 2 == 0 ? 1229 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1228) + GetMemoriaDictionary(1030, 1229) - 1) [/code]
+
+>AA 1229
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1228) + GetMemoriaDictionary(1030, 1229) - 1) [/code]
+
+>AA 1230
+[code=Patch] ((GetMemoriaDictionary(1030, 1230) + GetMemoriaDictionary(1030, 1231) - 1)) % 2 == 0 ? 1231 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1230) + GetMemoriaDictionary(1030, 1231) - 1) [/code]
+
+>AA 1231
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1230) + GetMemoriaDictionary(1030, 1231) - 1) [/code]
+
+>AA 1232
+[code=Patch] ((GetMemoriaDictionary(1030, 1232) + GetMemoriaDictionary(1030, 1233) - 1)) % 2 == 0 ? 1233 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1232) + GetMemoriaDictionary(1030, 1233) - 1) [/code]
+
+>AA 1233
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1232) + GetMemoriaDictionary(1030, 1233) - 1) [/code]
+
+>AA 1234
+[code=Patch] ((GetMemoriaDictionary(1030, 1234) + GetMemoriaDictionary(1030, 1235) - 1)) % 2 == 0 ? 1235 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1234) + GetMemoriaDictionary(1030, 1235) - 1) [/code]
+
+>AA 1235
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1234) + GetMemoriaDictionary(1030, 1235) - 1) [/code]
+
+>AA 1236
+[code=Patch] ((GetMemoriaDictionary(1030, 1236) + GetMemoriaDictionary(1030, 1237) - 1)) % 2 == 0 ? 1237 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1236) + GetMemoriaDictionary(1030, 1237) - 1) [/code]
+
+>AA 1237
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1236) + GetMemoriaDictionary(1030, 1237) - 1) [/code]
+
+>AA 1238
+[code=Patch] ((GetMemoriaDictionary(1030, 1238) + GetMemoriaDictionary(1030, 1239) - 1)) % 2 == 0 ? 1239 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1238) + GetMemoriaDictionary(1030, 1239) - 1) [/code]
+
+>AA 1239
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1238) + GetMemoriaDictionary(1030, 1239) - 1) [/code]
+
+>AA 1240
+[code=Patch] ((GetMemoriaDictionary(1030, 1240) + GetMemoriaDictionary(1030, 1241) - 1)) % 2 == 0 ? 1241 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1240) + GetMemoriaDictionary(1030, 1241) - 1) [/code]
+
+>AA 1241
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1240) + GetMemoriaDictionary(1030, 1241) - 1) [/code]
+
+>AA 1242
+[code=Patch] ((GetMemoriaDictionary(1030, 1242) + GetMemoriaDictionary(1030, 1243) - 1)) % 2 == 0 ? 1243 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1242) + GetMemoriaDictionary(1030, 1243) - 1) [/code]
+
+>AA 1243
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1242) + GetMemoriaDictionary(1030, 1243) - 1) [/code]
+
+>AA 1244
+[code=Patch] ((GetMemoriaDictionary(1030, 1244) + GetMemoriaDictionary(1030, 1245) - 1)) % 2 == 0 ? 1245 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1244) + GetMemoriaDictionary(1030, 1245) - 1) [/code]
+
+>AA 1245
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1244) + GetMemoriaDictionary(1030, 1245) - 1) [/code]
+
+>AA 1246
+[code=Patch] ((GetMemoriaDictionary(1030, 1246) + GetMemoriaDictionary(1030, 1247) - 1)) % 2 == 0 ? 1247 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1246) + GetMemoriaDictionary(1030, 1247) - 1) [/code]
+
+>AA 1247
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1246) + GetMemoriaDictionary(1030, 1247) - 1) [/code]
+
+>AA 1248
+[code=Patch] ((GetMemoriaDictionary(1030, 1248) + GetMemoriaDictionary(1030, 1249) - 1)) % 2 == 0 ? 1249 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1248) + GetMemoriaDictionary(1030, 1249) - 1) [/code]
+
+>AA 1249
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1248) + GetMemoriaDictionary(1030, 1249) - 1) [/code]
+
+>AA 1250
+[code=Patch] ((GetMemoriaDictionary(1030, 1250) + GetMemoriaDictionary(1030, 1251) - 1)) % 2 == 0 ? 1251 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1250) + GetMemoriaDictionary(1030, 1251) - 1) [/code]
+
+>AA 1251
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1250) + GetMemoriaDictionary(1030, 1251) - 1) [/code]
+
+>AA 1252
+[code=Patch] ((GetMemoriaDictionary(1030, 1252) + GetMemoriaDictionary(1030, 1253) - 1)) % 2 == 0 ? 1253 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1252) + GetMemoriaDictionary(1030, 1253) - 1) [/code]
+
+>AA 1253
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1252) + GetMemoriaDictionary(1030, 1253) - 1) [/code]
+
+>AA 1254
+[code=Patch] ((GetMemoriaDictionary(1030, 1254) + GetMemoriaDictionary(1030, 1255) - 1)) % 2 == 0 ? 1255 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1254) + GetMemoriaDictionary(1030, 1255) - 1) [/code]
+
+>AA 1255
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1254) + GetMemoriaDictionary(1030, 1255) - 1) [/code]
+
+>AA 1256
+[code=Patch] ((GetMemoriaDictionary(1030, 1256) + GetMemoriaDictionary(1030, 1257) - 1)) % 2 == 0 ? 1257 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1256) + GetMemoriaDictionary(1030, 1257) - 1) [/code]
+
+>AA 1257
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1256) + GetMemoriaDictionary(1030, 1257) - 1) [/code]
+
+>AA 1258
+[code=Patch] ((GetMemoriaDictionary(1030, 1258) + GetMemoriaDictionary(1030, 1259) - 1)) % 2 == 0 ? 1259 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1258) + GetMemoriaDictionary(1030, 1259) - 1) [/code]
+
+>AA 1259
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1258) + GetMemoriaDictionary(1030, 1259) - 1) [/code]
+
+>AA 1260
+[code=Patch] ((GetMemoriaDictionary(1030, 1260) + GetMemoriaDictionary(1030, 1261) - 1)) % 2 == 0 ? 1261 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1260) + GetMemoriaDictionary(1030, 1261) - 1) [/code]
+
+>AA 1261
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1260) + GetMemoriaDictionary(1030, 1261) - 1) [/code]
+
+>AA 1262
+[code=Patch] ((GetMemoriaDictionary(1030, 1262) + GetMemoriaDictionary(1030, 1263) - 1)) % 2 == 0 ? 1263 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1262) + GetMemoriaDictionary(1030, 1263) - 1) [/code]
+
+>AA 1263
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1262) + GetMemoriaDictionary(1030, 1263) - 1) [/code]
+
+>AA 1264
+[code=Patch] ((GetMemoriaDictionary(1030, 1264) + GetMemoriaDictionary(1030, 1265) - 1)) % 2 == 0 ? 1265 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1264) + GetMemoriaDictionary(1030, 1265) - 1) [/code]
+
+>AA 1265
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1264) + GetMemoriaDictionary(1030, 1265) - 1) [/code]
+
+>AA 1266
+[code=Patch] ((GetMemoriaDictionary(1030, 1266) + GetMemoriaDictionary(1030, 1267) - 1)) % 2 == 0 ? 1267 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1266) + GetMemoriaDictionary(1030, 1267) - 1) [/code]
+
+>AA 1267
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1266) + GetMemoriaDictionary(1030, 1267) - 1) [/code]
+
+>AA 1268
+[code=Patch] ((GetMemoriaDictionary(1030, 1268) + GetMemoriaDictionary(1030, 1269) - 1)) % 2 == 0 ? 1269 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1268) + GetMemoriaDictionary(1030, 1269) - 1) [/code]
+
+>AA 1269
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1268) + GetMemoriaDictionary(1030, 1269) - 1) [/code]
+
+>AA 1270
+[code=Patch] ((GetMemoriaDictionary(1030, 1270) + GetMemoriaDictionary(1030, 1271) - 1)) % 2 == 0 ? 1271 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1270) + GetMemoriaDictionary(1030, 1271) - 1) [/code]
+
+>AA 1271
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1270) + GetMemoriaDictionary(1030, 1271) - 1) [/code]
+
+>AA 1272
+[code=Patch] ((GetMemoriaDictionary(1030, 1272) + GetMemoriaDictionary(1030, 1273) - 1)) % 2 == 0 ? 1273 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1272) + GetMemoriaDictionary(1030, 1273) - 1) [/code]
+
+>AA 1273
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1272) + GetMemoriaDictionary(1030, 1273) - 1) [/code]
+
+>AA 1274
+[code=Patch] ((GetMemoriaDictionary(1030, 1274) + GetMemoriaDictionary(1030, 1275) - 1)) % 2 == 0 ? 1275 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1274) + GetMemoriaDictionary(1030, 1275) - 1) [/code]
+
+>AA 1275
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1274) + GetMemoriaDictionary(1030, 1275) - 1) [/code]
+
+>AA 1276
+[code=Patch] ((GetMemoriaDictionary(1030, 1276) + GetMemoriaDictionary(1030, 1277) - 1)) % 2 == 0 ? 1277 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1276) + GetMemoriaDictionary(1030, 1277) - 1) [/code]
+
+>AA 1277
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1276) + GetMemoriaDictionary(1030, 1277) - 1) [/code]
+
+>AA 1278
+[code=Patch] ((GetMemoriaDictionary(1030, 1278) + GetMemoriaDictionary(1030, 1279) - 1)) % 2 == 0 ? 1279 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1278) + GetMemoriaDictionary(1030, 1279) - 1) [/code]
+
+>AA 1279
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1278) + GetMemoriaDictionary(1030, 1279) - 1) [/code]
+
+>AA 1280
+[code=Patch] ((GetMemoriaDictionary(1030, 1280) + GetMemoriaDictionary(1030, 1281) - 1)) % 2 == 0 ? 1281 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1280) + GetMemoriaDictionary(1030, 1281) - 1) [/code]
+
+>AA 1281
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1280) + GetMemoriaDictionary(1030, 1281) - 1) [/code]
+
+>AA 1282
+[code=Patch] ((GetMemoriaDictionary(1030, 1282) + GetMemoriaDictionary(1030, 1283) - 1)) % 2 == 0 ? 1283 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1282) + GetMemoriaDictionary(1030, 1283) - 1) [/code]
+
+>AA 1283
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1282) + GetMemoriaDictionary(1030, 1283) - 1) [/code]
+
+>AA 1284
+[code=Patch] ((GetMemoriaDictionary(1030, 1284) + GetMemoriaDictionary(1030, 1285) - 1)) % 2 == 0 ? 1285 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1284) + GetMemoriaDictionary(1030, 1285) - 1) [/code]
+
+>AA 1285
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1284) + GetMemoriaDictionary(1030, 1285) - 1) [/code]
+
+>AA 1286
+[code=Patch] ((GetMemoriaDictionary(1030, 1286) + GetMemoriaDictionary(1030, 1287) - 1)) % 2 == 0 ? 1287 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1286) + GetMemoriaDictionary(1030, 1287) - 1) [/code]
+
+>AA 1287
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1286) + GetMemoriaDictionary(1030, 1287) - 1) [/code]
+
+>AA 1288
+[code=Patch] ((GetMemoriaDictionary(1030, 1288) + GetMemoriaDictionary(1030, 1289) - 1)) % 2 == 0 ? 1289 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1288) + GetMemoriaDictionary(1030, 1289) - 1) [/code]
+
+>AA 1289
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1288) + GetMemoriaDictionary(1030, 1289) - 1) [/code]
+
+>AA 1290
+[code=Patch] ((GetMemoriaDictionary(1030, 1290) + GetMemoriaDictionary(1030, 1291) - 1)) % 2 == 0 ? 1291 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1290) + GetMemoriaDictionary(1030, 1291) - 1) [/code]
+
+>AA 1291
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1290) + GetMemoriaDictionary(1030, 1291) - 1) [/code]
+
+>AA 1292
+[code=Patch] ((GetMemoriaDictionary(1030, 1292) + GetMemoriaDictionary(1030, 1293) - 1)) % 2 == 0 ? 1293 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1292) + GetMemoriaDictionary(1030, 1293) - 1) [/code]
+
+>AA 1293
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1292) + GetMemoriaDictionary(1030, 1293) - 1) [/code]
+
+>AA 1294
+[code=Patch] ((GetMemoriaDictionary(1030, 1294) + GetMemoriaDictionary(1030, 1295) - 1)) % 2 == 0 ? 1295 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1294) + GetMemoriaDictionary(1030, 1295) - 1) [/code]
+
+>AA 1295
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1294) + GetMemoriaDictionary(1030, 1295) - 1) [/code]
+
+>AA 1296
+[code=Patch] ((GetMemoriaDictionary(1030, 1296) + GetMemoriaDictionary(1030, 1297) - 1)) % 2 == 0 ? 1297 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1296) + GetMemoriaDictionary(1030, 1297) - 1) [/code]
+
+>AA 1297
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1296) + GetMemoriaDictionary(1030, 1297) - 1) [/code]
+
+>AA 1298
+[code=Patch] ((GetMemoriaDictionary(1030, 1298) + GetMemoriaDictionary(1030, 1299) - 1)) % 2 == 0 ? 1299 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1298) + GetMemoriaDictionary(1030, 1299) - 1) [/code]
+
+>AA 1299
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1298) + GetMemoriaDictionary(1030, 1299) - 1) [/code]
+
+>AA 1300
+[code=Patch] ((GetMemoriaDictionary(1030, 1300) + GetMemoriaDictionary(1030, 1301) - 1)) % 2 == 0 ? 1301 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1300) + GetMemoriaDictionary(1030, 1301) - 1) [/code]
+
+>AA 1301
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1300) + GetMemoriaDictionary(1030, 1301) - 1) [/code]
+
+>AA 1302
+[code=Patch] ((GetMemoriaDictionary(1030, 1302) + GetMemoriaDictionary(1030, 1303) - 1)) % 2 == 0 ? 1303 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1302) + GetMemoriaDictionary(1030, 1303) - 1) [/code]
+
+>AA 1303
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1302) + GetMemoriaDictionary(1030, 1303) - 1) [/code]
+
+>AA 1304
+[code=Patch] ((GetMemoriaDictionary(1030, 1304) + GetMemoriaDictionary(1030, 1305) - 1)) % 2 == 0 ? 1305 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1304) + GetMemoriaDictionary(1030, 1305) - 1) [/code]
+
+>AA 1305
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1304) + GetMemoriaDictionary(1030, 1305) - 1) [/code]
+
+>AA 1306
+[code=Patch] ((GetMemoriaDictionary(1030, 1306) + GetMemoriaDictionary(1030, 1307) - 1)) % 2 == 0 ? 1307 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1306) + GetMemoriaDictionary(1030, 1307) - 1) [/code]
+
+>AA 1307
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1306) + GetMemoriaDictionary(1030, 1307) - 1) [/code]
+
+>AA 1308
+[code=Patch] ((GetMemoriaDictionary(1030, 1308) + GetMemoriaDictionary(1030, 1309) - 1)) % 2 == 0 ? 1309 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1308) + GetMemoriaDictionary(1030, 1309) - 1) [/code]
+
+>AA 1309
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1308) + GetMemoriaDictionary(1030, 1309) - 1) [/code]
+
+>AA 1310
+[code=Patch] ((GetMemoriaDictionary(1030, 1310) + GetMemoriaDictionary(1030, 1311) - 1)) % 2 == 0 ? 1311 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1310) + GetMemoriaDictionary(1030, 1311) - 1) [/code]
+
+>AA 1311
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1310) + GetMemoriaDictionary(1030, 1311) - 1) [/code]
+
+>AA 1312
+[code=Patch] ((GetMemoriaDictionary(1030, 1312) + GetMemoriaDictionary(1030, 1313) - 1)) % 2 == 0 ? 1313 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1312) + GetMemoriaDictionary(1030, 1313) - 1) [/code]
+
+>AA 1313
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1312) + GetMemoriaDictionary(1030, 1313) - 1) [/code]
+
+>AA 1314
+[code=Patch] ((GetMemoriaDictionary(1030, 1314) + GetMemoriaDictionary(1030, 1315) - 1)) % 2 == 0 ? 1315 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1314) + GetMemoriaDictionary(1030, 1315) - 1) [/code]
+
+>AA 1315
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1314) + GetMemoriaDictionary(1030, 1315) - 1) [/code]
+
+>AA 1316
+[code=Patch] ((GetMemoriaDictionary(1030, 1316) + GetMemoriaDictionary(1030, 1317) - 1)) % 2 == 0 ? 1317 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1316) + GetMemoriaDictionary(1030, 1317) - 1) [/code]
+
+>AA 1317
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1316) + GetMemoriaDictionary(1030, 1317) - 1) [/code]
+
+>AA 1318
+[code=Patch] ((GetMemoriaDictionary(1030, 1318) + GetMemoriaDictionary(1030, 1319) - 1)) % 2 == 0 ? 1319 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1318) + GetMemoriaDictionary(1030, 1319) - 1) [/code]
+
+>AA 1319
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1318) + GetMemoriaDictionary(1030, 1319) - 1) [/code]
+
+>AA 1320
+[code=Patch] ((GetMemoriaDictionary(1030, 1320) + GetMemoriaDictionary(1030, 1321) - 1)) % 2 == 0 ? 1321 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1320) + GetMemoriaDictionary(1030, 1321) - 1) [/code]
+
+>AA 1321
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1320) + GetMemoriaDictionary(1030, 1321) - 1) [/code]
+
+>AA 1322
+[code=Patch] ((GetMemoriaDictionary(1030, 1322) + GetMemoriaDictionary(1030, 1323) - 1)) % 2 == 0 ? 1323 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1322) + GetMemoriaDictionary(1030, 1323) - 1) [/code]
+
+>AA 1323
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1322) + GetMemoriaDictionary(1030, 1323) - 1) [/code]
+
+>AA 1324
+[code=Patch] ((GetMemoriaDictionary(1030, 1324) + GetMemoriaDictionary(1030, 1325) - 1)) % 2 == 0 ? 1325 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1324) + GetMemoriaDictionary(1030, 1325) - 1) [/code]
+
+>AA 1325
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1324) + GetMemoriaDictionary(1030, 1325) - 1) [/code]
+
+>AA 1326
+[code=Patch] ((GetMemoriaDictionary(1030, 1326) + GetMemoriaDictionary(1030, 1327) - 1)) % 2 == 0 ? 1327 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1326) + GetMemoriaDictionary(1030, 1327) - 1) [/code]
+
+>AA 1327
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1326) + GetMemoriaDictionary(1030, 1327) - 1) [/code]
+
+>AA 1328
+[code=Patch] ((GetMemoriaDictionary(1030, 1328) + GetMemoriaDictionary(1030, 1329) - 1)) % 2 == 0 ? 1329 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1328) + GetMemoriaDictionary(1030, 1329) - 1) [/code]
+
+>AA 1329
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1328) + GetMemoriaDictionary(1030, 1329) - 1) [/code]
+
+>AA 1330
+[code=Patch] ((GetMemoriaDictionary(1030, 1330) + GetMemoriaDictionary(1030, 1331) - 1)) % 2 == 0 ? 1331 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1330) + GetMemoriaDictionary(1030, 1331) - 1) [/code]
+
+>AA 1331
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1330) + GetMemoriaDictionary(1030, 1331) - 1) [/code]
+
+>AA 1332
+[code=Patch] ((GetMemoriaDictionary(1030, 1332) + GetMemoriaDictionary(1030, 1333) - 1)) % 2 == 0 ? 1333 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1332) + GetMemoriaDictionary(1030, 1333) - 1) [/code]
+
+>AA 1333
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1332) + GetMemoriaDictionary(1030, 1333) - 1) [/code]
+
+>AA 1334
+[code=Patch] ((GetMemoriaDictionary(1030, 1334) + GetMemoriaDictionary(1030, 1335) - 1)) % 2 == 0 ? 1335 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1334) + GetMemoriaDictionary(1030, 1335) - 1) [/code]
+
+>AA 1335
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1334) + GetMemoriaDictionary(1030, 1335) - 1) [/code]
+
+>AA 1336
+[code=Patch] ((GetMemoriaDictionary(1030, 1336) + GetMemoriaDictionary(1030, 1337) - 1)) % 2 == 0 ? 1337 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1336) + GetMemoriaDictionary(1030, 1337) - 1) [/code]
+
+>AA 1337
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1336) + GetMemoriaDictionary(1030, 1337) - 1) [/code]
+
+>AA 1338
+[code=Patch] ((GetMemoriaDictionary(1030, 1338) + GetMemoriaDictionary(1030, 1339) - 1)) % 2 == 0 ? 1339 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1338) + GetMemoriaDictionary(1030, 1339) - 1) [/code]
+
+>AA 1339
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1338) + GetMemoriaDictionary(1030, 1339) - 1) [/code]
+
+>AA 1340
+[code=Patch] ((GetMemoriaDictionary(1030, 1340) + GetMemoriaDictionary(1030, 1341) - 1)) % 2 == 0 ? 1341 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1340) + GetMemoriaDictionary(1030, 1341) - 1) [/code]
+
+>AA 1341
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1340) + GetMemoriaDictionary(1030, 1341) - 1) [/code]
+
+>AA 1342
+[code=Patch] ((GetMemoriaDictionary(1030, 1342) + GetMemoriaDictionary(1030, 1343) - 1)) % 2 == 0 ? 1343 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1342) + GetMemoriaDictionary(1030, 1343) - 1) [/code]
+
+>AA 1343
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1342) + GetMemoriaDictionary(1030, 1343) - 1) [/code]
+
+>AA 1344
+[code=Patch] ((GetMemoriaDictionary(1030, 1344) + GetMemoriaDictionary(1030, 1345) - 1)) % 2 == 0 ? 1345 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1344) + GetMemoriaDictionary(1030, 1345) - 1) [/code]
+
+>AA 1345
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1344) + GetMemoriaDictionary(1030, 1345) - 1) [/code]
+
+>AA 1346
+[code=Patch] ((GetMemoriaDictionary(1030, 1346) + GetMemoriaDictionary(1030, 1347) - 1)) % 2 == 0 ? 1347 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1346) + GetMemoriaDictionary(1030, 1347) - 1) [/code]
+
+>AA 1347
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1346) + GetMemoriaDictionary(1030, 1347) - 1) [/code]
+
+>AA 1348
+[code=Patch] ((GetMemoriaDictionary(1030, 1348) + GetMemoriaDictionary(1030, 1349) - 1)) % 2 == 0 ? 1349 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1348) + GetMemoriaDictionary(1030, 1349) - 1) [/code]
+
+>AA 1349
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1348) + GetMemoriaDictionary(1030, 1349) - 1) [/code]
+
+>AA 1350
+[code=Patch] ((GetMemoriaDictionary(1030, 1350) + GetMemoriaDictionary(1030, 1351) - 1)) % 2 == 0 ? 1351 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1350) + GetMemoriaDictionary(1030, 1351) - 1) [/code]
+
+>AA 1351
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1350) + GetMemoriaDictionary(1030, 1351) - 1) [/code]
+
+>AA 1352
+[code=Patch] ((GetMemoriaDictionary(1030, 1352) + GetMemoriaDictionary(1030, 1353) - 1)) % 2 == 0 ? 1353 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1352) + GetMemoriaDictionary(1030, 1353) - 1) [/code]
+
+>AA 1353
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1352) + GetMemoriaDictionary(1030, 1353) - 1) [/code]
+
+>AA 1354
+[code=Patch] ((GetMemoriaDictionary(1030, 1354) + GetMemoriaDictionary(1030, 1355) - 1)) % 2 == 0 ? 1355 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1354) + GetMemoriaDictionary(1030, 1355) - 1) [/code]
+
+>AA 1355
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1354) + GetMemoriaDictionary(1030, 1355) - 1) [/code]
+
+>AA 1356
+[code=Patch] ((GetMemoriaDictionary(1030, 1356) + GetMemoriaDictionary(1030, 1357) - 1)) % 2 == 0 ? 1357 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1356) + GetMemoriaDictionary(1030, 1357) - 1) [/code]
+
+>AA 1357
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1356) + GetMemoriaDictionary(1030, 1357) - 1) [/code]
+
+>AA 1358
+[code=Patch] ((GetMemoriaDictionary(1030, 1358) + GetMemoriaDictionary(1030, 1359) - 1)) % 2 == 0 ? 1359 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1358) + GetMemoriaDictionary(1030, 1359) - 1) [/code]
+
+>AA 1359
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1358) + GetMemoriaDictionary(1030, 1359) - 1) [/code]
+
+>AA 1360
+[code=Patch] ((GetMemoriaDictionary(1030, 1360) + GetMemoriaDictionary(1030, 1361) - 1)) % 2 == 0 ? 1361 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1360) + GetMemoriaDictionary(1030, 1361) - 1) [/code]
+
+>AA 1361
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1360) + GetMemoriaDictionary(1030, 1361) - 1) [/code]
+
+>AA 1362
+[code=Patch] ((GetMemoriaDictionary(1030, 1362) + GetMemoriaDictionary(1030, 1363) - 1)) % 2 == 0 ? 1363 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1362) + GetMemoriaDictionary(1030, 1363) - 1) [/code]
+
+>AA 1363
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1362) + GetMemoriaDictionary(1030, 1363) - 1) [/code]
+
+>AA 1364
+[code=Patch] ((GetMemoriaDictionary(1030, 1364) + GetMemoriaDictionary(1030, 1365) - 1)) % 2 == 0 ? 1365 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1364) + GetMemoriaDictionary(1030, 1365) - 1) [/code]
+
+>AA 1365
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1364) + GetMemoriaDictionary(1030, 1365) - 1) [/code]
+
+>AA 1366
+[code=Patch] ((GetMemoriaDictionary(1030, 1366) + GetMemoriaDictionary(1030, 1367) - 1)) % 2 == 0 ? 1367 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1366) + GetMemoriaDictionary(1030, 1367) - 1) [/code]
+
+>AA 1367
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1366) + GetMemoriaDictionary(1030, 1367) - 1) [/code]
+
+>AA 1368
+[code=Patch] ((GetMemoriaDictionary(1030, 1368) + GetMemoriaDictionary(1030, 1369) - 1)) % 2 == 0 ? 1369 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1368) + GetMemoriaDictionary(1030, 1369) - 1) [/code]
+
+>AA 1369
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1368) + GetMemoriaDictionary(1030, 1369) - 1) [/code]
+
+>AA 1370
+[code=Patch] ((GetMemoriaDictionary(1030, 1370) + GetMemoriaDictionary(1030, 1371) - 1)) % 2 == 0 ? 1371 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1370) + GetMemoriaDictionary(1030, 1371) - 1) [/code]
+
+>AA 1371
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1370) + GetMemoriaDictionary(1030, 1371) - 1) [/code]
+
+>AA 1372
+[code=Patch] ((GetMemoriaDictionary(1030, 1372) + GetMemoriaDictionary(1030, 1373) - 1)) % 2 == 0 ? 1373 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1372) + GetMemoriaDictionary(1030, 1373) - 1) [/code]
+
+>AA 1373
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1372) + GetMemoriaDictionary(1030, 1373) - 1) [/code]
+
+>AA 1374
+[code=Patch] ((GetMemoriaDictionary(1030, 1374) + GetMemoriaDictionary(1030, 1375) - 1)) % 2 == 0 ? 1375 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1374) + GetMemoriaDictionary(1030, 1375) - 1) [/code]
+
+>AA 1375
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1374) + GetMemoriaDictionary(1030, 1375) - 1) [/code]
+
+>AA 1376
+[code=Patch] ((GetMemoriaDictionary(1030, 1376) + GetMemoriaDictionary(1030, 1377) - 1)) % 2 == 0 ? 1377 : -1 [/code]
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1376) + GetMemoriaDictionary(1030, 1377) - 1) [/code]
+
+>AA 1377
+[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1376) + GetMemoriaDictionary(1030, 1377) - 1) [/code]
+
+##>AA 1378
+##[code=Patch] HasLearntAbility(1314) ? (((GetMemoriaDictionary(1030, 1378) + GetMemoriaDictionary(1030, 1379) - 1)) % 2 == 0 ? 1379 : -1) : 1552 [/code]
+##[code=MPCost] 8 * (GetMemoriaDictionary(1030, 1378) + GetMemoriaDictionary(1030, 1379) - 1) [/code]
+
+############# Supporting Abilities #################
+
+>SA 0 Bénédiction (effect is coded in TranceSeekAPI)
+
+>SA 1 Pas Léger (effect is coded in TranceSeekAPI)
+
+>SA 2 Initiative
+StatusInit InitialATB 75
+
+>SA 3 Résilience
+
+>SA 4 Auto-Life
+StatusInit InitialStatus AutoLife
+
+>SA 5 HP+5%
+Permanent 
+[code=Condition] !HasSA(1005) && !HasSA(6) && !HasSA(1006) [/code]
+[code=MaxHP] MaxHP + MaxHP / 20 [/code]
+
+>SA 6 HP+10%
+Permanent 
+[code=Condition] !HasSA(1006) && !HasSA(5) && !HasSA(1005) [/code]
+[code=MaxHP] MaxHP + MaxHP / 10 [/code]
+
+Permanent 
+[code=Condition] !HasSA(1006) && HasSA(5) && !HasSA(1005) [/code]
+[code=MaxHP] MaxHP + (15 * MaxHP / 100) [/code]
+
+>SA 7 MP+5%
+Permanent 
+[code=Condition] !HasSA(1007) && !HasSA(8) && !HasSA(1008) [/code]
+[code=MaxMP] MaxMP + MaxMP / 20 [/code]
+
+>SA 8 MP+10%
+Permanent 
+[code=Condition] !HasSA(1008) && !HasSA(7) && !HasSA(1007) [/code]
+[code=MaxMP] MaxMP + MaxMP / 10 [/code]
+
+Permanent 
+[code=Condition] !HasSA(1008) && HasSA(7) && !HasSA(1007) [/code]
+[code=MaxMP] MaxMP + (15 * MaxMP / 100) [/code]
+
+>SA 9 Accuracy+
+Ability WhenHitRateSetup EvenImmobilized
+[code=Condition] AbilityId == BattleAbilityId_Attack [/code]
+[code=Evade] Evade / 2 [/code]
+
+>SA 10 Lucky Star
+Ability WhenBattleScriptStart EvenImmobilized
+[code=CasterCriticalRateBonus] 10 [/code]
+
+>SA 11 Long Reach
+Ability WhenCalcDamage EvenImmobilized
+[code=Condition] AbilityId == BattleAbilityId_Attack && CasterIsPlayer != TargetIsPlayer && CasterRow == 0 [/code]
+[code=DamageModifierCount] DamageModifierCount + 2 [/code]
+
+>SA 12 Stamina
+Ability WhenCalcDamage EvenImmobilized
+[code=Condition] AbilityId == BattleAbilityId_Attack && CasterMP < CasterMaxMP && CasterIsPlayer != TargetIsPlayer [/code]
+[code=CasterMP] CasterMaxMP > 50 ? CasterMP + (CasterMaxMP / 50) : CasterMP + 1 [/code]
+
+>SA 13 Bird Killer
+Ability WhenCalcDamage EvenImmobilized
+[code=Condition] AbilityId == BattleAbilityId_Attack && (TargetCategory & EnemyCategory_Flight) != 0 && CasterIsPlayer != TargetIsPlayer [/code]
+[code=DamageModifierCount] DamageModifierCount + 1 [/code]
+
+>SA 14 Bug Killer
+Ability WhenCalcDamage EvenImmobilized
+[code=Condition] AbilityId == BattleAbilityId_Attack && (TargetCategory & EnemyCategory_Soul) != 0 && CasterIsPlayer != TargetIsPlayer [/code]
+[code=DamageModifierCount] DamageModifierCount + 1 [/code]
+
+>SA 15 Giant Killer
+Ability WhenCalcDamage EvenImmobilized
+[code=Condition] AbilityId == BattleAbilityId_Attack && (TargetCategory & EnemyCategory_Stone) != 0 && CasterIsPlayer != TargetIsPlayer [/code]
+[code=DamageModifierCount] DamageModifierCount + 1 [/code]
+
+>SA 16 Undead Killer
+Ability WhenCalcDamage EvenImmobilized
+[code=Condition] AbilityId == BattleAbilityId_Attack && (TargetCategory & EnemyCategory_Undead) != 0 && CasterIsPlayer != TargetIsPlayer [/code]
+[code=DamageModifierCount] DamageModifierCount + 1 [/code]
+
+>SA 17 Dragon Killer
+Ability WhenCalcDamage EvenImmobilized
+[code=Condition] AbilityId == BattleAbilityId_Attack && (TargetCategory & EnemyCategory_Dragon) != 0 && CasterIsPlayer != TargetIsPlayer [/code]
+[code=DamageModifierCount] DamageModifierCount + 1 [/code]
+
+>SA 18 Devil Killer
+Ability WhenCalcDamage EvenImmobilized
+[code=Condition] AbilityId == BattleAbilityId_Attack && (TargetCategory & EnemyCategory_Devil) != 0 && CasterIsPlayer != TargetIsPlayer [/code]
+[code=DamageModifierCount] DamageModifierCount + 1 [/code]
+
+>SA 19 Beast Killer
+Ability WhenCalcDamage EvenImmobilized
+[code=Condition] AbilityId == BattleAbilityId_Attack && (TargetCategory & EnemyCategory_Beast) != 0 && CasterIsPlayer != TargetIsPlayer [/code]
+[code=DamageModifierCount] DamageModifierCount + 1 [/code]
+
+>SA 20 Man Eater
+Ability WhenCalcDamage EvenImmobilized
+[code=Condition] AbilityId == BattleAbilityId_Attack && (TargetCategory & EnemyCategory_Humanoid) != 0 && CasterIsPlayer != TargetIsPlayer [/code]
+[code=DamageModifierCount] DamageModifierCount + 1 [/code]
+
+>SA 21 High Jump (effect is coded in TranceSeekAPI)
+
+>SA 22 Master Thief (effect is coded in 0058_StealScript.cs)
+
+>SA 23 Steal Gil (effect is coded in 0058_StealScript.cs)
+
+>SA 24 Healer
+Ability WhenCalcDamage EvenImmobilized
+[code=Condition] AbilityId == BattleAbilityId_Attack && (TargetCategory & EnemyCategory_Undead) == 0 && !CheckAnyStatus(TargetCurrentStatus, BattleStatus_Zombie) [/code]
+[code=EffectTargetFlags] CalcFlag_HpDamageOrHeal [/code]
+
+Ability WhenCalcDamage EvenImmobilized
+[code=Condition] (AbilityId == BattleAbilityId_Attack && TargetIsPlayer) [/code]
+[code=DefencePower] 0 [/code]
+
+Ability WhenHitRateSetup EvenImmobilized
+[code=Condition] TargetIsPlayer [/code]
+[code=HitRate] 255 [/code]
+[code=Evade] 0 [/code]
+
+>SA 25 Add Status (effect is coded in TranceSeekAPI.cs)
+
+>SA 26 Stone Skin
+Ability AsTarget WhenBattleScriptEnd EvenImmobilized
+[code=Condition] CommandId < BattleCommandId_BoundaryCheck && CasterIsPlayer != TargetIsPlayer && (AbilityCategory & 8) != 0 [/code]
+[code=HPDamage] HPDamage - (10 * HPDamage) / 100 [/code]
+
+>SA 27 Chemist
+Ability WhenCalcDamage EvenImmobilized
+[code=Condition] (ScriptId == 69 || ScriptId == 70) [/code]
+[code=DamageModifierCount] DamageModifierCount + 4 [/code]
+
+>SA 28 Power Throw
+Ability WhenCalcDamage EvenImmobilized
+[code=Condition] ScriptId == 42 [/code]
+[code=DamageModifierCount] DamageModifierCount + 1 [/code]
+
+>SA 29 Power Up (effect is coded in 0037_ChakraScript.cs)
+
+>SA 30 Reflect-Null
+Command EvenImmobilized
+[code=Condition] IsTheCaster [/code]
+[code=IsReflectNull] true [/code]
+
+>SA 31 Reflectx2
+Ability WhenBattleScriptEnd EvenImmobilized
+[code=Condition] IsSpellReflected [/code]
+[code=HPDamage] HPDamage + HPDamage / 2 [/code]
+
+>SA 32 Overload (effect is coded in SA 44, Focus)
+
+>SA 33 Concentrate
+Ability WhenCalcDamage EvenImmobilized
+[code=Condition] ScriptId == 9 || ScriptId == 10 || ScriptId == 11 || ScriptId == 13 || ScriptId == 16 || ScriptId == 85 || ScriptId == 118 [/code]
+[code=DamageModifierCount] DamageModifierCount + 1 [/code]
+
+Permanent 
+[code=Condition] !HasSA(1033) [/code]
+[code=MPCostFactor] HasSA(34) ? MPCostFactor : MPCostFactor + (MPCostFactor / 4) [/code]
+
+>SA 34 Half MP
+Permanent
+[code=Condition] !HasSA(1034) [/code]
+[code=MPCostFactor] HasSA(33) ? MPCostFactor : MPCostFactor - (MPCostFactor / 4) [/code]
+
+>SA 35 High Tide
+Ability AsTarget WhenBattleScriptStart EvenImmobilized
+[code=TranceIncrease] TargetSpirit [/code]
+
+>SA 36 Counter
+Ability AsTarget
+[code=Condition] CommandId < BattleCommandId_BoundaryCheck && CasterIsPlayer != TargetIsPlayer && (AbilityCategory & 8) != 0 && TargetSpirit > GetRandom(0, 100) && !TargetHasSA(239) [/code]
+[code=Counter] 176 [/code]
+DisableSA 1036 36 1054 54 1056 56
+
+>SA 37 Cover
+Command
+[code=Condition] !IsTargeted && IsAllyOfTarget && CommandId == BattleCommandId_EnemyAtk && (AbilityCategory & 8) != 0 && IsSingleTarget && !CheckAnyStatus(CurrentStatus, BattleStatus_Heat) && PropertyByName('StatusProperty CustomStatus21 CanCover') == 1 [/code]
+[code=TryCover] !CheckAnyStatus(TargetCurrentStatus, BattleStatus_Death, BattleStatus_Petrify) && CheckAnyStatus(TargetCurrentStatus, BattleStatus_LowHP) [/code]
+
+>SA 38 Protect Girls
+Command
+[code=Condition] !IsTargeted && IsAllyOfTarget && CommandId == BattleCommandId_EnemyAtk && (AbilityCategory & 8) != 0 && IsSingleTarget && !CheckAnyStatus(CurrentStatus, BattleStatus_Heat) && PropertyByName('StatusProperty CustomStatus21 CanCover') == 1 [/code]
+[code=TryCover] !CheckAnyStatus(TargetCurrentStatus, BattleStatus_Death, BattleStatus_Petrify) && (TargetPlayerCategory & CharacterCategory_Female) != 0 && TargetHP < TargetMaxHP / 2 [/code]
+
+>SA 39 Super Guard
+Ability AsTarget WhenCalcDamage EvenImmobilized
+[code=Condition] (ScriptId == 9 || ScriptId == 10 || ScriptId == 11 || ScriptId == 13 || ScriptId == 16) && CheckAnyStatus(TargetCurrentStatus, BattleStatus_Defend) [/code]
+[code=Attack] Attack - ((25 * Attack) / 100) [/code]
+
+>SA 40 Body Temp
+StatusInit [code=DurationFactorHeat] 0.25 [/code]
+StatusInit [code=DurationFactorFreeze] 0.25 [/code]
+
+>SA 41 Alert
+BattleStart [code=BackAttack] 0 [/code]
+
+>SA 42 Presence
+BattleStart [code=Preemptive] 80 [/code]
+
+>SA 43 Level Up
+BattleResult 
+[code=Condition] !HasSA(1043) [/code]
+[code=BonusExp] BonusExp + BonusExp / 2 [/code]
+
+>SA 44 Ability Up
+BattleResult 
+[code=Condition] !HasSA(1044) [/code]
+[code=BonusAP] 2 * BonusAP [/code]
+
+>SA 45 Millionaire
+BattleResult WhenRewardAll
+[code=Condition] !HasSA(1045) [/code]
+[code=BonusGil] BonusGil + BonusGil / 2 [/code]
+
+>SA 46 Flee-Gil
+BattleResult WhenBattleEnd
+[code=Condition] IsFleeByLuck && !HasSA(1046) [/code]
+[code=BonusGil] FleeGil [/code]
+
+>SA 47 Guardian Mog
+BattleResult WhenBattleEnd [code=Status] 0 [/code]
+
+>SA 48 Insomniac
+StatusInit [code=DurationFactorSleep] 0.25 [/code]
+
+>SA 49 Antibody
+StatusInit [code=PartialResistPoison] 0.5 [/code]
+StatusInit [code=PartialResistVenom] 0.5 [/code]
+
+>SA 50 Bright Eyes
+StatusInit [code=PartialResistBlind] 0.5 [/code]
+
+>SA 51 Loudmouth
+StatusInit [code=PartialResistSilence] 0.5 [/code]
+
+>SA 52 Restore HP  (effect is coded in TranceSeekAPI.cs)
+
+>SA 53 Jelly
+StatusInit [code=PartialResistPetrify] 0.5 [/code]
+StatusInit [code=PartialResistGradualPetrify] 0.5 [/code]
+
+>SA 54 Return Magic
+Ability AsTarget
+[code=Condition] IsCounterableCommand && CasterIsPlayer != TargetIsPlayer && (AbilityCategory & 128) != 0 [/code]
+[code=ReturnMagic] 0 [/code]
+DisableSA 36 54 56
+
+>SA 55 Absorb MP
+Ability EvenImmobilized
+[code=Condition] CasterIsPlayer != TargetIsPlayer [/code]
+[code=CasterMP] Min(CasterMaxMP, CasterMP + (MPCost / 8)) [/code]]
+
+>SA 56 Auto-Potion
+Ability AsTarget
+[code=Condition] (GetItemCount(RegularItem_Potion) != 0 || GetItemCount(RegularItem_HiPotion) != 0 || GetItemCount(1000) != 0) && CommandId < BattleCommandId_BoundaryCheck && CasterIsPlayer != TargetIsPlayer && (EffectTargetFlags & CalcFlag_HpDamageOrHeal) == CalcFlag_HpAlteration && !CheckAnyStatus(TargetCurrentStatus, BattleStatus_Heat) [/code]
+[code=AutoItem] ((TargetMaxHP - TargetHP) > 1250 && GetItemCount(1000) != 0) ? 1000 : (((TargetMaxHP - TargetHP) > (TargetHasSA(27) ? 1000 : 500) && GetItemCount(RegularItem_HiPotion) != 0) ? RegularItem_HiPotion : (((TargetMaxHP - TargetHP) > (TargetHasSA(27) ? 400 : 200) && GetItemCount(RegularItem_Potion) != 0) ? RegularItem_Potion : 0)) [/code]
+DisableSA 36 54 56
+
+>SA 57 Locomotion
+StatusInit [code=PartialResistSlow] 0.5 [/code]
+StatusInit [code=PartialResistStop] 0.5 [/code]
+
+>SA 58 Clear Headed
+StatusInit [code=PartialResistConfuse] 0.5 [/code]
+
+>SA 59 Boost
+Command EvenImmobilized
+[code=Condition] IsTheCaster [/code]
+[code=IsShortSummon] false [/code]
+
+>SA 60 Odin’s Sword
+Ability WhenBattleScriptEnd EvenImmobilized
+[code=Condition] ScriptId == 87 && (EffectFlags & (BattleCalcFlags_Miss | BattleCalcFlags_Guard)) != 0 [/code]
+[code=EffectFlags] EffectFlags & 65470 [/code]
+[code=EffectTargetFlags] EffectTargetFlags | CalcFlag_HpAlteration [/code]
+[code=HPDamage] (IsShortSummon ? 0.666667 : 1.0) * (GetRandom(CasterMagic, CasterMagic + (CasterLevel + CasterMagic) / 8 + 1) * Max(1, 100 + Power - GetItemCount(RegularItem_Ore) - TargetMagicDefence)) [/code]
+
+>SA 61 Mug (effect is coded in 0058_StealScript.cs)
+
+>SA 62 Lupin (effect is coded in 0058_StealScript.cs)
+
+>SA 63 Void
+
+_____________________________________________________________________________________________________
+
+>SA 100 Doctor
+Ability WhenCalcDamage EvenImmobilized
+[code=Condition] (ScriptId == 10 || ScriptId == 37 || ScriptId == 69) [/code]
+[code=DamageModifierCount] DamageModifierCount + 1 [/code]
+
+>SA 101 Witchcraft
+Ability WhenHitRateSetup EvenImmobilized
+[code=HitRate] HitRate + 25 [/code]
+
+>SA 102 Archmage (effect is coded in TranceSeekAPI.cs)
+
+>SA 103 SOS Protect (effect is coded in TranceSeekAPI.cs)
+
+>SA 104 SOS Shell (effect is coded in TranceSeekAPI.cs)
+
+>SA 105 SOS Regen (effect is coded in TranceSeekAPI.cs)
+
+>SA 106 SOS Haste (effect is coded in TranceSeekAPI.cs)
+
+>SA 107 Inner Peace
+StatusInit [code=PartialResistBerserk] 0.5 [/code]
+
+>SA 108 Mystic Veil
+Ability AsTarget WhenBattleScriptEnd EvenImmobilized
+[code=Condition] TargetMP > (TargetMaxMP / 50) && (ScriptId == 9 || ScriptId == 11 || ScriptId == 15 || ScriptId == 16 || ScriptId == 17 || ScriptId == 18 || ScriptId == 20 || ScriptId == 23 || ScriptId == 31 || ScriptId == 63) [/code]
+[code=HPDamage] HPDamage - (10 * HPDamage) / 100 [/code]
+[code=TargetMP] Max(0, TargetMP - (TargetMaxMP / 50)) [/code]
+
+>SA 109 Instinct (effect is coded in TranceSeekAPI.cs)
+
+>SA 110 Proliferation (effect is coded in TranceSeekAPI.cs)
+
+>SA 111 Pasteurized
+StatusInit [code=PartialResistVirus] 0.5 [/code]
+
+>SA 112 United
+StatusInit [code=PartialResistTrouble] 0.5 [/code]
+
+>SA 113 Abundance
+StatusInit [code=PartialResistMini] 0.5 [/code]
+
+>SA 114 Purity
+StatusInit [code=PartialResistZombie] 0.5 [/code]
+
+>SA 115 Soul Drain (effect is coded in TranceSeekAPI.cs)
+
+>SA 116 Ethereal Steps (effect is coded in TranceSeekAPI.cs)
+
+>SA 117 EX Mode (effect is coded in TranceSeekAPI.cs)
+
+>SA 118 Flawless (effect is coded in TranceSeekAPI.cs)
+
+>SA 119 Agreement (effect is coded in TranceSeekAPI.cs)
+
+>SA 120 Ignorance
+BattleResult 
+[code=BonusExp] 0 [/code]
+
+>SA 121 Hole Pocket
+BattleResult WhenRewardAll
+[code=BonusGil] BonusGil / 2 [/code]
+
+>SA 122 Eye of the Dragon (effect is coded in TranceSeekAPI.cs)
+
+>SA 123 Assistance (effect is coded in TranceSeekAPI.cs)
+
+>SA 124 Persistance (effect is coded in different sources...)
+
+>SA 125 Glass Canon
+Permanent 
+[code=Condition] !HasSA(1125) [/code]
+[code=MaxHP] MaxHP - MaxHP / 4 [/code]
+[code=Strength] Strength - Strength / 4 [/code]
+[code=Defence] Defence - Defence / 4 [/code]
+[code=MaxMP] MaxMP + MaxMP / 4 [/code]
+[code=Magic] Magic + Magic / 4 [/code]
+[code=MagicDefence] MagicDefence + MagicDefence / 4 [/code]
+
+>SA 126 Propagation (effect is coded in TranceSeekAPI.cs)
+
+>SA 127 Invigorating (effect is coded in TranceSeekAPI.cs)
+
+>SA 128 Strategist (effect is coded in TranceSeekAPI.cs)
+
+>SA 129 Rejuvenate (effect is coded in RegenStatusScript.cs)
+
+>SA 130 Harmony (effect is coded in RegenStatusScript.cs)
+
+>SA 131 Altruistic (effect is coded in TranceSeekAPI.cs)
+
+>SA 132 Anastrophe (effect is coded in TranceSeekAPI.cs)
+
+>SA 133 SOS Reflect (effect is coded in TranceSeekAPI.cs)
+
+>SA 134 SOS Vanish (effect is coded in TranceSeekAPI.cs)
+
+>SA 135 Unperturbed
+StatusInit [code=PartialResistCustomStatus1] 0.5 [/code]
+StatusInit [code=PartialResistCustomStatus2] 0.5 [/code]
+StatusInit [code=PartialResistCustomStatus3] 0.5 [/code]
+StatusInit [code=PartialResistCustomStatus4] 0.5 [/code]
+
+>SA 200 Knavery (effect is coded in TranceSeekAPI.cs)
+
+>SA 201 Gorilla (effect is coded in TranceSeekAPI.cs)
+
+>SA 202 Ghost Hand (effect is coded in TranceSeekAPI.cs)
+
+>SA 203 Flexible (effect is coded in TranceSeekAPI.cs)
+
+>SA 204 Transcendent (effect is coded in 0044_FocusScript.cs)
+
+>SA 205 Wizard (effect is coded in TranceSeekAPI.cs)
+
+>SA 206 Insatiable (effect is coded in 0044_FocusScript.cs)
+
+>SA 207 Bobbin (effect is coded in TranceSeekAPI.cs)
+
+>SA 208 Divine guidance (effect is coded in TranceSeekAPI.cs)
+
+>SA 209 Divine punishment
+Ability WhenHitRateSetup EvenImmobilized
+[code=Condition] (ScriptId == 85 || ScriptId == 86 || ScriptId == 87) [/code]
+[code=Evade] Evade / 2 [/code]
+
+Ability WhenBattleScriptEnd EvenImmobilized
+[code=Condition] (ScriptId == 85 || ScriptId == 86 || ScriptId == 87) [/code]
+[code=HPDamage] HPDamage / 2 [/code]
+
+>SA 210 Gemologist (effect is coded here => Garnet Passive (Gems))
+
+>SA 211 Auto Gem (effect is coded in TranceSeekAPI.cs)
+
+>SA 212 Protector (effect is coded in OverloadOnBattleInitScript.cs)
+
+>SA 213 Duelist (effect is coded in OverloadOnBattleInitScript.cs)
+
+>SA 214 Enchanted blade (effect is coded in OverloadOnBattleInitScript.cs)
+
+>SA 215 Steadfast (effect is coded in OverloadOnBattleInitScript.cs)
+Permanent 
+[code=Condition] !HasSA(1215) [/code]
+[code=Defence] Defence + (Evade / 10) [/code]
+[code=Evade] 0 [/code]
+
+>SA 216 Sky Attack (effect is coded in Spear Scripts)
+
+>SA 217 Skydive (effect is coded in Spear Scripts)
+
+>SA 218 Nastrond (effect is coded in DragonStatusScript.cs)
+
+>SA 219 Embrace (effect is coded in DragonStatusScript.cs)
+
+>SA 220 Appetite (effect is coded in 0065_EatScript.cs)
+
+>SA 221 Gourmandise (effect is coded in 0065_EatScript.cs)
+
+>SA 222 Sharpening (effect is coded in BaseWeaponScript.cs)
+
+>SA 223 Voracious (effect is coded in 0065_EatScript.cs + 0208_DigestScript.cs)
+
+>SA 224 Come here! (effect is coded in Moug Mechanic)
+
+>SA 225 Bodyguard (effect is coded in TranceSeekAPI.cs)
+
+>SA 226 Synergy
+Ability WhenCalcDamage EvenImmobilized
+[code=DamageModifierCount] DamageModifierCount + 1 [/code]
+
+>SA 227 Harmony (effect is coded in OverloadOnBattleScriptStartScript.cs)
+
+>SA 228 Assassin (effect is coded in TranceSeekAPI.cs)
+
+>SA 229 Lethality (effect is coded in TranceSeekAPI.cs)
+
+>SA 230 Venefic (effect is coded in TranceSeekAPI.cs)
+
+>SA 231 Ferocity (effect is coded in DefendStatusScript.cs)
+
+>SA 232 Expiation (effect is coded in RedemptionStatusScript + TranceSeekAPI.cs)
+
+>SA 233 Amnesty (effect is coded in TranceSeekAPI.cs)
+
+>SA 234 Dominance (effect is coded in TranceSeekAPI.cs)
+
+>SA 235 Fencing (effect is coded in TranceSeekAPI.cs)
+
+>SA 236 Enraged (effect is coded in OverloadDamageModifierScript.cs)
+
+>SA 237 Maximum infusion (effect is coded in TranceSeekAPI.cs)
+
+>SA 238 Crisis level (effect is coded in OverloadDamageModifierScript.cs)
+
+>SA 239 Unleashed
+Ability AsTarget
+[code=Condition] CommandId < BattleCommandId_BoundaryCheck && CasterIsPlayer != TargetIsPlayer && (TargetHasSA(1036) ? 2 * TargetSpirit : TargetSpirit) > GetRandom(0, 100) && TargetHasSA(36) && ((AbilityCategory & 8) != 0 || (AbilityCategory & 16) != 0) [/code]
+[code=Counter] 176 [/code]
+DisableSA 1239 239 1054 54 1056 56
+
+>SA 240 Offering (effect is coded in TranceSeekAPI.cs)
+
+>SA 241 Dark side (effect is coded in OverloadDamageModifierScript.cs)
+
+>SA 242 Lucifer (effect is coded in TranceSeekAPI.cs)
+
+>SA 243 Prince of the shadows (effect is coded in AbilityFeatures.txt)
+
+>SA 244 Mecano (effect is coded in OverloadOnBattleScriptStartScript.cs)
+
+>SA 245 Training
+Ability WhenCalcDamage EvenImmobilized
+[code=Condition] CommandId == 1021 [/code]
+[code=DamageModifierCount] DamageModifierCount + 1 [/code]
+
+>SA 246 Emergency plan (effect is coded in AbilityFeatures.txt)
+
+>SA 247 Genius (effect is coded in AbilityFeatures.txt + Memoria.Scripts.dll)
+
+>SA 248 Econome (effect is coded in OverloadOnBattleScriptStartScript.cs)
+
+>SA 249 Assistance (effect is coded in TranceSeekAPI.cs)
+
+>SA 250 Geologist
+Ability WhenCalcDamage EvenImmobilized
+[code=Condition] ScriptId == 74 [/code]
+[code=DamageModifierCount] DamageModifierCount + 1 [/code]
+
+>SA 251 Artificer (effect is coded in Memoria.Scripts.dll)
+
+>SA 252 I'm all set!
+StatusInit InitialStatus Regen
+
+>SA 253 Take that! (effect is coded in TranceSeekAPI.cs)
+
+>SA 254 In top form! (effect is coded in OverloadOnBattleScriptStartScript.cs)
+
+>SA 255 Gyahaha! (effect is coded in Memoria.Scripts.dll)
+
+>SA 256 Metronome (effect is coded in 0164_TranceSeekSpecial.cs)
+
+>SA 257 Mania (effect is coded in TranceSeekAPI.cs)
+
+>SA 258 Reward (effect is coded in TranceSeekAPI.cs)
+
+>SA 259 Mog Kiss (effect is coded in TranceSeekAPI.cs)
+_______________________________________________________________________________________________
+
+>SA 1000 Bénédiction+  (effect is coded in TranceSeekAPI.cs)
+
+>SA 1001 Pas Léger+ (effect is coded in TranceSeekAPI.cs)
+
+>SA 1002 Initiative+
+StatusInit InitialATB 95
+StatusInit InitialStatus Haste
+DisableSA 2
+
+>SA 1003 Résilience+
+StatusInit ResistStatus Doom ResistStatus GradualPetrify
+
+>SA 1004 Auto-Life+
+
+>SA 1005 HP+10%
+Permanent 
+[code=Condition] !HasSA(6) && !HasSA(1006) [/code]
+[code=MaxHP] MaxHP + MaxHP / 10 [/code]
+
+Permanent 
+[code=Condition] HasSA(6) && !HasSA(1006) [/code]
+[code=MaxHP] MaxHP + (MaxHP / 5) [/code]
+
+>SA 1006 HP+20%
+Permanent 
+[code=Condition] !HasSA(5) && !HasSA(1005) [/code]
+[code=MaxHP] MaxHP + MaxHP / 5 [/code]
+
+Permanent 
+[code=Condition] HasSA(5) && !HasSA(1005) [/code]
+[code=MaxHP] MaxHP + (MaxHP / 4) [/code]
+
+Permanent 
+[code=Condition] HasSA(1005) [/code]
+[code=MaxHP] MaxHP + (30 * MaxHP / 100) [/code]
+
+>SA 1007 MP+10%
+Permanent 
+[code=Condition] !HasSA(8) && !HasSA(1008) [/code]
+[code=MaxMP] MaxMP + MaxMP / 10 [/code]
+
+Permanent 
+[code=Condition] HasSA(8) && !HasSA(1008) [/code]
+[code=MaxMP] MaxMP + (MaxMP / 5) [/code]
+
+>SA 1008 MP+20%
+Permanent 
+[code=Condition] !HasSA(7) && !HasSA(1007) [/code]
+[code=MaxMP] MaxMP + MaxMP / 5 [/code]
+
+Permanent 
+[code=Condition] HasSA(7) && !HasSA(1007) [/code]
+[code=MaxMP] MaxMP + (MaxMP / 4) [/code]
+
+Permanent 
+[code=Condition] HasSA(1007) [/code]
+[code=MaxMP] MaxMP + (30 * MaxMP / 100) [/code]
+
+>SA 1009 Accuracy+
+Ability WhenHitRateSetup EvenImmobilized
+[code=Condition] AbilityId == BattleAbilityId_Attack [/code]
+[code=Evade] Evade / 4 [/code]
+DisableSA 9
+
+>SA 1010 Lucky Star
+Ability WhenBattleScriptStart EvenImmobilized
+[code=CasterCriticalRateBonus] 20 [/code]
+
+>SA 1011 Long Reach+
+Ability WhenBattleScriptStart EvenImmobilized
+[code=IsShortRanged] false [/code]
+DisableSA 11
+
+>SA 1012 Stamina+
+Ability WhenCalcDamage EvenImmobilized
+[code=Condition] AbilityId == BattleAbilityId_Attack && CasterMP < CasterMaxMP && CasterIsPlayer != TargetIsPlayer [/code]
+[code=CasterMP] CasterMaxMP > 25 ? CasterMP + (CasterMaxMP / 25) : CasterMP + 1 [/code]
+DisableSA 12
+
+>SA 1013 Bird Killer+
+Ability WhenCalcDamage EvenImmobilized
+[code=Condition] AbilityId == BattleAbilityId_Attack && (TargetCategory & 128) != 0 && CasterIsPlayer != TargetIsPlayer [/code]
+[code=DamageModifierCount] DamageModifierCount + 1 [/code]
+
+>SA 1014 Bug Killer+
+Ability WhenCalcDamage EvenImmobilized
+[code=Condition] AbilityId == BattleAbilityId_Attack && (TargetCategory & 64) != 0 && CasterIsPlayer != TargetIsPlayer [/code]
+[code=DamageModifierCount] DamageModifierCount + 1 [/code]
+
+>SA 1015 Giant Killer+
+Ability WhenCalcDamage EvenImmobilized
+[code=Condition] AbilityId == BattleAbilityId_Attack && (TargetCategory & 32) != 0 && CasterIsPlayer != TargetIsPlayer [/code]
+[code=DamageModifierCount] DamageModifierCount + 1 [/code]
+
+>SA 1016 Undead Killer+
+Ability WhenCalcDamage EvenImmobilized
+[code=Condition] AbilityId == BattleAbilityId_Attack && (TargetCategory & 16) != 0 && CasterIsPlayer != TargetIsPlayer [/code]
+[code=DamageModifierCount] DamageModifierCount + 1 [/code]
+
+>SA 1017 Dragon Killer+
+Ability WhenCalcDamage EvenImmobilized
+[code=Condition] AbilityId == BattleAbilityId_Attack && (TargetCategory & 8) != 0 && CasterIsPlayer != TargetIsPlayer [/code]
+[code=DamageModifierCount] DamageModifierCount + 1 [/code]
+
+>SA 1018 Devil Killer+
+Ability WhenCalcDamage EvenImmobilized
+[code=Condition] AbilityId == BattleAbilityId_Attack && (TargetCategory & 4) != 0 && CasterIsPlayer != TargetIsPlayer [/code]
+[code=DamageModifierCount] DamageModifierCount + 1 [/code]
+
+>SA 1019 Beast Killer+
+Ability WhenCalcDamage EvenImmobilized
+[code=Condition] AbilityId == BattleAbilityId_Attack && (TargetCategory & 2) != 0 && CasterIsPlayer != TargetIsPlayer [/code]
+[code=DamageModifierCount] DamageModifierCount + 1 [/code]
+
+>SA 1020 Man Eater+
+Ability WhenCalcDamage EvenImmobilized
+[code=Condition] AbilityId == BattleAbilityId_Attack && (TargetCategory & 1) != 0 && CasterIsPlayer != TargetIsPlayer [/code]
+[code=DamageModifierCount] DamageModifierCount + 1 [/code]
+
+>SA 1021 High Jump+ (effect is coded in TranceSeekAPI)
+
+>SA 1022 Master Thief+ (effect is coded in 0058_StealScript.cs)
+
+>SA 1023 Steal Gil+ (effect is coded in 0058_StealScript.cs)
+
+>SA 1024 Healer+
+Ability WhenCalcDamage EvenImmobilized
+[code=Condition] AbilityId == BattleAbilityId_Attack && ((TargetCategory & EnemyCategory_Undead) != 0 || CheckAnyStatus(TargetCurrentStatus, BattleStatus_Zombie)) [/code]
+[code=DamageModifierCount] DamageModifierCount + 4 [/code]
+
+>SA 1025 Add Status+ (effect is coded in TranceSeekAPI.cs)
+
+>SA 1026 Stone Skin+
+Ability AsTarget WhenBattleScriptEnd EvenImmobilized
+[code=Condition] CommandId < BattleCommandId_BoundaryCheck && CasterIsPlayer != TargetIsPlayer && (AbilityCategory & 8) != 0 [/code]
+[code=HPDamage] HPDamage - (15 * HPDamage) / 100 [/code]
+DisableSA 26
+
+>SA 1027 Chemist+ (coded in 0069_ItemPotionScript.cs)
+
+>SA 1028 Power Throw+
+Ability WhenCalcDamage EvenImmobilized
+[code=Condition] ScriptId == 42 [/code]
+[code=DamageModifierCount] DamageModifierCount + 1 [/code]
+
+>SA 1029 Power Up+ (effect is coded in 0037_ChakraScript.cs)
+
+>SA 1030 Reflect-Null
+Command EvenImmobilized
+[code=Condition] IsTheCaster [/code]
+[code=IsReflectNull] true [/code]
+
+>SA 1031 Reflectx2+
+Ability WhenBattleScriptEnd EvenImmobilized
+[code=Condition] IsSpellReflected [/code]
+[code=HPDamage] 2 * HPDamage [/code]
+DisableSA 31
+
+>SA 1032 Overload+ (effect is coded in SA 44, Focus)
+
+>SA 1033 Concentrate+
+Ability WhenCalcDamage EvenImmobilized
+[code=Condition] ScriptId == 9 || ScriptId == 10 || ScriptId == 11 || ScriptId == 13 || ScriptId == 16 || ScriptId == 85 || ScriptId == 118 [/code]
+[code=DamageModifierCount] DamageModifierCount + 1 [/code]
+
+Permanent 
+[code=MPCostFactor] HasSA(1034) ? MPCostFactor : (HasSA(34) ? MPCostFactor + (MPCostFactor / 4) : MPCostFactor + (MPCostFactor / 2)) [/code]
+DisableSA 33
+
+>SA 1034 Half MP+
+Permanent 
+[code=MPCostFactor] HasSA(1033) ? MPCostFactor : (HasSA(33) ? MPCostFactor - (MPCostFactor / 4) : MPCostFactor - (MPCostFactor / 2)) [/code]
+DisableSA 34
+
+>SA 1035 High Tide+
+Ability AsTarget WhenBattleScriptStart EvenImmobilized
+[code=TranceIncrease] TargetSpirit [/code]
+
+Ability AsTarget WhenEffectDone EvenImmobilized
+[code=Condition] CheckAnyStatus(TargetCurrentStatus, BattleStatus_Trance) [/code]
+[code=TargetPermanentStatus] CombineStatuses(TargetPermanentStatus, BattleStatus_Regen) [/code]
+
+Ability WhenEffectDone EvenImmobilized
+[code=Condition] (CasterTrance <= ((300 - CasterLevel) / CasterSpirit * 10)) [/code]
+[code=CasterPermanentStatus] RemoveStatuses(CasterPermanentStatus, BattleStatus_Regen) [/code]
+[code=CasterCurrentStatus] RemoveStatuses(CasterCurrentStatus, BattleStatus_Regen) [/code]
+DisableSA 35
+
+>SA 1036 Counter+
+Ability AsTarget
+[code=Condition] CommandId < BattleCommandId_BoundaryCheck && CasterIsPlayer != TargetIsPlayer && (AbilityCategory & 8) != 0 && (2 * TargetSpirit) > GetRandom(0, 100) && !TargetHasSA(239) [/code]
+[code=Counter] 176 [/code]
+DisableSA 1036 36 1054 54 1056 56
+
+>SA 1037 Cover+
+Command
+[code=Condition] !IsTargeted && IsAllyOfTarget && CommandId == BattleCommandId_EnemyAtk && (AbilityCategory & 8) != 0 && IsSingleTarget && !CheckAnyStatus(CurrentStatus, BattleStatus_Heat) && PropertyByName('StatusProperty CustomStatus21 CanCover') == 1 [/code]
+[code=TryCover] !CheckAnyStatus(TargetCurrentStatus, BattleStatus_Death, BattleStatus_Petrify) && TargetHP < TargetMaxHP / 2 [/code]
+
+>SA 1038 Protect Girls+
+Command
+[code=Condition] !IsTargeted && IsAllyOfTarget && CommandId == BattleCommandId_EnemyAtk && (AbilityCategory & 8) != 0 && IsSingleTarget && !CheckAnyStatus(CurrentStatus, BattleStatus_Heat) && PropertyByName('StatusProperty CustomStatus21 CanCover') == 1 [/code]
+[code=TryCover] !CheckAnyStatus(TargetCurrentStatus, BattleStatus_Death, BattleStatus_Petrify) && (TargetPlayerCategory & CharacterCategory_Female) != 0 [/code]
+
+>SA 1039 Super Guard+
+Ability AsTarget WhenCalcDamage EvenImmobilized
+[code=Condition] (ScriptId == 9 || ScriptId == 10 || ScriptId == 11 || ScriptId == 13 || ScriptId == 16) && CheckAnyStatus(TargetCurrentStatus, BattleStatus_Defend) [/code]
+[code=Attack] Attack - ((25 * Attack) / 100) [/code]
+
+>SA 1040 Body Temp+
+StatusInit ResistStatus Freeze ResistStatus Heat
+
+>SA 1041 Alert+ (coded in TranceSeekAPI.cs)
+BattleStart [code=BackAttack] 0 [/code]
+
+>SA 1042 Presence+
+BattleStart [code=Preemptive] 144 [/code]
+
+>SA 1043 Level Up+
+BattleResult 
+[code=BonusExp] (Level < GetPartyMemberLevel(0) || Level < GetPartyMemberLevel(1) || Level < GetPartyMemberLevel(2) || Level < GetPartyMemberLevel(3)) ? BonusExp * 2 : (BonusExp + BonusExp / 2) [/code]
+
+>SA 1044 Ability Up+
+BattleResult [code=BonusAP] 3 * BonusAP [/code]
+
+>SA 1045 Millionaire+
+BattleResult WhenRewardAll 
+[code=BonusGil] BonusGil + (3 * BonusGil) / 4 [/code]
+
+>SA 1046 Flee-Gil+
+BattleResult WhenBattleEnd
+[code=Condition] IsFleeByLuck [/code]
+[code=BonusGil] FleeGil [/code]
+
+>SA 1047 Guardian Mog+
+BattleResult WhenBattleEnd 
+[code=Status] 0 [/code]
+[code=PlayerHP] MaxHP [/code]
+[code=PlayerMP] MaxMP [/code]
+
+>SA 1048 Insomniac+
+StatusInit ResistStatus Sleep
+
+>SA 1049 Antibody+
+StatusInit ResistStatus Poison ResistStatus Venom
+
+>SA 1050 Bright Eyes+
+StatusInit ResistStatus Blind
+
+>SA 1051 Loudmouth+
+StatusInit ResistStatus Silence
+
+>SA 1052 (effect is coded in TranceSeekAPI.cs)
+
+>SA 1053 Jelly+
+StatusInit ResistStatus Petrify ResistStatus GradualPetrify
+
+>SA 1054 Return Magic+
+Ability AsTarget
+[code=Condition] CasterIsPlayer != TargetIsPlayer && (HPDamage != 0 || (EffectFlags & BattleCalcFlags_DirectHP) != 0) [/code]
+[code=TargetMP] Min(TargetMaxMP, TargetMP + MPCost) [/code]
+DisableSA 36 54 56 1034 1054 1056
+
+>SA 1055 Absorb MP
+Ability EvenImmobilized
+[code=Condition] CasterIsPlayer != TargetIsPlayer [/code]
+[code=CasterMP] Min(CasterMaxMP, CasterMP + (MPCost / 8)) [/code]
+
+>SA 1056 Auto-Potion+
+Ability AsTarget
+[code=Condition] CommandId < BattleCommandId_BoundaryCheck && CasterIsPlayer != TargetIsPlayer && CheckAnyStatus(TargetCurrentStatus, BattleStatus_Poison | BattleStatus_Venom) && GetItemCount(243) != 0 && !CheckAnyStatus(TargetCurrentStatus, BattleStatus_Heat) && !CheckAnyStatus(TargetPermanentStatus, BattleStatus_Poison) [/code]
+[code=AutoItem] 243 [/code]
+DisableSA 36 54 56 1056
+
+Ability AsTarget
+[code=Condition] CommandId < BattleCommandId_BoundaryCheck && CasterIsPlayer != TargetIsPlayer && CheckAnyStatus(TargetCurrentStatus, BattleStatus_Blind) && GetItemCount(244) != 0 && !CheckAnyStatus(TargetCurrentStatus, BattleStatus_Heat) && !CheckAnyStatus(TargetPermanentStatus, BattleStatus_Blind) [/code]
+[code=AutoItem] 244 [/code]
+DisableSA 36 54 56 1056
+
+Ability AsTarget
+[code=Condition] CommandId < BattleCommandId_BoundaryCheck && CasterIsPlayer != TargetIsPlayer && CheckAnyStatus(TargetCurrentStatus, BattleStatus_Silence) && GetItemCount(241) != 0 && !CheckAnyStatus(TargetCurrentStatus, BattleStatus_Heat) && !CheckAnyStatus(TargetPermanentStatus, BattleStatus_Silence) [/code]
+[code=AutoItem] 241 [/code]
+DisableSA 36 54 56 1056
+
+Ability AsTarget
+[code=Condition] CommandId < BattleCommandId_BoundaryCheck && CasterIsPlayer != TargetIsPlayer && CheckAnyStatus(TargetCurrentStatus, BattleStatus_GradualPetrify) && GetItemCount(242) != 0 && !CheckAnyStatus(TargetCurrentStatus, BattleStatus_Heat) && !CheckAnyStatus(TargetPermanentStatus, BattleStatus_GradualPetrify) [/code]
+[code=AutoItem] 242 [/code]
+DisableSA 36 54 56 1056
+
+Ability AsTarget
+[code=Condition] CommandId < BattleCommandId_BoundaryCheck && CasterIsPlayer != TargetIsPlayer && CheckAnyStatus(TargetCurrentStatus, BattleStatus_Zombie) && GetItemCount(245) != 0 && !CheckAnyStatus(TargetCurrentStatus, BattleStatus_Heat) && !CheckAnyStatus(TargetPermanentStatus, BattleStatus_Zombie) [/code]
+[code=AutoItem] 245 [/code]
+DisableSA 36 54 56 1056
+
+Ability AsTarget
+[code=Condition] CommandId < BattleCommandId_BoundaryCheck && CasterIsPlayer != TargetIsPlayer && CheckAnyStatus(TargetCurrentStatus, BattleStatus_Virus) && GetItemCount(246) != 0 && !CheckAnyStatus(TargetCurrentStatus, BattleStatus_Heat) && !CheckAnyStatus(TargetPermanentStatus, BattleStatus_Virus) [/code]
+[code=AutoItem] 246 [/code]
+DisableSA 36 54 56 1056
+
+Ability AsTarget
+[code=Condition] CommandId < BattleCommandId_BoundaryCheck && CasterIsPlayer != TargetIsPlayer && CheckAnyStatus(TargetCurrentStatus, BattleStatus_Trouble) && GetItemCount(248) != 0 && !CheckAnyStatus(TargetCurrentStatus, BattleStatus_Heat) && !CheckAnyStatus(TargetPermanentStatus, BattleStatus_Trouble) [/code]
+[code=AutoItem] 248 [/code]
+DisableSA 36 54 56 1056
+
+>SA 1057 Locomotion+
+StatusInit ResistStatus Slow ResistStatus Stop
+
+>SA 1058 Clear Headed+
+StatusInit ResistStatus Confuse
+
+>SA 1059 Boost+
+Command EvenImmobilized
+[code=Condition] IsTheCaster [/code]
+[code=IsShortSummon] false [/code]
+
+Ability WhenCalcDamage EvenImmobilized
+[code=CasterMaxDamageLimit] 99999 [/code]
+
+>SA 1060 Odin’s Sword+
+Ability WhenBattleScriptEnd EvenImmobilized
+[code=Condition] ScriptId == 87 && (EffectFlags & (BattleCalcFlags_Miss | BattleCalcFlags_Guard)) != 0 [/code]
+[code=EffectFlags] EffectFlags & 65470 [/code]
+[code=EffectTargetFlags] EffectTargetFlags | CalcFlag_HpAlteration [/code]
+[code=HPDamage] (IsShortSummon ? 0.666667 : 1.0) * (GetRandom(CasterMagic, CasterMagic + (CasterLevel + CasterMagic) / 8 + 1) * Max(1, 100 + Power - GetItemCount(RegularItem_Ore) - TargetMagicDefence)) [/code]
+
+>SA 1061 Mug+ (effect is coded in 0058_StealScript.cs)
+
+>SA 1062 Lupin+
+Ability AsTarget
+[code=Condition] CommandId < BattleCommandId_BoundaryCheck && CasterIsPlayer != TargetIsPlayer && CasterStealableItemCount > 0 && !CheckAnyStatus(TargetCurrentStatus, BattleStatus_Heat) [/code]
+[code=Counter] 177 [/code]
+
+>SA 1100 Doctor+
+Ability WhenCalcDamage EvenImmobilized
+[code=Condition] (ScriptId == 10 || ScriptId == 37 || ScriptId == 69) [/code]
+[code=DamageModifierCount] DamageModifierCount + 1 [/code]
+
+>SA 1101 Witchcraft+
+Ability WhenHitRateSetup EvenImmobilized
+[code=HitRate] HitRate + 25 [/code]
+[code=Evade] Evade / 2 [/code]
+
+>SA 1102 Archmage+ (effect is coded in TranceSeekAPI.cs)
+
+>SA 1103 SOS Protect+ (effect is coded in TranceSeekAPI.cs)
+
+>SA 1104 SOS Shell+ (effect is coded in TranceSeekAPI.cs)
+
+>SA 1105 SOS Regen+ (effect is coded in TranceSeekAPI.cs)
+
+>SA 1106 SOS Haste+ (effect is coded in TranceSeekAPI.cs)
+
+>SA 1107 Inner Peace+
+StatusInit ResistStatus Berserk
+
+>SA 1108 Mystic Veil+
+Ability AsTarget WhenBattleScriptEnd EvenImmobilized
+[code=Condition] TargetMP > (TargetMaxMP / 50) && (ScriptId == 9 || ScriptId == 11 || ScriptId == 15 || ScriptId == 16 || ScriptId == 17 || ScriptId == 18 || ScriptId == 20 || ScriptId == 23 || ScriptId == 31 || ScriptId == 63) [/code]
+[code=HPDamage] HPDamage - (10 * HPDamage) / 100 [/code]
+[code=TargetMP] Max(0, TargetMP - (TargetMaxMP / 100)) [/code]
+
+>SA 1109 Instinct+ (effect is coded in TranceSeekAPI.cs)
+
+>SA 1110 Proliferation+ (effect is coded in TranceSeekAPI.cs)
+
+>SA 1111 Pasteurized+
+StatusInit ResistStatus Virus
+
+>SA 1112 United+
+StatusInit ResistStatus Trouble
+
+>SA 1113 Abundance+
+StatusInit ResistStatus Mini
+
+>SA 1114 Purity+
+StatusInit ResistStatus Zombie
+
+>SA 1115 Soul Drain+ (effect is coded in TranceSeekAPI.cs)
+
+>SA 1116 Ethereal Steps+ (effect is coded in TranceSeekAPI.cs)
+
+>SA 1117 EX Mode+ (effect is coded in TranceSeekAPI.cs)
+
+>SA 1118 Flawless (effect is coded in TranceSeekAPI.cs)
+
+>SA 1119 Agreement (effect is coded in TranceSeekAPI.cs)
+
+>SA 1120 Ignorance+
+BattleResult 
+[code=BonusExp] 0 [/code]
+[code=BonusAP] 0 [/code]
+
+>SA 1121 Hole Pocket+
+BattleResult WhenRewardAll
+[code=BonusGil] 0 [/code]
+
+>SA 1122 Eye of the Dragon+ (effect is coded in TranceSeekAPI.cs)
+
+>SA 1123 Assistance+ (effect is coded in TranceSeekAPI.cs)
+
+>SA 1124 Persistance+ (effect is coded in different sources...)
+
+>SA 1125 Glass Canon+
+Permanent 
+[code=MaxHP] MaxHP - MaxHP / 2 [/code]
+[code=Strength] Strength - Strength / 2 [/code]
+[code=Defence] Defence - Defence / 2 [/code]
+[code=MaxMP] MaxMP + MaxMP / 2 [/code]
+[code=Magic] Magic + Magic / 2 [/code]
+[code=MagicDefence] MagicDefence + MagicDefence / 2 [/code]
+
+>SA 1126 Propagation+ (effect is coded in TranceSeekAPI.cs)
+
+>SA 1127 Invigorating+ (effect is coded in TranceSeekAPI.cs)
+
+>SA 1128 Strategist+ (effect is coded in TranceSeekAPI.cs)
+
+>SA 1129 Rejuvenate+ (effect is coded in RegenStatusScript.cs)
+
+>SA 1130 Harmony+ (effect is coded in RegenStatusScript.cs)
+
+>SA 1131 Altruistic+ (effect is coded in TranceSeekAPI.cs)
+
+>SA 1132 Anastrophe+ (effect is coded in TranceSeekAPI.cs)
+
+>SA 1133 SOS Reflect+ (effect is coded in TranceSeekAPI.cs)
+
+>SA 1134 SOS Vanish+ (effect is coded in TranceSeekAPI.cs)
+
+>SA 1135 Unperturbed+
+StatusInit ResistStatus CustomStatus1 ResistStatus CustomStatus2 ResistStatus CustomStatus3 ResistStatus CustomStatus4
+
+>SA 1200 Knavery+ (effect is coded in TranceSeekAPI.cs)
+
+>SA 1201 Gorilla+ (effect is coded in TranceSeekAPI.cs)
+
+>SA 1202 Ghost Hand+ (effect is coded in TranceSeekAPI.cs)
+
+>SA 1203 Flexible+ (effect is coded in TranceSeekAPI.cs)
+
+>SA 1204 Transcendent+ (effect is coded in 0044_FocusScript.cs)
+
+>SA 1205 Wizard+ (effect is coded in TranceSeekAPI.cs)
+
+>SA 1206 Insatiable+ (effect is coded in 0044_FocusScript.cs)
+
+>SA 1207 Bobbin+ (effect is coded in TranceSeekAPI.cs)
+
+>SA 1208 Divine guidance+ (effect is coded in TranceSeekAPI.cs)
+
+>SA 1209 Divine punishment+
+Ability WhenHitRateSetup EvenImmobilized
+[code=Condition] (ScriptId == 85 || ScriptId == 86 || ScriptId == 87) [/code]
+[code=HitRate] 255 [/code]
+[code=Evade] 0 [/code]
+
+>SA 1210 Gemologist+ (effect is coded here => Garnet Passive (Gems))
+
+>SA 1211 Auto Gem+ (effect is coded in TranceSeekAPI.cs)
+
+>SA 1212 Protector+ (effect is coded in OverloadOnBattleInitScript.cs)
+
+>SA 1213 Duelist+ (effect is coded in OverloadOnBattleInitScript.cs)
+
+>SA 1214 Enchanted blade+ (effect is coded in OverloadOnBattleInitScript.cs)
+
+>SA 1215 Steadfast+ (effect is coded in OverloadOnBattleInitScript.cs)
+Permanent 
+[code=Defence] Defence + (Evade / 10) [/code]
+[code=MagicDefence] MagicDefence + (MagicEvade / 10) [/code]
+[code=Evade] 0 [/code]
+[code=MagicEvade] 0 [/code]
+
+>SA 1216 Sky Attack+ (effect is coded in Spear Scripts)
+
+>SA 1217 Skydive+ (effect is coded in Spear Scripts)
+
+>SA 1218 Nastrond+ (effect is coded in DragonStatusScript.cs)
+
+>SA 1219 Embrace+ (effect is coded in DragonStatusScript.cs)
+
+>SA 1220 Appetite+ (effect is coded in 0065_EatScript.cs)
+
+>SA 1221 Gourmandise+ (effect is coded in 0065_EatScript.cs)
+
+>SA 1222 Sharpening+ (effect is coded in BaseWeaponScript.cs)
+
+>SA 1223 Voracious+ (effect is coded in 0065_EatScript.cs + 0208_DigestScript.cs)
+
+>SA 1224 Come here!+ (effect is coded in Moug Mechanic)
+
+>SA 1225 Bodyguard+ (effect is coded in TranceSeekAPI.cs)
+
+>SA 1226 Synergy+
+Ability WhenCalcDamage EvenImmobilized
+[code=DamageModifierCount] DamageModifierCount + 1 [/code]
+
+>SA 1227 Harmony+ (effect is coded in 0065_EatScript.cs + 0208_DigestScript.cs)
+
+>SA 1228 Assassin+ (effect is coded in TranceSeekAPI.cs)
+
+>SA 1229 Lethality+ (effect is coded in TranceSeekAPI.cs)
+
+>SA 1230 Venefic+ (effect is coded in TranceSeekAPI.cs)
+
+>SA 1231 Ferocity+ (effect is coded in DefendStatusScript.cs)
+
+>SA 1232 Expiation+ (effect is coded in RedemptionStatusScript + TranceSeekAPI.cs)
+
+>SA 1233 Amnesty+ (effect is coded in TranceSeekAPI.cs)
+
+>SA 1234 Dominance+ (effect is coded in TranceSeekAPI.cs)
+
+>SA 1235 Fencing+ (effect is coded in TranceSeekAPI.cs)
+
+>SA 1236 Enraged+ (effect is coded in OverloadDamageModifierScript.cs)
+
+>SA 1237 Maximum infusion+ (effect is coded in TranceSeekAPI.cs)
+
+>SA 1238 Crisis level+ (effect is coded in OverloadDamageModifierScript.cs)
+
+>SA 1239 Unleashed+
+Ability AsTarget
+[code=Condition] CommandId < BattleCommandId_BoundaryCheck && CasterIsPlayer != TargetIsPlayer && (TargetHasSA(1036) ? 2 * TargetSpirit : TargetSpirit) > GetRandom(0, 100) && TargetHasSA(36) [/code]
+[code=Counter] 176 [/code]
+DisableSA 1239 239 1054 54 1056 56
+
+>SA 1240 Offering+ (effect is coded in TranceSeekAPI.cs)
+
+>SA 1241 Dark side+ (effect is coded in OverloadDamageModifierScript.cs)
+
+>SA 1242 Lucifer+ (effect is coded in TranceSeekAPI.cs)
+
+>SA 1243 Prince of the shadows+ (effect is coded in AbilityFeatures.txt)
+
+>SA 1244 Mecano+ (effect is coded in OverloadOnBattleScriptStartScript.cs)
+
+>SA 1245 Training+
+Ability WhenCalcDamage EvenImmobilized
+[code=Condition] CommandId == 1021 [/code]
+[code=DamageModifierCount] DamageModifierCount + 1 [/code]
+
+>SA 1246 Emergency plan+ (effect is coded in AbilityFeatures.txt)
+
+>SA 1247 Genius+ (effect is coded in AbilityFeatures.txt + Memoria.Scripts.dll)
+
+>SA 1248 Econome+ (effect is coded in OverloadOnBattleScriptStartScript.cs)
+
+>SA 1249 Assistance+ (effect is coded in TranceSeekAPI.cs)
+
+>SA 1250 Geologist+
+Ability WhenCalcDamage EvenImmobilized
+[code=Condition] ScriptId == 74 [/code]
+[code=DamageModifierCount] DamageModifierCount + 1 [/code]
+
+>SA 1251 Artificer+ (effect is coded in Memoria.Scripts.dll)
+
+>SA 1252 I'm all set!+ (effect is coded in OverloadOnBattleInitScript.cs)
+
+>SA 1253 Take that!+ (effect is coded in TranceSeekAPI.cs)
+
+>SA 1254 In top form!+ (effect is coded in OverloadOnBattleScriptStartScript.cs)
+
+>SA 1255 Gyahaha!+ (effect is coded in Memoria.Scripts.dll)
+
+>SA 1256 Metronome+ (effect is coded in 0164_TranceSeekSpecial.cs)
+
+>SA 1257 Mania+ (effect is coded in TranceSeekAPI.cs)
+
+>SA 1258 Reward+ (effect is coded in TranceSeekAPI.cs)
+
+>SA 1259 Mog Kiss+ (effect is coded in TranceSeekAPI.cs)
+
+_______________________________________________________________________________________________
+
+
+>SA 2013 Bird Killer++
+Ability WhenCalcDamage EvenImmobilized
+[code=Condition] AbilityId == BattleAbilityId_Attack && (TargetCategory & 128) != 0 && CasterIsPlayer != TargetIsPlayer && (CasterWeaponId >= 26 && CasterWeaponId <= 30 || CasterWeaponId == 1237) [/code]
+[code=DamageModifierCount] DamageModifierCount + 1 [/code]
+
+>SA 2014 Bug Killer++
+Ability WhenCalcDamage EvenImmobilized
+[code=Condition] AbilityId == BattleAbilityId_Attack && (TargetCategory & 64) != 0 && CasterIsPlayer != TargetIsPlayer && (CasterWeaponId >= 26 && CasterWeaponId <= 30 || CasterWeaponId == 1237) [/code]
+[code=DamageModifierCount] DamageModifierCount + 1 [/code]
+
+>SA 2015 Giant Killer++
+Ability WhenCalcDamage EvenImmobilized
+[code=Condition] AbilityId == BattleAbilityId_Attack && (TargetCategory & 32) != 0 && CasterIsPlayer != TargetIsPlayer && (CasterWeaponId >= 26 && CasterWeaponId <= 30 || CasterWeaponId == 1237) [/code]
+[code=DamageModifierCount] DamageModifierCount + 1 [/code]
+
+>SA 2016 Undead Killer++
+Ability WhenCalcDamage EvenImmobilized
+[code=Condition] AbilityId == BattleAbilityId_Attack && (TargetCategory & 16) != 0 && CasterIsPlayer != TargetIsPlayer && (CasterWeaponId >= 26 && CasterWeaponId <= 30 || CasterWeaponId == 1237) [/code]
+[code=DamageModifierCount] DamageModifierCount + 1 [/code]
+
+>SA 2017 Dragon Killer++
+Ability WhenCalcDamage EvenImmobilized
+[code=Condition] AbilityId == BattleAbilityId_Attack && (TargetCategory & 8) != 0 && CasterIsPlayer != TargetIsPlayer && (CasterWeaponId >= 26 && CasterWeaponId <= 30 || CasterWeaponId == 1237) [/code]
+[code=DamageModifierCount] DamageModifierCount + 1 [/code]
+
+>SA 2018 Devil Killer++
+Ability WhenCalcDamage EvenImmobilized
+[code=Condition] AbilityId == BattleAbilityId_Attack && (TargetCategory & 4) != 0 && CasterIsPlayer != TargetIsPlayer && (CasterWeaponId >= 26 && CasterWeaponId <= 30 || CasterWeaponId == 1237) [/code]
+[code=DamageModifierCount] DamageModifierCount + 1 [/code]
+
+>SA 2019 Beast Killer++
+Ability WhenCalcDamage EvenImmobilized
+[code=Condition] AbilityId == BattleAbilityId_Attack && (TargetCategory & 2) != 0 && CasterIsPlayer != TargetIsPlayer && (CasterWeaponId >= 26 && CasterWeaponId <= 30 || CasterWeaponId == 1237) [/code]
+[code=DamageModifierCount] DamageModifierCount + 1 [/code]
+
+>SA 2020 Man Eater++
+Ability WhenCalcDamage EvenImmobilized
+[code=Condition] AbilityId == BattleAbilityId_Attack && (TargetCategory & 1) != 0 && CasterIsPlayer != TargetIsPlayer && (CasterWeaponId >= 26 && CasterWeaponId <= 30 || CasterWeaponId == 1237) [/code]
+[code=DamageModifierCount] DamageModifierCount + 1 [/code]
