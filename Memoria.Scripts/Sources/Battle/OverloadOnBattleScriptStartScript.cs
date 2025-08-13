@@ -466,6 +466,9 @@ namespace Memoria.Scripts.Battle
                 );
             }
 
+            if (v.Caster.Weapon == (RegularItem)1163 && (v.Command.Id == BattleCommandId.BlackMagic || v.Command.Id == BattleCommandId.DoubleBlackMagic || v.Command.Id == TranceSeekBattleCommand.Witchcraft))
+                StealScript.ClassicSteal(v, false);
+
             if (v.Caster.PlayerIndex == (CharacterId)14)
             {
                 CharacterPresetId presetId = v.Caster.Player.PresetId;

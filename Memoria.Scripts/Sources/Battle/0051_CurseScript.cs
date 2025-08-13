@@ -1,5 +1,6 @@
 using Memoria.Data;
 using Memoria.Prime;
+using System.Collections.Generic;
 using System;﻿
 
 namespace Memoria.Scripts.Battle
@@ -27,43 +28,22 @@ namespace Memoria.Scripts.Battle
                 TranceSeekAPI.MagicAccuracy(_v);
                 _v.Target.PenaltyShellHitRate();
                 _v.PenaltyCommandDividedHitRate();
-                foreach (BattleStatusId statusId in (_v.Target.Data.stat.cur & (BattleStatusConst.ContiCount & BattleStatusConst.AnyNegative)).ToStatusList())
+                TranceSeekAPI.AlterStatusDuration(_v, _v.Target.Data.stat.cur & (BattleStatusConst.ContiCount & BattleStatusConst.AnyNegative));
+
+                if (_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill)) 
                 {
-                    BattleStatusDataEntry statusData = FF9StateSystem.Battle.FF9Battle.status_data[statusId];
-                    _v.Target.Data.stat.conti[statusId] += (Int16)((statusData.ContiCnt * (400 + _v.Caster.Will * 2 - _v.Target.Will)) * _v.Target.Data.stat.duration_factor[statusId]);
-                }
-                if (_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill)) // !!!TODO!!! Need to improve
-                {
-                    if (_v.Target.IsUnderAnyStatus(BattleStatus.Poison))
+                    List<BattleStatus> statuschoosen = new List<BattleStatus>{ BattleStatus.Poison, BattleStatus.Venom, BattleStatus.Blind,
+                        BattleStatus.Trouble, BattleStatus.Zombie, TranceSeekStatus.SilenceEasyKill };
+
+                    foreach (BattleStatus status in statuschoosen)
                     {
-                        _v.Target.RemoveStatus(BattleStatus.Poison);
-                        _v.Command.AbilityStatus |= BattleStatus.Poison;
+                        if (_v.Target.IsUnderAnyStatus(status))
+                        {
+                            _v.Target.RemoveStatus(status);
+                            _v.Command.AbilityStatus |= status;
+                        }
                     }
-                    if (_v.Target.IsUnderAnyStatus(BattleStatus.Blind))
-                    {
-                        _v.Target.RemoveStatus(BattleStatus.Blind);
-                        _v.Command.AbilityStatus |= BattleStatus.Blind;
-                    }
-                    if (_v.Target.IsUnderAnyStatus(BattleStatus.Trouble))
-                    {
-                        _v.Target.RemoveStatus(BattleStatus.Trouble);
-                        _v.Command.AbilityStatus |= BattleStatus.Trouble;
-                    }
-                    if (_v.Target.IsUnderAnyStatus(BattleStatus.Venom))
-                    {
-                        _v.Target.RemoveStatus(BattleStatus.Venom);
-                        _v.Command.AbilityStatus |= BattleStatus.Venom;
-                    }
-                    if (_v.Target.IsUnderAnyStatus(BattleStatus.Zombie))
-                    {
-                        _v.Target.RemoveStatus(BattleStatus.Zombie);
-                        _v.Command.AbilityStatus |= BattleStatus.Zombie;
-                    }
-                    if (_v.Target.IsUnderAnyStatus(TranceSeekStatus.SilenceEasyKill))
-                    {
-                        _v.Target.RemoveStatus(TranceSeekStatus.SilenceEasyKill);
-                        _v.Command.AbilityStatus |= TranceSeekStatus.SilenceEasyKill;
-                    }
+
                     TranceSeekAPI.TryAlterCommandStatuses(_v);
                 }
                 if (_v.Command.AbilityId == BattleAbilityId.NoMercy2)

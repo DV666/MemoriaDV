@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Memoria.Scripts</RootNamespace>
-    <AssemblyName>Memoria.Scripts</AssemblyName>
+    <AssemblyName>Memoria.Scripts.TranceSeek</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile>
@@ -482,13 +482,18 @@
       <Name>Assembly-CSharp</Name>
       <Private>False</Private>
     </ProjectReference>
+    <ProjectReference Include="..\Memoria.Prime\Memoria.Prime.csproj">
+      <Project>{110f557e-abff-44c5-886a-c7c7f0614558}</Project>
+      <Name>Memoria.Prime</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Sources\Battle\AbilityFeaturesTSBackup.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>"$(SolutionDir)\References\pdb2mdb.exe" "$(TargetPath)"</PostBuildEvent>
+    <PostBuildEvent>"$(SolutionDir)\References\pdb2mdb.exe" "$(TargetPath)"
+"C:\Users\Robin\Documents\Hades Workshop\DLLInjectionRapide.bat"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

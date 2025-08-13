@@ -26,11 +26,6 @@ namespace Memoria.Scripts.Battle
                 return;
             }
 
-            if (_v.Command.Id == BattleCommandId.SysLastPhoenix)
-            {
-                FF9StateSystem.Common.FF9.GetPlayer(CharacterId.Eiko).equip.Accessory = RegularItem.NoItem;
-            }
-
             if (_v.Caster.PlayerIndex == CharacterId.Quina && (_v.Command.AbilityId == BattleAbilityId.AutoLife || _v.Command.AbilityId == (BattleAbilityId)1526))
             {
                 if (_v.Target.CurrentHp == _v.Target.MaximumHp)
@@ -91,18 +86,30 @@ namespace Memoria.Scripts.Battle
             }
             else
             {
-                _v.Target.HpDamage = (Int32)(_v.Target.MaximumHp * (_v.Target.Will + _v.Command.Power) / 100);
+                if (_v.Command.AbilityId == BattleAbilityId.Phoenix || _v.Command.AbilityId == BattleAbilityId.RebirthFlame)
+                {
+                    _v.Target.HpDamage = (Int32)((_v.Target.MaximumHp * (ff9item.FF9Item_GetCount(RegularItem.PhoenixPinion)) / 100));
+                    _v.Target.HpDamage /= !_v.Caster.HasSupportAbilityByIndex(SupportAbility.Boost) ? 4 : 1;
+
+                    if (_v.Command.IsShortSummon)
+                        _v.Target.HpDamage = _v.Target.HpDamage / 2;
+
+                    _v.Target.HpDamage = Math.Max(1, _v.Target.HpDamage);
+                }
+                else
+                {
+                    _v.Target.HpDamage = (Int32)(_v.Target.MaximumHp * (_v.Target.Will + _v.Command.Power) / 100);
+                    if (_v.Command.IsManyTarget)
+                    {
+                        if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1126))
+                            _v.Target.HpDamage = (_v.Target.HpDamage * 3) / 4;
+                        else
+                            _v.Target.HpDamage /= 2;
+                    }
+                }
 
                 if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)100)) // Medecin
                     _v.Target.HpDamage += _v.Caster.HpDamage / (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1100) ? 2 : 4);
-
-                if (_v.Command.IsManyTarget)
-                {
-                    if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1126))
-                        _v.Target.HpDamage = (_v.Target.HpDamage * 3) / 4;
-                    else
-                        _v.Target.HpDamage /= 2;
-                }
             }
             TranceSeekAPI.TryRemoveAbilityStatuses(_v);
         }

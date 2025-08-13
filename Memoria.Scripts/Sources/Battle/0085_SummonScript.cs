@@ -1,6 +1,7 @@
 using System;
 using FF9;
 using Memoria.Data;
+using static SiliconStudio.Social.ResponseData;
 
 namespace Memoria.Scripts.Battle
 {
@@ -39,10 +40,6 @@ namespace Memoria.Scripts.Battle
                         _v.Target.TryRemoveStatuses(_v.Command.AbilityStatus);
                         _v.Target.AlterStatus(TranceSeekStatus.MentalUp);
                     }
-                    else
-                    {
-                        _v.Context.AttackPower += _v.Caster.Level;
-                    }
                     break;
                 }
                 case BattleAbilityId.Ifrit:
@@ -55,10 +52,6 @@ namespace Memoria.Scripts.Battle
                         _v.Command.AbilityCategory -= 16; // Remove Magical effect to prevent Vanish to disappear.
                         _v.Target.TryRemoveStatuses(_v.Command.AbilityStatus);
                         _v.Target.AlterStatus(TranceSeekStatus.ArmorUp);
-                    }
-                    else
-                    {
-                        _v.Context.AttackPower += _v.Caster.Level;
                     }
                     break;
                 }
@@ -73,9 +66,27 @@ namespace Memoria.Scripts.Battle
                         _v.Target.TryRemoveStatuses(_v.Command.AbilityStatus);
                         _v.Target.AlterStatus(TranceSeekStatus.MagicUp);
                     }
-                    else
+                    break;
+                }
+                case BattleAbilityId.Odin:
+                case BattleAbilityId.Zantetsuken:
+                case (BattleAbilityId)1533:
+                {
+                    if (_v.Target.IsPlayer)
                     {
-                        _v.Context.AttackPower += _v.Caster.Level;
+                        _v.Command.AbilityCategory -= 16; // Remove Magical effect to prevent Vanish to dissapear.
+                        btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.PowerUp, parameters: "+2");
+                    }
+                    else if (!_v.Caster.HasSupportAbilityByIndex(SupportAbility.OdinSword))
+                    {
+                        _v.Context.HitRate += (Int16)(ff9item.FF9Item_GetCount(RegularItem.Ore) >> 1);
+                        if (TranceSeekAPI.CheckUnsafetyOrGuard(_v))
+                        {
+                            TranceSeekAPI.MagicAccuracy(_v);                     
+                            if (TranceSeekAPI.TryMagicHit(_v))
+                                TranceSeekAPI.TryAlterCommandStatuses(_v);
+                        }
+                        return;
                     }
                     break;
                 }
@@ -90,10 +101,6 @@ namespace Memoria.Scripts.Battle
                         _v.Target.TryRemoveStatuses(_v.Command.AbilityStatus);
                         _v.Target.AlterStatus(BattleStatus.Regen);
                     }
-                    else
-                    {
-                        _v.Context.AttackPower += _v.Caster.Level;
-                    }
                     break;
                 }
                 case BattleAbilityId.Bahamut:
@@ -104,13 +111,9 @@ namespace Memoria.Scripts.Battle
                     if (_v.Target.IsPlayer)
                     {
                         _v.Command.AbilityCategory -= 16; // Remove Magical effect to prevent Vanish to disappear.
-                        _v.Target.TryRemoveStatuses(_v.Command.AbilityStatus);
                         _v.Target.Flags = CalcFlag.MpDamageOrHeal;
-                        _v.Target.MpDamage = _v.Caster.Magic + Comn.random16() % (1 + (_v.Caster.Level + _v.Caster.Magic) / 4);
-                    }
-                    else
-                    {
-                        _v.Context.AttackPower += _v.Caster.Level;
+                        _v.Target.MpDamage = (_v.Caster.Magic + Comn.random16() % (1 + (_v.Caster.Level + _v.Caster.Magic) / 2)) / 3;
+                        _v.Target.AlterStatus(BattleStatus.Float);
                     }
                     break;
                 }
@@ -124,10 +127,7 @@ namespace Memoria.Scripts.Battle
                         _v.Command.AbilityCategory -= 16; // Remove Magical effect to prevent Vanish to disappear.
                         _v.Target.TryRemoveStatuses(_v.Command.AbilityStatus);
                         _v.Target.AlterStatus(TranceSeekStatus.PowerUp | TranceSeekStatus.MagicUp | TranceSeekStatus.ArmorUp | TranceSeekStatus.MentalUp);
-                    }
-                    else
-                    {
-                        _v.Context.AttackPower += _v.Caster.Level;
+                        _v.Target.AlterStatus(TranceSeekStatus.PowerUp | TranceSeekStatus.MagicUp | TranceSeekStatus.ArmorUp | TranceSeekStatus.MentalUp);
                     }
                     break;
                 }
@@ -139,18 +139,23 @@ namespace Memoria.Scripts.Battle
                 case (BattleAbilityId)1579:
                 case (BattleAbilityId)1580:
                 case (BattleAbilityId)1581:
-                {  
-                    byte will = _v.Caster.Will; // TODO - To improve ? Move in Memoria.ini
-                    if (ff9item.FF9Item_GetCount(RegularItem.Ruby) > 0)
-                    {
-                        _v.Caster.Will = (byte)(_v.Caster.Will + _v.Caster.Will * ff9item.FF9Item_GetCount(RegularItem.Ruby) / 100L);
-                    }
-                    if (!_v.Command.IsShortSummon && _v.Command.Id == BattleCommandId.SummonEiko)
-                    {
-                        _v.Caster.Will = (byte)(_v.Caster.Will * 2);
-                    }
+                {
+                    int BonusFormula = (400 + _v.Caster.Will * 3);
                     TranceSeekAPI.TryAlterCommandStatuses(_v);
-                    _v.Caster.Will = will;
+
+                    if (_v.Command.IsShortSummon)
+                    {
+                        if (_v.Caster.HasSupportAbilityByIndex(SupportAbility.Boost))
+                            return;
+
+                        BonusFormula = BonusFormula / 3;
+                        TranceSeekAPI.AlterStatusDuration(_v, _v.Command.AbilityStatus, BonusFormula, false);
+                    }
+                    else if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Boost_Boosted))
+                        TranceSeekAPI.AlterStatusDuration(_v, _v.Command.AbilityStatus, BonusFormula, true);
+                    else if (_v.Caster.HasSupportAbilityByIndex(SupportAbility.Boost))
+                        TranceSeekAPI.AlterStatusDuration(_v, _v.Command.AbilityStatus, BonusFormula / 3, true);
+
                     return;
                 }
                 case BattleAbilityId.Fenrir1:
@@ -158,18 +163,13 @@ namespace Memoria.Scripts.Battle
                 case (BattleAbilityId)1576:
                 case (BattleAbilityId)1577:
                 {
-                    _v.Context.AttackPower += _v.Caster.Level;
                     _v.Context.HitRate += ((ff9item.FF9Item_GetCount(RegularItem.Sapphire) + 1)) / 2;
                     break;
                 }
-                case BattleAbilityId.Madeen:
-                case (BattleAbilityId)1583:
-                    _v.Context.AttackPower += _v.Caster.Level;
-                    break;
             }
-            if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)208) && _v.Target.IsPlayer)
+            if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Divine_guidance) && _v.Target.IsPlayer)
             {
-                if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1208))
+                if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Divine_guidance_Boosted))
                 {
                     _v.CalcHpMagicRecovery();
                     _v.Target.HpDamage /= 3;
@@ -177,6 +177,9 @@ namespace Memoria.Scripts.Battle
             }
             else if (TranceSeekAPI.CanAttackMagic(_v))
             {
+                int factor = _v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Boost_Boosted) ? 1 : (_v.Caster.HasSupportAbilityByIndex(SupportAbility.Boost) ? 2 : 6);
+                _v.Context.AttackPower += _v.Caster.Level / factor;
+
                 _v.CalcHpDamage();
 
                 // TODO - Create a new function for that ? Make it for MagicScript like for example ?                

@@ -151,7 +151,8 @@ namespace Memoria.Scripts.Battle
 
                     ushort TargetId = v.Caster.Id;
                     StateMoug[Eiko.Data] = 1;
-                    List<BattleAbilityId> MougAAList = new List<BattleAbilityId>();
+                    List<BattleAbilityId> ClassicMougAAList = new List<BattleAbilityId>();
+                    List<BattleAbilityId> SuperMougAAList = new List<BattleAbilityId>();
                     foreach (BattleAbilityId abilId in CharacterCommands.Commands[(BattleCommandId)1049].EnumerateAbilities()) // CMD Kupo (not used for Eiko)
                     {
                         Boolean AddAA = true;
@@ -265,12 +266,6 @@ namespace Memoria.Scripts.Battle
                                 }
                                 break;
                             }
-                            case (BattleAbilityId)2014: // Moga Shield
-                            {
-                                if (Eiko.Level < 60)
-                                    AddAA = false;
-                                break;
-                            }
                             case (BattleAbilityId)2013: // Moga Regen
                             {
                                 if (Eiko.Level < 70)
@@ -280,6 +275,28 @@ namespace Memoria.Scripts.Battle
                                     Boolean StatusToApply = false;
                                     foreach (BattleUnit unit in BattleState.EnumerateUnits())
                                         if (unit.IsPlayer && unit.IsTargetable && !unit.IsUnderAnyStatus(BattleStatus.Death | BattleStatus.Petrify | BattleStatus.Jump | BattleStatus.Regen))
+                                            StatusToApply = true;
+
+                                    if (!StatusToApply)
+                                        AddAA = false;
+                                }
+                                break;
+                            }
+                            case (BattleAbilityId)2014: // Moga Shield
+                            {
+                                if (Eiko.Level < 60)
+                                    AddAA = false;
+                                break;
+                            }
+                            case (BattleAbilityId)2015: // Moga Mirror
+                            {
+                                if (Eiko.Level < 80)
+                                    AddAA = false;
+                                else
+                                {
+                                    Boolean StatusToApply = false;
+                                    foreach (BattleUnit unit in BattleState.EnumerateUnits())
+                                        if (unit.IsPlayer && unit.IsTargetable && !unit.IsUnderAnyStatus(BattleStatus.Death | BattleStatus.Petrify | BattleStatus.Jump | BattleStatus.Vanish))
                                             StatusToApply = true;
 
                                     if (!StatusToApply)
@@ -303,22 +320,6 @@ namespace Memoria.Scripts.Battle
                                 }
                                 break;
                             }
-                            case (BattleAbilityId)2015: // Moga Mirror
-                            {
-                                if (Eiko.Level < 80)
-                                    AddAA = false;
-                                else
-                                {
-                                    Boolean StatusToApply = false;
-                                    foreach (BattleUnit unit in BattleState.EnumerateUnits())
-                                        if (unit.IsPlayer && unit.IsTargetable && !unit.IsUnderAnyStatus(BattleStatus.Death | BattleStatus.Petrify | BattleStatus.Jump | BattleStatus.Vanish))
-                                            StatusToApply = true;
-
-                                    if (!StatusToApply)
-                                        AddAA = false;
-                                }
-                                break;
-                            }
                             case (BattleAbilityId)2018: // Moga Support
                             {
                                 if (Eiko.Level < 85)
@@ -335,34 +336,33 @@ namespace Memoria.Scripts.Battle
                                 }
                                 break;
                             }
-                            case (BattleAbilityId)2016: // Moga AutoLife
-                            {
-                                if (Eiko.Level < 90)
-                                    AddAA = false;
-                                else
-                                {
-                                    Boolean StatusToApply = false;
-                                    foreach (BattleUnit unit in BattleState.EnumerateUnits())
-                                        if (unit.IsPlayer && unit.IsTargetable && !unit.IsUnderAnyStatus(BattleStatus.Death | BattleStatus.Petrify | BattleStatus.Jump | BattleStatus.AutoLife))
-                                            StatusToApply = true;
-
-                                    if (!StatusToApply)
-                                        AddAA = false;
-                                }
-                                break;
-                            }
-                            case (BattleAbilityId)2019: // Mouga Homing
-                            {
-                                if (Eiko.Level < 99)
-                                    AddAA = false;
-                                break;
-                            }
                         }
                         if (AddAA)
-                            MougAAList.Add(abilId);
-                    }
+                        {
+                            if ((int)abilId <= 2010)
+                                ClassicMougAAList.Add(abilId);
+                            else
+                                SuperMougAAList.Add(abilId);
+                        }
 
-                    BattleAbilityId MougAAChoosen = MougAAList[GameRandom.Next16() % MougAAList.Count];
+                    }                    
+
+                    BattleAbilityId MougAAChoosen = ClassicMougAAList[GameRandom.Next16() % ClassicMougAAList.Count]; // Classic Mog spell
+                    if (GameRandom.Next16() % 100 < 20)
+                        MougAAChoosen = SuperMougAAList[GameRandom.Next16() % SuperMougAAList.Count];
+                    if (GameRandom.Next16() % 100 < 5 && Eiko.Level >= 90) // Moga Autolife spell
+                    {
+                        Boolean StatusToApply = false;
+                        foreach (BattleUnit unit in BattleState.EnumerateUnits())
+                            if (unit.IsPlayer && unit.IsTargetable && !unit.IsUnderAnyStatus(BattleStatus.Death | BattleStatus.Petrify | BattleStatus.Jump | BattleStatus.AutoLife))
+                                StatusToApply = true;
+
+                        if (!StatusToApply)
+                            MougAAChoosen = TranceSeekBattleAbility.MogAutoLife2;
+                    }
+                    if (GameRandom.Next16() % 100 == 0 && Eiko.Level >= 99) // MougaHoming
+                        MougAAChoosen = TranceSeekBattleAbility.MougaHoming;
+
                     TargetType TargetAA = FF9StateSystem.Battle.FF9Battle.aa_data[MougAAChoosen].Info.Target;
                     Boolean TargetDefaultAlly = FF9StateSystem.Battle.FF9Battle.aa_data[MougAAChoosen].Info.DefaultAlly;
 

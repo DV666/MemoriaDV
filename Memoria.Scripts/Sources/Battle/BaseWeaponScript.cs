@@ -3,9 +3,6 @@ using Memoria.Data;
 using System.Collections.Generic;
 using System;
 using FF9;
-using Memoria.Prime;
-using static SiliconStudio.Social.ResponseData;
-using System.ComponentModel.Design;
 
 namespace Memoria.Scripts.Battle
 {
@@ -130,8 +127,6 @@ namespace Memoria.Scripts.Battle
                     if (_v.Caster.HasSupportAbility(SupportAbility1.AddStatus)) // SA Add Status (to handle specific case, like Elite Monsters). Can be improved ...?
                     {
                         BattleStatus WeaponStatus = _v.Caster.WeaponStatus;
-                        if (_v.Caster.Weapon == (RegularItem)1104 || _v.Caster.Weapon == (RegularItem)1154)
-                            WeaponStatus |= TranceSeekStatus.ArmorBreak;
 
                         if (((WeaponStatus & BattleStatus.Death) != 0 && !_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill)) || (WeaponStatus & BattleStatus.Death) == 0) // Don't force Death status.
                         {

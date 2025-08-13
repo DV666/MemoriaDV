@@ -376,7 +376,7 @@ namespace Memoria.Scripts.Battle
 
         public static void ViviFocus(BattleCalculator v)
         {
-            if (v.Command.Id != BattleCommandId.BlackMagic && v.Command.Id != BattleCommandId.BlackMagic && v.Command.Id != BattleCommandId.MagicSword && v.Command.Id != TranceSeekBattleCommand.Witchcraft)
+            if (v.Command.Id != BattleCommandId.BlackMagic && v.Command.Id != BattleCommandId.DoubleBlackMagic && v.Command.Id != BattleCommandId.MagicSword && v.Command.Id != TranceSeekBattleCommand.Witchcraft)
                 return;
 
             if (ViviPassive[v.Caster.Data][2] == 0)
@@ -1236,6 +1236,22 @@ namespace Memoria.Scripts.Battle
                     }
                     break;
                 }
+            }
+        }
+
+        public static void AlterStatusDuration(this BattleCalculator v, BattleStatus targetstatus, int NewFormula = 0, Boolean Add = true)
+        {
+            int Formula = 400 + v.Caster.Will * 2 - v.Target.Will;
+            if (Formula != 0)
+                Formula = NewFormula;
+
+            foreach (BattleStatusId statusId in targetstatus.ToStatusList())
+            {
+                BattleStatusDataEntry statusData = FF9StateSystem.Battle.FF9Battle.status_data[statusId];
+                if (Add)
+                    v.Target.Data.stat.conti[statusId] += (Int16)((statusData.ContiCnt * Formula) * v.Target.Data.stat.duration_factor[statusId]);
+                else
+                    v.Target.Data.stat.conti[statusId] -= (Int16)((statusData.ContiCnt * Formula) * v.Target.Data.stat.duration_factor[statusId]);
             }
         }
 

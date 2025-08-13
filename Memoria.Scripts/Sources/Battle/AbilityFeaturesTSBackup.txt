@@ -547,12 +547,6 @@
 #####################################################################################################
 
 >SA Global+
-Permanent [code=Condition] WeaponId == 1237 [/code] [code=ActivateSA] 19 [/code]
-Permanent [code=Condition] WeaponId == 1237 [/code] [code=HiddenSA] 19 [/code]
-Permanent [code=Condition] WeaponShape != 4 [/code] [code=HiddenSA] 1019 [/code]
-Permanent [code=Condition] WeaponId == 12370 [/code] [code=ActivateSA] 14 [/code]
-Permanent [code=Condition] WeaponId == 12370 [/code] [code=ActivateSA] 1014 [/code]
-Permanent [code=Condition] WeaponShape != 4 [/code] [code=HiddenSA] 1014 [/code]
 Permanent [code=Condition] CharacterIndex == CharacterId_Garnet [/code] [code=PlayerPermanentStatus] IsGarnetDepressed ? BattleStatus_Silence : 0 [/code]
 StatusInit [code=Condition] CharacterIndex == CharacterId_Garnet && IsGarnetDepressed [/code] AutoStatus Silence
 StatusInit [code=Condition] HeadId == 1218 [/code] AutoStatus Zombie
@@ -588,6 +582,27 @@ StatusInit [code=Condition] AccessoryId == 1215 [/code] AutoStatus Haste
 StatusInit [code=Condition] AccessoryId == 1217 [/code] ResistStatus Silence
 StatusInit [code=Condition] AccessoryId == 1217 [/code] ResistStatus Mini
 StatusInit [code=Condition] AccessoryId == 1242 [/code] AutoStatus Shell
+
+############ SA Features from Items ############
+Permanent [code=Condition] WeaponShape != 4 [/code] [code=BanishSA] 2013 [/code]
+Permanent [code=Condition] WeaponShape != 4 [/code] [code=BanishSA] 2014 [/code]
+Permanent [code=Condition] WeaponShape != 4 [/code] [code=BanishSA] 2015 [/code]
+Permanent [code=Condition] WeaponShape != 4 [/code] [code=BanishSA] 2016 [/code]
+Permanent [code=Condition] WeaponShape != 4 [/code] [code=BanishSA] 2017 [/code]
+Permanent [code=Condition] WeaponShape != 4 [/code] [code=BanishSA] 2018 [/code]
+Permanent [code=Condition] WeaponShape != 4 [/code] [code=BanishSA] 2019 [/code]
+Permanent [code=Condition] WeaponShape != 4 [/code] [code=BanishSA] 2020 [/code]
+
+Permanent [code=Condition] AccessoryId == 93 [/code] [code=ActivateFreeSA] 7 [/code]
+Permanent [code=Condition] AccessoryId == 1155 [/code] [code=ActivateFreeSA] 62 [/code]
+Permanent [code=Condition] AccessoryId == 1213 [/code] [code=BanishSAByLvl] 3 ; -1 [/code]
+Permanent [code=Condition] AccessoryId == 1245 [/code] [code=ActivateFreeSA] 35 [/code]
+Permanent [code=Condition] AccessoryId == 1259 [/code] [code=ActivateFreeSA] 23 ; 61 ; 62 [/code]
+
+Permanent [code=Condition] HasSA(133) [/code] [code=BanishSAByLvl] 134 ; -1 [/code]
+Permanent [code=Condition] HasSA(134) [/code] [code=BanishSAByLvl] 133 ; -1 [/code]
+
+############ No Back/Prevent Attack for custom bosses ############
 
 BattleStart
 [code=Condition] (BattleId == 1 && BattleGroupIndex == 2) || (BattleId == 128 && BattleGroupIndex == 2) || (BattleId == 169 && BattleGroupIndex == 1) || (BattleId == 600 && BattleGroupIndex == 1) || (BattleId == 849 && BattleGroupIndex == 2) || (BattleId == 849 && BattleGroupIndex == 3) || (BattleId == 849 && BattleGroupIndex == 4) || (BattleId == 849 && BattleGroupIndex == 5) || (BattleId == 849 && BattleGroupIndex == 2) || (BattleId == 850 && BattleGroupIndex == 2) || (BattleId == 851 && BattleGroupIndex == 2) [/code]
@@ -725,16 +740,16 @@ Ability WhenHitRateSetup EvenImmobilized
 
 ##### Amarant - Throw Weapon #####
 Ability WhenHitRateSetup EvenImmobilized
-[code=Condition] AbilityId == BattleAbilityId_Attack && (CasterWeaponId == 1025 || CasterWeaponId == 1026 || CasterWeaponId == 1027) [/code]
+[code=Condition] AbilityId == BattleAbilityId_Attack && GetItemProperty(CasterWeaponId, 'Shape') == 63 [/code]
 [code=HitRate] HitRate + HitRate / 2 [/code]
 [code=Evade] Evade / 4 [/code]
 
 Ability WhenBattleScriptStart EvenImmobilized
-[code=Condition] AbilityId == BattleAbilityId_Attack && (CasterWeaponId == 1025 || CasterWeaponId == 1026 || CasterWeaponId == 1027) [/code]
+[code=Condition] AbilityId == BattleAbilityId_Attack && GetItemProperty(CasterWeaponId, 'Shape') == 63 [/code]
 [code=IsShortRanged] false [/code]
 
 Ability WhenCalcDamage EvenImmobilized
-[code=Condition] AbilityId == BattleAbilityId_Attack && (TargetCategory & EnemyCategory_Flight) != 0 && CasterIsPlayer != TargetIsPlayer && (CasterWeaponId == 1025 || CasterWeaponId == 1026 || CasterWeaponId == 1027) [/code]
+[code=Condition] AbilityId == BattleAbilityId_Attack && (TargetCategory & EnemyCategory_Flight) != 0 && CasterIsPlayer != TargetIsPlayer && GetItemProperty(CasterWeaponId, 'Shape') == 63 [/code]
 [code=DamageModifierCount] DamageModifierCount + 1 [/code]
 
 ############# Special Items #################
@@ -755,9 +770,9 @@ Ability WhenHitRateSetup EvenImmobilized
 [code=HitRate] 255 [/code]
 [code=Evade] 0 [/code]
 
-Ability AsTarget WhenHitRateSetup
-[code=Condition] CommandId < BattleCommandId_BoundaryCheck && CasterIsPlayer != TargetIsPlayer && (AbilityCategory & 8) != 0 && TargetAccessoryId == 1203 && GetRandom(0, 4) == 0 [/code]
-[code=Evade] 255 [/code]
+Ability WhenBattleScriptEnd
+[code=Condition] (CommandId == BattleCommandId_WhiteMagicGarnet || CommandId == BattleCommandId_WhiteMagicEiko || CommandId == BattleCommandId_DoubleWhiteMagic) && GetItemProperty(CasterWeaponId, 'Shape') == 7 && (EffectTargetFlags & CalcFlag_HpRecovery) != 0 [/code]
+[code=HPDamage] HPDamage / 2 [/code]
 
 BattleResult WhenRewardAll
 [code=Condition] AccessoryId == 1212 [/code]
@@ -780,9 +795,12 @@ BattleResult WhenRewardAll
 
 Permanent 
 [code=Condition] AccessoryId == 1250  [/code]
-[code=MaxHP] MaxHP - (MaxHP / 10) [/code]
-[code=MaxMP] MaxMP - (MaxMP / 10) [/code]
+[code=MaxHP] MaxHP - (MaxHP / 4) [/code]
+[code=MaxMP] MaxMP - (MaxMP / 4) [/code]
 
+Ability AsTarget WhenCalcDamage EvenImmobilized
+[code=Condition] TargetWristId == 1251 [/code]
+[code=DamageModifierCount] (AbilityElement == 0 && ScriptId != 17 && ScriptId != 118 && ScriptId != 119) ? DamageModifierCount + 2 : DamageModifierCount - 2 [/code]
 
 ############# Enemy #################
 >SA GlobalEnemy+
@@ -802,7 +820,6 @@ Command
 [code=BonusExp] 2 * BonusExp [/code]
 [code=BonusGil] BonusGil + (BonusGil / 2) [/code]
 [code=BattleBonusAP] BattleBonusAP * 2 [/code]
-
 _____________________________________________________________________________________________________
 
 >AA 66 Fenrir (swap to the wind version if Maiden's Prayer is equipped)
@@ -831,7 +848,7 @@ ________________________________________________________________________________
 
 #### Basic commands ###
 >CMD 1 Attack
-[code=Patch] CharacterIndex == CharacterId_Marcus && CheckAnyStatus(CurrentStatus, BattleStatus_Trance) ? 1028 : ((WeaponId == 59 || WeaponId == 71 || WeaponId == 72 || WeaponId == 73 || WeaponId == 1028 || WeaponId == 1029 || WeaponId == 1030 || WeaponId == 1031 ) ? (GetRandom(0, 3) != 0 ? ((WeaponId == 59 || WeaponId == 71 || WeaponId == 72 || WeaponId == 73) ? 1050 : 1051) : ((WeaponId == 59 || WeaponId == 71 || WeaponId == 72 || WeaponId == 73) ? 1051 : 1052)) : -1) [/code]
+[code=Patch] GetMemoriaDictionary(2000 + CharacterIndex, 0) > 0 ? (2000 + CharacterIndex) : (CharacterIndex == CharacterId_Marcus && CheckAnyStatus(CurrentStatus, BattleStatus_Trance) ? 1028 : ((WeaponId == 59 || WeaponId == 71 || WeaponId == 72 || WeaponId == 73 || WeaponId == 1028 || WeaponId == 1029 || WeaponId == 1030 || WeaponId == 1031 ) ? (GetRandom(0, 3) != 0 ? ((WeaponId == 59 || WeaponId == 71 || WeaponId == 72 || WeaponId == 73) ? 1050 : 1051) : ((WeaponId == 59 || WeaponId == 71 || WeaponId == 72 || WeaponId == 73) ? 1051 : 1052)) : -1)) [/code]
 
 >CMD 2 Steal
 [code=Patch] (((CharacterIndex == CharacterId_Blank && ScenarioCounter >= 11100 && Trance > 128) || PropertyByName('StatusProperty CustomStatus21 MasterofAlchemy') != 0)) ? 1020 : (HasSA(1247) ? 1037 : (HasSA(247) ? 1036 : 2)) [/code]
@@ -841,7 +858,7 @@ ________________________________________________________________________________
 [code=Patch] SerialNumber != 0 ? 1001 : 25 [/code]
 
 >AA 1001 Disable Bandit ! for early daggers
-[code=Disable] CasterWeaponId == RegularItem_Dagger || CasterWeaponId == RegularItem_MageMasher || CasterWeaponId == RegularItem_MythrilDagger [/code]
+[code=Disable] CasterWeaponId == RegularItem_Dagger || CasterWeaponId == RegularItem_MageMasher || CasterWeaponId == RegularItem_MythrilDagger || CasterWeaponId == 1153 || CasterWeaponId == 1155 || CasterWeaponId == 1158 [/code]
 
 #### Sentinel Steiner + Dual Amarant ####
 >CMD 4
@@ -860,6 +877,9 @@ ________________________________________________________________________________
 [code=Patch] (HasSA(205) || HasSA(1205)) ? 1032 : -1 [/code]
 
 #### SA AA for Dagga ####
+>AA 7
+[code=Patch] HasSA(1260) ? 1585 : (HasSA(260) ? 1584 : -1) [/code]
+
 >AA 49
 [code=Patch] (HasSA(208) || HasSA(1208)) ? 1529 : -1 [/code]
 
@@ -2217,7 +2237,7 @@ Permanent
 
 >SA 35 High Tide
 Ability AsTarget WhenBattleScriptStart EvenImmobilized
-[code=TranceIncrease] TargetSpirit [/code]
+[code=TranceIncrease] GetRandom((TargetSpirit / 2), TargetSpirit + 1) [/code]
 
 >SA 36 Counter
 Ability AsTarget
@@ -2581,6 +2601,11 @@ StatusInit InitialStatus Regen
 >SA 258 Reward (effect is coded in TranceSeekAPI.cs)
 
 >SA 259 Mog Kiss (effect is coded in TranceSeekAPI.cs)
+
+>SA 260 Scan Test
+
+
+>SA 1260 Scan Test+
 _______________________________________________________________________________________________
 
 >SA 1000 Bénédiction+  (effect is coded in TranceSeekAPI.cs)
@@ -2597,7 +2622,7 @@ StatusInit ResistStatus Doom ResistStatus GradualPetrify
 
 >SA 1004 Auto-Life+
 
->SA 1005 HP+10%
+>SA 1005 HP+5%+
 Permanent 
 [code=Condition] !HasSA(6) && !HasSA(1006) [/code]
 [code=MaxHP] MaxHP + MaxHP / 10 [/code]
@@ -2606,7 +2631,7 @@ Permanent
 [code=Condition] HasSA(6) && !HasSA(1006) [/code]
 [code=MaxHP] MaxHP + (MaxHP / 5) [/code]
 
->SA 1006 HP+20%
+>SA 1006 HP+10%+
 Permanent 
 [code=Condition] !HasSA(5) && !HasSA(1005) [/code]
 [code=MaxHP] MaxHP + MaxHP / 5 [/code]
@@ -2619,7 +2644,7 @@ Permanent
 [code=Condition] HasSA(1005) [/code]
 [code=MaxHP] MaxHP + (30 * MaxHP / 100) [/code]
 
->SA 1007 MP+10%
+>SA 1007 MP+5%+
 Permanent 
 [code=Condition] !HasSA(8) && !HasSA(1008) [/code]
 [code=MaxMP] MaxMP + MaxMP / 10 [/code]
@@ -2628,7 +2653,7 @@ Permanent
 [code=Condition] HasSA(8) && !HasSA(1008) [/code]
 [code=MaxMP] MaxMP + (MaxMP / 5) [/code]
 
->SA 1008 MP+20%
+>SA 1008 MP+10%+
 Permanent 
 [code=Condition] !HasSA(7) && !HasSA(1007) [/code]
 [code=MaxMP] MaxMP + MaxMP / 5 [/code]
@@ -2760,16 +2785,6 @@ DisableSA 34
 >SA 1035 High Tide+
 Ability AsTarget WhenBattleScriptStart EvenImmobilized
 [code=TranceIncrease] TargetSpirit [/code]
-
-Ability AsTarget WhenEffectDone EvenImmobilized
-[code=Condition] CheckAnyStatus(TargetCurrentStatus, BattleStatus_Trance) [/code]
-[code=TargetPermanentStatus] CombineStatuses(TargetPermanentStatus, BattleStatus_Regen) [/code]
-
-Ability WhenEffectDone EvenImmobilized
-[code=Condition] (CasterTrance <= ((300 - CasterLevel) / CasterSpirit * 10)) [/code]
-[code=CasterPermanentStatus] RemoveStatuses(CasterPermanentStatus, BattleStatus_Regen) [/code]
-[code=CasterCurrentStatus] RemoveStatuses(CasterCurrentStatus, BattleStatus_Regen) [/code]
-DisableSA 35
 
 >SA 1036 Counter+
 Ability AsTarget
