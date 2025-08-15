@@ -268,7 +268,8 @@ namespace Memoria.Scripts.Battle
             {
                 ZidanePassive[v.Caster.Data][9]++;
                 btl_stat.AlterStatus(v.Caster, TranceSeekStatusId.Special, parameters: "Flexible0");
-                if (ZidanePassive[v.Caster.Data][9] >= 4)
+                int FlexibleTurn = v.Caster.HasSupportAbilityByIndex((SupportAbility)1203) ? 2 : 4;
+                if (ZidanePassive[v.Caster.Data][9] >= FlexibleTurn)
                 {
                     ZidanePassive[v.Caster.Data][9] = 0;
                     if (btl_util.getSerialNumber(v.Caster.Data) == CharacterSerialNumber.ZIDANE_SWORD)

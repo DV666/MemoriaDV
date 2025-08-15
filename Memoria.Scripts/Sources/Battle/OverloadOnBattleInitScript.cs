@@ -18,7 +18,7 @@ namespace Memoria.Scripts.Battle
 
         public void OnBattleInit()
         {
-            // FF9StateSystem.EventState.gEventGlobal[1403] = 4; // Debug difficulty mode
+            // FF9StateSystem.EventState.gEventGlobal[1403] = 6; // Debug difficulty mode
 
             SB2_PATTERN sb2Pattern = FF9StateSystem.Battle.FF9Battle.btl_scene.PatAddr[FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum];
             KeyValuePair<Int32, Int32> BattleExID = new KeyValuePair<Int32, Int32>(FF9StateSystem.Battle.battleMapIndex, FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum);
@@ -329,7 +329,7 @@ namespace Memoria.Scripts.Battle
                                         unit.Magic = (byte)Math.Min(unit.Magic + 1, byte.MaxValue);
                                     }
                                 }
-                                else if (FF9StateSystem.EventState.gEventGlobal[1403] == 4) // Necron mode
+                                else if (FF9StateSystem.EventState.gEventGlobal[1403] == 4 || FF9StateSystem.EventState.gEventGlobal[1403] == 5) // Necron mode + Beatrix Mode
                                 {
                                     if (FF9StateSystem.EventState.ScenarioCounter > 2250) // After Zidane/Vivi/Steiner get together in Evil Forest
                                     {
@@ -345,8 +345,6 @@ namespace Memoria.Scripts.Battle
                                         unit.Strength = (byte)Math.Min(unit.Strength + 2, byte.MaxValue);
                                         unit.Magic = (byte)Math.Min(unit.Magic + 2, byte.MaxValue);
                                     }
-                                    battleEnemy.Data.bonus_exp /= 2;
-                                    battleEnemy.Data.bonus_gil /= 10;
                                 }
                                 MonsterMechanic[unit.Data][3] = 1;
                                 break;
@@ -372,7 +370,7 @@ namespace Memoria.Scripts.Battle
 
                                 }
                             }
-                            else if (FF9StateSystem.EventState.gEventGlobal[1403] == 4) // Necron mode
+                            else if (FF9StateSystem.EventState.gEventGlobal[1403] == 4 || FF9StateSystem.EventState.gEventGlobal[1403] == 5) // Necron mode + Beatrix Mode
                             {
                                 if (FF9StateSystem.EventState.ScenarioCounter > 2250) // After Zidane/Vivi/Steiner get together in Evil Forest
                                 {
@@ -388,14 +386,17 @@ namespace Memoria.Scripts.Battle
                                     unit.Strength = (byte)Math.Min(unit.Strength + 2, byte.MaxValue);
                                     unit.Magic = (byte)Math.Min(unit.Magic + 2, byte.MaxValue);
                                 }
-                                battleEnemy.Data.bonus_exp /= 2;
-                                battleEnemy.Data.bonus_gil /= 10;
                             }
                         }
                         if (FF9StateSystem.EventState.gEventGlobal[1403] == 1) // Vivi mode
                         {
                             battleEnemy.Data.bonus_exp += (battleEnemy.Data.bonus_exp / 4);
                             battleEnemy.Data.bonus_gil += (battleEnemy.Data.bonus_gil / 4);
+                        }
+                        else if (FF9StateSystem.EventState.gEventGlobal[1403] == 4) // Necron
+                        {
+                            battleEnemy.Data.bonus_exp /= 2;
+                            battleEnemy.Data.bonus_gil /= 10;
                         }
                     }
 

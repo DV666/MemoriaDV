@@ -281,10 +281,16 @@ namespace Memoria.DefaultScripts
                 return;
 
             BattleEnemy battleEnemy = BattleEnemy.Find(mob);
-            if (mob.Data.dms_geo_id == 92 && battleEnemy.StealableItems[3] != RegularItem.NoItem) // Gnoll
+            if (mob.Data.dms_geo_id == 92 && battleEnemy.StealableItems[3] == (RegularItem)1162) // Gnoll
                 battleEnemy.StealableItems[3] = (RegularItem)1161;
-            else if (mob.Data.dms_geo_id == 85 && battleEnemy.StealableItems[3] != RegularItem.NoItem) // Lamia
+            else if (mob.Data.dms_geo_id == 85 && battleEnemy.StealableItems[3] == (RegularItem)1158) // Lamia
                 battleEnemy.StealableItems[3] = (RegularItem)1159;
+            else if (mob.Data.dms_geo_id == 152 && battleEnemy.StealableItems[3] == (RegularItem)1152) // Goblin
+                battleEnemy.StealableItems[3] = (RegularItem)1037;
+            else if (mob.Data.dms_geo_id == 556 && battleEnemy.StealableItems[3] == RegularItem.Peridot) // Mistodon
+                battleEnemy.StealableItems[3] = (RegularItem)1041;
+            else if (mob.Data.dms_geo_id == 90 && battleEnemy.StealableItems[3] == RegularItem.Tent) // Griffin
+                battleEnemy.StealableItems[3] = (RegularItem)1039;
         }
     }
 }

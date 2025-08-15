@@ -27,6 +27,7 @@ namespace Memoria.Scripts.Battle
             TranceSeekAPI.PenaltyShellAttack(_v);
             TranceSeekAPI.BonusElement(_v);
             TranceSeekAPI.MagicAccuracy(_v);
+            int BonusTurbo = _v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Boost_Boosted) ? 3 : (_v.Caster.HasSupportAbilityByIndex(SupportAbility.Boost) ? 2 : 1);
             switch (_v.Command.AbilityId)
             {
                 case BattleAbilityId.Shiva:
@@ -37,8 +38,8 @@ namespace Memoria.Scripts.Battle
                     if (_v.Target.IsPlayer)
                     {
                         _v.Command.AbilityCategory -= 16; // Remove Magical effect to prevent Vanish to disappear.
-                        _v.Target.TryRemoveStatuses(_v.Command.AbilityStatus);
-                        _v.Target.AlterStatus(TranceSeekStatus.MentalUp);
+                        _v.Target.TryRemoveStatuses(_v.Command.AbilityStatus);              
+                        btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.MentalUp, parameters: $"+{BonusTurbo}");
                     }
                     break;
                 }
@@ -51,7 +52,7 @@ namespace Memoria.Scripts.Battle
                     {
                         _v.Command.AbilityCategory -= 16; // Remove Magical effect to prevent Vanish to disappear.
                         _v.Target.TryRemoveStatuses(_v.Command.AbilityStatus);
-                        _v.Target.AlterStatus(TranceSeekStatus.ArmorUp);
+                        btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.ArmorUp, parameters: $"+{BonusTurbo}");
                     }
                     break;
                 }
@@ -64,7 +65,7 @@ namespace Memoria.Scripts.Battle
                     {
                         _v.Command.AbilityCategory -= 16; // Remove Magical effect to prevent Vanish to disappear.
                         _v.Target.TryRemoveStatuses(_v.Command.AbilityStatus);
-                        _v.Target.AlterStatus(TranceSeekStatus.MagicUp);
+                        btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.MagicUp, parameters: $"+{BonusTurbo}");
                     }
                     break;
                 }
@@ -75,7 +76,7 @@ namespace Memoria.Scripts.Battle
                     if (_v.Target.IsPlayer)
                     {
                         _v.Command.AbilityCategory -= 16; // Remove Magical effect to prevent Vanish to dissapear.
-                        btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.PowerUp, parameters: "+2");
+                        btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.PowerUp, parameters: $"+{BonusTurbo + 2}");
                     }
                     else if (!_v.Caster.HasSupportAbilityByIndex(SupportAbility.OdinSword))
                     {
@@ -126,8 +127,10 @@ namespace Memoria.Scripts.Battle
                     {
                         _v.Command.AbilityCategory -= 16; // Remove Magical effect to prevent Vanish to disappear.
                         _v.Target.TryRemoveStatuses(_v.Command.AbilityStatus);
-                        _v.Target.AlterStatus(TranceSeekStatus.PowerUp | TranceSeekStatus.MagicUp | TranceSeekStatus.ArmorUp | TranceSeekStatus.MentalUp);
-                        _v.Target.AlterStatus(TranceSeekStatus.PowerUp | TranceSeekStatus.MagicUp | TranceSeekStatus.ArmorUp | TranceSeekStatus.MentalUp);
+                        btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.PowerUp, parameters: $"+{BonusTurbo}");
+                        btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.MagicUp, parameters: $"+{BonusTurbo}");
+                        btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.ArmorUp, parameters: $"+{BonusTurbo}");
+                        btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.MentalUp, parameters: $"+{BonusTurbo}");
                     }
                     break;
                 }
@@ -172,7 +175,7 @@ namespace Memoria.Scripts.Battle
                 if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Divine_guidance_Boosted))
                 {
                     _v.CalcHpMagicRecovery();
-                    _v.Target.HpDamage /= 3;
+                    _v.Target.HpDamage /= (4 - BonusTurbo);
                 }
             }
             else if (TranceSeekAPI.CanAttackMagic(_v))

@@ -798,8 +798,8 @@ namespace Memoria.Scripts.Battle
             if (v.Target.IsUnderAnyStatus(BattleStatus.Shell))
                 v.Context.Attack >>= 1;
 
-            if (v.Caster.IsUnderAnyStatus(BattleStatus.CustomStatus18)) // Silence Easy Kill - 10% magic attack malus for bosses with Silence.
-                v.Context.Attack = (9 * v.Context.Attack) / 10;
+            if (v.Caster.IsUnderAnyStatus(BattleStatus.CustomStatus18)) // Silence Easy Kill - 25% magic attack malus for bosses with Silence.
+                v.Context.DamageModifierCount--;
 
             Int32 ReduceWeaponDamage = 0;
             switch (v.Target.Weapon)
@@ -1527,7 +1527,7 @@ namespace Memoria.Scripts.Battle
             if (v.Target.HasSupportAbilityByIndex((SupportAbility)211) && (v.Target.Flags & CalcFlag.HpRecovery) == 0 && !v.Target.IsUnderAnyStatus(BattleStatus.Heat) && v.Target.CurrentHp < (v.Target.MaximumHp / (v.Target.HasSupportAbilityByIndex((SupportAbility)1211) ? 2 : 4)) && !v.Caster.IsPlayer) // SA Auto Gem
             {
                 List <RegularItem> GemList = new List<RegularItem>{ RegularItem.Garnet, RegularItem.Amethyst, RegularItem.Aquamarine, RegularItem.Diamond, RegularItem.Emerald, RegularItem.Moonstone,
-                    RegularItem.Ruby, RegularItem.Peridot, RegularItem.Sapphire, RegularItem.Opal, RegularItem.Topaz, RegularItem.LapisLazuli};
+                    RegularItem.Ruby, RegularItem.Peridot, RegularItem.Sapphire, RegularItem.Opal, RegularItem.Topaz, RegularItem.LapisLazuli, RegularItem.Ore};
 
                 List<BattleStatusId> statuschoosen = new List<BattleStatusId>();
 

@@ -31,9 +31,9 @@ namespace Memoria.Scripts.Battle
             BattleEnemyPrototype enemyPrototype = BattleEnemyPrototype.Find(_v.Target);
             Int32 blueMagicId = enemyPrototype.BlueMagicId;
             int PowerCMD = _v.Command.Power;
-            if (_v.Caster.Head == TranceSeekRegularItem.ChefHat)
+            if (_v.Caster.Head == (RegularItem)1249)
                 PowerCMD = _v.Command.AbilityId == BattleAbilityId.Eat ? 4 : (_v.Command.AbilityId == BattleAbilityId.Cook ? 2 : PowerCMD);
-            else if (_v.Caster.Head == TranceSeekRegularItem.StarredChefHat)
+            else if (_v.Caster.Head == (RegularItem)1258)
                 PowerCMD = _v.Command.AbilityId == BattleAbilityId.Eat ? 2 : (_v.Command.AbilityId == BattleAbilityId.Cook ? 1 : PowerCMD);
 
             if (_v.Caster.InTrance || _v.Caster.HasSupportAbilityByIndex((SupportAbility)220) || _v.Caster.HasSupportAbilityByIndex((SupportAbility)221))
@@ -119,7 +119,7 @@ namespace Memoria.Scripts.Battle
             }
             else
             {
-                if (_v.Target.CurrentHp <= _v.Target.MaximumHp / _v.Command.Power)
+                if (_v.Target.CurrentHp <= _v.Target.MaximumHp / PowerCMD)
                 {
                     Int32 BonusHealFork = 0;
                     switch (_v.Caster.Weapon)
@@ -140,30 +140,35 @@ namespace Memoria.Scripts.Battle
                             BonusHealFork += 100;
                             break;
                     }
-                    if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)223))
+                    if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)223)) // Voracious
                     {
-                        if (!FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1035, out Dictionary<Int32, Int32> dict))
-                        {
-                            dict = new Dictionary<Int32, Int32>();
-                            FF9StateSystem.EventState.gScriptDictionary.Add(1035, dict);
-                        }
                         Int32 HPDigest = (int)(_v.Caster.MaximumHp / (_v.Command.Power / 2));
                         Int32 MPDigest = (int)(_v.Caster.MaximumMp / (_v.Command.Power / 2));
-                        dict[0] = (int)Math.Min(dict[0] + HPDigest, _v.Caster.MaximumHp);
-                        dict[1] = (int)Math.Min(dict[1] + MPDigest, _v.Caster.MaximumMp);
+                        if (!FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1035, out Dictionary<Int32, Int32> VoraciousDict))
+                        {
+                            VoraciousDict = new Dictionary<Int32, Int32>();
+                            VoraciousDict[0] = (int)Math.Min(HPDigest, _v.Caster.MaximumHp);
+                            VoraciousDict[1] = (int)Math.Min(MPDigest, _v.Caster.MaximumMp);
+                            FF9StateSystem.EventState.gScriptDictionary.Add(1035, VoraciousDict);
+                        }
+                        else
+                        {
+                            VoraciousDict[0] = (int)Math.Min(VoraciousDict[0] + HPDigest, _v.Caster.MaximumHp);
+                            VoraciousDict[1] = (int)Math.Min(VoraciousDict[1] + MPDigest, _v.Caster.MaximumMp);
+                        }
                     }
                     else
                     {
                         _v.Caster.Flags |= (CalcFlag.HpAlteration | CalcFlag.HpRecovery | CalcFlag.MpAlteration | CalcFlag.MpRecovery);
                         if (blueMagicId == 0 || ff9abil.FF9Abil_IsMaster(_v.Caster.Player, blueMagicId))
                         {
-                            _v.Caster.HpDamage = (int)(_v.Caster.MaximumHp / (_v.Command.Power / 2));
-                            _v.Caster.MpDamage = (int)(_v.Caster.MaximumMp / (_v.Command.Power / 2));
+                            _v.Caster.HpDamage = (int)(_v.Caster.MaximumHp / (PowerCMD / 2));
+                            _v.Caster.MpDamage = (int)(_v.Caster.MaximumMp / (PowerCMD / 2));
                         }
                         else
                         {
-                            _v.Caster.HpDamage = (int)(_v.Caster.MaximumHp / _v.Command.Power);
-                            _v.Caster.MpDamage = (int)(_v.Caster.MaximumMp / _v.Command.Power);
+                            _v.Caster.HpDamage = (int)(_v.Caster.MaximumHp / PowerCMD);
+                            _v.Caster.MpDamage = (int)(_v.Caster.MaximumMp / PowerCMD);
                         }
                         _v.Caster.HpDamage += (_v.Caster.HpDamage * BonusHealFork) / 100;
                         _v.Caster.MpDamage += (_v.Caster.MpDamage * BonusHealFork) / 100;
@@ -188,10 +193,10 @@ namespace Memoria.Scripts.Battle
                 {
                     if (!_v.Caster.IsUnderAnyStatus(BattleStatus.Trance))
                     {
-                        if (_v.Target.CurrentHp <= _v.Target.MaximumHp / 4U)
+                        if (_v.Target.CurrentHp <= _v.Target.MaximumHp / PowerCMD)
                             UIManager.Battle.SetBattleFollowMessage(3, Localization.GetWithDefault("Eat25"));
                         else
-                            if (_v.Target.CurrentHp <= _v.Target.MaximumHp / 2U)
+                            if (_v.Target.CurrentHp <= _v.Target.MaximumHp / PowerCMD)
                                 UIManager.Battle.SetBattleFollowMessage(3, Localization.GetWithDefault("Eat50"));
                             else
                                 UiState.SetBattleFollowFormatMessage(BattleMesages.CannotEatStrong);
@@ -200,10 +205,10 @@ namespace Memoria.Scripts.Battle
                     {
                         if (!_v.Target.HasCategory(EnemyCategory.Humanoid) && blueMagicId != 0)
                         {
-                            if (_v.Target.CurrentHp <= _v.Target.MaximumHp / 4U)
+                            if (_v.Target.CurrentHp <= _v.Target.MaximumHp / PowerCMD)
                                 UIManager.Battle.SetBattleFollowMessage(3, Localization.GetWithDefault("Eat25"));
                             else
-                                if (_v.Target.CurrentHp <= _v.Target.MaximumHp / 2U)
+                                if (_v.Target.CurrentHp <= _v.Target.MaximumHp / PowerCMD)
                                     UIManager.Battle.SetBattleFollowMessage(3, Localization.GetWithDefault("Eat50"));
                                 else
                                     UiState.SetBattleFollowFormatMessage(BattleMesages.CannotEatStrong);
@@ -218,7 +223,13 @@ namespace Memoria.Scripts.Battle
             if (!_v.Target.CheckUnsafetyOrMiss() || !_v.Target.CanBeAttacked() || _v.Target.HasCategory(EnemyCategory.Humanoid))
                 return 0;
 
-            if (_v.Target.CurrentHp > _v.Target.MaximumHp / _v.Command.Power)
+            int PowerCMD = _v.Command.Power;
+            if (_v.Caster.Head == TranceSeekRegularItem.ChefHat)
+                PowerCMD = _v.Command.AbilityId == BattleAbilityId.Eat ? 4 : (_v.Command.AbilityId == BattleAbilityId.Cook ? 2 : PowerCMD);
+            else if (_v.Caster.Head == TranceSeekRegularItem.StarredChefHat)
+                PowerCMD = _v.Command.AbilityId == BattleAbilityId.Eat ? 2 : (_v.Command.AbilityId == BattleAbilityId.Cook ? 1 : PowerCMD);
+
+            if (_v.Target.CurrentHp > _v.Target.MaximumHp / PowerCMD)
                 return 0;
 
             BattleEnemyPrototype enemyPrototype = BattleEnemyPrototype.Find(_v.Target);
