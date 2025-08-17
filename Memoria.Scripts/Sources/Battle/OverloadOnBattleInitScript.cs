@@ -5,8 +5,11 @@ using FF9;
 using Memoria.Data;
 using Memoria.Database;
 using Memoria.DefaultScripts;
+using Memoria.Prime;
 using UnityEngine;
+using System.IO;
 using static Memoria.Scripts.Battle.TranceSeekAPI;
+using System.Reflection;
 
 namespace Memoria.Scripts.Battle
 {
@@ -15,6 +18,7 @@ namespace Memoria.Scripts.Battle
         public Boolean InitHUDMessageChild;
         public HUDMessageChild HUDToReset = null;
         public Int32 magiclampcooldown;
+        private const String StuffListedPath = "TranceSeek/StuffListed.txt";
 
         public void OnBattleInit()
         {
@@ -42,6 +46,9 @@ namespace Memoria.Scripts.Battle
                 int idAA = 1136 + i;
                 FF9StateSystem.Battle.FF9Battle.aa_data[(BattleAbilityId)idAA].MP = 0;
             }
+
+            if (Configuration.Hacks.StealingAlwaysWorks == 10)
+                WriteStuffInFile();
 
             foreach (BattleUnit PlayerUnit in BattleState.EnumerateUnits())
             {
@@ -457,6 +464,96 @@ namespace Memoria.Scripts.Battle
             ff9Battle.map.btlBGInfoPtr = bbginfo;
             battle.InitBattleMap();
             ff9Battle.map.btlBGPtr.SetActive(true);
+        }
+
+        public static void WriteStuffInFile()
+        {
+            if (!File.Exists(StuffListedPath))
+                File.WriteAllText(StuffListedPath, "");
+
+            String data = "";
+
+            var SATranceSeek = new Dictionary<int, string>();
+            var RegularItemTranceSeek = new Dictionary<int, string>();
+
+            var SAfields = typeof(TranceSeekSupportAbility)
+                .GetFields(BindingFlags.Public | BindingFlags.Static);
+
+            foreach (var SAfield in SAfields)
+            {
+                int value = (int)(SupportAbility)SAfield.GetValue(null);
+                SATranceSeek[value] = SAfield.Name;
+            }
+
+            var Itemfields = typeof(TranceSeekRegularItem)
+             .GetFields(BindingFlags.Public | BindingFlags.Static);
+
+            foreach (var itemfield in Itemfields)
+            {
+                int value = (int)(RegularItem)itemfield.GetValue(null);
+                RegularItemTranceSeek[value] = itemfield.Name;
+            }
+
+            foreach (BattleUnit PlayerUnit in BattleState.EnumerateUnits())
+            {
+                if (!PlayerUnit.IsPlayer)
+                    continue;
+
+                data += $"################  {PlayerUnit.Name}  ################";
+
+                data += $"\n⚔️ Stuff";
+                if (RegularItemTranceSeek.TryGetValue((int)PlayerUnit.Weapon, out string WeaponName))
+                    data += "\n └> 🗡️ Weapon = " + WeaponName;
+                else
+                    data += "\n └> 🗡️ Weapon = " + PlayerUnit.Weapon;
+
+                if (RegularItemTranceSeek.TryGetValue((int)PlayerUnit.Head, out string HeadName))
+                    data += "\n └> 🎩 Head = " + HeadName;
+                else
+                    data += "\n └> 🎩 Head = " + PlayerUnit.Head;
+
+                if (RegularItemTranceSeek.TryGetValue((int)PlayerUnit.Wrist, out string WristName))
+                    data += "\n └> 🔗 Wrist = " + WristName;
+                else
+                    data += "\n └> 🔗 Wrist = " + PlayerUnit.Wrist;
+
+                if (RegularItemTranceSeek.TryGetValue((int)PlayerUnit.Armor, out string ArmorName))
+                    data += "\n └> 🛡️ Armor = " + ArmorName;
+                else
+                    data += "\n └> 🛡️ Armor = " + PlayerUnit.Armor;
+
+                if (RegularItemTranceSeek.TryGetValue((int)PlayerUnit.Accessory, out string AccessoryName))
+                    data += "\n └> 💍 Accessory = " + AccessoryName;
+                else
+                    data += "\n └> 💍 Accessory = " + PlayerUnit.Accessory;
+
+                data += $"\n\n📊 Stats";
+                data += "\n └> ❤️ HP = " + PlayerUnit.CurrentHp + "/" + PlayerUnit.MaximumHp;
+                data += "\n └> 🔷 MP = " + PlayerUnit.CurrentMp + "/" + PlayerUnit.MaximumMp;
+                data += "\n └> 🏅 Level = " + PlayerUnit.Level;
+                data += "\n └> 🏹 Dexterity = " + PlayerUnit.Dexterity;
+                data += "\n └> 💪 Strength = " + PlayerUnit.Strength;
+                data += "\n └> ✨ Magic = " + PlayerUnit.Magic;
+                data += "\n └> 🧘 Will = " + PlayerUnit.Will;
+                data += "\n └> 🛡️ PhysicalDefence = " + PlayerUnit.PhysicalDefence;
+                data += "\n └> 🌀 PhysicalEvade = " + PlayerUnit.PhysicalEvade;
+                data += "\n └> 🧙 MagicDefence = " + PlayerUnit.MagicDefence;
+                data += "\n └> 💫 MagicEvade = " + PlayerUnit.MagicEvade;
+
+                if (PlayerUnit.Data.saExtended.Count > 0)
+                {
+                    data += $"\n\n💎 SA equipped";
+                    foreach (SupportAbility saequipped in PlayerUnit.Data.saExtended)
+                        if (SATranceSeek.TryGetValue((int)saequipped, out string abilityName))
+                            data += "\n └> " + abilityName;
+                        else
+                            data += "\n └> " + saequipped;
+                }
+
+                data += "\n\n";
+            }
+
+            File.WriteAllText(StuffListedPath, data);
         }
 
         public static Int32[,] BossBattleBonusHP = new Int32[,]

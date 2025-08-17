@@ -52,7 +52,7 @@ namespace Memoria.Scripts.Battle
             if (v.Context.DamageModifierCount >= 0)
                 modifier_factor += v.Context.DamageModifierCount * 0.25f;
             else if (v.Context.DamageModifierCount == -1)
-                modifier_factor -= v.Context.DamageModifierCount * 0.25f;
+                modifier_factor = 0.75f;
             else
                 modifier_factor /= -v.Context.DamageModifierCount;
             if (modifier_factor < 0)

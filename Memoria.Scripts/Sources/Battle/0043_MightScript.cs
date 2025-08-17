@@ -33,6 +33,8 @@ namespace Memoria.Scripts.Battle
                 btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.MagicUp, parameters: $"+{_v.Command.Power}");
                 _v.Target.AlterStatus(TranceSeekStatus.Redemption, _v.Caster);
                 _v.Target.AlterStatus(TranceSeekStatus.Redemption, _v.Caster);
+                if (_v.Target.HasSupportAbilityByIndex((SupportAbility)232)) // SA Expiation
+                    _v.Target.AlterStatus(TranceSeekStatus.Redemption, _v.Caster);
                 if (_v.Caster.IsUnderAnyStatus(BattleStatus.Trance))
                 {
                     BeatrixPassive[_v.Caster.Data][2] = 2;

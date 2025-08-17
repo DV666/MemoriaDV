@@ -80,10 +80,6 @@ namespace Memoria.Scripts.Battle
                         else
                             v.Context.Attack = UnityEngine.Random.Range(v.Caster.Strength / 2, v.Caster.Strength) + BeatrixPassive[v.Caster.Data][0] + baseDamage;
                     }
-                    else if (ff9item._FF9Item_Data[v.Caster.Weapon].shape == 56) // Axe
-                    {
-                        v.Context.Attack = Comn.random16() % v.Caster.Strength + BeatrixPassive[v.Caster.Data][0] + Comn.random16() % baseDamage;
-                    }
                     else
                     {
                         v.Context.Attack = Comn.random16() % v.Caster.Strength + BeatrixPassive[v.Caster.Data][0] + baseDamage;
@@ -1193,13 +1189,18 @@ namespace Memoria.Scripts.Battle
 
         public static void SpecialItems(this BattleCalculator v)
         {
+            if (ff9item._FF9Item_Data[v.Caster.Weapon].shape == 56 && v.Target.HpDamage > 0) // Axe
+            {
+                v.Target.HpDamage = UnityEngine.Random.Range(v.Target.HpDamage / 10, v.Target.HpDamage);
+            }
+
             switch (v.Target.Accessory)
             {
                 case TranceSeekRegularItem.EmergencySatchel:
                 {
                     Boolean TargetPreventStatus = v.Target.IsUnderAnyStatus(BattleStatusConst.PreventCounter | BattleStatus.Heat | BattleStatus.Zombie);
                     int PotionHeal = v.Target.HasSupportAbility(SupportAbility1.Chemist) ? 400 : 200;
-                    if (!TargetPreventStatus && v.Caster.IsPlayer != v.Target.IsPlayer && SpecialItemEffect[v.Target.Data][0] > 0 && (v.Target.MaximumHp - v.Target.CurrentHp - v.Target.HpDamage) > PotionHeal)
+                    if (!TargetPreventStatus && v.Caster.IsPlayer != v.Target.IsPlayer && SpecialItemEffect[v.Target.Data][0] > 0 && (v.Target.MaximumHp - v.Target.CurrentHp + v.Target.HpDamage) > PotionHeal)
                     {
                         btl_cmd.SetCounter(v.Target.Data, BattleCommandId.AutoPotion, (int)RegularItem.Potion, v.Target.Id);
                         SpecialItemEffect[v.Target.Data][0]--;
@@ -1289,26 +1290,45 @@ namespace Memoria.Scripts.Battle
                 List<BattleAbilityId> Counter_AA = new List<BattleAbilityId>{ BattleAbilityId.ThunderSlash, BattleAbilityId.StockBreak, BattleAbilityId.Climhazzard, BattleAbilityId.Shock,
                 BattleAbilityId.Protect, BattleAbilityId.Shell, BattleAbilityId.Cura, BattleAbilityId.Berserk, BattleAbilityId.Reflect, BattleAbilityId.Regen, BattleAbilityId.Holy};
 
+                int RedemptionStack = (int)v.Target.GetPropertyByName("StatusProperty CustomStatus12 Stack");
+               
                 for (Int32 i = 0; i < Counter_AA.Count; i++)
                 {
                     if (!ff9abil.FF9Abil_IsMaster(v.Target.Player, (int)Counter_AA[i]))
                     {
-                        Counter_AA.Remove(Counter_AA[i]);
+                        int MPCost = FF9StateSystem.Battle.FF9Battle.aa_data[Counter_AA[i]].MP;
+                        if (Counter_AA[i] == BattleAbilityId.ThunderSlash || Counter_AA[i] == BattleAbilityId.StockBreak || Counter_AA[i] == BattleAbilityId.Climhazzard || Counter_AA[i] == BattleAbilityId.Shock)
+                            MPCost = ((4 - RedemptionStack) * (FF9StateSystem.Battle.FF9Battle.aa_data[Counter_AA[i]].MP)) / 4;
+
+                        if (MPCost > v.Target.CurrentMp)
+                            Counter_AA.Remove(Counter_AA[i]);
+
+                        if (v.Target.IsUnderAnyStatus(BattleStatus.Reflect) && (Counter_AA[i] == BattleAbilityId.Protect || Counter_AA[i] == BattleAbilityId.Shell
+                            || Counter_AA[i] == BattleAbilityId.Cura || Counter_AA[i] == BattleAbilityId.Reflect || Counter_AA[i] == BattleAbilityId.Regen)) // [TODO] To improve, don't work as intended...
+                            Counter_AA.Remove(Counter_AA[i]);
                     }
                 }
 
-                BattleAbilityId Counter_AA_Selected = Counter_AA[GameRandom.Next16() % Counter_AA.Count];
-                if (Counter_AA_Selected == BattleAbilityId.Protect || Counter_AA_Selected == BattleAbilityId.Shell || Counter_AA_Selected == BattleAbilityId.Reflect || Counter_AA_Selected == BattleAbilityId.Cura || Counter_AA_Selected == BattleAbilityId.Regen)
+                if (Counter_AA.Count > 0)
                 {
-                    btl_cmd.SetCounter(v.Target, BattleCommandId.Counter, (Int32)Counter_AA_Selected, v.Target.Id);
+                    BattleAbilityId Counter_AA_Selected = Counter_AA[GameRandom.Next16() % Counter_AA.Count];
+                    if (Counter_AA_Selected == BattleAbilityId.Protect || Counter_AA_Selected == BattleAbilityId.Shell || Counter_AA_Selected == BattleAbilityId.Reflect || Counter_AA_Selected == BattleAbilityId.Cura || Counter_AA_Selected == BattleAbilityId.Regen)
+                    {
+                        btl_cmd.SetCounter(v.Target, BattleCommandId.Counter, (Int32)Counter_AA_Selected, v.Target.Id);
+                    }
+                    else
+                    {
+                        if (Counter_AA_Selected == BattleAbilityId.StockBreak || Counter_AA_Selected == BattleAbilityId.Climhazzard)
+                            btl_cmd.SetCounter(v.Target, BattleCommandId.Counter, (Int32)Counter_AA_Selected, 240);
+                        else
+                            btl_cmd.SetCounter(v.Target, BattleCommandId.Counter, (Int32)Counter_AA_Selected, v.Caster.Id);
+                    }
                 }
                 else
                 {
-                    if (Counter_AA_Selected == BattleAbilityId.StockBreak || Counter_AA_Selected == BattleAbilityId.Climhazzard)
-                        btl_cmd.SetCounter(v.Target, BattleCommandId.Counter, (Int32)Counter_AA_Selected, 240);
-                    else
-                        btl_cmd.SetCounter(v.Target, BattleCommandId.Counter, (Int32)Counter_AA_Selected, v.Caster.Id);
+                    btl_cmd.SetCounter(v.Target, BattleCommandId.Counter, (int)BattleAbilityId.Attack, v.Caster.Id);
                 }
+
             }
             if (v.Caster.HasSupportAbilityByIndex((SupportAbility)110) && !v.Command.IsManyTarget && v.Command.Id != BattleCommandId.Attack && v.Target.HpDamage > 0 && 
                 (v.Command.ScriptId == 9 || v.Command.ScriptId == 10 || v.Command.ScriptId == 17 || v.Command.ScriptId == 18 || v.Command.ScriptId == 116 || v.Command.ScriptId == 118
@@ -1511,9 +1531,19 @@ namespace Memoria.Scripts.Battle
                         continue;
 
                     if (HPAssistanceDamage > 0)
-                        unit.CurrentHp = Math.Max(unit.CurrentHp - (uint)HPAssistanceDamage, 0);
+                    {
+                        if (unit.CurrentHp - HPAssistanceDamage > 0)
+                            unit.CurrentHp = Math.Max(unit.CurrentHp - (uint)HPAssistanceDamage, 0);
+                        else
+                            unit.CurrentHp = 0;
+                    }
                     if (MPAssistanceDamage > 0)
-                        unit.CurrentMp = Math.Max(unit.CurrentMp - (uint)MPAssistanceDamage, 0);
+                    {
+                        if (unit.CurrentMp - HPAssistanceDamage > 0)
+                            unit.CurrentMp = Math.Max(unit.CurrentMp - (uint)HPAssistanceDamage, 0);
+                        else
+                            unit.CurrentMp = 0;
+                    }
                     btl2d.Btl2dStatReq(unit.Data, HPAssistanceDamage, MPAssistanceDamage);
                 }
             }

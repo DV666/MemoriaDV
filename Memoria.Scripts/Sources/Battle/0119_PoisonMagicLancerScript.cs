@@ -33,7 +33,7 @@ namespace Memoria.Scripts.Battle
                 {
                     _v.Target.Flags |= (CalcFlag.HpAlteration | CalcFlag.MpAlteration);
                     if (_v.Target.HasCategory(EnemyCategory.Humanoid))
-                        _v.Context.DamageModifierCount += 4;
+                        _v.Context.DamageModifierCount += 2;
                     if (_v.Target.IsZombie || _v.Context.IsAbsorb)
                         _v.Target.Flags = CalcFlag.HpDamageOrHeal;
                     _v.CalcHpDamage();

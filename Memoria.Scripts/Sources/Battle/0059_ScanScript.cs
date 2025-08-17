@@ -85,6 +85,7 @@ namespace Memoria.Scripts.Battle
             if (mob.IsUnderAnyStatus(BattleStatusConst.BattleEndFull))
                 return false;
 
+
             if (((Input.GetKey(KeyCode.Alpha2) || (UIManager.Input.GetKey(Control.LeftBumper) && UIManager.Input.GetKey(Control.Special))) && mob.Id == 16)
                 || ((Input.GetKey(KeyCode.Alpha3) || (UIManager.Input.GetKey(Control.LeftTrigger) && UIManager.Input.GetKey(Control.Special))) && mob.Id == 32)
                 || ((Input.GetKey(KeyCode.Alpha4) || (UIManager.Input.GetKey(Control.RightBumper) && UIManager.Input.GetKey(Control.Special))) && mob.Id == 64)

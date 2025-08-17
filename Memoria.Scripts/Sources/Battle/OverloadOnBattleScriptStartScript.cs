@@ -266,21 +266,27 @@ namespace Memoria.Scripts.Battle
             if (v.Caster.HasSupportAbilityByIndex((SupportAbility)203) && v.Caster.PlayerIndex == CharacterId.Zidane && ZidanePassive[v.Caster.Data][4] == 0
                 && v.Command.Id != BattleCommandId.Counter && v.Command.Id != BattleCommandId.RushAttack) // SA Flexible
             {
-                ZidanePassive[v.Caster.Data][9]++;
-                btl_stat.AlterStatus(v.Caster, TranceSeekStatusId.Special, parameters: "Flexible0");
-                int FlexibleTurn = v.Caster.HasSupportAbilityByIndex((SupportAbility)1203) ? 2 : 4;
-                if (ZidanePassive[v.Caster.Data][9] >= FlexibleTurn)
+                // Permanent [code=Condition] WeaponId == 1 || WeaponId == 2 || WeaponId == 3 || WeaponId == 1153 || WeaponId == 1155 || WeaponId == 1158 || WeaponId == 1161 || WeaponId == 1164 || WeaponId == 1167 [/code] [code=BanishSAByLvl] 203 ; -1 [/code]
+                List<RegularItem> BlackListedWeapon = new List<RegularItem>{ RegularItem.Dagger, RegularItem.MageMasher, RegularItem.MythrilDagger, (RegularItem)1153,
+                (RegularItem)1155, (RegularItem)1158, (RegularItem)1161, (RegularItem)1164, (RegularItem)1167 };
+                if (!BlackListedWeapon.Contains(v.Caster.Weapon))
                 {
-                    ZidanePassive[v.Caster.Data][9] = 0;
-                    if (btl_util.getSerialNumber(v.Caster.Data) == CharacterSerialNumber.ZIDANE_SWORD)
-                        BattleState.EnqueueCounter(v.Caster, BattleCommandId.RushAttack, (BattleAbilityId)1000, v.Caster.Id);
-                    else
-                        BattleState.EnqueueCounter(v.Caster, BattleCommandId.RushAttack, (BattleAbilityId)1001, v.Caster.Id);
+                    ZidanePassive[v.Caster.Data][9]++;
+                    btl_stat.AlterStatus(v.Caster, TranceSeekStatusId.Special, parameters: "Flexible0");
+                    int FlexibleTurn = v.Caster.HasSupportAbilityByIndex((SupportAbility)1203) ? 2 : 4;
+                    if (ZidanePassive[v.Caster.Data][9] >= FlexibleTurn)
+                    {
+                        ZidanePassive[v.Caster.Data][9] = 0;
+                        if (btl_util.getSerialNumber(v.Caster.Data) == CharacterSerialNumber.ZIDANE_SWORD)
+                            BattleState.EnqueueCounter(v.Caster, BattleCommandId.RushAttack, (BattleAbilityId)1000, v.Caster.Id);
+                        else
+                            BattleState.EnqueueCounter(v.Caster, BattleCommandId.RushAttack, (BattleAbilityId)1001, v.Caster.Id);
 
-                    if (v.Caster.HasSupportAbilityByIndex((SupportAbility)1203))
-                        btl_stat.AlterStatus(v.Caster, TranceSeekStatusId.Special, parameters: "Flexible2"); // SA Flexible+
-                    else
-                        btl_stat.AlterStatus(v.Caster, TranceSeekStatusId.Special, parameters: "Flexible1"); // SA Flexible
+                        if (v.Caster.HasSupportAbilityByIndex((SupportAbility)1203))
+                            btl_stat.AlterStatus(v.Caster, TranceSeekStatusId.Special, parameters: "Flexible2"); // SA Flexible+
+                        else
+                            btl_stat.AlterStatus(v.Caster, TranceSeekStatusId.Special, parameters: "Flexible1"); // SA Flexible
+                    }
                 }
             }
 
@@ -395,12 +401,12 @@ namespace Memoria.Scripts.Battle
                 }
             }
 
-            if (v.Caster.PlayerIndex == CharacterId.Beatrix || v.Target.PlayerIndex == CharacterId.Beatrix && v.Command.Data.info.cover == 1) // Redemption mechanic
+            if (v.Caster.PlayerIndex == CharacterId.Beatrix) // Redemption mechanic
             {
-                if (BeatrixPassive[v.Caster.Data][3] == 0)
+                if (BeatrixPassive[v.Caster.Data][3] == 0 && v.Caster.PlayerIndex == CharacterId.Beatrix)
                 {
                     if (v.Command.Id == BattleCommandId.Attack || v.Command.Id == BattleCommandId.Defend || v.Command.Id == BattleCommandId.Counter && v.Command.AbilityId == BattleAbilityId.Attack ||
-                        v.Command.Id == BattleCommandId.HolyWhiteMagic || v.Caster.IsUnderAnyStatus(BattleStatus.Trance) || v.Command.Data.info.cover == 1 && v.Target.HasSupportAbility(SupportAbility2.Cover))
+                        v.Command.Id == BattleCommandId.HolyWhiteMagic || v.Caster.IsUnderAnyStatus(BattleStatus.Trance))
                     {
                         v.Caster.AlterStatus(TranceSeekStatus.Redemption, v.Caster);
                     }
@@ -426,6 +432,18 @@ namespace Memoria.Scripts.Battle
                         }
                     );
                 }
+            }
+            else if (BeatrixPassive[v.Target.Data][3] == 0 && v.Target.PlayerIndex == CharacterId.Beatrix && v.Target.IsCovering)
+            {
+                v.Target.AlterStatus(TranceSeekStatus.Redemption, v.Caster);
+                BeatrixPassive[v.Target.Data][3] = 1;
+                v.Caster.AddDelayedModifier(
+                    caster => caster.CurrentAtb >= caster.MaximumAtb,
+                    caster =>
+                    {
+                        BeatrixPassive[v.Target.Data][3] = 0;
+                    }
+                );
             }
 
             if (v.Caster.HasSupportAbilityByIndex((SupportAbility)240) && v.Command.Data.info.effect_counter == 1 && v.Command.Id != BattleCommandId.Counter && v.Caster.CurrentMp < v.Caster.MaximumMp) // SA Offering
@@ -467,7 +485,7 @@ namespace Memoria.Scripts.Battle
                 );
             }
 
-            if (v.Caster.Weapon == (RegularItem)1163 && (v.Command.Id == BattleCommandId.BlackMagic || v.Command.Id == BattleCommandId.DoubleBlackMagic || v.Command.Id == TranceSeekBattleCommand.Witchcraft))
+            if (v.Caster.Weapon == (RegularItem)1163 && (v.Command.Id == BattleCommandId.BlackMagic || v.Command.Id == BattleCommandId.DoubleBlackMagic || v.Command.Id == TranceSeekBattleCommand.Witchcraft) && !v.Target.IsPlayer)
                 StealScript.ClassicSteal(v, false);
 
             if (v.Caster.PlayerIndex == (CharacterId)14)

@@ -89,7 +89,9 @@ namespace Memoria.Scripts.Battle
                 if (TranceSeekAPI.CanAttackMagic(_v))
                 {
                     if (_v.Target.HasCategory(EnemyCategory.Humanoid) && (_v.Command.AbilityId == BattleAbilityId.None5 || _v.Command.AbilityId == BattleAbilityId.BioSword || _v.Command.AbilityId == (BattleAbilityId)1563)) // Poison/Arsenic/Bio Sword
-                        _v.Context.DamageModifierCount += 4;
+                        _v.Context.DamageModifierCount += 2;
+                    if (_v.Command.AbilityId == (BattleAbilityId)1568) // Drain Sword
+                        _v.PrepareHpDraining();
                     _v.CalcHpDamage();
                 }
                 TranceSeekAPI.TryAlterMagicStatuses(_v);

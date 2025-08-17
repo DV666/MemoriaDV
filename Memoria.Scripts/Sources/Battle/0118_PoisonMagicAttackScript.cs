@@ -27,7 +27,7 @@ namespace Memoria.Scripts.Battle
             if (TranceSeekAPI.CanAttackMagic(_v))
             {
                 if (_v.Target.HasCategory(EnemyCategory.Humanoid))
-                    _v.Context.DamageModifierCount += 4;
+                    _v.Context.DamageModifierCount += 2;
                 if (_v.Target.IsZombie)
                     _v.Target.Flags |= CalcFlag.HpRecovery;
                 if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)102))

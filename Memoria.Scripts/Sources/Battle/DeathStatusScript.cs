@@ -26,6 +26,10 @@ namespace Memoria.DefaultScripts
                 target.CurrentHp = 0;
             }
             target.CurrentAtb = 0;
+
+            if (!SpecialSAEffect.TryGetValue(target.Data, out var sa))
+                SpecialSAEffect[target.Data] = sa = new int[16]; // taille >= 15 car on écrit [14]
+
             if (!target.IsPlayer)
             {
                 if (target.Data.die_seq == 0)
@@ -46,7 +50,7 @@ namespace Memoria.DefaultScripts
             }          
             if (target.IsPlayer)
             {
-                SpecialSAEffect[target.Data][14] = 0; // Reset SOS trigger
+                sa[14] = 0; // Reset SOS trigger
                 if (target.PlayerIndex == CharacterId.Beatrix)
                 {
                     if (!BeatrixPassive.TryGetValue(target.Data, out Int32[] beatrixpassive))
