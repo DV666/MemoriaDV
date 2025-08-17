@@ -4,6 +4,22 @@ namespace Memoria.Scripts.Battle
 {
     public static class TranceSeekSupportAbility
     {
+        public const SupportAbility Blessing = SupportAbility.AutoReflect;
+        public const SupportAbility Light_step = SupportAbility.AutoFloat;
+        public const SupportAbility Initiative = SupportAbility.AutoHaste;
+        public const SupportAbility Resilience = SupportAbility.AutoRegen;
+        public const SupportAbility HP5 = SupportAbility.HP10;
+        public const SupportAbility HP10 = SupportAbility.HP20;
+        public const SupportAbility MP5 = SupportAbility.MP10;
+        public const SupportAbility MP10 = SupportAbility.MP20;
+        public const SupportAbility Lucky_Star = SupportAbility.Distract;
+        public const SupportAbility Stamina = SupportAbility.MPAttack;
+        public const SupportAbility Giant_Killer = SupportAbility.StoneKiller;
+        public const SupportAbility Stone_Skin = SupportAbility.GambleDefence;
+        public const SupportAbility Overload = SupportAbility.MagElemNull;
+        public const SupportAbility Quart_MP = SupportAbility.HalfMP;
+        public const SupportAbility Super_Guard = SupportAbility.Eye4Eye;
+        public const SupportAbility Last_Stand = SupportAbility.RestoreHP;
         public const SupportAbility Doctor = (SupportAbility)100;
         public const SupportAbility Maleficent = (SupportAbility)101;
         public const SupportAbility Archmage = (SupportAbility)102;

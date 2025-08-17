@@ -330,7 +330,7 @@ namespace Memoria.Scripts.Battle
                     }                    
 
                     BattleAbilityId MougAAChoosen = ClassicMougAAList[GameRandom.Next16() % ClassicMougAAList.Count]; // Classic Mog spell
-                    if (GameRandom.Next16() % 100 < 20)
+                    if (GameRandom.Next16() % 100 < 20 && SuperMougAAList.Count > 0)
                         MougAAChoosen = SuperMougAAList[GameRandom.Next16() % SuperMougAAList.Count];
                     if (GameRandom.Next16() % 100 < 5 && Eiko.Level >= 90) // Moga Autolife spell
                     {

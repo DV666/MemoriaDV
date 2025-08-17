@@ -10,6 +10,7 @@ using UnityEngine;
 using System.IO;
 using static Memoria.Scripts.Battle.TranceSeekAPI;
 using System.Reflection;
+using Assets.Sources.Scripts.UI.Common;
 
 namespace Memoria.Scripts.Battle
 {
@@ -47,7 +48,7 @@ namespace Memoria.Scripts.Battle
                 FF9StateSystem.Battle.FF9Battle.aa_data[(BattleAbilityId)idAA].MP = 0;
             }
 
-            if (Configuration.Hacks.StealingAlwaysWorks == 10)
+            if (Configuration.Mod.FolderNames.Contains("TranceSeek/StuffListed"))
                 WriteStuffInFile();
 
             foreach (BattleUnit PlayerUnit in BattleState.EnumerateUnits())
@@ -499,7 +500,7 @@ namespace Memoria.Scripts.Battle
                 if (!PlayerUnit.IsPlayer)
                     continue;
 
-                data += $"################  {PlayerUnit.Name}  ################";
+                data += $"################  {FF9TextTool.CharacterDefaultName(PlayerUnit.PlayerIndex)}  ################";
 
                 data += $"\n⚔️ Stuff";
                 if (RegularItemTranceSeek.TryGetValue((int)PlayerUnit.Weapon, out string WeaponName))

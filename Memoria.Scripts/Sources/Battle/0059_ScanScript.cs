@@ -25,6 +25,8 @@ namespace Memoria.Scripts.Battle
         public static Dictionary<BTL_DATA, Boolean> HPBarHidden = new Dictionary<BTL_DATA, Boolean>();
         public static Dictionary<BTL_DATA, Boolean> TriggerOneTime = new Dictionary<BTL_DATA, Boolean>();
 
+        public static Dictionary<BTL_DATA, BTL_DATA> CasterScanga = new Dictionary<BTL_DATA, BTL_DATA>();
+
         public ScanScript(BattleCalculator v)
         {
             _v = v;
@@ -56,6 +58,7 @@ namespace Memoria.Scripts.Battle
                     //HPRedBarHUD[_v.Target.Data] = null;
                     //ATBGreenBarHUD[_v.Target.Data] = null;
                     //ATBRedBarHUD[_v.Target.Data] = null;
+                    CasterScanga[_v.Target.Data] = _v.Caster.Data;
                     _v.Target.AddDelayedModifier(ShowScan, null);
                 }
                 else if (_v.Target.IsUnderStatus(BattleStatus.EasyKill) && !TranceSeekAPI.EliteMonster(_v.Target.Data)) // Boss
@@ -85,17 +88,20 @@ namespace Memoria.Scripts.Battle
             if (mob.IsUnderAnyStatus(BattleStatusConst.BattleEndFull))
                 return false;
 
-
-            if (((Input.GetKey(KeyCode.Alpha2) || (UIManager.Input.GetKey(Control.LeftBumper) && UIManager.Input.GetKey(Control.Special))) && mob.Id == 16)
-                || ((Input.GetKey(KeyCode.Alpha3) || (UIManager.Input.GetKey(Control.LeftTrigger) && UIManager.Input.GetKey(Control.Special))) && mob.Id == 32)
-                || ((Input.GetKey(KeyCode.Alpha4) || (UIManager.Input.GetKey(Control.RightBumper) && UIManager.Input.GetKey(Control.Special))) && mob.Id == 64)
-                || ((Input.GetKey(KeyCode.Alpha5) || (UIManager.Input.GetKey(Control.RightTrigger) && UIManager.Input.GetKey(Control.Special))) && mob.Id == 128))
+            BattleUnit caster = new BattleUnit (CasterScanga[mob.Data]);
+            if (caster.CurrentAtb >= caster.MaximumAtb && CasterScanga[mob.Data].currentAnimationName.Contains("_000"))
             {
-                SoundLib.PlaySoundEffect(1362); // Mog effect sound
-                if (mob.IsUnderStatus(BattleStatus.EasyKill) && !TranceSeekAPI.EliteMonster(mob.Data)) // Boss
-                    mob.Libra(BattleHUD.LibraInformation.Name | BattleHUD.LibraInformation.Level | BattleHUD.LibraInformation.Category | BattleHUD.LibraInformation.ElementalAffinities | BattleHUD.LibraInformation.ItemSteal);
-                else
-                    mob.Libra(BattleHUD.LibraInformation.All);
+                if (((Input.GetKey(KeyCode.Alpha2) || (UIManager.Input.GetKey(Control.LeftBumper) && UIManager.Input.GetKey(Control.Special))) && mob.Id == 16)
+                    || ((Input.GetKey(KeyCode.Alpha3) || (UIManager.Input.GetKey(Control.LeftTrigger) && UIManager.Input.GetKey(Control.Special))) && mob.Id == 32)
+                    || ((Input.GetKey(KeyCode.Alpha4) || (UIManager.Input.GetKey(Control.RightBumper) && UIManager.Input.GetKey(Control.Special))) && mob.Id == 64)
+                    || ((Input.GetKey(KeyCode.Alpha5) || (UIManager.Input.GetKey(Control.RightTrigger) && UIManager.Input.GetKey(Control.Special))) && mob.Id == 128))
+                {
+                    SoundLib.PlaySoundEffect(1362); // Mog effect sound
+                    if (mob.IsUnderStatus(BattleStatus.EasyKill) && !TranceSeekAPI.EliteMonster(mob.Data)) // Boss
+                        mob.Libra(BattleHUD.LibraInformation.Name | BattleHUD.LibraInformation.Level | BattleHUD.LibraInformation.Category | BattleHUD.LibraInformation.ElementalAffinities | BattleHUD.LibraInformation.ItemSteal);
+                    else
+                        mob.Libra(BattleHUD.LibraInformation.All);
+                }
             }
             return true;
         }

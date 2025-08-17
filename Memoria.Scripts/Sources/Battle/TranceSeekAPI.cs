@@ -95,7 +95,7 @@ namespace Memoria.Scripts.Battle
 
         public static void TryApplyDragon(this BattleCalculator v)
         {
-            if (v.Caster.PlayerIndex == CharacterId.Freya && !v.Target.IsUnderAnyStatus(TranceSeekStatus.Dragon))
+            if (v.Caster.PlayerIndex == CharacterId.Freya)
             {
                 Int32 quarterWill = v.Caster.Data.elem.wpr >> 2;
                 Int32 bonus = 0;
