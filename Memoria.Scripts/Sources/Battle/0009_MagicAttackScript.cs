@@ -20,23 +20,14 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            if (_v.Caster.Data.dms_geo_id == 404 && _v.Command.Power == 57 && SFX.currentEffectID == SpecialEffect.Aerial_Slash_Garuda) // [!!!TODO!!!] Kjata's Dance - Friendly Garuda
+            if (_v.Caster.Data.dms_geo_id == 404 && _v.Command.Power == 57) // Kjata's Dance - Friendly Garuda
             {
-                if (_v.Caster.SummonCount == 0)
-                {
-                    _v.Caster.SummonCount = 1;
+                if (_v.Command.Data.info.effect_counter == 1)
                     _v.Command.Element = EffectElement.Thunder;
-                }
-                else if (_v.Caster.SummonCount == 1)
-                {
-                    _v.Caster.SummonCount = 2;
+                else if (_v.Command.Data.info.effect_counter == 2)
                     _v.Command.Element = EffectElement.Cold;
-                }
-                else if (_v.Caster.SummonCount == 2)
-                {
-                    _v.Caster.SummonCount = 0;
+                else if (_v.Command.Data.info.effect_counter == 3)
                     _v.Command.Element = EffectElement.Fire;
-                }
             }
             if (_v.Target.MagicDefence == 255)
             {

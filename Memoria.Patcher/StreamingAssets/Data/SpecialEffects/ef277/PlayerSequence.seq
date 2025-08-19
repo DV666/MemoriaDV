@@ -1,4 +1,3 @@
-
 // Player sequence of SFX Throw_Disc
 
 StartThread: Condition=WeaponThrowShape == 43 && GetItemProperty(ItemUseId, 'Color') == 1

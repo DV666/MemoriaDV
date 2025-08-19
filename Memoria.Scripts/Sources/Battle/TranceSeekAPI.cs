@@ -30,7 +30,7 @@ namespace Memoria.Scripts.Battle
         
         public static Dictionary<BTL_DATA, Int32[]> SpecialSAEffect = new Dictionary<BTL_DATA, Int32[]>();
         // [0] => Sentinel/Duel ; [1] => LastStand ; [2] => Instinct ; [3] => PreventTranceSFX ; [4] => Mode EX ; [5] => HealHP ; [6] => HealMP ; [7] => TargetCount ; [8] => SpringBoots ; [9] => CriticalHit100 ;
-        // [10] => SteinerEnchantedBlade ; [11] => Peuh! ; [12] => That's all ; [13] => In top form! ; [14] => OneTriggerSOS
+        // [10] => SteinerEnchantedBlade ; [11] => Peuh! ; [12] => That's all ; [13] => In top form! ; [14] => OneTriggerSOS ; [15] => NewMaximumHP ; [16] => NewMaximumMP
 
         public static Dictionary<BTL_DATA, Int32[]> SpecialItemEffect = new Dictionary<BTL_DATA, Int32[]>();
         // [0] => Emergency Satchel ; [1] => Magical Satchel
@@ -1618,6 +1618,24 @@ namespace Memoria.Scripts.Battle
 
             if (v.Caster.HasSupportAbilityByIndex((SupportAbility)235) && v.Command.Id == BattleCommandId.Attack) // SA Fencing
                 v.Target.HpDamage += v.Caster.HasSupportAbilityByIndex((SupportAbility)1235) ? v.Target.HpDamage / 4 : v.Target.HpDamage / 8;
+
+            if ((v.Target.Flags & CalcFlag.HpRecovery) != 0 && v.Caster.HasSupportAbilityByIndex((SupportAbility)127) && v.Target.HpDamage > (v.Target.MaximumHp - v.Target.CurrentHp) && v.Target.IsPlayer) // SA Invigorating
+            {
+                if (v.Target.MaximumHp == SpecialSAEffect[v.Target.Data][15])
+                {
+                    uint OldMaximumHP = v.Target.MaximumHp;
+                    uint factor = (uint)(v.Caster.HasSupportAbilityByIndex((SupportAbility)1127) ? 20 : 10);
+                    v.Target.MaximumHp += Math.Min((v.Target.MaximumHp * factor) / 100, (uint)(v.Target.HpDamage * factor) / 100);
+                    v.Target.CurrentHp = v.Target.MaximumHp;
+                    v.Target.AddDelayedModifier(
+                        target => v.Target.CurrentHp > OldMaximumHP,
+                        target =>
+                        {
+                            v.Target.MaximumHp = OldMaximumHP;
+                        }
+                    );
+                }
+            }
 
             if (v.Caster.HasSupportAbilityByIndex((SupportAbility)257)) // SA Mania
             {

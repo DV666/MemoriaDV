@@ -53,7 +53,7 @@ ElseThread: Condition=CasterCharacterIndex == CharacterId_Garnet
 	WaitAnimation: Char=Caster
 	PlayAnimation: Char=Caster ; Anim=ANH_MAIN_B0_002_602
 	Wait: Time=16
-	ShowMesh: Enable=False ; Time=16 ; Char=AllPlayers
+	ShowMesh: Enable=False ; Time=16 ; Char=MatchingCondition(!IsTargeted && IsTargetable)
 	StopChannel
 	WaitAnimation: Char=Caster
 	PlaySFX: SFX=Ifrit__Full ; Reflect=True

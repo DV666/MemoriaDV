@@ -24,6 +24,7 @@ namespace Memoria.Scripts.Battle
             else if (unit.IsPlayer && unit.CurrentHp == unit.MaximumHp && HPColored)
             {
                 unit.UIColorHP = FF9TextTool.Green;
+                btl_stat.RemoveStatus(unit, BattleStatusId.LowHP);
             }
             else
             {

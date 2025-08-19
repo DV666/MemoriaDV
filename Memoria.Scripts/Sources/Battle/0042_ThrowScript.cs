@@ -28,6 +28,7 @@ namespace Memoria.Scripts.Battle
                     if (_v.Target.IsUnderAnyStatus(BattleStatus.Vanish))
                     {
                         _v.Context.Flags |= BattleCalcFlags.Miss;
+                        return;
                     }
                     TranceSeekAPI.WeaponPhysicalParams(CalcAttackBonus.Simple, _v);
                     TranceSeekAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
@@ -46,6 +47,11 @@ namespace Memoria.Scripts.Battle
                 }
                 else if (_v.Command.ItemId == (RegularItem)1032) // Smoking Bomb
                 {
+                    if (_v.Target.IsUnderAnyStatus(BattleStatusConst.CannotEscape))
+                    {
+                        _v.Context.Flags |= BattleCalcFlags.Miss;
+                        return;
+                    }
                     btl_sys.CheckEscape(false);
                     if (_v.CanEscape())
                     {

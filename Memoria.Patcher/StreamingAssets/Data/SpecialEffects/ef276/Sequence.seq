@@ -24,7 +24,7 @@ PlaySound: Sound=1801
 Wait: Time=40
 EffectPoint: Char=AllTargets ; Type=Effect
 Wait: Time=20
-EffectPoint: ShowMesh: Char=MatchingCondition(!IsTargeted && IsTargetable) ; Type=Figure
+EffectPoint: Char=Everyone ; Type=Figure
 Wait: Time=20
 StartThread: Condition=SFXUseCamera && AreTargetsPlayers
 	ShiftWorld: Angle=(0, 0, 0)

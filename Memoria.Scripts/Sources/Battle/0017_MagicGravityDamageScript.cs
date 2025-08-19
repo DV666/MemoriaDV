@@ -1,6 +1,7 @@
 using Memoria.Data;
 using Memoria.Prime;
 using System;
+using System.Runtime.Remoting.Contexts;
 
 namespace Memoria.Scripts.Battle
 {
@@ -57,14 +58,22 @@ namespace Memoria.Scripts.Battle
                 else
                 {
                     _v.CalcCannonProportionDamage();
+                    if (_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill) || TranceSeekAPI.EliteMonster(_v.Target.Data))
+                    {
+                        if (TranceSeekAPI.MonsterMechanic[_v.Target.Data][3] == 1 && _v.Target.CurrentHp > 10000)
+                            _v.Target.HpDamage = (Int32)(_v.Target.CurrentHp - 10000) * _v.Context.Attack / 100;
+                        else
+                            _v.Target.HpDamage = (Int32)_v.Target.CurrentHp * _v.Context.Attack / 100;
+
+                        Log.Message("TranceSeekAPI.MonsterMechanic[_v.Target.Data][3] = " + TranceSeekAPI.MonsterMechanic[_v.Target.Data][3]);
+                        Log.Message("TranceSeekAPI.MonsterMechanic[_v.Target.Data][5] = " + TranceSeekAPI.MonsterMechanic[_v.Target.Data][5]);
+                        _v.Target.HpDamage = Math.Max(1, (_v.Target.HpDamage / TranceSeekAPI.MonsterMechanic[_v.Target.Data][5]));
+                        TranceSeekAPI.MonsterMechanic[_v.Target.Data][5] = TranceSeekAPI.MonsterMechanic[_v.Target.Data][5] * 2;
+                    }
                 }
+
+                TranceSeekAPI.TryAlterMagicStatuses(_v);
             }
-            if (_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill) || TranceSeekAPI.EliteMonster(_v.Target.Data))
-            {
-                _v.Target.HpDamage = Math.Max(1, (_v.Target.HpDamage / TranceSeekAPI.MonsterMechanic[_v.Target.Data][5]));
-                TranceSeekAPI.MonsterMechanic[_v.Target.Data][5] = TranceSeekAPI.MonsterMechanic[_v.Target.Data][5] * 2;
-            }
-            TranceSeekAPI.TryAlterMagicStatuses(_v);
 
             if (TranceSeekAPI.AbsorbElement.TryGetValue(_v.Target.Data, out Int32 elementprotect))
                 if (elementprotect == 256)

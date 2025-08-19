@@ -28,7 +28,11 @@ namespace Memoria.DefaultScripts
             target.CurrentAtb = 0;
 
             if (!SpecialSAEffect.TryGetValue(target.Data, out var sa))
-                SpecialSAEffect[target.Data] = sa = new int[16]; // taille >= 15 car on écrit [14]
+            {
+                SpecialSAEffect[target.Data] = new int[18];
+                SpecialSAEffect[target.Data][15] = (int)target.Player.max.hp;
+                SpecialSAEffect[target.Data][16] = (int)target.Player.max.mp;
+            }
 
             if (!target.IsPlayer)
             {
@@ -50,7 +54,21 @@ namespace Memoria.DefaultScripts
             }          
             if (target.IsPlayer)
             {
-                sa[14] = 0; // Reset SOS trigger
+                SpecialSAEffect[target.Data][14] = 0; // Reset SOS trigger
+
+                // Reset stats
+                target.MaximumHp = (uint)SpecialSAEffect[target.Data][15];
+                target.MaximumMp = (uint)SpecialSAEffect[target.Data][16];
+                // target.Level = target.Player.level; // Too sensible
+                target.Dexterity = target.Player.elem.dex;
+                target.Strength = target.Player.elem.str;
+                target.Magic = target.Player.elem.mgc;
+                target.Will = target.Player.elem.wpr;
+                target.PhysicalDefence = target.Player.defence.PhysicalDefence;
+                target.MagicDefence = target.Player.defence.MagicalDefence;
+                target.PhysicalEvade = target.Player.defence.PhysicalEvade;
+                target.MagicEvade = target.Player.defence.MagicalEvade;
+
                 if (target.PlayerIndex == CharacterId.Beatrix)
                 {
                     if (!BeatrixPassive.TryGetValue(target.Data, out Int32[] beatrixpassive))

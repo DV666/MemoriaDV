@@ -138,9 +138,12 @@ namespace Memoria.Scripts.Battle
             if (FF9StateSystem.Common.FF9.party.IsInParty(CharacterId.Eiko) && v.Command.ScriptId != 64 && v.Command.ScriptId != 164 && v.Command.Id != BattleCommandId.Counter && v.Command.Data.info.effect_counter == 1)
             {
                 if (v.Caster.IsPlayer && v.Target.IsUnderAnyStatus(BattleStatus.Death) && (v.Command.ScriptId == 13 || v.Command.ScriptId == 72)) // Don't trigger if a player revive someone.
-                    return;
-
+                    return;         
+                
                 BattleUnit Eiko = BattleState.GetPlayerUnit(CharacterId.Eiko);
+
+                if (Eiko == null)
+                    return;
 
                 if (StateMoug[Eiko.Data] == 0 && !Eiko.IsUnderAnyStatus(BattleStatus.Death | BattleStatus.Petrify | BattleStatus.Jump | BattleStatus.Heat) && v.Caster.Data != Eiko.Data)
                 {
@@ -327,7 +330,10 @@ namespace Memoria.Scripts.Battle
                                 SuperMougAAList.Add(abilId);
                         }
 
-                    }                    
+                    }
+
+                    if (ClassicMougAAList.Count == 0)
+                        return;
 
                     BattleAbilityId MougAAChoosen = ClassicMougAAList[GameRandom.Next16() % ClassicMougAAList.Count]; // Classic Mog spell
                     if (GameRandom.Next16() % 100 < 20 && SuperMougAAList.Count > 0)

@@ -83,7 +83,7 @@ ElseThread
 	PlayAnimation: Char=Caster ; Anim=MP_CHANT ; Loop=True
 	Channel
 	Wait: Time=13
-	ShowMesh: Enable=False ; Time=16 ; Char=AllNonTargets
+	ShowMesh: Enable=False ; Time=16 ; Char=MatchingCondition(!IsTargeted && IsTargetable)
 	WaitSFXLoaded: SFX=Leviathan__Full ; Reflect=True
 	WaitAnimation: Char=Caster
 	StopChannel

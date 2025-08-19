@@ -82,8 +82,8 @@ namespace Memoria.Scripts.Battle
                 ProtectStatus[unit.Data] = new Dictionary<BattleStatus, Int32> { { 0, 0 } };
                 AbsorbElement[unit.Data] = -1;
                 StackBreakOrUpStatus[unit.Data] = [0, 0, 0, 0];
-                MonsterMechanic[unit.Data] = [ 0, 0, 0, 0, 100, 1, 0 ];
-                SpecialSAEffect[unit.Data] = [ 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ];
+                MonsterMechanic[unit.Data] = [ 0, 0, 0, 0, 100, 2, 0 ];
+                SpecialSAEffect[unit.Data] = [ 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, (int)unit.MaximumHp, (int)unit.MaximumMp];
                 SpecialItemEffect[unit.Data] = [3, 3];
                 ElementAffinitiesItem[unit.Data] = [0, 0];
                 TriggerSPSResistStatus[unit.Data] = false;
@@ -170,9 +170,13 @@ namespace Memoria.Scripts.Battle
                     else if (unit.Accessory == (RegularItem)1254) // Strange Cube
                     {
                         unit.MaximumHp = (uint)UnityEngine.Random.Range(unit.MaximumHp - (unit.MaximumHp / 2), unit.MaximumHp + (unit.MaximumHp / 2));
-                        unit.CurrentHp = unit.MaximumHp;
+                        SpecialSAEffect[unit.Data][15] = (int)unit.MaximumHp;
+                        if (unit.CurrentHp > unit.MaximumHp)
+                            unit.CurrentHp = unit.MaximumHp;
                         unit.MaximumMp = (uint)UnityEngine.Random.Range(unit.MaximumMp - (unit.MaximumMp / 2), unit.MaximumMp + (unit.MaximumMp / 2));
-                        unit.CurrentMp = unit.MaximumMp;
+                        SpecialSAEffect[unit.Data][16] = (int)unit.MaximumMp;
+                        if (unit.CurrentMp > unit.MaximumMp)
+                            unit.CurrentMp = unit.MaximumMp;
                         unit.Dexterity = (byte)UnityEngine.Random.Range(unit.Dexterity - (unit.Dexterity / 2), unit.Dexterity + (unit.Dexterity / 2));
                         unit.Strength = (byte)UnityEngine.Random.Range(unit.Strength - (unit.Strength / 2), unit.Strength + (unit.Strength / 2));
                         unit.Magic = (byte)UnityEngine.Random.Range(unit.Magic - (unit.Magic / 2), unit.Magic + (unit.Magic / 2));
@@ -276,8 +280,12 @@ namespace Memoria.Scripts.Battle
                         uint UnitOldMaximumMP = unit.MaximumMp;
                         unit.MaximumHp = (uint)(UnitOldMaximumMP / factor);
                         unit.MaximumMp = (uint)(UnitOldMaximumHP / factor);
-                        unit.CurrentHp = unit.MaximumHp;
-                        unit.CurrentMp = unit.MaximumMp;
+                        if (unit.CurrentHp > unit.MaximumHp)
+                            unit.CurrentHp = unit.MaximumHp;
+                        if (unit.CurrentMp > unit.MaximumMp)
+                            unit.CurrentMp = unit.MaximumMp;
+                        SpecialSAEffect[unit.Data][15] = (int)unit.MaximumHp;
+                        SpecialSAEffect[unit.Data][16] = (int)unit.MaximumMp;
                     }
 
                     if (unit.HasSupportAbilityByIndex((SupportAbility)1212)) // SA Protector+
@@ -504,51 +512,51 @@ namespace Memoria.Scripts.Battle
 
                 data += $"\n⚔️ Stuff";
                 if (RegularItemTranceSeek.TryGetValue((int)PlayerUnit.Weapon, out string WeaponName))
-                    data += "\n └> 🗡️ Weapon = " + WeaponName;
+                    data += "\n └→ 🗡️ Weapon = " + WeaponName;
                 else
-                    data += "\n └> 🗡️ Weapon = " + PlayerUnit.Weapon;
+                    data += "\n └→ 🗡️ Weapon = " + PlayerUnit.Weapon;
 
                 if (RegularItemTranceSeek.TryGetValue((int)PlayerUnit.Head, out string HeadName))
-                    data += "\n └> 🎩 Head = " + HeadName;
+                    data += "\n └→ 🎩 Head = " + HeadName;
                 else
-                    data += "\n └> 🎩 Head = " + PlayerUnit.Head;
+                    data += "\n └→ 🎩 Head = " + PlayerUnit.Head;
 
                 if (RegularItemTranceSeek.TryGetValue((int)PlayerUnit.Wrist, out string WristName))
-                    data += "\n └> 🔗 Wrist = " + WristName;
+                    data += "\n └→ 🔗 Wrist = " + WristName;
                 else
-                    data += "\n └> 🔗 Wrist = " + PlayerUnit.Wrist;
+                    data += "\n └→ 🔗 Wrist = " + PlayerUnit.Wrist;
 
                 if (RegularItemTranceSeek.TryGetValue((int)PlayerUnit.Armor, out string ArmorName))
-                    data += "\n └> 🛡️ Armor = " + ArmorName;
+                    data += "\n └→ 🛡️ Armor = " + ArmorName;
                 else
-                    data += "\n └> 🛡️ Armor = " + PlayerUnit.Armor;
+                    data += "\n └→ 🛡️ Armor = " + PlayerUnit.Armor;
 
                 if (RegularItemTranceSeek.TryGetValue((int)PlayerUnit.Accessory, out string AccessoryName))
-                    data += "\n └> 💍 Accessory = " + AccessoryName;
+                    data += "\n └→ 💍 Accessory = " + AccessoryName;
                 else
-                    data += "\n └> 💍 Accessory = " + PlayerUnit.Accessory;
+                    data += "\n └→ 💍 Accessory = " + PlayerUnit.Accessory;
 
                 data += $"\n\n📊 Stats";
-                data += "\n └> ❤️ HP = " + PlayerUnit.CurrentHp + "/" + PlayerUnit.MaximumHp;
-                data += "\n └> 🔷 MP = " + PlayerUnit.CurrentMp + "/" + PlayerUnit.MaximumMp;
-                data += "\n └> 🏅 Level = " + PlayerUnit.Level;
-                data += "\n └> 🏹 Dexterity = " + PlayerUnit.Dexterity;
-                data += "\n └> 💪 Strength = " + PlayerUnit.Strength;
-                data += "\n └> ✨ Magic = " + PlayerUnit.Magic;
-                data += "\n └> 🧘 Will = " + PlayerUnit.Will;
-                data += "\n └> 🛡️ PhysicalDefence = " + PlayerUnit.PhysicalDefence;
-                data += "\n └> 🌀 PhysicalEvade = " + PlayerUnit.PhysicalEvade;
-                data += "\n └> 🧙 MagicDefence = " + PlayerUnit.MagicDefence;
-                data += "\n └> 💫 MagicEvade = " + PlayerUnit.MagicEvade;
+                data += "\n └→ ❤️ HP = " + PlayerUnit.CurrentHp + "/" + PlayerUnit.MaximumHp;
+                data += "\n └→ 🔷 MP = " + PlayerUnit.CurrentMp + "/" + PlayerUnit.MaximumMp;
+                data += "\n └→ 🏅 Level = " + PlayerUnit.Level;
+                data += "\n └→ 🏹 Dexterity = " + PlayerUnit.Dexterity;
+                data += "\n └→ 💪 Strength = " + PlayerUnit.Strength;
+                data += "\n └→ ✨ Magic = " + PlayerUnit.Magic;
+                data += "\n └→ 🧘 Will = " + PlayerUnit.Will;
+                data += "\n └→ 🛡️ PhysicalDefence = " + PlayerUnit.PhysicalDefence;
+                data += "\n └→ 🌀 PhysicalEvade = " + PlayerUnit.PhysicalEvade;
+                data += "\n └→ 🧙 MagicDefence = " + PlayerUnit.MagicDefence;
+                data += "\n └→ 💫 MagicEvade = " + PlayerUnit.MagicEvade;
 
                 if (PlayerUnit.Data.saExtended.Count > 0)
                 {
                     data += $"\n\n💎 SA equipped";
                     foreach (SupportAbility saequipped in PlayerUnit.Data.saExtended)
                         if (SATranceSeek.TryGetValue((int)saequipped, out string abilityName))
-                            data += "\n └> " + abilityName;
+                            data += "\n └→ " + abilityName;
                         else
-                            data += "\n └> " + saequipped;
+                            data += "\n └→ " + saequipped;
                 }
 
                 data += "\n\n";
@@ -583,6 +591,7 @@ namespace Memoria.Scripts.Battle
             { 937, 0 }, // Trance Kuja 2nd (Crystal World)
             { 330, 0 }, // Kwell
             { 76, 0 }, // Larvalar Junior
+            { 84, 0 }, // Armodullahan
             { 132, 0 }, // Amarant Enemy
             { 631, 0 }, { 632, 0 },  // Friendly Manta
             { 336, 0 }, // Maskedefer

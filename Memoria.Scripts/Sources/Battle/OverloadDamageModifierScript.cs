@@ -167,13 +167,6 @@ namespace Memoria.Scripts.Battle
                     v.Target.MpDamage = Math.Min(v.Target.MpDamage, 9999);
             }
 
-            if ((v.Target.Flags & CalcFlag.HpRecovery) != 0 && v.Caster.HasSupportAbilityByIndex((SupportAbility)127) && !v.Target.IsZombie && v.Target.HpDamage > (v.Target.MaximumHp - v.Target.CurrentHp)) // SA Invigorating
-            {
-                uint factor = (uint)(v.Caster.HasSupportAbilityByIndex((SupportAbility)1127) ? 20 : 10);
-                v.Target.MaximumHp += Math.Min((v.Target.MaximumHp * factor) / 100, (uint)(v.Target.HpDamage - (v.Target.MaximumHp - v.Target.CurrentHp)));
-                v.Target.CurrentHp = v.Target.MaximumHp;
-            }
-
             if (SpecialSAEffect[v.Target.Data][11] == 1 && v.Target.HpDamage < v.Target.CurrentHp && (v.Command.AbilityCategory & 8) != 0 && (v.Target.Flags & CalcFlag.HpRecovery) == 0) // Peuh!
             {
                 SpecialSAEffect[v.Target.Data][11] = 0;
@@ -197,13 +190,23 @@ namespace Memoria.Scripts.Battle
                 btl_stat.AlterStatus(v.Target, TranceSeekStatusId.Special, parameters: "Duelist++");
             }
 
-            if ((v.Target.Flags & CalcFlag.HpRecovery) != 0 && v.Caster.HasSupportAbilityByIndex((SupportAbility)127) && !v.Target.IsZombie && v.Target.HpDamage > (v.Target.MaximumHp - v.Target.CurrentHp)) // SA Invigorating
+            if (FF9StateSystem.Settings.IsDmg9999 && FF9StateSystem.EventState.gEventGlobal[1403] >= 3 && v.Caster.IsPlayer)
             {
-                uint factor = (uint)(v.Caster.HasSupportAbilityByIndex((SupportAbility)1127) ? 20 : 10);
-                v.Target.MaximumHp += Math.Min((v.Target.MaximumHp * factor) / 100, (uint)(v.Target.HpDamage - (v.Target.MaximumHp - v.Target.CurrentHp)));
-                v.Target.CurrentHp = v.Target.MaximumHp;
+                v.Target.Flags = CalcFlag.HpRecovery;
+                Dictionary<String, String> localizedMessage = new Dictionary<String, String>
+                    {
+                        { "US", "C'est non !" },
+                        { "UK", "C'est non !" },
+                        { "JP", "C'est non !" },
+                        { "ES", "C'est non !" },
+                        { "FR", "C'est non !" },
+                        { "GR", "C'est non !" },
+                        { "IT", "C'est non !" },
+                    };
+                btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[FF19EE]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 0);
+                SoundLib.PlaySoundEffect(4004); //se511115
             }
-
+                
             TranceSeekAPI.SpecialItems(v);
         }
     }

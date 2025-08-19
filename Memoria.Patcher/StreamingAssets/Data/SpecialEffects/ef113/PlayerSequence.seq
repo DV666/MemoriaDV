@@ -1,6 +1,6 @@
 // Player sequence of SFX Player_Attack_Amarant
 
-StartThread: Condition=CasterWeaponId == 1025 || CasterWeaponId == 1026 || CasterWeaponId == 1027
+StartThread: Condition=GetItemProperty(CasterWeaponId, 'Shape') == 63
 	WaitAnimation: Char=Caster
 	Message: Text=[CastName] ; Priority=1 ; Title=True
 	Turn: Char=Caster ; BaseAngle=AllTargets ; Time=5
@@ -22,8 +22,7 @@ StartThread: Condition=CasterWeaponId == 1025 || CasterWeaponId == 1026 || Caste
 		PlaySFX: SFX=Throw_Disc ; SkipSequence ; HideMeshes=2, 3, 4
 	EndThread
 	Wait: Time=50
-EndThread
-StartThread: Condition=CasterWeaponId != 1025 && CasterWeaponId != 1026 && CasterWeaponId != 1027
+ElseThread
 	WaitAnimation: Char=Caster
 	LoadSFX: SFX=Player_Attack_Amarant
 	PlayAnimation: Char=Caster ; Anim=MP_SET

@@ -58,7 +58,7 @@ StartThread: Condition=CasterWeaponId == 1161
 	EndThread
 	PlayAnimation: Char=Caster ; Anim=Idle
 	WaitTurn: Char=Caster
-ElseThread:
+ElseThread
 	WaitAnimation: Char=Caster
 	LoadSFX: SFX=Player_Attack_Zidane_Sword
 	PlayAnimation: Char=Caster ; Anim=MP_SET

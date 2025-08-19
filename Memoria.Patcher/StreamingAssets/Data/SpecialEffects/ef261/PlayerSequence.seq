@@ -36,35 +36,35 @@ StartThread: Condition=AbilityId == 1533 && TargetIsPlayer
 	Turn: Char=Caster ; BaseAngle=Default ; Time=5
 	WaitTurn: Char=Caster
 ElseThread: Condition=CasterCharacterIndex == CharacterId_Garnet
-		WaitAnimation: Char=Caster
-		SetVariable: Variable=cmd_status ; Value=&65533 ; Reflect=True
-		StartThread: Condition=IsSingleSelectedTarget
-			Turn: Char=Caster ; BaseAngle=AllTargets ; Time=5
-		EndThread
-		SetupReflect: Delay=SFXLoaded
-		LoadSFX: SFX=Odin__Full ; Reflect=True ; UseCamera=True
-		ShowMesh: Char=Caster ; Mesh=Weapon ; Enable=False
-		PlayAnimation: Char=Caster ; Anim=ANH_MAIN_B0_002_600
-		WaitAnimation: Char=Caster
-		Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
-		Channel
-		PlayAnimation: Char=Caster ; Anim=ANH_MAIN_B0_002_601 ; Loop=True
-		SetBackgroundIntensity: Intensity=0.5 ; Time=20
-		WaitSFXLoaded: SFX=Odin__Full ; Reflect=True
-		WaitAnimation: Char=Caster
-		PlayAnimation: Char=Caster ; Anim=ANH_MAIN_B0_002_602
-		Wait: Time=16
-		ShowMesh: Enable=False ; Time=16 ; Char=AllPlayers
-		StopChannel
-		WaitAnimation: Char=Caster
-		PlaySFX: SFX=Odin__Full ; Reflect=True
-		WaitSFXDone: SFX=Odin__Full ; Reflect=True
-		ActivateReflect
-		WaitReflect
-		PlayAnimation: Char=Caster ; Anim=Idle
-		Turn: Char=Caster ; BaseAngle=Default ; Time=5
-		WaitTurn: Char=Caster
-		SetVariable: Variable=cmd_status ; Value=|2 ; Reflect=True
+	WaitAnimation: Char=Caster
+	SetVariable: Variable=cmd_status ; Value=&65533 ; Reflect=True
+	StartThread: Condition=IsSingleSelectedTarget
+		Turn: Char=Caster ; BaseAngle=AllTargets ; Time=5
+	EndThread
+	SetupReflect: Delay=SFXLoaded
+	LoadSFX: SFX=Odin__Full ; Reflect=True ; UseCamera=True
+	ShowMesh: Char=Caster ; Mesh=Weapon ; Enable=False
+	PlayAnimation: Char=Caster ; Anim=ANH_MAIN_B0_002_600
+	WaitAnimation: Char=Caster
+	Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
+	Channel
+	PlayAnimation: Char=Caster ; Anim=ANH_MAIN_B0_002_601 ; Loop=True
+	SetBackgroundIntensity: Intensity=0.5 ; Time=20
+	WaitSFXLoaded: SFX=Odin__Full ; Reflect=True
+	WaitAnimation: Char=Caster
+	PlayAnimation: Char=Caster ; Anim=ANH_MAIN_B0_002_602
+	Wait: Time=16
+	ShowMesh: Enable=False ; Time=16 ; Char=MatchingCondition(!IsTargeted && IsTargetable)
+	StopChannel
+	WaitAnimation: Char=Caster
+	PlaySFX: SFX=Odin__Full ; Reflect=True
+	WaitSFXDone: SFX=Odin__Full ; Reflect=True
+	ActivateReflect
+	WaitReflect
+	PlayAnimation: Char=Caster ; Anim=Idle
+	Turn: Char=Caster ; BaseAngle=Default ; Time=5
+	WaitTurn: Char=Caster
+	SetVariable: Variable=cmd_status ; Value=|2 ; Reflect=True
 ElseThread
 	WaitAnimation: Char=Caster
 	SetVariable: Variable=cmd_status ; Value=&65533 ; Reflect=True
