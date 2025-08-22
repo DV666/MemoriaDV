@@ -24,9 +24,9 @@ namespace Memoria.Scripts.Battle
             {
                 _v.Command.AbilityCategory -= 16; // Remove Magical effect to prevent Vanish to dissapear.
                 btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.PowerUp, parameters: "+2");
-                if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Divine_guidance) && _v.Target.IsPlayer)
+                if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.DivineGuidance) && _v.Target.IsPlayer)
                 {
-                    if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Divine_guidance_Boosted))
+                    if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.DivineGuidance_Boosted))
                     {
                         _v.CalcHpMagicRecovery();
                         _v.Target.HpDamage /= 3;

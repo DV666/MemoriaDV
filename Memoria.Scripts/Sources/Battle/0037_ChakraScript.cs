@@ -90,7 +90,7 @@ namespace Memoria.Scripts.Battle
                 if (_v.Caster.HasSupportAbilityByIndex(SupportAbility.PowerUp)) // PowerUp
                     TranceSeekAPI.IncreaseTrance(_v.Target.Data, Comn.random16() % (_v.Caster.Will / 2));
 
-                if (_v.Caster.HasSupportAbilityByIndex(SupportAbility.PowerUp) && !_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Power_Up_Boosted))
+                if (_v.Caster.HasSupportAbilityByIndex(SupportAbility.PowerUp) && !_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.PowerUp_Boosted))
                 {
                     _v.Target.Flags |= (CalcFlag.HpDamageOrHeal);
                     _v.Target.HpDamage = (int)(_v.Target.MaximumHp * (uint)_v.Command.Power / 100U);

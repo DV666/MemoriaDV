@@ -58,7 +58,7 @@ namespace Memoria.DefaultScripts
                 Target.CurrentMp = Target.MaximumMp;
             }
 
-            if (target.HasSupportAbilityByIndex(TranceSeekSupportAbility.High_Tide_Boosted))
+            if (target.HasSupportAbilityByIndex(TranceSeekSupportAbility.HighTide_Boosted))
             {
                 Target.CurrentHp = Target.MaximumHp;
                 Target.CurrentMp = Target.MaximumMp;

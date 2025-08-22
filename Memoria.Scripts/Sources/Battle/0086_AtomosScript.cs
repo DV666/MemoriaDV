@@ -1,5 +1,6 @@
 using FF9;
 using Memoria.Data;
+using Memoria.Prime;
 using System;
 
 namespace Memoria.Scripts.Battle
@@ -26,9 +27,9 @@ namespace Memoria.Scripts.Battle
                 _v.Command.AbilityCategory -= 16; // Remove Magical effect to prevent Vanish to dissapear.
                 _v.Target.TryRemoveStatuses(_v.Command.AbilityStatus);
                 _v.Target.AlterStatus(TranceSeekStatus.PerfectDodge);
-                if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Divine_guidance) && _v.Target.IsPlayer)
+                if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.DivineGuidance) && _v.Target.IsPlayer)
                 {
-                    if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Divine_guidance_Boosted))
+                    if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.DivineGuidance_Boosted))
                     {
                         _v.CalcHpMagicRecovery();
                         _v.Target.HpDamage /= 3;
@@ -39,19 +40,24 @@ namespace Memoria.Scripts.Battle
 
             _v.SetCommandAttack();
             TranceSeekAPI.BonusElement(_v);
-            if (!TranceSeekAPI.CanAttackMagic(_v))
-                return;
-
-            _v.CalcCannonProportionDamage();
-            if (_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill))
+            if (TranceSeekAPI.CanAttackMagic(_v))
             {
-                _v.Target.HpDamage = Math.Max(1, (_v.Target.HpDamage / TranceSeekAPI.MonsterMechanic[_v.Target.Data][5]));
-                TranceSeekAPI.MonsterMechanic[_v.Target.Data][5] = TranceSeekAPI.MonsterMechanic[_v.Target.Data][5] * 2;
+                _v.CalcCannonProportionDamage();
+                if (_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill) || TranceSeekAPI.EliteMonster(_v.Target.Data))
+                {
+                    if (TranceSeekAPI.MonsterMechanic[_v.Target.Data][3] == 1 && _v.Target.CurrentHp > 10000)
+                        _v.Target.HpDamage = (Int32)(_v.Target.CurrentHp - 10000) * _v.Context.Attack / 100;
+                    else
+                        _v.Target.HpDamage = (Int32)_v.Target.CurrentHp * _v.Context.Attack / 100;
+
+                    _v.Target.HpDamage = Math.Max(1, (_v.Target.HpDamage / TranceSeekAPI.MonsterMechanic[_v.Target.Data][5]));
+                    TranceSeekAPI.MonsterMechanic[_v.Target.Data][5] = TranceSeekAPI.MonsterMechanic[_v.Target.Data][5] * 2;
+                }
+                if ((ff9item.FF9Item_GetCount(RegularItem.Amethyst)) > Comn.random16() % 100)
+                    _v.Target.TryAlterStatuses(_v.Command.AbilityStatus, false, _v.Caster);
+                if (_v.Command.IsShortSummon)
+                    _v.Target.HpDamage = _v.Target.HpDamage * 2 / 3;
             }
-            if ((ff9item.FF9Item_GetCount(RegularItem.Amethyst)) > Comn.random16() % 100)
-                TranceSeekAPI.TryAlterCommandStatuses(_v);
-            if (_v.Command.IsShortSummon)
-                _v.Target.HpDamage = _v.Target.HpDamage * 2 / 3;
         }
     }
 }

@@ -238,8 +238,7 @@ namespace Memoria.Scripts.Battle
                         unit.SummonCount = 1; // [TODO] Change to Memoria Dict : Used for SA Take that!
                         SpecialSAEffect[unit.Data][13] = unit.PhysicalDefence; // In top form!
                     }
-
-                    if (unit.PlayerIndex == (CharacterId)15) // Reset CMD Komrade
+                    else if (unit.PlayerIndex == (CharacterId)15) // Reset CMD Komrade
                     {
                         List<BattleAbilityId> ListAAKomrade = CharacterCommands.Commands[(BattleCommandId)1030].EnumerateAbilities().ToList();
                         int TotalAAKomrade = 2 * ListAAKomrade.Count;
@@ -430,6 +429,11 @@ namespace Memoria.Scripts.Battle
                         sps.posOffset = Vector3.zero;
                         TranceSeekSpecial.PolaritySPS[unit] = sps;
                     }
+
+                    if (Configuration.Battle.Speed == 2)
+                    {
+                        unit.AddDelayedModifier(SearchTargetAvailable, null);
+                    }
                 }
             }
         }
@@ -457,6 +461,22 @@ namespace Memoria.Scripts.Battle
             {
                 magiclampcooldown -= caster.Data.cur.at_coef * BattleState.ATBTickCount;
             }
+            return true;
+        }
+
+        private Boolean SearchTargetAvailable(BattleUnit unit) // Avoid Freyja to spam "Jump" against monsters on 1vs1, with almost same Speed.
+        {
+            Boolean TargetAvailable = false;
+            for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
+                if (next.bi.player == 1 && !btl_stat.CheckStatus(next, BattleStatus.Death | BattleStatus.Jump) && next.bi.target != 0)
+                    TargetAvailable = true;
+
+            if (TargetAvailable)
+                return true;
+
+            if (unit.CurrentAtb > ((4 * unit.MaximumAtb) / 5))
+                unit.CurrentAtb = (short)(Math.Max(1, unit.CurrentAtb - (unit.MaximumAtb / 10)));
+
             return true;
         }
 
@@ -551,12 +571,18 @@ namespace Memoria.Scripts.Battle
 
                 if (PlayerUnit.Data.saExtended.Count > 0)
                 {
-                    data += $"\n\n💎 SA equipped";
+                    List<String> PlayerSAName = new List<String>();
                     foreach (SupportAbility saequipped in PlayerUnit.Data.saExtended)
                         if (SATranceSeek.TryGetValue((int)saequipped, out string abilityName))
-                            data += "\n └→ " + abilityName;
+                            PlayerSAName.Add(abilityName);
                         else
-                            data += "\n └→ " + saequipped;
+                            PlayerSAName.Add(saequipped.ToString());
+
+                    PlayerSAName.Sort();
+
+                    data += $"\n\n💎 SA equipped";
+                    for (Int32 i = 0; i < PlayerSAName.Count; i++) 
+                        data += "\n └→ " + PlayerSAName[i];
                 }
 
                 data += "\n\n";

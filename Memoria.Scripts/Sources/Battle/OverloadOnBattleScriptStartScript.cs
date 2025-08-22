@@ -496,7 +496,6 @@ namespace Memoria.Scripts.Battle
                     CharacterCommands.CommandSets[presetId].Regular[0] = (BattleCommandId)(UnityEngine.Random.Range(1042, 1045));
                 else
                     CharacterCommands.CommandSets[presetId].Regular[0] = (BattleCommandId)(UnityEngine.Random.Range(1038, 1041));
-
             }
 
             // [TODO] To remove when this function will be fixed (in my PR https://github.com/Albeoris/Memoria/pull/1255 or before)
@@ -524,7 +523,7 @@ namespace Memoria.Scripts.Battle
                     {
                         OverloadOnBattleScriptEndScript.EikoMougMechanic(v);
                     }
-                 );
+                );
             }
             return false;
         }

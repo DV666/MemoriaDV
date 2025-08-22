@@ -154,6 +154,7 @@ namespace Memoria.Scripts.Battle
 
                     ushort TargetId = v.Caster.Id;
                     StateMoug[Eiko.Data] = 1;
+                    Boolean TargetReflect = false;
                     List<BattleAbilityId> ClassicMougAAList = new List<BattleAbilityId>();
                     List<BattleAbilityId> SuperMougAAList = new List<BattleAbilityId>();
                     foreach (BattleAbilityId abilId in CharacterCommands.Commands[(BattleCommandId)1049].EnumerateAbilities()) // CMD Kupo (not used for Eiko)
@@ -210,8 +211,14 @@ namespace Memoria.Scripts.Battle
                                 {
                                     Boolean TargetAvailable = true;
                                     foreach (BattleUnit monster in BattleState.EnumerateUnits())
+                                    {
                                         if (!monster.IsPlayer && monster.IsTargetable && !monster.IsUnderAnyStatus(BattleStatus.Death | BattleStatus.Petrify | BattleStatus.Jump | BattleStatus.Reflect))
                                             TargetAvailable = true;
+
+                                        if (monster.IsUnderAnyStatus(BattleStatus.Reflect))
+                                            TargetReflect = true;
+                                    }
+
 
                                     if (TargetAvailable)
                                         AddAA = true;
@@ -381,6 +388,17 @@ namespace Memoria.Scripts.Battle
                             TargetId = candidates[UnityEngine.Random.Range(0, candidates.Count)];
                             MougAAChoosen = (BattleAbilityId)2008;
                         }
+                    }
+
+                    if (TargetReflect && (MougAAChoosen == (BattleAbilityId)2009 || MougAAChoosen == (BattleAbilityId)2010)) // Prevent Moug use Mog Flare / Mog Holy on target under Reflect
+                    {
+                        List<UInt16> TargetsAvailable = new List<UInt16>(4);
+                        for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
+                            if (next.bi.player == 0 && (!btl_stat.CheckStatus(next, BattleStatus.Death | BattleStatus.Petrify | BattleStatus.Reflect)) && next.bi.target != 0)
+                                TargetsAvailable.Add(next.btl_id);
+
+                        if (TargetsAvailable.Count == 0)
+                            TargetId = TargetsAvailable[UnityEngine.Random.Range(0, TargetsAvailable.Count)];
                     }
                     btl_cmd.SetCounter(Eiko, BattleCommandId.Counter, (int)MougAAChoosen, TargetId);
                 }

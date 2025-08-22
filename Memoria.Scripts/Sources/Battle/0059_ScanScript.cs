@@ -38,7 +38,7 @@ namespace Memoria.Scripts.Battle
             {
                 if (_v.Command.AbilityId == (BattleAbilityId)1075 || (_v.Command.Power == 33 && _v.Command.HitRate == 33)) // Lani - Predator's Eye
                 {
-                    _v.Target.Libra(BattleHUD.LibraInformation.NameLevel | BattleHUD.LibraInformation.Category | BattleHUD.LibraInformation.ElementalAffinities | BattleHUD.LibraInformation.StatusAffinities);
+                    _v.Target.Libra(BattleHUD.LibraInformation.Name | BattleHUD.LibraInformation.Category | BattleHUD.LibraInformation.ElementalAffinities | BattleHUD.LibraInformation.StatusAffinities);
                 }
                 else if (_v.Command.AbilityId == (BattleAbilityId)1585) // Scan X
                 {

@@ -76,7 +76,7 @@ namespace Memoria.Scripts.Battle
                     if (_v.Target.IsPlayer)
                     {
                         _v.Command.AbilityCategory -= 16; // Remove Magical effect to prevent Vanish to dissapear.
-                        btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.PowerUp, parameters: $"+{BonusTurbo + 2}");
+                        btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.PowerUp, parameters: $"+{BonusTurbo + 1}");
                     }
                     else if (!_v.Caster.HasSupportAbilityByIndex(SupportAbility.OdinSword))
                     {
@@ -170,9 +170,9 @@ namespace Memoria.Scripts.Battle
                     break;
                 }
             }
-            if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Divine_guidance) && _v.Target.IsPlayer)
+            if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.DivineGuidance) && _v.Target.IsPlayer)
             {
-                if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Divine_guidance_Boosted))
+                if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.DivineGuidance_Boosted))
                 {
                     _v.CalcHpMagicRecovery();
                     _v.Target.HpDamage /= (4 - BonusTurbo);

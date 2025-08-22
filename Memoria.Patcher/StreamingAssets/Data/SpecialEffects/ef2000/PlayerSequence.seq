@@ -12,3 +12,5 @@ WaitSFXLoaded: SFX=Chakra__Multi ; Reflect=True
 PlaySFX: SFX=Chakra__Multi ; Reflect=True ; MeshColors=(1.0, 0.0, 0.5)
 WaitSFXDone: SFX=Chakra__Multi ; Reflect=True
 WaitAnimation: Char=Caster
+ActivateReflect
+WaitReflect

@@ -65,8 +65,6 @@ namespace Memoria.Scripts.Battle
                         else
                             _v.Target.HpDamage = (Int32)_v.Target.CurrentHp * _v.Context.Attack / 100;
 
-                        Log.Message("TranceSeekAPI.MonsterMechanic[_v.Target.Data][3] = " + TranceSeekAPI.MonsterMechanic[_v.Target.Data][3]);
-                        Log.Message("TranceSeekAPI.MonsterMechanic[_v.Target.Data][5] = " + TranceSeekAPI.MonsterMechanic[_v.Target.Data][5]);
                         _v.Target.HpDamage = Math.Max(1, (_v.Target.HpDamage / TranceSeekAPI.MonsterMechanic[_v.Target.Data][5]));
                         TranceSeekAPI.MonsterMechanic[_v.Target.Data][5] = TranceSeekAPI.MonsterMechanic[_v.Target.Data][5] * 2;
                     }

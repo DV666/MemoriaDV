@@ -36,9 +36,12 @@ namespace Memoria.Scripts.Battle
             else if (_v.Caster.Head == (RegularItem)1258)
                 PowerCMD = _v.Command.AbilityId == BattleAbilityId.Eat ? 2 : (_v.Command.AbilityId == BattleAbilityId.Cook ? 1 : PowerCMD);
 
-            if (_v.Caster.InTrance || _v.Caster.HasSupportAbilityByIndex((SupportAbility)220) || _v.Caster.HasSupportAbilityByIndex((SupportAbility)221))
+            Boolean saAppetite = _v.Caster.HasSupportAbilityByIndex((SupportAbility)220);
+            Boolean saGluttony = _v.Caster.HasSupportAbilityByIndex((SupportAbility)221);
+
+            if (_v.Caster.InTrance || saAppetite || saGluttony)
             {
-                if (!_v.Caster.InTrance && _v.Caster.HasSupportAbilityByIndex((SupportAbility)220) && _v.Caster.HasSupportAbilityByIndex((SupportAbility)221)) // SA Appetite AND Gourmandise
+                if (!_v.Caster.InTrance && saAppetite && saGluttony) // SA Appetite AND Gourmandise
                 {
                     Int32 MixStrMag = (_v.Caster.Strength + _v.Caster.Magic) / 2;
                     Int32 baseDamage = Comn.random16() % (1 + (_v.Caster.Level + MixStrMag >> 3));
@@ -50,7 +53,7 @@ namespace Memoria.Scripts.Battle
                     TranceSeekAPI.BonusBackstabAndPenaltyLongDistance(_v);
                     TranceSeekAPI.PenaltyShellAttack(_v);
                 }
-                else if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)220) || _v.Caster.InTrance) // SA Appetite
+                else if (saAppetite || _v.Caster.InTrance) // SA Appetite
                 {
                     Int32 baseDamage = Comn.random16() % (1 + (_v.Caster.Level + _v.Caster.Strength >> 3));
                     _v.Context.AttackPower = _v.Caster.GetWeaponPower(_v.Command);
@@ -60,7 +63,7 @@ namespace Memoria.Scripts.Battle
                     TranceSeekAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
                     TranceSeekAPI.BonusBackstabAndPenaltyLongDistance(_v);
                 }
-                else if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)221)) // SA Gourmandise
+                else if (saGluttony) // SA Gourmandise
                 {
                     Int32 baseDamage = Comn.random16() % (1 + (_v.Caster.Level + _v.Caster.Magic >> 3));
                     _v.Context.AttackPower = _v.Caster.GetWeaponPower(_v.Command);
@@ -110,6 +113,8 @@ namespace Memoria.Scripts.Battle
 
             if (_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill) || !_v.Target.CanBeAttacked() || btl_util.getEnemyTypePtr(_v.Target.Data).category == 1)
             {
+                if (saAppetite || saGluttony)
+                    return;
                 if (!_v.Caster.IsUnderAnyStatus(BattleStatus.Trance))
                 {
                     UiState.SetBattleFollowFormatMessage(BattleMesages.CannotEat);

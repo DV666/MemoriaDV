@@ -1,0 +1,27 @@
+// Player sequence of SFX S.Silence
+
+WaitAnimation: Char=Caster
+StartThread: Condition=IsSingleSelectedTarget
+	Turn: Char=Caster ; BaseAngle=AllTargets ; Time=5
+EndThread
+Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
+SetupReflect: Delay=SFXLoaded
+LoadSFX: SFX=Silence__Single ; Reflect=True ; FirstBone=31 ; SecondBone=31
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_122_BTL_RUNIC1
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_122_BTL_RUNIC2 ; Loop=True
+Channel
+WaitSFXLoaded: SFX=Silence__Single ; Reflect=True
+WaitAnimation: Char=Caster
+StopChannel
+Wait: Time=10
+PlaySFX: SFX=Silence__Single ; Reflect=True
+PlayAnimation: Char=Caster ; Anim=ANH_MON_B3_122_BTL_RUNIC3
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=Idle
+WaitAnimation: Char=Caster
+ActivateReflect
+WaitReflect
+WaitSFXDone: SFX=Silence__Single ; Reflect=True
+Turn: Char=Caster ; BaseAngle=Default ; Time=5
+WaitTurn: Char=Caster
