@@ -13,14 +13,14 @@ StartThread: Condition=CasterCharacterIndex == CharacterId_Vivi
 	SetupReflect: Delay=SFXLoaded
 	StartThread: Condition=IsSingleTarget ; Sync=True
 		LoadSFX: SFX=Stop ; Reflect=True
-			PlayAnimation: Char=Caster ; Anim=ANH_MAIN_B0_006_600 ; Speed=1.25
+			PlayAnimation: Char=Caster ; Anim=ANH_MAIN_B0_006_600
 			WaitAnimation: Char=Caster
-			PlayAnimation: Char=Caster ; Anim=ANH_MAIN_B0_006_601 ; Loop=True ; Speed=1.25
+			PlayAnimation: Char=Caster ; Anim=ANH_MAIN_B0_006_601
 			Channel
 			WaitSFXLoaded: SFX=Stop ; Reflect=True
 			WaitAnimation: Char=Caster
 			StopChannel
-			PlayAnimation: Char=Caster ; Anim=ANH_MAIN_B0_006_602 ; Speed=1.25
+			PlayAnimation: Char=Caster ; Anim=ANH_MAIN_B0_006_602 ; Loop=True
 			WaitAnimation: Char=Caster
 		PlaySFX: SFX=Stop ; Reflect=True
 		WaitSFXDone: SFX=Stop ; Reflect=True

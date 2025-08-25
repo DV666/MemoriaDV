@@ -397,7 +397,7 @@ namespace Memoria.Scripts.Battle
                             if (next.bi.player == 0 && (!btl_stat.CheckStatus(next, BattleStatus.Death | BattleStatus.Petrify | BattleStatus.Reflect)) && next.bi.target != 0)
                                 TargetsAvailable.Add(next.btl_id);
 
-                        if (TargetsAvailable.Count == 0)
+                        if (TargetsAvailable.Count > 0)
                             TargetId = TargetsAvailable[UnityEngine.Random.Range(0, TargetsAvailable.Count)];
                     }
                     btl_cmd.SetCounter(Eiko, BattleCommandId.Counter, (int)MougAAChoosen, TargetId);

@@ -31,18 +31,19 @@ namespace Memoria.Scripts.Battle
                 if (_v.Target.PhysicalEvade == 255 || TranceSeekAPI.ZidanePassive[_v.Target.Data][2] > 0)
                 {
                     _v.Context.Flags |= BattleCalcFlags.Miss;
+                    return;
                 }
 
                 Dictionary<String, String> localizedMessage = new Dictionary<String, String>
-                    {
-                        { "US", "Thief's eye!" },
-                        { "UK", "Thief's eye!" },
-                        { "JP", "泥棒の目!" },
-                        { "ES", "Ojo del ladrón!" },
-                        { "FR", "Œil du voleur !" },
-                        { "GR", "Auge des Diebes!" },
-                        { "IT", "Occhio del ladro!" },
-                    };
+                {
+                    { "US", "Thief's Eye!" },
+                    { "UK", "Thief's Eye!" },
+                    { "JP", "泥棒の目!" },
+                    { "ES", "Ojo del ladrón!" },
+                    { "FR", "Œil du voleur !" },
+                    { "GR", "Auge des Diebes!" },
+                    { "IT", "Occhio del ladro!" },
+                };
                 btl2d.Btl2dReqSymbolMessage(_v.Target.Data, "[FDEE00]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 5);
                 TranceSeekAPI.ZidanePassive[_v.Target.Data][2] = 1;
             }

@@ -51,49 +51,12 @@ namespace Memoria.Scripts.Battle
             if (Configuration.Mod.FolderNames.Contains("TranceSeek/StuffListed"))
                 WriteStuffInFile();
 
-            foreach (BattleUnit PlayerUnit in BattleState.EnumerateUnits())
-            {
-                if (!PlayerUnit.IsPlayer)
-                    continue;
-
-                if (PlayerUnit.HasSupportAbilityByIndex((SupportAbility)1045)) // Pluriche+
-                {
-                    foreach (BattleUnit monster in BattleState.EnumerateUnits())
-                    {
-                        if (!monster.IsPlayer)
-                        {
-                            BattleEnemy battleEnemy = BattleEnemy.Find(monster);
-                            battleEnemy.Data.bonus_item_rate[3] += 15;
-                            battleEnemy.Data.bonus_item_rate[2] += 64;
-                            battleEnemy.Data.bonus_item_rate[1] += 96;
-                        }
-                    }
-                }
-            }
+            InitTSVariables();
 
             Boolean RefinedMonocleTrigger = false;
 
             foreach (BattleUnit unit in BattleState.EnumerateUnits())
             {
-                ZidanePassive[unit.Data] = [0, 0, 0, 0, 0, 255, 255, 0, 0, 0, 0, 0 ];
-                ViviPreviousSpell[unit.Data] = BattleAbilityId.Void;
-                ViviPassive[unit.Data] = [0, 0, 0];
-                BeatrixPassive[unit.Data] = [0, 0, 0, 0];
-                ProtectStatus[unit.Data] = new Dictionary<BattleStatus, Int32> { { 0, 0 } };
-                AbsorbElement[unit.Data] = -1;
-                StackBreakOrUpStatus[unit.Data] = [0, 0, 0, 0];
-                MonsterMechanic[unit.Data] = [ 0, 0, 0, 0, 100, 2, 0 ];
-                SpecialSAEffect[unit.Data] = [ 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, (int)unit.MaximumHp, (int)unit.MaximumMp];
-                SpecialItemEffect[unit.Data] = [3, 3];
-                ElementAffinitiesItem[unit.Data] = [0, 0];
-                TriggerSPSResistStatus[unit.Data] = false;
-                RollBackStats[unit.Data] = [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ];
-                RollBackBattleStatus[unit.Data] = 0;
-                WeaponNewElement[unit.Data] = EffectElement.None;
-                WeaponNewStatus[unit.Data] = 0;
-                StateMoug[unit.Data] = 0;
-                ModelMoug[unit.Data] = null;
-
                 if (unit.IsPlayer)
                 {
                     if ((FF9StateSystem.Battle.battleMapIndex == 334 || FF9StateSystem.Battle.battleMapIndex == 335)) // Add Steal command for Zidane/Marcus against Steiner 2nd
@@ -153,10 +116,29 @@ namespace Memoria.Scripts.Battle
                         unit.AlterStatus(TranceSeekStatus.ArmorUp, unit);
                         unit.AlterStatus(TranceSeekStatus.MentalUp, unit);
                     }
+                    if (unit.HasSupportAbilityByIndex((SupportAbility)1045)) // Pluriche+
+                    {
+                        foreach (BattleUnit monster in BattleState.EnumerateUnits())
+                        {
+                            if (!monster.IsPlayer)
+                            {
+                                BattleEnemy battleEnemy = BattleEnemy.Find(monster);
+                                battleEnemy.Data.bonus_item_rate[3] += 15;
+                                battleEnemy.Data.bonus_item_rate[2] += 64;
+                                battleEnemy.Data.bonus_item_rate[1] += 96;
+                            }
+                        }
+                    }
                     if (unit.Weapon == RegularItem.Defender)
                     {
                         unit.AlterStatus(TranceSeekStatus.ArmorUp, unit);
                         unit.AlterStatus(TranceSeekStatus.MentalUp, unit);
+                    }
+                    if (unit.Wrist == RegularItem.ThiefGloves)
+                    {
+                        foreach (BattleUnit monster in BattleState.EnumerateUnits())
+                            if (!monster.IsPlayer)
+                                ZidanePassive[monster.Data][2] = 1;
                     }
                     if (unit.Armor == (RegularItem)1220) // Mechanical Armor
                     {
@@ -165,7 +147,19 @@ namespace Memoria.Scripts.Battle
                     }
                     if (unit.Accessory == (RegularItem)1253) // Ishgard Scarf
                     {
-                        btl_stat.AlterStatus(btl_scrp.FindBattleUnit(btl_util.GetRandomBtlID(0U, false)), TranceSeekStatusId.Dragon);
+                        unit.AddDelayedModifier(
+                            caster => FF9StateSystem.Battle.FF9Battle.btl_phase < FF9StateBattleSystem.PHASE_MENU_ON,
+                            caster =>
+                            {
+                                List<UInt16> TargetsAvailable = new List<UInt16>(4);
+                                for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
+                                    if (next.bi.player == 0 && !btl_stat.CheckStatus(next, BattleStatus.Death | BattleStatus.Petrify) && next.bi.target != 0)
+                                        TargetsAvailable.Add(next.btl_id);
+
+                                if (TargetsAvailable.Count > 0)
+                                    btl_stat.AlterStatus(btl_scrp.FindBattleUnitUnlimited(TargetsAvailable[UnityEngine.Random.Range(0, TargetsAvailable.Count)]), TranceSeekStatusId.Dragon);
+                            }
+                        );
                     }
                     else if (unit.Accessory == (RegularItem)1254) // Strange Cube
                     {
@@ -435,6 +429,31 @@ namespace Memoria.Scripts.Battle
                         unit.AddDelayedModifier(SearchTargetAvailable, null);
                     }
                 }
+            }
+        }
+
+        public static void InitTSVariables()
+        {
+            foreach (BattleUnit unit in BattleState.EnumerateUnits())
+            {
+                ZidanePassive[unit.Data] = [0, 0, 0, 0, 0, 255, 255, 0, 0, 0, 0, 0];
+                ViviPreviousSpell[unit.Data] = BattleAbilityId.Void;
+                ViviPassive[unit.Data] = [0, 0, 0];
+                BeatrixPassive[unit.Data] = [0, 0, 0, 0];
+                ProtectStatus[unit.Data] = new Dictionary<BattleStatus, Int32> { { 0, 0 } };
+                AbsorbElement[unit.Data] = -1;
+                StackBreakOrUpStatus[unit.Data] = [0, 0, 0, 0];
+                MonsterMechanic[unit.Data] = [0, 0, 0, 0, 100, 2, 0];
+                SpecialSAEffect[unit.Data] = [0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, (int)unit.MaximumHp, (int)unit.MaximumMp];
+                SpecialItemEffect[unit.Data] = [3, 3];
+                ElementAffinitiesItem[unit.Data] = [0, 0];
+                TriggerSPSResistStatus[unit.Data] = false;
+                RollBackStats[unit.Data] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+                RollBackBattleStatus[unit.Data] = 0;
+                WeaponNewElement[unit.Data] = EffectElement.None;
+                WeaponNewStatus[unit.Data] = 0;
+                StateMoug[unit.Data] = 0;
+                ModelMoug[unit.Data] = null;
             }
         }
 

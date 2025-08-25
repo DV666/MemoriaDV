@@ -1,6 +1,8 @@
 ﻿using Memoria.Data;
+using Memoria.Prime;
 using System;
 using System.Collections.Generic;
+using System.Runtime.Remoting.Contexts;
 
 namespace Memoria.Scripts.Battle
 {
@@ -75,7 +77,7 @@ namespace Memoria.Scripts.Battle
                     _v.Caster.SummonCount = 1;
                 }
             }
-            if (_v.IsCasterNotTarget() && _v.Target.CanBeAttacked())
+            else if (_v.IsCasterNotTarget() && _v.Target.CanBeAttacked())
             {
                 uint currentHp = _v.Target.CurrentHp;
                 _v.NormalMagicParams();
@@ -141,19 +143,11 @@ namespace Memoria.Scripts.Battle
                         }
                         else
                         {
-                            if (_v.Context.PowerDifference >= 1)
-                            {
-                                _v.CalcHpDamage();
-
-                                if (_v.Target.HpDamage > currentHp)
-                                {
-                                    _v.Caster.HpDamage = (int)currentHp;
-                                }
-                                else
-                                {
-                                    _v.Caster.HpDamage = _v.Target.HpDamage;
-                                }
-                            }
+                            _v.CalcHpDamage();
+                            if (_v.Target.HpDamage > currentHp)
+                                _v.Caster.HpDamage = (int)currentHp;
+                            else
+                                _v.Caster.HpDamage = _v.Target.HpDamage;
                             TranceSeekAPI.TryAlterMagicStatuses(_v);
                         }
                     }

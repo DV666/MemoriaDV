@@ -492,6 +492,16 @@ namespace Memoria.Scripts.Battle
                 _v.Target.RemoveStatus(BattleStatus.Mini);
                 _v.Target.Data.geo_scale_default = 16384;
             }
+            else if (_v.Command.Power == 199 && _v.Command.HitRate == 199 && _v.Command.AbilityStatus == BattleStatus.Reflect) // AntiBoom from Invincible (CD3 Kuja)
+            {
+                _v.Target.Flags = CalcFlag.HpAlteration | CalcFlag.MpAlteration;
+                _v.Target.HpDamage = (int)(_v.Target.CurrentHp - 1);
+                _v.Target.MpDamage = (int)(_v.Target.CurrentMp - 1);
+                if (_v.Target.IsUnderPermanentStatus(BattleStatus.Reflect))
+                    _v.Target.Data.stat.permanent &= ~BattleStatus.Reflect;
+
+                _v.Target.RemoveStatus(BattleStatus.Reflect);
+            }
             else if (_v.Caster.Data.dms_geo_id == 146) // Quicksand mechanic
             {
                 if (_v.Command.Power == 10)

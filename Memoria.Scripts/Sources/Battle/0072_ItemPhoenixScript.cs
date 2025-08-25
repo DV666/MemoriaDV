@@ -79,7 +79,7 @@ namespace Memoria.Scripts.Battle
 
         public Single RateTarget()
         {
-            if (!_v.Target.CanBeRevived() || _v.Target.Accessory == (RegularItem)1213)
+            if (!_v.Target.CanBeRevived())
                 return 0;
 
             if (_v.Target.IsZombie && !_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill))

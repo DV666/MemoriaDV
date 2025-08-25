@@ -1625,7 +1625,9 @@ namespace Memoria.Scripts.Battle
                 {
                     uint OldMaximumHP = v.Target.MaximumHp;
                     uint factor = (uint)(v.Caster.HasSupportAbilityByIndex((SupportAbility)1127) ? 20 : 10);
-                    v.Target.MaximumHp += Math.Min((v.Target.MaximumHp * factor) / 100, (uint)(v.Target.HpDamage * factor) / 100);
+                    uint LimitMaxHP = v.Target.MaximumHp + ((v.Target.MaximumHp * factor) / 100);
+
+                    v.Target.MaximumHp = (uint)Math.Min(v.Target.CurrentHp + v.Target.HpDamage, LimitMaxHP);
                     v.Target.CurrentHp = v.Target.MaximumHp;
                     v.Target.AddDelayedModifier(
                         target => v.Target.CurrentHp > OldMaximumHP,

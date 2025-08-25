@@ -95,11 +95,11 @@ namespace Memoria.DefaultScripts
                 if (inflicter.HasSupportAbilityByIndex((SupportAbility)219)) // SA Embrace
                 {
                     DiffPhysicalEvade = target.PhysicalEvade / 4;
-                    target.PhysicalEvade = Math.Min(0, target.PhysicalEvade - DiffPhysicalEvade);
+                    target.PhysicalEvade = Math.Max(0, target.PhysicalEvade - DiffPhysicalEvade);
                     if (inflicter.HasSupportAbilityByIndex((SupportAbility)1219))
                     {
                         DiffMagicalEvade = target.MagicEvade / 4;
-                        target.MagicEvade = Math.Min(0, target.MagicEvade - DiffMagicalEvade);
+                        target.MagicEvade = Math.Max(0, target.MagicEvade - DiffMagicalEvade);
                     }
                 }
             }
@@ -117,11 +117,11 @@ namespace Memoria.DefaultScripts
             }
             if (DiffPhysicalEvade > 0)
             {
-                Target.PhysicalEvade = Math.Max(255, Target.PhysicalEvade + DiffPhysicalEvade);
+                Target.PhysicalEvade = Math.Min(255, Target.PhysicalEvade + DiffPhysicalEvade);
             }
             if (DiffMagicalEvade > 0)
             {
-                Target.MagicEvade = Math.Max(255, Target.MagicEvade + DiffMagicalEvade);
+                Target.MagicEvade = Math.Min(255, Target.MagicEvade + DiffMagicalEvade);
             }
             return true;
         }

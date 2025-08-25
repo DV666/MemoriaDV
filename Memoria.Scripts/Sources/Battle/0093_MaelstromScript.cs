@@ -43,7 +43,7 @@ namespace Memoria.Scripts.Battle
                     {
                         _v.Target.CurrentHp = (uint)(1 + GameRandom.Next8() % 9);
                     }
-                    TranceSeekAPI.TryAlterCommandStatuses(_v);
+                    TranceSeekAPI.TryAlterCommandStatuses(_v, false);
                 }
             }
         }

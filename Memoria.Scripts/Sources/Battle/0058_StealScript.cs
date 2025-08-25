@@ -182,13 +182,13 @@ namespace Memoria.Scripts.Battle
             AddBonusSteal();
             Dictionary<String, String> localizedMessage = new Dictionary<String, String>
             {
-                { "US", "Eye of the thief!" },
-                { "UK", "Eye of the thief!" },
-                { "JP", "Eye of the thief!" },
-                { "ES", "Eye of the thief!" },
+                { "US", "Thief's Eye!" },
+                { "UK", "Thief's Eye!" },
+                { "JP", "泥棒の目!" },
+                { "ES", "Ojo del ladrón!" },
                 { "FR", "Œil du voleur !" },
-                { "GR", "Eye of the thief!" },
-                { "IT", "Eye of the thief!" },
+                { "GR", "Auge des Diebes!" },
+                { "IT", "Occhio del ladro!" },
             };
             if (_v.Caster.IsUnderAnyStatus(BattleStatus.Trance) && _v.Caster.PlayerIndex == CharacterId.Zidane)
             {
@@ -215,6 +215,7 @@ namespace Memoria.Scripts.Battle
                     return;
                 }
                 btl2d.Btl2dReqSymbolMessage(_v.Target.Data, "[FDEE00]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 5);
+                SoundLib.PlaySoundEffect(4005); //se511116
                 return;
             }
             else if (GameRandom.Next8() < NewStealableItemRates(battleEnemy.StealableItemRates[3], _v.Caster) && battleEnemy.StealableItems[3] != RegularItem.NoItem)
@@ -240,6 +241,8 @@ namespace Memoria.Scripts.Battle
                 return;
             }
             btl2d.Btl2dReqSymbolMessage(_v.Target.Data, "[FDEE00]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 5);
+            if (_v.Caster.PlayerIndex == CharacterId.Zidane)
+                SoundLib.PlaySoundEffect(4005); //se511116
         }
 
         public static float NewStealableItemRates(ushort StealableItemRates, BattleCaster Caster)

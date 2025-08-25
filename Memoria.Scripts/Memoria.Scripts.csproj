@@ -367,9 +367,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
     <Compile Include="Sources\Battle\0108_AuthorityScript.cs" />
-    <Compile Include="Sources\Battle\0108_IaiStrikeScript.cs">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Compile>
     <Compile Include="Sources\Battle\0109_MiniScript.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>

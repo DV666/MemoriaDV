@@ -32,6 +32,9 @@ namespace Memoria.Scripts.Battle
 
                 if (TranceSeekAPI.StateMoug[_v.Caster.Data] == 1 && TranceSeekAPI.ModelMoug[_v.Caster.Data] == null) // Moug appears.
                 {
+                    if ((_v.Command.AbilityCategory & 16) != 0)
+                        _v.Command.AbilityCategory -= 16; // Remove magical effect (for Vanish)
+
                     TranceSeekAPI.ModelMoug[_v.Caster.Data] = ModelFactory.CreateModel("GEO_NPC_F4_MOG", true);
                     // ANH_NPC_F4_MOG_INTO_EIK_PASSIVE_1
                     // ANH_NPC_F4_MOG_INTO_EIK_PASSIVE_2
@@ -57,6 +60,9 @@ namespace Memoria.Scripts.Battle
                 }
                 else if (TranceSeekAPI.StateMoug[_v.Caster.Data] == 2 && TranceSeekAPI.ModelMoug[_v.Caster.Data] != null) // Moug cast.
                 {
+                    if ((_v.Command.AbilityCategory & 16) != 0)
+                        _v.Command.AbilityCategory -= 16; // Remove magical effect (for Vanish)
+
                     TranceSeekAPI.ModelMoug[_v.Caster.Data].transform.localPosition = _v.Caster.Data.gameObject.transform.localPosition + new Vector3(0f, 0f, 250f);
                     Animation animation = TranceSeekAPI.ModelMoug[_v.Caster.Data].GetComponent<Animation>();
                     if (animation != null)
