@@ -48,6 +48,16 @@ namespace Memoria.Scripts.Battle
                 FF9StateSystem.Battle.FF9Battle.aa_data[(BattleAbilityId)idAA].MP = 0;
             }
 
+            if (!FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1000, out Dictionary<Int32, Int32> dictgils)) // Reset bonus gils
+            {
+                dictgils = new Dictionary<Int32, Int32>();
+                FF9StateSystem.EventState.gScriptDictionary.Add(1000, dictgils);
+            }
+            else
+            {
+                dictgils[0] = 0;
+            }
+
             if (Configuration.Mod.FolderNames.Contains("TranceSeek/StuffListed"))
                 WriteStuffInFile();
 
@@ -118,6 +128,7 @@ namespace Memoria.Scripts.Battle
                     }
                     if (unit.HasSupportAbilityByIndex((SupportAbility)1045)) // Pluriche+
                     {
+                        dictgils[0] += 3;
                         foreach (BattleUnit monster in BattleState.EnumerateUnits())
                         {
                             if (!monster.IsPlayer)
@@ -128,6 +139,14 @@ namespace Memoria.Scripts.Battle
                                 battleEnemy.Data.bonus_item_rate[1] += 96;
                             }
                         }
+                    }
+                    else if (unit.HasSupportAbilityByIndex(SupportAbility.Millionaire)) // Pluriche+
+                    {
+                        dictgils[0] += 2;
+                    }
+                    if (unit.Accessory == (RegularItem)1212) // Cait's Eye
+                    {
+                        dictgils[0] += 1;
                     }
                     if (unit.Weapon == RegularItem.Defender)
                     {
@@ -211,15 +230,21 @@ namespace Memoria.Scripts.Battle
                     else if (unit.Accessory == (RegularItem)1261 && !RefinedMonocleTrigger) // Refined Monocle
                     {
                         RefinedMonocleTrigger = true;
-                        foreach (BattleUnit monsteratb in BattleState.EnumerateUnits())
-                            if (!monsteratb.IsPlayer)
+                        unit.AddDelayedModifier(
+                            caster => FF9StateSystem.Battle.FF9Battle.btl_phase < FF9StateBattleSystem.PHASE_MENU_ON,
+                            caster =>
                             {
-                                ScanScript.TriggerOneTime[monsteratb.Data] = false;
-                                ScanScript.HPBarHidden[monsteratb.Data] = false;
-                                ScanScript.ATBGreenBarHUD[monsteratb.Data] = null;
-                                ScanScript.ATBRedBarHUD[monsteratb.Data] = null;
-                                monsteratb.AddDelayedModifier(ScanScript.ShowATBBar, null);
+                                foreach (BattleUnit monsteratb in BattleState.EnumerateUnits())
+                                    if (!monsteratb.IsPlayer && monsteratb.IsTargetable)
+                                    {
+                                        ScanScript.TriggerOneTime[monsteratb.Data] = false;
+                                        ScanScript.HPBarHidden[monsteratb.Data] = false;
+                                        ScanScript.ATBGreenBarHUD[monsteratb.Data] = null;
+                                        ScanScript.ATBRedBarHUD[monsteratb.Data] = null;
+                                        monsteratb.AddDelayedModifier(ScanScript.ShowATBBar, null);
+                                    }
                             }
+                        );
                     }
                     if (unit.IsUnderAnyStatus(BattleStatus.EasyKill))
                     {
@@ -451,6 +476,7 @@ namespace Memoria.Scripts.Battle
                 RollBackStats[unit.Data] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
                 RollBackBattleStatus[unit.Data] = 0;
                 WeaponNewElement[unit.Data] = EffectElement.None;
+                WeaponNewCustomElement[unit.Data] = 0;
                 WeaponNewStatus[unit.Data] = 0;
                 StateMoug[unit.Data] = 0;
                 ModelMoug[unit.Data] = null;

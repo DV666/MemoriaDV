@@ -42,6 +42,7 @@ namespace Memoria.Scripts.Battle
         public static Dictionary<BTL_DATA, Boolean> TriggerSPSResistStatus = new Dictionary<BTL_DATA, Boolean>();
         public static Dictionary<BTL_DATA, BattleStatus> RollBackBattleStatus = new Dictionary<BTL_DATA, BattleStatus>();
         public static Dictionary<BTL_DATA, EffectElement> WeaponNewElement = new Dictionary<BTL_DATA, EffectElement>();
+        public static Dictionary<BTL_DATA, Int32> WeaponNewCustomElement = new Dictionary<BTL_DATA, Int32>(); // 0 = None, 1 = Poison, 2 = Gravity
         public static Dictionary<BTL_DATA, BattleStatus> WeaponNewStatus = new Dictionary<BTL_DATA, BattleStatus>();
 
         public static Boolean EliteMonster(BTL_DATA Monster)
@@ -133,13 +134,13 @@ namespace Memoria.Scripts.Battle
             }
         }
 
-        public static void TryCriticalHit(this BattleCalculator v)
+        public static void TryCriticalHit(this BattleCalculator v, int BonusCrit = 0)
         {
             if (v.Caster.HasSupportAbilityByIndex((SupportAbility)1102)) // Archimage+ (10% crit en bonus)
                 ZidanePassive[v.Caster.Data][1] = 40;
             Int32 quarterWill = (v.Caster.Data.elem.wpr + ZidanePassive[v.Caster.Data][1]) >> 2;
             BonusCriticalFromWeapon(v.Caster.Weapon, out Int32 BonusWeaponCritical);
-            if (quarterWill != 0 && ((Comn.random16() % quarterWill) + v.Caster.Data.critical_rate_deal_bonus + v.Target.Data.critical_rate_receive_resistance + BonusWeaponCritical > Comn.random16() % 100) || v.Caster.IsUnderAnyStatus(TranceSeekStatus.PerfectCrit) || SpecialSAEffect[v.Target.Data][9] > 0)
+            if (quarterWill != 0 && (((Comn.random16() % quarterWill) + v.Caster.Data.critical_rate_deal_bonus + v.Target.Data.critical_rate_receive_resistance + BonusWeaponCritical + BonusCrit) > Comn.random16() % 100) || v.Caster.IsUnderAnyStatus(TranceSeekStatus.PerfectCrit) || SpecialSAEffect[v.Target.Data][9] > 0)
             {
                 if (SpecialSAEffect[v.Target.Data][9] > 0)
                     SpecialSAEffect[v.Target.Data][9]--;
@@ -389,7 +390,7 @@ namespace Memoria.Scripts.Battle
                 );
                 if (v.Caster.PlayerIndex == CharacterId.Vivi)
                 {
-                    if ((v.Command.Id == BattleCommandId.BlackMagic || v.Command.Id == BattleCommandId.DoubleBlackMagic) || v.Command.Id == (BattleCommandId)1032)
+                    if ((v.Command.Id == BattleCommandId.BlackMagic || v.Command.Id == BattleCommandId.DoubleBlackMagic) || v.Command.Id == TranceSeekBattleCommand.Witchcraft)
                     {
                         if (ViviPassive[v.Caster.Data][1] == 0)
                         {
@@ -466,6 +467,14 @@ namespace Memoria.Scripts.Battle
                                     };
                                     btl2d.Btl2dReqSymbolMessage(v.Caster.Data, "[DC143C]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 40);
                                 }
+                            }
+
+                            if (v.Caster.Weapon == (RegularItem)1163 && !v.Target.IsPlayer)
+                            {
+                                if (v.Command.TargetCount > 1)
+                                    WhatIsThatScript.MultipleSteal(v, false);
+                                else
+                                    StealScript.ClassicSteal(v, false);
                             }
                             ViviPreviousSpell[v.Caster.Data] = v.Command.AbilityId;
                         }
@@ -886,9 +895,9 @@ namespace Memoria.Scripts.Battle
 
             CanAttackElement(v, WeaponElement);
 
-            if (WeaponNewElement[v.Caster.Data] != 0 & v.Target.IsWeakElement(WeaponElement))
+            if (WeaponNewElement[v.Caster.Data] != 0)
             {
-                if (v.Caster.PlayerIndex == (CharacterId)12) // SA Maximum infusion
+                if (v.Caster.PlayerIndex == (CharacterId)12 & v.Target.IsWeakElement(WeaponElement)) // SA Maximum infusion
                 {
                     BattleAbilityId InfusedAA = ViviPreviousSpell[v.Caster.Data];
                     if (InfusedAA == (BattleAbilityId)1091 || InfusedAA == (BattleAbilityId)1092 || InfusedAA == (BattleAbilityId)1093 || InfusedAA == (BattleAbilityId)1094)
@@ -901,6 +910,12 @@ namespace Memoria.Scripts.Battle
                     }
                 }
             }
+
+            if (((WeaponNewCustomElement[v.Caster.Data] & 1) != 0) && v.Target.HasCategory(EnemyCategory.Humanoid)) // Poison
+                v.Context.DamageModifierCount++;
+
+            if (((WeaponNewCustomElement[v.Caster.Data] & 2) != 0) && v.Target.HasCategory(EnemyCategory.Stone)) // Gravity
+                v.Context.DamageModifierCount++;
 
             return true;
         }

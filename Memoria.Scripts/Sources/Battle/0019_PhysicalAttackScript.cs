@@ -51,8 +51,7 @@ namespace Memoria.Scripts.Battle
                 if (_v.Command.AbilityId == BattleAbilityId.CherryBlossom)
                 {
                     short CriticalBonus = _v.Caster.Data.critical_rate_deal_bonus;
-                    _v.Caster.Data.critical_rate_deal_bonus += 33;
-                    TranceSeekAPI.TryCriticalHit(_v);
+                    TranceSeekAPI.TryCriticalHit(_v, 33);
                     if (_v.Target.IsUnderAnyStatus(TranceSeekStatus.Dragon) || (_v.Caster.IsUnderStatus(BattleStatus.Trance)))
                     {
                         if (_v.Caster.Will > Comn.random16() % 100)
@@ -65,7 +64,6 @@ namespace Memoria.Scripts.Battle
                             _v.Target.TryAlterStatuses(BattleStatus.Poison, false, _v.Caster);
                         }
                     }
-                    _v.Caster.Data.critical_rate_deal_bonus = CriticalBonus;
                     _v.CalcHpDamage();
                 }
                 else

@@ -380,7 +380,7 @@ namespace Memoria.Scripts.Battle
                     {
                         List<UInt16> candidates = new List<UInt16>(4);
                         for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
-                            if (next.bi.player == 1 && btl_stat.CheckStatus(next, BattleStatus.Death) && next.bi.target != 0)
+                            if (next.bi.player == 1 && btl_stat.CheckStatus(next, BattleStatus.Death) && !btl_stat.CheckStatus(next, BattleStatus.Zombie) && next.bi.target != 0)
                                 candidates.Add(next.btl_id);
 
                         if (candidates.Count > 0)

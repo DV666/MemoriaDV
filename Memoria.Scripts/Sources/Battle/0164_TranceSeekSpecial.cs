@@ -279,6 +279,32 @@ namespace Memoria.Scripts.Battle
                 TranceSeekAPI.MonsterMechanic[_v.Target.Data][4] = 100;
                 return;
             }
+            else if (_v.Command.Power == 77 && _v.Command.HitRate == 177 && _v.Caster.Data.dms_geo_id == 546) // Mad Alchemist - Dragon Power
+            {
+                Dictionary<String, String> localizedMessage2 = new Dictionary<String, String>
+                {
+                    { "US", "Strength ↑↑↑" },
+                    { "UK", "Strength ↑↑↑" },
+                    { "JP", "ちから ↑↑↑" },
+                    { "ES", "Forza ↑↑↑" },
+                    { "FR", "Force ↑↑↑" },
+                    { "GR", "Fuerza ↑↑↑" },
+                    { "IT", "Stärke ↑↑↑" },
+                };
+                btl2d.Btl2dReqSymbolMessage(_v.Target.Data, "[FF040E]", localizedMessage2, HUDMessage.MessageStyle.DAMAGE, 10);
+                Dictionary<String, String> localizedMessage = new Dictionary<String, String>
+                {
+                    { "US", "Magic ↑↑↑" },
+                    { "UK", "Magic ↑↑↑" },
+                    { "JP", "まりょく ↑↑↑" },
+                    { "ES", "POT magico ↑↑↑" },
+                    { "FR", "Magie ↑↑↑" },
+                    { "GR", "Magia ↑↑↑" },
+                    { "IT", "Zauber ↑↑↑" },
+                };
+                btl2d.Btl2dReqSymbolMessage(_v.Target.Data, "[FF040E]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 15);
+                return;
+            }
             else if (_v.Command.Power == 1 && _v.Command.HitRate == 1 && _v.Caster.Data.dms_geo_id == 405) // Friendly Lady Bug - Wind mechanics
             {
                 int ColorWing = GameRandom.Next16() % 5;

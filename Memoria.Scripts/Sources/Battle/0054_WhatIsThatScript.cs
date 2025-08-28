@@ -1,13 +1,13 @@
-using Assets.Sources.Scripts.UI.Common;
+﻿using Assets.Sources.Scripts.UI.Common;
 using System;
 using Memoria.Data;
-using Memoria.Assets;
-using System.Text;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Memoria.Scripts.Battle
 {
     /// <summary>
-    /// What�s That!?
+    /// What’s That!?
     /// </summary>
     [BattleScript(Id)]
     public sealed class WhatIsThatScript : IBattleScript
@@ -23,284 +23,48 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            short num = 0;
-            string text = string.Empty;
-            string text2 = string.Empty;
-            string text3 = string.Empty;
-            string text4 = string.Empty;
-            foreach (BattleUnit battleUnit in BattleState.EnumerateUnits())
+            BattleUnit boss = FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits().FirstOrDefault(u => (u.CurrentStatus & BattleStatus.EasyKill) != 0);
+            if (_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill))
             {
-                if (battleUnit.IsPlayer || !battleUnit.IsUnderStatus(BattleStatus.EasyKill))
+                _v.Context.Flags |= BattleCalcFlags.Miss;
+                return;
+            }
+
+            if (_v.Target.Data == _v.Caster.Data && boss == null)
+                MultipleSteal(_v, false);
+
+            if (boss == null)
+                _v.Target.FaceAsUnit(_v.Caster);
+
+            _v.Target.ChangeRowToDefault();
+        }
+
+        public static void MultipleSteal(BattleCalculator v, Boolean AllEnnemy = false)
+        {
+            List<RegularItem> ItemStolen = new List<RegularItem>();
+            foreach (BattleUnit monster in BattleState.EnumerateUnits())
+                if (!monster.IsPlayer && (monster.IsTargetable || AllEnnemy))
                 {
-                    if (!battleUnit.IsPlayer && battleUnit.PhysicalEvade != 255 && !battleUnit.IsUnderStatus(BattleStatus.EasyKill) && !battleUnit.IsUnderStatus(BattleStatus.Vanish))
-                    {
-                        battleUnit.FaceAsUnit(_v.Caster);
-                        BattleEnemy battleEnemy = BattleEnemy.Find(battleUnit);
-                        if (HasStealableItems(battleEnemy))
-                        {
-                            if (battleEnemy.StealableItems[3] != RegularItem.NoItem && GameRandom.Next8() < StealScript.NewStealableItemRates(battleEnemy.StealableItemRates[3], _v.Caster))
-                            {
-                                if (num == 0)
-                                {
-                                    text += FF9TextTool.ItemName(battleEnemy.StealableItems[3]);
-                                }
-                                else if (num == 1)
-                                {
-                                    text2 += FF9TextTool.ItemName(battleEnemy.StealableItems[3]);
-                                }
-                                else if (num == 2)
-                                {
-                                    text3 += FF9TextTool.ItemName(battleEnemy.StealableItems[3]);
-                                }
-                                else if (num == 3)
-                                {
-                                    text4 += FF9TextTool.ItemName(battleEnemy.StealableItems[3]);
-                                }
-                                _v.StealItem(battleEnemy, 3);
-                            }
-                            else if (battleEnemy.StealableItems[2] != RegularItem.NoItem && GameRandom.Next8() < StealScript.NewStealableItemRates(battleEnemy.StealableItemRates[2], _v.Caster))
-                            {
-                                if (num == 0)
-                                {
-                                    text += FF9TextTool.ItemName(battleEnemy.StealableItems[2]);
-                                }
-                                else if (num == 1)
-                                {
-                                    text2 += FF9TextTool.ItemName(battleEnemy.StealableItems[2]);
-                                }
-                                else if (num == 2)
-                                {
-                                    text3 += FF9TextTool.ItemName(battleEnemy.StealableItems[2]);
-                                }
-                                else if (num == 3)
-                                {
-                                    text4 += FF9TextTool.ItemName(battleEnemy.StealableItems[2]);
-                                }
-                                _v.StealItem(battleEnemy, 2);
-                            }
-                            else if (battleEnemy.StealableItems[1] != RegularItem.NoItem && GameRandom.Next8() < StealScript.NewStealableItemRates(battleEnemy.StealableItemRates[1], _v.Caster))
-                            {
-                                if (num == 0)
-                                {
-                                    text += FF9TextTool.ItemName(battleEnemy.StealableItems[1]);
-                                }
-                                else if (num == 1)
-                                {
-                                    text2 += FF9TextTool.ItemName(battleEnemy.StealableItems[1]);
-                                }
-                                else if (num == 2)
-                                {
-                                    text3 += FF9TextTool.ItemName(battleEnemy.StealableItems[1]);
-                                }
-                                else if (num == 3)
-                                {
-                                    text4 += FF9TextTool.ItemName(battleEnemy.StealableItems[1]);
-                                }
-                                _v.StealItem(battleEnemy, 1);
-                            }
-                            else if (battleEnemy.StealableItems[0] != RegularItem.NoItem)
-                            {
-                                if (num == 0)
-                                {
-                                    text += FF9TextTool.ItemName(battleEnemy.StealableItems[0]);
-                                }
-                                else if (num == 1)
-                                {
-                                    text2 += FF9TextTool.ItemName(battleEnemy.StealableItems[0]);
-                                }
-                                else if (num == 2)
-                                {
-                                    text3 += FF9TextTool.ItemName(battleEnemy.StealableItems[0]);
-                                }
-                                else if (num == 3)
-                                {
-                                    text4 += FF9TextTool.ItemName(battleEnemy.StealableItems[0]);
-                                }
-                                _v.StealItem(battleEnemy, 0);
-                            }
-                            else if (TranceSeekAPI.ZidanePassive[battleUnit.Data][2] > 0) // Oeil de voleur
-                            {
-                                if (battleEnemy.StealableItems[3] != RegularItem.NoItem && GameRandom.Next8() < StealScript.NewStealableItemRates(battleEnemy.StealableItemRates[3], _v.Caster))
-                                {
-                                    if (num == 0)
-                                    {
-                                        text += FF9TextTool.ItemName(battleEnemy.StealableItems[3]);
-                                    }
-                                    else if (num == 1)
-                                    {
-                                        text2 += FF9TextTool.ItemName(battleEnemy.StealableItems[3]);
-                                    }
-                                    else if (num == 2)
-                                    {
-                                        text3 += FF9TextTool.ItemName(battleEnemy.StealableItems[3]);
-                                    }
-                                    else if (num == 3)
-                                    {
-                                        text4 += FF9TextTool.ItemName(battleEnemy.StealableItems[3]);
-                                    }
-                                    _v.StealItem(battleEnemy, 3);
-                                }
-                                else if (battleEnemy.StealableItems[2] != RegularItem.NoItem && GameRandom.Next8() < StealScript.NewStealableItemRates(battleEnemy.StealableItemRates[2], _v.Caster))
-                                {
-                                    if (num == 0)
-                                    {
-                                        text += FF9TextTool.ItemName(battleEnemy.StealableItems[2]);
-                                    }
-                                    else if (num == 1)
-                                    {
-                                        text2 += FF9TextTool.ItemName(battleEnemy.StealableItems[2]);
-                                    }
-                                    else if (num == 2)
-                                    {
-                                        text3 += FF9TextTool.ItemName(battleEnemy.StealableItems[2]);
-                                    }
-                                    else if (num == 3)
-                                    {
-                                        text4 += FF9TextTool.ItemName(battleEnemy.StealableItems[2]);
-                                    }
-                                    _v.StealItem(battleEnemy, 2);
-                                }
-                                else if (battleEnemy.StealableItems[1] != RegularItem.NoItem && GameRandom.Next8() < StealScript.NewStealableItemRates(battleEnemy.StealableItemRates[1], _v.Caster))
-                                {
-                                    if (num == 0)
-                                    {
-                                        text += FF9TextTool.ItemName(battleEnemy.StealableItems[1]);
-                                    }
-                                    else if (num == 1)
-                                    {
-                                        text2 += FF9TextTool.ItemName(battleEnemy.StealableItems[1]);
-                                    }
-                                    else if (num == 2)
-                                    {
-                                        text3 += FF9TextTool.ItemName(battleEnemy.StealableItems[1]);
-                                    }
-                                    else if (num == 3)
-                                    {
-                                        text4 += FF9TextTool.ItemName(battleEnemy.StealableItems[1]);
-                                    }
-                                    _v.StealItem(battleEnemy, 1);
-                                }
-                                else if (battleEnemy.StealableItems[0] != RegularItem.NoItem)
-                                {
-                                    if (num == 0)
-                                    {
-                                        text += FF9TextTool.ItemName(battleEnemy.StealableItems[0]);
-                                    }
-                                    else if (num == 1)
-                                    {
-                                        text2 += FF9TextTool.ItemName(battleEnemy.StealableItems[0]);
-                                    }
-                                    else if (num == 2)
-                                    {
-                                        text3 += FF9TextTool.ItemName(battleEnemy.StealableItems[0]);
-                                    }
-                                    else if (num == 3)
-                                    {
-                                        text4 += FF9TextTool.ItemName(battleEnemy.StealableItems[0]);
-                                    }
-                                    _v.StealItem(battleEnemy, 0);
-                                }
-                            }
-                            else if (num == 0)
-                            {
-                                text += Localization.Get("Miss");
-                            }
-                            else if (num == 1)
-                            {
-                                text2 += Localization.Get("Miss");
-                            }
-                            else if (num == 2)
-                            {
-                                text3 += Localization.Get("Miss");
-                            }
-                            else if (num == 3)
-                            {
-                                text4 += Localization.Get("Miss");
-                            }
-                            num += 1;
-                        }
-                        else
-                        {
-                            if (num == 0)
-                            {
-                                text += Localization.Get("Miss");
-                            }
-                            else if (num == 1)
-                            {
-                                text2 += Localization.Get("Miss");
-                            }
-                            else if (num == 2)
-                            {
-                                text3 += Localization.Get("Miss");
-                            }
-                            else if (num == 3)
-                            {
-                                text4 += Localization.Get("Miss");
-                            }
-                            num += 1;
-                        }
-                    }
+                    BattleEnemy battleEnemy = BattleEnemy.Find(monster);
+                    if (HasStealableItems(battleEnemy))
+                        ItemStolen.Add(ClassicSteal(v, monster, v.Caster));
                 }
-                else
+
+            if (ItemStolen.Count > 0)
+            {
+                string steal_text = "";
+                foreach (RegularItem item in ItemStolen)
                 {
-                    battleUnit.ChangeRowToDefault();
+                    if (item == RegularItem.NoItem)
+                        continue;
+
+                    if (String.IsNullOrEmpty(steal_text))
+                        steal_text += FF9TextTool.ItemName(item);
+                    else
+                        steal_text += " / " + FF9TextTool.ItemName(item);
                 }
-            }
-            if (num == 1)
-            {
-                UiState.SetBattleFollowFormatMessage(BattleMesages.Stole, new object[]
-                {
-                    string.Concat(new string[]
-                    {
-                        text
-                    })
-                });
-                return;
-            }
-            if (num == 2)
-            {
-                UiState.SetBattleFollowFormatMessage(BattleMesages.Stole, new object[]
-                {
-                    string.Concat(new string[]
-                    {
-                        text,
-                        " / ",
-                        text2
-                    })
-                });
-                return;
-            }
-            if (num == 3)
-            {
-                UiState.SetBattleFollowFormatMessage(BattleMesages.Stole, new object[]
-                {
-                    string.Concat(new string[]
-                    {
-                        text,
-                        " / ",
-                        text2,
-                        " / ",
-                        text3
-                    })
-                });
-                return;
-            }
-            if (num == 4)
-            {
-                UiState.SetBattleFollowFormatMessage(BattleMesages.Stole, new object[]
-                {
-                    string.Concat(new string[]
-                    {
-                        text,
-                        " / ",
-                        text2,
-                        " / ",
-                        text3,
-                        " / ",
-                        text4
-                    })
-                });
-                return;
+                if (!String.IsNullOrEmpty(steal_text))
+                    UiState.SetBattleFollowFormatMessage(BattleMesages.Stole, steal_text);
             }
         }
 
@@ -316,6 +80,89 @@ namespace Memoria.Scripts.Battle
                 }
             }
             return result;
+        }
+
+        public static RegularItem ClassicSteal(BattleCalculator v, BattleUnit monster, BattleCaster caster)
+        {
+            RegularItem ItemStolen = RegularItem.NoItem;
+            BattleEnemy battleEnemy = BattleEnemy.Find(monster);
+            if (GameRandom.Next8() < StealScript.NewStealableItemRates(battleEnemy.StealableItemRates[3], caster) && battleEnemy.StealableItems[3] != RegularItem.NoItem)
+            {
+                ItemStolen = battleEnemy.StealableItems[3];
+                StealScript.StealItem(v, battleEnemy, 3, false);
+            }
+            else if (GameRandom.Next8() < StealScript.NewStealableItemRates(battleEnemy.StealableItemRates[2], caster) && battleEnemy.StealableItems[2] != RegularItem.NoItem)
+            {
+                ItemStolen = battleEnemy.StealableItems[2];
+                StealScript.StealItem(v, battleEnemy, 2, false);
+            }
+            else if (GameRandom.Next8() < StealScript.NewStealableItemRates(battleEnemy.StealableItemRates[1], caster) && battleEnemy.StealableItems[1] != RegularItem.NoItem)
+            {
+                ItemStolen = battleEnemy.StealableItems[1];
+                StealScript.StealItem(v, battleEnemy, 1, false);
+            }
+            else if (GameRandom.Next8() < StealScript.NewStealableItemRates(battleEnemy.StealableItemRates[0], caster) && battleEnemy.StealableItems[0] != RegularItem.NoItem)
+            {
+                ItemStolen = battleEnemy.StealableItems[0];
+                StealScript.StealItem(v, battleEnemy, 0, false);
+            }
+            else if (TranceSeekAPI.ZidanePassive[monster.Data][2] > 0 && caster.PlayerIndex == CharacterId.Zidane) // Oeil de voleur activé
+            {
+                if (caster.PlayerIndex == CharacterId.Zidane)
+                    AddBonusSteal(monster);
+
+                Dictionary<String, String> ThiefEyeMessage = new Dictionary<String, String>
+                {
+                    { "US", "Thief's Eye!" },
+                    { "UK", "Thief's Eye!" },
+                    { "JP", "泥棒の目!" },
+                    { "ES", "Ojo del ladrón!" },
+                    { "FR", "Œil du voleur !" },
+                    { "GR", "Auge des Diebes!" },
+                    { "IT", "Occhio del ladro!" },
+                };
+                if (GameRandom.Next8() < StealScript.NewStealableItemRates(battleEnemy.StealableItemRates[3], caster) && battleEnemy.StealableItems[3] != RegularItem.NoItem)
+                {
+                    ItemStolen = battleEnemy.StealableItems[3];
+                    btl2d.Btl2dReqSymbolMessage(monster.Data, "[FDEE00]", ThiefEyeMessage, HUDMessage.MessageStyle.DAMAGE, 5);
+                    StealScript.StealItem(v, battleEnemy, 3, false);
+                }
+                else if (GameRandom.Next8() < StealScript.NewStealableItemRates(battleEnemy.StealableItemRates[2], caster) && battleEnemy.StealableItems[2] != RegularItem.NoItem)
+                {
+                    ItemStolen = battleEnemy.StealableItems[2];
+                    btl2d.Btl2dReqSymbolMessage(monster.Data, "[FDEE00]", ThiefEyeMessage, HUDMessage.MessageStyle.DAMAGE, 5);
+                    StealScript.StealItem(v, battleEnemy, 2, false);
+                }
+                else if (GameRandom.Next8() < StealScript.NewStealableItemRates(battleEnemy.StealableItemRates[1], caster) && battleEnemy.StealableItems[1] != RegularItem.NoItem)
+                {
+                    ItemStolen = battleEnemy.StealableItems[1];
+                    btl2d.Btl2dReqSymbolMessage(monster.Data, "[FDEE00]", ThiefEyeMessage, HUDMessage.MessageStyle.DAMAGE, 5);
+                    StealScript.StealItem(v, battleEnemy, 1, false);
+                }
+                else if (GameRandom.Next8() < StealScript.NewStealableItemRates(battleEnemy.StealableItemRates[0], caster) && battleEnemy.StealableItems[0] != RegularItem.NoItem)
+                {
+                    ItemStolen = battleEnemy.StealableItems[0];
+                    btl2d.Btl2dReqSymbolMessage(monster.Data, "[FDEE00]", ThiefEyeMessage, HUDMessage.MessageStyle.DAMAGE, 5);
+                    StealScript.StealItem(v, battleEnemy, 0, false);
+                }
+            }
+            return ItemStolen;
+        }
+
+        public static void AddBonusSteal(BattleUnit monster)
+        {
+            BattleEnemy battleEnemy = BattleEnemy.Find(monster);
+            var slot = new List<int>();
+            for (Int32 i = 1; i < 4; i++)
+            {
+                if (battleEnemy.StealableItems[i] != RegularItem.NoItem)
+                {
+                    slot.Add(i);
+                }
+
+            }
+            int slotchoosen = UnityEngine.Random.Range(0, slot.Count);
+            battleEnemy.Data.steal_item_rate[slot[slotchoosen]] += 8;
         }
     }
 }

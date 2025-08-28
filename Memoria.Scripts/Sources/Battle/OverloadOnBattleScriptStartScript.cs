@@ -370,15 +370,28 @@ namespace Memoria.Scripts.Battle
             {
                 if (v.Command.Id == BattleCommandId.MagicSword)
                 {
-                    WeaponNewElement[v.Caster.Data] = v.Command.Element;
-                    SpecialSAEffect[v.Caster.Data][10] = v.Caster.HasSupportAbilityByIndex((SupportAbility)1214) ? 3 : 2;
+                    int StatusInfused = -1;
+                    int ElementInfused = (int)v.Command.Element;
+                    if (v.Command.AbilityStatus > 0)
+                        StatusInfused = (int)v.Command.AbilityStatus;
+
+                    if (v.Command.AbilityId == TranceSeekBattleAbility.MagicSword_Poison || v.Command.AbilityId == TranceSeekBattleAbility.MagicSword_Arsenic || v.Command.AbilityId == BattleAbilityId.BioSword)
+                        ElementInfused = 256;
+                    else if (v.Command.AbilityId == TranceSeekBattleAbility.MagicSword_Quarter || v.Command.AbilityId == TranceSeekBattleAbility.MagicSword_Demi || v.Command.AbilityId == TranceSeekBattleAbility.MagicSword_Gravija)
+                        ElementInfused = 512;
+
+                    InfusedWeaponScript.InfuseWeapon(v, v.Caster.Data, ElementInfused, StatusInfused);
+                    SpecialSAEffect[v.Caster.Data][10] = v.Caster.HasSupportAbilityByIndex((SupportAbility)1214) ? 2 : 1;
                 }
                 else if (SpecialSAEffect[v.Caster.Data][10] > 0)
                 {
                     SpecialSAEffect[v.Caster.Data][10]--;
                     if (SpecialSAEffect[v.Caster.Data][10] <= 0)
                     {
-                        WeaponNewElement[v.Caster.Data] = EffectElement.None;
+                        WeaponNewElement[v.Caster.Data] = 0;
+                        WeaponNewCustomElement[v.Caster.Data] = 0;
+                        WeaponNewStatus[v.Caster.Data] = 0;
+                        InfusedWeaponScript.ClearInfuseWeapon(v.Caster.Data);
                     }
                 }
             }
@@ -484,9 +497,6 @@ namespace Memoria.Scripts.Battle
                     }
                 );
             }
-
-            if (v.Caster.Weapon == (RegularItem)1163 && (v.Command.Id == BattleCommandId.BlackMagic || v.Command.Id == BattleCommandId.DoubleBlackMagic || v.Command.Id == TranceSeekBattleCommand.Witchcraft) && !v.Target.IsPlayer)
-                StealScript.ClassicSteal(v, false);
 
             if (v.Caster.PlayerIndex == (CharacterId)14)
             {

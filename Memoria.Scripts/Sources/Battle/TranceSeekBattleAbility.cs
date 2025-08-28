@@ -4,6 +4,7 @@ namespace Memoria.Scripts.Battle
 {
     public static class TranceSeekBattleAbility
     {
+        public const BattleAbilityId MagicSword_Arsenic = BattleAbilityId.None5;
         public const BattleAbilityId Thief = (BattleAbilityId)1000;
         public const BattleAbilityId Bandit = (BattleAbilityId)1001;
         public const BattleAbilityId WindyBlade = (BattleAbilityId)1002;

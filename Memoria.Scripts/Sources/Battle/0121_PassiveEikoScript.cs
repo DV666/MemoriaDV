@@ -130,35 +130,34 @@ namespace Memoria.Scripts.Battle
                             if (!_v.Target.CanBeRevived())
                             {
                                 _v.Context.Flags |= BattleCalcFlags.Miss;
-                                return;
-                            }
-
-                            if (HitRateForZombie() && !TranceSeekAPI.TryMagicHit(_v))
-                                return;
-
-                            if (_v.Target.IsZombie && !_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill))
-                            {
-                                _v.Target.Kill();
-                                return;
-                            }
-
-                            if (!_v.Target.CheckIsPlayer())
-                                return;
-
-                            _v.Target.Flags |= CalcFlag.HpAlteration | CalcFlag.HpRecovery;
-                            if (_v.Target.HasSupportAbilityByIndex((SupportAbility)1004)) // Invincible+
-                            {
-                                _v.Target.Flags |= CalcFlag.MpAlteration | CalcFlag.MpRecovery;
-                                _v.Target.HpDamage = (int)_v.Target.MaximumHp;
-                                _v.Target.MpDamage = (int)_v.Target.MaximumMp;
                             }
                             else
                             {
-                                _v.Target.HpDamage = (Int32)(_v.Target.MaximumHp * _v.Command.Power) / 100;
-                                if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)100)) // Medecin
-                                    _v.Target.HpDamage += _v.Caster.HpDamage / (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1100) ? 2 : 4);
+                                if (!HitRateForZombie() || TranceSeekAPI.TryMagicHit(_v))
+                                {
+                                    if (_v.Target.IsZombie && !_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill))
+                                    {
+                                        _v.Target.Kill();
+                                    }
+                                    else
+                                    {
+                                        _v.Target.Flags |= CalcFlag.HpAlteration | CalcFlag.HpRecovery;
+                                        if (_v.Target.HasSupportAbilityByIndex((SupportAbility)1004)) // Invincible+
+                                        {
+                                            _v.Target.Flags |= CalcFlag.MpAlteration | CalcFlag.MpRecovery;
+                                            _v.Target.HpDamage = (int)_v.Target.MaximumHp;
+                                            _v.Target.MpDamage = (int)_v.Target.MaximumMp;
+                                        }
+                                        else
+                                        {
+                                            _v.Target.HpDamage = (Int32)(_v.Target.MaximumHp * _v.Command.Power) / 100;
+                                            if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)100)) // Medecin
+                                                _v.Target.HpDamage += _v.Caster.HpDamage / (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1100) ? 2 : 4);
+                                        }
+                                        TranceSeekAPI.TryRemoveAbilityStatuses(_v);
+                                    }
+                                }
                             }
-                            TranceSeekAPI.TryRemoveAbilityStatuses(_v);
                             break;
                         case (BattleAbilityId)2009: // Atomoug
                         case (BattleAbilityId)2010: // Sidémoug

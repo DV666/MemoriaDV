@@ -21,14 +21,13 @@ namespace Memoria.Scripts.Battle
                 if (!btl_stat.CheckStatus(unit, BattleStatus.LowHP))
                     btl_stat.AlterStatus(unit, BattleStatusId.LowHP);
             }
-            else if (unit.IsPlayer && unit.CurrentHp == unit.MaximumHp && HPColored)
-            {
-                unit.UIColorHP = FF9TextTool.Green;
-                btl_stat.RemoveStatus(unit, BattleStatusId.LowHP);
-            }
             else
             {
-                unit.UIColorHP = FF9TextTool.White;
+                if (unit.IsPlayer && unit.CurrentHp == unit.MaximumHp && HPColored)
+                    unit.UIColorHP = FF9TextTool.Green;
+                else
+                    unit.UIColorHP = FF9TextTool.White;
+
                 btl_stat.RemoveStatus(unit, BattleStatusId.LowHP);
             }
 
