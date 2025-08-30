@@ -1026,7 +1026,7 @@ namespace Memoria.Scripts.Battle
 
             if (factor > 0)
             {
-                if (v.Caster.HasSupportAbilityByIndex((SupportAbility)230))
+                if (v.Caster.HasSupportAbilityByIndex((SupportAbility)230)) // Venefic
                 {
                     if (v.Caster.HasSupportAbilityByIndex((SupportAbility)1230))
                         v.Context.Attack += (v.Context.Attack * factor * bonus) / 100;
@@ -1631,7 +1631,7 @@ namespace Memoria.Scripts.Battle
                 v.Target.RemoveStatus(BattleStatus.AutoLife);
             }
 
-            if (v.Caster.HasSupportAbilityByIndex((SupportAbility)235) && v.Command.Id == BattleCommandId.Attack) // SA Fencing
+            if (v.Caster.HasSupportAbilityByIndex((SupportAbility)235) && v.Command.Id == BattleCommandId.Attack && v.Caster.IsUnderAnyStatus(TranceSeekStatus.Redemption)) // SA Fencing
                 v.Target.HpDamage += v.Caster.HasSupportAbilityByIndex((SupportAbility)1235) ? v.Target.HpDamage / 4 : v.Target.HpDamage / 8;
 
             if ((v.Target.Flags & CalcFlag.HpRecovery) != 0 && v.Caster.HasSupportAbilityByIndex((SupportAbility)127) && v.Target.HpDamage > (v.Target.MaximumHp - v.Target.CurrentHp) && v.Target.IsPlayer) // SA Invigorating

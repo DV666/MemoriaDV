@@ -174,7 +174,21 @@ namespace Memoria.DefaultScripts
             if (!Target.IsMonsterTransform && SpecialSAEffect[Target][3] == 0)
                 btl_cmd.SetCommand(Target.Data.cmd[4], BattleCommandId.SysTrans, 0, Target.Id, 0u);
 
-            if (Target.PlayerIndex == CharacterId.Marcus)
+            if (!Target.IsPlayer)
+            {
+                if (Target.Data.dms_geo_id == 427) // [TODO] The reloading textures part can be improved imo.
+                {
+                    Target.AddDelayedModifier(
+                        target => !target.IsDisappear,
+                        target =>
+                        {
+                            ModelMoug[target.Data].SetActive(false);
+                            ModelFactory.ChangeModelTexture(target.Data.gameObject, new string[] { "CustomTextures/Players/BeatrixTranceWings/427_0_vanilla.png", "CustomTextures/Players/BeatrixTranceWings/427_1_vanilla.png" });
+                        }
+                    );
+                }
+            }
+            else if (Target.PlayerIndex == CharacterId.Marcus)
                 Target.AddDelayedModifier(
                     target => !target.IsDisappear,
                     target =>

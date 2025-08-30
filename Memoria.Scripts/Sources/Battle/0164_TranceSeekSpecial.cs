@@ -452,6 +452,14 @@ namespace Memoria.Scripts.Battle
                 PolaritySPS[_v.Caster.Data].meshRenderer.enabled = false;
                 return;
             }
+            else if (_v.Command.Power == 133 && _v.Command.HitRate == 133 && _v.Caster.Data.dms_geo_id == 427) // Beatrix 3 - Finisher
+            {
+                _v.Target.CurrentHp = 1;
+                _v.Target.CurrentMp = 1;
+                btl_stat.MakeStatusesPermanent(_v.Caster, _v.Caster.PermanentStatus | BattleStatus.Trance, false);
+                _v.Caster.RemoveStatus(BattleStatus.Trance);
+                return;
+            }
             else if (_v.Caster.Data.dms_geo_id == 63) // Golden Pidove
             {
                 if (_v.Target.Data == _v.Caster.Data)
