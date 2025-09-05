@@ -48,7 +48,7 @@ namespace Memoria.DefaultScripts
             UInt32 damage = Target.MaximumHp >> (Target.IsUnderAnyStatus(BattleStatus.EasyKill) ? 8 : 5);
             Boolean isDmg = false;
 
-            if (!Target.IsZombie && (Int32)Target.GetPropertyByName("StatusProperty CustomStatus21 CursedBlood") == 0)
+            if (!Target.IsZombie && (Int32)Target.GetPropertyByName("StatusProperty CustomStatus21 CursedBlood") == 0 && (TranceSeekAPI.NewEffectElement[Target.Data][0] & 8) == 0)
             {
                 isDmg = true;
                 if (Target.CurrentHp > damage)

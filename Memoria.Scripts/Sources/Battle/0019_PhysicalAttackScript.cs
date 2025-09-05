@@ -50,8 +50,8 @@ namespace Memoria.Scripts.Battle
             {
                 if (_v.Command.AbilityId == BattleAbilityId.CherryBlossom)
                 {
-                    short CriticalBonus = _v.Caster.Data.critical_rate_deal_bonus;
-                    TranceSeekAPI.TryCriticalHit(_v, 33);
+                    TranceSeekAPI.TryCriticalHit(_v, 25);
+
                     if (_v.Target.IsUnderAnyStatus(TranceSeekStatus.Dragon) || (_v.Caster.IsUnderStatus(BattleStatus.Trance)))
                     {
                         if (_v.Caster.Will > Comn.random16() % 100)

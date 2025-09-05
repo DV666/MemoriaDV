@@ -5,10 +5,7 @@ using FF9;
 using Memoria.Assets;
 using Memoria.Data;
 using Memoria.Database;
-using Memoria.Prime.PsdFile;
 using UnityEngine;
-using UnityEngine.Networking;
-using static SiliconStudio.Social.ResponseData;
 
 namespace Memoria.Scripts.Battle
 {
@@ -345,6 +342,7 @@ namespace Memoria.Scripts.Battle
                     UIManager.Battle.SetBattleFollowMessage(3, Localization.GetWithDefault("LadyBugWhite"));
                 }
                 _v.Caster.Data.gameObject.SetActive(true);
+                return;
             }
             else if (_v.Command.Power == 25 && _v.Command.HitRate == 111 && _v.Caster.Data.dms_geo_id == 278) // Polarity (+) with SPS effect (Black Waltz 3)
             {
@@ -526,6 +524,13 @@ namespace Memoria.Scripts.Battle
                 _v.Target.RemoveStatus(BattleStatus.Mini);
                 _v.Target.Data.geo_scale_default = 16384;
             }
+            else if (_v.Command.Power == 55 && _v.Command.HitRate == 55 && _v.Command.AbilityStatus == BattleStatus.Poison) // Biosphere (Bioar)
+            {
+                _v.Target.Data.stat.invalid &= ~BattleStatus.Poison;
+                _v.Target.AlterStatus(BattleStatus.Poison, _v.Caster);
+                if ((TranceSeekAPI.NewEffectElement[_v.Target.Data][0] & 8) == 0)
+                    TranceSeekAPI.NewEffectElement[_v.Target.Data][0] = 8;
+            }
             else if (_v.Command.Power == 199 && _v.Command.HitRate == 199 && _v.Command.AbilityStatus == BattleStatus.Reflect) // AntiBoom from Invincible (CD3 Kuja)
             {
                 _v.Target.Flags = CalcFlag.HpAlteration | CalcFlag.MpAlteration;
@@ -554,7 +559,9 @@ namespace Memoria.Scripts.Battle
                                 _v.Target.Data.cur.at = 0;
                             _v.Target.Data.sel_mode = 0;
                         }
-                        btl_stat.MakeStatusesPermanent(_v.Target, BattleStatus.Stop, true);
+                        _v.Target.Data.stat.permanent |= BattleStatus.Stop;
+                        _v.Target.Data.stat.permanent_on_hold |= BattleStatus.Stop;
+                        _v.Target.Data.stat.cur |= BattleStatus.Stop;
                         _v.Target.Data.bi.target = 0;
                         TranceSeekAPI.MonsterMechanic[_v.Caster.Data][2] = _v.Target.Id;
                         FF9StateSystem.EventState.gEventGlobal[1305] = (byte)_v.Target.Id;
@@ -566,7 +573,8 @@ namespace Memoria.Scripts.Battle
                             if (TranceSeekAPI.MonsterMechanic[_v.Caster.Data][2] == unit.Id)
                             {
                                 unit.Data.bi.target = 1;
-                                btl_stat.MakeStatusesPermanent(unit, BattleStatus.Stop, false);
+                                unit.Data.stat.permanent_on_hold &= ~BattleStatus.Stop;
+                                unit.Data.stat.permanent &= ~BattleStatus.Stop;
                                 unit.RemoveStatus(BattleStatus.Stop);
                                 FF9StateSystem.EventState.gEventGlobal[1305] = 0;
                             }

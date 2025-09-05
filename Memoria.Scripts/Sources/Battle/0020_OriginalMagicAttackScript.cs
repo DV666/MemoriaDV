@@ -156,16 +156,6 @@ namespace Memoria.Scripts.Battle
                             case BattleAbilityId.DragonCrest:
                                 _v.Target.TryAlterStatuses(BattleStatus.Doom, false, _v.Caster);
                                 break;
-                            case BattleAbilityId.CherryBlossom:
-                                if (_v.Caster.Will > Comn.random16() % 100)
-                                {
-                                    _v.Target.TryAlterStatuses(BattleStatus.Venom, false, _v.Caster);
-                                }
-                                else
-                                {
-                                    _v.Target.TryAlterStatuses(BattleStatus.Poison, false, _v.Caster);
-                                }                                   
-                                break;
                         }
                     } 
                 }

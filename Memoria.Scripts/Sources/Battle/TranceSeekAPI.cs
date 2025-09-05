@@ -35,7 +35,7 @@ namespace Memoria.Scripts.Battle
         public static Dictionary<BTL_DATA, Int32[]> SpecialItemEffect = new Dictionary<BTL_DATA, Int32[]>();
         // [0] => Emergency Satchel ; [1] => Magical Satchel
 
-        public static Dictionary<BTL_DATA, Int32[]> ElementAffinitiesItem = new Dictionary<BTL_DATA, Int32[]>(); // 0 = None, 1 = Weak, 2 = Half, 4 = Immune, 8 = Absorb
+        public static Dictionary<BTL_DATA, Int32[]> NewEffectElement = new Dictionary<BTL_DATA, Int32[]>(); // 0 = None, 1 = Weak, 2 = Half, 4 = Immune, 8 = Absorb
         // [0] => Poison ; [1] => Gravity
 
         public static Dictionary<BTL_DATA, Int32[]> RollBackStats = new Dictionary<BTL_DATA, Int32[]>();
@@ -99,38 +99,34 @@ namespace Memoria.Scripts.Battle
             if (v.Caster.PlayerIndex == CharacterId.Freya)
             {
                 Int32 quarterWill = v.Caster.Data.elem.wpr >> 2;
-                Int32 bonus = 0;
+                Int32 bonusdragon = 0;
                 switch (v.Caster.Weapon)
                 {
                     case RegularItem.MythrilSpear:
                     case RegularItem.Partisan:
-                        bonus += 5;
+                        bonusdragon += 5;
                         break;
                     case RegularItem.IceLance:
                     case RegularItem.Trident:
-                        bonus += 8;
+                        bonusdragon += 8;
                         break;
                     case RegularItem.HeavyLance:
                     case RegularItem.Obelisk:
-                        bonus += 10;
+                        bonusdragon += 10;
                         break;
                     case RegularItem.HolyLance:
-                        bonus += 15;
+                        bonusdragon += 15;
                         break;
                     case RegularItem.KainLance:
-                        bonus += 20;
+                        bonusdragon += 20;
                         break;
                     case RegularItem.DragonHair:
-                        bonus += 25;
+                        bonusdragon += 25;
                         break;
                 }
-                if (v.Command.AbilityId == BattleAbilityId.CherryBlossom)
-                    bonus += 25;
 
-                if (quarterWill != 0 && (((Comn.random16() % quarterWill) + bonus) > Comn.random16() % 100))
-                {
+                if (quarterWill != 0 && (((Comn.random16() % quarterWill) + bonusdragon) > Comn.random16() % 100))
                     v.Target.AlterStatus(TranceSeekStatus.Dragon, v.Caster);
-                }
             }
         }
 
@@ -381,7 +377,7 @@ namespace Memoria.Scripts.Battle
                 ViviPassive[v.Caster.Data][2] = 1;
                 Int32 counter = 25;
                 v.Caster.AddDelayedModifier(
-                    caster => (counter -= BattleState.ATBTickCount) > 0,
+                    caster => (counter -= 1) > 0,
                     caster =>
                     {
                         ViviPassive[v.Caster.Data][1] = 0;
@@ -953,16 +949,16 @@ namespace Memoria.Scripts.Battle
                 return false;
             }
 
-            if (v.Target.IsGuardElement(Element) || ((v.Command.ScriptId == 118 || v.Command.ScriptId == 119) && (ElementAffinitiesItem[v.Target.Data][0] & 4) != 0) || ((v.Command.ScriptId == 17 || v.Command.ScriptId == 86) && (ElementAffinitiesItem[v.Target.Data][1] & 4) != 0))
+            if (v.Target.IsGuardElement(Element) || ((v.Command.ScriptId == 118 || v.Command.ScriptId == 119) && (NewEffectElement[v.Target.Data][0] & 4) != 0) || ((v.Command.ScriptId == 17 || v.Command.ScriptId == 86) && (NewEffectElement[v.Target.Data][1] & 4) != 0))
             {
                 v.Context.Flags |= BattleCalcFlags.Guard;
                 return false;
             }
 
-            if (v.Target.IsHalfElement(Element) || ((v.Command.ScriptId == 118 || v.Command.ScriptId == 119) && (ElementAffinitiesItem[v.Target.Data][0] & 2) != 0) || ((v.Command.ScriptId == 17 || v.Command.ScriptId == 86) && (ElementAffinitiesItem[v.Target.Data][1] & 2) != 0))
+            if (v.Target.IsHalfElement(Element) || ((v.Command.ScriptId == 118 || v.Command.ScriptId == 119) && (NewEffectElement[v.Target.Data][0] & 2) != 0) || ((v.Command.ScriptId == 17 || v.Command.ScriptId == 86) && (NewEffectElement[v.Target.Data][1] & 2) != 0))
                 v.Context.DamageModifierCount -= 2;
 
-            if (v.Target.IsWeakElement(Element) || ((v.Command.ScriptId == 118 || v.Command.ScriptId == 119) && (ElementAffinitiesItem[v.Target.Data][0] & 1) != 0) || ((v.Command.ScriptId == 17 || v.Command.ScriptId == 86) && (ElementAffinitiesItem[v.Target.Data][1] & 1) != 0))
+            if (v.Target.IsWeakElement(Element) || ((v.Command.ScriptId == 118 || v.Command.ScriptId == 119) && (NewEffectElement[v.Target.Data][0] & 1) != 0) || ((v.Command.ScriptId == 17 || v.Command.ScriptId == 86) && (NewEffectElement[v.Target.Data][1] & 1) != 0))
                 v.Context.DamageModifierCount += 2;
 
             if (v.Target.CanAbsorbElement(Element))
@@ -977,7 +973,7 @@ namespace Memoria.Scripts.Battle
             if (AbsorbElement.TryGetValue(v.Target.Data, out Int32 elementprotect))
                 if ((Element & (EffectElement)elementprotect) != 0 && elementprotect != -1)
                     v.Context.Flags |= BattleCalcFlags.Absorb;
-            else if (((v.Command.ScriptId == 118 || v.Command.ScriptId == 119) && (ElementAffinitiesItem[v.Target.Data][0] & 8) != 0) || ((v.Command.ScriptId == 17 || v.Command.ScriptId == 86) && (ElementAffinitiesItem[v.Target.Data][1] & 8) != 0))
+            else if (((v.Command.ScriptId == 118 || v.Command.ScriptId == 119) && (NewEffectElement[v.Target.Data][0] & 8) != 0) || ((v.Command.ScriptId == 17 || v.Command.ScriptId == 86) && (NewEffectElement[v.Target.Data][1] & 8) != 0))
                 v.Context.Flags |= BattleCalcFlags.Absorb;
 
             v.Target.AlterStatuses(Element);

@@ -8,6 +8,8 @@ using UnityEngine;
 using System.IO;
 using System.Collections.Generic;
 using Memoria.Scripts.Battle;
+using System.Linq;
+using static SFXDataMesh.Raw;
 
 namespace Memoria.DefaultScripts
 {
@@ -23,6 +25,8 @@ namespace Memoria.DefaultScripts
         public Boolean MarcusAbsorbDarkness = false;
         public Boolean MarcusWeakLight = false;
         public List<BattleStatusId> StatusResistOni = new List<BattleStatusId>();
+        public Int32 TimerEndTrance = 0;
+        public Boolean TriggerTimerEndTrance = false;
 
         public static Int32 GetPhantomCount(BattleUnit btl)
         {
@@ -91,7 +95,7 @@ namespace Memoria.DefaultScripts
 
                 if (target.PlayerIndex == CharacterId.Marcus)
                     target.AddDelayedModifier(
-                        target => !target.IsDisappear,
+                        target => !target.Data.tranceGo.activeSelf,
                         target =>
                         {
                             target.Data.weapon_geo.SetActive(false);
@@ -121,6 +125,12 @@ namespace Memoria.DefaultScripts
                                 if (target.HasSupportAbilityByIndex((SupportAbility)1242))
                                     target.AlterStatus(BattleStatus.EasyKill);
                             }
+                            if (ModelMoug[target.Data] == null)
+                            {
+                                ModelMoug[target.Data] = ModelFactory.CreateModel("GEO_NPC_DemonWings", true);
+                                ModelMoug[target.Data].SetActive(true);
+                                GeoAttach(ModelMoug[target.Data], target.Data.gameObject, 1);
+                            }
                         }
                     );
 
@@ -135,21 +145,6 @@ namespace Memoria.DefaultScripts
                                 ModelMoug[target.Data] = ModelFactory.CreateModel("GEO_NPC_GoldenWings", true);
                                 ModelMoug[target.Data].SetActive(true);
                                 GeoAttach(ModelMoug[target.Data], target.Data.gameObject, 11);
-                            }
-                        }
-                    );
-                }
-                else if (target.PlayerIndex == CharacterId.Marcus)
-                {
-                    target.AddDelayedModifier(
-                        target => !target.Data.tranceGo.activeSelf,
-                        target =>
-                        {
-                            if (ModelMoug[target.Data] == null)
-                            {
-                                ModelMoug[target.Data] = ModelFactory.CreateModel("GEO_NPC_DemonWings", true);
-                                ModelMoug[target.Data].SetActive(true);
-                                GeoAttach(ModelMoug[target.Data], target.Data.gameObject, 1);
                             }
                         }
                     );
@@ -176,19 +171,29 @@ namespace Memoria.DefaultScripts
 
             if (!Target.IsPlayer)
             {
-                if (Target.Data.dms_geo_id == 427) // [TODO] The reloading textures part can be improved imo.
+                if (Target.Data.dms_geo_id == 427)
                 {
+                    Int32 counter = 70;
                     Target.AddDelayedModifier(
-                        target => !target.IsDisappear,
+                        target => (counter -= 1) > 0,
                         target =>
                         {
-                            ModelMoug[target.Data].SetActive(false);
-                            ModelFactory.ChangeModelTexture(target.Data.gameObject, new string[] { "CustomTextures/Players/BeatrixTranceWings/427_0_vanilla.png", "CustomTextures/Players/BeatrixTranceWings/427_1_vanilla.png" });
+                            Vector3 position = target.Data.gameObject.transform.position;
+                            UnityEngine.Object.Destroy(ModelMoug[target.Data]);
+                            target.Data.weaponModels[0].geo.SetActive(false);
+                            target.Data.gameObject.SetActive(false);
+                            target.Data.gameObject = ModelFactory.CreateModel("GEO_MON_B3_155", true);
+                            target.Data.gameObject.transform.position = position;
+                            target.Data.weaponModels[0].geo = ModelFactory.CreateModel("GEO_WEP_B1_037", true);
+                            GeoAttach(target.Data.weaponModels[0].geo, target.Data.gameObject, 16);
+                            target.Data.gameObject.SetActive(true);
+                            target.Data.weaponModels[0].geo.SetActive(true);
                         }
                     );
                 }
             }
             else if (Target.PlayerIndex == CharacterId.Marcus)
+            {
                 Target.AddDelayedModifier(
                     target => !target.IsDisappear,
                     target =>
@@ -216,8 +221,40 @@ namespace Memoria.DefaultScripts
                         }
                     }
                 );
+            }
+            else if (Target.Accessory == TranceSeekRegularItem.GhostScarf && !Target.IsUnderAnyStatus(BattleStatus.Vanish)) 
+            // [TODO] Specific bug when mixing this Accessory when getting Trance at the start of the battle, like Vivi vs Black Waltz 3 on Disc 1.
+            {
+                TimerEndTrance = 10;
+                Target.AddDelayedModifier(WaitTranceSFXEnd, ResetModel);
+            }
+            return true;
+        }
+
+        private Boolean WaitTranceSFXEnd(BattleUnit unit)
+        {
+            if (unit.IsDisappear)
+                TriggerTimerEndTrance = true;
+
+            if (TriggerTimerEndTrance)
+                if (!unit.IsDisappear)
+                {
+                    if (TimerEndTrance > 0)
+                        TimerEndTrance--;
+                    else
+                        return false;
+                }
 
             return true;
+        }
+
+        private void ResetModel(BattleUnit unit)
+        {
+            Vector3 position = unit.Data.gameObject.transform.position;
+            CharacterBattleParameter btlParam = btl_mot.BattleParameterList[unit.Player.info.serial_no];
+            unit.Data.gameObject = ModelFactory.CreateModel(btlParam.ModelId, true, true, Configuration.Graphics.ElementsSmoothTexture);
+            unit.Data.gameObject.transform.position = position;
+            btl_eqp.InitWeapon(unit.Player, unit.Data);
         }
 
         public void OnFinishCommand(CMD_DATA cmd, Int32 tranceDecrease)

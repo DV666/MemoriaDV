@@ -1,5 +1,6 @@
 ﻿using System;
 using Memoria.Data;
+using Memoria.Prime;
 using Memoria.Scripts.Battle;
 using Object = System.Object;
 
@@ -36,16 +37,21 @@ namespace Memoria.DefaultScripts
                 if (heat_damage > 0)
                 {
                     if ((EffectElement.Fire & Target.AbsorbElement) != 0)
+                    {
                         Target.Data.fig.info = FF9.Param.FIG_INFO_HP_RECOVER;
+                        Target.CurrentHp = Math.Min(Target.CurrentHp + heat_damage, Target.MaximumHp);
+                        btl2d.Btl2dStatReq(Target, -(Int32)heat_damage, 0);
+                    }
                     else
+                    {
                         Target.Data.fig.info = FF9.Param.FIG_INFO_DISP_HP;
+                        if (Target.CurrentHp > heat_damage)
+                            Target.CurrentHp -= heat_damage;
+                        else
+                            Target.CurrentHp = 1;
 
-                    if (Target.CurrentHp > heat_damage)
-                        Target.CurrentHp -= heat_damage;
-                    else
-                        Target.CurrentHp = 1;
-
-                    btl2d.Btl2dStatReq(Target, (Int32)heat_damage, 0);
+                        btl2d.Btl2dStatReq(Target, (Int32)heat_damage, 0);
+                    }
                 }
             }
         }

@@ -3,6 +3,7 @@ using Memoria.Data;
 using FF9;
 using Object = System.Object;
 using Memoria.Scripts.Battle;
+using Memoria.Prime;
 
 namespace Memoria.DefaultScripts
 {

@@ -36,6 +36,23 @@ namespace Memoria.Scripts.Battle
         {
             if (_v.Caster.IsPlayer)
             {
+                if (_v.Command.AbilityId == BattleAbilityId.Scan && false) // Debug Scan
+                {
+                    _v.Target.Libra(BattleHUD.LibraInformation.All);
+                    Memoria.Prime.Log.Message("_v.Target.Level = " + _v.Target.Level);
+                    Memoria.Prime.Log.Message("_v.Target.Dexterity = " + _v.Target.Dexterity);
+                    Memoria.Prime.Log.Message("_v.Target.Strength = " + _v.Target.Strength);
+                    Memoria.Prime.Log.Message("_v.Target.Magic = " + _v.Target.Magic);
+                    Memoria.Prime.Log.Message("_v.Target.Will = " + _v.Target.Will);
+                    Memoria.Prime.Log.Message("_v.Target.PhysicalDefence = " + _v.Target.PhysicalDefence);
+                    Memoria.Prime.Log.Message("_v.Target.PhysicalEvade = " + _v.Target.PhysicalEvade);
+                    Memoria.Prime.Log.Message("_v.Target.MagicDefence = " + _v.Target.MagicDefence);
+                    Memoria.Prime.Log.Message("_v.Target.MagicEvade = " + _v.Target.MagicEvade);
+                    Memoria.Prime.Log.Message("_v.Target.CurrentStatus = " + _v.Target.CurrentStatus);
+                    Memoria.Prime.Log.Message("_v.Target.ResistStatus = " + _v.Target.ResistStatus);
+                    Memoria.Prime.Log.Message("_v.Target.PermanentStatus = " + _v.Target.PermanentStatus);
+                    return;
+                }
                 if (_v.Command.AbilityId == (BattleAbilityId)1075 || (_v.Command.Power == 33 && _v.Command.HitRate == 33)) // Lani - Predator's Eye
                 {
                     _v.Target.Libra(BattleHUD.LibraInformation.Name | BattleHUD.LibraInformation.Category | BattleHUD.LibraInformation.ElementalAffinities | BattleHUD.LibraInformation.StatusAffinities);

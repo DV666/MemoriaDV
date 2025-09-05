@@ -23,6 +23,7 @@ namespace Memoria.Scripts.Battle
 
         public void OnBattleInit()
         {
+            // Zidane = 0, Vivi = 1, Eiko = 2, Kuja = 3, Necron = 4, Beatrix = 5, Ozma = 6, Garland = 7
             // FF9StateSystem.EventState.gEventGlobal[1403] = 6; // Debug difficulty mode
 
             SB2_PATTERN sb2Pattern = FF9StateSystem.Battle.FF9Battle.btl_scene.PatAddr[FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum];
@@ -53,9 +54,71 @@ namespace Memoria.Scripts.Battle
                 dictgils = new Dictionary<Int32, Int32>();
                 FF9StateSystem.EventState.gScriptDictionary.Add(1000, dictgils);
             }
-            else
+            dictgils[0] = 0;
+
+            if (!FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1001, out Dictionary<Int32, Int32> dictdifficulty)) // Modificators from difficulties
             {
-                dictgils[0] = 0;
+                dictdifficulty = new Dictionary<Int32, Int32>();
+                FF9StateSystem.EventState.gScriptDictionary.Add(1001, dictdifficulty);
+            }
+
+            if (FF9StateSystem.EventState.gEventGlobal[1403] < 7)
+            {
+                // Bonuses here are written in % (positive or negative)
+                dictdifficulty[0] = 0; // HP Bonus
+                dictdifficulty[1] = 0; // MP Bonus
+                dictdifficulty[2] = 0; // Level Bonus
+                dictdifficulty[3] = 0; // Dexterity Bonus
+                dictdifficulty[4] = 0; // Strength Bonus
+                dictdifficulty[5] = 0; // Magic Bonus
+                dictdifficulty[6] = 0; // Spirit Bonus
+                dictdifficulty[7] = 0; // Defence.P Bonus
+                dictdifficulty[8] = 0; // Evade.P Bonus
+                dictdifficulty[9] = 0; // Defence.M Bonus
+                dictdifficulty[10] = 0; // Evade.M Bonus
+                dictdifficulty[11] = 0; // EXP Bonus
+                dictdifficulty[12] = 0; // Gils Bonus
+
+                if (FF9StateSystem.EventState.gEventGlobal[1403] == 3) // Kuja mode
+                {
+                    if (FF9StateSystem.EventState.ScenarioCounter > 2250) // After Zidane/Vivi/Steiner get together in Evil Forest
+                    {
+                        dictdifficulty[0] = 10;
+                        dictdifficulty[4] = 25;
+                        dictdifficulty[5] = 25;
+                    }
+                    else
+                    {
+                        dictdifficulty[0] = 5;
+                        dictdifficulty[4] = 10;
+                        dictdifficulty[5] = 10;
+                    }
+                }
+                else if (FF9StateSystem.EventState.gEventGlobal[1403] == 4 || FF9StateSystem.EventState.gEventGlobal[1403] == 5) // Necron mode + Beatrix Mode
+                {
+                    if (FF9StateSystem.EventState.ScenarioCounter > 2250) // After Zidane/Vivi/Steiner get together in Evil Forest
+                    {
+                        dictdifficulty[0] = 25;
+                        dictdifficulty[4] = 50;
+                        dictdifficulty[5] = 50;
+                    }
+                    else
+                    {
+                        dictdifficulty[0] = 10;
+                        dictdifficulty[4] = 20;
+                        dictdifficulty[5] = 20;
+                    }
+                    if (FF9StateSystem.EventState.gEventGlobal[1403] == 4)
+                    {
+                        dictdifficulty[11] = -50;
+                        dictdifficulty[12] = -90;
+                    }
+                }
+                else if (FF9StateSystem.EventState.gEventGlobal[1403] == 1) // Vivi mode
+                {
+                    dictdifficulty[11] = 25;
+                    dictdifficulty[12] = 25;
+                }
             }
 
             if (Configuration.Mod.FolderNames.Contains("TranceSeek/StuffListed"))
@@ -81,37 +144,37 @@ namespace Memoria.Scripts.Battle
 
                     // Poison element
                     if (ItemAffinitiesPoison.ContainsKey(unit.Weapon))
-                        if (ElementAffinitiesItem[unit.Data][0] < ItemAffinitiesPoison[unit.Weapon])
-                            ElementAffinitiesItem[unit.Data][0] = ItemAffinitiesPoison[unit.Weapon];
+                        if (NewEffectElement[unit.Data][0] < ItemAffinitiesPoison[unit.Weapon])
+                            NewEffectElement[unit.Data][0] = ItemAffinitiesPoison[unit.Weapon];
                     if (ItemAffinitiesPoison.ContainsKey(unit.Head))
-                        if (ElementAffinitiesItem[unit.Data][0] < ItemAffinitiesPoison[unit.Head])
-                         ElementAffinitiesItem[unit.Data][0] = ItemAffinitiesPoison[unit.Head];
+                        if (NewEffectElement[unit.Data][0] < ItemAffinitiesPoison[unit.Head])
+                         NewEffectElement[unit.Data][0] = ItemAffinitiesPoison[unit.Head];
                     if (ItemAffinitiesPoison.ContainsKey(unit.Armor))
-                        if (ElementAffinitiesItem[unit.Data][0] < ItemAffinitiesPoison[unit.Armor])
-                            ElementAffinitiesItem[unit.Data][0] = ItemAffinitiesPoison[unit.Armor];
+                        if (NewEffectElement[unit.Data][0] < ItemAffinitiesPoison[unit.Armor])
+                            NewEffectElement[unit.Data][0] = ItemAffinitiesPoison[unit.Armor];
                     if (ItemAffinitiesPoison.ContainsKey(unit.Wrist))
-                        if (ElementAffinitiesItem[unit.Data][0] < ItemAffinitiesPoison[unit.Wrist])
-                            ElementAffinitiesItem[unit.Data][0] = ItemAffinitiesPoison[unit.Wrist];
+                        if (NewEffectElement[unit.Data][0] < ItemAffinitiesPoison[unit.Wrist])
+                            NewEffectElement[unit.Data][0] = ItemAffinitiesPoison[unit.Wrist];
                     if (ItemAffinitiesPoison.ContainsKey(unit.Accessory))
-                        if (ElementAffinitiesItem[unit.Data][0] < ItemAffinitiesPoison[unit.Accessory])
-                            ElementAffinitiesItem[unit.Data][0] = ItemAffinitiesPoison[unit.Accessory];
+                        if (NewEffectElement[unit.Data][0] < ItemAffinitiesPoison[unit.Accessory])
+                            NewEffectElement[unit.Data][0] = ItemAffinitiesPoison[unit.Accessory];
 
                     // Gravity element
                     if (ItemAffinitiesGravity.ContainsKey(unit.Weapon))
-                        if (ElementAffinitiesItem[unit.Data][1] < ItemAffinitiesGravity[unit.Weapon])
-                            ElementAffinitiesItem[unit.Data][1] = ItemAffinitiesGravity[unit.Weapon];
+                        if (NewEffectElement[unit.Data][1] < ItemAffinitiesGravity[unit.Weapon])
+                            NewEffectElement[unit.Data][1] = ItemAffinitiesGravity[unit.Weapon];
                     if (ItemAffinitiesGravity.ContainsKey(unit.Head))
-                        if (ElementAffinitiesItem[unit.Data][1] < ItemAffinitiesGravity[unit.Head])
-                            ElementAffinitiesItem[unit.Data][1] = ItemAffinitiesGravity[unit.Head];
+                        if (NewEffectElement[unit.Data][1] < ItemAffinitiesGravity[unit.Head])
+                            NewEffectElement[unit.Data][1] = ItemAffinitiesGravity[unit.Head];
                     if (ItemAffinitiesGravity.ContainsKey(unit.Armor))
-                        if (ElementAffinitiesItem[unit.Data][1] < ItemAffinitiesGravity[unit.Armor])
-                            ElementAffinitiesItem[unit.Data][1] = ItemAffinitiesGravity[unit.Armor];
+                        if (NewEffectElement[unit.Data][1] < ItemAffinitiesGravity[unit.Armor])
+                            NewEffectElement[unit.Data][1] = ItemAffinitiesGravity[unit.Armor];
                     if (ItemAffinitiesGravity.ContainsKey(unit.Wrist))
-                        if (ElementAffinitiesItem[unit.Data][1] < ItemAffinitiesGravity[unit.Wrist])
-                            ElementAffinitiesItem[unit.Data][1] = ItemAffinitiesGravity[unit.Wrist];
+                        if (NewEffectElement[unit.Data][1] < ItemAffinitiesGravity[unit.Wrist])
+                            NewEffectElement[unit.Data][1] = ItemAffinitiesGravity[unit.Wrist];
                     if (ItemAffinitiesGravity.ContainsKey(unit.Accessory))
-                        if (ElementAffinitiesItem[unit.Data][1] < ItemAffinitiesGravity[unit.Accessory])
-                            ElementAffinitiesItem[unit.Data][1] = ItemAffinitiesGravity[unit.Accessory];
+                        if (NewEffectElement[unit.Data][1] < ItemAffinitiesGravity[unit.Accessory])
+                            NewEffectElement[unit.Data][1] = ItemAffinitiesGravity[unit.Accessory];
 
                     if (unit.HasSupportAbilityByIndex((SupportAbility)1041)) // Alert+
                     {
@@ -346,40 +409,8 @@ namespace Memoria.Scripts.Battle
                             {
                                 ChangeHP = true;
                                 uint bonusHP = unit.MaximumHp - 10000;
-                                if (FF9StateSystem.EventState.gEventGlobal[1403] == 3) // Kuja mode
-                                {
-                                    if (FF9StateSystem.EventState.ScenarioCounter > 2250) // After Zidane/Vivi/Steiner get together in Evil Forest
-                                    {
-                                        unit.MaximumHp += (bonusHP / 10);
-                                        unit.CurrentHp += (bonusHP / 10);
-                                        unit.Strength = (byte)Math.Min(unit.Strength + (unit.Strength / 4), byte.MaxValue);
-                                        unit.Magic = (byte)Math.Min(unit.Magic + (unit.Magic / 4), byte.MaxValue);
-                                    }
-                                    else
-                                    {
-                                        unit.MaximumHp += (bonusHP / 20);
-                                        unit.CurrentHp += (bonusHP / 20);
-                                        unit.Strength = (byte)Math.Min(unit.Strength + 1, byte.MaxValue);
-                                        unit.Magic = (byte)Math.Min(unit.Magic + 1, byte.MaxValue);
-                                    }
-                                }
-                                else if (FF9StateSystem.EventState.gEventGlobal[1403] == 4 || FF9StateSystem.EventState.gEventGlobal[1403] == 5) // Necron mode + Beatrix Mode
-                                {
-                                    if (FF9StateSystem.EventState.ScenarioCounter > 2250) // After Zidane/Vivi/Steiner get together in Evil Forest
-                                    {
-                                        unit.MaximumHp += (bonusHP / 4);
-                                        unit.CurrentHp += (bonusHP / 4);
-                                        unit.Strength = (byte)Math.Min(unit.Strength + (unit.Strength / 2), byte.MaxValue);
-                                        unit.Magic = (byte)Math.Min(unit.Magic + (unit.Magic / 2), byte.MaxValue);
-                                    }
-                                    else
-                                    {
-                                        unit.MaximumHp += (bonusHP / 8);
-                                        unit.CurrentHp += (bonusHP / 8);
-                                        unit.Strength = (byte)Math.Min(unit.Strength + 2, byte.MaxValue);
-                                        unit.Magic = (byte)Math.Min(unit.Magic + 2, byte.MaxValue);
-                                    }
-                                }
+                                unit.MaximumHp += (uint)((bonusHP * dictdifficulty[0]) / 100);
+                                unit.CurrentHp = unit.MaximumHp;
                                 MonsterMechanic[unit.Data][3] = 1;
                                 break;
                             }
@@ -387,51 +418,25 @@ namespace Memoria.Scripts.Battle
                         if (!ChangeHP)
                         {
                             uint bonusHP = unit.MaximumHp;
-                            if (FF9StateSystem.EventState.gEventGlobal[1403] == 3) // Kuja mode
-                            {
-                                if (FF9StateSystem.EventState.ScenarioCounter > 2250) // After Zidane/Vivi/Steiner get together in Evil Forest
-                                {
-                                    unit.MaximumHp += (bonusHP / 10);
-                                    unit.CurrentHp += (bonusHP / 10);
-                                    unit.Strength = (byte)Math.Min(unit.Strength + (unit.Strength / 4), byte.MaxValue);
-                                    unit.Magic = (byte)Math.Min(unit.Magic + (unit.Magic / 4), byte.MaxValue);
-                                }
-                                else
-                                {
-                                    unit.MaximumHp += (bonusHP / 20);
-                                    unit.CurrentHp += (bonusHP / 20);
-                                    unit.Strength = (byte)Math.Min(unit.Strength + 1, byte.MaxValue);
+                            unit.MaximumHp += (uint)((bonusHP * dictdifficulty[0]) / 100);
+                            unit.CurrentHp = unit.MaximumHp;
+                        }
+                        unit.MaximumMp += (uint)((unit.MaximumMp * dictdifficulty[1]) / 100);
+                        unit.CurrentMp = unit.MaximumMp;
 
-                                }
-                            }
-                            else if (FF9StateSystem.EventState.gEventGlobal[1403] == 4 || FF9StateSystem.EventState.gEventGlobal[1403] == 5) // Necron mode + Beatrix Mode
-                            {
-                                if (FF9StateSystem.EventState.ScenarioCounter > 2250) // After Zidane/Vivi/Steiner get together in Evil Forest
-                                {
-                                    unit.MaximumHp += (bonusHP / 4);
-                                    unit.CurrentHp += (bonusHP / 4);
-                                    unit.Strength = (byte)Math.Min(unit.Strength + (unit.Strength / 2), byte.MaxValue);
-                                    unit.Magic = (byte)Math.Min(unit.Magic + (unit.Magic / 2), byte.MaxValue);
-                                }
-                                else
-                                {
-                                    unit.MaximumHp += (bonusHP / 8);
-                                    unit.CurrentHp += (bonusHP / 8);
-                                    unit.Strength = (byte)Math.Min(unit.Strength + 2, byte.MaxValue);
-                                    unit.Magic = (byte)Math.Min(unit.Magic + 2, byte.MaxValue);
-                                }
-                            }
-                        }
-                        if (FF9StateSystem.EventState.gEventGlobal[1403] == 1) // Vivi mode
-                        {
-                            battleEnemy.Data.bonus_exp += (battleEnemy.Data.bonus_exp / 4);
-                            battleEnemy.Data.bonus_gil += (battleEnemy.Data.bonus_gil / 4);
-                        }
-                        else if (FF9StateSystem.EventState.gEventGlobal[1403] == 4) // Necron
-                        {
-                            battleEnemy.Data.bonus_exp /= 2;
-                            battleEnemy.Data.bonus_gil /= 10;
-                        }
+                        unit.Level = (byte)Math.Min((unit.Level + (unit.Level * dictdifficulty[2]) / 100), byte.MaxValue);
+                        unit.Dexterity = (byte)Math.Min((unit.Dexterity + (unit.Dexterity * dictdifficulty[3]) / 100), 50);
+                        unit.Strength = (byte)Math.Min((unit.Strength + (unit.Strength * dictdifficulty[4]) / 100), byte.MaxValue);
+                        unit.Magic = (byte)Math.Min((unit.Magic + (unit.Magic * dictdifficulty[5]) / 100), byte.MaxValue);
+                        unit.Will = (byte)Math.Min((unit.Will + (unit.Will * dictdifficulty[6]) / 100), 50);
+                        unit.PhysicalDefence = (byte)Math.Min((unit.PhysicalDefence + (unit.PhysicalDefence * dictdifficulty[7]) / 100), byte.MaxValue);
+                        unit.PhysicalEvade = (byte)Math.Min((unit.PhysicalEvade + (unit.PhysicalEvade * dictdifficulty[8]) / 100), byte.MaxValue);
+                        unit.MagicDefence = (byte)Math.Min((unit.MagicDefence + (unit.MagicDefence * dictdifficulty[9]) / 100), byte.MaxValue);
+                        unit.MagicEvade = (byte)Math.Min((unit.MagicEvade + (unit.MagicEvade * dictdifficulty[10]) / 100), byte.MaxValue);
+
+
+                        battleEnemy.Data.bonus_exp = (uint)(battleEnemy.Data.bonus_exp + ((battleEnemy.Data.bonus_exp * dictdifficulty[11]) / 100));
+                        battleEnemy.Data.bonus_gil = (uint)(battleEnemy.Data.bonus_gil + ((battleEnemy.Data.bonus_gil * dictdifficulty[12]) / 100));
                     }
 
                     if (FF9StateSystem.Battle.battleMapIndex == 838 && sb2Pattern.Monster[unit.Data.bi.slot_no].TypeNo == 1) // Golden Pidove (fake Sleep)
@@ -447,6 +452,37 @@ namespace Memoria.Scripts.Battle
                         sps.boneTran = attachTransf;
                         sps.posOffset = Vector3.zero;
                         TranceSeekSpecial.PolaritySPS[unit] = sps;
+                    }
+
+                    BTL_SCENE btl_scene = FF9StateSystem.Battle.FF9Battle.btl_scene;
+                    SB2_PUT enemyPlacement = btl_scene.PatAddr[FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum].Monster[unit.Data.bi.slot_no];
+                    SB2_MON_PARM monParam = btl_scene.MonAddr[enemyPlacement.TypeNo];
+
+                    // Pad 0 (byte) => Unused (1) ; Pad 1 (uint16) => Unused (2) ; Pad 2 (uint16) => Unused (3)
+                    // Pad 1 :
+                    // 1 -> Weak Poison     16 -> Weak Gravity
+                    // 2 -> Half Poison     32 -> Weak Gravity
+                    // 4 -> Immune Poison   64 -> Weak Gravity
+                    // 8 -> Absorb Poison   128 -> Weak Gravity
+
+                    if (monParam.Pad1 > 0)
+                    {
+                        if ((monParam.Pad1 & 1) != 0)
+                            NewEffectElement[unit.Data][0] += 1;
+                        if ((monParam.Pad1 & 2) != 0)
+                            NewEffectElement[unit.Data][0] += 2;
+                        if ((monParam.Pad1 & 4) != 0)
+                            NewEffectElement[unit.Data][0] += 4;
+                        if ((monParam.Pad1 & 8) != 0)
+                            NewEffectElement[unit.Data][0] += 8;
+                        if ((monParam.Pad1 & 16) != 0)
+                            NewEffectElement[unit.Data][1] += 1;
+                        if ((monParam.Pad1 & 32) != 0)
+                            NewEffectElement[unit.Data][1] += 2;
+                        if ((monParam.Pad1 & 64) != 0)
+                            NewEffectElement[unit.Data][1] += 4;
+                        if ((monParam.Pad1 & 128) != 0)
+                            NewEffectElement[unit.Data][1] += 8;
                     }
 
                     if (Configuration.Battle.Speed == 2)
@@ -471,7 +507,7 @@ namespace Memoria.Scripts.Battle
                 MonsterMechanic[unit.Data] = [0, 0, 0, 0, 100, 2, 0];
                 SpecialSAEffect[unit.Data] = [0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, (int)unit.MaximumHp, (int)unit.MaximumMp];
                 SpecialItemEffect[unit.Data] = [3, 3];
-                ElementAffinitiesItem[unit.Data] = [0, 0];
+                NewEffectElement[unit.Data] = [0, 0];
                 TriggerSPSResistStatus[unit.Data] = false;
                 RollBackStats[unit.Data] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
                 RollBackBattleStatus[unit.Data] = 0;
@@ -680,6 +716,7 @@ namespace Memoria.Scripts.Battle
             { 335, 0 }, { 335, 1 }, { 335, 2 }, // Steiner 2nd
             { 337, 0 }, { 337, 1 }, // Steiner 3rd + Bombo
             { 936, 0 }, // Sulfura
+            { 21, 1 }, // Valseur 1
             { 294, 0 }, // Valseur 2
             { 296, 0 }, // Valseur 3
             { 74, 0 }, { 74, 1 }, // Zorn & Thorn
