@@ -80,21 +80,17 @@ namespace Memoria.Scripts.Battle
                 }
                 TranceSeekAPI.TryAlterMagicStatuses(_v);
             }
-            if (FF9StateSystem.Battle.battleMapIndex == 303) // Blambourine Fight
+            if (FF9StateSystem.Battle.battleMapIndex == 303 && (_v.Command.AbilityStatus & BattleStatus.Heat) != 0 && _v.Command.RawIndex == 11) // Buzz - Blambourine
             {
-                SB2_PATTERN sb2Pattern = FF9StateSystem.Battle.FF9Battle.btl_scene.PatAddr[FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum];
-                if (sb2Pattern.Monster[_v.Caster.Data.bi.slot_no].TypeNo == 0 && (_v.Command.AbilityStatus & BattleStatus.Heat) != 0) // Buzz - Blambourine
+                BattleStatusDataEntry statusData = FF9StateSystem.Battle.FF9Battle.status_data[BattleStatusId.Heat];
+                Int32 wait = (short)(((400 + (_v.Caster.Will * 2) - _v.Target.Will) * statusData.ContiCnt) / 4); // Reduce Heat duration for this fight (Disc 1)
+                _v.Target.AddDelayedModifier(
+                target => (wait -= target.Data.cur.at_coef * BattleState.ATBTickCount) > 0,
+                target =>
                 {
-                    BattleStatusDataEntry statusData = FF9StateSystem.Battle.FF9Battle.status_data[BattleStatusId.Heat];
-                    Int32 wait = (short)(((400 + (_v.Caster.Will * 2) - _v.Target.Will) * statusData.ContiCnt) / 4); // Reduce Heat duration for Disc 1
-                    _v.Target.AddDelayedModifier(
-                    target => (wait -= target.Data.cur.at_coef * BattleState.ATBTickCount) > 0,
-                    target =>
-                    {
-                        target.RemoveStatus(BattleStatus.Heat);
-                    }
-                    );
+                    target.RemoveStatus(BattleStatus.Heat);
                 }
+                );
             }
         }
 

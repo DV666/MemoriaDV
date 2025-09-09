@@ -203,7 +203,7 @@ namespace Memoria.Scripts.Battle
                 );
                 return;
             }
-            if (_v.Command.Power == 11 && _v.Command.HitRate == 11) // Ironite (Dragon Force)
+            else if (_v.Command.Power == 11 && _v.Command.HitRate == 11) // Ironite (Dragon Force)
             {
                 _v.Target.TryAlterSingleStatus(BattleStatusId.ChangeStat, true, _v.Caster, "PhysicalDefence", Math.Min(255, _v.Target.PhysicalDefence + 2));
                 Dictionary<String, String> localizedMessage = new Dictionary<String, String>
@@ -502,22 +502,6 @@ namespace Memoria.Scripts.Battle
                     _v.Caster.Data.mot[3] = "ANH_MON_B3_114_003";
                     return;
                 }                  
-            }
-            if (FF9StateSystem.Battle.battleMapIndex == 303)
-            {
-                SB2_PATTERN sb2Pattern = FF9StateSystem.Battle.FF9Battle.btl_scene.PatAddr[FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum];
-                if (sb2Pattern.Monster[_v.Caster.Data.bi.slot_no].TypeNo == 0 && (_v.Command.AbilityStatus & BattleStatus.Heat) != 0) // Buzz - Blambourine
-                {
-                    BattleStatusDataEntry statusData = FF9StateSystem.Battle.FF9Battle.status_data[BattleStatusId.Heat];
-                    Int32 wait = (short)(((400 + (_v.Caster.Will * 2) - _v.Target.Will) * statusData.ContiCnt) / 4);
-                    _v.Target.AddDelayedModifier(
-                    target => (wait -= target.Data.cur.at_coef * BattleState.ATBTickCount) > 0,
-                    target =>
-                    {
-                        target.RemoveStatus(BattleStatus.Heat);
-                    }
-                    );
-                }
             }
             else if (_v.Command.Power == 77 && _v.Command.HitRate == 77) // Giant Drink (Mad Alchemist)
             {
