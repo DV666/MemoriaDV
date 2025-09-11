@@ -26,7 +26,7 @@ namespace Memoria.Scripts.Battle
             TranceSeekAPI.BonusElement(_v);
             if (TranceSeekAPI.CanAttackMagic(_v))
             {
-                if (_v.Target.HasCategory(EnemyCategory.Humanoid))
+                if (_v.Target.HasCategory(EnemyCategory.Humanoid) && !_v.Target.IsPlayer)
                     _v.Context.DamageModifierCount += 2;
                 if (_v.Target.IsZombie)
                     _v.Target.Flags |= CalcFlag.HpRecovery;

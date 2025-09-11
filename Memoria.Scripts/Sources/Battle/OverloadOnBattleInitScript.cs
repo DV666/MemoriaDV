@@ -11,6 +11,7 @@ using System.IO;
 using static Memoria.Scripts.Battle.TranceSeekAPI;
 using System.Reflection;
 using Assets.Sources.Scripts.UI.Common;
+using Memoria.Assets;
 
 namespace Memoria.Scripts.Battle
 {
@@ -517,6 +518,19 @@ namespace Memoria.Scripts.Battle
                 StateMoug[unit.Data] = 0;
                 ModelMoug[unit.Data] = null;
             }
+
+            //int AbilityFeaturesFiles = 0;
+            //String inputPath = DataResources.Characters.Abilities.PureDirectory + DataResources.Characters.Abilities.SAFeaturesFile;
+            //Dictionary<SupportAbility, SupportingAbilityFeature> result = new Dictionary<SupportAbility, SupportingAbilityFeature>();
+            //foreach (AssetManager.AssetFolder folder in AssetManager.FolderLowToHigh)
+            //if (folder.TryFindAssetInModOnDisc(inputPath, out String fullPath, AssetManagerUtil.GetStreamingAssetsPath() + "/"))
+            //AbilityFeaturesFiles++;
+
+            //if (AbilityFeaturesFiles > 1)
+            //{
+                //string contenu = File.ReadAllText(path);
+                //int nbCaracteres = contenu.Length;
+            //}
         }
 
         private Boolean ProcessMagicLampRecast(BattleUnit caster)
@@ -725,7 +739,8 @@ namespace Memoria.Scripts.Battle
             { 668, 0 },  { 217, 0 }, { 670, 0 }, { 751, 0 }, { 652, 0 }, { 664, 0 }, { 216, 0 }, // Friendly Yeti
             // ########### CD4 Bosses ##############
             { 93, 2 }, { 93, 3 }, { 93, 4 }, { 93, 5 }, // Prison Cage + Little Girl
-            { 299, 1 }, { 299, 2 } // Jötunn + Flarder
+            { 299, 1 }, { 299, 2 }, // Jötunn + Flarder
+            { 84, 1 } // Armodullahan
         };
 
         public static Int32[,] PreventBossModificationDifficulty = new Int32[,]
@@ -738,7 +753,8 @@ namespace Memoria.Scripts.Battle
         public static Dictionary<KeyValuePair<Int32, Int32>, String> CustomBBGonBattleID = new Dictionary<KeyValuePair<Int32, Int32>, String>
         {
             { new KeyValuePair<Int32, Int32>(299, 1), "BBG_B023" }, // Lindblum boss (Steiner Quest)
-            { new KeyValuePair<Int32, Int32>(838, 1), "BBG_B042" } // Golden Pidove
+            { new KeyValuePair<Int32, Int32>(838, 1), "BBG_B042" }, // Golden Pidove
+            { new KeyValuePair<Int32, Int32>(84, 1), "BBG_B024" } // Armodullahan (Cinna Quest)
         };
 
         private static readonly HashSet<Int32> DarkBBG = new HashSet<Int32>(new[] { 4, 5, 6, 8, 9, 12, 13, 14, 15, 16, 32, 36, 37, 38, 39, 40, 41, 42, 45, 46, 67, 68, 69, 70, 71, 72,

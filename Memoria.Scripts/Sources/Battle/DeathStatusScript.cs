@@ -75,6 +75,14 @@ namespace Memoria.DefaultScripts
                         BeatrixPassive[target.Data] = [0, 0, 0, 0];
                     BeatrixPassive[target.Data][2] = 0;
                 }
+                else if (target.PlayerIndex == CharacterId.Vivi)
+                {
+                    if (!ViviPassive.TryGetValue(target.Data, out var focus))
+                    {
+                        ViviPassive[target.Data] = [0, 0, 0];
+                    }
+                    ViviPassive[target.Data][0] = 0;
+                }
             }
             if (!target.HasSupportAbilityByIndex((SupportAbility)1232)) // SA Expiation+
                 btl_stat.RemoveStatus(target, TranceSeekStatusId.Redemption);
