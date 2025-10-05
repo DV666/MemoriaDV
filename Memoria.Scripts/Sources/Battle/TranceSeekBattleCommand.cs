@@ -79,5 +79,27 @@ namespace Memoria.Scripts.Battle
             { "GR", "Schwert" },
             { "IT", "Gladius" }
         };
+
+        public static Dictionary<String, String> SeikenCMDNameVanilla = new Dictionary<String, String>
+        {
+            { "US", "Seiken" },
+            { "UK", "Seiken" },
+            { "JP", "聖剣技" },
+            { "ES", "Ira santa" },
+            { "FR", "Lame Sainte" },
+            { "GR", "Hl.-Schwt." },
+            { "IT", "Sanctum" }
+        };
+
+        public static Dictionary<String, String> SeikenPlusCMDNameVanilla = new Dictionary<String, String>
+        {
+            { "US", "Seiken+" },
+            { "UK", "Seiken+" },
+            { "JP", "聖剣技+" },
+            { "ES", "Ira santa+" },
+            { "FR", "Lame Bénie" },
+            { "GR", "Hl.-Schwt.+" },
+            { "IT", "Sanctum+" }
+        };
     }
 }

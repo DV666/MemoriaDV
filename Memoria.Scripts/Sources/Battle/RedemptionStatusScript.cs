@@ -2,6 +2,7 @@
 using UnityEngine;
 using Memoria.Data;
 using Object = System.Object;
+using System.Linq;
 
 namespace Memoria.DefaultScripts
 {
@@ -16,6 +17,7 @@ namespace Memoria.DefaultScripts
 
         public override UInt32 Apply(BattleUnit target, BattleUnit inflicter, params Object[] parameters)
         {
+            Boolean RedemptionSHPActivate = Configuration.Mod.FolderNames.Contains("TranceSeek/RedemptionIconInBattle");
             base.Apply(target, inflicter, parameters);
             OverlapSHP.SetupOverlappingSHP2(target);
             Int32 StackMaximum = target.HasSupportAbilityByIndex((SupportAbility)232) ? 3 : 2; // SA Expiation
@@ -63,7 +65,7 @@ namespace Memoria.DefaultScripts
                     NumberHUD.Label = $"[FFA500]   {Stack}";
                 return btl_stat.ALTER_INVALID;
             }
-            else if (Stack > 1)
+            else if (Stack > 1 && RedemptionSHPActivate)
             {
                 if (NumberHUD == null)
                 {

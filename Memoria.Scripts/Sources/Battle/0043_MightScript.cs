@@ -45,6 +45,7 @@ namespace Memoria.Scripts.Battle
                 {
                     BeatrixPassive[_v.Caster.Data][2] = 1;
                 }
+                UpdateRedemptionHUD(_v.Target);
                 return;
             }
             else if (_v.Caster.Data.dms_geo_id == 410 && _v.Command.Power == 2 || (_v.Caster.Data.dms_geo_id == 410 && _v.Command.Power == 4 || _v.Command.AbilityId == (BattleAbilityId)1081)) // [Lani] Adrénaline + Super Muscles

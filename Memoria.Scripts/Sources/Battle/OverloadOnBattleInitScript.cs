@@ -393,11 +393,21 @@ namespace Memoria.Scripts.Battle
 
                     if (unit.PlayerIndex == CharacterId.Steiner)
                     {
-                        FF9TextTool.SetCommandName(BattleCommandId.SwordAct, TranceSeekBattleCommand.SwdArtCMDNameVanilla[Localization.CurrentSymbol]);
-                        if (FF9TextTool.DisplayBatch.commandName.TryGetValue(BattleCommandId.SwordAct, out String CMDName))
-                            CMDVanillaName[unit.Data][0] = CMDName;
+                        FF9TextTool.SetCommandName(BattleCommandId.SwordAct, TranceSeekBattleCommand.SwdArtCMDNameVanilla[Localization.CurrentDisplaySymbol]);
+                        if (FF9TextTool.DisplayBatch.commandName.TryGetValue(BattleCommandId.SwordAct, out String SwordActName))
+                            CMDVanillaName[unit.Data][0] = SwordActName;
 
                         unit.AddDelayedModifier(SteinerMechanic, null);
+                    }
+                    if (unit.PlayerIndex == CharacterId.Beatrix)
+                    {
+                        FF9TextTool.SetCommandName(BattleCommandId.HolySword1, TranceSeekBattleCommand.SeikenCMDNameVanilla[Localization.CurrentDisplaySymbol]);
+                        FF9TextTool.SetCommandName(BattleCommandId.HolySword2, TranceSeekBattleCommand.SeikenPlusCMDNameVanilla[Localization.CurrentDisplaySymbol]);
+                        if (FF9TextTool.DisplayBatch.commandName.TryGetValue(BattleCommandId.HolySword1, out String SeikenName))
+                            CMDVanillaName[unit.Data][0] = SeikenName;
+
+                        if (FF9TextTool.DisplayBatch.commandName.TryGetValue(BattleCommandId.HolySword2, out String SeikenPlusName))
+                            CMDVanillaName[unit.Data][1] = SeikenPlusName;
                     }
                 }
                 else // Monsters init
@@ -532,7 +542,7 @@ namespace Memoria.Scripts.Battle
                 WeaponNewStatus[unit.Data] = 0;
                 StateMoug[unit.Data] = 0;
                 ModelMoug[unit.Data] = null;
-                CMDVanillaName[unit.Data] = [null];
+                CMDVanillaName[unit.Data] = [null, null];
             }
 
             if (FF9StateSystem.EventState.gEventGlobal[1403] == 4 || FF9StateSystem.EventState.gEventGlobal[1403] == 5 || FF9StateSystem.EventState.gEventGlobal[1403] == 6)
@@ -593,7 +603,7 @@ namespace Memoria.Scripts.Battle
                 SteinerPassive[unit.Data][2] = 1;
                 SteinerPassive[unit.Data][0]--;
                 SteinerPassive[unit.Data][1]++;
-                FF9TextTool.SetCommandName(BattleCommandId.SwordAct, TranceSeekBattleCommand.SwdArtCMDNameVanilla[Localization.CurrentSymbol] + " (" + SteinerPassive[unit.Data][0] + "/" + (SteinerPassive[unit.Data][0] + SteinerPassive[unit.Data][1]) + ")");
+                FF9TextTool.SetCommandName(BattleCommandId.SwordAct, TranceSeekBattleCommand.SwdArtCMDNameVanilla[Localization.CurrentDisplaySymbol] + " (" + SteinerPassive[unit.Data][0] + "/" + (SteinerPassive[unit.Data][0] + SteinerPassive[unit.Data][1]) + ")");
                 UIManager.Battle.OnLocalize();
                 SoundLib.PlaySoundEffect(1577);
                 unit.UILabelHP = $"{SteinerPassive[unit.Data][1]} [SPRT=IconAtlas,item200_00,32,32]\n{unit.CurrentHp}";
@@ -605,7 +615,7 @@ namespace Memoria.Scripts.Battle
                 SteinerPassive[unit.Data][2] = 1;
                 SteinerPassive[unit.Data][0]++;
                 SteinerPassive[unit.Data][1]--;
-                FF9TextTool.SetCommandName(BattleCommandId.SwordAct, TranceSeekBattleCommand.SwdArtCMDNameVanilla[Localization.CurrentSymbol] + " (" + SteinerPassive[unit.Data][0] + "/" + (SteinerPassive[unit.Data][0] + SteinerPassive[unit.Data][1]) + ")");
+                FF9TextTool.SetCommandName(BattleCommandId.SwordAct, TranceSeekBattleCommand.SwdArtCMDNameVanilla[Localization.CurrentDisplaySymbol] + " (" + SteinerPassive[unit.Data][0] + "/" + (SteinerPassive[unit.Data][0] + SteinerPassive[unit.Data][1]) + ")");
                 UIManager.Battle.OnLocalize();
                 SoundLib.PlaySoundEffect(1577);
                 if (SteinerPassive[unit.Data][1] > 0)

@@ -1,4 +1,5 @@
-﻿using FF9;
+﻿using Assets.Sources.Scripts.UI.Common;
+using FF9;
 using Memoria.Assets;
 using Memoria.Data;
 using Memoria.Database;
@@ -443,6 +444,7 @@ namespace Memoria.Scripts.Battle
                         }
                     }
                     BeatrixPassive[v.Caster.Data][3] = 1;
+                    UpdateRedemptionHUD(v.Caster);
                     v.Caster.AddDelayedModifier(
                         caster => caster.CurrentAtb >= caster.MaximumAtb,
                         caster =>
@@ -456,6 +458,7 @@ namespace Memoria.Scripts.Battle
             {
                 v.Target.AlterStatus(TranceSeekStatus.Redemption, v.Caster);
                 BeatrixPassive[v.Target.Data][3] = 1;
+                UpdateRedemptionHUD(v.Target);
                 v.Caster.AddDelayedModifier(
                     caster => caster.CurrentAtb >= caster.MaximumAtb,
                     caster =>

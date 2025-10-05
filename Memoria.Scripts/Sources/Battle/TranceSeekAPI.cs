@@ -1267,7 +1267,7 @@ namespace Memoria.Scripts.Battle
 
         public static void ResetSteinerPassive(BattleUnit unit)
         {
-            FF9TextTool.SetCommandName(BattleCommandId.SwordAct, TranceSeekBattleCommand.SwdArtCMDNameVanilla[Localization.CurrentSymbol]);
+            FF9TextTool.SetCommandName(BattleCommandId.SwordAct, TranceSeekBattleCommand.SwdArtCMDNameVanilla[Localization.CurrentDisplaySymbol]);
             unit.UILabelHP = unit.CurrentHp.ToString();
 
             unit.AddDelayedModifier(
@@ -1279,6 +1279,35 @@ namespace Memoria.Scripts.Battle
                     dictbattle[1] = 0;
             }
             );
+        }
+
+        public static void UpdateRedemptionHUD(BattleUnit unit)
+        {
+            int RedemptionStack = (int)unit.GetPropertyByName("StatusProperty CustomStatus12 Stack");
+            if (RedemptionStack > 0 && BeatrixPassive[unit.Data][0] != RedemptionStack)
+            {
+                BeatrixPassive[unit.Data][0] = RedemptionStack;
+                FF9TextTool.SetCommandName(BattleCommandId.HolySword1, TranceSeekBattleCommand.SeikenCMDNameVanilla[Localization.CurrentDisplaySymbol] + " (" + RedemptionStack + " [SPRT=IconAtlas,item200_01,40,40] )");
+                FF9TextTool.SetCommandName(BattleCommandId.HolySword2, TranceSeekBattleCommand.SeikenPlusCMDNameVanilla[Localization.CurrentDisplaySymbol] + " (" + RedemptionStack + " [SPRT=IconAtlas,item200_01,40,40] )");
+                Dictionary<String, String> BeatrixPassiveMessage = new Dictionary<String, String>
+                    {
+                        { "US", "[SPRT=IconAtlas,item200_01] Redemption!" },
+                        { "UK", "[SPRT=IconAtlas,item200_01] Redemption!" },
+                        { "JP", "[SPRT=IconAtlas,item200_01] Redemption!" },
+                        { "ES", "[SPRT=IconAtlas,item200_01] Redemption!" },
+                        { "FR", "[SPRT=IconAtlas,item200_01] Redemption !" },
+                        { "GR", "[SPRT=IconAtlas,item200_01] Redemption!" },
+                        { "IT", "[SPRT=IconAtlas,item200_01] Redemption!" },
+                    };
+                btl2d.Btl2dReqSymbolMessage(unit.Data, "[FFFFFF]", BeatrixPassiveMessage, HUDMessage.MessageStyle.DAMAGE, 30);
+            }
+            else if (RedemptionStack == 0)
+            {
+                BeatrixPassive[unit.Data][0] = RedemptionStack;
+                FF9TextTool.SetCommandName(BattleCommandId.HolySword1, TranceSeekBattleCommand.SeikenCMDNameVanilla[Localization.CurrentDisplaySymbol]);
+                FF9TextTool.SetCommandName(BattleCommandId.HolySword2, TranceSeekBattleCommand.SeikenPlusCMDNameVanilla[Localization.CurrentDisplaySymbol]);
+            }
+
         }
 
         public static void SpecialEffect(this BattleCalculator v)
