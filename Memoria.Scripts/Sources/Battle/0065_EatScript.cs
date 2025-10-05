@@ -41,7 +41,7 @@ namespace Memoria.Scripts.Battle
 
             if (_v.Caster.InTrance || saAppetite || saGluttony)
             {
-                if (!_v.Caster.InTrance && saAppetite && saGluttony) // SA Appetite AND Gourmandise
+                if (!_v.Caster.InTrance && saAppetite && saGluttony) // SA Appetite + Gluttony
                 {
                     Int32 MixStrMag = (_v.Caster.Strength + _v.Caster.Magic) / 2;
                     Int32 baseDamage = Comn.random16() % (1 + (_v.Caster.Level + MixStrMag >> 3));
@@ -63,7 +63,7 @@ namespace Memoria.Scripts.Battle
                     TranceSeekAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
                     TranceSeekAPI.BonusBackstabAndPenaltyLongDistance(_v);
                 }
-                else if (saGluttony) // SA Gourmandise
+                else if (saGluttony) // SA Gluttony
                 {
                     Int32 baseDamage = Comn.random16() % (1 + (_v.Caster.Level + _v.Caster.Magic >> 3));
                     _v.Context.AttackPower = _v.Caster.GetWeaponPower(_v.Command);
@@ -78,7 +78,11 @@ namespace Memoria.Scripts.Battle
                 {
                     TranceSeekAPI.TryCriticalHit(_v);
                     TranceSeekAPI.IpsenCastleMalus(_v);
-                    if (_v.Caster.IsUnderAnyStatus(BattleStatus.Trance))
+                    if ((_v.Context.Flags & BattleCalcFlags.Absorb) != 0)
+                    {
+                        _v.Target.Flags |= CalcFlag.HpDamageOrHeal;
+                    }
+                    else if(_v.Caster.IsUnderAnyStatus(BattleStatus.Trance))
                     {
                         _v.Target.Flags |= (CalcFlag.HpAlteration | CalcFlag.MpAlteration);
                         _v.Caster.Flags |= (CalcFlag.HpDamageOrHeal | CalcFlag.MpDamageOrHeal);
@@ -92,6 +96,7 @@ namespace Memoria.Scripts.Battle
                     {
                         _v.Target.Flags |= CalcFlag.HpAlteration;
                     }
+
                     int hpDamage = Math.Max(1, _v.Context.PowerDifference * _v.Context.EnsureAttack);
                     int mpDamage = Math.Max(1, _v.Context.PowerDifference * _v.Context.EnsureAttack >> 4);
                     if (_v.Target.CurrentHp < hpDamage && !_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill) && !_v.Target.HasCategory(EnemyCategory.Humanoid))
@@ -109,6 +114,9 @@ namespace Memoria.Scripts.Battle
                     if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1221))
                         _v.Caster.AlterStatus(TranceSeekStatus.MagicUp, _v.Caster);
                 }
+
+                if ((_v.Context.Flags & BattleCalcFlags.Absorb) != 0) // Stop the script if the spell heals the target (from elemental forks)
+                    return;
             }
 
             if (_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill) || !_v.Target.CanBeAttacked() || btl_util.getEnemyTypePtr(_v.Target.Data).category == 1)

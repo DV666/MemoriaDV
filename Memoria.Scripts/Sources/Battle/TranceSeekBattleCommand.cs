@@ -1,4 +1,6 @@
 ﻿using Memoria.Data;
+using System.Collections.Generic;
+using System;
 
 namespace Memoria.Scripts.Battle
 {
@@ -66,5 +68,16 @@ namespace Memoria.Scripts.Battle
         public const BattleCommandId AttackInfused13 = (BattleCommandId)2013;
         public const BattleCommandId AttackInfused14 = (BattleCommandId)2014;
         public const BattleCommandId AttackInfused15 = (BattleCommandId)2015;
+
+        public static Dictionary<String, String> SwdArtCMDNameVanilla = new Dictionary<String, String>
+        {
+            { "US", "Swd Art" },
+            { "UK", "Swd Art" },
+            { "JP", "剣技" },
+            { "ES", "Esgrima" },
+            { "FR", "Escrime" },
+            { "GR", "Schwert" },
+            { "IT", "Gladius" }
+        };
     }
 }

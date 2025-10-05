@@ -11,8 +11,6 @@ namespace Memoria.Scripts.Battle
     /// </summary>
     public abstract class BaseWeaponScript : IBattleScript
     {
-        public const Int32 Id = 1000;
-
         private readonly BattleCalculator _v;
         private readonly CalcAttackBonus _bonus;
 
@@ -183,10 +181,12 @@ namespace Memoria.Scripts.Battle
             TranceSeekAPI.CharacterBonusPassive(_v, "MagicAttack");
             TranceSeekAPI.CasterPenaltyMini(_v);
             TranceSeekAPI.EnemyTranceBonusAttack(_v);
-            --_v.Context.DamageModifierCount;
             if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)102))
                 TranceSeekAPI.TryCriticalHit(_v);
             _v.Caster.HpDamage = _v.Context.EnsureAttack * _v.Context.EnsurePowerDifference;
+            if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)100)) // Medecin
+                _v.Caster.HpDamage += _v.Caster.HpDamage / (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1100) ? 2 : 4);
+
             foreach (BattleUnit unit in BattleState.EnumerateUnits())
             {
                 if (!unit.IsPlayer || !unit.IsTargetable || unit.IsUnderAnyStatus(BattleStatus.Death | BattleStatus.Petrify | BattleStatus.Jump))

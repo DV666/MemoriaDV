@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Assets.Sources.Scripts.UI.Common;
 using FF9;
+using Memoria.Assets;
 using Memoria.Data;
 using Memoria.Database;
 using UnityEngine;
@@ -17,7 +18,10 @@ namespace Memoria.Scripts.Battle
 
         public static Dictionary<BTL_DATA, Int32[]> ViviPassive = new Dictionary<BTL_DATA, Int32[]>(); // [0] => Focus ; [1] => NumberTargets ; [2] => TriggerOneTime
         public static Dictionary<BTL_DATA, BattleAbilityId> ViviPreviousSpell = new Dictionary<BTL_DATA, BattleAbilityId>();
-        public static Dictionary<BTL_DATA, Int32[]> BeatrixPassive = new Dictionary<BTL_DATA, Int32[]>(); // [0] => Strength ; [1] => Magic ; [2] => Bravoure ; [3] => TargetCount
+
+        public static Dictionary<BTL_DATA, Int32[]> SteinerPassive = new Dictionary<BTL_DATA, Int32[]>(); // [0] => StackCMD ; [1] => StackCMD ; [2] => TriggerOneTime
+        public static Dictionary<BTL_DATA, Int32[]> BeatrixPassive = new Dictionary<BTL_DATA, Int32[]>(); // [0] => StackCMD ; [1] => Magic (Dummied) ; [2] => Bravoure ; [3] => TargetCount
+
         public static Dictionary<BTL_DATA, Dictionary<BattleStatus, Int32>> ProtectStatus = new Dictionary<BTL_DATA, Dictionary<BattleStatus, Int32>>();
         public static Dictionary<BTL_DATA, Int32> AbsorbElement = new Dictionary<BTL_DATA, Int32>();
         public static Dictionary<BTL_DATA, Int32> StateMoug = new Dictionary<BTL_DATA, Int32>();
@@ -44,6 +48,7 @@ namespace Memoria.Scripts.Battle
         public static Dictionary<BTL_DATA, EffectElement> WeaponNewElement = new Dictionary<BTL_DATA, EffectElement>();
         public static Dictionary<BTL_DATA, Int32> WeaponNewCustomElement = new Dictionary<BTL_DATA, Int32>(); // 0 = None, 1 = Poison, 2 = Gravity
         public static Dictionary<BTL_DATA, BattleStatus> WeaponNewStatus = new Dictionary<BTL_DATA, BattleStatus>();
+        public static Dictionary<BTL_DATA, string[]> CMDVanillaName = new Dictionary<BTL_DATA, string[]>();
 
         public static Boolean EliteMonster(BTL_DATA Monster)
         {
@@ -61,35 +66,35 @@ namespace Memoria.Scripts.Battle
             switch (bonus)
             {
                 case CalcAttackBonus.Simple:
-                    v.Context.Attack = v.Caster.Strength + BeatrixPassive[v.Caster.Data][0] + baseDamage;
+                    v.Context.Attack = v.Caster.Strength + baseDamage;
                     break;
                 case CalcAttackBonus.WillPower:
-                    v.Context.Attack = (v.Caster.Strength + BeatrixPassive[v.Caster.Data][0] + v.Caster.Will >> 1) + baseDamage;
+                    v.Context.Attack = (v.Caster.Strength + v.Caster.Will >> 1) + baseDamage;
                     break;
                 case CalcAttackBonus.Dexterity:
-                    v.Context.Attack = (v.Caster.Strength + BeatrixPassive[v.Caster.Data][0] + v.Caster.Data.elem.dex >> 1) + baseDamage;
+                    v.Context.Attack = (v.Caster.Strength + v.Caster.Data.elem.dex >> 1) + baseDamage;
                     break;
                 case CalcAttackBonus.Magic:
-                    v.Context.Attack = (v.Caster.Strength + BeatrixPassive[v.Caster.Data][0] + v.Caster.Data.elem.mgc + BeatrixPassive[v.Caster.Data][1] >> 1) + baseDamage;
+                    v.Context.Attack = (v.Caster.Strength + v.Caster.Data.elem.mgc) + baseDamage;
                     break;
                 case CalcAttackBonus.Random:
                 {
                     if (v.Caster.HasSupportAbilityByIndex((SupportAbility)222)) // SA Sharpening
                     {
                         if (v.Caster.HasSupportAbilityByIndex((SupportAbility)1222)) // SA Sharpening +
-                            v.Context.Attack = v.Caster.Strength + BeatrixPassive[v.Caster.Data][0] + baseDamage;
+                            v.Context.Attack = v.Caster.Strength + baseDamage;
                         else
-                            v.Context.Attack = UnityEngine.Random.Range(v.Caster.Strength / 2, v.Caster.Strength) + BeatrixPassive[v.Caster.Data][0] + baseDamage;
+                            v.Context.Attack = UnityEngine.Random.Range(v.Caster.Strength / 2, v.Caster.Strength) + baseDamage;
                     }
                     else
                     {
-                        v.Context.Attack = Comn.random16() % v.Caster.Strength + BeatrixPassive[v.Caster.Data][0] + baseDamage;
+                        v.Context.Attack = Comn.random16() % v.Caster.Strength + baseDamage;
                     }
                     break;
                 }
                 case CalcAttackBonus.Level:
                     v.Context.AttackPower += v.Caster.Data.level;
-                    v.Context.Attack = v.Caster.Strength + BeatrixPassive[v.Caster.Data][0] + baseDamage;
+                    v.Context.Attack = v.Caster.Strength + baseDamage;
                     break;
             }
         }
@@ -655,10 +660,6 @@ namespace Memoria.Scripts.Battle
                 v.Context.Flags |= BattleCalcFlags.Guard;
                 return;
             }
-            if (v.Target.PlayerIndex == CharacterId.Beatrix)
-            {
-                v.Context.DefensePower += BeatrixPassive[v.Caster.Data][0];
-            }
 
             if (v.Target.IsUnderAnyStatus(BattleStatus.Defend))
             {
@@ -931,9 +932,6 @@ namespace Memoria.Scripts.Battle
             }
 
             CanAttackElement(v);
-
-            if (v.Target.PlayerIndex == CharacterId.Beatrix)
-                v.Context.DefensePower += BeatrixPassive[v.Caster.Data][1];
          
             return true;
         }
@@ -1041,17 +1039,17 @@ namespace Memoria.Scripts.Battle
                 {
                     case "MagicAttack":
                     {
-                        v.Context.Attack = (Int16)(v.Caster.Magic + Comn.random16() % (1 + (v.Caster.Level + v.Caster.Magic + BeatrixPassive[v.Caster.Data][1] >> 3)));
+                        v.Context.Attack = (Int16)(v.Caster.Magic + Comn.random16() % (1 + (v.Caster.Level + v.Caster.Magic)));
                         break;
                     }
                     case "PhysicalAttack":
                     {
-                        v.Context.Attack = (Int16)(v.Caster.Strength + Comn.random16() % (1 + (v.Caster.Level + v.Caster.Strength + BeatrixPassive[v.Caster.Data][0] >> 2)));
+                        v.Context.Attack = (Int16)(v.Caster.Strength + Comn.random16() % (1 + (v.Caster.Level + v.Caster.Strength)));
                         break;
                     }
                     case "LowPhysicalAttack":
                     {
-                        v.Context.Attack = (Int16)(v.Caster.Strength + Comn.random16() % (1 + (v.Caster.Level + v.Caster.Strength + BeatrixPassive[v.Caster.Data][0] >> 3)));
+                        v.Context.Attack = (Int16)(v.Caster.Strength + Comn.random16() % (1 + (v.Caster.Level + v.Caster.Strength)));
                         break;
                     }
                 }
@@ -1060,7 +1058,7 @@ namespace Memoria.Scripts.Battle
             {
                 if (mode == "MagicAttack")
                 {
-                    v.Context.Attack = (Int16)(v.Caster.Strength + Comn.random16() % (1 + (v.Caster.Level + v.Caster.Strength >> 3)));
+                    v.Context.Attack = (Int16)(v.Caster.Strength + Comn.random16() % (1 + v.Caster.Level));
                 }
             }
         }
@@ -1265,6 +1263,22 @@ namespace Memoria.Scripts.Battle
                 else
                     v.Target.Data.stat.conti[statusId] -= (Int16)((statusData.ContiCnt * Formula) * v.Target.Data.stat.duration_factor[statusId]);
             }
+        }
+
+        public static void ResetSteinerPassive(BattleUnit unit)
+        {
+            FF9TextTool.SetCommandName(BattleCommandId.SwordAct, TranceSeekBattleCommand.SwdArtCMDNameVanilla[Localization.CurrentSymbol]);
+            unit.UILabelHP = unit.CurrentHp.ToString();
+
+            unit.AddDelayedModifier(
+            caster => caster.CurrentAtb >= caster.MaximumAtb,
+            caster =>
+            {
+                SteinerPassive[unit.Data][1] = 0;
+                if (FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1000, out Dictionary<Int32, Int32> dictbattle)) 
+                    dictbattle[1] = 0;
+            }
+            );
         }
 
         public static void SpecialEffect(this BattleCalculator v)
@@ -1672,6 +1686,23 @@ namespace Memoria.Scripts.Battle
                     v.Target.AlterStatus(BattleStatus.Regen);
                 if (Mog.HasSupportAbilityByIndex((SupportAbility)1259))
                     v.Target.RemoveStatus(BattleStatusConst.AnyNegative &~BattleStatus.Death);
+            }
+
+            if (v.Target.PlayerIndex == CharacterId.Steiner && v.Target.IsCovering && (SteinerPassive[v.Target.Data][0] + SteinerPassive[v.Target.Data][1]) < 5)
+            {
+                SteinerPassive[v.Target.Data][0]++;
+                FF9TextTool.SetCommandName(BattleCommandId.SwordAct, TranceSeekBattleCommand.SwdArtCMDNameVanilla[Localization.CurrentSymbol] + " (" + SteinerPassive[v.Target.Data][0] + "/" + (SteinerPassive[v.Target.Data][0] + SteinerPassive[v.Target.Data][1]) + ")");
+                Dictionary<String, String> SteinerPassiveMessage = new Dictionary<String, String>
+                {
+                    { "US", "[SPRT=IconAtlas,item200_00] Pluto!" },
+                    { "UK", "[SPRT=IconAtlas,item200_00] Pluto!" },
+                    { "JP", "[SPRT=IconAtlas,item200_00] Pluto!" },
+                    { "ES", "[SPRT=IconAtlas,item200_00] Pluto!" },
+                    { "FR", "[SPRT=IconAtlas,item200_00] Brutos !" },
+                    { "GR", "[SPRT=IconAtlas,item200_00] Pluto!" },
+                    { "IT", "[SPRT=IconAtlas,item200_00] Pluto!" },
+                };
+                btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[5C5C5C]", SteinerPassiveMessage, HUDMessage.MessageStyle.DAMAGE, 30);
             }
 
             if (v.Caster.Weapon == (RegularItem)1152 && v.Caster.Level == v.Target.Level && v.Command.AbilityId == BattleAbilityId.Attack) // Goblin Sword

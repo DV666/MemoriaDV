@@ -76,10 +76,27 @@ namespace Memoria.Scripts.Battle
             if (_v.Command.AbilityId == (BattleAbilityId)1099) // Iron Clast
             {
                 _v.Command.AbilityStatus |= TranceSeekStatus.ArmorUp;
+                if (TranceSeekAPI.SteinerPassive[_v.Target.Data][1] > 0)
+                {
+                    btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.ArmorUp, parameters: $"+{TranceSeekAPI.SteinerPassive[_v.Target.Data][1]}");
+                    if (TranceSeekAPI.SteinerPassive[_v.Target.Data][1] == 5)
+                        _v.Target.AlterStatus(BattleStatus.Protect);
+                    TranceSeekAPI.ResetSteinerPassive(_v.Caster);
+                }
             }
             else if (_v.Command.AbilityId == (BattleAbilityId)1007) // Rempart
             {
                 _v.Command.AbilityStatus |= TranceSeekStatus.Bulwark;
+                if (TranceSeekAPI.SteinerPassive[_v.Caster.Data][1] > 0)
+                {
+                    if (TranceSeekAPI.SteinerPassive[_v.Caster.Data][1] == 5)
+                        btl_stat.RemoveStatus(_v.Target, TranceSeekStatusId.ArmorBreak);
+
+                    btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.ArmorUp);
+                    if (TranceSeekAPI.SteinerPassive[_v.Caster.Data][1] >= 3)
+                        btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.ArmorUp);
+                    TranceSeekAPI.ResetSteinerPassive(_v.Caster);
+                }
             }
             else if (_v.Command.AbilityId == (BattleAbilityId)1059) // Runic
             {
@@ -121,9 +138,13 @@ namespace Memoria.Scripts.Battle
                 };
                 btl2d.Btl2dReqSymbolMessage(_v.Caster.Data, "[FFC0CB]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 5);
             }
+            else if (_v.Caster.Data.dms_geo_id == 150 && _v.Command.HitRate == 255) // Exoskeleton
+            {
+                btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.ArmorUp, parameters: $"+{_v.Command.Power}");
+            }
             else if (_v.Caster.Data.dms_geo_id == 412 && _v.Command.Power == 99) // Vin de Bacchus
             {
-                btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.PowerUp, parameters: "4");
+                btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.PowerUp, parameters: "+4");
             }
             TranceSeekAPI.TryAlterCommandStatuses(_v);
             if (_v.Command.AbilityId == (BattleAbilityId)1137) // Spring Boots

@@ -127,6 +127,10 @@ namespace Memoria.Scripts.Battle
                                 healing = _v.Context.AttackPower * _v.Context.Attack;
                             }
                         }
+
+                        if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)100)) // Medecin
+                            healing += healing / (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1100) ? 2 : 4);
+
                         if (unit.IsZombie)
                         {
                             btl2d.Btl2dStatReq(unit, healing, 0);

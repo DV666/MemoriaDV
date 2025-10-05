@@ -1,3 +1,4 @@
+using Memoria.Data;
 using Memoria.Prime;
 using System;
 using System.Runtime.Remoting.Contexts;
@@ -43,6 +44,13 @@ namespace Memoria.Scripts.Battle
             {
                 _v.CalcHpDamage();
                 TranceSeekAPI.TryAlterMagicStatuses(_v);
+            }
+            if (TranceSeekAPI.SteinerPassive[_v.Caster.Data][1] > 0)
+            {
+                if (_v.Command.AbilityId == BattleAbilityId.IaiStrike && _v.Command.Data.info.effect_counter == 1 && TranceSeekAPI.SteinerPassive[_v.Caster.Data][1] == 5)
+                    _v.Caster.CurrentMp = (uint)Math.Min(_v.Caster.CurrentMp + FF9StateSystem.Battle.FF9Battle.aa_data[_v.Command.AbilityId].MP, _v.Caster.MaximumMp);
+
+                TranceSeekAPI.ResetSteinerPassive(_v.Caster);
             }
         }
     }

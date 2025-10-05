@@ -48,6 +48,10 @@ namespace Memoria.Scripts.Battle
                 if ((v.Target.Flags & CalcFlag.MpAlteration) != 0)
                     v.Target.MpDamage = Math.Max(1, v.Target.MpDamage - malusMPdamage);
             }
+
+            //if (!v.Target.IsPlayer && (v.Target.Data.dms_geo_id == 354 || v.Target.Data.dms_geo_id == 221 || v.Target.Data.dms_geo_id == 83) && v.Command.Element == 0) // Stone monsters
+                //v.Context.DamageModifierCount -= 2;
+
             Single modifier_factor = 1f; // [TODO] Make something more cleaner about PowerUp status like here ?
             if (v.Context.DamageModifierCount >= 0)
                 modifier_factor += v.Context.DamageModifierCount * 0.25f;
@@ -186,9 +190,7 @@ namespace Memoria.Scripts.Battle
             }
 
             if (v.Target.IsCovering && v.Target.HasSupportAbilityByIndex((SupportAbility)213)) // SA Duelist
-            {
                 btl_stat.AlterStatus(v.Target, TranceSeekStatusId.Special, parameters: "Duelist++");
-            }
 
             if (FF9StateSystem.Settings.IsDmg9999 && FF9StateSystem.EventState.gEventGlobal[1403] >= 3 && v.Caster.IsPlayer)
             {

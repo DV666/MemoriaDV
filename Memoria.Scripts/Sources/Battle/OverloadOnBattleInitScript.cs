@@ -12,6 +12,9 @@ using static Memoria.Scripts.Battle.TranceSeekAPI;
 using System.Reflection;
 using Assets.Sources.Scripts.UI.Common;
 using Memoria.Assets;
+using static Memoria.IOverloadPlayerUIScript;
+using static Memoria.Assets.DataResources.Characters;
+using static Memoria.Assets.DataResources;
 
 namespace Memoria.Scripts.Battle
 {
@@ -50,12 +53,14 @@ namespace Memoria.Scripts.Battle
                 FF9StateSystem.Battle.FF9Battle.aa_data[(BattleAbilityId)idAA].MP = 0;
             }
 
-            if (!FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1000, out Dictionary<Int32, Int32> dictgils)) // Reset bonus gils
+            if (!FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1000, out Dictionary<Int32, Int32> dictbattle)) // Modificators for battle
             {
-                dictgils = new Dictionary<Int32, Int32>();
-                FF9StateSystem.EventState.gScriptDictionary.Add(1000, dictgils);
+                dictbattle = new Dictionary<Int32, Int32>();
+                FF9StateSystem.EventState.gScriptDictionary.Add(1000, dictbattle);
             }
-            dictgils[0] = 0;
+            dictbattle[0] = 0; // Bonus gils from SA or items
+            dictbattle[1] = 0; // Steiner mechanic
+            dictbattle[2] = 0; // Beatrix mechanic
 
             if (!FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1001, out Dictionary<Int32, Int32> dictdifficulty)) // Modificators from difficulties
             {
@@ -192,7 +197,7 @@ namespace Memoria.Scripts.Battle
                     }
                     if (unit.HasSupportAbilityByIndex((SupportAbility)1045)) // Pluriche+
                     {
-                        dictgils[0] += 3;
+                        dictbattle[0] += 3;
                         foreach (BattleUnit monster in BattleState.EnumerateUnits())
                         {
                             if (!monster.IsPlayer)
@@ -206,11 +211,11 @@ namespace Memoria.Scripts.Battle
                     }
                     else if (unit.HasSupportAbilityByIndex(SupportAbility.Millionaire)) // Pluriche+
                     {
-                        dictgils[0] += 2;
+                        dictbattle[0] += 2;
                     }
                     if (unit.Accessory == (RegularItem)1212) // Cait's Eye
                     {
-                        dictgils[0] += 1;
+                        dictbattle[0] += 1;
                     }
                     if (unit.Weapon == RegularItem.Defender)
                     {
@@ -355,7 +360,7 @@ namespace Memoria.Scripts.Battle
                         unit.AlterStatus(BattleStatus.Death, unit);
                         unit.CurrentHp = 0;
                     }
-                    if (unit.HasSupportAbilityByIndex((SupportAbility)132)) // SA Anastrophe
+                    if (unit.HasSupportAbilityByIndex((SupportAbility)132) && false) // SA Anastrophe
                     {
                         int factor = unit.HasSupportAbilityByIndex((SupportAbility)1132) ? 1 : 2;
                         uint UnitOldMaximumHP = unit.MaximumHp;
@@ -385,6 +390,15 @@ namespace Memoria.Scripts.Battle
                         btl_stat.AlterStatus(unit, TranceSeekStatusId.Special, parameters: "CanCover1");
                     else
                         btl_stat.AlterStatus(unit, TranceSeekStatusId.Special, parameters: "CanCover0");
+
+                    if (unit.PlayerIndex == CharacterId.Steiner)
+                    {
+                        FF9TextTool.SetCommandName(BattleCommandId.SwordAct, TranceSeekBattleCommand.SwdArtCMDNameVanilla[Localization.CurrentSymbol]);
+                        if (FF9TextTool.DisplayBatch.commandName.TryGetValue(BattleCommandId.SwordAct, out String CMDName))
+                            CMDVanillaName[unit.Data][0] = CMDName;
+
+                        unit.AddDelayedModifier(SteinerMechanic, null);
+                    }
                 }
                 else // Monsters init
                 {
@@ -501,6 +515,7 @@ namespace Memoria.Scripts.Battle
                 ZidanePassive[unit.Data] = [0, 0, 0, 0, 0, 255, 255, 0, 0, 0, 0, 0];
                 ViviPreviousSpell[unit.Data] = BattleAbilityId.Void;
                 ViviPassive[unit.Data] = [0, 0, 0];
+                SteinerPassive[unit.Data] = [0, 0, 0, 0];             
                 BeatrixPassive[unit.Data] = [0, 0, 0, 0];
                 ProtectStatus[unit.Data] = new Dictionary<BattleStatus, Int32> { { 0, 0 } };
                 AbsorbElement[unit.Data] = -1;
@@ -517,20 +532,16 @@ namespace Memoria.Scripts.Battle
                 WeaponNewStatus[unit.Data] = 0;
                 StateMoug[unit.Data] = 0;
                 ModelMoug[unit.Data] = null;
+                CMDVanillaName[unit.Data] = [null];
             }
 
-            //int AbilityFeaturesFiles = 0;
-            //String inputPath = DataResources.Characters.Abilities.PureDirectory + DataResources.Characters.Abilities.SAFeaturesFile;
-            //Dictionary<SupportAbility, SupportingAbilityFeature> result = new Dictionary<SupportAbility, SupportingAbilityFeature>();
-            //foreach (AssetManager.AssetFolder folder in AssetManager.FolderLowToHigh)
-            //if (folder.TryFindAssetInModOnDisc(inputPath, out String fullPath, AssetManagerUtil.GetStreamingAssetsPath() + "/"))
-            //AbilityFeaturesFiles++;
-
-            //if (AbilityFeaturesFiles > 1)
-            //{
-                //string contenu = File.ReadAllText(path);
-                //int nbCaracteres = contenu.Length;
-            //}
+            if (FF9StateSystem.EventState.gEventGlobal[1403] == 4 || FF9StateSystem.EventState.gEventGlobal[1403] == 5 || FF9StateSystem.EventState.gEventGlobal[1403] == 6)
+            {
+                string fullPath = "TranceSeek/StreamingAssets/Data/Characters/Abilities/AbilityFeatures.txt";
+                Dictionary<SupportAbility, SupportingAbilityFeature> result = new Dictionary<SupportAbility, SupportingAbilityFeature>();
+                ff9abil.LoadAbilityFeatureFile(ref result, File.ReadAllText(fullPath), fullPath);
+                ff9abil._FF9Abil_SaFeature = result;
+            }
         }
 
         private Boolean ProcessMagicLampRecast(BattleUnit caster)
@@ -571,6 +582,43 @@ namespace Memoria.Scripts.Battle
 
             if (unit.CurrentAtb > ((4 * unit.MaximumAtb) / 5))
                 unit.CurrentAtb = (short)(Math.Max(1, unit.CurrentAtb - (unit.MaximumAtb / 10)));
+
+            return true;
+        }
+
+        private Boolean SteinerMechanic(BattleUnit unit)
+        {
+            if (UIManager.Input.GetKey(Control.RightTrigger) && SteinerPassive[unit.Data][0] > 0 && SteinerPassive[unit.Data][2] == 0 && unit.Data.bi.line_no == UIManager.Battle.CurrentPlayerIndex)
+            {
+                SteinerPassive[unit.Data][2] = 1;
+                SteinerPassive[unit.Data][0]--;
+                SteinerPassive[unit.Data][1]++;
+                FF9TextTool.SetCommandName(BattleCommandId.SwordAct, TranceSeekBattleCommand.SwdArtCMDNameVanilla[Localization.CurrentSymbol] + " (" + SteinerPassive[unit.Data][0] + "/" + (SteinerPassive[unit.Data][0] + SteinerPassive[unit.Data][1]) + ")");
+                UIManager.Battle.OnLocalize();
+                SoundLib.PlaySoundEffect(1577);
+                unit.UILabelHP = $"{SteinerPassive[unit.Data][1]} [SPRT=IconAtlas,item200_00,32,32]\n{unit.CurrentHp}";
+                if (FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1000, out Dictionary<Int32, Int32> dictbattle))
+                    dictbattle[1] = SteinerPassive[unit.Data][1];
+            }
+            else if (UIManager.Input.GetKey(Control.LeftTrigger) && SteinerPassive[unit.Data][1] > 0 && SteinerPassive[unit.Data][2] == 0 && unit.Data.bi.line_no == UIManager.Battle.CurrentPlayerIndex)
+            {
+                SteinerPassive[unit.Data][2] = 1;
+                SteinerPassive[unit.Data][0]++;
+                SteinerPassive[unit.Data][1]--;
+                FF9TextTool.SetCommandName(BattleCommandId.SwordAct, TranceSeekBattleCommand.SwdArtCMDNameVanilla[Localization.CurrentSymbol] + " (" + SteinerPassive[unit.Data][0] + "/" + (SteinerPassive[unit.Data][0] + SteinerPassive[unit.Data][1]) + ")");
+                UIManager.Battle.OnLocalize();
+                SoundLib.PlaySoundEffect(1577);
+                if (SteinerPassive[unit.Data][1] > 0)
+                    unit.UILabelHP = $"{SteinerPassive[unit.Data][1]} [SPRT=IconAtlas,item200_00,32,32]\n{unit.CurrentHp}";
+                else
+                    unit.UILabelHP = unit.CurrentHp.ToString();
+
+                if (FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1000, out Dictionary<Int32, Int32> dictbattle))
+                    dictbattle[1] = SteinerPassive[unit.Data][1];
+            }
+
+            if (!UIManager.Input.GetKey(Control.LeftTrigger) && !UIManager.Input.GetKey(Control.RightTrigger))
+                SteinerPassive[unit.Data][2] = 0;
 
             return true;
         }

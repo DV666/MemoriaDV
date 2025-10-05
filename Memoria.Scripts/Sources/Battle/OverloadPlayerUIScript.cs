@@ -2,6 +2,7 @@
 using FF9;
 using Memoria.Data;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -59,6 +60,101 @@ namespace Memoria.Scripts.Battle
                 float blue = 1.0f;
 
                 result.ColorMagicStone = new Color(red, green, blue);
+            }
+
+            int IdDict = (int)(2000 + player.Index);
+            if (!FF9StateSystem.EventState.gScriptDictionary.TryGetValue(IdDict, out Dictionary<Int32, Int32> dictbattle)) // Modificators for battle
+            {
+                dictbattle = new Dictionary<Int32, Int32>();
+                FF9StateSystem.EventState.gScriptDictionary.Add(IdDict, dictbattle);
+                dictbattle[1] = 0;
+                dictbattle[2] = 0;
+                dictbattle[3] = 0;
+            }
+
+            if (player.saExtended.Contains((SupportAbility)1132)) // SA Anastrophe+
+            {
+                if (dictbattle[3] != 2)
+                {
+                    dictbattle[1] = 0;
+                    dictbattle[2] = 0;
+                    dictbattle[3] = 2;
+                    ff9play.FF9Play_Update(player);
+                    dictbattle[1] = (int)(player.max.hp);
+                    dictbattle[2] = (int)(player.max.mp);
+                    ff9play.FF9Play_Update(player);
+                }
+            }
+            else if (player.saExtended.Contains((SupportAbility)132)) // SA Anastrophe
+            {
+                if (dictbattle[3] != 1)
+                {
+                    dictbattle[1] = 0;
+                    dictbattle[2] = 0;
+                    dictbattle[3] = 1;
+                    ff9play.FF9Play_Update(player);
+                    dictbattle[1] = (int)(player.max.hp / 2);
+                    dictbattle[2] = (int)(player.max.mp / 2);
+                    ff9play.FF9Play_Update(player);
+                }
+            }
+            else
+            {
+                dictbattle[1] = 0;
+                dictbattle[2] = 0;
+                dictbattle[3] = 0;
+            }
+
+            if (Input.GetKey(KeyCode.KeypadPlus) && FF9StateSystem.EventState.ScenarioCounter >= 11100 && FF9StateSystem.EventState.gEventGlobal[1500] > 0)
+            { // Debug, to delete at the release ?
+                SoundLib.PlaySoundEffect(1362);
+                if (GameState.HasKeyItem(82))
+                {
+                    ff9item.FF9Item_RemoveImportant(82);
+                    ff9item.FF9Item_AddImportant(83);
+                    FF9StateSystem.EventState.gEventGlobal[1403] = 2;
+                }
+                else if (GameState.HasKeyItem(83))
+                {
+                    ff9item.FF9Item_RemoveImportant(83);
+                    ff9item.FF9Item_AddImportant(84);
+                    FF9StateSystem.EventState.gEventGlobal[1403] = 0;
+                }
+                else if (GameState.HasKeyItem(84))
+                {
+                    ff9item.FF9Item_RemoveImportant(84);
+                    ff9item.FF9Item_AddImportant(85);
+                    FF9StateSystem.EventState.gEventGlobal[1403] = 3;
+                }
+                else if (GameState.HasKeyItem(85))
+                {
+                    ff9item.FF9Item_RemoveImportant(85);
+                    ff9item.FF9Item_AddImportant(86);
+                    FF9StateSystem.EventState.gEventGlobal[1403] = 4;
+                }
+                else if (GameState.HasKeyItem(86))
+                {
+                    ff9item.FF9Item_RemoveImportant(86);
+                    ff9item.FF9Item_AddImportant(87);
+                    FF9StateSystem.EventState.gEventGlobal[1403] = 5;
+                }
+                else if (GameState.HasKeyItem(87))
+                {
+                    ff9item.FF9Item_RemoveImportant(87);
+                    ff9item.FF9Item_AddImportant(88);
+                    FF9StateSystem.EventState.gEventGlobal[1403] = 6;
+                }
+                else if (GameState.HasKeyItem(88))
+                {
+                    ff9item.FF9Item_RemoveImportant(88);
+                    ff9item.FF9Item_AddImportant(82);
+                    FF9StateSystem.EventState.gEventGlobal[1403] = 1;
+                }
+                else
+                {
+                    ff9item.FF9Item_AddImportant(84);
+                    FF9StateSystem.EventState.gEventGlobal[1403] = 0;
+                }
             }
 
             return result;

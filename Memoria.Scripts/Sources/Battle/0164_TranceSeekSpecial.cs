@@ -302,6 +302,10 @@ namespace Memoria.Scripts.Battle
                 btl2d.Btl2dReqSymbolMessage(_v.Target.Data, "[FF040E]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 15);
                 return;
             }
+            else if (_v.Caster.Data.dms_geo_id == 92 && _v.Command.Power == 10 && _v.Command.HitRate == 77) // Kelgar - Lupine Attack
+            {
+                _v.Target.Data.stat.cur = BattleStatus.EasyKill;
+            }
             else if (_v.Command.Power == 1 && _v.Command.HitRate == 1 && _v.Caster.Data.dms_geo_id == 405) // Friendly Lady Bug - Wind mechanics
             {
                 int ColorWing = GameRandom.Next16() % 5;

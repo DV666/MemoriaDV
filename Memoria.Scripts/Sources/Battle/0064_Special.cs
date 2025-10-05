@@ -136,24 +136,6 @@ namespace Memoria.Scripts.Battle
                     }
                 }
             }
-            else if (_v.Caster.Data.dms_geo_id == 92 && _v.Command.Power == 10) // Kelgar - Lupine Attack
-            {
-                List<BattleStatusId> statuschoosen = new List<BattleStatusId>{ BattleStatusId.Poison, BattleStatusId.Venom, BattleStatusId.Blind, BattleStatusId.Silence,
-                    BattleStatusId.Trouble, BattleStatusId.Freeze, BattleStatusId.Heat, BattleStatusId.Doom, BattleStatusId.Mini, BattleStatusId.GradualPetrify,
-                    BattleStatusId.Berserk, BattleStatusId.Confuse, BattleStatusId.Stop, BattleStatusId.Zombie, BattleStatusId.Slow, BattleStatusId.Haste,
-                    BattleStatusId.Protect, BattleStatusId.Shell, BattleStatusId.Regen, BattleStatusId.Float, BattleStatusId.Vanish, TranceSeekStatusId.PowerBreak,
-                TranceSeekStatusId.MagicBreak, TranceSeekStatusId.ArmorBreak, TranceSeekStatusId.MentalBreak, TranceSeekStatusId.PowerUp,
-                TranceSeekStatusId.MagicUp, TranceSeekStatusId.ArmorUp, TranceSeekStatusId.MentalUp, TranceSeekStatusId.Vieillissement,
-                TranceSeekStatusId.Dragon};
-
-                for (Int32 i = 0; i < (statuschoosen.Count - 1); i++)
-                {
-                    if ((statuschoosen[i].ToBattleStatus() & _v.Caster.CurrentStatus) != 0)
-                    {
-                        btl_stat.RemoveStatus(_v.Target, statuschoosen[i]);
-                    }
-                }
-            }
             else if (_v.Caster.Data.dms_geo_id == 36) // Silver Dragon - Counter Stance
             {
                 if (_v.Command.Power == 1 && _v.Command.HitRate == 1)

@@ -583,6 +583,14 @@ StatusInit [code=Condition] AccessoryId == 1217 [/code] ResistStatus Silence
 StatusInit [code=Condition] AccessoryId == 1217 [/code] ResistStatus Mini
 StatusInit [code=Condition] AccessoryId == 1242 [/code] AutoStatus Shell
 
+Ability WhenCalcDamage EvenImmobilized
+[code=Condition] CommandId == BattleCommandId_Throw && ItemUseId != RegularItem_NoItem [/code]
+[code=TargetCurrentStatus] CombineStatuses(TargetCurrentStatus, GetItemProperty(ItemUseId, 'WeaponStatus')) [/code]
+
+Ability WhenCalcDamage EvenImmobilized
+[code=Condition] CommandId == BattleCommandId_Throw && ItemUseId != RegularItem_NoItem && (GetItemProperty(ItemUseId, 'WeaponElement') & TargetWeakElement) != 0 [/code]
+[code=DamageModifierCount] DamageModifierCount + 1 [/code]
+
 ############ SA Features from Items ############
 Permanent [code=Condition] WeaponShape != 4 [/code] [code=BanishSA] 2013 [/code]
 Permanent [code=Condition] WeaponShape != 4 [/code] [code=BanishSA] 2014 [/code]
@@ -593,14 +601,20 @@ Permanent [code=Condition] WeaponShape != 4 [/code] [code=BanishSA] 2018 [/code]
 Permanent [code=Condition] WeaponShape != 4 [/code] [code=BanishSA] 2019 [/code]
 Permanent [code=Condition] WeaponShape != 4 [/code] [code=BanishSA] 2020 [/code]
 
-Permanent [code=Condition] AccessoryId == 93 [/code] [code=ActivateFreeSA] 7 [/code]
-Permanent [code=Condition] AccessoryId == 1155 [/code] [code=ActivateFreeSA] 62 [/code]
+Permanent [code=Condition] WristId == 93 [/code] [code=ActivateFreeSA] 7 [/code]
+Permanent [code=Condition] WeaponId == 1155 [/code] [code=ActivateFreeSA] 62 [/code]
+Permanent [code=Condition] WeaponId == 1165 [/code] [code=ActivateFreeSA] 36 [/code]
+Permanent [code=Condition] WeaponId == 1166 [/code] [code=ActivateFreeSA] 8 [/code]
 Permanent [code=Condition] AccessoryId == 1213 [/code] [code=BanishSAByLvl] 3 ; -1 [/code]
-Permanent [code=Condition] AccessoryId == 1245 [/code] [code=ActivateFreeSA] 35 [/code]
+Permanent [code=Condition] WristId == 1245 [/code] [code=ActivateFreeSA] 35 [/code]
 Permanent [code=Condition] AccessoryId == 1259 [/code] [code=ActivateFreeSA] 23 ; 61 ; 62 [/code]
 
-Permanent [code=Condition] HasSA(133) [/code] [code=BanishSAByLvl] 134 ; -1 [/code]
-Permanent [code=Condition] HasSA(134) [/code] [code=BanishSAByLvl] 133 ; -1 [/code]
+Permanent [code=Condition] (HasLearntSupport(203) || HasSA(203) || WristId == 96) && (WeaponId == 1 || WeaponId == 2 || WeaponId == 3 || WeaponId == 1153 || WeaponId == 1155 || WeaponId == 1158 || WeaponId == 1161 || WeaponId == 1164 || WeaponId == 1167) [/code] [code=BanishSAByLvl] 203 ; -1 [/code]
+Permanent [code=Condition] HasSA(133) && (HasLearntSupport(134) || HasSA(134) || AccessoryId == 1200 || WeaponId == 1160) [/code] [code=BanishSAByLvl] 134 ; -1 [/code]
+Permanent [code=Condition] HasSA(134) && (HasLearntSupport(133) || HasSA(133) || AccessoryId == 205 || WeaponId == 1160) [/code] [code=BanishSAByLvl] 133 ; -1 [/code]
+Permanent [code=Condition] HasSA(204) && (HasLearntSupport(206) || HasSA(206) || AccessoryId == 1257) [/code] [code=BanishSAByLvl] 206 ; -1 [/code]
+Permanent [code=Condition] HasSA(206) && (HasLearntSupport(204) || HasSA(204) || AccessoryId == 1250) [/code] [code=BanishSAByLvl] 204 ; -1 [/code]
+Permanent [code=Condition] !HasSA(36) && (HasLearntSupport(234) || HasSA(234) || WristId == 107) [/code] [code=BanishSAByLvl] 234 ; -1 [/code]
 
 ############ No Back/Prevent Attack for custom bosses ############
 
@@ -608,6 +622,10 @@ BattleStart
 [code=Condition] (BattleId == 1 && BattleGroupIndex == 2) || (BattleId == 128 && BattleGroupIndex == 2) || (BattleId == 169 && BattleGroupIndex == 1) || (BattleId == 600 && BattleGroupIndex == 1) || (BattleId == 849 && BattleGroupIndex == 2) || (BattleId == 849 && BattleGroupIndex == 3) || (BattleId == 849 && BattleGroupIndex == 4) || (BattleId == 849 && BattleGroupIndex == 5) || (BattleId == 849 && BattleGroupIndex == 2) || (BattleId == 850 && BattleGroupIndex == 2) || (BattleId == 851 && BattleGroupIndex == 2) [/code]
 [code=BackAttack] 0 [/code]
 [code=Preemptive] 0 [/code]
+
+BattleStart
+[code=Condition] GetMemoriaDictionary(1002, 0) == 1 [/code]
+[code=BackAttack] 255 [/code]
 
 ############# Special mechanics/features #################
 
@@ -630,6 +648,11 @@ Command
 Command
 [code=Condition] CommandId == 1030 && (AbilityId == 1263 || AbilityId == 1377) [/code]
 [code=CommandTargetId] GetRandomBit(BattleFilter(255, GetRandom(0, 2), 1, BattleStatus_Death)) [/code]
+
+### Special ###
+Permanent 
+[code=Condition] CharacterIndex == CharacterId_Cinna [/code]
+[code=MaxMP] MaxMP / 10 [/code]
 
 ############# Garnet Passive (Gems) #################
 Ability AsTarget WhenBattleScriptEnd EvenImmobilized
@@ -775,18 +798,17 @@ Ability WhenBattleScriptEnd
 [code=HPDamage] HPDamage / 2 [/code]
 
 BattleResult WhenRewardAll
-[code=Condition] AccessoryId == 1212 [/code]
-[code=BonusGil] BonusGil + BonusGil / 4 [/code]
+[code=BonusGil] BonusGil + (GetMemoriaDictionary(1000, 0) * 25 * BonusGil) / 100 [/code]
 
-BattleResult WhenRewardAll
+BattleResult
 [code=Condition] AccessoryId == 1216 [/code]
 [code=BonusExp] BonusExp + BonusExp / 2 [/code]
 
-BattleResult WhenRewardAll
+BattleResult
 [code=Condition] AccessoryId == 1239 [/code]
 [code=BonusAP] BonusAP * 2 [/code]
 
-BattleResult WhenRewardAll
+BattleResult
 [code=Condition] HeadId == 1241 [/code]
 [code=BonusItemCount1] GetItemProperty(BonusItem1, 'Shape') == 21 ? (BonusItemCount1 + (GetUnitProperty(GetPartyMemberIndex(0), 'HeadId') == 1241 ? 1 : 0) + (GetUnitProperty(GetPartyMemberIndex(1), 'HeadId') == 1241 ? 1 : 0) + (GetUnitProperty(GetPartyMemberIndex(2), 'HeadId') == 1241 ? 1 : 0) + (GetUnitProperty(GetPartyMemberIndex(3), 'HeadId') == 1241 ? 1 : 0)) : BonusItemCount1 [/code]
 [code=BonusItemCount2] GetItemProperty(BonusItem2, 'Shape') == 21 ? (BonusItemCount2 + (GetUnitProperty(GetPartyMemberIndex(0), 'HeadId') == 1241 ? 1 : 0) + (GetUnitProperty(GetPartyMemberIndex(1), 'HeadId') == 1241 ? 1 : 0) + (GetUnitProperty(GetPartyMemberIndex(2), 'HeadId') == 1241 ? 1 : 0) + (GetUnitProperty(GetPartyMemberIndex(3), 'HeadId') == 1241 ? 1 : 0)) : BonusItemCount2 [/code]
@@ -795,12 +817,26 @@ BattleResult WhenRewardAll
 
 Permanent 
 [code=Condition] AccessoryId == 1250  [/code]
-[code=MaxHP] MaxHP - (MaxHP / 4) [/code]
-[code=MaxMP] MaxMP - (MaxMP / 4) [/code]
+[code=Defence] Defence - (Defence / 4) [/code]
+[code=MagicDefence] MagicDefence - (MagicDefence / 4) [/code]
+
+Permanent 
+[code=Condition] WristId == 98  [/code]
+[code=Speed] Speed + (Speed / 10) [/code]
+
+Permanent 
+[code=Condition] WeaponId == 1161  [/code]
+[code=Defence] Defence + 2 [/code]
 
 Ability AsTarget WhenCalcDamage EvenImmobilized
 [code=Condition] TargetWristId == 1251 [/code]
 [code=DamageModifierCount] (AbilityElement == 0 && ScriptId != 17 && ScriptId != 118 && ScriptId != 119) ? DamageModifierCount + 2 : DamageModifierCount - 2 [/code]
+
+############# Difficulty #################
+
+BattleResult
+[code=Condition] GetEventGlobalByte(1403) == 6 && ((ScenarioCounter <= 2400 && Level >= 5) || (ScenarioCounter <= 2540 && Level >= 7) || (ScenarioCounter <= 2990 && Level >= 9) || (ScenarioCounter <= 3740 && Level >= 12) || (ScenarioCounter <= 3900 && Level >= 15) || (ScenarioCounter >= 3900 && ScenarioCounter < 4600 && Level >= 13) || (ScenarioCounter <= 4730 && Level >= 17) || (ScenarioCounter <= 4990 && Level >= 19) || (ScenarioCounter <= 5120 && Level >= 21) || (ScenarioCounter <= 5900 && Level >= 23) || (ScenarioCounter <= 5990 && Level >= 25) || (ScenarioCounter <= 6310 && Level >= 27) || (ScenarioCounter <= 6740 && Level >= 29) || (ScenarioCounter <= 6820 && Level >= 30) || (ScenarioCounter <= 6990 && Level >= 32) || (ScenarioCounter <= 9510 && Level >= 34) || (ScenarioCounter <= 9890 && Level >= 37) || (ScenarioCounter <= 9990 && Level >= 41) || (ScenarioCounter <= 10700 && Level >= 45) || (ScenarioCounter <= 10830 && Level >= 50) || (ScenarioCounter <= 11100 && Level >= 55)) [/code]
+[code=BonusExp] 0 [/code]
 
 ############# Enemy #################
 >SA GlobalEnemy+
@@ -808,7 +844,7 @@ StatusInit [code=Condition] CheckAnyStatus(CurrentStatus, BattleStatus_EasyKill)
 StatusInit [code=Condition] CheckAnyStatus(CurrentStatus, BattleStatus_EasyKill) [/code] [code=DurationFactorFreeze] 0.20 [/code]
 StatusInit [code=Condition] CheckAnyStatus(CurrentStatus, BattleStatus_EasyKill) [/code] [code=DurationFactorSlow] 0.30 [/code]
 
-############# Taunt Mechanic ##############
+#### Taunt Mechanic ####
 Command EvenImmobilized
 [code=Condition] IsTheCaster && IsSingleTarget && !IsSelfTarget && PropertyByName('StatusProperty CustomStatus22 ForcedTargetId') > 0 [/code]
 [code=CommandTargetId] CasterPropertyByName('StatusProperty CustomStatus22 ForcedTargetId') [/code]
@@ -821,12 +857,6 @@ Command
 [code=BonusGil] BonusGil + (BonusGil / 2) [/code]
 [code=BattleBonusAP] BattleBonusAP * 2 [/code]
 _____________________________________________________________________________________________________
-
->AA 66 Fenrir (swap to the wind version if Maiden's Prayer is equipped)
-[code=Patch] AccessoryId == 1214 ? 67 : -1 [/code]
-
->AA 68 Carbuncle (swap to different versions depending on the jewel equipped)
-[code=Patch] AccessoryId == 1200 ? 71 : (AccessoryId == 1204 ? 70 : (AccessoryId == 198 ? 69 : -1)) [/code]
 
 >AA 82 Roulette (now Maelstorm, to disable Roulette effect from Memoria)
 
@@ -857,8 +887,11 @@ ________________________________________________________________________________
 >CMD 25 Replace Skill by Bandit
 [code=Patch] SerialNumber != 0 ? 1001 : 25 [/code]
 
+>AA 1000 Disable Steal !
+[code=Disable] CasterWeaponId == 1161 [/code]
+
 >AA 1001 Disable Bandit ! for early daggers
-[code=Disable] CasterWeaponId == RegularItem_Dagger || CasterWeaponId == RegularItem_MageMasher || CasterWeaponId == RegularItem_MythrilDagger || CasterWeaponId == 1153 || CasterWeaponId == 1155 || CasterWeaponId == 1158 [/code]
+[code=Disable] CasterWeaponId == RegularItem_Dagger || CasterWeaponId == RegularItem_MageMasher || CasterWeaponId == RegularItem_MythrilDagger || CasterWeaponId == 1153 || CasterWeaponId == 1155 || CasterWeaponId == 1158 || CasterWeaponId == 1164 || CasterWeaponId == 1167 [/code]
 
 #### Sentinel Steiner + Dual Amarant ####
 >CMD 4
@@ -871,38 +904,107 @@ ________________________________________________________________________________
 
 #### SA CMD for Vivi ####
 >CMD 13
-[code=Patch] HasSA(1206) ? 10034 : (HasSA(206) ? 1033 : -1) [/code]
+[code=Patch] HasSA(204) ? 1056 : (HasSA(1206) ? 1034 : (HasSA(206) ? 1033 : -1)) [/code]
+[code=Disable] CheckAnyStatus(CurrentStatus, BattleStatus_Silence) [/code]
 
 >CMD 22
 [code=Patch] (HasSA(205) || HasSA(1205)) ? 1032 : -1 [/code]
+
+>CMD 1000
+[code=Disable] CheckAnyStatus(CurrentStatus, BattleStatus_Silence) [/code]
+
+>CMD 1033
+[code=Disable] CheckAnyStatus(CurrentStatus, BattleStatus_Silence) [/code]
+
+>CMD 1034
+[code=Disable] CheckAnyStatus(CurrentStatus, BattleStatus_Silence) [/code]
 
 #### SA AA for Dagga ####
 >AA 7
 [code=Patch] HasSA(1260) ? 1585 : (HasSA(260) ? 1584 : -1) [/code]
 
 >AA 49
-[code=Patch] (HasSA(208) || HasSA(1208)) ? 1529 : -1 [/code]
+[code=Patch] HasSA(208) ? 1529 : -1 [/code]
+[code=MPCost] CasterHasSA(1059) ? (MPCost * 2) : (CasterHasSA(59) ? (MPCost * 1.5) : MPCost) [/code]
 
 >AA 51
-[code=Patch] (HasSA(208) || HasSA(1208)) ? 1530 : -1 [/code]
+[code=Patch] HasSA(208) ? 1530 : -1 [/code]
+[code=MPCost] CasterHasSA(1059) ? (MPCost * 2) : (CasterHasSA(59) ? (MPCost * 1.5) : MPCost) [/code]
 
 >AA 53
-[code=Patch] (HasSA(208) || HasSA(1208)) ? 1531 : -1 [/code]
+[code=Patch] HasSA(208) ? 1531 : -1 [/code]
+[code=MPCost] CasterHasSA(1059) ? (MPCost * 2) : (CasterHasSA(59) ? (MPCost * 1.5) : MPCost) [/code]
 
 >AA 55
-[code=Patch] (HasSA(208) || HasSA(1208)) ? 1532 : -1 [/code]
+[code=Patch] HasSA(208) ? 1532 : -1 [/code]
+[code=MPCost] CasterHasSA(1059) ? (MPCost * 2) : (CasterHasSA(59) ? (MPCost * 1.5) : MPCost) [/code]
 
 >AA 58
-[code=Patch] (HasSA(208) || HasSA(1208)) ? 1533 : -1 [/code]
+[code=Patch] HasSA(208) ? 1533 : -1 [/code]
+[code=MPCost] CasterHasSA(1059) ? (MPCost * 2) : (CasterHasSA(59) ? (MPCost * 1.5) : MPCost) [/code]
 
 >AA 60
-[code=Patch] (HasSA(208) || HasSA(1208)) ? 1534 : -1 [/code]
+[code=Patch] HasSA(208) ? 1534 : -1 [/code]
+[code=MPCost] CasterHasSA(1059) ? (MPCost * 2) : (CasterHasSA(59) ? (MPCost * 1.5) : MPCost) [/code]
 
 >AA 62
-[code=Patch] (HasSA(208) || HasSA(1208)) ? 1535 : -1 [/code]
+[code=Patch] HasSA(208) ? 1535 : -1 [/code]
+[code=MPCost] CasterHasSA(1059) ? (MPCost * 2) : (CasterHasSA(59) ? (MPCost * 1.5) : MPCost) [/code]
 
 >AA 64
-[code=Patch] (HasSA(208) || HasSA(1208)) ? 1536 : -1 [/code]
+[code=Patch] HasSA(208) ? 1536 : -1 [/code]
+[code=MPCost] CasterHasSA(1059) ? (MPCost * 2) : (CasterHasSA(59) ? (MPCost * 1.5) : MPCost) [/code]
+
+#### Summons (Dagga / Eiko) ####
+>AA 66
+[code=Patch] AccessoryId == 1214 ? 67 : -1 [/code]
+[code=MPCost] CasterHasSA(1059) ? (MPCost * 2) : (CasterHasSA(59) ? (MPCost * 1.5) : MPCost) [/code]
+
+>AA 67
+[code=MPCost] CasterHasSA(1059) ? (MPCost * 2) : (CasterHasSA(59) ? (MPCost * 1.5) : MPCost) [/code]
+
+>AA 68
+[code=Patch] AccessoryId == 1200 ? 71 : (AccessoryId == 1204 ? 70 : (AccessoryId == 198 ? 69 : -1)) [/code]
+[code=MPCost] CasterHasSA(1059) ? (MPCost * 2) : (CasterHasSA(59) ? (MPCost * 1.5) : MPCost) [/code]
+
+>AA 69
+[code=MPCost] CasterHasSA(1059) ? (MPCost * 2) : (CasterHasSA(59) ? (MPCost * 1.5) : MPCost) [/code]
+
+>AA 70
+[code=MPCost] CasterHasSA(1059) ? (MPCost * 2) : (CasterHasSA(59) ? (MPCost * 1.5) : MPCost) [/code]
+
+>AA 71
+[code=MPCost] CasterHasSA(1059) ? (MPCost * 2) : (CasterHasSA(59) ? (MPCost * 1.5) : MPCost) [/code]
+
+>AA 72
+[code=MPCost] CasterHasSA(1059) ? (MPCost * 2) : (CasterHasSA(59) ? (MPCost * 1.5) : MPCost) [/code]
+
+>AA 74
+[code=MPCost] CasterHasSA(1059) ? (MPCost * 2) : (CasterHasSA(59) ? (MPCost * 1.5) : MPCost) [/code]
+
+>AA 1529
+[code=MPCost] CasterHasSA(1059) ? (MPCost * 2) : (CasterHasSA(59) ? (MPCost * 1.5) : MPCost) [/code]
+
+>AA 1530
+[code=MPCost] CasterHasSA(1059) ? (MPCost * 2) : (CasterHasSA(59) ? (MPCost * 1.5) : MPCost) [/code]
+
+>AA 1531
+[code=MPCost] CasterHasSA(1059) ? (MPCost * 2) : (CasterHasSA(59) ? (MPCost * 1.5) : MPCost) [/code]
+
+>AA 1532
+[code=MPCost] CasterHasSA(1059) ? (MPCost * 2) : (CasterHasSA(59) ? (MPCost * 1.5) : MPCost) [/code]
+
+>AA 1533
+[code=MPCost] CasterHasSA(1059) ? (MPCost * 2) : (CasterHasSA(59) ? (MPCost * 1.5) : MPCost) [/code]
+
+>AA 1534
+[code=MPCost] CasterHasSA(1059) ? (MPCost * 2) : (CasterHasSA(59) ? (MPCost * 1.5) : MPCost) [/code]
+
+>AA 1535
+[code=MPCost] CasterHasSA(1059) ? (MPCost * 2) : (CasterHasSA(59) ? (MPCost * 1.5) : MPCost) [/code]
+
+>AA 1536
+[code=MPCost] CasterHasSA(1059) ? (MPCost * 2) : (CasterHasSA(59) ? (MPCost * 1.5) : MPCost) [/code]
 
 #### Beatrix (redemption) ####
 
@@ -1263,13 +1365,10 @@ ________________________________________________________________________________
 [code=Patch] HasSA(126) ? 1516 : -1 [/code]
 
 >AA 81 Doom
-[code=Patch] HasSA(126) ? 1517 : -1 [/code]
+[code=Patch] WeaponId == 1038 ? 1018 : (HasSA(126) ? 1517 : -1) [/code]
 
 >AA 82 Maelstrom
 [code=Patch] HasSA(126) ? 1518 : -1 [/code]
-
->AA 83 Matra Magic
-[code=Patch] HasSA(126) ? 1519 : -1 [/code]
 
 >AA 85 Matraga Magic
 [code=Patch] WeaponId == 1019 ? 1030 : -1 [/code]
@@ -1281,7 +1380,7 @@ ________________________________________________________________________________
 [code=Patch] WeaponId == 1018 ? 1029 : (HasSA(126) ? 1521 : -1) [/code]
 
 >AA 89 Pumpkin Head
-[code=Patch] HasSA(126) ? 1522 : -1 [/code]
+[code=Patch] WeaponId == 1037 ? 1017 : (HasSA(126) ? 1522 : -1) [/code]
 
 >AA 94 Discharge+
 [code=Patch] WeaponId == 1016 ? 1027 : -1 [/code]
@@ -1299,7 +1398,13 @@ ________________________________________________________________________________
 [code=Patch] HasSA(126) ? 1525 : -1 [/code]
 
 >AA 100 Angel Whisper
-[code=Patch] HasSA(126) ? 1526 : -1 [/code]
+[code=Patch] WeaponId == 1040 ? 1020 : (HasSA(126) ? 1526 : -1) [/code]
+
+>AA 95 White Wind
+[code=Patch] WeaponId == 1039 ? 1019 : -1 [/code]
+
+>AA 91 Earthquake
+[code=Patch] WeaponId == 1041 ? 1021 : -1 [/code]
 
 ############# SA Flexible #################
 
@@ -2280,10 +2385,7 @@ BattleResult
 [code=Condition] !HasSA(1044) [/code]
 [code=BonusAP] 2 * BonusAP [/code]
 
->SA 45 Millionaire
-BattleResult WhenRewardAll
-[code=Condition] !HasSA(1045) [/code]
-[code=BonusGil] BonusGil + BonusGil / 2 [/code]
+>SA 45 Millionaire (effect is coded in OverloadOnBattleInitScript.cs)
 
 >SA 46 Flee-Gil
 BattleResult WhenBattleEnd
@@ -2325,8 +2427,8 @@ Ability EvenImmobilized
 
 >SA 56 Auto-Potion
 Ability AsTarget
-[code=Condition] (GetItemCount(RegularItem_Potion) != 0 || GetItemCount(RegularItem_HiPotion) != 0 || GetItemCount(1000) != 0) && CommandId < BattleCommandId_BoundaryCheck && CasterIsPlayer != TargetIsPlayer && (EffectTargetFlags & CalcFlag_HpDamageOrHeal) == CalcFlag_HpAlteration && !CheckAnyStatus(TargetCurrentStatus, BattleStatus_Heat) [/code]
-[code=AutoItem] ((TargetMaxHP - TargetHP) > 1250 && GetItemCount(1000) != 0) ? 1000 : (((TargetMaxHP - TargetHP) > (TargetHasSA(27) ? 1000 : 500) && GetItemCount(RegularItem_HiPotion) != 0) ? RegularItem_HiPotion : (((TargetMaxHP - TargetHP) > (TargetHasSA(27) ? 400 : 200) && GetItemCount(RegularItem_Potion) != 0) ? RegularItem_Potion : 0)) [/code]
+[code=Condition] !TargetHasSA(1056) && (GetItemCount(RegularItem_Potion) != 0 || GetItemCount(RegularItem_HiPotion) != 0) && CommandId < BattleCommandId_BoundaryCheck && CasterIsPlayer != TargetIsPlayer && (EffectTargetFlags & CalcFlag_HpDamageOrHeal) == CalcFlag_HpAlteration && !CheckAnyStatus(TargetCurrentStatus, BattleStatus_Heat) [/code]
+[code=AutoItem] ((TargetMaxHP - TargetHP) > (TargetHasSA(27) ? 1000 : 500) && GetItemCount(RegularItem_HiPotion) != 0) ? RegularItem_HiPotion : (((TargetMaxHP - TargetHP) > (TargetHasSA(27) ? 400 : 200) && GetItemCount(RegularItem_Potion) != 0) ? RegularItem_Potion : 0) [/code]
 DisableSA 36 54 56
 
 >SA 57 Locomotion
@@ -2336,17 +2438,12 @@ StatusInit [code=PartialResistStop] 0.5 [/code]
 >SA 58 Clear Headed
 StatusInit [code=PartialResistConfuse] 0.5 [/code]
 
->SA 59 Boost
+>SA 59 Boost (effect is coded in 0085_SummonScript.cs)
 Command EvenImmobilized
-[code=Condition] IsTheCaster [/code]
-[code=IsShortSummon] false [/code]
+[code=Condition] IsTheCaster && (ScriptId == 85 || ScriptId == 86 || ScriptId == 87) [/code]
+[code=IsShortSummon] GetRandom(0, 100) < 75 [/code]
 
->SA 60 Odin’s Sword
-Ability WhenBattleScriptEnd EvenImmobilized
-[code=Condition] ScriptId == 87 && (EffectFlags & (BattleCalcFlags_Miss | BattleCalcFlags_Guard)) != 0 [/code]
-[code=EffectFlags] EffectFlags & 65470 [/code]
-[code=EffectTargetFlags] EffectTargetFlags | CalcFlag_HpAlteration [/code]
-[code=HPDamage] (IsShortSummon ? 0.666667 : 1.0) * (GetRandom(CasterMagic, CasterMagic + (CasterLevel + CasterMagic) / 8 + 1) * Max(1, 100 + Power - GetItemCount(RegularItem_Ore) - TargetMagicDefence)) [/code]
+>SA 60 Odin’s Sword (effect is coded in 0087_OdinScript.cs)
 
 >SA 61 Mug (effect is coded in 0058_StealScript.cs)
 
@@ -2482,7 +2579,7 @@ Ability WhenHitRateSetup EvenImmobilized
 [code=Evade] Evade / 2 [/code]
 
 Ability WhenBattleScriptEnd EvenImmobilized
-[code=Condition] (ScriptId == 85 || ScriptId == 86 || ScriptId == 87) [/code]
+[code=Condition] (ScriptId == 85 || ScriptId == 86 || ScriptId == 87) && !TargetIsPlayer [/code]
 [code=HPDamage] HPDamage / 2 [/code]
 
 >SA 210 Gemologist (effect is coded here => Garnet Passive (Gems))
@@ -2823,9 +2920,7 @@ BattleResult
 >SA 1044 Ability Up+
 BattleResult [code=BonusAP] 3 * BonusAP [/code]
 
->SA 1045 Millionaire+
-BattleResult WhenRewardAll 
-[code=BonusGil] BonusGil + (3 * BonusGil) / 4 [/code]
+>SA 1045 Millionaire+ (effect is coded in OverloadOnBattleInitScript.cs)
 
 >SA 1046 Flee-Gil+
 BattleResult WhenBattleEnd
@@ -2867,6 +2962,11 @@ Ability EvenImmobilized
 [code=CasterMP] Min(CasterMaxMP, CasterMP + (MPCost / 8)) [/code]
 
 >SA 1056 Auto-Potion+
+Ability AsTarget
+[code=Condition] (GetItemCount(RegularItem_Potion) != 0 || GetItemCount(RegularItem_HiPotion) != 0 || GetItemCount(1000) != 0) && CommandId < BattleCommandId_BoundaryCheck && CasterIsPlayer != TargetIsPlayer && (EffectTargetFlags & CalcFlag_HpDamageOrHeal) == CalcFlag_HpAlteration && !CheckAnyStatus(TargetCurrentStatus, BattleStatus_Heat) [/code]
+[code=AutoItem] ((TargetMaxHP - TargetHP) > 1250 && GetItemCount(1000) != 0) ? 1000 : (((TargetMaxHP - TargetHP) > (TargetHasSA(27) ? 1000 : 500) && GetItemCount(RegularItem_HiPotion) != 0) ? RegularItem_HiPotion : (((TargetMaxHP - TargetHP) > (TargetHasSA(27) ? 400 : 200) && GetItemCount(RegularItem_Potion) != 0) ? RegularItem_Potion : 0)) [/code]
+DisableSA 36 54 56 1056
+
 Ability AsTarget
 [code=Condition] CommandId < BattleCommandId_BoundaryCheck && CasterIsPlayer != TargetIsPlayer && CheckAnyStatus(TargetCurrentStatus, BattleStatus_Poison | BattleStatus_Venom) && GetItemCount(243) != 0 && !CheckAnyStatus(TargetCurrentStatus, BattleStatus_Heat) && !CheckAnyStatus(TargetPermanentStatus, BattleStatus_Poison) [/code]
 [code=AutoItem] 243 [/code]
@@ -2910,18 +3010,13 @@ StatusInit ResistStatus Confuse
 
 >SA 1059 Boost+
 Command EvenImmobilized
-[code=Condition] IsTheCaster [/code]
+[code=Condition] IsTheCaster && (ScriptId == 85 || ScriptId == 86 || ScriptId == 87) [/code]
 [code=IsShortSummon] false [/code]
 
 Ability WhenCalcDamage EvenImmobilized
 [code=CasterMaxDamageLimit] 99999 [/code]
 
->SA 1060 Odin’s Sword+
-Ability WhenBattleScriptEnd EvenImmobilized
-[code=Condition] ScriptId == 87 && (EffectFlags & (BattleCalcFlags_Miss | BattleCalcFlags_Guard)) != 0 [/code]
-[code=EffectFlags] EffectFlags & 65470 [/code]
-[code=EffectTargetFlags] EffectTargetFlags | CalcFlag_HpAlteration [/code]
-[code=HPDamage] (IsShortSummon ? 0.666667 : 1.0) * (GetRandom(CasterMagic, CasterMagic + (CasterLevel + CasterMagic) / 8 + 1) * Max(1, 100 + Power - GetItemCount(RegularItem_Ore) - TargetMagicDefence)) [/code]
+>SA 1060 Odin’s Sword+ (effect is coded in 0087_OdinScript.cs)
 
 >SA 1061 Mug+ (effect is coded in 0058_StealScript.cs)
 

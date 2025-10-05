@@ -44,6 +44,20 @@ namespace Memoria.Scripts.Battle
                     return;
 
                 BattleState.EnqueueCounter(unit, BattleCommandId.RushAttack, BattleAbilityId.Attack, randomEnemy);
+                if (TranceSeekAPI.SteinerPassive[_v.Caster.Data][1] == 5)
+                {
+                    unit.AlterStatus(BattleStatus.Haste);
+                    btl_stat.AlterStatus(unit, TranceSeekStatusId.PowerUp, parameters: $"+2");
+                }
+                else if (TranceSeekAPI.SteinerPassive[_v.Caster.Data][1] >= 3)
+                {
+                    unit.AlterStatus(BattleStatus.Haste);
+                    btl_stat.AlterStatus(unit, TranceSeekStatusId.PowerUp);
+                }
+                else if (TranceSeekAPI.SteinerPassive[_v.Caster.Data][1] > 0)
+                {
+                    unit.AlterStatus(BattleStatus.Haste);
+                }
             }
 
             if (canAttack == false)
@@ -51,6 +65,8 @@ namespace Memoria.Scripts.Battle
                 _v.Context.Flags = 0;
                 UiState.SetBattleFollowFormatMessage(BattleMesages.ChargeFailed);
             }
+            else if (TranceSeekAPI.SteinerPassive[_v.Caster.Data][1] > 0)
+                TranceSeekAPI.ResetSteinerPassive(_v.Caster);
         }
     }
 }

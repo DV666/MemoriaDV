@@ -1,4 +1,5 @@
 using System;
+using FF9;
 using Memoria.Data;
 using Memoria.Prime;
 
@@ -67,7 +68,12 @@ namespace Memoria.Scripts.Battle
                         TranceSeekAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
                         TranceSeekAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
                     }
-                    if ((GameRandom.Next8() % (_v.Command.AbilityId == (BattleAbilityId)1550 ? 2 : 3) != 0) && _v.Command.AbilityId != (BattleAbilityId)1551)
+
+                    int ChanceDeathBlow = 33;
+                    if (TranceSeekAPI.SteinerPassive[_v.Caster.Data][1] > 0)
+                        ChanceDeathBlow += 10 * TranceSeekAPI.SteinerPassive[_v.Caster.Data][1];
+
+                    if (Comn.random16() % 100 > ChanceDeathBlow && _v.Command.AbilityId != (BattleAbilityId)1551)
                     {
                         _v.Context.Flags |= BattleCalcFlags.Miss;
                     }
@@ -101,6 +107,9 @@ namespace Memoria.Scripts.Battle
                             btl_stat.AlterStatus(_v.Caster, TranceSeekStatusId.Special, parameters: "Duelist--");
                         }
                     }
+
+                    if (TranceSeekAPI.SteinerPassive[_v.Caster.Data][1] > 0)
+                        TranceSeekAPI.ResetSteinerPassive(_v.Caster);
                 }
             }
         }

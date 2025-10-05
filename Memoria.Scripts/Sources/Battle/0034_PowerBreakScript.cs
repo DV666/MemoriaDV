@@ -43,6 +43,12 @@ namespace Memoria.Scripts.Battle
                 {
                     _v.NormalPhysicalParams();
                 }
+                if (TranceSeekAPI.SteinerPassive[_v.Caster.Data][1] > 0)
+                {
+                    _v.Command.HitRate += 10 * TranceSeekAPI.SteinerPassive[_v.Caster.Data][1];
+                    TranceSeekAPI.ResetSteinerPassive(_v.Caster);
+                }
+
                 TranceSeekAPI.MagicAccuracy(_v);
                 TranceSeekAPI.EnemyTranceBonusAttack(_v);
                 TranceSeekAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
