@@ -12,9 +12,6 @@ using static Memoria.Scripts.Battle.TranceSeekAPI;
 using System.Reflection;
 using Assets.Sources.Scripts.UI.Common;
 using Memoria.Assets;
-using static Memoria.IOverloadPlayerUIScript;
-using static Memoria.Assets.DataResources.Characters;
-using static Memoria.Assets.DataResources;
 
 namespace Memoria.Scripts.Battle
 {
