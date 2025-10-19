@@ -151,7 +151,17 @@ namespace Memoria.Scripts.Battle
                                 _v.Caster.HpDamage = 0;
                                 break;
                             case BattleAbilityId.SixDragons:
-                                btl_stat.RemoveStatuses(_v.Target, _v.Command.AbilityStatus);
+                                int bonusdamage = 0;
+                                foreach (BattleStatusId statusId in _v.Target.Data.stat.cur.ToStatusList())
+                                {
+                                    if (statusId != BattleStatusId.EasyKill)
+                                    {
+                                        bonusdamage += 5;
+                                        btl_stat.RemoveStatus(_v.Target, statusId);
+                                    }
+                                }
+                                if (bonusdamage > 0)
+                                    _v.Target.HpDamage += (_v.Target.HpDamage * bonusdamage) / 100;
                                 break;
                             case BattleAbilityId.DragonCrest:
                                 _v.Target.TryAlterStatuses(BattleStatus.Doom, false, _v.Caster);

@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using static UIManager;
 
 namespace Memoria.Scripts.Battle
 {
@@ -105,7 +106,21 @@ namespace Memoria.Scripts.Battle
                 dictbattle[3] = 0;
             }
 
-            if (Input.GetKey(KeyCode.KeypadPlus) && FF9StateSystem.EventState.ScenarioCounter >= 11100 && FF9StateSystem.EventState.gEventGlobal[1500] > 0)
+            /*
+            if (PersistenSingleton<HonoInputManager>.Instance.IsInput(Control.LeftTrigger) && PersistenSingleton<HonoInputManager>.Instance.IsInput(Control.RightTrigger) &&
+                PersistenSingleton<HonoInputManager>.Instance.IsInput(Control.Special) && player.saExtended.Count > 0)
+            {
+                List<SupportAbility> SAtoRemove = new List<SupportAbility>();
+                foreach (SupportAbility SaList in player.saExtended)
+                    SAtoRemove.Add(SaList);
+                SAtoRemove = SAtoRemove.OrderBy(sa => sa).ToList();
+                foreach (SupportAbility Sa in SAtoRemove)
+                    ff9abil.FF9Abil_SetEnableSA(player, Sa, false);
+            }
+            */
+
+
+            if (UnityEngine.Input.GetKey(KeyCode.KeypadPlus) && FF9StateSystem.EventState.ScenarioCounter >= 11100 && FF9StateSystem.EventState.gEventGlobal[1500] > 0)
             { // Debug, to delete at the release ?
                 SoundLib.PlaySoundEffect(1362);
                 if (GameState.HasKeyItem(82))

@@ -117,22 +117,15 @@ namespace Memoria.Scripts.Battle
                     num2 = (uint)(_v.Target.MaximumMp / _v.Command.Power);
                     uint num3 = _v.Target.CurrentHp - num;
 
-                    if (_v.Caster.CurrentHp == 1U)
+                    if (num3 <= 0)
                     {
-                        _v.Context.Flags |= BattleCalcFlags.Miss;
+                        _v.Target.HpDamage = (int)(_v.Target.CurrentHp);
+                        _v.Caster.MpDamage = (int)(num2 * _v.Target.CurrentHp / num);
                     }
                     else
                     {
-                        if (num3 <= 0)
-                        {
-                            _v.Target.HpDamage = (int)(_v.Target.CurrentHp);
-                            _v.Caster.MpDamage = (int)(num2 * _v.Target.CurrentHp / num);
-                        }
-                        else
-                        {
-                            _v.Target.HpDamage = (int)num;
-                            _v.Caster.MpDamage = (int)num2;
-                        }
+                        _v.Target.HpDamage = (int)num;
+                        _v.Caster.MpDamage = (int)num2;
                     }
                 }
             }

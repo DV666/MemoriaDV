@@ -36,7 +36,8 @@ namespace Memoria.Scripts.Battle
             if (boss == null)
                 _v.Target.FaceAsUnit(_v.Caster);
 
-            _v.Target.ChangeRowToDefault();
+            if (_v.Target.IsPlayer && _v.Target.Row != _v.Target.Player.info.row)
+                TranceSeekAPI.ChangeRow(_v.Target);
         }
 
         public static void MultipleSteal(BattleCalculator v, Boolean AllEnnemy = false)

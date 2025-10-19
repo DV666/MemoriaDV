@@ -33,6 +33,7 @@ namespace Memoria.Scripts.Battle
                 _v.NormalMagicParams();
                 TranceSeekAPI.CharacterBonusPassive(_v, "MagicAttack");
                 TranceSeekAPI.CasterPenaltyMini(_v);
+                TranceSeekAPI.TryApplyDragon(_v);
                 _v.CalcHpMagicRecovery();
                 if (!_v.Target.IsUnderAnyStatus(BattleStatus.Zombie))
                     _v.Target.Flags |= CalcFlag.HpRecovery;

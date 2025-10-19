@@ -50,19 +50,12 @@ namespace Memoria.Scripts.Battle
             {
                 if (_v.Command.AbilityId == BattleAbilityId.CherryBlossom)
                 {
-                    TranceSeekAPI.TryCriticalHit(_v, 25);
-
                     if (_v.Target.IsUnderAnyStatus(TranceSeekStatus.Dragon) || (_v.Caster.IsUnderStatus(BattleStatus.Trance)))
                     {
-                        if (_v.Caster.Will > Comn.random16() % 100)
-                        {
+                        if (_v.Target.IsUnderAnyStatus(BattleStatus.Poison))
                             _v.Target.TryAlterStatuses(BattleStatus.Venom, false, _v.Caster);
-                            _v.Target.TryAlterStatuses(BattleStatus.Poison, false, _v.Caster);
-                        }
                         else
-                        {
-                            _v.Target.TryAlterStatuses(BattleStatus.Poison, false, _v.Caster);
-                        }
+                            TranceSeekAPI.TryAlterMagicStatuses(_v);
                     }
                     _v.CalcHpDamage();
                 }
@@ -92,8 +85,8 @@ namespace Memoria.Scripts.Battle
                             _v.Command.AbilityStatus |= BattleStatus.Confuse;
                         if (_v.Caster.IsUnderAnyStatus(BattleStatus.Haste))
                             _v.Command.AbilityStatus |= BattleStatus.Slow;
-
-                        TranceSeekAPI.TryAlterCommandStatuses(_v);
+                        if (_v.Caster.IsUnderAnyStatus(BattleStatus.Float))
+                            _v.Command.AbilityStatus |= BattleStatus.GradualPetrify;
                     }
                     else
                         TranceSeekAPI.TryAlterMagicStatuses(_v);

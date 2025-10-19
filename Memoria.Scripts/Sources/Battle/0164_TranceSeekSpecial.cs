@@ -574,7 +574,10 @@ namespace Memoria.Scripts.Battle
             else
             {
                 foreach (BattleStatusId statusId in _v.Target.Data.stat.cur.ToStatusList())
-                    btl_stat.RemoveStatus(_v.Target, statusId);
+                {
+                    if (statusId != BattleStatusId.EasyKill)
+                        btl_stat.RemoveStatus(_v.Target, statusId);
+                }
                 _v.Context.Flags = 0;
             }
         }

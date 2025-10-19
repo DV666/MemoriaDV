@@ -37,6 +37,8 @@ namespace Memoria.DefaultScripts
             if (Target.HasSupportAbilityByIndex((SupportAbility)130)) // SA Harmony
             {
                 UInt32 healMP = Target.HasSupportAbilityByIndex((SupportAbility)1130) ? (Target.MaximumMp / 50) : (Target.MaximumMp / 100);
+                if (Target.HasSupportAbilityByIndex((SupportAbility)129)) // SA Rejuvenate
+                    healMP += Target.HasSupportAbilityByIndex((SupportAbility)1129) ? (healMP / 2) : (healMP / 4);
                 if (Target.IsZombie)
                 {
                     isDmg = true;

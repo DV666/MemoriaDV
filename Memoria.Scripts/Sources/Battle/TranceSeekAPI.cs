@@ -1031,30 +1031,9 @@ namespace Memoria.Scripts.Battle
                     v.Context.Attack += (v.Context.Attack * factor * bonus) / 100;
             }
         }
-        public static void CharacterBonusPassive(this BattleCalculator v, string mode = "")
+        public static void CharacterBonusPassive(this BattleCalculator v, string mode = "") // [TODO] Rename + delete this from most functions (deprecaticed old Beatrix passive)
         {
-            if (v.Caster.PlayerIndex == CharacterId.Beatrix)
-            {
-                switch (mode)
-                {
-                    case "MagicAttack":
-                    {
-                        v.Context.Attack = (Int16)(v.Caster.Magic + Comn.random16() % (1 + (v.Caster.Level + v.Caster.Magic)));
-                        break;
-                    }
-                    case "PhysicalAttack":
-                    {
-                        v.Context.Attack = (Int16)(v.Caster.Strength + Comn.random16() % (1 + (v.Caster.Level + v.Caster.Strength)));
-                        break;
-                    }
-                    case "LowPhysicalAttack":
-                    {
-                        v.Context.Attack = (Int16)(v.Caster.Strength + Comn.random16() % (1 + (v.Caster.Level + v.Caster.Strength)));
-                        break;
-                    }
-                }
-            }
-            else if (v.Caster.PlayerIndex == CharacterId.Marcus)
+            if (v.Caster.PlayerIndex == CharacterId.Marcus)
             {
                 if (mode == "MagicAttack")
                 {
@@ -1122,6 +1101,15 @@ namespace Memoria.Scripts.Battle
         {
             if (v.Target.PhysicalDefence != 255 || v.Target.PhysicalDefence != 255 || v.Target.MagicDefence != 255 || v.Target.MagicEvade != 255 && !v.Command.IsManyTarget)
                 v.RaiseTrouble();
+        }
+
+        public static void ChangeRow(BattleUnit unit)
+        {
+            btl_para.SwitchPlayerRow(unit.Data);
+            if (unit.Row == 1)
+                btl_stat.AlterStatus(unit, TranceSeekStatusId.Special, parameters: "CanCover1");
+            else
+                btl_stat.AlterStatus(unit, TranceSeekStatusId.Special, parameters: "CanCover0");
         }
 
         public static void SA_StatusApply(BattleUnit inflicter, Boolean StatusIsPositive)
@@ -1342,7 +1330,7 @@ namespace Memoria.Scripts.Battle
                 (int)v.Target.GetPropertyByName("StatusProperty CustomStatus12 Stack") >= 2 && v.Target.Will < Comn.random16() % 100 && !v.Caster.IsPlayer) // SA Dominance
             {
                 List<BattleAbilityId> Counter_AA = new List<BattleAbilityId>{ BattleAbilityId.ThunderSlash, BattleAbilityId.StockBreak, BattleAbilityId.Climhazzard, BattleAbilityId.Shock,
-                BattleAbilityId.Protect, BattleAbilityId.Shell, BattleAbilityId.Cura, BattleAbilityId.Berserk, BattleAbilityId.Reflect, BattleAbilityId.Regen, BattleAbilityId.Holy};
+                BattleAbilityId.Protect, BattleAbilityId.Shell, BattleAbilityId.Cura, BattleAbilityId.Berserk, BattleAbilityId.Reflect, BattleAbilityId.Regen};
 
                 int RedemptionStack = (int)v.Target.GetPropertyByName("StatusProperty CustomStatus12 Stack");
                
