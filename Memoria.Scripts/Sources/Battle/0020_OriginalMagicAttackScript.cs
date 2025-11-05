@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.Remoting.Contexts;
 using FF9;
 using Memoria.Data;
+using Memoria.Prime;
 
 namespace Memoria.Scripts.Battle
 {
@@ -83,10 +85,8 @@ namespace Memoria.Scripts.Battle
                     _v.Caster.SetLowPhysicalAttack();
                     _v.Target.SetMagicDefense();
                     if (_v.Command.HitRate == 98)
-                    {
                         _v.Context.DefensePower = _v.Context.DefensePower - (_v.Context.DefensePower / 4);
-                    }
-                    _v.Target.SetMagicDefense();
+
                     TranceSeekAPI.CasterPenaltyMini(_v);
                     TranceSeekAPI.PenaltyShellAttack(_v);
                     TranceSeekAPI.PenaltyCommandDividedAttack(_v);
@@ -115,13 +115,13 @@ namespace Memoria.Scripts.Battle
                         _v.Context.DamageModifierCount -= 2;
                     TranceSeekAPI.PenaltyShellAttack(_v);
                     if (!_v.Caster.IsPlayer)
-                    {
                         TranceSeekAPI.BonusBackstabAndPenaltyLongDistance(_v);
-                    }
                 }
             }
             TranceSeekAPI.EnemyTranceBonusAttack(_v);
             TranceSeekAPI.BonusElement(_v);
+            Log.Message("Context.EnsureAttack = " + _v.Context.EnsureAttack);
+            Log.Message("Context.EnsurePowerDifference = " + _v.Context.EnsurePowerDifference);
             if (TranceSeekAPI.CanAttackMagic(_v))
             {
                 if (_v.Caster.PlayerIndex == CharacterId.Freya) // Dragon abilities
@@ -132,12 +132,26 @@ namespace Memoria.Scripts.Battle
                         switch (_v.Command.AbilityId)
                         {
                             case BattleAbilityId.DragonBreath:
+                                int bonusdamage = 0;
+                                foreach (BattleStatusId statusId in _v.Target.Data.stat.cur.ToStatusList())
+                                {
+                                    if (statusId != BattleStatusId.EasyKill)
+                                    {
+                                        bonusdamage += 5;
+                                        btl_stat.RemoveStatus(_v.Target, statusId);
+                                    }
+                                }
+                                if (bonusdamage > 0)
+                                    _v.Context.Attack += (_v.Context.Attack * bonusdamage) / 100;
+                                break;
+                            case BattleAbilityId.SixDragons:
                                 if (_v.Target.MagicDefence != 255)
-                                    _v.Context.DefensePower /= 2;
+                                    _v.Context.DefensePower = (_v.Context.DefensePower / 2);
+                                _v.Target.TryAlterStatuses(TranceSeekStatus.MentalBreak, false, _v.Caster);
                                 break;
                             case BattleAbilityId.WhiteDraw:
                                 _v.Caster.Flags = (CalcFlag.HpAlteration | CalcFlag.HpRecovery);
-                                _v.Caster.HpDamage = _v.Context.EnsureAttack * _v.Context.EnsurePowerDifference / 4;
+                                _v.Caster.HpDamage = (_v.Context.EnsureAttack * _v.Context.EnsurePowerDifference) / 2;
                                 foreach (BattleUnit battleUnit in BattleState.EnumerateUnits())
                                 {
                                     if (battleUnit.IsPlayer && battleUnit.IsTargetable && !battleUnit.IsUnderAnyStatus(BattleStatus.Death | BattleStatus.Petrify))
@@ -150,30 +164,21 @@ namespace Memoria.Scripts.Battle
                                 _v.Caster.Flags = 0;
                                 _v.Caster.HpDamage = 0;
                                 break;
-                            case BattleAbilityId.SixDragons:
-                                int bonusdamage = 0;
-                                foreach (BattleStatusId statusId in _v.Target.Data.stat.cur.ToStatusList())
-                                {
-                                    if (statusId != BattleStatusId.EasyKill)
-                                    {
-                                        bonusdamage += 5;
-                                        btl_stat.RemoveStatus(_v.Target, statusId);
-                                    }
-                                }
-                                if (bonusdamage > 0)
-                                    _v.Target.HpDamage += (_v.Target.HpDamage * bonusdamage) / 100;
-                                break;
-                            case BattleAbilityId.DragonCrest:
-                                _v.Target.TryAlterStatuses(BattleStatus.Doom, false, _v.Caster);
+                            case TranceSeekBattleAbility.Hraesvelgr:
+                                _v.Caster.RemoveStatus(BattleStatusConst.AnyNegative);
+                                _v.Caster.Flags |= CalcFlag.HpDamageOrHeal;
+                                _v.Caster.HpDamage = (int)_v.Caster.MaximumHp;
                                 break;
                         }
                     } 
                 }
                 else if (_v.Caster.PlayerIndex == CharacterId.Beatrix && _v.Command.AbilityId == (BattleAbilityId)1043)
                 {
-                    _v.Caster.Flags |= (CalcFlag.MpAlteration | CalcFlag.MpRecovery);
-                    _v.Caster.MpDamage = (_v.Target.HpDamage >> 5);
+                    _v.Target.Flags |= (CalcFlag.MpAlteration | CalcFlag.MpRecovery);
+                    _v.Target.MpDamage = (_v.Target.HpDamage >> 5);
                 }
+                Log.Message("[NEW] Context.EnsureAttack = " + _v.Context.EnsureAttack);
+                Log.Message("[NEW] Context.EnsurePowerDifference = " + _v.Context.EnsurePowerDifference);
                 _v.CalcHpDamage();
             }
             TranceSeekAPI.InfusedWeaponStatus(_v);

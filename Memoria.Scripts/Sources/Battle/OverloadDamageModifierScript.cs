@@ -125,6 +125,7 @@ namespace Memoria.Scripts.Battle
             }
 
             TranceSeekAPI.SpecialEffect(v);
+            TranceSeekAPI.DragonMechanic(v); // Need to be in OverloadOnBattleScriptEndScript.cs
 
             if (v.Target.PlayerIndex == CharacterId.Amarant && SpecialSAEffect[v.Target.Data][0] == 1 && (v.Command.AbilityCategory & 8) != 0 && v.Target.IsUnderAnyStatus(BattleStatus.Defend)) // Duel Amarant
             {

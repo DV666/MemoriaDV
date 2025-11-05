@@ -47,12 +47,6 @@ namespace Memoria.Scripts.Battle
                 return;
             }
 
-            if (_v.Command.AbilityId == BattleAbilityId.Luna)
-            {
-                btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.Dragon, _v.Caster, parameters: "Add");
-                return;
-            }
-
             if ( _v.Command.AbilityId == (BattleAbilityId)1104 && (_v.Caster.ResistStatus & BattleStatus.Doom) == 0) // Sang Maudit
             {
                 btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.PowerUp, parameters: $"+{_v.Command.Power}");

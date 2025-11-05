@@ -469,6 +469,12 @@ namespace Memoria.Scripts.Battle
         public const BattleAbilityId DiamondLight = (BattleAbilityId)1581;
         public const BattleAbilityId RebirthFlame = (BattleAbilityId)1582;
         public const BattleAbilityId TerraHoming = (BattleAbilityId)1583;
+        public const BattleAbilityId Scanra = (BattleAbilityId)1584;
+        public const BattleAbilityId Scanga = (BattleAbilityId)1585;
+        public const BattleAbilityId Geirskögul = (BattleAbilityId)1586;
+        public const BattleAbilityId ReiWrath = (BattleAbilityId)1587;
+        public const BattleAbilityId LitanyOfBurmecia = (BattleAbilityId)1588;
+        public const BattleAbilityId Hraesvelgr = (BattleAbilityId)1589;
         public const BattleAbilityId MogCure = (BattleAbilityId)2000;
         public const BattleAbilityId MogHug = (BattleAbilityId)2001;
         public const BattleAbilityId MogRegen = (BattleAbilityId)2002;

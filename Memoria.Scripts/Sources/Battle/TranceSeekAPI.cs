@@ -19,6 +19,7 @@ namespace Memoria.Scripts.Battle
         public static Dictionary<BTL_DATA, Int32[]> ViviPassive = new Dictionary<BTL_DATA, Int32[]>(); // [0] => Focus ; [1] => NumberTargets ; [2] => TriggerOneTime
         public static Dictionary<BTL_DATA, BattleAbilityId> ViviPreviousSpell = new Dictionary<BTL_DATA, BattleAbilityId>();
 
+        public static Dictionary<BTL_DATA, Int32[]> FreyaPassive = new Dictionary<BTL_DATA, Int32[]>(); // [0] => DragonChanceStack
         public static Dictionary<BTL_DATA, Int32[]> SteinerPassive = new Dictionary<BTL_DATA, Int32[]>(); // [0] => StackCMD ; [1] => StackCMD ; [2] => TriggerOneTime
         public static Dictionary<BTL_DATA, Int32[]> BeatrixPassive = new Dictionary<BTL_DATA, Int32[]>(); // [0] => StackCMD ; [1] => Magic (Dummied) ; [2] => Bravoure ; [3] => TargetCount
 
@@ -99,42 +100,6 @@ namespace Memoria.Scripts.Battle
             }
         }
 
-        public static void TryApplyDragon(this BattleCalculator v)
-        {
-            if (v.Caster.PlayerIndex == CharacterId.Freya)
-            {
-                Int32 quarterWill = v.Caster.Data.elem.wpr >> 2;
-                Int32 bonusdragon = 0;
-                switch (v.Caster.Weapon)
-                {
-                    case RegularItem.MythrilSpear:
-                    case RegularItem.Partisan:
-                        bonusdragon += 5;
-                        break;
-                    case RegularItem.IceLance:
-                    case RegularItem.Trident:
-                        bonusdragon += 8;
-                        break;
-                    case RegularItem.HeavyLance:
-                    case RegularItem.Obelisk:
-                        bonusdragon += 10;
-                        break;
-                    case RegularItem.HolyLance:
-                        bonusdragon += 15;
-                        break;
-                    case RegularItem.KainLance:
-                        bonusdragon += 20;
-                        break;
-                    case RegularItem.DragonHair:
-                        bonusdragon += 25;
-                        break;
-                }
-
-                if (quarterWill != 0 && (((Comn.random16() % quarterWill) + bonusdragon) > Comn.random16() % 100))
-                    v.Target.AlterStatus(TranceSeekStatus.Dragon, v.Caster);
-            }
-        }
-
         public static void TryCriticalHit(this BattleCalculator v, int BonusCrit = 0)
         {
             if (v.Caster.HasSupportAbilityByIndex((SupportAbility)1102)) // Archimage+ (10% crit en bonus)
@@ -153,8 +118,6 @@ namespace Memoria.Scripts.Battle
                 v.Target.HpDamage *= 2;
                 v.Target.MpDamage *= 2;
                 v.Target.Flags |= CalcFlag.Critical;
-                if (v.Caster.PlayerIndex == CharacterId.Freya)
-                    v.Target.AlterStatus(TranceSeekStatus.Dragon, v.Caster);
             }
             else if (v.Caster.PlayerIndex == CharacterId.Zidane && btl_util.getSerialNumber(v.Caster.Data) == CharacterSerialNumber.ZIDANE_SWORD)
             {
@@ -170,6 +133,56 @@ namespace Memoria.Scripts.Battle
                         { "IT", "↑ Letale ↑" },
                     };
                 btl2d.Btl2dReqSymbolMessage(v.Caster.Data, "[FFFF00]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 15);
+            }
+        }
+
+        public static void TryApplyDragon(this BattleCalculator v)
+        {
+            if (v.Caster.PlayerIndex == CharacterId.Freya)
+            {
+                Int32 quarterWill = v.Caster.Data.elem.wpr >> 2;
+                Int32 bonusdragon = 0;
+                switch (v.Caster.Weapon)
+                {
+                    case RegularItem.MythrilSpear:
+                        bonusdragon += 4;
+                        break;
+                    case RegularItem.Partisan:
+                        bonusdragon += 5;
+                        break;
+                    case RegularItem.IceLance:
+                        bonusdragon += 6;
+                        break;
+                    case RegularItem.Trident:
+                        bonusdragon += 7;
+                        break;
+                    case RegularItem.HeavyLance:
+                        bonusdragon += 8;
+                        break;
+                    case RegularItem.Obelisk:
+                        bonusdragon += 9;
+                        break;
+                    case RegularItem.HolyLance:
+                        bonusdragon += 10;
+                        break;
+                    case RegularItem.KainLance:
+                        bonusdragon += 12;
+                        break;
+                    case RegularItem.DragonHair:
+                        bonusdragon += 15;
+                        break;
+                }
+
+                FreyaPassive[v.Target.Data][0] += bonusdragon;
+
+                if (quarterWill != 0)
+                {
+                    if ((((Comn.random16() % quarterWill) + FreyaPassive[v.Target.Data][0]) > Comn.random16() % 100) || ((v.Target.Flags & CalcFlag.Critical) != 0 && v.Command.Id == BattleCommandId.Attack))
+                    {
+                        v.Target.AlterStatus(TranceSeekStatus.Dragon, v.Caster);
+                        FreyaPassive[v.Target.Data][0] = 0;
+                    }
+                }
             }
         }
 
@@ -1031,6 +1044,23 @@ namespace Memoria.Scripts.Battle
                     v.Context.Attack += (v.Context.Attack * factor * bonus) / 100;
             }
         }
+
+        public static void DragonMechanic(this BattleCalculator v)
+        {
+            if (v.Caster.PlayerIndex == CharacterId.Freya)
+            {
+                if (v.Target.IsUnderAnyStatus(TranceSeekStatus.Dragon) && !v.Caster.IsUnderStatus(BattleStatus.Trance) && v.Command.Id == BattleCommandId.DragonAct && v.Command.AbilityId != BattleAbilityId.Luna)
+                {
+                    float DragonRemove = v.Caster.HasSupportAbilityByIndex((SupportAbility)1122) ? 25 : (v.Caster.HasSupportAbilityByIndex((SupportAbility)122) ? 12.5f : 0); // Eye of the dragon
+                    if (DragonRemove < Comn.random16() % 100)
+                        btl_stat.AlterStatus(v.Target, TranceSeekStatusId.Dragon, v.Caster, parameters: "Remove");
+                }
+                else if (v.Command.Id == BattleCommandId.Attack || (v.Command.Id == BattleCommandId.DragonAct && !v.Target.IsUnderAnyStatus(TranceSeekStatus.Dragon) && v.Command.AbilityId != BattleAbilityId.Luna))
+                {
+                    TryApplyDragon(v);
+                }
+            }
+        }
         public static void CharacterBonusPassive(this BattleCalculator v, string mode = "") // [TODO] Rename + delete this from most functions (deprecaticed old Beatrix passive)
         {
             if (v.Caster.PlayerIndex == CharacterId.Marcus)
@@ -1423,13 +1453,6 @@ namespace Memoria.Scripts.Battle
 
             if (v.Caster.HasSupportAbility(SupportAbility1.ReflectNull) && v.Target.IsUnderAnyStatus(BattleStatus.Reflect) && !v.Caster.HasSupportAbilityByIndex((SupportAbility)1030))
                 v.Target.HpDamage >>= 1;
-
-            if (v.Target.IsUnderAnyStatus(TranceSeekStatus.Dragon) && !v.Caster.IsUnderStatus(BattleStatus.Trance) && v.Command.Id == BattleCommandId.DragonAct && v.Command.AbilityId != BattleAbilityId.Luna)
-            {
-                float DragonRemove = v.Caster.HasSupportAbilityByIndex((SupportAbility)1122) ? 25 : (v.Caster.HasSupportAbilityByIndex((SupportAbility)122) ? 12.5f : 0); // Eye of the dragon
-                if (DragonRemove < Comn.random16() % 100)
-                    btl_stat.AlterStatus(v.Target, TranceSeekStatusId.Dragon, v.Caster, parameters: "Remove");
-            }
 
             if (v.Command.Id == (BattleCommandId)1032) // SA Witchcraft
             {

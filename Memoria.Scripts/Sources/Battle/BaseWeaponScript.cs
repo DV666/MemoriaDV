@@ -32,6 +32,7 @@ namespace Memoria.Scripts.Battle
             else if (!_v.Target.TryKillFrozen())
             {
                 Attack();
+                DragonSkillScript.ReiWrathTrigger(_v);
             }
         }
 
@@ -114,7 +115,6 @@ namespace Memoria.Scripts.Battle
                     else
                     {
                         TranceSeekAPI.TryCriticalHit(_v);
-                        TranceSeekAPI.TryApplyDragon(_v);
                     }
                     if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)229) && (_v.Target.Flags & CalcFlag.Critical) != 0) // SA Lethality
                     {

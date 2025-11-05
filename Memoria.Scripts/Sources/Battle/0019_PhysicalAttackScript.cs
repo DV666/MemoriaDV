@@ -48,49 +48,61 @@ namespace Memoria.Scripts.Battle
             TranceSeekAPI.BonusElement(_v);
             if (_v.CanAttackMagic())
             {
-                if (_v.Command.AbilityId == BattleAbilityId.CherryBlossom)
+                _v.CalcHpDamage();
+
+                if (_v.Command.Id == BattleCommandId.DragonAct)
                 {
+                    if (_v.Command.AbilityId == TranceSeekBattleAbility.Geirskögul)
+                        _v.Target.HpDamage /= 3;
+
                     if (_v.Target.IsUnderAnyStatus(TranceSeekStatus.Dragon) || (_v.Caster.IsUnderStatus(BattleStatus.Trance)))
                     {
-                        if (_v.Target.IsUnderAnyStatus(BattleStatus.Poison))
-                            _v.Target.TryAlterStatuses(BattleStatus.Venom, false, _v.Caster);
-                        else
-                            TranceSeekAPI.TryAlterMagicStatuses(_v);
+                        switch (_v.Command.AbilityId)
+                        {
+                            case BattleAbilityId.CherryBlossom:
+                                if (_v.Target.IsUnderAnyStatus(BattleStatus.Poison))
+                                    _v.Target.TryAlterStatuses(BattleStatus.Venom, false, _v.Caster);
+                                else
+                                    TranceSeekAPI.TryAlterMagicStatuses(_v);
+                                break;
+                            case BattleAbilityId.DragonCrest:
+                                _v.Target.TryAlterStatuses(BattleStatus.Doom, false, _v.Caster);
+                                break;
+                            case TranceSeekBattleAbility.Geirskögul:
+                                TranceSeekAPI.TryCriticalHit(_v, 255);
+                                break;
+
+                        }
                     }
-                    _v.CalcHpDamage();
+                }
+                else if (_v.Command.AbilityId == (BattleAbilityId)1009) // Pluto Charge
+                {
+                    int factorDefense = _v.Caster.PhysicalDefence + (_v.Caster.PhysicalDefence * (TranceSeekAPI.StackBreakOrUpStatus[_v.Caster.Data][2]) / 100);
+                    _v.Target.HpDamage = (_v.Target.HpDamage * factorDefense) / 100;
+                }
+                else if (_v.Command.AbilityId == (BattleAbilityId)1043) // Fury of the general
+                    TranceSeekAPI.TryCriticalHit(_v);
+                else if (_v.Command.AbilityId == BattleAbilityId.DemiShock1 || _v.Command.AbilityId == BattleAbilityId.DemiShock2) // Tobigeri
+                {
+                    if (_v.Caster.IsUnderAnyStatus(BattleStatus.Protect))
+                        _v.Command.AbilityStatus |= BattleStatus.Blind;
+                    if (_v.Caster.IsUnderAnyStatus(BattleStatus.Shell))
+                        _v.Command.AbilityStatus |= BattleStatus.Silence;
+                    if (_v.Caster.IsUnderAnyStatus(BattleStatus.Reflect))
+                        _v.Command.AbilityStatus |= BattleStatus.Trouble;
+                    if (_v.Caster.IsUnderAnyStatus(BattleStatus.Regen))
+                        _v.Command.AbilityStatus |= BattleStatus.Poison;
+                    if (_v.Caster.IsUnderAnyStatus(BattleStatus.AutoLife))
+                        _v.Command.AbilityStatus |= BattleStatus.Doom;
+                    if (_v.Caster.IsUnderAnyStatus(BattleStatus.Vanish))
+                        _v.Command.AbilityStatus |= BattleStatus.Confuse;
+                    if (_v.Caster.IsUnderAnyStatus(BattleStatus.Haste))
+                        _v.Command.AbilityStatus |= BattleStatus.Slow;
+                    if (_v.Caster.IsUnderAnyStatus(BattleStatus.Float))
+                        _v.Command.AbilityStatus |= BattleStatus.GradualPetrify;
                 }
                 else
-                {
-                    _v.CalcHpDamage();
-                    if (_v.Command.AbilityId == (BattleAbilityId)1009) // Pluto Charge
-                    {
-                        int factorDefense = _v.Caster.PhysicalDefence + (_v.Caster.PhysicalDefence * (TranceSeekAPI.StackBreakOrUpStatus[_v.Caster.Data][2]) / 100);
-                        _v.Target.HpDamage = (_v.Target.HpDamage * factorDefense) / 100;
-                    }
-                    else if (_v.Command.AbilityId == (BattleAbilityId)1043) // Fury of the general
-                        TranceSeekAPI.TryCriticalHit(_v);
-                    else if (_v.Command.AbilityId == BattleAbilityId.DemiShock1 || _v.Command.AbilityId == BattleAbilityId.DemiShock2) // Tobigeri
-                    {
-                        if (_v.Caster.IsUnderAnyStatus(BattleStatus.Protect))
-                            _v.Command.AbilityStatus |= BattleStatus.Blind;
-                        if (_v.Caster.IsUnderAnyStatus(BattleStatus.Shell))
-                            _v.Command.AbilityStatus |= BattleStatus.Silence;
-                        if (_v.Caster.IsUnderAnyStatus(BattleStatus.Reflect))
-                            _v.Command.AbilityStatus |= BattleStatus.Trouble;
-                        if (_v.Caster.IsUnderAnyStatus(BattleStatus.Regen))
-                            _v.Command.AbilityStatus |= BattleStatus.Poison;
-                        if (_v.Caster.IsUnderAnyStatus(BattleStatus.AutoLife))
-                            _v.Command.AbilityStatus |= BattleStatus.Doom;
-                        if (_v.Caster.IsUnderAnyStatus(BattleStatus.Vanish))
-                            _v.Command.AbilityStatus |= BattleStatus.Confuse;
-                        if (_v.Caster.IsUnderAnyStatus(BattleStatus.Haste))
-                            _v.Command.AbilityStatus |= BattleStatus.Slow;
-                        if (_v.Caster.IsUnderAnyStatus(BattleStatus.Float))
-                            _v.Command.AbilityStatus |= BattleStatus.GradualPetrify;
-                    }
-                    else
-                        TranceSeekAPI.TryAlterMagicStatuses(_v);
-                }
+                    TranceSeekAPI.TryAlterMagicStatuses(_v);
             }
         }
     }

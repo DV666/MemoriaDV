@@ -2,7 +2,6 @@
 using UnityEngine;
 using Memoria.Data;
 using Object = System.Object;
-using Memoria.Scripts.Battle;
 
 namespace Memoria.DefaultScripts
 {

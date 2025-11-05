@@ -522,6 +522,7 @@ namespace Memoria.Scripts.Battle
                 ZidanePassive[unit.Data] = [0, 0, 0, 0, 0, 255, 255, 0, 0, 0, 0, 0];
                 ViviPreviousSpell[unit.Data] = BattleAbilityId.Void;
                 ViviPassive[unit.Data] = [0, 0, 0];
+                FreyaPassive[unit.Data] = [0];
                 SteinerPassive[unit.Data] = [0, 0, 0, 0];             
                 BeatrixPassive[unit.Data] = [0, 0, 0, 0];
                 ProtectStatus[unit.Data] = new Dictionary<BattleStatus, Int32> { { 0, 0 } };
