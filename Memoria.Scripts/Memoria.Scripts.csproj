@@ -398,6 +398,7 @@
     <Compile Include="Sources\Battle\0140_SummonMonsterScript.cs" />
     <Compile Include="Sources\Battle\0141_MagicWeaponSpecialScript.cs" />
     <Compile Include="Sources\Battle\0164_TranceSeekSpecial.cs" />
+    <Compile Include="Sources\Battle\0222_NewGamePlusScript.cs" />
     <Compile Include="Sources\Battle\0200_MixPotionScript.cs" />
     <Compile Include="Sources\Battle\0201_MixRemedyScript.cs" />
     <Compile Include="Sources\Battle\0202_MixStoneScript.cs" />

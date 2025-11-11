@@ -49,8 +49,12 @@ namespace Memoria.Scripts.Battle
                     v.Target.MpDamage = Math.Max(1, v.Target.MpDamage - malusMPdamage);
             }
 
-            //if (!v.Target.IsPlayer && (v.Target.Data.dms_geo_id == 354 || v.Target.Data.dms_geo_id == 221 || v.Target.Data.dms_geo_id == 83) && v.Command.Element == 0) // Stone monsters
-                //v.Context.DamageModifierCount -= 2;
+            if (v.Caster.IsPlayer && !v.Target.IsPlayer && v.Command.Element == 0 && (v.Target.Flags & CalcFlag.HpRecovery) == 0
+                && (v.Target.Data.dms_geo_id == 354 || v.Target.Data.dms_geo_id == 221 || v.Target.Data.dms_geo_id == 83)) // Stone monsters
+            {
+                v.Context.DamageModifierCount -= 2;
+                SoundLib.PlaySoundEffect(5003); //se770003
+            }
 
             Single modifier_factor = 1f; // [TODO] Make something more cleaner about PowerUp status like here ?
             if (v.Context.DamageModifierCount >= 0)

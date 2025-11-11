@@ -101,7 +101,6 @@ namespace Memoria.Scripts.Battle
                     return;
                 }
             }
-            TranceSeekAPI.DragonMechanic(_v);
         }
 
         public static void ReiWrathTrigger(BattleCalculator v)
