@@ -110,14 +110,6 @@ namespace Memoria.Scripts.Battle
                     v.Context.TranceIncrease = 0;
             }
 
-            if (v.Command.IsManyTarget && v.Command.AbilityId >= (BattleAbilityId)1500 && v.Command.AbilityId <= (BattleAbilityId)1526)
-            {
-                if (v.Caster.HasSupportAbilityByIndex((SupportAbility)1126))
-                    v.Target.HpDamage = (v.Target.HpDamage * 3) / 4;
-                else
-                    v.Target.HpDamage /= 2;
-            }
-
             if (v.Caster.IsUnderAnyStatus(TranceSeekStatus.Special) && v.Command.Id == BattleCommandId.Item && (v.Target.Flags & CalcFlag.HpRecovery) != 0) // Secret ingredient
             {
                 object Secretingredient = v.Caster.GetPropertyByName("StatusProperty CustomStatus21 Secretingredient");

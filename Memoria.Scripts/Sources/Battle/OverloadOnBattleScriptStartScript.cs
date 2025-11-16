@@ -507,6 +507,15 @@ namespace Memoria.Scripts.Battle
                 );
             }
 
+            if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Propagation) && v.Command.IsManyTarget && v.Command.Data.info.effect_counter > 1 && v.Command.AbilityId >= (BattleAbilityId)1499 && v.Command.AbilityId <= (BattleAbilityId)1526)
+            {
+                int CostMP = FF9StateSystem.Battle.FF9Battle.aa_data[v.Command.AbilityId].MP;
+                if (v.Caster.CurrentMp < CostMP)
+                    v.Context.Flags |= TranceSeekBattleCalcFlags.PropagationFail;
+                else
+                    v.Caster.CurrentMp -= (uint)CostMP;
+            }
+
             if (v.Caster.PlayerIndex == (CharacterId)14)
             {
                 CharacterPresetId presetId = v.Caster.Player.PresetId;

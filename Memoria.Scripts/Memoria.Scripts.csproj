@@ -466,6 +466,7 @@
     <Compile Include="Sources\Battle\TranceSeekRegularItem.cs" />
     <Compile Include="Sources\Battle\TranceSeekStatus.cs" />
     <Compile Include="Sources\Battle\TranceSeekStatusId.cs" />
+    <Compile Include="Sources\Battle\TranceSeekBattleCalcFlags.cs" />
     <Compile Include="Sources\Battle\TranceSeekSupportAbility.cs" />
     <Compile Include="Sources\Battle\TranceStatusScript.cs" />
     <Compile Include="Sources\Battle\TroubleStatusScript.cs" />

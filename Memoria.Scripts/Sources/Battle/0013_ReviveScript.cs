@@ -54,13 +54,8 @@ namespace Memoria.Scripts.Battle
                         _v.Target.HpDamage += _v.Caster.HpDamage / (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1100) ? 2 : 4);
 
 
-                    if (_v.Command.IsManyTarget)
-                    {
-                        if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1126))
-                            _v.Target.HpDamage = (_v.Target.HpDamage * 3) / 4;
-                        else
-                            _v.Target.HpDamage /= 2;
-                    }
+                    if (_v.Command.IsManyTarget && !_v.Caster.HasSupportAbilityByIndex((SupportAbility)1126))
+                        _v.Target.HpDamage /= 2;
                 }
                 return;
             }
@@ -99,13 +94,8 @@ namespace Memoria.Scripts.Battle
                 else
                 {
                     _v.Target.HpDamage = (Int32)(_v.Target.MaximumHp * (_v.Target.Will + _v.Command.Power) / 100);
-                    if (_v.Command.IsManyTarget)
-                    {
-                        if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1126))
-                            _v.Target.HpDamage = (_v.Target.HpDamage * 3) / 4;
-                        else
-                            _v.Target.HpDamage /= 2;
-                    }
+                    if (_v.Command.IsManyTarget && !_v.Caster.HasSupportAbilityByIndex((SupportAbility)1126))
+                        _v.Target.HpDamage /= 2;
                 }
 
                 if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)100)) // Medecin

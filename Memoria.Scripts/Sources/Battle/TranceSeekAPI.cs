@@ -6,6 +6,7 @@ using Memoria.Assets;
 using Memoria.Data;
 using Memoria.Database;
 using UnityEngine;
+using static SiliconStudio.Social.ResponseData;
 
 namespace Memoria.Scripts.Battle
 {
@@ -141,35 +142,35 @@ namespace Memoria.Scripts.Battle
             if (v.Caster.PlayerIndex == CharacterId.Freya)
             {
                 Int32 quarterWill = v.Caster.Data.elem.wpr >> 2;
-                Int32 bonusdragon = 0;
+                Int32 bonusdragon = 2;
                 switch (v.Caster.Weapon)
                 {
                     case RegularItem.MythrilSpear:
-                        bonusdragon += 4;
+                        bonusdragon = 4;
                         break;
                     case RegularItem.Partisan:
-                        bonusdragon += 5;
+                        bonusdragon = 5;
                         break;
                     case RegularItem.IceLance:
-                        bonusdragon += 6;
+                        bonusdragon = 6;
                         break;
                     case RegularItem.Trident:
-                        bonusdragon += 7;
+                        bonusdragon = 7;
                         break;
                     case RegularItem.HeavyLance:
-                        bonusdragon += 8;
+                        bonusdragon = 8;
                         break;
                     case RegularItem.Obelisk:
-                        bonusdragon += 9;
+                        bonusdragon = 9;
                         break;
                     case RegularItem.HolyLance:
-                        bonusdragon += 10;
+                        bonusdragon = 10;
                         break;
                     case RegularItem.KainLance:
-                        bonusdragon += 12;
+                        bonusdragon = 12;
                         break;
                     case RegularItem.DragonHair:
-                        bonusdragon += 15;
+                        bonusdragon = 15;
                         break;
                 }
 
@@ -661,7 +662,10 @@ namespace Memoria.Scripts.Battle
             ReduceAccuracyEliteMonsters(v);
 
             if (v.Command.HitRate > Comn.random16() % 100)
+            {
                 v.Target.TryAlterStatuses(v.Command.AbilityStatus, false, v.Caster);
+                AlterStatusDurationFromSA(v, v.Command.AbilityStatus);
+            }
 
             SPS_GuardStatus(v);
         }
@@ -934,6 +938,11 @@ namespace Memoria.Scripts.Battle
         {
             ViviFocus(v);
 
+            if ((v.Context.Flags & TranceSeekBattleCalcFlags.PropagationFail) != 0)
+            {
+                v.Context.Flags |= BattleCalcFlags.Miss;
+                return false;
+            }
             if (v.Target.IsUnderAnyStatus(TranceSeekStatus.Runic))
             {
                 v.CalcHpDamage();
@@ -1049,13 +1058,16 @@ namespace Memoria.Scripts.Battle
         {
             if (v.Caster.PlayerIndex == CharacterId.Freya)
             {
-                if (v.Target.IsUnderAnyStatus(TranceSeekStatus.Dragon) && !v.Caster.IsUnderStatus(BattleStatus.Trance) && v.Command.Id == BattleCommandId.DragonAct && v.Command.AbilityId != BattleAbilityId.Luna)
+                if (v.Command.AbilityId == BattleAbilityId.Luna) // Luna effect handle in 0079_DragonSkillScript.cs
+                    return;
+
+                if (v.Target.IsUnderAnyStatus(TranceSeekStatus.Dragon) && !v.Caster.IsUnderStatus(BattleStatus.Trance) && v.Command.Id == BattleCommandId.DragonAct)
                 {
                     float DragonRemove = v.Caster.HasSupportAbilityByIndex((SupportAbility)1122) ? 25 : (v.Caster.HasSupportAbilityByIndex((SupportAbility)122) ? 12.5f : 0); // Eye of the dragon
                     if (DragonRemove < Comn.random16() % 100)
                         btl_stat.AlterStatus(v.Target, TranceSeekStatusId.Dragon, v.Caster, parameters: "Remove");
                 }
-                else if (v.Command.Id == BattleCommandId.Attack || (v.Command.Id == BattleCommandId.DragonAct && !v.Target.IsUnderAnyStatus(TranceSeekStatus.Dragon) && v.Command.AbilityId != BattleAbilityId.Luna))
+                else if (v.Command.Id == BattleCommandId.Attack || v.Command.Id == BattleCommandId.Spear || v.Command.Id == BattleCommandId.SpearInTrance || (v.Command.Id == BattleCommandId.DragonAct && !v.Target.IsUnderAnyStatus(TranceSeekStatus.Dragon)))
                 {
                     TryApplyDragon(v);
                 }
@@ -1074,14 +1086,23 @@ namespace Memoria.Scripts.Battle
 
         public static void TryAlterCommandStatuses(this BattleCalculator v, Boolean ChangeContext = true)
         {
-            if (v.Command.AbilityStatus != 0)
+            if (v.Command.AbilityStatus != 0 && (v.Context.Flags & TranceSeekBattleCalcFlags.PropagationFail) == 0)
+            {
                 v.Target.TryAlterStatuses(v.Command.AbilityStatus, ChangeContext, v.Caster);
+                AlterStatusDurationFromSA(v, v.Command.AbilityStatus);
+            }
 
             SPS_GuardStatus(v);
         }
 
         public static void TryRemoveAbilityStatuses(this BattleCalculator v)
         {
+            if ((v.Context.Flags & TranceSeekBattleCalcFlags.PropagationFail) != 0)
+            {
+                v.Context.Flags |= BattleCalcFlags.Miss;
+                return;
+            }
+
             if (v.Caster.HasSupportAbilityByIndex((SupportAbility)249) && v.Command.AbilityStatus > 0) // SA Assistance
             {
                 foreach (BattleStatusId status in v.Command.AbilityStatus.ToStatusList())
@@ -1280,6 +1301,44 @@ namespace Memoria.Scripts.Battle
                     v.Target.Data.stat.conti[statusId] += (Int16)((statusData.ContiCnt * Formula) * v.Target.Data.stat.duration_factor[statusId]);
                 else
                     v.Target.Data.stat.conti[statusId] -= (Int16)((statusData.ContiCnt * Formula) * v.Target.Data.stat.duration_factor[statusId]);
+            }
+        }
+
+        public static void AlterStatusDurationFromSA(this BattleCalculator v, BattleStatus cmd_status)
+        {
+            foreach (BattleStatusId statusId in (BattleStatusConst.ContiCount & v.Command.AbilityStatus).ToStatusList())
+            {
+                BattleStatus status = statusId.ToBattleStatus();
+                BattleStatusDataEntry statusData = FF9StateSystem.Battle.FF9Battle.status_data[statusId];
+
+                Boolean PositiveStatus = (BattleStatusConst.AnyPositive & status) != 0;
+                Boolean NegativeStatus = (BattleStatusConst.AnyNegative & status) != 0;
+
+                int durationfactor = NegativeStatus ? (400 + v.Caster.Will * 2 - v.Target.Will) : (PositiveStatus ? (400 + v.Caster.Will * 3) : 200);
+
+                if (PositiveStatus)
+                {
+                    if (v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.Blessing_Boosted))
+                        durationfactor *= 2;
+                    else if (v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.Blessing))
+                        durationfactor = (3 * durationfactor) / 2;
+
+                    if (v.Caster.PlayerIndex == CharacterId.Garnet && (v.Caster.Accessory == RegularItem.Ruby || v.Caster.InTrance))
+                        durationfactor = durationfactor * (1 + ((ff9item.FF9Item_GetCount(RegularItem.Ruby) + 1) / 200));
+                }
+                if (NegativeStatus)
+                {
+                    if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Persistence_Boosted))
+                        durationfactor = (3 * durationfactor) / 2;
+                    else if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Persistence))
+                        durationfactor = (5 * durationfactor) / 4;
+                }
+
+                if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Propagation) && !v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Propagation_Boosted)
+                    && v.Command.IsManyTarget && v.Command.AbilityId >= (BattleAbilityId)1499 && v.Command.AbilityId <= (BattleAbilityId)1526)
+                    durationfactor /= 2;
+
+                v.Target.Data.stat.conti[statusId] = (Int16)((statusData.ContiCnt * durationfactor) * v.Target.Data.stat.duration_factor[statusId]);
             }
         }
 
