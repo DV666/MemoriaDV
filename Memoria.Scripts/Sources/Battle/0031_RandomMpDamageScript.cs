@@ -85,13 +85,8 @@ namespace Memoria.Scripts.Battle
                     if (_v.Target.IsUnderStatus(BattleStatus.Shell))
                         num /= 2;
 
-                    if (_v.Command.IsManyTarget)
-                    {
-                        if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1126))
-                            num = (num * 3) / 4;
-                        else
-                            num /= 2;
-                    }
+                    if (_v.Command.IsManyTarget && !_v.Caster.HasSupportAbilityByIndex((SupportAbility)1126))
+                        num /= 2;
 
                     _v.Target.MpDamage = num;
                     _v.Caster.MpDamage = num;

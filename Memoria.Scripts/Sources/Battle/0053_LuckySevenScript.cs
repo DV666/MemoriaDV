@@ -34,33 +34,36 @@ namespace Memoria.Scripts.Battle
                 else if (_v.Command.AbilityId == BattleAbilityId.LuckySeven) // Extorquer
                 {
                     int extortgils = 0;
-                    string extortitem = null;
+                    //string extortitem = null;
                     BattleEnemy battleEnemy = BattleEnemy.Find(_v.Target);
                     for (int i = 0; i < 4; i++)
                     {
                         if (battleEnemy.StealableItems[i] != RegularItem.NoItem)
                         {
                             FF9ITEM_DATA item = ff9item._FF9Item_Data[battleEnemy.StealableItems[i]];
-                            extortgils = (int)(_v.Command.Power * item.price) / 100;
-                            extortitem = FF9TextTool.ItemName(battleEnemy.StealableItems[i]);
+                            extortgils += (int)(_v.Command.Power * item.price) / 100;
+                            //extortitem = FF9TextTool.ItemName(battleEnemy.StealableItems[i]);
                             battleEnemy.StealableItems[i] = RegularItem.NoItem;
-                            break;
                         }
                     }
-                    if (extortgils != 0)
+                    if (extortgils > 0)
                     {
-                        Dictionary<String, String> localizedMessage = new Dictionary<String, String>
-                        {
-                          { "US", $"+{extortgils} gils!" },
-                          { "UK", $"+{extortgils} gils!" },
-                          { "JP", $"+{extortgils} ギル!" },
-                          { "ES", $"+{extortgils} guiles!" },
-                          { "FR", $"+{extortgils} gils !" },
-                          { "GR", $"+{extortgils} Gil!" },
-                          { "IT", $"+{extortgils} Guil!" },
-                        };
-                        btl2d.Btl2dReqSymbolMessage(_v.Target.Data, NGUIText.FF9YellowColor, localizedMessage, HUDMessage.MessageStyle.DAMAGE, 5);
                         Dictionary<String, String> BattleMessagesExtort = new Dictionary<String, String>
+                        {
+                          { "US", $"You obtained {extortgils} Gil!" },
+                          { "UK", $"You obtained {extortgils} Gil!" },
+                          { "JP", $"{extortgils}ギルを手に入れた！" },
+                          { "ES", $"¡Has obtenido {extortgils} guiles!" },
+                          { "FR", $"Vous obtenez {extortgils} gils !" },
+                          { "DE", $"Du hast {extortgils} Gil erhalten!" },
+                          { "IT", $"Hai ottenuto {extortgils} Gil!" },
+                        };
+
+                        //btl2d.Btl2dReqSymbolMessage(_v.Target.Data, NGUIText.FF9YellowColor, localizedMessage, HUDMessage.MessageStyle.DAMAGE, 5);
+                        BattleMessagesExtort.TryGetValue(Localization.CurrentSymbol, out string CustomMessage);
+                        UIManager.Battle.SetBattleFollowMessage(4, CustomMessage);
+
+                        /*Dictionary<String, String> BattleMessagesExtort = new Dictionary<String, String>
                         {
                           { "US", $"{extortitem} has been destroyed !" },
                           { "UK", $"{extortitem} has been destroyed !" },
@@ -71,7 +74,7 @@ namespace Memoria.Scripts.Battle
                           { "IT", $"{extortitem} è stato distrutto!" },
                         };
                         BattleMessagesExtort.TryGetValue(Localization.CurrentSymbol, out string CustomMessage);
-                        UIManager.Battle.SetBattleFollowMessage(4, CustomMessage);
+                        UIManager.Battle.SetBattleFollowMessage(4, CustomMessage);*/
                         return;
                     }
                     _v.Context.Flags |= BattleCalcFlags.Miss;

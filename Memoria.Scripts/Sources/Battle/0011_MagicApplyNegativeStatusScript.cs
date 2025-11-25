@@ -23,13 +23,13 @@ namespace Memoria.Scripts.Battle
         {
             if (_v.Command.AbilityId == BattleAbilityId.Doom)
             {
-                if (_v.Target.MagicDefence == 255)
-                {
-                    _v.Context.Flags |= BattleCalcFlags.Guard;
-                    return;
-                }
                 if ((_v.Target.ResistStatus & BattleStatus.Doom) != 0)
                 {
+                    if (_v.Target.MagicDefence == 255)
+                    {
+                        _v.Context.Flags |= BattleCalcFlags.Guard;
+                        return;
+                    }
                     _v.Target.Flags |= CalcFlag.HpAlteration;
                     _v.Target.HpDamage = (int)_v.Caster.CurrentHp;
                     if (_v.Target.IsUnderAnyStatus(BattleStatus.Shell))
