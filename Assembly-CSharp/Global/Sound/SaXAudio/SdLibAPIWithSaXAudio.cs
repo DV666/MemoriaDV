@@ -1,10 +1,9 @@
 ﻿using Memoria.Prime;
 using Memoria.Prime.AKB2;
-using SoLoud;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Runtime.InteropServices;
+using UnityEngine;
 
 namespace Global.Sound.SaXAudio
 {
@@ -45,7 +44,10 @@ namespace Global.Sound.SaXAudio
             BusSoundEffect = SaXAudio.CreateBus();
             BusVoice = SaXAudio.CreateBus();
             AudioEffectManager.Initialize();
-            Log.Message($"[SaXAudio] Initialized");
+            //GameObject go = new GameObject("SaXAudioUpdater");
+            //go.AddComponent<SaXAudio.SaXAudioUpdater>();
+            //GameObject.DontDestroyOnLoad(go);
+            Log.Message($"[SaXAudio] Initialized === BUILD TEST V4.2 FROM DV !");
             return 0;
         }
 

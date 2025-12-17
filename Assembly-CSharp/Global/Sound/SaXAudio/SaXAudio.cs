@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using UnityEngine;
 
 namespace Global.Sound.SaXAudio
 {
@@ -203,6 +204,9 @@ namespace Global.Sound.SaXAudio
         [DllImport("SaXAudio")]
         public static extern UInt32 GetBankCount();
 
+        [DllImport("SaXAudio")]
+        public static extern void FlushGarbage();
+
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate void OnDecodedDelegate(Int32 bankID, IntPtr buffer);
 
@@ -215,6 +219,14 @@ namespace Global.Sound.SaXAudio
         private static void TriggerOnFinished(Int32 voiceID)
         {
             OnVoiceFinished?.Invoke(voiceID);
+        }
+
+        public class SaXAudioUpdater : MonoBehaviour
+        {
+            void Update()
+            {
+                SaXAudio.FlushGarbage();
+            }
         }
     }
 }
