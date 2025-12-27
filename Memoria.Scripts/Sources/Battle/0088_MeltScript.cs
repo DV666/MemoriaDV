@@ -92,6 +92,7 @@ namespace Memoria.Scripts.Battle
                     return;
                 }
                 _v.Target.HpDamage = (Int32)_v.Caster.CurrentHp;
+                TranceSeekAPI.TryAlterMagicStatuses(_v);
             }
 
             if (_v.Caster.CurrentHp != 0)

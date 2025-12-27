@@ -351,7 +351,10 @@
     <Compile Include="Sources\Battle\0102_EnemyMugScript.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Include="Sources\Battle\0103_MagicApplyPositiveStatusScript.cs">
+    <Compile Include="Sources\Battle\0103_MagicApplyPositiveStatusScript - Copier.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
+    <Compile Include="Sources\Battle\0163_SpecialApplyPositiveStatusScript.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
     <Compile Include="Sources\Battle\0104_TonberryKarmaScript.cs">

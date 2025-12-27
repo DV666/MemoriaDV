@@ -105,7 +105,7 @@ namespace Memoria.Scripts.Battle
                 if (_v.Command.AbilityId == BattleAbilityId.Chakra2)
                     _v.Target.RemoveStatus(BattleStatus.Poison | BattleStatus.Silence | BattleStatus.Blind);
 
-                TranceSeekAPI.TryAlterMagicStatuses(_v);
+                TranceSeekAPI.TryAlterCommandStatuses(_v);
             }
         }
     }

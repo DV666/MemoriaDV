@@ -60,6 +60,8 @@ namespace Memoria.DefaultScripts
                 Target.MaximumMp += (Target.MaximumMp / 2);
                 Target.CurrentHp = Target.MaximumHp;
                 Target.CurrentMp = Target.MaximumMp;
+                Target.RemoveStatus(BattleStatusConst.AnyNegative);
+                Target.AlterStatus(BattleStatus.EasyKill);
             }
 
             if (target.HasSupportAbilityByIndex(TranceSeekSupportAbility.HighTide_Boosted))

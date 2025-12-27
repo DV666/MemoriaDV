@@ -26,11 +26,11 @@ namespace Memoria.DefaultScripts
 
         public void OnFinishCommand(CMD_DATA cmd, Int32 tranceDecrease)
         {
-            if (Target.IsUnderAnyStatus(BattleStatus.Heat) && Target.IsUnderAnyStatus(BattleStatus.EasyKill) && Target.CurrentHp > 1) // Heat Damage
+            if (Target.IsUnderAnyStatus(BattleStatus.Heat) && !Target.IsPlayer && Target.CurrentHp > 1) // Heat Damage on monsters
             {
-                UInt32 heat_damage = Target.MaximumHp / 128;
+                UInt32 heat_damage = (uint)(Target.MaximumHp / (Target.IsUnderAnyStatus(BattleStatus.EasyKill) ? 128 : 32));
                 if (TranceSeekAPI.MonsterMechanic[Target.Data][3] > 0)
-                    heat_damage = (Target.MaximumHp - 10000) / 128;
+                    heat_damage = (uint)((Target.MaximumHp - 10000) / (Target.IsUnderAnyStatus(BattleStatus.EasyKill) ? 128 : 32));
                 if (heat_damage > 9999)
                     heat_damage = Math.Max(Target.CurrentHp, 9999);
 
@@ -61,8 +61,9 @@ namespace Memoria.DefaultScripts
             if (cmd.Data.regist != null && (cmd.Data.cmd_no < BattleCommandId.EnemyReaction || cmd.Data.cmd_no > BattleCommandId.BoundaryUpperCheck))
             {
                 BTL_DATA btl = cmd.Data.regist;
+                Boolean FireMonster = ((byte)EffectElement.Fire & btl.def_attr.absorb) != 0 && btl.bi.player == 0;
 
-                if (!btl_stat.CheckStatus(btl, BattleStatus.EasyKill))
+                if (!btl_stat.CheckStatus(btl, BattleStatus.EasyKill) && !FireMonster)
                 {
                     if (btl_stat.CheckStatus(btl, BattleStatus.Heat))
                     {
