@@ -3,7 +3,7 @@
 SetBackgroundIntensity: Intensity=0.5 ; Time=4 ; HoldDuration=89
 ChangeSize: Char=AllTargets ; Size=0.67 ; Time=3 ; ScaleShadow=True
 MoveToPosition: Char=AllTargets ; RelativePosition=(475.0, 1670.0, 261.0) ; MoveHeight=True ; Time=0
-ShowMesh: ShowMesh: Char=MatchingCondition(!IsTargeted && IsTargetable) ; Enable=False ; IsDisappear=True
+ShowMesh: Char=MatchingCondition(!IsTargeted && IsTargetable) ; Enable=False ; IsDisappear=True
 StartThread: Condition=SFXUseCamera && AreTargetsPlayers
 	ShiftWorld: Angle=(0, 180, 0)
 EndThread

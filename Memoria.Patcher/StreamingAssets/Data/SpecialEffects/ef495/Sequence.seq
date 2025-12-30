@@ -19,7 +19,7 @@ PlaySound: Sound=2254
 Wait: Time=9
 ShowMesh: Char=AllNonTargets ; Enable=False ; Time=1
 Wait: Time=1
-ShowMesh: ShowMesh: Char=MatchingCondition(!IsTargeted && IsTargetable) ; Enable=False ; IsDisappear=True
+ShowMesh: Char=MatchingCondition(!IsTargeted && IsTargetable) ; Enable=False ; IsDisappear=True
 Wait: Time=83
 PlaySound: Sound=2447
 PlaySound: Sound=2448
