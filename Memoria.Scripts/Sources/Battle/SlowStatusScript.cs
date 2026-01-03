@@ -19,6 +19,7 @@ namespace Memoria.DefaultScripts
             }
             btl_para.SetupATBCoef(target, btl_para.GetATBCoef() * 2 / 3);
             target.UISpriteATB = BattleHUD.ATEGray;
+            //target.AddDelayedModifier(HalfSpeedAnimation, null);
             TranceSeekAPI.SA_StatusApply(inflicter, false);
             return btl_stat.ALTER_SUCCESS;
         }
@@ -27,6 +28,16 @@ namespace Memoria.DefaultScripts
         {
             btl_para.SetupATBCoef(Target, btl_para.GetATBCoef());
             Target.UISpriteATB = Target.IsUnderAnyStatus(BattleStatus.Stop) ? BattleHUD.ATEGray : Target.IsUnderAnyStatus(BattleStatus.Haste) ? BattleHUD.ATEOrange : BattleHUD.ATENormal;
+            Target.Data.animSpeed = 1f;
+            return true;
+        }
+
+        private Boolean HalfSpeedAnimation(BattleUnit target) // Not perfect, testing for the fun.
+        {
+            if (!target.IsUnderAnyStatus(BattleStatus.Slow))
+                return false;
+
+            target.Data.animSpeed = 0.5f;
             return true;
         }
     }

@@ -26,5 +26,6 @@ namespace Memoria.Scripts.Battle
         public const BattleStatus Runic = BattleStatus.CustomStatus20;
         public const BattleStatus Special = BattleStatus.CustomStatus21;
         public const BattleStatus Provok = BattleStatus.CustomStatus22;
+        public const BattleStatus Charm = BattleStatus.CustomStatus23;
     }
 }

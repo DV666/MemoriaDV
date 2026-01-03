@@ -1,9 +1,10 @@
-﻿using System;
+﻿using FF9;
 using Memoria.Data;
-using FF9;
-using Object = System.Object;
+using Memoria.Database;
 using Memoria.Scripts.Battle;
+using System;
 using System.Collections.Generic;
+using Object = System.Object;
 
 namespace Memoria.DefaultScripts
 {
@@ -35,7 +36,18 @@ namespace Memoria.DefaultScripts
 
             int TargetID = Target.Data.dms_geo_id == 341 ? 15 : btl_util.GetRandomBtlID(1); // Mantis Reaper from Abadon
             if (Target.IsPlayer)
-                btl_cmd.SetCommand(Target.ATBCommand, BattleCommandId.Attack, (Int32)BattleAbilityId.Attack, btl_util.GetRandomBtlID(0), 0u);
+            {
+                BattleCommandId CMDChoosen = BattleCommandId.Attack;
+                BattleAbilityId AAChoosen = BattleAbilityId.Attack;
+                CMDChoosen = BattleCommandHelper.Patch(BattleCommandId.Attack, BattleCommandMenu.Attack, Target.Player, Target);
+
+                if (CharacterCommands.Commands.TryGetValue(CMDChoosen, out CharacterCommand cmdData)) // For special attacks like Vivi's scepters
+                {
+                    BattleAbilityId abilId = cmdData.GetAbilityId(0);
+                    AAChoosen = BattleAbilityHelper.Patch(abilId, Target.Player);
+                }
+                btl_cmd.SetCommand(Target.ATBCommand, CMDChoosen, (Int32)AAChoosen, btl_util.GetRandomBtlID(0), 0u);
+            }
             else
                 btl_cmd.SetEnemyCommand(Target, BattleCommandId.EnemyAtk, Target.EnemyType.p_atk_no, (ushort)TargetID);
             if (Configuration.VoiceActing.Enabled)

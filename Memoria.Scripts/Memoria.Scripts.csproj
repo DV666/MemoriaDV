@@ -351,7 +351,7 @@
     <Compile Include="Sources\Battle\0102_EnemyMugScript.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Include="Sources\Battle\0103_MagicApplyPositiveStatusScript - Copier.cs">
+    <Compile Include="Sources\Battle\0103_MagicApplyPositiveStatusScript.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
     <Compile Include="Sources\Battle\0163_SpecialApplyPositiveStatusScript.cs">
@@ -414,6 +414,7 @@
     <Compile Include="Sources\Battle\BaseWeaponScript.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
+    <Compile Include="Sources\Battle\CharmStatusScript.cs" />
     <Compile Include="Sources\Battle\BerserkStatusScript.cs" />
     <Compile Include="Sources\Battle\BlindStatusScript.cs" />
     <Compile Include="Sources\Battle\BulwarkStatusScript.cs" />

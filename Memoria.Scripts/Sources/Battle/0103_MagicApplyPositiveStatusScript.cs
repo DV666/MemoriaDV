@@ -140,6 +140,14 @@ namespace Memoria.Scripts.Battle
             {
                 btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.PowerUp, parameters: "+4");
             }
+            else if (_v.Command.HitRate == 77 && _v.Command.Power == 77) // Random Good Status
+            {
+                List<BattleStatusId> statuslist = new List<BattleStatusId>();
+                foreach (BattleStatusId status in _v.Command.AbilityStatus.ToStatusList())
+                    statuslist.Add(status);
+
+                btl_stat.AlterStatus(_v.Target, statuslist[GameRandom.Next16() % statuslist.Count], _v.Caster);
+            }
             TranceSeekAPI.TryAlterCommandStatuses(_v);
             if (_v.Command.AbilityId == (BattleAbilityId)1137) // Spring Boots
             {

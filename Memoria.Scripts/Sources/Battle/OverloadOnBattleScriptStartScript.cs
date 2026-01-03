@@ -12,6 +12,24 @@ namespace Memoria.Scripts.Battle
 {
     public class OverloadOnBattleScriptStartScript : IOverloadOnBattleScriptStartScript
     {
+
+        public static readonly BattleStatus[] CustomStatusAAMonster =
+        {
+            TranceSeekStatus.PowerBreak,    // Bit 0 (valeur 1)
+            TranceSeekStatus.MagicBreak,    // Bit 1 (valeur 2)
+            TranceSeekStatus.ArmorBreak,    // Bit 2 (valeur 4)
+            TranceSeekStatus.MentalBreak,   // Bit 3 (valeur 8)
+            TranceSeekStatus.PowerUp,       // Bit 4 (valeur 16)
+            TranceSeekStatus.MagicUp,       // Bit 5 (valeur 32)
+            TranceSeekStatus.ArmorUp,       // Bit 6 (valeur 64)
+            TranceSeekStatus.MentalUp,      // Bit 7 (valeur 128)
+            TranceSeekStatus.Bulwark,       // Bit 8 (valeur 256) -> CustomStatus13
+            TranceSeekStatus.PerfectDodge,  // Bit 9 (valeur 512) -> CustomStatus14
+            TranceSeekStatus.PerfectCrit,   // Bit 10 (valeur 1024) -> CustomStatus15
+            TranceSeekStatus.Vieillissement,// Bit 11 (valeur 2048) -> CustomStatus16
+            TranceSeekStatus.Charm          // Bit 12 (valeur 4096) -> CustomStatus23
+        };
+
         public Boolean OnBattleScriptStart(BattleCalculator v)
         {
             if (MonsterMechanic[v.Target.Data][3] == 1 && v.Target.CurrentHp <= 10000) // Prevent boss to die => Maybe use CustomBattleFlagsMeaning ?
@@ -54,30 +72,10 @@ namespace Memoria.Scripts.Battle
             if (!v.Caster.IsPlayer && v.Command.Data.aa.Vfx2 > 0) // Custom status for monsters (using the Animation 2 value in HW) 
             {
                 ulong AACustomStatus = v.Command.Data.aa.Vfx2;
-                if ((AACustomStatus & 1) != 0)
-                    v.Command.AbilityStatus |= TranceSeekStatus.PowerBreak;
-                if ((AACustomStatus & 2) != 0)
-                    v.Command.AbilityStatus |= TranceSeekStatus.MagicBreak;
-                if ((AACustomStatus & 4) != 0)
-                    v.Command.AbilityStatus |= TranceSeekStatus.ArmorBreak;
-                if ((AACustomStatus & 8) != 0)
-                    v.Command.AbilityStatus |= TranceSeekStatus.MentalBreak;
-                if ((AACustomStatus & 16) != 0)
-                    v.Command.AbilityStatus |= TranceSeekStatus.PowerUp;
-                if ((AACustomStatus & 32) != 0)
-                    v.Command.AbilityStatus |= TranceSeekStatus.MagicUp;
-                if ((AACustomStatus & 64) != 0)
-                    v.Command.AbilityStatus |= TranceSeekStatus.ArmorUp;
-                if ((AACustomStatus & 128) != 0)
-                    v.Command.AbilityStatus |= TranceSeekStatus.MentalUp;
-                if ((AACustomStatus & 256) != 0)
-                    v.Command.AbilityStatus |= TranceSeekStatus.Bulwark;
-                if ((AACustomStatus & 512) != 0)
-                    v.Command.AbilityStatus |= TranceSeekStatus.PerfectDodge;
-                if ((AACustomStatus & 1024) != 0)
-                    v.Command.AbilityStatus |= TranceSeekStatus.PerfectCrit;
-                if ((AACustomStatus & 2048) != 0)
-                    v.Command.AbilityStatus |= TranceSeekStatus.Vieillissement;
+
+                for (int i = 0; i < CustomStatusAAMonster.Length; i++)
+                    if ((AACustomStatus & (1UL << i)) != 0)
+                        v.Command.AbilityStatus |= CustomStatusAAMonster[i];
             }
 
             if (v.Caster.HasSupportAbilityByIndex((SupportAbility)117) && SpecialSAEffect[v.Caster][4] == 0 && v.Caster.IsUnderAnyStatus(BattleStatus.Trance)) // Mode EX

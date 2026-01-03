@@ -30,8 +30,11 @@ namespace Memoria.Scripts.Battle
             SB2_PATTERN sb2Pattern = FF9StateSystem.Battle.FF9Battle.btl_scene.PatAddr[FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum];
             KeyValuePair<Int32, Int32> BattleExID = new KeyValuePair<Int32, Int32>(FF9StateSystem.Battle.battleMapIndex, FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum);
 
-            if (CustomBBGonBattleID.ContainsKey(BattleExID)) // Change BBG for specific, to have a better camera.
-                ChangeBBG(CustomBBGonBattleID[BattleExID]);
+            if (CustomBBGfromBattleID.ContainsKey(BattleExID)) // Change BBG for specific, to have a better camera.
+                ChangeBBG(CustomBBGfromBattleID[BattleExID]);
+
+            if (ChangeDepthBBGfromBattleID.ContainsKey(BattleExID)) // Change BBG for specific, to have a better camera.
+                ChangeDepthBBG(ChangeDepthBBGfromBattleID[BattleExID]);
 
             if (BattleExID.Equals(new KeyValuePair<Int32, Int32>(93, 3))) // Prison Cage + Little Girl
                 HonoluluBattleMain.SetupAttachModel(FF9StateSystem.Battle.FF9Battle.btl_data[4], FF9StateSystem.Battle.FF9Battle.btl_data[5], 55, 25);
@@ -43,6 +46,8 @@ namespace Memoria.Scripts.Battle
                 OverlapSHP.ClearInBattleInit();
                 InitHUDMessageChild = true;
             }
+
+            FF9StateSystem.EventState.gEventGlobal[1544] = 0; // Reset Charm Target
 
             for (Int32 i = 0; i < 8; i++) // CMD Engineer reset
             {
@@ -646,6 +651,16 @@ namespace Memoria.Scripts.Battle
             ff9Battle.map.btlBGPtr.SetActive(true);
         }
 
+        public void ChangeDepthBBG(int depthvalue)
+        {
+            FF9StateBattleSystem ff9Battle = FF9StateSystem.Battle.FF9Battle;
+            foreach (Renderer rend in ff9Battle.map.btlBGPtr.GetComponentsInChildren<Renderer>())
+            {
+                foreach (Material mat in rend.materials)
+                    mat.SetInt("_ZWrite", depthvalue);
+            }
+        }
+
         public static void WriteStuffInFile()
         {
             if (!File.Exists(StuffListedPath))
@@ -806,7 +821,12 @@ namespace Memoria.Scripts.Battle
             { 303, 1 } // Dagga (Plant Brain CD1)
         };
 
-        public static Dictionary<KeyValuePair<Int32, Int32>, String> CustomBBGonBattleID = new Dictionary<KeyValuePair<Int32, Int32>, String>
+        public static Dictionary<KeyValuePair<Int32, Int32>, Int32> ChangeDepthBBGfromBattleID = new Dictionary<KeyValuePair<Int32, Int32>, Int32>
+        {
+            { new KeyValuePair<Int32, Int32>(326, 1), 1 } // Ze Big Bertha + Misty (reason : legs from Ze Big Bertha don't go on the water)
+        };
+
+        public static Dictionary<KeyValuePair<Int32, Int32>, String> CustomBBGfromBattleID = new Dictionary<KeyValuePair<Int32, Int32>, String>
         {
             { new KeyValuePair<Int32, Int32>(299, 1), "BBG_B023" }, // Lindblum boss (Steiner Quest)
             { new KeyValuePair<Int32, Int32>(838, 1), "BBG_B042" }, // Golden Pidove

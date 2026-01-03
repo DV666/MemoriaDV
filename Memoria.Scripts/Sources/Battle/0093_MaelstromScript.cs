@@ -1,5 +1,8 @@
+using Memoria.Data;
 using Memoria.Prime;
 using System;
+using System.Collections;
+using System.Runtime.InteropServices;
 
 namespace Memoria.Scripts.Battle
 {
@@ -20,7 +23,27 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            if (TranceSeekAPI.CheckUnsafetyOrGuard(_v) && _v.Target.CanBeAttacked())
+            if (_v.Command.Power == 111 && _v.Command.HitRate == 111)
+            {
+                uint dice = (uint)(GameRandom.Next8() % 4);
+                if (dice < 3)
+                {
+                    BattleStatusId statusId = dice switch
+                    {
+                        0 => BattleStatusId.Death,
+                        1 => BattleStatusId.Doom,
+                        2 => BattleStatusId.Stop,
+                        _ => BattleStatusId.Death
+                    };
+
+                    btl_stat.AlterStatus(_v.Target, statusId, _v.Caster);
+                }
+                else if (_v.Target.CurrentHp > 1)
+                {
+                    _v.Target.CurrentHp = (uint)(1 + GameRandom.Next8() % _v.Target.CurrentHp);
+                }
+            }
+            else if (TranceSeekAPI.CheckUnsafetyOrGuard(_v) && _v.Target.CanBeAttacked())
             {
                 Boolean ForceMaelstrom = (_v.Command.HitRate == 255);
                 TranceSeekAPI.MagicAccuracy(_v);

@@ -1589,7 +1589,7 @@ namespace Memoria.Scripts.Battle
                 btl2d.Btl2dStatReq(v.Target, 0, -TargetHealMP);
             }
 
-            if ((HealHP > 0 || HealMP > 0) && !v.Caster.IsUnderAnyStatus(BattleStatus.Death) && SpecialSAEffect[v.Caster.Data][7] <= 0)
+            if ((HealHP > 0 || HealMP > 0) && !v.Caster.IsUnderAnyStatus(BattleStatus.Death) && SpecialSAEffect[v.Caster.Data][7] == 0)
             {
                 if (HealHP > 0)
                     v.Caster.CurrentHp = Math.Min(v.Caster.CurrentHp + (uint)HealHP, v.Caster.MaximumHp);

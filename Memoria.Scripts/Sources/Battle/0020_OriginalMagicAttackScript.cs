@@ -120,8 +120,6 @@ namespace Memoria.Scripts.Battle
             }
             TranceSeekAPI.EnemyTranceBonusAttack(_v);
             TranceSeekAPI.BonusElement(_v);
-            Log.Message("Context.EnsureAttack = " + _v.Context.EnsureAttack);
-            Log.Message("Context.EnsurePowerDifference = " + _v.Context.EnsurePowerDifference);
             if (TranceSeekAPI.CanAttackMagic(_v))
             {
                 if (_v.Caster.PlayerIndex == CharacterId.Freya) // Dragon abilities
@@ -177,8 +175,6 @@ namespace Memoria.Scripts.Battle
                     _v.Target.Flags |= (CalcFlag.MpAlteration | CalcFlag.MpRecovery);
                     _v.Target.MpDamage = (_v.Target.HpDamage >> 5);
                 }
-                Log.Message("[NEW] Context.EnsureAttack = " + _v.Context.EnsureAttack);
-                Log.Message("[NEW] Context.EnsurePowerDifference = " + _v.Context.EnsurePowerDifference);
                 _v.CalcHpDamage();
             }
             TranceSeekAPI.InfusedWeaponStatus(_v);

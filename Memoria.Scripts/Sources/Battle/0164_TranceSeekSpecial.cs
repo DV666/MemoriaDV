@@ -18,6 +18,7 @@ namespace Memoria.Scripts.Battle
         public const Int32 Id = 0164;
 
         private readonly BattleCalculator _v;
+        private Transform _berthaCannonBone;
 
         public TranceSeekSpecial(BattleCalculator v)
         {
@@ -306,6 +307,16 @@ namespace Memoria.Scripts.Battle
             {
                 _v.Target.Data.stat.cur = BattleStatus.EasyKill;
             }
+            else if (_v.Command.Power == 48 && _v.Command.HitRate == 48) // Misty jumping on Big Bertha MKIX
+            {
+                if (FF9StateSystem.Battle.FF9Battle.btl_data[4].cur.hp <= 10000) // End of the fight.
+                    FF9StateSystem.EventState.gEventGlobal[1307] = 0;
+                else
+                {
+                    FF9StateSystem.EventState.gEventGlobal[1307] = 1;
+                    _v.Target.AddDelayedModifier(AjustMistyOnBoss, null);
+                }
+            }
             else if (_v.Command.Power == 1 && _v.Command.HitRate == 1 && _v.Caster.Data.dms_geo_id == 405) // Friendly Lady Bug - Wind mechanics
             {
                 int ColorWing = GameRandom.Next16() % 5;
@@ -580,6 +591,48 @@ namespace Memoria.Scripts.Battle
                 }
                 _v.Context.Flags = 0;
             }
+        }
+
+        private Boolean AjustMistyOnBoss(BattleUnit caster)
+        {
+            if (FF9StateSystem.EventState.gEventGlobal[1307] == 0)
+                return false;
+
+            // 1. Récupération des données
+            BTL_DATA bertha = FF9StateSystem.Battle.FF9Battle.btl_data[4];
+            BTL_DATA misty = FF9StateSystem.Battle.FF9Battle.btl_data[5];
+
+            // Sécurité de base
+            if (bertha == null || bertha.gameObject == null || misty == null || misty.gameObject == null)
+                return false;
+
+            // 2. Caching du Bone (Optimisation)
+            // Si on n'a pas encore trouvé le bone, on le cherche maintenant.
+            if (_berthaCannonBone == null)
+            {
+                _berthaCannonBone = bertha.gameObject.transform.GetChildByName("bone018");
+
+                // Si après recherche c'est toujours null (ex: modèle pas chargé), on attend la prochaine frame.
+                if (_berthaCannonBone == null)
+                    return false;
+            }
+
+            // 3. Réglages de décalage
+            // (Tu peux modifier ces valeurs pour ajuster la position visuelle)
+            Vector3 positionOffset = new Vector3(0, 200, -250);
+            Vector3 rotationOffset = new Vector3(0, 180, 180);
+
+            // 4. Calcul et Application
+            // On utilise _berthaCannonBone qui est maintenant mémorisé
+            misty.gameObject.transform.position = _berthaCannonBone.position + (_berthaCannonBone.rotation * positionOffset);
+            misty.gameObject.transform.rotation = _berthaCannonBone.rotation * Quaternion.Euler(rotationOffset);
+
+            // 5. Mise à jour interne du moteur
+            misty.pos[0] = misty.gameObject.transform.position.x;
+            misty.pos[1] = misty.gameObject.transform.position.y;
+            misty.pos[2] = misty.gameObject.transform.position.z;
+
+            return true;
         }
     }
 }
