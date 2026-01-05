@@ -128,14 +128,14 @@ namespace Memoria.Scripts.Battle
                     case (BattleAbilityId)1088: // Indra Blade
                     case (BattleAbilityId)1089: // Varuna Blade
                     {
-                        btl_stat.AlterStatus(v.Caster, TranceSeekStatusId.Rage, parameters: "-2");
+                        btl_stat.AlterStatus(v.Caster, TranceSeekStatusId.Rage, parameters: "-3");
                         break;
                     }
                     case (BattleAbilityId)1078: // Ripping
                     case (BattleAbilityId)1081: // Super Muscles
                     case (BattleAbilityId)1090: // Prithvi Blade
                     {
-                        btl_stat.AlterStatus(v.Caster, TranceSeekStatusId.Rage, parameters: "-3");
+                        btl_stat.AlterStatus(v.Caster, TranceSeekStatusId.Rage, parameters: "-5");
                         break;
                     }
                 }

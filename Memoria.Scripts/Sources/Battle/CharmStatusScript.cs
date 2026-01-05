@@ -28,6 +28,7 @@ namespace Memoria.DefaultScripts
         {
             btl_stat.StatusCommandCancel(Target);
             FF9StateSystem.EventState.gEventGlobal[1544] &= (byte)~Target.Id;
+            Target.CurrentOrientationAngle = Target.DefaultOrientationAngle;
             return true;
         }
 
