@@ -64,13 +64,13 @@ namespace Memoria.EchoS
                 }
                 catch (Exception ex)
                 {
-                    Log.Warning($"Failed to open file '{fullPath}': {ex.Message}");
+                    Log.Message($"Failed to open file '{fullPath}': {ex.Message}");
                     stream = null;
                 }
             }
             else
             {
-                Log.Warning($"[BattleScriptParser] File not found: '{StuffListedPath}'. Please check the path or mod installation.");
+                Log.Message($"[BattleScriptParser] File not found: '{StuffListedPath}'. Please check the path or mod installation.");
             }
 
             if (stream == null)
@@ -95,13 +95,13 @@ namespace Memoria.EchoS
                     BattleSpeakerEx speaker = ParseSpeaker(columns[0]);
                     if (speaker == null)
                     {
-                        Log.Warning($"Speaker missing or invalid at line {lineNumber}");
+                        Log.Message($"Speaker missing or invalid at line {lineNumber}");
                         continue;
                     }
 
                     if (string.IsNullOrEmpty(columns[2]))
                     {
-                        Log.Warning($"Path missing {lineNumber}");
+                        Log.Message($"Path missing {lineNumber}");
                         continue;
                     }
 
@@ -133,7 +133,7 @@ namespace Memoria.EchoS
 
                     if (entry.When == null)
                     {
-                        Log.Warning($"Moment missing or invalid at line {lineNumber}");
+                        Log.Message($"Moment missing or invalid at line {lineNumber}");
                         continue;
                     }
 
@@ -159,7 +159,7 @@ namespace Memoria.EchoS
                         }
                         else
                         {
-                            Log.Warning($"Couldn't parse Context Flags '{columns[16]}' at line {lineNumber}");
+                            Log.Message($"Couldn't parse Context Flags '{columns[16]}' at line {lineNumber}");
                         }
                     }
 
@@ -174,7 +174,7 @@ namespace Memoria.EchoS
                     if (columns[11].Length > 0)
                     {
                         entry.Items = ParseEnumMulti<RegularItem>(columns[11]);
-                        if (entry.Items == null) Log.Warning($"Couldn't parse items '{columns[11]}' at line {lineNumber}");
+                        if (entry.Items == null) Log.Message($"Couldn't parse items '{columns[11]}' at line {lineNumber}");
                     }
 
                     string textVal = columns[3].Trim();
@@ -206,7 +206,7 @@ namespace Memoria.EchoS
                         break;
                     }
                 }
-                if (lines[link.Key].ChainId < 0) Log.Warning($"Couldn't find next line in the chain '{targetPath}'");
+                if (lines[link.Key].ChainId < 0) Log.Message($"Couldn't find next line in the chain '{targetPath}'");
             }
 
             foreach (var link in customChainLinks)
@@ -222,7 +222,7 @@ namespace Memoria.EchoS
                         break;
                     }
                 }
-                if (customLines[link.Key].ChainId < 0) Log.Warning($"Couldn't find next line in the chain '{targetPath}'");
+                if (customLines[link.Key].ChainId < 0) Log.Message($"Couldn't find next line in the chain '{targetPath}'");
             }
 
             Log.Message($"Total lines successfully loaded '{lines.Count + customLines.Count}'");
@@ -237,7 +237,7 @@ namespace Memoria.EchoS
         private static int ParseInt32(string value, int defaultValue)
         {
             if (value.Length == 0) return defaultValue;
-            if (!int.TryParse(value, out int result)) Log.Warning($"Couldn't parse '{value}'");
+            if (!int.TryParse(value, out int result)) LogEchoS.Debug($"Couldn't parse '{value}'");
             return result;
         }
 
@@ -250,7 +250,7 @@ namespace Memoria.EchoS
             }
             catch
             {
-                Log.Warning($"Couldn't parse {typeof(T).Name} '{value}'");
+                Log.Message($"Couldn't parse {typeof(T).Name} '{value}'");
                 return defaultValue;
             }
         }
@@ -270,7 +270,7 @@ namespace Memoria.EchoS
             }
             catch
             {
-                Log.Warning($"Couldn't parse {typeof(T).Name} multi '{value}'");
+                Log.Message($"Couldn't parse {typeof(T).Name} multi '{value}'");
                 return null;
             }
         }
@@ -284,14 +284,12 @@ namespace Memoria.EchoS
 
             string content = value.Trim();
 
-            // Détection de l'exclusion
             if (content.StartsWith("!"))
             {
                 isBlacklist = true;
                 content = content.Substring(1);
             }
 
-            // Découpage par virgules
             string[] parts = content.Split(',');
             List<int> list = new List<int>();
 
@@ -323,7 +321,7 @@ namespace Memoria.EchoS
             }
             catch
             {
-                Log.Warning($"Couldn't parse BattleAbilityId '{value}'");
+                Log.Message($"Couldn't parse BattleAbilityId '{value}'");
                 return null;
             }
         }
@@ -338,7 +336,7 @@ namespace Memoria.EchoS
                 BattleVoice.BattleMoment m = ParseMoment(p.Trim());
                 if ((int)m == 0 && p.Trim() != "0")
                 {
-                    Log.Warning($"Couldn't parse BattleMoment '{p.Trim()}'");
+                    Log.Message($"Couldn't parse BattleMoment '{p.Trim()}'");
                     return null;
                 }
                 list.Add(m);
@@ -409,14 +407,14 @@ namespace Memoria.EchoS
                     {
                         if (!FF9BattleDB.GEO.ContainsKey(modelId))
                         {
-                            Log.Warning($"Invalid model id '{modelId}'");
+                            Log.Message($"Invalid model id '{modelId}'");
                             return null;
                         }
                         speaker.enemyModelId = modelId;
                     }
                     else if (!FF9BattleDB.GEO.TryGetKey(parts[1], out speaker.enemyModelId))
                     {
-                        Log.Warning($"Invalid model name '{parts[1]}'");
+                        Log.Message($"Invalid model name '{parts[1]}'");
                         return null;
                     }
                 }

@@ -90,7 +90,7 @@ namespace Memoria.EchoS
         private static void ListComponents(GameObject go, int indent = 0)
         {
             string indentStr = new string(' ', indent * 4);
-            Log.Message($"[DEBUG] {indentStr}> {go.name} position: {go.transform.localPosition}");
+            LogEchoS.Debug($"[DEBUG] {indentStr}> {go.name} position: {go.transform.localPosition}");
 
             Component[] components = go.GetComponents<Component>();
             if (components != null && components.Length != 0)
@@ -104,11 +104,11 @@ namespace Memoria.EchoS
                     {
                         if (component is UIWidget uiwidget)
                         {
-                            Log.Message($"[DEBUG]   {indentStr}{component} {component.GetType()} w: {uiwidget.width} h: {uiwidget.height} localScale: {component.transform.localScale} localPosition; {component.transform.localPosition}");
+                            LogEchoS.Debug($"[DEBUG]   {indentStr}{component} {component.GetType()} w: {uiwidget.width} h: {uiwidget.height} localScale: {component.transform.localScale} localPosition; {component.transform.localPosition}");
                         }
                         else
                         {
-                            Log.Message($"[DEBUG]   {indentStr}{component} {component.GetType()}");
+                            LogEchoS.Debug($"[DEBUG]   {indentStr}{component} {component.GetType()}");
                         }
                     }
                 }

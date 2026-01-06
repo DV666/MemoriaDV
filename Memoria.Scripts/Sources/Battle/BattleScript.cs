@@ -78,11 +78,11 @@ namespace Memoria.EchoS
                         break;
                     }
                 }
-                Log.Message($"OnBattleInOut {BattleMomentEx.ToString(when)} {focusChar} RNG: {rngIndex}/{count}");
+                LogEchoS.Debug($"OnBattleInOut {BattleMomentEx.ToString(when)} {focusChar} RNG: {rngIndex}/{count}");
             }
             else
             {
-                Log.Message($"OnBattleInOut {BattleMomentEx.ToString(when)} {focusChar}");
+                LogEchoS.Debug($"OnBattleInOut {BattleMomentEx.ToString(when)} {focusChar}");
             }
 
             if (!BattleSystem.CanPlayMoreLines) return true;
@@ -101,7 +101,7 @@ namespace Memoria.EchoS
                         eNames += $"[{StringExtension.RemoveTags(unit.Name)}({unit.Data.dms_geo_id})] ";
                 }
 
-                Log.Message($"BattleId: {FF9StateSystem.Battle.battleMapIndex} Players: {pNames}Enemies: {eNames}");
+                LogEchoS.Debug($"BattleId: {FF9StateSystem.Battle.battleMapIndex} Players: {pNames}Enemies: {eNames}");
                 BattleSystem.InTranceCharacters.Clear();
                 BattleSystem.Flags = 0;
 
@@ -183,7 +183,7 @@ namespace Memoria.EchoS
             string abilityName = StringExtension.RemoveTags(calc.Command.AbilityCastingName ?? "");
             if (string.IsNullOrEmpty(abilityName) && actingChar.IsPlayer) abilityName = calc.Command.AbilityId.ToString();
 
-            Log.Message($"OnBattleAct {BattleMomentEx.ToString(when)} [{StringExtension.RemoveTags(actingChar.Name)}({actingChar.Id})] {calc.Command.Id} [{abilityName}({(int)abilityId})] {calc.Command.TargetType} {(calc.Target != null ? $"[{StringExtension.RemoveTags(calc.Target.Name)}({calc.Target.Id})]" : "")}");
+            LogEchoS.Debug($"OnBattleAct {BattleMomentEx.ToString(when)} [{StringExtension.RemoveTags(actingChar.Name)}({actingChar.Id})] {calc.Command.Id} [{abilityName}({(int)abilityId})] {calc.Command.TargetType} {(calc.Target != null ? $"[{StringExtension.RemoveTags(calc.Target.Name)}({calc.Target.Id})]" : "")}");
 
             if (!BattleSystem.CanPlayMoreLines)
             {
@@ -218,7 +218,7 @@ namespace Memoria.EchoS
 
             if ((int)extraMoment != 0)
             {
-                Log.Message($"OnBattleAct additional When: {extraMoment}");
+                LogEchoS.Debug($"OnBattleAct additional When: {extraMoment}");
                 int extraLine = BattleSystem.GetRandomLine(extraMoment, filter);
                 if (extraLine >= 0) BattleSystem.QueueLine(extraLine, extraMoment);
             }
@@ -232,13 +232,13 @@ namespace Memoria.EchoS
             BattleSystem.OnDeathCalc = null;
             if (hitChar.CurrentHp == 0U)
             {
-                Log.Message($"OnHit {BattleMomentEx.ToString(when)} [{StringExtension.RemoveTags(hitChar.Name)}({hitChar.Id})] died");
+                LogEchoS.Debug($"OnHit {BattleMomentEx.ToString(when)} [{StringExtension.RemoveTags(hitChar.Name)}({hitChar.Id})] died");
                 CheckDeathLowHP(calc);
                 return true;
             }
 
             BattleAbilityId abilityId = calc.Caster.IsPlayer ? calc.Command.AbilityId : (BattleAbilityId)calc.Command.RawIndex;
-            Log.Message($"OnHit {BattleMomentEx.ToString(when)} [{StringExtension.RemoveTags(hitChar.Name)}({hitChar.Id})] {calc.Command.Id} [{StringExtension.RemoveTags(calc.Command.AbilityCastingName ?? "")}({(int)abilityId})]");
+            LogEchoS.Debug($"OnHit {BattleMomentEx.ToString(when)} [{StringExtension.RemoveTags(hitChar.Name)}({hitChar.Id})] {calc.Command.Id} [{StringExtension.RemoveTags(calc.Command.AbilityCastingName ?? "")}({(int)abilityId})]");
 
             uint hitFlags = BattleSystem.Flags | (uint)BattleSystem.GetFlags(calc);
             if (calc.Caster.Data != calc.Target.Data)
@@ -282,14 +282,14 @@ namespace Memoria.EchoS
             bool isDead = target.IsUnderStatus(BattleStatus.Death);
             if (!isDead && target.CurrentHp == 0U && calc.Command.AbilityId != (BattleAbilityId)106)
             {
-                Log.Message($"Death added [{StringExtension.RemoveTags(target.Name)}({target.Id})]");
+                LogEchoS.Debug($"Death added [{StringExtension.RemoveTags(target.Name)}({target.Id})]");
                 OnStatusChangeEx(target, calc, BattleStatusId.Death, (BattleVoice.BattleMoment)18);
                 return;
             }
 
             if (isDead && target.CurrentHp > 0U)
             {
-                Log.Message($"Death removed [{StringExtension.RemoveTags(target.Name)}({target.Id})]");
+                LogEchoS.Debug($"Death removed [{StringExtension.RemoveTags(target.Name)}({target.Id})]");
                 OnStatusChangeEx(target, calc, BattleStatusId.Death, (BattleVoice.BattleMoment)19);
                 return;
             }
@@ -334,7 +334,7 @@ namespace Memoria.EchoS
             if (BattleSystem.PerformingCalc != null && calc != null)
             {
                 string casterName = (calc.Caster != null) ? StringExtension.RemoveTags(calc.Caster.Name) : "null";
-                Log.Message($"Enqueued OnStatusChange {BattleMomentEx.ToString(when)} [{StringExtension.RemoveTags(statusedChar.Name)}({statusedChar.Id})] {status} [{casterName}({calc.Caster?.Id})]");
+                LogEchoS.Debug($"Enqueued OnStatusChange {BattleMomentEx.ToString(when)} [{StringExtension.RemoveTags(statusedChar.Name)}({statusedChar.Id})] {status} [{casterName}({calc.Caster?.Id})]");
 
                 if (!BattleSystem.StatusEvents.ContainsKey(calc.Command)) BattleSystem.StatusEvents[calc.Command] = new List<StatusEventData>();
                 BattleSystem.StatusEvents[calc.Command].Add(new StatusEventData { statusedChar = statusedChar, calc = calc, status = status, when = when });
@@ -352,11 +352,11 @@ namespace Memoria.EchoS
             if (calc != null)
             {
                 string casterName = (calc.Caster != null) ? StringExtension.RemoveTags(calc.Caster.Name) : "null";
-                Log.Message($"OnStatusChange {BattleMomentEx.ToString(when)} [{StringExtension.RemoveTags(statusedChar.Name)}({statusedChar.Id})] {status} [{casterName}({calc.Caster?.Id})]");
+                LogEchoS.Debug($"OnStatusChange {BattleMomentEx.ToString(when)} [{StringExtension.RemoveTags(statusedChar.Name)}({statusedChar.Id})] {status} [{casterName}({calc.Caster?.Id})]");
             }
             else
             {
-                Log.Message($"OnStatusChange {BattleMomentEx.ToString(when)} [{StringExtension.RemoveTags(statusedChar.Name)}({statusedChar.Id})] {status}");
+                LogEchoS.Debug($"OnStatusChange {BattleMomentEx.ToString(when)} [{StringExtension.RemoveTags(statusedChar.Name)}({statusedChar.Id})] {status}");
             }
 
             if (!BattleSystem.CanPlayMoreLines) return true;
@@ -371,7 +371,7 @@ namespace Memoria.EchoS
                 if (status == BattleStatusId.Death && (int)when == 19) BattleSystem.OnDeathCalc = calc;
                 if (status == BattleStatusId.LowHP && (int)when == 18 && BattleSystem.OnDeathCalc == calc)
                 {
-                    Log.Message("OnStatusChange LowHP after revive prevented");
+                    LogEchoS.Debug("OnStatusChange LowHP after revive prevented");
                     BattleSystem.OnDeathCalc = null;
                     return true;
                 }
@@ -408,7 +408,7 @@ namespace Memoria.EchoS
 
         public void OnDialogAudioStart(int voiceId, string text)
         {
-            Log.Message($"OnBattleDialogAudioStart {voiceId} '{text}'");
+            LogEchoS.Debug($"OnBattleDialogAudioStart {voiceId} '{text}'");
             BattleSystem.CurrentPlayingDialog = voiceId;
             BattleSystem.LinesQueue.Clear();
             BattleVoice.StopAllVoices();
@@ -417,7 +417,7 @@ namespace Memoria.EchoS
 
         public void OnDialogAudioEnd(int voiceId, string text)
         {
-            Log.Message($"OnBattleDialogAudioEnd {voiceId} '{text}'");
+            LogEchoS.Debug($"OnBattleDialogAudioEnd {voiceId} '{text}'");
             if (BattleSystem.CurrentPlayingDialog == voiceId) BattleSystem.CurrentPlayingDialog = -1;
         }
     }

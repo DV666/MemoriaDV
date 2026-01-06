@@ -224,7 +224,7 @@ namespace Memoria.EchoS
                 totalWeight *= 3f;
 
             float roll = UnityEngine.Random.Range(0f, totalWeight);
-            Log.Message(string.Format("Selected lines ({0}): {1}RNG: {2}/{3}", weights.Count, debugInfo, roll, totalWeight));
+            LogEchoS.Debug(string.Format("Selected lines ({0}): {1}RNG: {2}/{3}", weights.Count, debugInfo, roll, totalWeight));
 
             float currentRange = 0f;
             foreach (var entry in weights)
@@ -262,7 +262,7 @@ namespace Memoria.EchoS
             {
                 if (LinesQueue.Count > 2)
                 {
-                    Log.Message("Line '" + Lines[i].Path + "' ignored. Queue full");
+                    LogEchoS.Debug("Line '" + Lines[i].Path + "' ignored. Queue full");
                     return;
                 }
 
@@ -273,7 +273,7 @@ namespace Memoria.EchoS
                 if (startPlaying)
                     PlayLine(i, when, PlayNextLine);
                 else
-                    Log.Message("Queueing '" + Lines[i].Path + "'");
+                    LogEchoS.Debug("Queueing '" + Lines[i].Path + "'");
             }
         }
 
@@ -284,12 +284,12 @@ namespace Memoria.EchoS
 
             if (LinesQueue.Count == 0)
             {
-                Log.Message("Chain ended");
+                LogEchoS.Debug("Chain ended");
                 return;
             }
 
             KeyValuePair<int, BattleVoice.BattleMoment> next = LinesQueue.Peek();
-            Log.Message("Playing next line: " + Lines[next.Key].Path);
+            LogEchoS.Debug("Playing next line: " + Lines[next.Key].Path);
             PlayLine(next.Key, next.Value, PlayNextLine);
         }
 
@@ -312,7 +312,7 @@ namespace Memoria.EchoS
                             return;
                         }
                     }
-                    Log.Message(string.Format("Cancelled queued line '{0}' ({1})", Lines[i].Path, (timeout <= 0) ? "timeout" : "dialog"));
+                    LogEchoS.Debug(string.Format("Cancelled queued line '{0}' ({1})", Lines[i].Path, (timeout <= 0) ? "timeout" : "dialog"));
                     onFinishedPlaying?.Invoke();
                 }).Start();
                 return;
@@ -353,7 +353,7 @@ namespace Memoria.EchoS
                         needsTranceEffect = true;
                 }
 
-                Log.Message("Starting '" + path + "'" + ((onFinishedPlaying != null) ? " with a chain" : ""));
+                LogEchoS.Debug("Starting '" + path + "'" + ((onFinishedPlaying != null) ? " with a chain" : ""));
                 AddToPlayedLines(i);
 
                 bool soundStarted = false;
@@ -402,7 +402,7 @@ namespace Memoria.EchoS
                 return;
             }
 
-            Log.Message(string.Format("Couldn't find battle unit '{0}'", Lines[i].Speaker));
+            LogEchoS.Debug(string.Format("Couldn't find battle unit '{0}'", Lines[i].Speaker));
             onFinishedPlaying?.Invoke();
         }
 
