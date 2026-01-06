@@ -342,18 +342,17 @@ namespace Memoria.EchoS
             if (speaker != null)
             {
                 string path = Lines[i].Path;
-                bool needsTranceEffect = false;
-                if (InTranceCharacters.Contains(speaker.Data) && when != (BattleVoice.BattleMoment)BattleMomentEx.TranceEnter && when != (BattleVoice.BattleMoment)BattleMomentEx.TranceLeave)
+                bool isTrance = InTranceCharacters.Contains(speaker.Data);
+
+                if (isTrance && when != (BattleVoice.BattleMoment)BattleMomentEx.TranceEnter && when != (BattleVoice.BattleMoment)BattleMomentEx.TranceLeave)
                 {
                     string trancePath = path.Replace("/", "(Trance)/");
                     string fullPath = "Voices/" + Localization.CurrentSymbol + "/Battle/" + trancePath;
                     if (AssetManager.HasAssetOnDisc("Sounds/" + fullPath + ".akb", true, true) || AssetManager.HasAssetOnDisc("Sounds/" + fullPath + ".ogg", true, false))
                         path = trancePath;
-                    else
-                        needsTranceEffect = true;
                 }
 
-                LogEchoS.Debug("Starting '" + path + "'" + ((onFinishedPlaying != null) ? " with a chain" : ""));
+                Log.Message("Starting '" + path + "'" + ((onFinishedPlaying != null) ? " with a chain" : ""));
                 AddToPlayedLines(i);
 
                 bool soundStarted = false;
@@ -373,28 +372,34 @@ namespace Memoria.EchoS
 
                     if (speaker.IsPlayer)
                     {
-                        if (needsTranceEffect)
+                        string charName = speaker.PlayerIndex.ToString();
+                        BattleStatus currentStatuses = speaker.CurrentStatus;
+
+                        foreach (BattleStatus status in Enum.GetValues(typeof(BattleStatus)))
                         {
-                            AudioEffectManager.EffectPreset? preset = AudioEffectManager.GetUnlistedPreset(string.Format("Trance{0}", speaker.PlayerIndex));
-                            if (preset != null)
-                                AudioEffectManager.ApplyPresetOnSound(preset.Value, soundId, path, 0f);
-                        }
-                        if (speaker.IsPlayer && speaker.IsUnderStatus(BattleStatus.Mini))
-                        {
-                            ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetPitch(soundId, 1.25f, 0);
+                            if ((currentStatuses & status) != 0)
+                            {
+                                string presetKey = status.ToString() + charName;
+                                AudioEffectManager.EffectPreset? preset = AudioEffectManager.GetUnlistedPreset(presetKey);
+
+                                if (preset != null)
+                                {
+                                    AudioEffectManager.ApplyPresetOnSound(preset.Value, soundId, path, 0f);
+                                    break;
+                                }
+                            }
                         }
                     }
+
                     PersistenSingleton<BattleSubtitles>.Instance.Show(speaker, "“" + Lines[i].Text + "”");
                 }
                 else
                 {
                     PersistenSingleton<BattleSubtitles>.Instance.Show(speaker, "“" + Lines[i].Text + "”");
-
                     new Thread(delegate ()
                     {
                         int waitTime = 2000 + (Lines[i].Text.Length * 50);
                         Thread.Sleep(waitTime);
-
                         PersistenSingleton<BattleSubtitles>.Instance.Hide(speaker.Id, "“" + Lines[i].Text + "”");
                         onFinishedPlaying?.Invoke();
                     }).Start();
@@ -402,7 +407,7 @@ namespace Memoria.EchoS
                 return;
             }
 
-            LogEchoS.Debug(string.Format("Couldn't find battle unit '{0}'", Lines[i].Speaker));
+            Log.Message(string.Format("Couldn't find battle unit '{0}'", Lines[i].Speaker));
             onFinishedPlaying?.Invoke();
         }
 

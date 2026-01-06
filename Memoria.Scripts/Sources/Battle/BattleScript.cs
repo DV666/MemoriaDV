@@ -49,7 +49,7 @@ namespace Memoria.EchoS
             }
 
             CharacterId focusChar = BattleVoice.VictoryFocusIndex;
-            if ((int)when == 4 && focusChar != CharacterId.NONE && BattleState.BattleUnitCount(true) > 1)
+            if (when == BattleVoice.BattleMoment.VictoryPose && focusChar != CharacterId.NONE && BattleState.BattleUnitCount(true) > 1)
             {
                 bool onlyOneSurvivor = true;
                 for (int j = 0; j < 4; j++)
@@ -87,7 +87,7 @@ namespace Memoria.EchoS
 
             if (!BattleSystem.CanPlayMoreLines) return true;
 
-            if ((int)when == 1)
+            if (when == BattleVoice.BattleMoment.BattleStart)
             {
                 PersistenSingleton<BattleSubtitles>.Instance.ClearAll();
                 string pNames = "";
@@ -118,7 +118,7 @@ namespace Memoria.EchoS
 
             uint currentFlags = BattleSystem.Flags;
             BattleSystem.QueueLine(BattleSystem.GetRandomLine(when, (i, moment) =>
-                BattleSystem.CommonChecks(i, moment, currentFlags, null, ((int)when == 2) ? BattleStatusId.Silence : (BattleStatusId)(-1)) &&
+                BattleSystem.CommonChecks(i, moment, currentFlags, null, (when == BattleVoice.BattleMoment.GameOver) ? BattleStatusId.Silence : (BattleStatusId)(-1)) &&
                 (!BattleSystem.Lines[i].Speaker.CheckIsPlayer || focusChar == CharacterId.NONE || focusChar == BattleSystem.Lines[i].Speaker.playerId)), when);
 
             return true;
@@ -129,7 +129,7 @@ namespace Memoria.EchoS
             BattleSystem.HasFirstActHappened = true;
             bool isFinished = false;
 
-            if ((int)when == 11)
+            if (when == BattleVoice.BattleMoment.HitEffect)
             {
                 if (calc.Command.Id == BattleCommandId.Steal)
                 {
@@ -154,9 +154,9 @@ namespace Memoria.EchoS
                 BattleSystem.PerformingCalc = null;
             }
 
-            if ((int)when == 9)
+            if (when == BattleVoice.BattleMoment.CommandPerform)
             {
-                if (calc.Command.Id == (BattleCommandId)59)
+                if (calc.Command.Id == BattleCommandId.SysTrans)
                 {
                     if (actingChar.InTrance)
                     {
@@ -209,14 +209,14 @@ namespace Memoria.EchoS
             BattleSystem.QueueLine(BattleSystem.GetRandomLine(when, filter), when);
 
             BattleVoice.BattleMoment extraMoment = 0;
-            if ((int)when == 11)
+            if (when == BattleVoice.BattleMoment.HitEffect)
             {
                 if (calc.Target != null && calc.Target.CurrentHp <= 0U) extraMoment = BattleMomentEx.KillEffect;
                 else if ((calc.Context.Flags & BattleCalcFlags.Dodge) != 0) extraMoment = BattleMomentEx.DodgeEffect;
                 else if ((calc.Context.Flags & BattleCalcFlags.Miss) != 0) extraMoment = BattleMomentEx.MissEffect;
             }
 
-            if ((int)extraMoment != 0)
+            if (extraMoment != BattleVoice.BattleMoment.Unknown)
             {
                 LogEchoS.Debug($"OnBattleAct additional When: {extraMoment}");
                 int extraLine = BattleSystem.GetRandomLine(extraMoment, filter);
@@ -368,8 +368,8 @@ namespace Memoria.EchoS
             {
                 statusFlags |= (uint)BattleSystem.GetFlags(calc);
                 statusFlags |= (uint)(calc.Caster.IsPlayer ? LineEntryFlag.Ally : LineEntryFlag.Enemy);
-                if (status == BattleStatusId.Death && (int)when == 19) BattleSystem.OnDeathCalc = calc;
-                if (status == BattleStatusId.LowHP && (int)when == 18 && BattleSystem.OnDeathCalc == calc)
+                if (status == BattleStatusId.Death && when == BattleVoice.BattleMoment.Removed && BattleSystem.OnDeathCalc == calc);
+                if (status == BattleStatusId.LowHP && when == BattleVoice.BattleMoment.Added && BattleSystem.OnDeathCalc == calc)
                 {
                     LogEchoS.Debug("OnStatusChange LowHP after revive prevented");
                     BattleSystem.OnDeathCalc = null;
