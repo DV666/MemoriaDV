@@ -126,10 +126,30 @@ namespace Memoria.EchoS
                         BattleIdIsBlacklist = bBlacklist,
                         ScenarioMin = ParseInt32(columns[14], 0),
                         ScenarioMax = ParseInt32(columns[15], 0),
-                        CommandId = ParseEnumMulti<BattleCommandId>(columns[8]),
-                        Abilities = ParseAbilities(columns[12]),
                         Statuses = ParseEnumMulti<BattleStatusId>(columns[10])
                     };
+
+                    string commandIdRaw = columns[8].Trim();
+                    if (!string.IsNullOrEmpty(commandIdRaw))
+                    {
+                        if (commandIdRaw.StartsWith("!"))
+                        {
+                            entry.CommandIdIsBlacklist = true;
+                            commandIdRaw = commandIdRaw.Substring(1).Trim();
+                        }
+                        entry.CommandId = ParseEnumMulti<BattleCommandId>(commandIdRaw);
+                    }
+
+                    string abilitiesRaw = columns[12].Trim();
+                    if (!string.IsNullOrEmpty(abilitiesRaw))
+                    {
+                        if (abilitiesRaw.StartsWith("!"))
+                        {
+                            entry.AbilitiesIsBlacklist = true;
+                            abilitiesRaw = abilitiesRaw.Substring(1).Trim();
+                        }
+                        entry.Abilities = ParseAbilities(abilitiesRaw);
+                    }
 
                     if (entry.When == null)
                     {

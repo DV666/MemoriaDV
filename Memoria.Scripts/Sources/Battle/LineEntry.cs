@@ -35,6 +35,9 @@ namespace Memoria.EchoS
 
         public BattleAbilityId[] Abilities;
 
+        public bool CommandIdIsBlacklist;
+        public bool AbilitiesIsBlacklist;
+
         public BattleStatusId[] Statuses;
 
         public BattleCalcFlags ContextFlags;

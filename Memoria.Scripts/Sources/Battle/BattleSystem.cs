@@ -3,9 +3,9 @@ using Memoria.Assets;
 using Memoria.Data;
 using Memoria.Prime;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using UnityEngine;
 
 namespace Memoria.EchoS
@@ -17,6 +17,35 @@ namespace Memoria.EchoS
         public static bool IsBackAttack => FF9StateSystem.Battle.FF9Battle.btl_scene.Info.StartType == battle_start_type_tags.BTL_START_BACK_ATTACK;
 
         public static bool CanPlayMoreLines => CurrentPlayingDialog < 0;
+
+        public static Dictionary<int, AudioEffectManager.EffectPreset> PresetCache = new Dictionary<int, AudioEffectManager.EffectPreset>();
+        private static bool _cacheInitialized = false;
+
+        private static void InitializePresetCache()
+        {
+            if (_cacheInitialized) return;
+            PresetCache.Clear();
+
+            for (int i = 0; i < 4; i++)
+            {
+                foreach (CharacterId charId in new CharacterId[] { CharacterId.Zidane, CharacterId.Vivi, CharacterId.Garnet, CharacterId.Steiner, CharacterId.Freya, CharacterId.Quina, CharacterId.Eiko, CharacterId.Amarant, CharacterId.Beatrix })
+                {
+                    string charName = charId.ToString();
+                    foreach (BattleStatus status in Enum.GetValues(typeof(BattleStatus)))
+                    {
+                        string key = status.ToString() + charName;
+                        var preset = AudioEffectManager.GetUnlistedPreset(key);
+                        if (preset != null)
+                        {
+                            int cacheKey = (int)status | ((int)charId << 16);
+                            if (!PresetCache.ContainsKey(cacheKey))
+                                PresetCache.Add(cacheKey, preset.Value);
+                        }
+                    }
+                }
+            }
+            _cacheInitialized = true;
+        }
 
         public static LineEntryFlag GetFlags(BattleCalculator calc)
         {
@@ -224,7 +253,7 @@ namespace Memoria.EchoS
                 totalWeight *= 3f;
 
             float roll = UnityEngine.Random.Range(0f, totalWeight);
-            LogEchoS.Debug(string.Format("Selected lines ({0}): {1}RNG: {2}/{3}", weights.Count, debugInfo, roll, totalWeight));
+            Log.Message(string.Format("Selected lines ({0}): {1}RNG: {2}/{3}", weights.Count, debugInfo, roll, totalWeight));
 
             float currentRange = 0f;
             foreach (var entry in weights)
@@ -262,7 +291,7 @@ namespace Memoria.EchoS
             {
                 if (LinesQueue.Count > 2)
                 {
-                    LogEchoS.Debug("Line '" + Lines[i].Path + "' ignored. Queue full");
+                    Log.Message("Line '" + Lines[i].Path + "' ignored. Queue full");
                     return;
                 }
 
@@ -273,7 +302,7 @@ namespace Memoria.EchoS
                 if (startPlaying)
                     PlayLine(i, when, PlayNextLine);
                 else
-                    LogEchoS.Debug("Queueing '" + Lines[i].Path + "'");
+                    Log.Message("Queueing '" + Lines[i].Path + "'");
             }
         }
 
@@ -284,44 +313,70 @@ namespace Memoria.EchoS
 
             if (LinesQueue.Count == 0)
             {
-                LogEchoS.Debug("Chain ended");
+                Log.Message("Chain ended");
                 return;
             }
 
             KeyValuePair<int, BattleVoice.BattleMoment> next = LinesQueue.Peek();
-            LogEchoS.Debug("Playing next line: " + Lines[next.Key].Path);
+            Log.Message("Playing next line: " + Lines[next.Key].Path);
             PlayLine(next.Key, next.Value, PlayNextLine);
+        }
+
+        private static IEnumerator WaitForVoiceRoutine(int i, BattleVoice.BattleMoment when, Action onFinishedPlaying)
+        {
+            yield return new WaitForSeconds(0.1f);
+            float timeout = 3.0f;
+
+            while (timeout > 0)
+            {
+                yield return new WaitForSeconds(0.05f);
+                timeout -= 0.05f;
+
+                if (CurrentPlayingDialog >= 0) break;
+
+                if (BattleVoice.GetPlayingVoicesCount() == 0)
+                {
+                    PlayLineNow(i, when, onFinishedPlaying);
+                    yield break;
+                }
+            }
+
+            Log.Message(string.Format("Cancelled queued line '{0}' ({1})", Lines[i].Path, (timeout <= 0) ? "timeout" : "dialog"));
+            onFinishedPlaying?.Invoke();
         }
 
         private static void PlayLine(int i, BattleVoice.BattleMoment when, Action onFinishedPlaying = null)
         {
             if (Lines[i].IsVerbal && (CurrentPlayingDialog >= 0 || BattleVoice.GetPlayingVoicesCount() > 0))
             {
-                new Thread(delegate ()
+                if (PersistenSingleton<BattleSubtitles>.Instance != null)
                 {
-                    Thread.Sleep(100);
-                    int timeout = 3000;
-                    while (timeout > 0)
-                    {
-                        Thread.Sleep(50);
-                        timeout -= 50;
-                        if (CurrentPlayingDialog >= 0) break;
-                        if (BattleVoice.GetPlayingVoicesCount() == 0)
-                        {
-                            PlayLineNow(i, when, onFinishedPlaying);
-                            return;
-                        }
-                    }
-                    LogEchoS.Debug(string.Format("Cancelled queued line '{0}' ({1})", Lines[i].Path, (timeout <= 0) ? "timeout" : "dialog"));
+                    PersistenSingleton<BattleSubtitles>.Instance.StartCoroutine(WaitForVoiceRoutine(i, when, onFinishedPlaying));
+                }
+                else
+                {
                     onFinishedPlaying?.Invoke();
-                }).Start();
+                }
                 return;
             }
             PlayLineNow(i, when, onFinishedPlaying);
         }
 
+        private static IEnumerator WaitAndHideRoutine(int speakerId, string text, float seconds, Action onFinished)
+        {
+            yield return new WaitForSeconds(seconds);
+            if (PersistenSingleton<BattleSubtitles>.Instance != null)
+            {
+                string displayText = text != null ? "“" + text + "”" : "";
+                PersistenSingleton<BattleSubtitles>.Instance.Hide((ushort)speakerId, displayText);
+            }
+            onFinished?.Invoke();
+        }
+
         private static void PlayLineNow(int i, BattleVoice.BattleMoment when, Action onFinishedPlaying)
         {
+            if (!_cacheInitialized) InitializePresetCache();
+
             BattleUnit speaker = null;
             if (!Lines[i].Speaker.CheckCanTalk && Lines[i].With != null)
             {
@@ -356,13 +411,15 @@ namespace Memoria.EchoS
                 AddToPlayedLines(i);
 
                 bool soundStarted = false;
+                string displayText = Lines[i].Text != null ? "“" + Lines[i].Text + "”" : "";
 
                 int soundId = BattleVoice.PlayVoice(speaker, "Battle/" + path, AdjustPriority(when, Lines[i].Priority), delegate ()
                 {
                     if (soundStarted)
                     {
                         onFinishedPlaying?.Invoke();
-                        PersistenSingleton<BattleSubtitles>.Instance.Hide(speaker.Id, "“" + Lines[i].Text + "”");
+                        if (PersistenSingleton<BattleSubtitles>.Instance != null)
+                            PersistenSingleton<BattleSubtitles>.Instance.Hide(speaker.Id, displayText);
                     }
                 });
 
@@ -372,37 +429,43 @@ namespace Memoria.EchoS
 
                     if (speaker.IsPlayer)
                     {
-                        string charName = speaker.PlayerIndex.ToString();
                         BattleStatus currentStatuses = speaker.CurrentStatus;
+                        int speakerIdShifted = (int)speaker.PlayerIndex << 16;
 
-                        foreach (BattleStatus status in Enum.GetValues(typeof(BattleStatus)))
+                        foreach (var kvp in PresetCache)
                         {
-                            if ((currentStatuses & status) != 0)
-                            {
-                                string presetKey = status.ToString() + charName;
-                                AudioEffectManager.EffectPreset? preset = AudioEffectManager.GetUnlistedPreset(presetKey);
+                            if ((kvp.Key & 0xFFFF0000) != speakerIdShifted) continue;
 
-                                if (preset != null)
-                                {
-                                    AudioEffectManager.ApplyPresetOnSound(preset.Value, soundId, path, 0f);
-                                    break;
-                                }
+                            int statusInt = kvp.Key & 0xFFFF;
+                            if (((int)currentStatuses & statusInt) != 0)
+                            {
+                                AudioEffectManager.ApplyPresetOnSound(kvp.Value, soundId, path, 0f);
+                                break;
                             }
                         }
                     }
 
-                    PersistenSingleton<BattleSubtitles>.Instance.Show(speaker, "“" + Lines[i].Text + "”");
+                    if (PersistenSingleton<BattleSubtitles>.Instance != null && !string.IsNullOrEmpty(Lines[i].Text))
+                        PersistenSingleton<BattleSubtitles>.Instance.Show(speaker, displayText);
                 }
                 else
                 {
-                    PersistenSingleton<BattleSubtitles>.Instance.Show(speaker, "“" + Lines[i].Text + "”");
-                    new Thread(delegate ()
+                    Log.Message($"[Echo-S] Audio file missing for {speaker.Name} ! => Battle/{path}");
+
+                    if (PersistenSingleton<BattleSubtitles>.Instance != null && !string.IsNullOrEmpty(Lines[i].Text))
+                        PersistenSingleton<BattleSubtitles>.Instance.Show(speaker, displayText);
+
+                    float textLength = Lines[i].Text != null ? Lines[i].Text.Length : 0;
+                    float waitTime = 2.0f + (textLength * 0.05f);
+
+                    if (PersistenSingleton<BattleSubtitles>.Instance != null)
                     {
-                        int waitTime = 2000 + (Lines[i].Text.Length * 50);
-                        Thread.Sleep(waitTime);
-                        PersistenSingleton<BattleSubtitles>.Instance.Hide(speaker.Id, "“" + Lines[i].Text + "”");
+                        PersistenSingleton<BattleSubtitles>.Instance.StartCoroutine(WaitAndHideRoutine(speaker.Id, Lines[i].Text, waitTime, onFinishedPlaying));
+                    }
+                    else
+                    {
                         onFinishedPlaying?.Invoke();
-                    }).Start();
+                    }
                 }
                 return;
             }
@@ -419,13 +482,30 @@ namespace Memoria.EchoS
 
         private static int AdjustPriority(BattleVoice.BattleMoment moment, int priority)
         {
-            if ((int)moment == 4) return priority + 2000;
-            if (((int)moment >= 1 && (int)moment <= 8) || moment == (BattleVoice.BattleMoment)BattleMomentEx.VictoryPoseSurvivor || moment == (BattleVoice.BattleMoment)BattleMomentEx.TranceEnter || moment == (BattleVoice.BattleMoment)BattleMomentEx.TranceLeave)
+            if (moment == BattleVoice.BattleMoment.VictoryPose)
+                return priority + 2000;
+
+            if ((moment >= BattleVoice.BattleMoment.BattleStart && moment <= BattleVoice.BattleMoment.EnemyEscape) ||
+                moment == (BattleVoice.BattleMoment)BattleMomentEx.VictoryPoseSurvivor ||
+                moment == (BattleVoice.BattleMoment)BattleMomentEx.TranceEnter ||
+                moment == (BattleVoice.BattleMoment)BattleMomentEx.TranceLeave)
+            {
                 return priority + 1000;
-            if (moment == (BattleVoice.BattleMoment)BattleMomentEx.KillEffect || moment == (BattleVoice.BattleMoment)BattleMomentEx.MissEffect || moment == (BattleVoice.BattleMoment)BattleMomentEx.DodgeEffect)
+            }
+
+            if (moment == (BattleVoice.BattleMoment)BattleMomentEx.KillEffect ||
+                moment == (BattleVoice.BattleMoment)BattleMomentEx.MissEffect ||
+                moment == (BattleVoice.BattleMoment)BattleMomentEx.DodgeEffect)
+            {
                 return priority + 100;
-            if ((int)moment == 18 || (int)moment == 19) return priority + 100;
-            if ((int)moment >= 13 && (int)moment <= 17) return priority - 100;
+            }
+
+            if (moment == BattleVoice.BattleMoment.Added || moment == BattleVoice.BattleMoment.Removed)
+                return priority + 100;
+
+            if (moment >= BattleVoice.BattleMoment.Damaged && moment <= BattleVoice.BattleMoment.Missed)
+                return priority - 100;
+
             return priority;
         }
 

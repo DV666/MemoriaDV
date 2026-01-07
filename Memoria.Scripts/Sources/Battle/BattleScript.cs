@@ -1,6 +1,8 @@
+using Global.Sound.SaXAudio;
 using Memoria.Data;
 using Memoria.Prime;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -48,6 +50,32 @@ namespace Memoria.EchoS
                 Log.Message($"Cleared all lines but '{BattleSystem.Lines[item.Key].Path}'");
             }
 
+            if (when == BattleVoice.BattleMoment.BattleStart)
+            {
+                BattleSystem.PresetCache.Clear();
+
+                // On pré-calcule pour les 4 persos de l'équipe
+                foreach (BattleUnit unit in BattleState.EnumerateUnits())
+                {
+                    if (!unit.IsPlayer) continue;
+
+                    string charName = unit.PlayerIndex.ToString();
+
+                    foreach (BattleStatus status in Enum.GetValues(typeof(BattleStatus)))
+                    {
+                        string key = status.ToString() + charName;
+
+                        var preset = AudioEffectManager.GetUnlistedPreset(key);
+
+                        if (preset != null)
+                        {
+                            int cacheKey = (int)status | ((int)unit.PlayerIndex << 16);
+                            BattleSystem.PresetCache[cacheKey] = preset.Value;
+                        }
+                    }
+                }
+            }
+
             CharacterId focusChar = BattleVoice.VictoryFocusIndex;
             if (when == BattleVoice.BattleMoment.VictoryPose && focusChar != CharacterId.NONE && BattleState.BattleUnitCount(true) > 1)
             {
@@ -90,18 +118,22 @@ namespace Memoria.EchoS
             if (when == BattleVoice.BattleMoment.BattleStart)
             {
                 PersistenSingleton<BattleSubtitles>.Instance.ClearAll();
-                string pNames = "";
-                string eNames = "";
-                for (BTL_DATA btl = FF9StateSystem.Battle.FF9Battle.btl_list.next; btl != null; btl = btl.next)
+                if (LogEchoS.DebugEnable)
                 {
-                    BattleUnit unit = new BattleUnit(btl);
-                    if (unit.IsPlayer)
-                        pNames += $"[{unit.Name}] ";
-                    else
-                        eNames += $"[{StringExtension.RemoveTags(unit.Name)}({unit.Data.dms_geo_id})] ";
+                    string pNames = "";
+                    string eNames = "";
+                    for (BTL_DATA btl = FF9StateSystem.Battle.FF9Battle.btl_list.next; btl != null; btl = btl.next)
+                    {
+                        BattleUnit unit = new BattleUnit(btl);
+                        if (unit.IsPlayer)
+                            pNames += $"[{unit.Name}] ";
+                        else
+                            eNames += $"[{StringExtension.RemoveTags(unit.Name)}({unit.Data.dms_geo_id})] ";
+                    }
+
+                    LogEchoS.Debug($"BattleId: {FF9StateSystem.Battle.battleMapIndex} Players: {pNames}Enemies: {eNames}");
                 }
 
-                LogEchoS.Debug($"BattleId: {FF9StateSystem.Battle.battleMapIndex} Players: {pNames}Enemies: {eNames}");
                 BattleSystem.InTranceCharacters.Clear();
                 BattleSystem.Flags = 0;
 
@@ -201,8 +233,39 @@ namespace Memoria.EchoS
             {
                 if (!BattleSystem.CommonChecks(i, moment, actFlags, actingChar, (BattleStatusId)(-1))) return false;
                 if (!BattleSystem.CanPlayMoreLines && BattleSystem.Lines[i].IsVerbal) return false;
-                if (BattleSystem.Lines[i].Abilities != null && !BattleSystem.Lines[i].Abilities.Contains(abilityId)) return false;
-                if (BattleSystem.Lines[i].CommandId != null && !BattleSystem.Lines[i].CommandId.Contains(calc.Command.Id)) return false;
+                if (BattleSystem.Lines[i].CommandId != null)
+                {
+                    bool containsCmd = BattleSystem.Lines[i].CommandId.Contains(calc.Command.Id);
+
+                    if (BattleSystem.Lines[i].CommandIdIsBlacklist)
+                    {
+                        if (containsCmd) return false;
+                    }
+                    else
+                    {
+                        if (!containsCmd) return false;
+                    }
+
+                    if ((calc.Command.Id == BattleCommandId.Item || calc.Command.Id == BattleCommandId.AutoPotion) &&
+                        BattleSystem.Lines[i].Items != null && !BattleSystem.Lines[i].Items.Contains(calc.Command.ItemId))
+                    {
+                        return false;
+                    }
+                }
+
+                if (BattleSystem.Lines[i].Abilities != null)
+                {
+                    bool containsAbility = BattleSystem.Lines[i].Abilities.Contains(abilityId);
+
+                    if (BattleSystem.Lines[i].AbilitiesIsBlacklist)
+                    {
+                        if (containsAbility) return false;
+                    }
+                    else
+                    {
+                        if (!containsAbility) return false;
+                    }
+                }
                 return true;
             };
 
@@ -316,14 +379,18 @@ namespace Memoria.EchoS
             if (BattleSystem.StatusEvents.TryGetValue(calc.Command, out List<StatusEventData> events))
             {
                 BattleSystem.StatusEvents.Remove(calc.Command);
-                new Thread(() =>
+
+                if (PersistenSingleton<BattleSubtitles>.Instance != null)
                 {
-                    Thread.Sleep(1);
+                    PersistenSingleton<BattleSubtitles>.Instance.StartCoroutine(ProcessStatusesRoutine(events));
+                }
+                else
+                {
                     foreach (var data in events)
                     {
                         OnStatusChangeEx(data.statusedChar, data.calc, data.status, data.when);
                     }
-                }).Start();
+                }
             }
         }
 
@@ -419,6 +486,16 @@ namespace Memoria.EchoS
         {
             LogEchoS.Debug($"OnBattleDialogAudioEnd {voiceId} '{text}'");
             if (BattleSystem.CurrentPlayingDialog == voiceId) BattleSystem.CurrentPlayingDialog = -1;
+        }
+
+        private IEnumerator ProcessStatusesRoutine(List<StatusEventData> events)
+        {
+            yield return null;
+
+            foreach (var data in events)
+            {
+                OnStatusChangeEx(data.statusedChar, data.calc, data.status, data.when);
+            }
         }
     }
 }
