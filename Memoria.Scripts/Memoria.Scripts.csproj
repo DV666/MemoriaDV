@@ -81,9 +81,6 @@
       <Name>Memoria.Prime</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="Ressources\Memoria.EchoS.BattleLines.tsv" />
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>"$(SolutionDir)\References\pdb2mdb.exe" "$(TargetPath)"</PostBuildEvent>

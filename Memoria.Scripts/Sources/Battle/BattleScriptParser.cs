@@ -12,7 +12,7 @@ namespace Memoria.EchoS
     {
         public static FileSystemWatcher watcher;
         public static bool Loading;
-        private const String StuffListedPath = "[Tsunamods] Echo-S 9/BattleLines.tsv";
+        public static String StuffListedPath = "[Tsunamods] Echo-S 9/BattleLines.tsv";
 
         public static IEnumerable<LineEntry> LoadLines()
         {
@@ -442,7 +442,7 @@ namespace Memoria.EchoS
                 if (parts.Length > 2) statusPart = parts[2];
                 if (statusPart != null)
                 {
-                    speaker.Status = ParseEnum(statusPart, (BattleStatusId)(-1));
+                    speaker.Status = ParseEnum(statusPart, BattleStatusId.None);
                 }
             }
             return speaker;

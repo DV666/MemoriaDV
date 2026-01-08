@@ -140,10 +140,9 @@ namespace Memoria.EchoS
 
             if (speaker != null)
             {
-                if (currentLine.Speaker.CheckIsPlayer)
+                if (currentLine.Speaker.CheckIsPlayer && !currentLine.Speaker.CheckIsCharacter(speaker))
                 {
-                    if (!currentLine.Speaker.CheckIsCharacter(speaker))
-                        return false;
+                    return false;
                 }
                 else if (currentLine.With != null && currentLine.With.Length > 0 && currentLine.With[0].CheckIsPlayer && !currentLine.With[0].CheckIsCharacter(speaker))
                 {
@@ -186,7 +185,8 @@ namespace Memoria.EchoS
                 foreach (BattleSpeakerEx withSpeaker in currentLine.With)
                 {
                     BattleUnit partnerUnit = withSpeaker.FindBattleUnit();
-                    if ((!withSpeaker.Without || partnerUnit == null) && partnerUnit != null && !partnerUnit.IsUnderStatus(BattleStatus.Death) && (withSpeaker.Status == BattleStatusId.None || partnerUnit.IsUnderStatus((BattleStatus)withSpeaker.Status)) && (!withSpeaker.CheckCanTalk || BattleVoice.BattleSpeaker.CheckCanSpeak(partnerUnit, priority, statusException)))
+
+                    if ((!withSpeaker.Without || partnerUnit == null) && partnerUnit != null && !partnerUnit.IsUnderStatus(BattleStatus.Death) && (withSpeaker.Status == BattleStatusId.None || partnerUnit.IsUnderStatus(withSpeaker.Status)) && (!withSpeaker.CheckCanTalk || BattleVoice.BattleSpeaker.CheckCanSpeak(partnerUnit, priority, statusException)))
                     {
                         hasRequiredPartner = true;
                         break;

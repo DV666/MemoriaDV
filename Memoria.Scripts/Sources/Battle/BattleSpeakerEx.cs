@@ -32,7 +32,7 @@ namespace Memoria.EchoS
             return $"{prefix}{enemyBId}:{enemyMId}{statusText}";
         }
 
-        public BattleStatusId Status = (BattleStatusId)(-1);
+        public BattleStatusId Status = BattleStatusId.None;
 
         public bool CheckCanTalk = true;
 

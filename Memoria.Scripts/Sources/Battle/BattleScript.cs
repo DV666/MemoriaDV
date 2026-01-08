@@ -1,9 +1,11 @@
 using Global.Sound.SaXAudio;
+using Memoria.Assets;
 using Memoria.Data;
 using Memoria.Prime;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using UnityEngine;
@@ -12,8 +14,11 @@ namespace Memoria.EchoS
 {
     public class BattleScript : IOverloadVABattleScript
     {
+        private static readonly string EchoSFileIni = "[Tsunamods] Echo-S 9/Echo-S-9.ini";
+
         public void Initialize()
         {
+            LoadConfiguration();
             Log.Message("[Echo-S] Initialize");
 
             BattleVoice.OnBattleInOut += new BattleVoice.BattleInOutDelegate(this.OnBattleInOut);
@@ -36,6 +41,52 @@ namespace Memoria.EchoS
                         return;
                     }
                 }
+            }
+        }
+
+        private void LoadConfiguration()
+        {
+            try
+            {
+                if (File.Exists(EchoSFileIni))
+                {
+                    Log.Message("[Echo-S] Echo-S-9.ini detected. Loading...");
+                    string[] lines = File.ReadAllLines(EchoSFileIni);
+                    foreach (string line in lines)
+                    {
+                        string cleanLine = line.Trim();
+
+                        if (string.IsNullOrEmpty(cleanLine) || cleanLine.StartsWith(";") || cleanLine.StartsWith("#"))
+                            continue;
+
+                        if (cleanLine.StartsWith("Debug=", StringComparison.OrdinalIgnoreCase))
+                        {
+                            string value = cleanLine.Substring(6).Trim();
+                            if (value == "1")
+                            {
+                                LogEchoS.DebugEnable = true;
+                                Log.Message("[Echo-S] Debug Mode ENABLED via INI file.");
+                            }
+                        }
+                        else if (cleanLine.StartsWith("BattleLinesPath=", StringComparison.OrdinalIgnoreCase))
+                        {
+                            string customPath = cleanLine.Substring(16).Trim();
+
+                            customPath = customPath.Trim('"').Trim('\'');
+
+                            if (!string.IsNullOrEmpty(customPath))
+                            {
+                                BattleScriptParser.StuffListedPath = customPath;
+                                Log.Message($"[Echo-S] Custom BattleLines path set to: {customPath}");
+                            }
+                        }
+                    }
+                    Log.Message("[Echo-S] Echo-S-9.ini loaded !");
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Message($"[Echo-S] Warning: Failed to load config file. {ex.Message}");
             }
         }
 
@@ -150,7 +201,7 @@ namespace Memoria.EchoS
 
             uint currentFlags = BattleSystem.Flags;
             BattleSystem.QueueLine(BattleSystem.GetRandomLine(when, (i, moment) =>
-                BattleSystem.CommonChecks(i, moment, currentFlags, null, (when == BattleVoice.BattleMoment.GameOver) ? BattleStatusId.Silence : (BattleStatusId)(-1)) &&
+                BattleSystem.CommonChecks(i, moment, currentFlags, null, (when == BattleVoice.BattleMoment.GameOver) ? BattleStatusId.Silence : BattleStatusId.None) &&
                 (!BattleSystem.Lines[i].Speaker.CheckIsPlayer || focusChar == CharacterId.NONE || focusChar == BattleSystem.Lines[i].Speaker.playerId)), when);
 
             return true;
@@ -231,7 +282,7 @@ namespace Memoria.EchoS
 
             BattleSystem.LineEntryPredicate filter = (i, moment) =>
             {
-                if (!BattleSystem.CommonChecks(i, moment, actFlags, actingChar, (BattleStatusId)(-1))) return false;
+                if (!BattleSystem.CommonChecks(i, moment, actFlags, actingChar, BattleStatusId.None)) return false;
                 if (!BattleSystem.CanPlayMoreLines && BattleSystem.Lines[i].IsVerbal) return false;
                 if (BattleSystem.Lines[i].CommandId != null)
                 {
@@ -311,7 +362,7 @@ namespace Memoria.EchoS
 
             BattleSystem.QueueLine(BattleSystem.GetRandomLine(when, (i, moment) =>
             {
-                if (!BattleSystem.CommonChecks(i, moment, hitFlags, hitChar, (BattleStatusId)(-1))) return false;
+                if (!BattleSystem.CommonChecks(i, moment, hitFlags, hitChar, BattleStatusId.None)) return false;
                 if (BattleSystem.Lines[i].ContextFlags != 0 && (BattleSystem.Lines[i].ContextFlags & (BattleCalcFlags)calc.Context.Flags) == 0) return false;
                 if (!BattleSystem.CanPlayMoreLines && BattleSystem.Lines[i].IsVerbal) return false;
 
@@ -343,17 +394,17 @@ namespace Memoria.EchoS
             if (target.HpDamage == 0) return;
 
             bool isDead = target.IsUnderStatus(BattleStatus.Death);
-            if (!isDead && target.CurrentHp == 0U && calc.Command.AbilityId != (BattleAbilityId)106)
+            if (!isDead && target.CurrentHp == 0U && calc.Command.AbilityId != BattleAbilityId.Sacrifice)
             {
                 LogEchoS.Debug($"Death added [{StringExtension.RemoveTags(target.Name)}({target.Id})]");
-                OnStatusChangeEx(target, calc, BattleStatusId.Death, (BattleVoice.BattleMoment)18);
+                OnStatusChangeEx(target, calc, BattleStatusId.Death, BattleVoice.BattleMoment.Added);
                 return;
             }
 
             if (isDead && target.CurrentHp > 0U)
             {
                 LogEchoS.Debug($"Death removed [{StringExtension.RemoveTags(target.Name)}({target.Id})]");
-                OnStatusChangeEx(target, calc, BattleStatusId.Death, (BattleVoice.BattleMoment)19);
+                OnStatusChangeEx(target, calc, BattleStatusId.Death, BattleVoice.BattleMoment.Removed);
                 return;
             }
 
@@ -364,12 +415,12 @@ namespace Memoria.EchoS
 
             if (!wasNotLow && isNowLow)
             {
-                OnStatusChangeEx(target, calc, BattleStatusId.LowHP, (BattleVoice.BattleMoment)18);
+                OnStatusChangeEx(target, calc, BattleStatusId.LowHP, BattleVoice.BattleMoment.Added);
                 if (applyEffect) btl_stat.AddCustomGlowEffect(target.Data, 0, 1, new int[] { -5, -15, -20 });
             }
             else if (wasNotLow && !isNowLow)
             {
-                OnStatusChangeEx(target, calc, BattleStatusId.LowHP, (BattleVoice.BattleMoment)19);
+                OnStatusChangeEx(target, calc, BattleStatusId.LowHP, BattleVoice.BattleMoment.Removed);
                 if (applyEffect) btl_stat.ClearAllGlowEffect(target.Data);
             }
         }
