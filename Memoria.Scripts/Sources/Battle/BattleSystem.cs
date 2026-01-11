@@ -78,8 +78,8 @@ namespace Memoria.EchoS
         public static Boolean CommonChecks(Int32 i, BattleMoment when, UInt32 flags, BattleUnit speaker, BattleStatusId statusException = BattleStatusId.None)
         {
             // [SPECIAL] Black Waltz 3: Vivi lines not tagged with the right BattleId are ignored
-            if (FF9StateSystem.Battle.battleMapIndex == 296 && Lines[i].Speaker.playerId == CharacterId.Vivi && !Lines[i].BattleIds.Contains(296))
-                return false;
+            //if (FF9StateSystem.Battle.battleMapIndex == 296 && Lines[i].Speaker.playerId == CharacterId.Vivi && !Lines[i].BattleIds.Contains(296))
+                //return false;
 
             if (!Lines[i].When.Contains(when))
                 return false;
@@ -89,12 +89,8 @@ namespace Memoria.EchoS
 
             if (Lines[i].BattleIds != null && Lines[i].BattleIds.Length > 0)
             {
-                bool matchFound = Lines[i].BattleIds.Contains(FF9StateSystem.Battle.battleMapIndex);
-
-                if (Lines[i].BattleIdIsBlacklist)
-                    if (matchFound) return false;
-                else
-                    if (!matchFound) return false;
+                if (Lines[i].BattleIdIsBlacklist == Lines[i].BattleIds.Contains(FF9StateSystem.Battle.battleMapIndex))
+                    return false;
             }
 
             if (Lines[i].ScenarioMin > 0 && GameState.ScenarioCounter < Lines[i].ScenarioMin)
@@ -127,8 +123,8 @@ namespace Memoria.EchoS
             while (chainId >= 0)
             {
                 // [SPECIAL] Black Waltz 3: Vivi lines not tagged with the right BattleId are ignored
-                if (FF9StateSystem.Battle.battleMapIndex == 296 && Lines[chainId].Speaker.playerId == CharacterId.Vivi && !Lines[chainId].BattleIds.Contains(296))
-                    return false;
+                //if (FF9StateSystem.Battle.battleMapIndex == 296 && Lines[chainId].Speaker.playerId == CharacterId.Vivi && !Lines[chainId].BattleIds.Contains(296))
+                    //return false;
 
                 if (!CanTalk(Lines[chainId].Speaker, AdjustPriority(when, Lines[i].Priority), statusException))
                     return false;
