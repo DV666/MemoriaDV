@@ -47,10 +47,6 @@ namespace Memoria.Scripts.Battle
         public static Dictionary<BTL_DATA, Int32[]> RollBackStats = new Dictionary<BTL_DATA, Int32[]>();
         public static Dictionary<BTL_DATA, Boolean> TriggerSPSResistStatus = new Dictionary<BTL_DATA, Boolean>();
         public static Dictionary<BTL_DATA, BattleStatus> RollBackBattleStatus = new Dictionary<BTL_DATA, BattleStatus>();
-        public static Dictionary<BTL_DATA, EffectElement> WeaponNewElement = new Dictionary<BTL_DATA, EffectElement>();
-        public static Dictionary<BTL_DATA, Int32> WeaponNewCustomElement = new Dictionary<BTL_DATA, Int32>(); // 0 = None, 1 = Poison, 2 = Gravity
-        public static Dictionary<BTL_DATA, BattleStatus> WeaponNewStatus = new Dictionary<BTL_DATA, BattleStatus>();
-        public static Dictionary<BTL_DATA, string[]> CMDVanillaName = new Dictionary<BTL_DATA, string[]>();
 
         public static Boolean EliteMonster(BTL_DATA Monster)
         {
@@ -890,7 +886,7 @@ namespace Memoria.Scripts.Battle
             if ((v.Caster.WeaponElement & v.Caster.BonusElement) != 0)
                 ++v.Context.DamageModifierCount;
 
-            if ((WeaponNewElement[v.Caster.Data] & v.Caster.BonusElement) != 0)
+            if ((InfusedWeaponScript.WeaponNewElement[v.Caster.Data] & v.Caster.BonusElement) != 0)
                 ++v.Context.DamageModifierCount;
         }
 
@@ -904,12 +900,12 @@ namespace Memoria.Scripts.Battle
         {
             EffectElement WeaponElement = v.Caster.WeaponElement;
 
-            if (WeaponNewElement[v.Caster.Data] != 0)
-                WeaponElement |= WeaponNewElement[v.Caster.Data];
+            if (InfusedWeaponScript.WeaponNewElement[v.Caster.Data] != 0)
+                WeaponElement |= InfusedWeaponScript.WeaponNewElement[v.Caster.Data];
 
             CanAttackElement(v, WeaponElement);
 
-            if (WeaponNewElement[v.Caster.Data] != 0)
+            if (InfusedWeaponScript.WeaponNewElement[v.Caster.Data] != 0)
             {
                 if (v.Caster.PlayerIndex == (CharacterId)12 & v.Target.IsWeakElement(WeaponElement)) // SA Maximum infusion
                 {
@@ -925,10 +921,10 @@ namespace Memoria.Scripts.Battle
                 }
             }
 
-            if (((WeaponNewCustomElement[v.Caster.Data] & 1) != 0) && v.Target.HasCategory(EnemyCategory.Humanoid)) // Poison
+            if (((InfusedWeaponScript.WeaponNewCustomElement[v.Caster.Data] & 1) != 0) && v.Target.HasCategory(EnemyCategory.Humanoid)) // Poison
                 v.Context.DamageModifierCount++;
 
-            if (((WeaponNewCustomElement[v.Caster.Data] & 2) != 0) && v.Target.HasCategory(EnemyCategory.Stone)) // Gravity
+            if (((InfusedWeaponScript.WeaponNewCustomElement[v.Caster.Data] & 2) != 0) && v.Target.HasCategory(EnemyCategory.Stone)) // Gravity
                 v.Context.DamageModifierCount++;
 
             return true;
@@ -1003,7 +999,7 @@ namespace Memoria.Scripts.Battle
 
         public static void InfusedWeaponStatus(this BattleCalculator v)
         {
-            if (WeaponNewStatus[v.Caster.Data] != 0 && WeaponNewStatus[v.Caster.Data] != BattleStatus.Protect && WeaponNewStatus[v.Caster.Data] != BattleStatus.Shell)
+            if (InfusedWeaponScript.WeaponNewStatus[v.Caster.Data] != 0 && InfusedWeaponScript.WeaponNewStatus[v.Caster.Data] != BattleStatus.Protect && InfusedWeaponScript.WeaponNewStatus[v.Caster.Data] != BattleStatus.Shell)
             {
                 foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(v.Caster))
                     saFeature.TriggerOnAbility(v, "HitRateSetup", false);
@@ -1013,12 +1009,12 @@ namespace Memoria.Scripts.Battle
                 if (v.Caster.IsPlayer)
                 {
                     if (v.Caster.WeaponRate > Comn.random16() % 100)
-                        v.Command.AbilityStatus |= WeaponNewStatus[v.Caster.Data];
+                        v.Command.AbilityStatus |= InfusedWeaponScript.WeaponNewStatus[v.Caster.Data];
                 }
                 else
-                    v.Command.AbilityStatus |= WeaponNewStatus[v.Caster.Data];
+                    v.Command.AbilityStatus |= InfusedWeaponScript.WeaponNewStatus[v.Caster.Data];
 
-                if ((v.Target.ResistStatus & WeaponNewStatus[v.Caster.Data]) != 0 && !v.Target.IsPlayer)
+                if ((v.Target.ResistStatus & InfusedWeaponScript.WeaponNewStatus[v.Caster.Data]) != 0 && !v.Target.IsPlayer)
                     TriggerSPSResistStatus[v.Target] = true;
             }
         } 
@@ -1572,11 +1568,11 @@ namespace Memoria.Scripts.Battle
             {
                 HealMP += (int)(v.Caster.MaximumMp / 25);
             }
-            if (WeaponNewStatus[v.Caster.Data] == BattleStatus.Protect && (v.Command.Id == BattleCommandId.Attack || v.Command.Id == BattleCommandId.Counter)) // Drain MagiLame
+            if (InfusedWeaponScript.WeaponNewStatus[v.Caster.Data] == BattleStatus.Protect && (v.Command.Id == BattleCommandId.Attack || v.Command.Id == BattleCommandId.Counter)) // Drain MagiLame
             {
                 HealHP += v.Target.HpDamage / 4;
             }
-            if (WeaponNewStatus[v.Caster.Data] == BattleStatus.Shell && (v.Command.Id == BattleCommandId.Attack || v.Command.Id == BattleCommandId.Counter)) // Osmose MagiLame
+            if (InfusedWeaponScript.WeaponNewStatus[v.Caster.Data] == BattleStatus.Shell && (v.Command.Id == BattleCommandId.Attack || v.Command.Id == BattleCommandId.Counter)) // Osmose MagiLame
             {
                 HealMP += v.Target.MpDamage / 80;
             }

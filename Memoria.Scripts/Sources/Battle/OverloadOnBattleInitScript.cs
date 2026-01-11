@@ -397,7 +397,7 @@ namespace Memoria.Scripts.Battle
                     {
                         FF9TextTool.SetCommandName(BattleCommandId.SwordAct, TranceSeekBattleCommand.SwdArtCMDNameVanilla[Localization.CurrentDisplaySymbol]);
                         if (FF9TextTool.DisplayBatch.commandName.TryGetValue(BattleCommandId.SwordAct, out String SwordActName))
-                            CMDVanillaName[unit.Data][0] = SwordActName;
+                            InfusedWeaponScript.CMDVanillaName[unit.Data][0] = SwordActName;
 
                         unit.AddDelayedModifier(SteinerMechanic, null);
                     }
@@ -406,10 +406,10 @@ namespace Memoria.Scripts.Battle
                         FF9TextTool.SetCommandName(BattleCommandId.HolySword1, TranceSeekBattleCommand.SeikenCMDNameVanilla[Localization.CurrentDisplaySymbol]);
                         FF9TextTool.SetCommandName(BattleCommandId.HolySword2, TranceSeekBattleCommand.SeikenPlusCMDNameVanilla[Localization.CurrentDisplaySymbol]);
                         if (FF9TextTool.DisplayBatch.commandName.TryGetValue(BattleCommandId.HolySword1, out String SeikenName))
-                            CMDVanillaName[unit.Data][0] = SeikenName;
+                            InfusedWeaponScript.CMDVanillaName[unit.Data][0] = SeikenName;
 
                         if (FF9TextTool.DisplayBatch.commandName.TryGetValue(BattleCommandId.HolySword2, out String SeikenPlusName))
-                            CMDVanillaName[unit.Data][1] = SeikenPlusName;
+                            InfusedWeaponScript.CMDVanillaName[unit.Data][1] = SeikenPlusName;
                     }
                 }
                 else // Monsters init
@@ -540,12 +540,12 @@ namespace Memoria.Scripts.Battle
                 TriggerSPSResistStatus[unit.Data] = false;
                 RollBackStats[unit.Data] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
                 RollBackBattleStatus[unit.Data] = 0;
-                WeaponNewElement[unit.Data] = EffectElement.None;
-                WeaponNewCustomElement[unit.Data] = 0;
-                WeaponNewStatus[unit.Data] = 0;
+                InfusedWeaponScript.WeaponNewElement[unit.Data] = EffectElement.None;
+                InfusedWeaponScript.WeaponNewCustomElement[unit.Data] = 0;
+                InfusedWeaponScript.WeaponNewStatus[unit.Data] = 0;
                 StateMoug[unit.Data] = 0;
                 ModelMoug[unit.Data] = null;
-                CMDVanillaName[unit.Data] = [null, null];
+                InfusedWeaponScript.CMDVanillaName[unit.Data] = [null, null];
             }
 
             if (FF9StateSystem.EventState.gEventGlobal[1403] == 4 || FF9StateSystem.EventState.gEventGlobal[1403] == 5 || FF9StateSystem.EventState.gEventGlobal[1403] == 6)

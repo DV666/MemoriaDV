@@ -393,9 +393,9 @@ namespace Memoria.Scripts.Battle
                     SpecialSAEffect[v.Caster.Data][10]--;
                     if (SpecialSAEffect[v.Caster.Data][10] <= 0)
                     {
-                        WeaponNewElement[v.Caster.Data] = 0;
-                        WeaponNewCustomElement[v.Caster.Data] = 0;
-                        WeaponNewStatus[v.Caster.Data] = 0;
+                        InfusedWeaponScript.WeaponNewElement[v.Caster.Data] = 0;
+                        InfusedWeaponScript.WeaponNewCustomElement[v.Caster.Data] = 0;
+                        InfusedWeaponScript.WeaponNewStatus[v.Caster.Data] = 0;
                         InfusedWeaponScript.ClearInfuseWeapon(v.Caster.Data);
                     }
                 }

@@ -19,6 +19,12 @@ namespace Memoria.Scripts.Battle
 
         private readonly BattleCalculator _v;
 
+        public static Dictionary<BTL_DATA, EffectElement> WeaponNewElement = new Dictionary<BTL_DATA, EffectElement>();
+        public static Dictionary<BTL_DATA, Int32> WeaponNewCustomElement = new Dictionary<BTL_DATA, Int32>(); // 0 = None, 1 = Poison, 2 = Gravity
+        public static Dictionary<BTL_DATA, BattleStatus> WeaponNewStatus = new Dictionary<BTL_DATA, BattleStatus>();
+        public static Dictionary<BTL_DATA, string[]> CMDVanillaName = new Dictionary<BTL_DATA, string[]>();
+        public static Dictionary<BTL_DATA, int> WeaponInfusedCooldown = new Dictionary<BTL_DATA, int>();
+
         public InfusedWeaponScript(BattleCalculator v)
         {
             _v = v;
@@ -26,8 +32,8 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            TranceSeekAPI.WeaponNewElement[_v.Target.Data] = _v.Command.Element;
-            TranceSeekAPI.WeaponNewStatus[_v.Target.Data] = _v.Command.AbilityStatus;
+            WeaponNewElement[_v.Target.Data] = _v.Command.Element;
+            InfusedWeaponScript.WeaponNewStatus[_v.Target.Data] = _v.Command.AbilityStatus;
             TranceSeekAPI.ViviPreviousSpell[_v.Target.Data] = _v.Command.AbilityId; // SA Maximum infusion for Lani/Vivi
 
             int Element = (int)_v.Command.Element;
@@ -38,6 +44,9 @@ namespace Memoria.Scripts.Battle
                 Element = 256;
 
             InfuseWeapon(_v, _v.Target.Data, Element, (int)_v.Command.AbilityStatus);
+            BattleStatusDataEntry statusData = FF9StateSystem.Battle.FF9Battle.status_data[BattleStatusId.Regen];
+            WeaponInfusedCooldown[_v.Target.Data] = (400 + (_v.Caster.Will * 3)) * statusData.ContiCnt;
+            _v.Target.AddDelayedModifier(InfuseWeaponCooldown, null);
         }
 
         public static void InfuseWeapon(BattleCalculator v, BTL_DATA btl, int NewElement = -1, int NewStatus = -1)
@@ -51,13 +60,13 @@ namespace Memoria.Scripts.Battle
             if (NewElement != -1)
             {
                 InfusedElement = (EffectElement)NewElement;
-                TranceSeekAPI.WeaponNewElement[btl] = InfusedElement;
+                WeaponNewElement[btl] = InfusedElement;
             }
 
             if (NewStatus != -1)
             {
                 InfusedStatus = (BattleStatus)NewStatus;
-                TranceSeekAPI.WeaponNewStatus[btl] = InfusedStatus;
+                InfusedWeaponScript.WeaponNewStatus[btl] = InfusedStatus;
             }
 
             if (btl.bi.player != 0)
@@ -109,13 +118,13 @@ namespace Memoria.Scripts.Battle
 
                     if (NewElement == 256) // Poison
                     {
-                        TranceSeekAPI.WeaponNewCustomElement[btl] = 1;
+                        InfusedWeaponScript.WeaponNewCustomElement[btl] = 1;
                         ElementText = "[800080]";
                         DescText = Regex.Replace(DescText, "=ELEMENT=", PoisonEffectElementCMDDesc[Localization.CurrentSymbol]);
                     }
                     else if (NewElement == 512) // Gravity
                     {
-                        TranceSeekAPI.WeaponNewCustomElement[btl] = 2;
+                        InfusedWeaponScript.WeaponNewCustomElement[btl] = 2;
                         ElementText = "[6E0C5C]";
                         DescText = Regex.Replace(DescText, "=ELEMENT=", GravityEffectElementCMDDesc[Localization.CurrentSymbol]);
                     }
@@ -140,6 +149,19 @@ namespace Memoria.Scripts.Battle
                 FF9TextTool.SetCommandName((BattleCommandId)ID, ElementText + InfusedAttackCMDName[Localization.CurrentSymbol] + StatusText);
                 FF9TextTool.SetCommandHelpDesc((BattleCommandId)ID, DescText);
             }
+        }
+
+        private Boolean InfuseWeaponCooldown(BattleUnit unit)
+        {
+            if (WeaponInfusedCooldown[_v.Target.Data] <= 0)
+            {
+                ClearInfuseWeapon(unit);
+                return false;
+            }
+            else
+                WeaponInfusedCooldown[_v.Target.Data] -= (unit.Data.cur.at_coef * BattleState.ATBTickCount);
+
+            return true;
         }
 
         public static void ClearInfuseWeapon(BTL_DATA btl)
