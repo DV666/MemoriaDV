@@ -1,4 +1,4 @@
-using Assets.Sources.Scripts.UI.Common;
+Ôªøusing Assets.Sources.Scripts.UI.Common;
 using Global.Sound.SaXAudio;
 using Memoria.Assets;
 using Memoria.Data;
@@ -43,39 +43,7 @@ namespace Memoria.EchoS
         public static bool CanPlayMoreLines => CurrentPlayingDialog < 0;
 
         public delegate bool LineEntryPredicate(int lineId, BattleVoice.BattleMoment when);
-
-        public static Dictionary<string, AudioEffectManager.EffectPreset> PresetCache = new Dictionary<string, AudioEffectManager.EffectPreset>();
-        public static Boolean PresetCacheInitialized = false;
-
-        public static void InitializePresetCache()
-        {
-            if (PresetCacheInitialized)
-                return;
-
-            PresetCache.Clear(); // [DV] Maybe to handle later for characters swap ?
-
-            for (BTL_DATA btl = FF9StateSystem.Battle.FF9Battle.btl_list.next; btl != null; btl = btl.next)
-            {
-                BattleUnit unit = new BattleUnit(btl);
-                string charName = unit.IsPlayer ? FF9TextTool.CharacterDefaultName(unit.PlayerIndex) : unit.Name;
-                LogEchoS.Debug($"Searching preset for {charName} in AudioEffects.txt...");
-                foreach (BattleStatus status in Enum.GetValues(typeof(BattleStatus)))
-                {
-                    string key = status.ToString() + charName;
-                    var preset = AudioEffectManager.GetUnlistedPreset(key);
-                    if (preset != null)
-                    {
-                        if (!PresetCache.ContainsKey(key))
-                        {
-                            PresetCache.Add(key, preset.Value);
-                            LogEchoS.Debug($"Preset found for {charName}, named {key}.");
-                        }
-                    }
-                }
-            }
-            PresetCacheInitialized = true;
-            LogEchoS.Debug($"PresetCache initialized : total of {PresetCache.Count} in the cache.");
-        }
+        public static Dictionary<int, string> MonsterNameWithoutTag = new Dictionary<int, string>();
 
         public static UInt32 GetFlags(BattleCalculator calc)
         {
@@ -378,7 +346,7 @@ namespace Memoria.EchoS
             yield return new WaitForSeconds(seconds);
             if (PersistenSingleton<BattleSubtitles>.Instance != null)
             {
-                string displayText = text != null ? "ì" + text + "î" : "";
+                string displayText = text != null ? "‚Äú" + text + "‚Äù" : "";
                 PersistenSingleton<BattleSubtitles>.Instance.Hide((ushort)speakerId, displayText);
             }
             onFinished?.Invoke();
@@ -386,9 +354,6 @@ namespace Memoria.EchoS
 
         private static void PlayLineNow(int i, BattleVoice.BattleMoment when, Action onFinishedPlaying)
         {
-            if (!PresetCacheInitialized)
-                BattleSystem.InitializePresetCache();
-
             BattleUnit speaker = null;
             // Note: 'With' becomes the speaker when 'Speaker' is not checked for speech
             if (!Lines[i].Speaker.CheckCanTalk && Lines[i].With != null)
@@ -429,7 +394,7 @@ namespace Memoria.EchoS
                 AddToPlayedLines(i);
 
                 bool soundStarted = false;
-                string displayText = Lines[i].Text != null ? "ì" + Lines[i].Text + "î" : "";
+                string displayText = Lines[i].Text != null ? "‚Äú" + Lines[i].Text + "‚Äù" : "";
 
                 int soundId = PlayVoice(speaker, "Battle/" + path, AdjustPriority(when, Lines[i].Priority), delegate ()
                 {
@@ -445,23 +410,15 @@ namespace Memoria.EchoS
                 {
                     soundStarted = true;
 
-                    BattleStatus currentStatuses = speaker.CurrentStatus;
-                    LogEchoS.Message("currentStatuses = " + currentStatuses);
-                    foreach (var kvp in PresetCache)
+                    foreach (BattleStatusId currentStatuses in speaker.CurrentStatus.ToStatusList())
                     {
-                        string speakerName = speaker.IsPlayer ? FF9TextTool.CharacterDefaultName(speaker.PlayerIndex) : speaker.Name;
-                        if (!kvp.Key.Contains(speakerName)) continue;
+                        string speakerName = speaker.IsPlayer ? FF9TextTool.CharacterDefaultName(speaker.PlayerIndex) : MonsterNameWithoutTag[speaker.Id];
+                        AudioEffectManager.EffectPreset? preset = AudioEffectManager.GetUnlistedPreset($"{currentStatuses}{speakerName}");
 
-                        string statusName = kvp.Key.Replace(speakerName, string.Empty).Trim();
-                        BattleStatus PresetStatus = (BattleStatus)Enum.Parse(typeof(BattleStatus), statusName);
+                        if (preset == null) continue;
 
-                        LogEchoS.Message("statusName = " + statusName);
-                        LogEchoS.Message("PresetStatus = " + PresetStatus);
-                        if (speaker.IsUnderAnyStatus(PresetStatus))
-                        {
-                            AudioEffectManager.ApplyPresetOnSound(kvp.Value, soundId, path, 0f);
-                            break;
-                        }
+                        AudioEffectManager.ApplyPresetOnSound(preset.Value, soundId, path, 0f);
+                        break;
                     }
 
                     // Apply Mini speed effect => [TODO] Maybe add parameters for the preset file ? Or the .ini file ?

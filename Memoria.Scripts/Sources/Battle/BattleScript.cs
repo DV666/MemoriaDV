@@ -100,23 +100,13 @@ namespace Memoria.EchoS
 
             if (when == BattleVoice.BattleMoment.BattleStart)
             {
-                BattleSystem.PresetCache.Clear();
-
-                // On pré-calcule pour les 4 persos de l'équipe
-                foreach (BattleUnit unit in BattleState.EnumerateUnits())
+                for (BTL_DATA monster = FF9StateSystem.Battle.FF9Battle.btl_list.next; monster != null; monster = monster.next)
                 {
-                    if (!unit.IsPlayer) continue;
-
-                    string charName = unit.PlayerIndex.ToString();
-
-                    foreach (BattleStatus status in Enum.GetValues(typeof(BattleStatus)))
+                    BattleUnit unit = new BattleUnit(monster);
+                    if (monster.bi.player == 0 )
                     {
-                        string key = status.ToString() + charName;
-
-                        var preset = AudioEffectManager.GetUnlistedPreset(key);
-
-                        if (preset != null)
-                            BattleSystem.PresetCache[key] = preset.Value;
+                        MonsterNameWithoutTag[unit.Id] = unit.Name.RemoveTags(); // To avoid calculating Regex for each call.
+                        break;
                     }
                 }
             }
@@ -187,7 +177,7 @@ namespace Memoria.EchoS
                         enemies += $"[{unit.Name.RemoveTags()}({unit.Data.dms_geo_id})] ";
                     }
                 }
-                LogEchoS.Debug($"BattleId: {FF9StateSystem.Battle.battleMapIndex} Players: {players}Enemies: {enemies}");
+                LogEchoS.Debug($"BattleId: {FF9StateSystem.Battle.battleMapIndex} # Players: {players} # Enemies: {enemies}");
 
                 InTranceCharacters.Clear();
 
