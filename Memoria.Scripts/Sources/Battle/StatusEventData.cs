@@ -1,4 +1,3 @@
-using System;
 using Memoria.Data;
 
 namespace Memoria.EchoS

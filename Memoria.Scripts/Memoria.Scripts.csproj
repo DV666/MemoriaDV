@@ -61,7 +61,6 @@
     <Compile Include="Sources\Battle\LogEchoS.cs" />
     <Compile Include="Sources\Battle\LineEntryFlag.cs" />
     <Compile Include="Sources\Battle\StatusEventData.cs" />
-    <Compile Include="Sources\Battle\StringExtension.cs" />
     <Compile Include="Sources\Battle\BattleScriptParser.cs" />
     <Compile Include="Sources\Battle\BattleSpeakerEx.cs" />
     <Compile Include="Sources\Battle\BattleSubtitles.cs" />

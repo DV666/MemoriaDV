@@ -1,10 +1,10 @@
 using Memoria.Data;
-using Memoria.Prime;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using static Memoria.Data.BattleVoice;
 
 namespace Memoria.EchoS
 {
@@ -42,7 +42,7 @@ namespace Memoria.EchoS
 
             if (!string.IsNullOrEmpty(fullPath) && File.Exists(fullPath))
             {
-                Log.Message($"Loading external database '{fullPath}'");
+                LogEchoS.Message($"Loading external database '{fullPath}'");
                 try
                 {
                     stream = File.OpenRead(fullPath);
@@ -64,13 +64,13 @@ namespace Memoria.EchoS
                 }
                 catch (Exception ex)
                 {
-                    Log.Message($"Failed to open file '{fullPath}': {ex.Message}");
+                    LogEchoS.Message($"Failed to open file '{fullPath}': {ex.Message}");
                     stream = null;
                 }
             }
             else
             {
-                Log.Message($"[BattleScriptParser] File not found: '{StuffListedPath}'. Please check the path or mod installation.");
+                LogEchoS.Message($"[BattleScriptParser] File not found: '{StuffListedPath}'. Please check the path or mod installation.");
             }
 
             if (stream == null)
@@ -95,13 +95,13 @@ namespace Memoria.EchoS
                     BattleSpeakerEx speaker = ParseSpeaker(columns[0]);
                     if (speaker == null)
                     {
-                        Log.Message($"Speaker missing or invalid at line {lineNumber}");
+                        LogEchoS.Message($"Speaker missing or invalid at line {lineNumber}");
                         continue;
                     }
 
                     if (string.IsNullOrEmpty(columns[2]))
                     {
-                        Log.Message($"Path missing {lineNumber}");
+                        LogEchoS.Message($"Path missing {lineNumber}");
                         continue;
                     }
 
@@ -153,7 +153,7 @@ namespace Memoria.EchoS
 
                     if (entry.When == null)
                     {
-                        Log.Message($"Moment missing or invalid at line {lineNumber}");
+                        LogEchoS.Message($"Moment missing or invalid at line {lineNumber}");
                         continue;
                     }
 
@@ -179,7 +179,7 @@ namespace Memoria.EchoS
                         }
                         else
                         {
-                            Log.Message($"Couldn't parse Context Flags '{columns[16]}' at line {lineNumber}");
+                            LogEchoS.Message($"Couldn't parse Context Flags '{columns[16]}' at line {lineNumber}");
                         }
                     }
 
@@ -194,7 +194,7 @@ namespace Memoria.EchoS
                     if (columns[11].Length > 0)
                     {
                         entry.Items = ParseEnumMulti<RegularItem>(columns[11]);
-                        if (entry.Items == null) Log.Message($"Couldn't parse items '{columns[11]}' at line {lineNumber}");
+                        if (entry.Items == null) LogEchoS.Message($"Couldn't parse items '{columns[11]}' at line {lineNumber}");
                     }
 
                     string textVal = columns[3].Trim();
@@ -226,7 +226,7 @@ namespace Memoria.EchoS
                         break;
                     }
                 }
-                if (lines[link.Key].ChainId < 0) Log.Message($"Couldn't find next line in the chain '{targetPath}'");
+                if (lines[link.Key].ChainId < 0) LogEchoS.Message($"Couldn't find next line in the chain '{targetPath}'");
             }
 
             foreach (var link in customChainLinks)
@@ -242,10 +242,10 @@ namespace Memoria.EchoS
                         break;
                     }
                 }
-                if (customLines[link.Key].ChainId < 0) Log.Message($"Couldn't find next line in the chain '{targetPath}'");
+                if (customLines[link.Key].ChainId < 0) LogEchoS.Message($"Couldn't find next line in the chain '{targetPath}'");
             }
 
-            Log.Message($"Total lines successfully loaded '{lines.Count + customLines.Count}'");
+            LogEchoS.Message($"Total lines successfully loaded '{lines.Count + customLines.Count}'");
             BattleSystem.CustomLineStart = lines.Count;
 
             foreach (var lineItem in lines) yield return lineItem;
@@ -254,45 +254,89 @@ namespace Memoria.EchoS
             Loading = false;
         }
 
-        private static int ParseInt32(string value, int defaultValue)
+        public static void CountCharacterLines(LineEntry[] lines)
         {
-            if (value.Length == 0) return defaultValue;
-            if (!int.TryParse(value, out int result)) LogEchoS.Debug($"Couldn't parse '{value}'");
-            return result;
+            Dictionary<CharacterId, HashSet<String>> linesPerChar = new Dictionary<CharacterId, HashSet<String>>();
+
+            for (Int32 i = 0; i < lines.Length; i++)
+            {
+                if (!lines[i].IsVerbal) continue;
+
+                BattleSpeakerEx speaker = lines[i].Speaker;
+                CharacterId id = speaker.playerId;
+                if (id == CharacterId.NONE && speaker.enemyModelId == 298)
+                    id = CharacterId.Steiner;
+                if (id == CharacterId.NONE && speaker.CheckCanTalk)
+                    continue;
+
+
+                if (!speaker.CheckCanTalk)
+                {
+                    if (lines[i].With == null || lines[i].With.Count() == 0) continue;
+                    if (lines[i].With[0].playerId == CharacterId.NONE || !lines[i].With[0].CheckCanTalk) continue;
+                    id = lines[i].With[0].playerId;
+                }
+
+                if (!linesPerChar.ContainsKey(id))
+                {
+                    linesPerChar[id] = new HashSet<String>();
+                }
+                linesPerChar[id].Add(lines[i].Text);
+            }
+
+            foreach (var player in linesPerChar)
+            {
+                LogEchoS.Message($"{player.Key}: {player.Value.Count} unique lines");
+            }
         }
 
-        private static T ParseEnum<T>(string value, T defaultValue) where T : Enum
+        private static Int32 ParseInt32(String value, Int32 defaultValue)
         {
-            if (value.Length == 0) return defaultValue;
+            if (value.Length == 0)
+                return defaultValue;
+
+            if (!Int32.TryParse(value, out defaultValue))
+            {
+                LogEchoS.Warning($"Couldn't parse '{value}'");
+            }
+            return defaultValue;
+        }
+
+        private static T ParseEnum<T>(String value, T defaultValue) where T : Enum
+        {
+            if (value.Length == 0)
+                return defaultValue;
+
             try
             {
                 return (T)Enum.Parse(typeof(T), value);
             }
             catch
             {
-                Log.Message($"Couldn't parse {typeof(T).Name} '{value}'");
-                return defaultValue;
+                LogEchoS.Warning($"Couldn't parse {typeof(T)} '{value}'");
             }
+            return defaultValue;
         }
 
-        private static T[] ParseEnumMulti<T>(string value) where T : Enum
+        private static T[] ParseEnumMulti<T>(String value) where T : Enum
         {
-            if (value.Length == 0) return null;
-            string[] parts = value.Split(',');
-            List<T> list = new List<T>();
+            if (value.Length == 0)
+                return null;
+
+            String[] values = value.Split(',');
+            List<T> result = new List<T>();
             try
             {
-                foreach (string s in parts)
-                {
-                    list.Add((T)Enum.Parse(typeof(T), s.Trim()));
-                }
-                return list.ToArray();
+                foreach (String val in values)
+                    result.Add((T)Enum.Parse(typeof(T), val.Trim()));
+
+                return result.ToArray();
             }
             catch
             {
-                Log.Message($"Couldn't parse {typeof(T).Name} multi '{value}'");
-                return null;
+                LogEchoS.Warning($"Couldn't parse {typeof(T)} '{value}'");
             }
+            return null;
         }
 
         private static void ParseBattleIds(string value, out int[] ids, out bool isBlacklist)
@@ -324,126 +368,156 @@ namespace Memoria.EchoS
             if (list.Count > 0) ids = list.ToArray();
         }
 
-        private static BattleAbilityId[] ParseAbilities(string value)
+        private static BattleAbilityId[] ParseAbilities(String value)
         {
-            if (value.Length == 0) return null;
-            string[] parts = value.Split(',');
-            List<BattleAbilityId> list = new List<BattleAbilityId>();
+            if (value.Length == 0)
+                return null;
+
+            String[] values = value.Split(',');
+            List<BattleAbilityId> result = new List<BattleAbilityId>();
             try
             {
-                foreach (string s in parts)
+                foreach (String val in values)
                 {
-                    string trimmed = s.Trim();
-                    if (int.TryParse(trimmed, out int id)) list.Add((BattleAbilityId)id);
-                    else list.Add((BattleAbilityId)Enum.Parse(typeof(BattleAbilityId), trimmed));
+                    String trimmed = val.Trim();
+                    if (Int32.TryParse(trimmed, out Int32 id))
+                        result.Add((BattleAbilityId)id);
+                    else
+                        result.Add((BattleAbilityId)Enum.Parse(typeof(BattleAbilityId), trimmed));
                 }
-                return list.ToArray();
+                return result.ToArray();
             }
             catch
             {
-                Log.Message($"Couldn't parse BattleAbilityId '{value}'");
-                return null;
+                LogEchoS.Warning($"Couldn't parse {typeof(BattleAbilityId)} '{value}'");
             }
+            return null;
         }
 
-        private static BattleVoice.BattleMoment[] ParseMoments(string value)
+        private static BattleMoment[] ParseMoments(String value)
         {
-            if (value.Length == 0) return null;
-            List<BattleVoice.BattleMoment> list = new List<BattleVoice.BattleMoment>();
-            string[] parts = value.Split(',');
-            foreach (string p in parts)
+            if (value.Length == 0)
+                return null;
+
+            List<BattleMoment> result = new List<BattleMoment>();
+
+            String[] values = value.Split(',');
+            for (int i = 0; i < values.Length; i++)
             {
-                BattleVoice.BattleMoment m = ParseMoment(p.Trim());
-                if ((int)m == 0 && p.Trim() != "0")
+                BattleMoment moment = ParseMoment(values[i].Trim());
+                if (moment == BattleMoment.Unknown)
                 {
-                    Log.Message($"Couldn't parse BattleMoment '{p.Trim()}'");
+                    LogEchoS.Warning($"Couldn't parse BattleMoment '{values[i].Trim()}'");
                     return null;
                 }
-                list.Add(m);
+                else
+                    result.Add(moment);
             }
-            return list.Count > 0 ? list.ToArray() : null;
+
+            if (result.Count == 0)
+                return null;
+
+            return result.ToArray();
         }
 
-        private static BattleVoice.BattleMoment ParseMoment(string value)
+        private static BattleMoment ParseMoment(String value)
         {
+            BattleMoment result = BattleMoment.Unknown;
             try
             {
-                return (BattleVoice.BattleMoment)Enum.Parse(typeof(BattleVoice.BattleMoment), value);
+                result = (BattleMoment)Enum.Parse(typeof(BattleMoment), value);
             }
             catch
             {
-                string lower = value.ToLower();
-                foreach (PropertyInfo prop in typeof(BattleMomentEx).GetProperties())
+                // Look in BattleMomentEx
+                value = value.ToLower();
+                PropertyInfo[] properties = typeof(BattleMomentEx).GetProperties();
+                foreach (PropertyInfo property in properties)
                 {
-                    if (prop.Name.ToLower() == lower)
-                    {
-                        return (BattleVoice.BattleMoment)prop.GetValue(null, null);
-                    }
+                    if (property.Name.ToLower() == value)
+                        return (BattleMoment)property.GetValue(null, null);
                 }
             }
-            return 0;
+            return result;
         }
 
-        private static BattleSpeakerEx ParseSpeaker(string value)
+        private static BattleSpeakerEx ParseSpeaker(String value)
         {
-            if (value.Length == 0) return null;
+            if (value.Length == 0)
+                return null;
+
             BattleSpeakerEx speaker = new BattleSpeakerEx();
 
-            if (value.StartsWith("$"))
+            if (value[0] == '$')
             {
                 speaker.CheckCanTalk = false;
                 value = value.Substring(1);
             }
-            if (value.StartsWith("!"))
+
+            if (value[0] == '!')
             {
                 speaker.CheckIsPlayer = false;
                 value = value.Substring(1);
             }
-            if (value.StartsWith("\\"))
+
+            if (value[0] == '\\')
             {
                 speaker.Without = true;
                 value = value.Substring(1);
             }
 
-            string[] parts = value.Trim().Split(':');
-            if (parts.Length == 1)
+            String[] tokens = value.Trim().Split(':');
+            if (tokens.Length == 1)
             {
-                speaker.playerId = ParseEnum(parts[0], CharacterId.NONE);
-                if (speaker.playerId == CharacterId.NONE) return null;
+                // CharacterId
+                speaker.playerId = ParseEnum(tokens[0], CharacterId.NONE);
+                if (speaker.playerId == CharacterId.NONE)
+                    return null;
             }
-            else if (parts.Length > 1)
+            else if (tokens.Length > 1)
             {
-                string statusPart = null;
-                if (parts[0].Length > 0 && !int.TryParse(parts[0], out speaker.enemyBattleId))
+                String status = null;
+                // The speaker is an enemy identified by its battle ID and/or its model name
+                if (tokens[0].Length > 0)
                 {
-                    speaker.playerId = ParseEnum(parts[0], CharacterId.NONE);
-                    if (speaker.playerId == CharacterId.NONE) return null;
-                    statusPart = parts[1];
-                }
-
-                if (statusPart == null && parts[1].Length > 0)
-                {
-                    if (int.TryParse(parts[1], out int modelId))
+                    // BattleId:
+                    if (!Int32.TryParse(tokens[0], out speaker.enemyBattleId))
                     {
+                        // CharacterId:StatusId
+                        speaker.playerId = ParseEnum(tokens[0], CharacterId.NONE);
+                        if (speaker.playerId == CharacterId.NONE)
+                            return null;
+                        status = tokens[1];
+                    }
+                }
+                // Note: Empty string is valid, allowing to target any enemy. Useful for debugging.
+                if (status == null && tokens[1].Length > 0)
+                {
+                    // BattleId:ModelId
+                    if (Int32.TryParse(tokens[1], out int modelId))
+                    {
+                        // Verify the number is a valid ModelId
                         if (!FF9BattleDB.GEO.ContainsKey(modelId))
                         {
-                            Log.Message($"Invalid model id '{modelId}'");
+                            LogEchoS.Warning($"Invalid model id '{modelId}'");
                             return null;
                         }
                         speaker.enemyModelId = modelId;
                     }
-                    else if (!FF9BattleDB.GEO.TryGetKey(parts[1], out speaker.enemyModelId))
+                    // BattleId:ModelName
+                    else if (!FF9BattleDB.GEO.TryGetKey(tokens[1], out speaker.enemyModelId))
                     {
-                        Log.Message($"Invalid model name '{parts[1]}'");
+                        LogEchoS.Warning($"Invalid model name '{tokens[1]}'");
                         return null;
                     }
                 }
 
-                if (parts.Length > 2) statusPart = parts[2];
-                if (statusPart != null)
-                {
-                    speaker.Status = ParseEnum(statusPart, BattleStatusId.None);
-                }
+                // BattleId:ModelId:StatusId
+                if (tokens.Length > 2)
+                    status = tokens[2];
+
+                if (status != null)
+                    speaker.Status = ParseEnum(status, BattleStatusId.None);
             }
             return speaker;
         }

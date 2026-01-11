@@ -1,24 +1,49 @@
 using Global.Sound.SaXAudio;
 using Memoria.Assets;
 using Memoria.Data;
-using Memoria.Prime;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using static Memoria.Data.BattleVoice;
+using Line = System.Collections.Generic.KeyValuePair<System.Int32, Memoria.Data.BattleVoice.BattleMoment>;
 
 namespace Memoria.EchoS
 {
     public static class BattleSystem
     {
+        public static uint Flags = 0U;
+
+        public static LineEntry[] Lines = null;
+        public static int CustomLineStart;
+
+        public static Queue<Line> LinesQueue = new Queue<Line>();
+
+        public static int[] PlayedLines = new int[512];
+        public static int PlayedLinesPos;
+        public static int PlayedLinesCount;
+
+        public static BattleCalculator OnDeathCalc;
+        public static BattleCalculator PerformingCalc;
+        public static Dictionary<BattleCommand, List<StatusEventData>> StatusEvents = new Dictionary<BattleCommand, List<StatusEventData>>();
+
+        public static int CurrentPlayingDialog = -1;
+        public static int CurrentPlayingChain = -1;
+
+        public static bool HasFirstActHappened = false;
+
+        public static HashSet<BTL_DATA> InTranceCharacters = new HashSet<BTL_DATA>();
+
         public static bool IsPreemptive => FF9StateSystem.Battle.FF9Battle.btl_scene.Info.StartType == battle_start_type_tags.BTL_START_FIRST_ATTACK;
 
         public static bool IsBackAttack => FF9StateSystem.Battle.FF9Battle.btl_scene.Info.StartType == battle_start_type_tags.BTL_START_BACK_ATTACK;
 
         public static bool CanPlayMoreLines => CurrentPlayingDialog < 0;
 
-        public static Dictionary<int, AudioEffectManager.EffectPreset> PresetCache = new Dictionary<int, AudioEffectManager.EffectPreset>();
+        public delegate bool LineEntryPredicate(int lineId, BattleVoice.BattleMoment when);
+
+        public static Dictionary<string, AudioEffectManager.EffectPreset> PresetCache = new Dictionary<string, AudioEffectManager.EffectPreset>();
         private static bool _cacheInitialized = false;
 
         private static void InitializePresetCache()
@@ -26,300 +51,300 @@ namespace Memoria.EchoS
             if (_cacheInitialized) return;
             PresetCache.Clear();
 
-            for (int i = 0; i < 4; i++)
+            for (BTL_DATA btl = FF9StateSystem.Battle.FF9Battle.btl_list.next; btl != null; btl = btl.next)
             {
-                foreach (CharacterId charId in new CharacterId[] { CharacterId.Zidane, CharacterId.Vivi, CharacterId.Garnet, CharacterId.Steiner, CharacterId.Freya, CharacterId.Quina, CharacterId.Eiko, CharacterId.Amarant, CharacterId.Beatrix })
+                BattleUnit unit = new BattleUnit(btl);
+                if (unit.IsPlayer) // Can work with monsters but now, it's just for players.
                 {
-                    string charName = charId.ToString();
+                    string charName = unit.Name.ToString();
                     foreach (BattleStatus status in Enum.GetValues(typeof(BattleStatus)))
                     {
                         string key = status.ToString() + charName;
                         var preset = AudioEffectManager.GetUnlistedPreset(key);
                         if (preset != null)
                         {
-                            int cacheKey = (int)status | ((int)charId << 16);
-                            if (!PresetCache.ContainsKey(cacheKey))
-                                PresetCache.Add(cacheKey, preset.Value);
+                            if (!PresetCache.ContainsKey(key))
+                                PresetCache.Add(key, preset.Value);
                         }
                     }
                 }
             }
+
+
             _cacheInitialized = true;
         }
 
-        public static LineEntryFlag GetFlags(BattleCalculator calc)
+        public static UInt32 GetFlags(BattleCalculator calc)
         {
-            LineEntryFlag flags = (LineEntryFlag)Flags;
-
+            UInt32 flags = Flags;
             if (calc.Command.IsManyTarget)
-                flags |= LineEntryFlag.Multi;
+                flags |= (UInt32)LineEntryFlag.Multi;
             else
-                flags |= LineEntryFlag.Single;
+            {
+                flags |= (UInt32)LineEntryFlag.Single;
 
-            if (calc.Target.Id == calc.Caster.Id)
-                flags |= LineEntryFlag.Self;
+                if (calc.Target.Id == calc.Caster.Id)
+                    flags |= (UInt32)LineEntryFlag.Self;
+            }
 
-            CalcFlag targetFlags = (CalcFlag)calc.Target.Flags;
-            BattleCalcFlags contextFlags = (BattleCalcFlags)calc.Context.Flags;
+            if ((calc.Target.Flags & CalcFlag.Critical) != 0)
+                flags |= (UInt32)LineEntryFlag.Crit;
+            if ((calc.Target.Flags & CalcFlag.HpAlteration) != 0)
+                flags |= (UInt32)LineEntryFlag.Hp;
+            if ((calc.Target.Flags & CalcFlag.MpAlteration) != 0)
+                flags |= (UInt32)LineEntryFlag.Mp;
 
-            if ((targetFlags & CalcFlag.Critical) != 0)
-                flags |= LineEntryFlag.Crit;
-
-            if ((targetFlags & CalcFlag.HpAlteration) != 0)
-                flags |= LineEntryFlag.Hp;
-
-            if ((targetFlags & CalcFlag.MpAlteration) != 0)
-                flags |= LineEntryFlag.Mp;
-
-            if ((contextFlags & BattleCalcFlags.Dodge) != 0)
-                flags |= LineEntryFlag.Dodge;
-            else if ((contextFlags & BattleCalcFlags.Miss) != 0)
-                flags |= LineEntryFlag.Miss;
+            if ((calc.Context.Flags & BattleCalcFlags.Dodge) != 0)
+                flags |= (UInt32)LineEntryFlag.Dodge;
+            else if ((calc.Context.Flags & BattleCalcFlags.Miss) != 0)
+                flags |= (UInt32)LineEntryFlag.Miss;
             else
-                flags |= LineEntryFlag.Hit;
+                flags |= (UInt32)LineEntryFlag.Hit;
 
             return flags;
         }
 
-        public static bool CommonChecks(int i, BattleVoice.BattleMoment when, uint flags, BattleUnit speaker, BattleStatusId statusException = (BattleStatusId)30)
+        public static Boolean CommonChecks(Int32 i, BattleMoment when, UInt32 flags, BattleUnit speaker, BattleStatusId statusException = BattleStatusId.None)
         {
-            LineEntry currentLine = Lines[i];
-
-            if (FF9StateSystem.Battle.battleMapIndex == 296 && (CharacterId)currentLine.Speaker.playerId == CharacterId.Vivi)
-            {
-                bool explicitlyAllowed = false;
-                if (currentLine.BattleIds != null)
-                {
-                    foreach (int id in currentLine.BattleIds)
-                    {
-                        if (id == 296)
-                        {
-                            explicitlyAllowed = true;
-                            break;
-                        }
-                    }
-                }
-                if (!explicitlyAllowed || currentLine.BattleIdIsBlacklist)
-                    return false;
-            }
-
-            if (!currentLine.When.Contains(when))
+            // [SPECIAL] Black Waltz 3: Vivi lines not tagged with the right BattleId are ignored
+            if (FF9StateSystem.Battle.battleMapIndex == 296 && Lines[i].Speaker.playerId == CharacterId.Vivi && !Lines[i].BattleIds.Contains(296))
                 return false;
 
-            if (currentLine.Flags != LineEntryFlag.None && ((uint)currentLine.Flags & flags) == 0U)
+            if (!Lines[i].When.Contains(when))
                 return false;
 
-            if (currentLine.BattleIds != null && currentLine.BattleIds.Length > 0)
-            {
-                int currentMapId = FF9StateSystem.Battle.battleMapIndex;
-                bool matchFound = false;
-                foreach (int id in currentLine.BattleIds)
-                {
-                    if (id == currentMapId)
-                    {
-                        matchFound = true;
-                        break;
-                    }
-                }
+            if ((~Lines[i].Flags & (LineEntryFlag)flags) != 0)
+                return false;
 
-                if (currentLine.BattleIdIsBlacklist)
-                {
+            if (Lines[i].BattleIds != null && Lines[i].BattleIds.Length > 0)
+            {
+                bool matchFound = Lines[i].BattleIds.Contains(FF9StateSystem.Battle.battleMapIndex);
+
+                if (Lines[i].BattleIdIsBlacklist)
                     if (matchFound) return false;
-                }
                 else
-                {
                     if (!matchFound) return false;
-                }
             }
 
-            if (currentLine.ScenarioMin > 0 && GameState.ScenarioCounter < currentLine.ScenarioMin)
+            if (Lines[i].ScenarioMin > 0 && GameState.ScenarioCounter < Lines[i].ScenarioMin)
                 return false;
 
-            if (currentLine.ScenarioMax > 0 && GameState.ScenarioCounter > currentLine.ScenarioMax)
+            if (Lines[i].ScenarioMax > 0 && GameState.ScenarioCounter > Lines[i].ScenarioMax)
                 return false;
 
             if (speaker != null)
             {
-                if (currentLine.Speaker.CheckIsPlayer && !currentLine.Speaker.CheckIsCharacter(speaker))
+                if (Lines[i].Speaker.CheckIsPlayer)
                 {
-                    return false;
-                }
-                else if (currentLine.With != null && currentLine.With.Length > 0 && currentLine.With[0].CheckIsPlayer && !currentLine.With[0].CheckIsCharacter(speaker))
-                {
-                    return false;
-                }
-            }
-
-            int priority = AdjustPriority(when, currentLine.Priority);
-
-            if (!CanTalk(currentLine.Speaker, priority, statusException))
-                return false;
-
-            for (int j = currentLine.ChainId; j >= 0; j = Lines[j].ChainId)
-            {
-                if (FF9StateSystem.Battle.battleMapIndex == 296 && (CharacterId)Lines[j].Speaker.playerId == CharacterId.Vivi)
-                {
-                    bool explicitlyAllowed = false;
-                    if (Lines[j].BattleIds != null)
-                    {
-                        foreach (int id in Lines[j].BattleIds)
-                        {
-                            if (id == 296)
-                            {
-                                explicitlyAllowed = true;
-                                break;
-                            }
-                        }
-                    }
-                    if (!explicitlyAllowed || Lines[j].BattleIdIsBlacklist)
+                    if (!Lines[i].Speaker.CheckIsCharacter(speaker))
                         return false;
                 }
-
-                if (!CanTalk(Lines[j].Speaker, priority, statusException))
+                // TODO check all With
+                else if (Lines[i].With != null && !Lines[i].With[0].CheckIsCharacter(speaker))
                     return false;
             }
 
-            if (currentLine.With != null)
-            {
-                bool hasRequiredPartner = false;
-                foreach (BattleSpeakerEx withSpeaker in currentLine.With)
-                {
-                    BattleUnit partnerUnit = withSpeaker.FindBattleUnit();
+            // Check if speaker can talk
+            if (statusException == BattleStatusId.None)
+                statusException = BattleStatusId.Jump;
 
-                    if ((!withSpeaker.Without || partnerUnit == null) && partnerUnit != null && !partnerUnit.IsUnderStatus(BattleStatus.Death) && (withSpeaker.Status == BattleStatusId.None || partnerUnit.IsUnderStatus(withSpeaker.Status)) && (!withSpeaker.CheckCanTalk || BattleVoice.BattleSpeaker.CheckCanSpeak(partnerUnit, priority, statusException)))
-                    {
-                        hasRequiredPartner = true;
-                        break;
-                    }
+            if (!CanTalk(Lines[i].Speaker, AdjustPriority(when, Lines[i].Priority), statusException))
+                return false;
+
+            // Check if all speakers in the chain can talk
+            Int32 chainId = Lines[i].ChainId;
+            while (chainId >= 0)
+            {
+                // [SPECIAL] Black Waltz 3: Vivi lines not tagged with the right BattleId are ignored
+                if (FF9StateSystem.Battle.battleMapIndex == 296 && Lines[chainId].Speaker.playerId == CharacterId.Vivi && !Lines[chainId].BattleIds.Contains(296))
+                    return false;
+
+                if (!CanTalk(Lines[chainId].Speaker, AdjustPriority(when, Lines[i].Priority), statusException))
+                    return false;
+                chainId = Lines[chainId].ChainId;
+            }
+
+            // Check for required player
+            if (Lines[i].With != null)
+            {
+                Boolean found = false;
+                foreach (BattleSpeakerEx with in Lines[i].With)
+                {
+                    BattleUnit unit = with.FindBattleUnit();
+
+                    // Check for without
+                    if (with.Without && unit != null)
+                        continue;
+
+                    // Note: should I not check for Death here?
+                    if (unit == null || unit.IsUnderStatus(BattleStatus.Death))
+                        continue;
+                    if (with.Status != BattleStatusId.None && !unit.IsUnderStatus(with.Status))
+                        continue;
+                    if (with.CheckCanTalk && !BattleSpeaker.CheckCanSpeak(unit, AdjustPriority(when, Lines[i].Priority), statusException))
+                        continue;
+
+                    found = true;
+                    break;
                 }
-                if (!hasRequiredPartner)
+
+                if (!found)
                     return false;
             }
 
             return true;
         }
 
-        public static int GetRandomLine(BattleVoice.BattleMoment moment, LineEntryPredicate filter)
+        public static Int32 GetRandomLine(BattleMoment moment, LineEntryPredicate filter)
         {
-            int maxPriority = int.MinValue;
-            Dictionary<int, float> weights = new Dictionary<int, float>();
-            float totalWeight = 0f;
-            string debugInfo = "";
-
-            for (int i = 0; i < CustomLineStart; i++)
+            Int32 currentPriority = Int32.MinValue;
+            Dictionary<Int32, Single> weights = new Dictionary<Int32, Single>();
+            Single totalWeight = 0;
+            String selectedLines = "";
+            for (Int32 i = 0; i < CustomLineStart; i++)
             {
-                if (CurrentPlayingChain < 0 || !Lines[CurrentPlayingChain].Speaker.Equals(Lines[i].Speaker))
+                // Chains cannot be interrupted
+                if (CurrentPlayingChain >= 0 && Lines[CurrentPlayingChain].Speaker.Equals(Lines[i].Speaker))
+                    continue;
+
+                Int32 priority = AdjustPriority(moment, Lines[i].Priority);
+                if (priority < currentPriority)
+                    continue;
+                if (!filter(i, moment))
+                    continue;
+
+                // Reduce weights of already played lines
+                Single weight = Lines[i].Weight;
+                if (weight >= 0)
                 {
-                    int priority = AdjustPriority(moment, Lines[i].Priority);
-                    if (priority >= maxPriority && filter(i, moment))
+                    for (Int32 j = 0; j < PlayedLinesCount; j++)
                     {
-                        float weight = Lines[i].Weight;
-                        if (weight >= 0f)
+                        // Get the position in the circular buffer
+                        Int32 p = (PlayedLinesPos - 1 - j) % PlayedLines.Length;
+                        if (PlayedLines[p] == i)
                         {
-                            for (int j = 0; j < PlayedLinesCount; j++)
-                            {
-                                int idx = (PlayedLinesPos - 1 - j + PlayedLines.Length) % PlayedLines.Length;
-                                if (PlayedLines[idx] == i)
-                                {
-                                    float penalty = Mathf.Min(0.5f, (float)j / 20f);
-                                    weight *= penalty;
-                                }
-                            }
+                            Single f = Mathf.Min(0.5f, j / 20f);
+                            weight *= f;
                         }
-                        else
-                        {
-                            weight = -weight;
-                        }
-
-                        if (priority > maxPriority)
-                        {
-                            maxPriority = priority;
-                            weights.Clear();
-                            totalWeight = 0f;
-                            debugInfo = "";
-                        }
-
-                        weights[i] = weight;
-                        totalWeight += weight;
-                        debugInfo += string.Format("['{0}'({1})] ", Lines[i].Path, weight);
                     }
                 }
-            }
+                else
+                    weight = -weight; // negative weight mean fixed weight
 
-            if (totalWeight == 0f)
+                if (priority > currentPriority)
+                {
+                    currentPriority = priority;
+                    weights.Clear();
+                    totalWeight = 0;
+                    selectedLines = "";
+                }
+                weights[i] = weight;
+                totalWeight += weight;
+                selectedLines += $"['{Lines[i].Path}'({weight})] ";
+            }
+            if (totalWeight == 0)
                 return -1;
 
+            // To avoid repeating a single line too much do a coin toss
+            // TODO: remove when enough lines?
             if (weights.Count == 1 && totalWeight < 1f)
                 totalWeight *= 3f;
 
-            float roll = UnityEngine.Random.Range(0f, totalWeight);
-            Log.Message(string.Format("Selected lines ({0}): {1}RNG: {2}/{3}", weights.Count, debugInfo, roll, totalWeight));
+            Single rng = UnityEngine.Random.Range(0, totalWeight);
 
-            float currentRange = 0f;
-            foreach (var entry in weights)
+            LogEchoS.Message($"Selected lines ({weights.Count}): {selectedLines}RNG: {rng}/{totalWeight}");
+
+            totalWeight = 0;
+            foreach (Int32 i in weights.Keys)
             {
-                currentRange += entry.Value;
-                if (roll <= currentRange)
-                    return entry.Key;
+                totalWeight += weights[i];
+                if (rng <= totalWeight)
+                    return i;
             }
-
             return -1;
         }
 
-        public static void QueueLine(int i, BattleVoice.BattleMoment when)
+        public static void QueueLine(Int32 i, BattleMoment when)
         {
-            if (i < 0) return;
+            if (i < 0)
+                return;
 
-            bool startPlaying = LinesQueue.Count == 0;
-
+            Boolean queueEmpty = LinesQueue.Count == 0;
+            Int32 chainId = -1;
             if (!Lines[i].IsVerbal)
             {
-                for (int j = Lines[i].ChainId; j >= 0; j = Lines[j].ChainId)
-                    LinesQueue.Enqueue(new KeyValuePair<int, BattleVoice.BattleMoment>(j, (BattleVoice.BattleMoment)BattleMomentEx.Chain));
-
-                if (startPlaying)
+                chainId = Lines[i].ChainId;
+                while (chainId >= 0)
                 {
-                    LinesQueue.Enqueue(new KeyValuePair<int, BattleVoice.BattleMoment>(i, when));
+                    LinesQueue.Enqueue(new Line(chainId, BattleMomentEx.Chain));
+                    chainId = Lines[chainId].ChainId;
+                }
+                if (queueEmpty)
+                {
+                    // If queue is empty we need to start a chain
+                    LinesQueue.Enqueue(new Line(i, when));
                     PlayLine(i, when, PlayNextLine);
                 }
                 else
-                {
-                    PlayLine(i, when, null);
-                }
+                    // A chain is already going, we play the line on top of it
+                    PlayLine(i, when);
+                return;
             }
-            else
+
+            // TODO: priority?
+
+            if (LinesQueue.Count > 2)
             {
-                if (LinesQueue.Count > 2)
-                {
-                    Log.Message("Line '" + Lines[i].Path + "' ignored. Queue full");
-                    return;
-                }
-
-                LinesQueue.Enqueue(new KeyValuePair<int, BattleVoice.BattleMoment>(i, when));
-                for (int j = Lines[i].ChainId; j >= 0; j = Lines[j].ChainId)
-                    LinesQueue.Enqueue(new KeyValuePair<int, BattleVoice.BattleMoment>(j, (BattleVoice.BattleMoment)BattleMomentEx.Chain));
-
-                if (startPlaying)
-                    PlayLine(i, when, PlayNextLine);
-                else
-                    Log.Message("Queueing '" + Lines[i].Path + "'");
+                LogEchoS.Debug($"Line '{Lines[i].Path}' ignored. Queue full");
+                return;
             }
+
+            // We queue the line and its chain
+            LinesQueue.Enqueue(new Line(i, when));
+            chainId = Lines[i].ChainId;
+            while (chainId >= 0)
+            {
+                LinesQueue.Enqueue(new Line(chainId, BattleMomentEx.Chain));
+                chainId = Lines[chainId].ChainId;
+            }
+
+            if (queueEmpty)
+                // We start a chain going
+                PlayLine(i, when, PlayNextLine);
+            else
+                // No need to start a chain
+                LogEchoS.Debug($"Queueing '{Lines[i].Path}'");
         }
 
         private static void PlayNextLine()
         {
-            if (LinesQueue.Count == 0) return;
             LinesQueue.Dequeue();
-
             if (LinesQueue.Count == 0)
             {
-                Log.Message("Chain ended");
+                LogEchoS.Debug($"Chain ended");
                 return;
             }
 
-            KeyValuePair<int, BattleVoice.BattleMoment> next = LinesQueue.Peek();
-            Log.Message("Playing next line: " + Lines[next.Key].Path);
-            PlayLine(next.Key, next.Value, PlayNextLine);
+            Line line = LinesQueue.Peek();
+            LogEchoS.Debug($"Playing next line: {Lines[line.Key].Path}");
+            PlayLine(line.Key, line.Value, PlayNextLine);
+        }
+
+        private static void PlayLine(int i, BattleVoice.BattleMoment when, Action onFinishedPlaying = null)
+        {
+            if (Lines[i].IsVerbal && (CurrentPlayingDialog >= 0 || BattleVoice.GetPlayingVoicesCount() > 0))
+            {
+                if (PersistenSingleton<BattleSubtitles>.Instance != null)
+                {
+                    PersistenSingleton<BattleSubtitles>.Instance.StartCoroutine(WaitForVoiceRoutine(i, when, onFinishedPlaying));
+                }
+                else
+                {
+                    onFinishedPlaying?.Invoke();
+                }
+                return;
+            }
+            PlayLineNow(i, when, onFinishedPlaying);
         }
 
         private static IEnumerator WaitForVoiceRoutine(int i, BattleVoice.BattleMoment when, Action onFinishedPlaying)
@@ -341,25 +366,8 @@ namespace Memoria.EchoS
                 }
             }
 
-            Log.Message(string.Format("Cancelled queued line '{0}' ({1})", Lines[i].Path, (timeout <= 0) ? "timeout" : "dialog"));
+            LogEchoS.Message(string.Format("Cancelled queued line '{0}' ({1})", Lines[i].Path, (timeout <= 0) ? "timeout" : "dialog"));
             onFinishedPlaying?.Invoke();
-        }
-
-        private static void PlayLine(int i, BattleVoice.BattleMoment when, Action onFinishedPlaying = null)
-        {
-            if (Lines[i].IsVerbal && (CurrentPlayingDialog >= 0 || BattleVoice.GetPlayingVoicesCount() > 0))
-            {
-                if (PersistenSingleton<BattleSubtitles>.Instance != null)
-                {
-                    PersistenSingleton<BattleSubtitles>.Instance.StartCoroutine(WaitForVoiceRoutine(i, when, onFinishedPlaying));
-                }
-                else
-                {
-                    onFinishedPlaying?.Invoke();
-                }
-                return;
-            }
-            PlayLineNow(i, when, onFinishedPlaying);
         }
 
         private static IEnumerator WaitAndHideRoutine(int speakerId, string text, float seconds, Action onFinished)
@@ -378,14 +386,20 @@ namespace Memoria.EchoS
             if (!_cacheInitialized) InitializePresetCache();
 
             BattleUnit speaker = null;
+            // Note: 'With' becomes the speaker when 'Speaker' is not checked for speech
             if (!Lines[i].Speaker.CheckCanTalk && Lines[i].With != null)
             {
-                foreach (BattleSpeakerEx withSpeaker in Lines[i].With)
+                BattleUnit unit = null;
+                foreach (BattleSpeakerEx with in Lines[i].With)
                 {
-                    if (withSpeaker.CheckCanTalk)
+                    if (with.CheckCanTalk)
                     {
-                        speaker = withSpeaker.FindBattleUnit();
-                        if (speaker != null) break;
+                        unit = with.FindBattleUnit();
+                        if (unit != null)
+                        {
+                            speaker = unit;
+                            break;
+                        }
                     }
                 }
             }
@@ -407,13 +421,13 @@ namespace Memoria.EchoS
                         path = trancePath;
                 }
 
-                Log.Message("Starting '" + path + "'" + ((onFinishedPlaying != null) ? " with a chain" : ""));
+                LogEchoS.Message("Starting '" + path + "'" + ((onFinishedPlaying != null) ? " with a chain" : ""));
                 AddToPlayedLines(i);
 
                 bool soundStarted = false;
                 string displayText = Lines[i].Text != null ? "“" + Lines[i].Text + "”" : "";
 
-                int soundId = BattleVoice.PlayVoice(speaker, "Battle/" + path, AdjustPriority(when, Lines[i].Priority), delegate ()
+                int soundId = PlayVoice(speaker, "Battle/" + path, AdjustPriority(when, Lines[i].Priority), delegate ()
                 {
                     if (soundStarted)
                     {
@@ -430,19 +444,24 @@ namespace Memoria.EchoS
                     if (speaker.IsPlayer)
                     {
                         BattleStatus currentStatuses = speaker.CurrentStatus;
-                        int speakerIdShifted = (int)speaker.PlayerIndex << 16;
 
                         foreach (var kvp in PresetCache)
                         {
-                            if ((kvp.Key & 0xFFFF0000) != speakerIdShifted) continue;
+                            if (!kvp.Key.Contains(speaker.Name)) continue;
 
-                            int statusInt = kvp.Key & 0xFFFF;
-                            if (((int)currentStatuses & statusInt) != 0)
+                            string statusName = kvp.Key.Replace(speaker.Name, string.Empty).Trim();
+                            BattleStatus PresetStatus = (BattleStatus)Enum.Parse(typeof(BattleStatus), statusName);
+
+                            if (speaker.IsUnderAnyStatus(PresetStatus))
                             {
                                 AudioEffectManager.ApplyPresetOnSound(kvp.Value, soundId, path, 0f);
                                 break;
                             }
                         }
+
+                        // Apply Mini speed effect => [TODO] Maybe add parameters for the preset file ?
+                        if (speaker.IsPlayer && speaker.IsUnderStatus(BattleStatus.Mini))
+                            ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetPitch(soundId, 1.25f, 0);
                     }
 
                     if (PersistenSingleton<BattleSubtitles>.Instance != null && !string.IsNullOrEmpty(Lines[i].Text))
@@ -450,7 +469,7 @@ namespace Memoria.EchoS
                 }
                 else
                 {
-                    Log.Message($"[Echo-S] Audio file missing for {speaker.Name} ! => Battle/{path}");
+                    LogEchoS.Message("Audio file missing for {speaker.Name} ! => Battle/{path}");
 
                     if (PersistenSingleton<BattleSubtitles>.Instance != null && !string.IsNullOrEmpty(Lines[i].Text))
                         PersistenSingleton<BattleSubtitles>.Instance.Show(speaker, displayText);
@@ -470,68 +489,46 @@ namespace Memoria.EchoS
                 return;
             }
 
-            Log.Message(string.Format("Couldn't find battle unit '{0}'", Lines[i].Speaker));
+            LogEchoS.Message(string.Format("Couldn't find battle unit '{0}'", Lines[i].Speaker));
             onFinishedPlaying?.Invoke();
         }
 
-        private static bool CanTalk(BattleSpeakerEx speaker, int priority, BattleStatusId statusException)
+        private static Boolean CanTalk(BattleSpeakerEx speaker, Int32 priority, BattleStatusId statusException)
         {
             BattleUnit unit = speaker.FindBattleUnit();
-            return unit != null && (speaker.Status == BattleStatusId.None || unit.IsUnderStatus((BattleStatus)speaker.Status)) && (!speaker.CheckCanTalk || BattleVoice.BattleSpeaker.CheckCanSpeak(unit, priority, statusException));
+            if (unit == null)
+                return false;
+            if (speaker.Status != BattleStatusId.None && !unit.IsUnderStatus(speaker.Status))
+                return false;
+            if (speaker.CheckCanTalk && !BattleSpeaker.CheckCanSpeak(unit, priority, statusException))
+                return false;
+            return true;
         }
 
-        private static int AdjustPriority(BattleVoice.BattleMoment moment, int priority)
+        private static Int32 AdjustPriority(BattleMoment moment, Int32 priority)
         {
-            if (moment == BattleVoice.BattleMoment.VictoryPose)
+            // Adjust priorities
+            if (moment == BattleMoment.VictoryPose)
                 return priority + 2000;
-
-            if ((moment >= BattleVoice.BattleMoment.BattleStart && moment <= BattleVoice.BattleMoment.EnemyEscape) ||
-                moment == (BattleVoice.BattleMoment)BattleMomentEx.VictoryPoseSurvivor ||
-                moment == (BattleVoice.BattleMoment)BattleMomentEx.TranceEnter ||
-                moment == (BattleVoice.BattleMoment)BattleMomentEx.TranceLeave)
-            {
+            if ((moment >= BattleMoment.BattleStart && moment <= BattleMoment.EnemyEscape)
+                || moment == BattleMomentEx.VictoryPoseSurvivor
+                || moment == BattleMomentEx.TranceEnter
+                || moment == BattleMomentEx.TranceLeave)
                 return priority + 1000;
-            }
-
-            if (moment == (BattleVoice.BattleMoment)BattleMomentEx.KillEffect ||
-                moment == (BattleVoice.BattleMoment)BattleMomentEx.MissEffect ||
-                moment == (BattleVoice.BattleMoment)BattleMomentEx.DodgeEffect)
-            {
+            if (moment == BattleMomentEx.KillEffect || moment == BattleMomentEx.MissEffect || moment == BattleMomentEx.DodgeEffect)
                 return priority + 100;
-            }
-
-            if (moment == BattleVoice.BattleMoment.Added || moment == BattleVoice.BattleMoment.Removed)
+            if (moment == BattleMoment.Added || moment == BattleMoment.Removed)
                 return priority + 100;
-
-            if (moment >= BattleVoice.BattleMoment.Damaged && moment <= BattleVoice.BattleMoment.Missed)
+            if (moment >= BattleMoment.Damaged && moment <= BattleMoment.Missed)
                 return priority - 100;
-
             return priority;
         }
 
-        private static void AddToPlayedLines(int i)
+        private static void AddToPlayedLines(Int32 i)
         {
             PlayedLines[PlayedLinesPos] = i;
             PlayedLinesPos = (PlayedLinesPos + 1) % PlayedLines.Length;
-            if (PlayedLinesCount < PlayedLines.Length)
-                PlayedLinesCount++;
+            if (PlayedLinesCount < PlayedLines.Length) PlayedLinesCount++;
         }
-
-        public static uint Flags = 0U;
-        public static LineEntry[] Lines = null;
-        public static int CustomLineStart;
-        public static Queue<KeyValuePair<int, BattleVoice.BattleMoment>> LinesQueue = new Queue<KeyValuePair<int, BattleVoice.BattleMoment>>();
-        public static int[] PlayedLines = new int[512];
-        public static int PlayedLinesPos;
-        public static int PlayedLinesCount;
-        public static BattleCalculator OnDeathCalc;
-        public static BattleCalculator PerformingCalc;
-        public static Dictionary<BattleCommand, List<StatusEventData>> StatusEvents = new Dictionary<BattleCommand, List<StatusEventData>>();
-        public static int CurrentPlayingDialog = -1;
-        public static int CurrentPlayingChain = -1;
-        public static bool HasFirstActHappened = false;
-        public static HashSet<BTL_DATA> InTranceCharacters = new HashSet<BTL_DATA>();
-
-        public delegate bool LineEntryPredicate(int lineId, BattleVoice.BattleMoment when);
     }
 }

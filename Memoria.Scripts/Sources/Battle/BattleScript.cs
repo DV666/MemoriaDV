@@ -1,14 +1,15 @@
 using Global.Sound.SaXAudio;
-using Memoria.Assets;
 using Memoria.Data;
-using Memoria.Prime;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading;
-using UnityEngine;
+using System.Text.RegularExpressions;
+using static Memoria.Data.BattleVoice;
+using static Memoria.EchoS.BattleSystem;
+using Line = System.Collections.Generic.KeyValuePair<System.Int32, Memoria.Data.BattleVoice.BattleMoment>;
+
 
 namespace Memoria.EchoS
 {
@@ -19,27 +20,23 @@ namespace Memoria.EchoS
         public void Initialize()
         {
             LoadConfiguration();
-            Log.Message("[Echo-S] Initialize");
+            LogEchoS.Message("Initialize");
 
-            BattleVoice.OnBattleInOut += new BattleVoice.BattleInOutDelegate(this.OnBattleInOut);
-            BattleVoice.OnAct += new BattleVoice.BattleActDelegate(this.OnAct);
-            BattleVoice.OnHit += new BattleVoice.BattleActDelegate(this.OnHit);
-            BattleVoice.OnStatusChange += new BattleVoice.StatusChangeDelegate(this.OnStatusChange);
-            BattleVoice.OnDialogAudioStart += new BattleVoice.BattleDialogDelegate(this.OnDialogAudioStart);
-            BattleVoice.OnDialogAudioEnd += new BattleVoice.BattleDialogDelegate(this.OnDialogAudioEnd);
+            BattleVoice.OnBattleInOut += OnBattleInOut;
+            BattleVoice.OnAct += OnAct;
+            BattleVoice.OnHit += OnHit;
+            BattleVoice.OnStatusChange += OnStatusChange;
+            BattleVoice.OnDialogAudioStart += OnDialogAudioStart;
+            BattleVoice.OnDialogAudioEnd += OnDialogAudioEnd;
+            Lines = BattleScriptParser.LoadLines().ToArray();
+            BattleScriptParser.CountCharacterLines(Lines);
 
-            BattleSystem.Lines = BattleScriptParser.LoadLines().ToArray();
-
-            if (AssetManager.FolderHighToLow != null)
+            foreach (var folder in AssetManager.FolderHighToLow)
             {
-                var folders = AssetManager.FolderHighToLow;
-                for (int i = 0; i < folders.Length; i++)
+                if (folder.FolderPath.EndsWith("BattleSubtitles/"))
                 {
-                    if (folders[i].FolderPath != null && folders[i].FolderPath.EndsWith("BattleSubtitles/"))
-                    {
-                        PersistenSingleton<BattleSubtitles>.Instance.Enabled = true;
-                        return;
-                    }
+                    BattleSubtitles.Instance.Enabled = true;
+                    break;
                 }
             }
         }
@@ -50,7 +47,7 @@ namespace Memoria.EchoS
             {
                 if (File.Exists(EchoSFileIni))
                 {
-                    Log.Message("[Echo-S] Echo-S-9.ini detected. Loading...");
+                    LogEchoS.Message("Echo-S-9.ini detected. Loading...");
                     string[] lines = File.ReadAllLines(EchoSFileIni);
                     foreach (string line in lines)
                     {
@@ -65,7 +62,7 @@ namespace Memoria.EchoS
                             if (value == "1")
                             {
                                 LogEchoS.DebugEnable = true;
-                                Log.Message("[Echo-S] Debug Mode ENABLED via INI file.");
+                                LogEchoS.Message("Debug Mode ENABLED via INI file.");
                             }
                         }
                         else if (cleanLine.StartsWith("BattleLinesPath=", StringComparison.OrdinalIgnoreCase))
@@ -77,28 +74,28 @@ namespace Memoria.EchoS
                             if (!string.IsNullOrEmpty(customPath))
                             {
                                 BattleScriptParser.StuffListedPath = customPath;
-                                Log.Message($"[Echo-S] Custom BattleLines path set to: {customPath}");
+                                LogEchoS.Message("Custom BattleLines path set to: {customPath}");
                             }
                         }
                     }
-                    Log.Message("[Echo-S] Echo-S-9.ini loaded !");
+                    LogEchoS.Message("Echo-S-9.ini loaded !");
                 }
             }
             catch (Exception ex)
             {
-                Log.Message($"[Echo-S] Warning: Failed to load config file. {ex.Message}");
+                LogEchoS.Message("Warning: Failed to load config file. {ex.Message}");
             }
         }
 
         public bool OnBattleInOut(BattleVoice.BattleMoment when)
         {
-            BattleSystem.HasFirstActHappened = false;
-            if (BattleSystem.LinesQueue.Count > 1)
+            HasFirstActHappened = false;
+            if (LinesQueue.Count > 1)
             {
-                var item = BattleSystem.LinesQueue.Dequeue();
-                BattleSystem.LinesQueue.Clear();
-                BattleSystem.LinesQueue.Enqueue(item);
-                Log.Message($"Cleared all lines but '{BattleSystem.Lines[item.Key].Path}'");
+                Line line = LinesQueue.Dequeue();
+                LinesQueue.Clear();
+                LinesQueue.Enqueue(line);
+                LogEchoS.Message($"Cleared all lines but '{Lines[line.Key].Path}'");
             }
 
             if (when == BattleVoice.BattleMoment.BattleStart)
@@ -119,137 +116,177 @@ namespace Memoria.EchoS
                         var preset = AudioEffectManager.GetUnlistedPreset(key);
 
                         if (preset != null)
-                        {
-                            int cacheKey = (int)status | ((int)unit.PlayerIndex << 16);
-                            BattleSystem.PresetCache[cacheKey] = preset.Value;
-                        }
+                            BattleSystem.PresetCache[key] = preset.Value;
                     }
                 }
             }
 
-            CharacterId focusChar = BattleVoice.VictoryFocusIndex;
-            if (when == BattleVoice.BattleMoment.VictoryPose && focusChar != CharacterId.NONE && BattleState.BattleUnitCount(true) > 1)
+            // Custom moments
+            CharacterId focusChar = VictoryFocusIndex;
+            if (when == BattleMoment.VictoryPose)
             {
-                bool onlyOneSurvivor = true;
-                for (int j = 0; j < 4; j++)
+                if (focusChar != CharacterId.NONE && BattleState.BattleUnitCount(true) > 1)
                 {
-                    BattleUnit unit = new BattleUnit(FF9StateSystem.Battle.FF9Battle.btl_data[j]);
-                    CharacterId pIndex = unit.PlayerIndex;
-                    if (pIndex != CharacterId.NONE && pIndex != focusChar && unit.CurrentHp > 0U)
+                    Boolean isSolo = true;
+                    for (Int32 i = 0; i < 4; i++)
                     {
-                        onlyOneSurvivor = false;
-                        break;
+                        BattleUnit unit = new BattleUnit(FF9StateSystem.Battle.FF9Battle.btl_data[i]);
+                        CharacterId charId = unit.PlayerIndex;
+
+                        if (charId != CharacterId.NONE && charId != focusChar && unit.CurrentHp > 0)
+                        {
+                            isSolo = false;
+                            break;
+                        }
                     }
+                    if (isSolo)
+                        when = BattleMomentEx.VictoryPoseSurvivor;
                 }
-                if (onlyOneSurvivor) when = BattleMomentEx.VictoryPoseSurvivor;
             }
 
             if (focusChar == CharacterId.NONE)
             {
-                int count = BattleState.BattleUnitCount(true);
-                int rngIndex = UnityEngine.Random.Range(0, count);
-                int current = rngIndex;
-                for (BTL_DATA btl = FF9StateSystem.Battle.FF9Battle.btl_list.next; btl != null; btl = btl.next)
+                // Select a random player
+                Int32 count = BattleState.BattleUnitCount(true);
+                if (FF9StateSystem.Battle.battleMapIndex == 303)
+                    count--;
+                Int32 rng, i;
+                rng = i = UnityEngine.Random.Range(0, count);
+                for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
                 {
-                    if (btl.bi.player != 0 && current-- == 0)
+                    // Prevent Blank from saying an intro
+                    if (FF9StateSystem.Battle.battleMapIndex == 303 && (CharacterId)next.bi.slot_no == CharacterId.Blank) continue;
+                    if (next.bi.player != 0 && i-- == 0)
                     {
-                        focusChar = (CharacterId)btl.bi.slot_no;
+                        focusChar = (CharacterId)next.bi.slot_no;
                         break;
                     }
                 }
-                LogEchoS.Debug($"OnBattleInOut {BattleMomentEx.ToString(when)} {focusChar} RNG: {rngIndex}/{count}");
+                LogEchoS.Debug($"OnBattleInOut {BattleMomentEx.ToString(when)} {focusChar} RNG: {rng}/{count}");
             }
             else
-            {
                 LogEchoS.Debug($"OnBattleInOut {BattleMomentEx.ToString(when)} {focusChar}");
-            }
 
             if (!BattleSystem.CanPlayMoreLines) return true;
 
-            if (when == BattleVoice.BattleMoment.BattleStart)
+            if (when == BattleMoment.BattleStart)
             {
-                PersistenSingleton<BattleSubtitles>.Instance.ClearAll();
-                if (LogEchoS.DebugEnable)
+                BattleSubtitles.Instance.ClearAll();
+
+                String players = "";
+                String enemies = "";
+                for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
                 {
-                    string pNames = "";
-                    string eNames = "";
-                    for (BTL_DATA btl = FF9StateSystem.Battle.FF9Battle.btl_list.next; btl != null; btl = btl.next)
+                    BattleUnit unit = new BattleUnit(next);
+                    if (unit.IsPlayer)
                     {
-                        BattleUnit unit = new BattleUnit(btl);
-                        if (unit.IsPlayer)
-                            pNames += $"[{unit.Name}] ";
-                        else
-                            eNames += $"[{StringExtension.RemoveTags(unit.Name)}({unit.Data.dms_geo_id})] ";
+                        players += $"[{unit.Name}] ";
                     }
-
-                    LogEchoS.Debug($"BattleId: {FF9StateSystem.Battle.battleMapIndex} Players: {pNames}Enemies: {eNames}");
+                    else
+                    {
+                        enemies += $"[{unit.Name.RemoveTags()}({unit.Data.dms_geo_id})] ";
+                    }
                 }
+                LogEchoS.Debug($"BattleId: {FF9StateSystem.Battle.battleMapIndex} Players: {players}Enemies: {enemies}");
 
-                BattleSystem.InTranceCharacters.Clear();
-                BattleSystem.Flags = 0;
+                InTranceCharacters.Clear();
 
-                if (BattleSystem.IsPreemptive) BattleSystem.Flags |= (uint)LineEntryFlag.Preemptive;
-                else if (BattleSystem.IsBackAttack) BattleSystem.Flags |= (uint)LineEntryFlag.BackAttack;
-                else BattleSystem.Flags |= (uint)LineEntryFlag.FrontAttack;
+                Flags = 0;
+                if (IsPreemptive)
+                    Flags |= (UInt32)LineEntryFlag.Preemptive;
+                else if (IsBackAttack)
+                    Flags |= (UInt32)LineEntryFlag.BackAttack;
+                else
+                    Flags |= (UInt32)LineEntryFlag.FrontAttack;
 
-                BattleSystem.Flags |= (uint)((BattleState.BattleUnitCount(true) > 1) ? LineEntryFlag.PlayerTeam : LineEntryFlag.PlayerSolo);
-                BattleSystem.Flags |= (uint)((BattleState.BattleUnitCount(false) > 1) ? LineEntryFlag.EnemyTeam : LineEntryFlag.EnemySolo);
-                BattleSystem.Flags |= (uint)((BattleState.IsFriendlyBattle || BattleState.IsRagtimeBattle) ? LineEntryFlag.FriendlyBattle : LineEntryFlag.NonFriendlyBattle);
+                Flags |= BattleState.BattleUnitCount(true) > 1 ? (UInt32)LineEntryFlag.PlayerTeam : (UInt32)LineEntryFlag.PlayerSolo;
+                Flags |= BattleState.BattleUnitCount(false) > 1 ? (UInt32)LineEntryFlag.EnemyTeam : (UInt32)LineEntryFlag.EnemySolo;
+                Flags |= BattleState.IsFriendlyBattle || BattleState.IsRagtimeBattle ? (UInt32)LineEntryFlag.FriendlyBattle : (UInt32)LineEntryFlag.NonFriendlyBattle;
 
-                if (!BattleState.IsRandomBattle) BattleSystem.Flags |= (uint)(LineEntryFlag.Serious | LineEntryFlag.Boss);
+                // TODO: better define Boss and Serious
+                // Right now both mean scripted battles
+                if (!BattleState.IsRandomBattle)
+                    Flags |= (UInt32)LineEntryFlag.Boss | (UInt32)LineEntryFlag.Serious;
             }
 
-            uint currentFlags = BattleSystem.Flags;
-            BattleSystem.QueueLine(BattleSystem.GetRandomLine(when, (i, moment) =>
-                BattleSystem.CommonChecks(i, moment, currentFlags, null, (when == BattleVoice.BattleMoment.GameOver) ? BattleStatusId.Silence : BattleStatusId.None) &&
-                (!BattleSystem.Lines[i].Speaker.CheckIsPlayer || focusChar == CharacterId.NONE || focusChar == BattleSystem.Lines[i].Speaker.playerId)), when);
+            // Prepping flags
+            UInt32 flags = Flags;
+
+            // Play a random line
+            Int32 lineId = GetRandomLine(when, (i, moment) =>
+            {
+                if (!CommonChecks(i, moment, flags, null, when == BattleMoment.GameOver ? BattleStatusId.Death : BattleStatusId.None))
+                    return false;
+
+                // Check for focused character
+                if (Lines[i].Speaker.CheckIsPlayer
+                    && focusChar != CharacterId.NONE
+                    && focusChar != Lines[i].Speaker.playerId)
+                {
+                    return false;
+                }
+
+                return true;
+            });
+            QueueLine(lineId, when);
 
             return true;
         }
 
-        public bool OnAct(BattleUnit actingChar, BattleCalculator calc, BattleVoice.BattleMoment when)
+        public Boolean OnAct(BattleUnit actingChar, BattleCalculator calc, BattleMoment when)
         {
-            BattleSystem.HasFirstActHappened = true;
-            bool isFinished = false;
+            HasFirstActHappened = true;
+            Boolean processStatuses = false;
 
-            if (when == BattleVoice.BattleMoment.HitEffect)
+            // Custom moments
+            if (when == BattleMoment.HitEffect)
             {
                 if (calc.Command.Id == BattleCommandId.Steal)
                 {
                     if (calc.Context.ItemSteal == RegularItem.NoItem)
                     {
-                        bool anyItemsLeft = calc.Target.Enemy.Data.steal_item.Any(p => p != RegularItem.NoItem);
-                        when = anyItemsLeft ? BattleMomentEx.StealFail : BattleMomentEx.StealEmpty;
+                        if (calc.Target.Enemy.Data.steal_item.Count(p => p != RegularItem.NoItem) == 0)
+                            when = BattleMomentEx.StealEmpty;
+                        else
+                            when = BattleMomentEx.StealFail;
                     }
-                    else when = BattleMomentEx.StealSuccess;
+                    else
+                        when = BattleMomentEx.StealSuccess;
                 }
                 else if (calc.Command.Id == BattleCommandId.Eat || calc.Command.Id == BattleCommandId.Cook)
                 {
                     switch (calc.Context.EatResult)
                     {
-                        case EatResult.Failed: when = BattleMomentEx.EatFail; break;
-                        case EatResult.CannotEat: when = BattleMomentEx.EatCannot; break;
-                        case EatResult.Yummy: when = BattleMomentEx.EatSuccess; break;
-                        case EatResult.TasteBad: when = BattleMomentEx.EatBad; break;
+                        case EatResult.Yummy:
+                            when = BattleMomentEx.EatSuccess;
+                            break;
+                        case EatResult.TasteBad:
+                            when = BattleMomentEx.EatBad;
+                            break;
+                        case EatResult.Failed:
+                            when = BattleMomentEx.EatFail;
+                            break;
+                        case EatResult.CannotEat:
+                            when = BattleMomentEx.EatCannot;
+                            break;
                     }
                 }
-                isFinished = true;
-                BattleSystem.PerformingCalc = null;
+                processStatuses = true;
+                PerformingCalc = null;
             }
-
-            if (when == BattleVoice.BattleMoment.CommandPerform)
+            if (when == BattleMoment.CommandPerform)
             {
                 if (calc.Command.Id == BattleCommandId.SysTrans)
                 {
                     if (actingChar.InTrance)
                     {
                         when = BattleMomentEx.TranceEnter;
-                        BattleSystem.InTranceCharacters.Add(actingChar.Data);
+                        InTranceCharacters.Add(actingChar.Data);
                     }
                     else
                     {
                         when = BattleMomentEx.TranceLeave;
-                        BattleSystem.InTranceCharacters.Remove(actingChar.Data);
+                        InTranceCharacters.Remove(actingChar.Data);
                     }
                 }
                 else if (calc.Command.Id == BattleCommandId.Change)
@@ -258,170 +295,211 @@ namespace Memoria.EchoS
                 }
                 else
                 {
-                    BattleSystem.PerformingCalc = calc;
+                    PerformingCalc = calc;
                 }
             }
 
-            BattleAbilityId abilityId = actingChar.IsPlayer ? calc.Command.AbilityId : (BattleAbilityId)calc.Command.RawIndex;
-            string abilityName = StringExtension.RemoveTags(calc.Command.AbilityCastingName ?? "");
-            if (string.IsNullOrEmpty(abilityName) && actingChar.IsPlayer) abilityName = calc.Command.AbilityId.ToString();
+            BattleAbilityId ability = actingChar.IsPlayer ? calc.Command.AbilityId : (BattleAbilityId)calc.Command.RawIndex;
+            String abilityName = calc.Command.AbilityCastingName.RemoveTags();
+            if (String.IsNullOrEmpty(abilityName) && actingChar.IsPlayer) abilityName = calc.Command.AbilityId.ToString();
+            LogEchoS.Debug($"OnBattleAct {BattleMomentEx.ToString(when)} [{actingChar.Name.RemoveTags()}({actingChar.Id})] {calc.Command.Id} [{abilityName}({(Int32)ability})] {calc.Command.TargetType} {((calc.Target != null) ? $"[{calc.Target.Name.RemoveTags()}({calc.Target.Id})]" : "")}");
 
-            LogEchoS.Debug($"OnBattleAct {BattleMomentEx.ToString(when)} [{StringExtension.RemoveTags(actingChar.Name)}({actingChar.Id})] {calc.Command.Id} [{abilityName}({(int)abilityId})] {calc.Command.TargetType} {(calc.Target != null ? $"[{StringExtension.RemoveTags(calc.Target.Name)}({calc.Target.Id})]" : "")}");
-
-            if (!BattleSystem.CanPlayMoreLines)
+            if (!CanPlayMoreLines)
             {
-                if (isFinished) ProcessStatuses(calc);
+                if (processStatuses)
+                    ProcessStatuses(calc);
                 return true;
             }
 
-            uint actFlags = BattleSystem.Flags | (uint)BattleSystem.GetFlags(calc);
+            // Prepping flags
+            UInt32 flags = Flags;
+            flags |= GetFlags(calc);
             if (calc.Caster.Data != calc.Target.Data)
-            {
-                actFlags |= (uint)(calc.Target.IsPlayer ? LineEntryFlag.Ally : LineEntryFlag.Enemy);
-            }
+                flags |= calc.Target.IsPlayer ? (UInt32)LineEntryFlag.Ally : (UInt32)LineEntryFlag.Enemy;
 
-            BattleSystem.LineEntryPredicate filter = (i, moment) =>
+            // Play a random line
+            Boolean filter(int i, BattleMoment moment)
             {
-                if (!BattleSystem.CommonChecks(i, moment, actFlags, actingChar, BattleStatusId.None)) return false;
-                if (!BattleSystem.CanPlayMoreLines && BattleSystem.Lines[i].IsVerbal) return false;
-                if (BattleSystem.Lines[i].CommandId != null)
+                if (!CommonChecks(i, moment, flags, actingChar))
+                    return false;
+
+                // Check target
+                if (Lines[i].Target != null && !Lines[i].Target.CheckIsCharacter(calc.Target))
+                    return false;
+
+                // Check ability
+                if (Lines[i].Abilities != null && !Lines[i].Abilities.Contains(ability))
+                    return false;
+
+                // Check command
+                if (Lines[i].CommandId != null)
                 {
-                    bool containsCmd = BattleSystem.Lines[i].CommandId.Contains(calc.Command.Id);
-
-                    if (BattleSystem.Lines[i].CommandIdIsBlacklist)
-                    {
-                        if (containsCmd) return false;
-                    }
-                    else
-                    {
-                        if (!containsCmd) return false;
-                    }
-
-                    if ((calc.Command.Id == BattleCommandId.Item || calc.Command.Id == BattleCommandId.AutoPotion) &&
-                        BattleSystem.Lines[i].Items != null && !BattleSystem.Lines[i].Items.Contains(calc.Command.ItemId))
-                    {
+                    BattleCommandId command = calc.Command.Id;
+                    if (!Lines[i].CommandId.Contains(command))
                         return false;
+
+                    // Check for item used
+                    if ((command == BattleCommandId.Item || command == BattleCommandId.Throw) && Lines[i].Items != null)
+                    {
+                        if (!Lines[i].Items.Contains(calc.Command.ItemId))
+                            return false;
                     }
                 }
 
-                if (BattleSystem.Lines[i].Abilities != null)
+                // Check for item stolen
+                if (actingChar.IsPlayer && ability == BattleAbilityId.Steal && Lines[i].Items != null)
                 {
-                    bool containsAbility = BattleSystem.Lines[i].Abilities.Contains(abilityId);
-
-                    if (BattleSystem.Lines[i].AbilitiesIsBlacklist)
-                    {
-                        if (containsAbility) return false;
-                    }
-                    else
-                    {
-                        if (!containsAbility) return false;
-                    }
+                    if (!Lines[i].Items.Contains(calc.Context.ItemSteal))
+                        return false;
                 }
+
                 return true;
-            };
-
-            BattleSystem.QueueLine(BattleSystem.GetRandomLine(when, filter), when);
-
-            BattleVoice.BattleMoment extraMoment = 0;
-            if (when == BattleVoice.BattleMoment.HitEffect)
-            {
-                if (calc.Target != null && calc.Target.CurrentHp <= 0U) extraMoment = BattleMomentEx.KillEffect;
-                else if ((calc.Context.Flags & BattleCalcFlags.Dodge) != 0) extraMoment = BattleMomentEx.DodgeEffect;
-                else if ((calc.Context.Flags & BattleCalcFlags.Miss) != 0) extraMoment = BattleMomentEx.MissEffect;
             }
 
-            if (extraMoment != BattleVoice.BattleMoment.Unknown)
+            Int32 lineId = GetRandomLine(when, filter);
+            QueueLine(lineId, when);
+
+            BattleMoment additionalWhen = BattleMoment.Unknown;
+            if (when == BattleMoment.HitEffect)
             {
-                LogEchoS.Debug($"OnBattleAct additional When: {extraMoment}");
-                int extraLine = BattleSystem.GetRandomLine(extraMoment, filter);
-                if (extraLine >= 0) BattleSystem.QueueLine(extraLine, extraMoment);
+                if (calc.Target?.CurrentHp <= 0)
+                    additionalWhen = BattleMomentEx.KillEffect;
+                else if ((calc.Context.Flags & BattleCalcFlags.Dodge) != 0)
+                    additionalWhen = BattleMomentEx.DodgeEffect;
+                else if ((calc.Context.Flags & BattleCalcFlags.Miss) != 0)
+                    additionalWhen = BattleMomentEx.MissEffect;
             }
 
-            if (isFinished) ProcessStatuses(calc);
+            if (additionalWhen != BattleMoment.Unknown)
+            {
+                LogEchoS.Debug($"OnBattleAct additional When: {additionalWhen}");
+                Int32 nextId = GetRandomLine(additionalWhen, filter);
+                if (nextId >= 0)
+                    QueueLine(nextId, additionalWhen);
+            }
+
+            if (processStatuses)
+                ProcessStatuses(calc);
+
             return true;
         }
 
-        public bool OnHit(BattleUnit hitChar, BattleCalculator calc, BattleVoice.BattleMoment when)
+        public Boolean OnHit(BattleUnit hitChar, BattleCalculator calc, BattleMoment when)
         {
-            BattleSystem.OnDeathCalc = null;
-            if (hitChar.CurrentHp == 0U)
+            OnDeathCalc = null;
+
+            // We don't want the event when hit character dies
+            // TODO: or do we? only non verbal?
+            if (hitChar.CurrentHp == 0)
             {
-                LogEchoS.Debug($"OnHit {BattleMomentEx.ToString(when)} [{StringExtension.RemoveTags(hitChar.Name)}({hitChar.Id})] died");
+                LogEchoS.Debug($"OnHit {BattleMomentEx.ToString(when)} [{hitChar.Name.RemoveTags()}({hitChar.Id})] died");
                 CheckDeathLowHP(calc);
                 return true;
             }
 
-            BattleAbilityId abilityId = calc.Caster.IsPlayer ? calc.Command.AbilityId : (BattleAbilityId)calc.Command.RawIndex;
-            LogEchoS.Debug($"OnHit {BattleMomentEx.ToString(when)} [{StringExtension.RemoveTags(hitChar.Name)}({hitChar.Id})] {calc.Command.Id} [{StringExtension.RemoveTags(calc.Command.AbilityCastingName ?? "")}({(int)abilityId})]");
+            BattleAbilityId ability = calc.Caster.IsPlayer ? calc.Command.AbilityId : (BattleAbilityId)calc.Command.RawIndex;
+            LogEchoS.Debug($"OnHit {BattleMomentEx.ToString(when)} [{hitChar.Name.RemoveTags()}({hitChar.Id})] {calc.Command.Id} [{calc.Command.AbilityCastingName.RemoveTags()}({(Int32)ability})]");
 
-            uint hitFlags = BattleSystem.Flags | (uint)BattleSystem.GetFlags(calc);
+            // Prepping flags
+            UInt32 flags = Flags;
+            flags |= GetFlags(calc);
             if (calc.Caster.Data != calc.Target.Data)
-            {
-                hitFlags |= (uint)(calc.Caster.IsPlayer ? LineEntryFlag.Ally : LineEntryFlag.Enemy);
-            }
+                flags |= calc.Caster.IsPlayer ? (UInt32)LineEntryFlag.Ally : (UInt32)LineEntryFlag.Enemy;
+            else
+                flags |= (UInt32)LineEntryFlag.Self;
 
-            BattleSystem.QueueLine(BattleSystem.GetRandomLine(when, (i, moment) =>
+            // Play a random line
+            Int32 lineId = GetRandomLine(when, (i, moment) =>
             {
-                if (!BattleSystem.CommonChecks(i, moment, hitFlags, hitChar, BattleStatusId.None)) return false;
-                if (BattleSystem.Lines[i].ContextFlags != 0 && (BattleSystem.Lines[i].ContextFlags & (BattleCalcFlags)calc.Context.Flags) == 0) return false;
-                if (!BattleSystem.CanPlayMoreLines && BattleSystem.Lines[i].IsVerbal) return false;
+                if (!CommonChecks(i, moment, flags, hitChar))
+                    return false;
 
-                if (BattleSystem.Lines[i].Target != null)
+                // Check context flags
+                if (Lines[i].ContextFlags != 0 && (Lines[i].ContextFlags & calc.Context.Flags) == 0)
+                    return false;
+
+                // Only non verbal lines can play while a dialog plays
+                if (!CanPlayMoreLines && Lines[i].IsVerbal)
+                    return false;
+
+                // Check caster
+                if (Lines[i].Target != null && !Lines[i].Target.CheckIsCharacter(calc.Caster))
+                    return false;
+
+                // Check ability
+                if (Lines[i].Abilities != null && !Lines[i].Abilities.Contains(ability))
+                    return false;
+
+                // Check command
+                if (Lines[i].CommandId != null)
                 {
-                    bool isCaster = BattleSystem.Lines[i].Target.CheckIsCharacter(calc.Caster);
-                    if (BattleSystem.Lines[i].Target.Without ? isCaster : !isCaster) return false;
+                    BattleCommandId command = calc.Command.Id;
+                    if (!Lines[i].CommandId.Contains(command))
+                        return false;
+
+                    // Check for item used
+                    if ((command == BattleCommandId.Item || command == BattleCommandId.Throw) && Lines[i].Items != null)
+                    {
+                        if (!Lines[i].Items.Contains(calc.Command.ItemId))
+                            return false;
+                    }
                 }
 
-                if (BattleSystem.Lines[i].Abilities != null && !BattleSystem.Lines[i].Abilities.Contains(abilityId)) return false;
-
-                if (BattleSystem.Lines[i].CommandId != null)
+                // Check for item stolen
+                if (calc.Caster.IsPlayer && ability == BattleAbilityId.Steal && Lines[i].Items != null)
                 {
-                    if (!BattleSystem.Lines[i].CommandId.Contains(calc.Command.Id)) return false;
-                    if ((calc.Command.Id == BattleCommandId.Item || calc.Command.Id == BattleCommandId.AutoPotion) &&
-                        BattleSystem.Lines[i].Items != null && !BattleSystem.Lines[i].Items.Contains(calc.Command.ItemId)) return false;
+                    if (!Lines[i].Items.Contains(calc.Context.ItemSteal))
+                        return false;
                 }
 
-                return !calc.Caster.IsPlayer || abilityId != (BattleAbilityId)177 || BattleSystem.Lines[i].Items == null || BattleSystem.Lines[i].Items.Contains(calc.Context.ItemSteal);
-            }), when);
+                return true;
+            });
 
+            QueueLine(lineId, when);
+
+            // Special handling of Death and LowHp status
             CheckDeathLowHP(calc);
+
             return true;
         }
 
         private void CheckDeathLowHP(BattleCalculator calc)
         {
-            BattleUnit target = calc.Target;
-            if (target.HpDamage == 0) return;
+            BattleUnit hitChar = calc.Target;
+            if (hitChar.HpDamage == 0) return;
 
-            bool isDead = target.IsUnderStatus(BattleStatus.Death);
-            if (!isDead && target.CurrentHp == 0U && calc.Command.AbilityId != BattleAbilityId.Sacrifice)
+            Boolean hasDeath = hitChar.IsUnderStatus(BattleStatus.Death);
+
+            // Note: we don't want Zidane to say a death line after sacrifice
+            if (!hasDeath && hitChar.CurrentHp == 0 && calc.Command.AbilityId != BattleAbilityId.Sacrifice)
             {
-                LogEchoS.Debug($"Death added [{StringExtension.RemoveTags(target.Name)}({target.Id})]");
-                OnStatusChangeEx(target, calc, BattleStatusId.Death, BattleVoice.BattleMoment.Added);
+                LogEchoS.Debug($"Death added [{hitChar.Name.RemoveTags()}({hitChar.Id})]");
+                OnStatusChangeEx(hitChar, calc, BattleStatusId.Death, BattleMoment.Added);
+                return;
+            }
+            else if (hasDeath && hitChar.CurrentHp > 0)
+            {
+                LogEchoS.Debug($"Death removed [{hitChar.Name.RemoveTags()}({hitChar.Id})]");
+                OnStatusChangeEx(hitChar, calc, BattleStatusId.Death, BattleMoment.Removed);
                 return;
             }
 
-            if (isDead && target.CurrentHp > 0U)
-            {
-                LogEchoS.Debug($"Death removed [{StringExtension.RemoveTags(target.Name)}({target.Id})]");
-                OnStatusChangeEx(target, calc, BattleStatusId.Death, BattleVoice.BattleMoment.Removed);
-                return;
-            }
+            Single ratio = hitChar.IsPlayer ? 6f : 4f;
+            Boolean wasLowHP = ((hitChar.CurrentHp + hitChar.HpDamage) * ratio <= hitChar.MaximumHp);
+            Boolean isLowHP = (hitChar.CurrentHp * ratio <= hitChar.MaximumHp);
+            Boolean cantEat = !hitChar.IsPlayer && calc.Target.CheckUnsafetyOrMiss() && calc.Target.CanBeAttacked() && !calc.Target.HasCategory(EnemyCategory.Humanoid);
 
-            float threshold = target.IsPlayer ? 6f : 4f;
-            bool wasNotLow = (float)((ulong)target.CurrentHp + (ulong)((long)target.HpDamage)) * threshold <= target.MaximumHp;
-            bool isNowLow = target.CurrentHp * threshold <= target.MaximumHp;
-            bool applyEffect = !target.IsPlayer && calc.Target.CheckUnsafetyOrMiss() && calc.Target.CanBeAttacked() && !calc.Target.HasCategory(CharacterCategory.Male);
-
-            if (!wasNotLow && isNowLow)
+            if (!wasLowHP && isLowHP)
             {
-                OnStatusChangeEx(target, calc, BattleStatusId.LowHP, BattleVoice.BattleMoment.Added);
-                if (applyEffect) btl_stat.AddCustomGlowEffect(target.Data, 0, 1, new int[] { -5, -15, -20 });
+                OnStatusChangeEx(hitChar, calc, BattleStatusId.LowHP, BattleMoment.Added);
+                // Apply a slight glow to indicate the enemy is low hp (eat range)
+                if (cantEat) btl_stat.AddCustomGlowEffect(hitChar.Data, 0, 1, new int[] { -5, -15, -20 });
             }
-            else if (wasNotLow && !isNowLow)
+            else if (wasLowHP && !isLowHP)
             {
-                OnStatusChangeEx(target, calc, BattleStatusId.LowHP, BattleVoice.BattleMoment.Removed);
-                if (applyEffect) btl_stat.ClearAllGlowEffect(target.Data);
+                OnStatusChangeEx(hitChar, calc, BattleStatusId.LowHP, BattleMoment.Removed);
+                // Remove the glow
+                if (cantEat) btl_stat.ClearAllGlowEffect(hitChar.Data);
             }
         }
 
@@ -432,111 +510,135 @@ namespace Memoria.EchoS
                 BattleSystem.StatusEvents.Remove(calc.Command);
 
                 if (PersistenSingleton<BattleSubtitles>.Instance != null)
-                {
                     PersistenSingleton<BattleSubtitles>.Instance.StartCoroutine(ProcessStatusesRoutine(events));
-                }
                 else
-                {
                     foreach (var data in events)
-                    {
                         OnStatusChangeEx(data.statusedChar, data.calc, data.status, data.when);
-                    }
-                }
             }
         }
 
-        public bool OnStatusChange(BattleUnit statusedChar, BattleCalculator calc, BattleStatusId status, BattleVoice.BattleMoment when)
+        public Boolean OnStatusChange(BattleUnit statusedChar, BattleCalculator calc, BattleStatusId status, BattleMoment when)
         {
+            // We handle Death and LowHP in OnHit
             if (status == BattleStatusId.Death || status == BattleStatusId.LowHP) return true;
 
-            if (BattleSystem.PerformingCalc != null && calc != null)
+            if (PerformingCalc != null && calc != null)
             {
-                string casterName = (calc.Caster != null) ? StringExtension.RemoveTags(calc.Caster.Name) : "null";
-                LogEchoS.Debug($"Enqueued OnStatusChange {BattleMomentEx.ToString(when)} [{StringExtension.RemoveTags(statusedChar.Name)}({statusedChar.Id})] {status} [{casterName}({calc.Caster?.Id})]");
-
-                if (!BattleSystem.StatusEvents.ContainsKey(calc.Command)) BattleSystem.StatusEvents[calc.Command] = new List<StatusEventData>();
-                BattleSystem.StatusEvents[calc.Command].Add(new StatusEventData { statusedChar = statusedChar, calc = calc, status = status, when = when });
+                LogEchoS.Debug($"Enqueued OnStatusChange {BattleMomentEx.ToString(when)} [{statusedChar.Name.RemoveTags()}({statusedChar.Id})] {status} [{calc.Caster?.Name.RemoveTags()}({calc.Caster?.Id})]");
+                if (!StatusEvents.ContainsKey(calc.Command))
+                    StatusEvents[calc.Command] = new List<StatusEventData>();
+                StatusEvents[calc.Command].Add(new StatusEventData() { statusedChar = statusedChar, calc = calc, status = status, when = when });
                 return true;
             }
-
             OnStatusChangeEx(statusedChar, calc, status, when);
             return true;
         }
 
-        public bool OnStatusChangeEx(BattleUnit statusedChar, BattleCalculator calc, BattleStatusId status, BattleVoice.BattleMoment when)
+        public Boolean OnStatusChangeEx(BattleUnit statusedChar, BattleCalculator calc, BattleStatusId status, BattleMoment when)
         {
-            if (!BattleSystem.HasFirstActHappened) return true;
+            if (!HasFirstActHappened)
+                return true;
 
             if (calc != null)
+                LogEchoS.Debug($"OnStatusChange {BattleMomentEx.ToString(when)} [{statusedChar.Name.RemoveTags()}({statusedChar.Id})] {status} [{calc.Caster?.Name.RemoveTags()}({calc.Caster?.Id})]");
+            else
+                LogEchoS.Debug($"OnStatusChange {BattleMomentEx.ToString(when)} [{statusedChar.Name.RemoveTags()}({statusedChar.Id})] {status}");
+
+            if (!CanPlayMoreLines)
+                return true;
+
+            BattleAbilityId ability = BattleAbilityId.Void;
+
+            // Prepping flags
+            UInt32 flags = Flags;
+            if (calc != null)
             {
-                string casterName = (calc.Caster != null) ? StringExtension.RemoveTags(calc.Caster.Name) : "null";
-                LogEchoS.Debug($"OnStatusChange {BattleMomentEx.ToString(when)} [{StringExtension.RemoveTags(statusedChar.Name)}({statusedChar.Id})] {status} [{casterName}({calc.Caster?.Id})]");
+                flags |= GetFlags(calc);
+                if (calc.Caster.Data != calc.Target.Data)
+                    flags |= calc.Caster.IsPlayer ? (UInt32)LineEntryFlag.Ally : (UInt32)LineEntryFlag.Enemy;
+                else
+                    flags |= (UInt32)LineEntryFlag.Self;
+
+                // Prevent LowHP after Revive
+                // TODO: what about auto-life?
+                if (status == BattleStatusId.Death && when == BattleMoment.Removed)
+                    OnDeathCalc = calc;
+
+                if (status == BattleStatusId.LowHP && when == BattleMoment.Added && OnDeathCalc == calc)
+                {
+                    LogEchoS.Debug($"OnStatusChange LowHP after revive prevented");
+                    OnDeathCalc = null;
+                    return true;
+                }
+
+                ability = calc.Caster.IsPlayer ? calc.Command.AbilityId : (BattleAbilityId)calc.Command.RawIndex;
             }
             else
             {
-                LogEchoS.Debug($"OnStatusChange {BattleMomentEx.ToString(when)} [{StringExtension.RemoveTags(statusedChar.Name)}({statusedChar.Id})] {status}");
+                // Allows disabling some lines when triggered by poison or regen
+                flags |= (UInt32)LineEntryFlag.Self;
             }
 
-            if (!BattleSystem.CanPlayMoreLines) return true;
-
-            BattleAbilityId abilityId = 0;
-            uint statusFlags = BattleSystem.Flags;
-
-            if (calc != null)
+            // Play a random line
+            Int32 lineId = GetRandomLine(when, (i, moment) =>
             {
-                statusFlags |= (uint)BattleSystem.GetFlags(calc);
-                statusFlags |= (uint)(calc.Caster.IsPlayer ? LineEntryFlag.Ally : LineEntryFlag.Enemy);
-                if (status == BattleStatusId.Death && when == BattleVoice.BattleMoment.Removed && BattleSystem.OnDeathCalc == calc);
-                if (status == BattleStatusId.LowHP && when == BattleVoice.BattleMoment.Added && BattleSystem.OnDeathCalc == calc)
-                {
-                    LogEchoS.Debug("OnStatusChange LowHP after revive prevented");
-                    BattleSystem.OnDeathCalc = null;
+                if (Lines[i].Statuses == null || !Lines[i].Statuses.Contains(status))
+                    return false;
+
+                if (!CommonChecks(i, moment, flags, statusedChar, status))
+                    return false;
+
+                if (calc == null)
+                    // We don't have further info to filter
                     return true;
-                }
-                abilityId = calc.Caster.IsPlayer ? calc.Command.AbilityId : (BattleAbilityId)calc.Command.RawIndex;
-            }
-            else statusFlags |= (uint)LineEntryFlag.Self;
 
-            BattleSystem.QueueLine(BattleSystem.GetRandomLine(when, (i, moment) =>
-            {
-                if (BattleSystem.Lines[i].Statuses == null || !BattleSystem.Lines[i].Statuses.Contains(status)) return false;
-                if (!BattleSystem.CommonChecks(i, moment, statusFlags, statusedChar, status)) return false;
-                if (calc == null) return true;
-                if (BattleSystem.Lines[i].ContextFlags != 0 && (BattleSystem.Lines[i].ContextFlags & (BattleCalcFlags)calc.Context.Flags) == 0) return false;
+                // Check context flags
+                if (Lines[i].ContextFlags != 0 && (Lines[i].ContextFlags & calc.Context.Flags) == 0)
+                    return false;
 
-                if (BattleSystem.Lines[i].Target != null)
+                // Check caster
+                if (Lines[i].Target != null && !Lines[i].Target.CheckIsCharacter(calc.Caster))
+                    return false;
+
+                // Check ability
+                if (Lines[i].Abilities != null && !Lines[i].Abilities.Contains(ability))
+                    return false;
+
+                // Check command
+                if (Lines[i].CommandId != null)
                 {
-                    bool isCaster = BattleSystem.Lines[i].Target.CheckIsCharacter(calc.Caster);
-                    if (BattleSystem.Lines[i].Target.Without ? isCaster : !isCaster) return false;
-                }
+                    BattleCommandId command = calc.Command.Id;
+                    if (!Lines[i].CommandId.Contains(command))
+                        return false;
 
-                if (BattleSystem.Lines[i].Abilities != null && !BattleSystem.Lines[i].Abilities.Contains(abilityId)) return false;
-
-                if (BattleSystem.Lines[i].CommandId != null)
-                {
-                    if (!BattleSystem.Lines[i].CommandId.Contains(calc.Command.Id)) return false;
-                    if ((calc.Command.Id == BattleCommandId.Item || calc.Command.Id == BattleCommandId.AutoPotion) &&
-                        BattleSystem.Lines[i].Items != null && !BattleSystem.Lines[i].Items.Contains(calc.Command.ItemId)) return false;
+                    // Check for item used
+                    if ((command == BattleCommandId.Item || command == BattleCommandId.Throw) && Lines[i].Items != null)
+                    {
+                        if (!Lines[i].Items.Contains(calc.Command.ItemId))
+                            return false;
+                    }
                 }
                 return true;
-            }), when);
+            });
 
+            QueueLine(lineId, when);
             return true;
         }
 
-        public void OnDialogAudioStart(int voiceId, string text)
+        public void OnDialogAudioStart(Int32 voiceId, String text)
         {
             LogEchoS.Debug($"OnBattleDialogAudioStart {voiceId} '{text}'");
-            BattleSystem.CurrentPlayingDialog = voiceId;
-            BattleSystem.LinesQueue.Clear();
-            BattleVoice.StopAllVoices();
-            PersistenSingleton<BattleSubtitles>.Instance.ClearAll();
+            CurrentPlayingDialog = voiceId;
+            LinesQueue.Clear();
+            StopAllVoices();
+            BattleSubtitles.Instance.ClearAll();
         }
 
-        public void OnDialogAudioEnd(int voiceId, string text)
+        public void OnDialogAudioEnd(Int32 voiceId, String text)
         {
             LogEchoS.Debug($"OnBattleDialogAudioEnd {voiceId} '{text}'");
-            if (BattleSystem.CurrentPlayingDialog == voiceId) BattleSystem.CurrentPlayingDialog = -1;
+            if (CurrentPlayingDialog == voiceId)
+                CurrentPlayingDialog = -1;
         }
 
         private IEnumerator ProcessStatusesRoutine(List<StatusEventData> events)
@@ -547,6 +649,14 @@ namespace Memoria.EchoS
             {
                 OnStatusChangeEx(data.statusedChar, data.calc, data.status, data.when);
             }
+        }
+    }
+
+    public static class StringExtension
+    {
+        public static String RemoveTags(this string s)
+        {
+            return Regex.Replace(s, @"\[[^]]*\]", "");
         }
     }
 }

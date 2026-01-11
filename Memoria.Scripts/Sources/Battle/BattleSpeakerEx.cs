@@ -1,43 +1,50 @@
-using System;
 using Memoria.Data;
+using System;
+using static Memoria.Data.BattleVoice;
 
 namespace Memoria.EchoS
 {
     public class BattleSpeakerEx : BattleVoice.BattleSpeaker
     {
-        public bool Equals(BattleVoice.BattleSpeaker speaker)
+        public BattleStatusId Status = BattleStatusId.None;
+        public Boolean CheckCanTalk = true;
+        public Boolean CheckIsPlayer = true;
+        public Boolean Without = false;
+
+        public new bool Equals(BattleSpeaker speaker)
         {
-            if ((int)speaker.playerId >= 0 || (int)this.playerId >= 0)
+            if (speaker.playerId >= 0 || playerId >= 0)
+                return speaker.playerId == playerId;
+
+            if (speaker.enemyModelId != enemyModelId)
+                return false;
+
+            return speaker.enemyBattleId == -1 || enemyBattleId == -1 || speaker.enemyBattleId == enemyBattleId;
+        }
+
+        public Boolean CheckIsCharacter(BattleUnit unit)
+        {
+            if (!CheckIsPlayer) return true;
+
+            Boolean isCharacter = (playerId == CharacterId.NONE && enemyModelId == -1 && enemyBattleId == -1) ? true : base.CheckIsCharacter(unit.Data);
+            if (isCharacter && Status != BattleStatusId.None)
             {
-                return speaker.playerId == this.playerId;
+                isCharacter = unit.IsUnderAnyStatus(Status);
+                LogEchoS.Debug($"[CheckIsCharacter] {Status} {isCharacter}");
             }
 
-            return speaker.enemyModelId == this.enemyModelId &&
-                   (speaker.enemyBattleId == -1 || this.enemyBattleId == -1 || speaker.enemyBattleId == this.enemyBattleId);
+            if (Without) isCharacter = !isCharacter;
+
+            return isCharacter;
         }
 
         public override string ToString()
         {
-            string statusText = (Status != BattleStatusId.None) ? $":{Status}" : "";
-            string prefix = (!CheckCanTalk ? "$" : "") + (!CheckIsPlayer ? "!" : "") + (Without ? "\\" : "");
-
+            String status = Status != BattleStatusId.None ? $":{Status}" : "";
+            String pre = $"{(!CheckCanTalk ? "$" : "")}{(!CheckIsPlayer ? "!" : "")}{(Without ? "\\" : "")}";
             if (playerId != CharacterId.NONE)
-            {
-                return $"{prefix}{playerId}{statusText}";
-            }
-
-            string enemyBId = (enemyBattleId >= 0) ? enemyBattleId.ToString() : "";
-            string enemyMId = (enemyModelId >= 0) ? enemyModelId.ToString() : "";
-
-            return $"{prefix}{enemyBId}:{enemyMId}{statusText}";
+                return $"{pre}{playerId}{status}";
+            return $"{pre}{(enemyBattleId >= 0 ? enemyBattleId.ToString() : "")}:{(enemyModelId >= 0 ? enemyModelId.ToString() : "")}{status}";
         }
-
-        public BattleStatusId Status = BattleStatusId.None;
-
-        public bool CheckCanTalk = true;
-
-        public bool CheckIsPlayer = true;
-
-        public bool Without;
     }
 }

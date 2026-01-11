@@ -1,5 +1,4 @@
 using Assets.Sources.Scripts.UI.Common;
-using Memoria.Prime;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,117 +7,94 @@ namespace Memoria.EchoS
 {
     public class BattleSubtitles : PersistenSingleton<BattleSubtitles>
     {
-        private readonly Dictionary<ushort, HUDMessageChild> activeSubtitles = new Dictionary<ushort, HUDMessageChild>();
-        private readonly Dictionary<BattleUnit, string> createQueue = new Dictionary<BattleUnit, string>();
+        private readonly Dictionary<UInt16, HUDMessageChild> activeSubtitles = new Dictionary<UInt16, HUDMessageChild>();
+        private readonly Dictionary<BattleUnit, String> createQueue = new Dictionary<BattleUnit, String>();
         private readonly HashSet<HUDMessageChild> deleteQueue = new HashSet<HUDMessageChild>();
 
-        public bool Enabled;
+        public Boolean Enabled = false;
 
         public void Update()
         {
-            foreach (var kvp in createQueue)
+            foreach (var entry in createQueue)
             {
                 try
                 {
-                    if (activeSubtitles.TryGetValue(kvp.Key.Id, out HUDMessageChild existingMsg))
+                    if (activeSubtitles.TryGetValue(entry.Key.Id, out HUDMessageChild message))
                     {
-                        Hide(kvp.Key.Id, existingMsg.Label);
+                        Hide(entry.Key.Id, message.Label);
                     }
 
-                    btl2d.GetIconPosition(kvp.Key.Data, 5, out Transform targetTransform, out Vector3 offset);
-
-                    HUDMessageChild newMsg = Singleton<HUDMessage>.Instance.Show(targetTransform, kvp.Value, 0, offset, 0);
-
-                    newMsg.GetComponent<UIWidget>().color = FF9TextTool.White;
-                    newMsg.GetComponent<TweenPosition>().enabled = false;
-                    newMsg.GetComponent<TweenAlpha>().enabled = false;
-
-                    activeSubtitles[kvp.Key.Id] = newMsg;
+                    btl2d.GetIconPosition(entry.Key.Data, btl2d.ICON_POS_NUMBER, out Transform attach, out Vector3 offset);
+                    message = HUDMessage.Instance.Show(attach, entry.Value, HUDMessage.MessageStyle.NONE, offset, 0);
+                    message.GetComponent<UIWidget>().color = FF9TextTool.White;
+                    message.GetComponent<TweenPosition>().enabled = false;
+                    message.GetComponent<TweenAlpha>().enabled = false;
+                    activeSubtitles[entry.Key.Id] = message;
                 }
-                catch
-                {
-                    // Ignorer les erreurs si l'unité n'est plus valide
-                }
+                catch { }
             }
             createQueue.Clear();
 
-            foreach (HUDMessageChild msgToDelete in deleteQueue)
+            foreach (HUDMessageChild message in deleteQueue)
             {
                 try
                 {
-                    Singleton<HUDMessage>.Instance.ReleaseObject(msgToDelete);
+                    HUDMessage.Instance.ReleaseObject(message);
                 }
-                catch
-                {
-                }
+                catch { }
             }
             deleteQueue.Clear();
+
         }
 
-        public void Show(BattleUnit speaker, string text)
+        public void Show(BattleUnit speaker, String text)
         {
-            if (!Enabled || speaker == null || text.Length < 3 || text.StartsWith("“$"))
-            {
-                return;
-            }
+            if (!Enabled || speaker == null || text.Length < 3 || text.StartsWith("“$")) return;
+
             createQueue[speaker] = text;
         }
 
-        public void Hide(ushort speakerID, string text)
+        public void Hide(UInt16 speakerID, String text)
         {
-            if (!Enabled)
+            if (!Enabled) return;
+            if (activeSubtitles.TryGetValue(speakerID, out HUDMessageChild message) && message.Label == text)
             {
-                return;
-            }
-
-            if (activeSubtitles.TryGetValue(speakerID, out HUDMessageChild msg) && msg.Label == text)
-            {
-                deleteQueue.Add(msg);
+                deleteQueue.Add(message);
                 activeSubtitles.Remove(speakerID);
             }
         }
 
         public void ClearAll()
         {
-            foreach (HUDMessageChild item in activeSubtitles.Values)
+            foreach (HUDMessageChild message in activeSubtitles.Values)
             {
-                deleteQueue.Add(item);
+                deleteQueue.Add(message);
             }
             activeSubtitles.Clear();
         }
 
         private static void ListComponents(GameObject go, int indent = 0)
         {
-            string indentStr = new string(' ', indent * 4);
-            LogEchoS.Debug($"[DEBUG] {indentStr}> {go.name} position: {go.transform.localPosition}");
-
-            Component[] components = go.GetComponents<Component>();
-            if (components != null && components.Length != 0)
+            LogEchoS.Message($"[DEBUG] {new string(' ', indent * 4)}> {go.name} position: {go.transform.localPosition}");
+            var comps = go.GetComponents<Component>();
+            if (comps != null && comps.Length > 0)
             {
-                foreach (Component component in components)
+                foreach (Component c in comps)
                 {
-                    if (component is Transform) continue;
-
-                    MonoBehaviour monoBehaviour = component as MonoBehaviour;
-                    if (monoBehaviour == null || !monoBehaviour.isActiveAndEnabled)
+                    if (c is Transform || ((c as MonoBehaviour)?.isActiveAndEnabled ?? false)) continue;
+                    if (c is UIWidget)
                     {
-                        if (component is UIWidget uiwidget)
-                        {
-                            LogEchoS.Debug($"[DEBUG]   {indentStr}{component} {component.GetType()} w: {uiwidget.width} h: {uiwidget.height} localScale: {component.transform.localScale} localPosition; {component.transform.localPosition}");
-                        }
-                        else
-                        {
-                            LogEchoS.Debug($"[DEBUG]   {indentStr}{component} {component.GetType()}");
-                        }
+                        var w = c as UIWidget;
+                        LogEchoS.Debug($"[DEBUG]   {new string(' ', indent * 4)}{c} {c.GetType()} w: {w.width} h: {w.height} localScale: {c.transform.localScale} localPosition; {c.transform.localPosition}");
+                    }
+                    else
+                    {
+                        LogEchoS.Debug($"[DEBUG]   {new string(' ', indent * 4)}{c} {c.GetType()}");
                     }
                 }
-
                 foreach (Transform child in go.transform)
                 {
-                    if (child.gameObject != go)
-                    {
-                        ListComponents(child.gameObject, indent + 1);
-                    }
+                    if (child.gameObject != go) ListComponents(child.gameObject, indent + 1);
                 }
             }
         }
