@@ -1,8 +1,9 @@
-﻿using System;
-using System.Collections;
-using Assets.Sources.Scripts.UI.Common;
+﻿using Assets.Sources.Scripts.UI.Common;
 using Memoria;
 using Memoria.Assets;
+using Memoria.Data;
+using System;
+using System.Collections;
 using UnityEngine;
 
 public class HelpDialog : Singleton<HelpDialog>

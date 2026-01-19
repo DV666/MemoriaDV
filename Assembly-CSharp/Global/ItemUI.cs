@@ -612,6 +612,11 @@ public class ItemUI : UIScene
             Int32 itemDataIndex = go.transform.parent.GetComponent<RecycleListItem>().ItemDataIndex;
             _currentArrangeItemIndex = itemDataIndex;
         }
+        if (ButtonGroupState.ActiveGroup == ItemGroupButton)
+            VoiceHUD.CurrentObjectSelected = "Menu_ITEM_" + (int)_itemIdList[_currentItemIndex];
+        else if (ButtonGroupState.ActiveGroup == KeyItemGroupButton)
+            VoiceHUD.CurrentObjectSelected = "Menu_KEYITEM_" + _keyItemIdList[_currentItemIndex];
+
         return true;
     }
 

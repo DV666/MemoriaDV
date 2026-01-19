@@ -1,4 +1,5 @@
 ﻿using Memoria.Assets;
+using Memoria.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -541,6 +542,7 @@ public class ButtonGroupState : MonoBehaviour
             Singleton<HelpDialog>.Instance.Tail = button.Help.Tail;
             Singleton<HelpDialog>.Instance.Depth = ButtonGroupState.pointerDepthList.TryGetValue(ButtonGroupState.activeGroup, out Int32 depth) ? depth - 1 : 4;
             Singleton<HelpDialog>.Instance.ShowDialog();
+            VoiceHUD.UpdateHelpDialogAudio();
         }
     }
 
@@ -552,10 +554,10 @@ public class ButtonGroupState : MonoBehaviour
             UICamera.selectedObject = go;
         if (go == null)
             return;
+        UICamera.Notify(PersistenSingleton<UIManager>.Instance.gameObject, "OnItemSelect", go); // [DV] I move this function here, to a better refresh info for VoiceHUD
         ButtonGroupState.UpdateActiveButton();
         if (ButtonGroupState.PrevActiveButton != go && ButtonGroupState.activeGroup != Dialog.DialogGroupButton && !ButtonGroupState.muteActiveSound)
             FF9Sfx.FF9SFX_Play(103);
-        UICamera.Notify(PersistenSingleton<UIManager>.Instance.gameObject, "OnItemSelect", go);
     }
 
     private static void ActiveGroupChanged(String newGroupName)

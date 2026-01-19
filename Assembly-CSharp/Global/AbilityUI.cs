@@ -834,12 +834,14 @@ public class AbilityUI : UIScene
             if (this.currentAbilityIndex != go.GetComponent<RecycleListItem>().ItemDataIndex)
             {
                 this.currentAbilityIndex = go.GetComponent<RecycleListItem>().ItemDataIndex;
+                VoiceHUD.CurrentObjectSelected = $"Menu_CHAR{FF9StateSystem.Common.FF9.party.member[currentPartyIndex].Index}_AA_" + aaIdList[currentAbilityIndex];
                 this.SetAbilityInfo(true);
             }
         }
         else if (ButtonGroupState.ActiveGroup == SupportAbilityGroupButton && this.currentAbilityIndex != go.GetComponent<RecycleListItem>().ItemDataIndex)
         {
             this.currentAbilityIndex = go.GetComponent<RecycleListItem>().ItemDataIndex;
+            VoiceHUD.CurrentObjectSelected = $"Menu_CHAR{FF9StateSystem.Common.FF9.party.member[currentPartyIndex].Index}_SA_" + saIdList[currentAbilityIndex];
             this.SetAbilityInfo(true);
         }
         return true;
@@ -1039,6 +1041,7 @@ public class AbilityUI : UIScene
                 return;
             this.activeAbilityScrollList.JumpToIndex(this.firstActiveAbility, true);
         }
+        VoiceHUD.CurrentObjectSelected = $"Menu_CHAR{FF9StateSystem.Common.FF9.party.member[currentPartyIndex].Index}_AA_" + aaIdList[0];
     }
 
     private void DisplayAADetail(Transform item, ListDataTypeBase data, Int32 index, Boolean isInit)

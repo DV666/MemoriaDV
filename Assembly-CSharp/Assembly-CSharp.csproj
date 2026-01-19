@@ -480,6 +480,7 @@
     <Compile Include="Memoria\Speedrun\Split.cs" />
     <Compile Include="Memoria\Speedrun\SpeedrunSettings.cs" />
     <Compile Include="Memoria\VoiceActing\BattleVoice.cs" />
+    <Compile Include="Memoria\VoiceActing\VoiceHUD.cs" />
     <Compile Include="Memoria\VoiceActing\VoicePlayer.cs" />
     <Compile Include="Global\TileSystem\TileSystem.cs" />
     <Compile Include="Memoria\Application\FPSManager.cs" />

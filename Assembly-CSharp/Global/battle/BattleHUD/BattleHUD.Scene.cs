@@ -531,15 +531,28 @@ public partial class BattleHUD : UIScene
     {
         if (base.OnItemSelect(go))
         {
+            CharacterId CurrentCharacter = FF9StateSystem.Battle.FF9Battle.GetUnit(CurrentPlayerIndex).PlayerIndex;
             if (ButtonGroupState.ActiveGroup == CommandGroupButton)
             {
                 _currentCommandIndex = (BattleCommandMenu)go.transform.GetSiblingIndex();
                 if (_currentCommandIndex != BattleCommandMenu.Defend && _currentCommandIndex != BattleCommandMenu.Change)
                     ResetSlidingButton(false);
+                VoiceHUD.CurrentObjectSelected = $"Battle_CHAR{CurrentCharacter}_CMD_" + (int)_currentCommandId;
             }
             else if (ButtonGroupState.ActiveGroup == AbilityGroupButton || ButtonGroupState.ActiveGroup == ItemGroupButton)
             {
                 _currentSubMenuIndex = go.GetComponent<RecycleListItem>().ItemDataIndex;
+
+                CharacterCommand command = CharacterCommands.Commands[_currentCommandId];
+
+                if (ButtonGroupState.ActiveGroup == AbilityGroupButton)
+                {
+                    VoiceHUD.CurrentObjectSelected = $"Battle_CHAR{CurrentCharacter}_AA_" + (int)PatchAbility(CharacterCommands.Commands[(BattleCommandId)_currentCommandIndex].GetAbilityId(_currentSubMenuIndex));
+                }
+                else
+                {
+                    VoiceHUD.CurrentObjectSelected = $"Battle_CHAR{CurrentCharacter}_ITEM_" + (int)_itemIdList[_currentSubMenuIndex];
+                }
             }
             if (ButtonGroupState.ActiveGroup == TargetGroupButton && _cursorType == CursorGroup.Individual)
             {

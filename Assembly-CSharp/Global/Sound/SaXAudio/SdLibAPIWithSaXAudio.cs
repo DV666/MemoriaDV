@@ -150,7 +150,7 @@ namespace Global.Sound.SaXAudio
             AudioEffectManager.EffectPreset? preset = AudioEffectManager.GetPreset(data.Profile, busID);
             if (preset != null && busID != 0)
             {
-                Log.Message($"[AudioEffectManager] Filtered '{data.Profile.ResourceID}' from bus {busID}");
+                SoundLib.Log($"[AudioEffectManager] Preset:{preset.Value.Name} => Filtered '{data.Profile.ResourceID}' from bus {busID}");
                 busID = 0;
             }
 
