@@ -1,11 +1,13 @@
-﻿using Assets.Sources.Scripts.UI.Common;
-using FF9;
+﻿using FF9;
 using Memoria.Assets;
 using Memoria.Data;
 using Memoria.Database;
 using Memoria.Prime;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.IO;
+using System.Text.RegularExpressions;
 using static Memoria.Scripts.Battle.TranceSeekAPI;
 
 namespace Memoria.Scripts.Battle
@@ -32,6 +34,9 @@ namespace Memoria.Scripts.Battle
 
         public Boolean OnBattleScriptStart(BattleCalculator v)
         {
+            if (OverloadOnBattleInitScript.DebugBattle)
+                OverloadOnBattleInitScript.ReadDebugBattleFile();
+
             if (MonsterMechanic[v.Target.Data][3] == 1 && v.Target.CurrentHp <= 10000) // Prevent boss to die => Maybe use CustomBattleFlagsMeaning ?
             {
                 v.Target.CurrentHp = 10000;

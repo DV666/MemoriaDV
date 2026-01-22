@@ -1,17 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Assets.Sources.Scripts.UI.Common;
 using FF9;
+using Memoria.Assets;
 using Memoria.Data;
 using Memoria.Database;
 using Memoria.DefaultScripts;
 using Memoria.Prime;
-using UnityEngine;
+using System;
+using System.Collections.Generic;
 using System.IO;
-using static Memoria.Scripts.Battle.TranceSeekAPI;
+using System.Linq;
 using System.Reflection;
-using Assets.Sources.Scripts.UI.Common;
-using Memoria.Assets;
+using System.Text.RegularExpressions;
+using UnityEngine;
+using static Memoria.Scripts.Battle.TranceSeekAPI;
 
 namespace Memoria.Scripts.Battle
 {
@@ -21,6 +22,9 @@ namespace Memoria.Scripts.Battle
         public HUDMessageChild HUDToReset = null;
         public Int32 magiclampcooldown;
         private const String StuffListedPath = "TranceSeek/StuffListed.txt";
+
+        public static Boolean DebugBattle = true;
+        private const String DebugFilePath = "TranceSeek/DebugBattle.txt";
 
         public void OnBattleInit()
         {
@@ -518,6 +522,9 @@ namespace Memoria.Scripts.Battle
                     }
                 }
             }
+
+            if (DebugBattle)
+                WriteDebugBattleFile();
         }
 
         public static void InitTSVariables()
@@ -755,6 +762,162 @@ namespace Memoria.Scripts.Battle
             }
 
             File.WriteAllText(StuffListedPath, data);
+        }
+
+        public static void WriteDebugBattleFile()
+        {
+            if (!File.Exists(DebugFilePath))
+                File.WriteAllText(DebugFilePath, "");
+
+            String data = "";
+
+            foreach (BattleUnit unit in BattleState.EnumerateUnits())
+            {
+                string name = unit.IsPlayer ? FF9TextTool.CharacterDefaultName(unit.PlayerIndex) : RemoveTags(unit.Name);
+
+                data += $"################  {name}  ################";
+
+                data += "\n\n EDIT ? : " + "No";
+
+                data += $"\n\n📊 Stats";
+                data += "\n └→ ID = " + unit.Id;
+                data += "\n └→ ❤️ HP = " + unit.CurrentHp + "/" + unit.MaximumHp;
+                data += "\n └→ 🔷 MP = " + unit.CurrentMp + "/" + unit.MaximumMp;
+                data += "\n └→ 🏅 Level = " + unit.Level;
+                data += "\n └→ 🏹 Dexterity = " + unit.Dexterity;
+                data += "\n └→ 💪 Strength = " + unit.Strength;
+                data += "\n └→ ✨ Magic = " + unit.Magic;
+                data += "\n └→ 🧘 Will = " + unit.Will;
+                data += "\n └→ 🛡️ PhysicalDefence = " + unit.PhysicalDefence;
+                data += "\n └→ 🌀 PhysicalEvade = " + unit.PhysicalEvade;
+                data += "\n └→ 🧙 MagicDefence = " + unit.MagicDefence;
+                data += "\n └→ 💫 MagicEvade = " + unit.MagicEvade;
+
+
+                data += "\n\n └→ Current Status = " + unit.CurrentStatus;
+                data += "\n └→ Auto Status = " + unit.PermanentStatus;
+                data += "\n └→ Resist Status = " + unit.ResistStatus;
+                data += "\n\n";
+            }
+
+            File.WriteAllText(DebugFilePath, data);
+        }
+
+        public static void ReadDebugBattleFile()
+        {
+            if (!File.Exists(DebugFilePath))
+                return;
+
+            string fullText = File.ReadAllText(DebugFilePath);
+
+            string[] unitBlocks = fullText.Split(new string[] { "################" }, StringSplitOptions.RemoveEmptyEntries);
+
+            foreach (string block in unitBlocks)
+            {
+                if (!Regex.IsMatch(block, @"EDIT \? :.*Yes", RegexOptions.IgnoreCase))
+                    continue;
+
+                Match matchID = Regex.Match(block, @"ID = (\d+)");
+                if (!matchID.Success) continue;
+
+                int unitId = int.Parse(matchID.Groups[1].Value);
+
+                BattleUnit unit = BattleState.EnumerateUnits().FirstOrDefault(u => u.Id == unitId);
+
+                if (unit == null)
+                    continue;
+
+                Match matchHP = Regex.Match(block, @"❤️ HP = (\d+)/(\d+)");
+                if (matchHP.Success)
+                {
+                    uint newCur = uint.Parse(matchHP.Groups[1].Value);
+                    uint newMax = uint.Parse(matchHP.Groups[2].Value);
+
+                    if (unit.MaximumHp != newMax) unit.MaximumHp = newMax;
+                    if (unit.CurrentHp != newCur) unit.CurrentHp = newCur;
+                }
+
+                Match matchMP = Regex.Match(block, @"🔷 MP = (\d+)/(\d+)");
+                if (matchMP.Success)
+                {
+                    uint newCur = uint.Parse(matchMP.Groups[1].Value);
+                    uint newMax = uint.Parse(matchMP.Groups[2].Value);
+
+                    if (unit.MaximumMp != newMax) unit.MaximumMp = newMax;
+                    if (unit.CurrentMp != newCur) unit.CurrentMp = newCur;
+                }
+
+                ApplyStat(block, @"🏅 Level = (\d+)", v => unit.Level = (byte)v);
+                ApplyStat(block, @"🏹 Dexterity = (\d+)", v => unit.Dexterity = (byte)v);
+                ApplyStat(block, @"💪 Strength = (\d+)", v => unit.Strength = (byte)v);
+                ApplyStat(block, @"✨ Magic = (\d+)", v => unit.Magic = (byte)v);
+                ApplyStat(block, @"🧘 Will = (\d+)", v => unit.Will = (byte)v);
+                ApplyStat(block, @"🛡️ PhysicalDefence = (\d+)", v => unit.PhysicalDefence = (byte)v);
+                ApplyStat(block, @"🌀 PhysicalEvade = (\d+)", v => unit.PhysicalEvade = (byte)v);
+                ApplyStat(block, @"🧙 MagicDefence = (\d+)", v => unit.MagicDefence = (byte)v);
+                ApplyStat(block, @"💫 MagicEvade = (\d+)", v => unit.MagicEvade = (byte)v);
+
+                UpdateStatusLogic(block, @"Current Status = (.*)", unit.CurrentStatus,
+                    (s) => btl_stat.AlterStatuses(unit, s, unit),
+                    (s) => btl_stat.RemoveStatuses(unit, s));
+
+                UpdateStatusLogic(block, @"Auto Status = (.*)", unit.PermanentStatus,
+                    (s) => btl_stat.MakeStatusesPermanent(unit, s, true),
+                    (s) => btl_stat.MakeStatusesPermanent(unit, s, false));
+
+                UpdateStatusLogic(block, @"Resist Status = (.*)", unit.ResistStatus,
+                    (s) => unit.Data.stat.invalid |= s,
+                    (s) => unit.Data.stat.invalid &= ~s);
+            }
+            WriteDebugBattleFile();
+        }
+
+        private static void ApplyStat(string block, string pattern, Action<int> applyAction)
+        {
+            Match m = Regex.Match(block, pattern);
+            if (m.Success && int.TryParse(m.Groups[1].Value, out int val))
+            {
+                applyAction(val);
+            }
+        }
+
+        private static void UpdateStatusLogic(string block, string pattern, BattleStatus currentStatus, Action<BattleStatus> onAdd, Action<BattleStatus> onRemove)
+        {
+            Match m = Regex.Match(block, pattern);
+            if (!m.Success) return;
+
+            string statusString = m.Groups[1].Value;
+
+            BattleStatus targetStatus = 0;
+            if (!string.IsNullOrEmpty(statusString) && statusString.Trim().Length > 0 && statusString.Trim() != "0")
+            {
+                try
+                {
+                    targetStatus = (BattleStatus)Enum.Parse(typeof(BattleStatus), statusString.Trim());
+                }
+                catch
+                {
+                    return;
+                }
+            }
+
+            BattleStatus statusToAdd = targetStatus & ~currentStatus;
+            BattleStatus statusToRemove = currentStatus & ~targetStatus;
+
+            if (statusToAdd != 0)
+            {
+                onAdd(statusToAdd);
+            }
+
+            if (statusToRemove != 0)
+            {
+                onRemove(statusToRemove);
+            }
+        }
+
+        public static String RemoveTags(string s)
+        {
+            return Regex.Replace(s, @"\[[^]]*\]", "");
         }
 
         public static Int32[,] BossBattleBonusHP = new Int32[,]
