@@ -773,9 +773,10 @@ namespace Memoria.Scripts.Battle
 
             foreach (BattleUnit unit in BattleState.EnumerateUnits())
             {
-                string name = unit.IsPlayer ? FF9TextTool.CharacterDefaultName(unit.PlayerIndex) : RemoveTags(unit.Name);
-
-                data += $"################  {name}  ################";
+                if (unit.IsPlayer)
+                    data += $"################  ⭐ {FF9TextTool.CharacterDefaultName(unit.PlayerIndex)} ⭐  ################";
+                else
+                    data += $"################  👾 {RemoveTags(unit.Name)} 👾  ################";
 
                 data += "\n\n EDIT ? : " + "No";
 
@@ -794,9 +795,9 @@ namespace Memoria.Scripts.Battle
                 data += "\n └→ 💫 MagicEvade = " + unit.MagicEvade;
 
 
-                data += "\n\n └→ Current Status = " + unit.CurrentStatus;
-                data += "\n └→ Auto Status = " + unit.PermanentStatus;
-                data += "\n └→ Resist Status = " + unit.ResistStatus;
+                data += "\n\n └→ 🎭 Current Status = " + unit.CurrentStatus;
+                data += "\n └→ ♾️ Auto Status = " + unit.PermanentStatus;
+                data += "\n └→ 🚫 Resist Status = " + unit.ResistStatus;
                 data += "\n\n";
             }
 
@@ -857,15 +858,15 @@ namespace Memoria.Scripts.Battle
                 ApplyStat(block, @"🧙 MagicDefence = (\d+)", v => unit.MagicDefence = (byte)v);
                 ApplyStat(block, @"💫 MagicEvade = (\d+)", v => unit.MagicEvade = (byte)v);
 
-                UpdateStatusLogic(block, @"Current Status = (.*)", unit.CurrentStatus,
+                UpdateStatusLogic(block, @"🎭 Current Status = (.*)", unit.CurrentStatus,
                     (s) => btl_stat.AlterStatuses(unit, s, unit),
                     (s) => btl_stat.RemoveStatuses(unit, s));
 
-                UpdateStatusLogic(block, @"Auto Status = (.*)", unit.PermanentStatus,
+                UpdateStatusLogic(block, @"♾️ Auto Status = (.*)", unit.PermanentStatus,
                     (s) => btl_stat.MakeStatusesPermanent(unit, s, true),
                     (s) => btl_stat.MakeStatusesPermanent(unit, s, false));
 
-                UpdateStatusLogic(block, @"Resist Status = (.*)", unit.ResistStatus,
+                UpdateStatusLogic(block, @"🚫 Resist Status = (.*)", unit.ResistStatus,
                     (s) => unit.Data.stat.invalid |= s,
                     (s) => unit.Data.stat.invalid &= ~s);
             }
