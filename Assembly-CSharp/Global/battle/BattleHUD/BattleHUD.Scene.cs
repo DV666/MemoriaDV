@@ -537,7 +537,7 @@ public partial class BattleHUD : UIScene
                 _currentCommandIndex = (BattleCommandMenu)go.transform.GetSiblingIndex();
                 if (_currentCommandIndex != BattleCommandMenu.Defend && _currentCommandIndex != BattleCommandMenu.Change)
                     ResetSlidingButton(false);
-                VoiceHUD.CurrentObjectSelected = $"Battle_CHAR{CurrentCharacter}_CMD_" + (int)_currentCommandId;
+                VoiceHUD.PlayHelpTextDialogAudio("Battle", "Command", (int)_currentCommandId, CurrentCharacter);
             }
             else if (ButtonGroupState.ActiveGroup == AbilityGroupButton || ButtonGroupState.ActiveGroup == ItemGroupButton)
             {
@@ -546,13 +546,9 @@ public partial class BattleHUD : UIScene
                 CharacterCommand command = CharacterCommands.Commands[_currentCommandId];
 
                 if (ButtonGroupState.ActiveGroup == AbilityGroupButton)
-                {
-                    VoiceHUD.CurrentObjectSelected = $"Battle_CHAR{CurrentCharacter}_AA_" + (int)PatchAbility(CharacterCommands.Commands[(BattleCommandId)_currentCommandIndex].GetAbilityId(_currentSubMenuIndex));
-                }
+                    VoiceHUD.PlayHelpTextDialogAudio("Battle", "ActiveAbility", (int)PatchAbility(CharacterCommands.Commands[(BattleCommandId)_currentCommandIndex].GetAbilityId(_currentSubMenuIndex)), CurrentCharacter);
                 else
-                {
-                    VoiceHUD.CurrentObjectSelected = $"Battle_CHAR{CurrentCharacter}_ITEM_" + (int)_itemIdList[_currentSubMenuIndex];
-                }
+                    VoiceHUD.PlayHelpTextDialogAudio("Battle", "RegularItem", (int)_itemIdList[_currentSubMenuIndex], CurrentCharacter);
             }
             if (ButtonGroupState.ActiveGroup == TargetGroupButton && _cursorType == CursorGroup.Individual)
             {

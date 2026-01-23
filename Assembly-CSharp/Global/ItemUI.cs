@@ -600,6 +600,7 @@ public class ItemUI : UIScene
                         }
                         break;
                 }
+                VoiceHUD.PlayHelpTextDialogAudio("ItemMenu", "SelectMenu", (int)_currentMenu);
             }
         }
         else if (ButtonGroupState.ActiveGroup == ItemGroupButton || ButtonGroupState.ActiveGroup == KeyItemGroupButton)
@@ -612,10 +613,16 @@ public class ItemUI : UIScene
             Int32 itemDataIndex = go.transform.parent.GetComponent<RecycleListItem>().ItemDataIndex;
             _currentArrangeItemIndex = itemDataIndex;
         }
+        else if (ButtonGroupState.ActiveGroup == ArrangeMenuGroupButton)
+        {
+            VoiceHUD.PlayHelpTextDialogAudio("ItemMenu", "ArrangeMenu", go.transform.GetSiblingIndex());
+        }
         if (ButtonGroupState.ActiveGroup == ItemGroupButton)
-            VoiceHUD.CurrentObjectSelected = "Menu_ITEM_" + (int)_itemIdList[_currentItemIndex];
+            VoiceHUD.PlayHelpTextDialogAudio("ItemMenu", "RegularItem", (int)_itemIdList[_currentItemIndex]);
         else if (ButtonGroupState.ActiveGroup == KeyItemGroupButton)
-            VoiceHUD.CurrentObjectSelected = "Menu_KEYITEM_" + _keyItemIdList[_currentItemIndex];
+            VoiceHUD.PlayHelpTextDialogAudio("ItemMenu", "KeyItem", _keyItemIdList[_currentItemIndex]);
+        else if (ButtonGroupState.ActiveGroup == TargetGroupButton)
+            VoiceHUD.PlayHelpTextDialogAudio("ItemMenu", "Target", go.transform.GetSiblingIndex());
 
         return true;
     }

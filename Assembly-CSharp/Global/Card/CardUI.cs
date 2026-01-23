@@ -276,7 +276,7 @@ public class CardUI : UIScene
                 if (oldSelectionHUD != null || newSelectionHUD.Id == oldSelectionHUD.Id)
                     oldSelectionHUD.CardHighlightAnimation.enabled = false;
             }
-            VoiceHUD.CurrentObjectSelected = $"Menu_CARD_" + currentCardId;
+            VoiceHUD.PlayHelpTextDialogAudio("MenuTetraMaster", "", currentCardId);
         }
         return true;
     }

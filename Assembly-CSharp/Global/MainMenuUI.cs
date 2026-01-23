@@ -344,12 +344,20 @@ public class MainMenuUI : UIScene
                 Int32 selectedIndex = go.transform.GetSiblingIndex();
                 if (this.currentCharacterIndex != selectedIndex)
                     this.currentCharacterIndex = selectedIndex;
+
+                VoiceHUD.PlayHelpTextDialogAudio("MainMenu", "Character", selectedIndex, FF9StateSystem.Common.FF9.party.member[currentCharacterIndex].Index);
             }
             else if (ButtonGroupState.ActiveGroup == MainMenuUI.OrderGroupButton)
             {
                 Int32 selectedIndex = go.transform.parent.GetSiblingIndex();
                 if (this.currentOrder != selectedIndex)
                     this.currentOrder = selectedIndex;
+
+                VoiceHUD.PlayHelpTextDialogAudio("MainMenu", "Order", selectedIndex, FF9StateSystem.Common.FF9.party.member[currentCharacterIndex].Index);
+            }
+            else if (ButtonGroupState.ActiveGroup == MainMenuUI.SubMenuGroupButton)
+            {
+                VoiceHUD.PlayHelpTextDialogAudio("MainMenu", "", go.transform.GetSiblingIndex());
             }
         }
         return true;

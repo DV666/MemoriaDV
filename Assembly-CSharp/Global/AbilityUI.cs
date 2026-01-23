@@ -827,6 +827,7 @@ public class AbilityUI : UIScene
                         this.DisplaySA();
                         break;
                 }
+                VoiceHUD.PlayHelpTextDialogAudio("MenuActiveAbility", "SubMenu", (int)currentSubMenu);
             }
         }
         else if (ButtonGroupState.ActiveGroup == ActionAbilityGroupButton)
@@ -834,15 +835,20 @@ public class AbilityUI : UIScene
             if (this.currentAbilityIndex != go.GetComponent<RecycleListItem>().ItemDataIndex)
             {
                 this.currentAbilityIndex = go.GetComponent<RecycleListItem>().ItemDataIndex;
-                VoiceHUD.CurrentObjectSelected = $"Menu_CHAR{FF9StateSystem.Common.FF9.party.member[currentPartyIndex].Index}_AA_" + aaIdList[currentAbilityIndex];
+                VoiceHUD.PlayHelpTextDialogAudio("MenuActiveAbility", "", aaIdList[currentAbilityIndex], FF9StateSystem.Common.FF9.party.member[currentPartyIndex].Index);
                 this.SetAbilityInfo(true);
             }
         }
         else if (ButtonGroupState.ActiveGroup == SupportAbilityGroupButton && this.currentAbilityIndex != go.GetComponent<RecycleListItem>().ItemDataIndex)
         {
             this.currentAbilityIndex = go.GetComponent<RecycleListItem>().ItemDataIndex;
-            VoiceHUD.CurrentObjectSelected = $"Menu_CHAR{FF9StateSystem.Common.FF9.party.member[currentPartyIndex].Index}_SA_" + saIdList[currentAbilityIndex];
+            VoiceHUD.PlayHelpTextDialogAudio("MenuSupportAbility", "", saIdList[currentAbilityIndex], FF9StateSystem.Common.FF9.party.member[currentPartyIndex].Index);
             this.SetAbilityInfo(true);
+        }
+        else if (ButtonGroupState.ActiveGroup == TargetGroupButton)
+        {
+            Int32 memberIndex = go.transform.GetSiblingIndex();
+            VoiceHUD.PlayHelpTextDialogAudio("MenuActiveAbility", "TargetMenu", memberIndex, FF9StateSystem.Common.FF9.party.member[currentPartyIndex].Index);
         }
         return true;
     }
@@ -1041,7 +1047,7 @@ public class AbilityUI : UIScene
                 return;
             this.activeAbilityScrollList.JumpToIndex(this.firstActiveAbility, true);
         }
-        VoiceHUD.CurrentObjectSelected = $"Menu_CHAR{FF9StateSystem.Common.FF9.party.member[currentPartyIndex].Index}_AA_" + aaIdList[0];
+        VoiceHUD.PlayHelpTextDialogAudio("MenuActiveAbility", "", aaIdList[0], FF9StateSystem.Common.FF9.party.member[currentPartyIndex].Index);
     }
 
     private void DisplayAADetail(Transform item, ListDataTypeBase data, Int32 index, Boolean isInit)

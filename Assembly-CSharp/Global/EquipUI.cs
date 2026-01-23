@@ -373,6 +373,7 @@ public class EquipUI : UIScene
         {
             this.currentMenu = this.GetSubMenuFromGameObject(go);
             this.DisplayEquipment();
+            VoiceHUD.PlayHelpTextDialogAudio("MenuEquip", "SubMenu", (int)currentMenu, FF9StateSystem.Common.FF9.party.member[this.currentPartyIndex].Index);
         }
 
         if (ButtonGroupState.ActiveGroup == EquipUI.EquipmentGroupButton)
@@ -381,7 +382,9 @@ public class EquipUI : UIScene
             {
                 this.currentEquipPart = go.transform.GetSiblingIndex();
                 this.DisplayEquiptmentInfo();
-                this.DisplayParameter();
+                this.DisplayParameter();       
+                VoiceHUD.PlayHelpTextDialogAudio("MenuEquip", "EquipmentSlot", (int)FF9StateSystem.Common.FF9.party.member[this.currentPartyIndex].equip[this.currentEquipPart], FF9StateSystem.Common.FF9.party.member[this.currentPartyIndex].Index);
+                // Which one ? => VoiceHUD.PlayHelpTextDialogAudio("MenuEquip", "EquipmentSlot", currentEquipPart, FF9StateSystem.Common.FF9.party.member[this.currentPartyIndex].Index);
             }
         }
         else if (ButtonGroupState.ActiveGroup == EquipUI.InventoryGroupButton && this.currentItemIndex != go.GetComponent<RecycleListItem>().ItemDataIndex)
@@ -389,6 +392,7 @@ public class EquipUI : UIScene
             this.currentItemIndex = go.GetComponent<RecycleListItem>().ItemDataIndex;
             this.DisplayEquiptmentInfo();
             this.DisplayParameter();
+            VoiceHUD.PlayHelpTextDialogAudio("MenuEquip", "InventoryGroup", currentItemIndex, FF9StateSystem.Common.FF9.party.member[this.currentPartyIndex].Index);
         }
 
         return true;

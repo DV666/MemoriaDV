@@ -542,7 +542,6 @@ public class ButtonGroupState : MonoBehaviour
             Singleton<HelpDialog>.Instance.Tail = button.Help.Tail;
             Singleton<HelpDialog>.Instance.Depth = ButtonGroupState.pointerDepthList.TryGetValue(ButtonGroupState.activeGroup, out Int32 depth) ? depth - 1 : 4;
             Singleton<HelpDialog>.Instance.ShowDialog();
-            VoiceHUD.UpdateHelpDialogAudio();
         }
     }
 

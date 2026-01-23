@@ -253,6 +253,7 @@ public class StatusUI : UIScene
             Singleton<HelpDialog>.Instance.ShowDialog();
             if (playSound)
                 FF9Sfx.FF9SFX_Play(682);
+            VoiceHUD.PlayHelpTextDialogAudio("MenuStatus", "", 0, FF9StateSystem.Common.FF9.party.member[_currentPartyIndex].Index);
         }
         else
         {
