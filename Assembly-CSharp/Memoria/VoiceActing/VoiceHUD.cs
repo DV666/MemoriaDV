@@ -22,7 +22,7 @@ namespace Memoria.Data
             if (!string.IsNullOrEmpty(subtype))
                 fulltype += $"_{subtype}";
 
-            Log.Message("fulltype = " + fulltype);
+            //Log.Message("fulltype = " + fulltype);
 
             string itemvalue = "";
 
@@ -92,7 +92,7 @@ namespace Memoria.Data
                         ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Stop(_lastPlayedSound.SoundID, 0);
 
                     int CustomID = path.GetHashCode(); // Generate a custom ID based on the path (otherwise, ID is same for an AA, with Eiko/Garnet for example)
-                    SoundLib.VALog($"[READING] => type:{type}, Id:{Id}, CustomID:{CustomID}, value:{itemvalue}, path:{path}");
+                    SoundLib.VALog($"[READING] => type:{fulltype}, Id:{Id}, value:{itemvalue}, CustomID:{CustomID}, path:{path}");
                     _lastPlayedSound = VoicePlayer.CreateLoadThenPlayVoice(CustomID, path);
                     found = true;
                     break;
@@ -100,7 +100,7 @@ namespace Memoria.Data
             }
 
             if (!found)
-                SoundLib.VALog($"[NOT FOUND] => type:{type}, Id:{Id}, value:{itemvalue}, path(s):'{String.Join("', '", candidates.ToArray().Reverse().ToArray())}' (not found)");
+                SoundLib.VALog($"[NOT FOUND] => type:{fulltype}, Id:{Id}, value:{itemvalue}, path(s):'{String.Join("', '", candidates.ToArray().Reverse().ToArray())}' (not found)");
         }
     }
 }
