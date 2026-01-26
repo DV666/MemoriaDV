@@ -7,7 +7,7 @@ namespace Memoria.Scripts.Battle
     /// Armour Break
     /// </summary>
     [BattleScript(Id)]
-    public sealed class FullBreakScript : IBattleScript, IEstimateBattleScript
+    public sealed class FullBreakScript : IBattleScript
     {
         public const Int32 Id = 0114;
 
@@ -46,6 +46,7 @@ namespace Memoria.Scripts.Battle
                 TranceSeekAPI.EnemyTranceBonusAttack(_v);
                 TranceSeekAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
                 TranceSeekAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
+                TranceSeekAPI.BonusBackstabAndPenaltyLongDistance(_v);
                 TranceSeekAPI.BonusElement(_v);
                 _v.CalcHpDamage();
                 _v.Command.AbilityStatus |= TranceSeekStatus.PowerBreak;
@@ -54,33 +55,6 @@ namespace Memoria.Scripts.Battle
                 _v.Command.AbilityStatus |= TranceSeekStatus.MentalBreak;
                 TranceSeekAPI.TryAlterMagicStatuses(_v);
             }
-        }
-
-        public Single RateTarget()
-        {
-            _v.NormalMagicParams();
-            TranceSeekAPI.CharacterBonusPassive(_v, "MagicAttack");
-            TranceSeekAPI.CasterPenaltyMini(_v);
-            TranceSeekAPI.PenaltyShellAttack(_v);
-            TranceSeekAPI.PenaltyCommandDividedAttack(_v);
-            TranceSeekAPI.BonusElement(_v);
-
-            if (!TranceSeekAPI.CanAttackMagic(_v))
-                return 0;
-
-            if (_v.Target.IsUnderAnyStatus(BattleStatus.Reflect) && !_v.Command.IsReflectNull)
-                return 0;
-
-            _v.CalcHpDamage();
-
-            Single rate = Math.Min(_v.Target.HpDamage, _v.Target.CurrentHp);
-
-            if ((_v.Target.Flags & CalcFlag.HpRecovery) == CalcFlag.HpRecovery)
-                rate *= -1;
-            if (_v.Target.IsPlayer)
-                rate *= -1;
-
-            return rate;
         }
     }
 }

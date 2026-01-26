@@ -106,21 +106,8 @@ namespace Memoria.Scripts.Battle
                 dictbattle[3] = 0;
             }
 
-            /*
-            if (PersistenSingleton<HonoInputManager>.Instance.IsInput(Control.LeftTrigger) && PersistenSingleton<HonoInputManager>.Instance.IsInput(Control.RightTrigger) &&
-                PersistenSingleton<HonoInputManager>.Instance.IsInput(Control.Special) && player.saExtended.Count > 0)
-            {
-                List<SupportAbility> SAtoRemove = new List<SupportAbility>();
-                foreach (SupportAbility SaList in player.saExtended)
-                    SAtoRemove.Add(SaList);
-                SAtoRemove = SAtoRemove.OrderBy(sa => sa).ToList();
-                foreach (SupportAbility Sa in SAtoRemove)
-                    ff9abil.FF9Abil_SetEnableSA(player, Sa, false);
-            }
-            */
-
-
-            if (UnityEngine.Input.GetKey(KeyCode.KeypadPlus) && FF9StateSystem.EventState.ScenarioCounter >= 11100 && FF9StateSystem.EventState.gEventGlobal[1500] > 0)
+            //if (UnityEngine.Input.GetKey(KeyCode.KeypadPlus) && FF9StateSystem.EventState.ScenarioCounter >= 11100 && FF9StateSystem.EventState.gEventGlobal[1500] > 0)
+            if (UnityEngine.Input.GetKey(KeyCode.KeypadPlus))
             { // Debug, to delete at the release ?
                 SoundLib.PlaySoundEffect(1362);
                 if (GameState.HasKeyItem(82))
@@ -170,6 +157,10 @@ namespace Memoria.Scripts.Battle
                     ff9item.FF9Item_AddImportant(84);
                     FF9StateSystem.EventState.gEventGlobal[1403] = 0;
                 }
+                if (FF9StateSystem.EventState.gEventGlobal[1403] >= 4 && FF9StateSystem.EventState.gEventGlobal[1403] <= 6) // Activate Hardcore IA
+                    FF9StateSystem.EventState.gEventGlobal[1407] = 1;
+                else
+                    FF9StateSystem.EventState.gEventGlobal[1407] = 0;
             }
 
             return result;

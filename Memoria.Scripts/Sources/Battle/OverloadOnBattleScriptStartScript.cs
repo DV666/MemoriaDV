@@ -2,12 +2,8 @@
 using Memoria.Assets;
 using Memoria.Data;
 using Memoria.Database;
-using Memoria.Prime;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.IO;
-using System.Text.RegularExpressions;
 using static Memoria.Scripts.Battle.TranceSeekAPI;
 
 namespace Memoria.Scripts.Battle
@@ -15,7 +11,7 @@ namespace Memoria.Scripts.Battle
     public class OverloadOnBattleScriptStartScript : IOverloadOnBattleScriptStartScript
     {
 
-        public static readonly BattleStatus[] CustomStatusAAMonster =
+        public static readonly BattleStatus[] CustomStatusAAMonster = // Custom status for monsters (using the Animation 2 value in HW) 
         {
             TranceSeekStatus.PowerBreak,    // Bit 0 (valeur 1)
             TranceSeekStatus.MagicBreak,    // Bit 1 (valeur 2)
@@ -34,9 +30,6 @@ namespace Memoria.Scripts.Battle
 
         public Boolean OnBattleScriptStart(BattleCalculator v)
         {
-            if (OverloadOnBattleInitScript.DebugBattle)
-                OverloadOnBattleInitScript.ReadDebugBattleFile();
-
             if (MonsterMechanic[v.Target.Data][3] == 1 && v.Target.CurrentHp <= 10000) // Prevent boss to die => Maybe use CustomBattleFlagsMeaning ?
             {
                 v.Target.CurrentHp = 10000;
@@ -74,7 +67,7 @@ namespace Memoria.Scripts.Battle
                     v.Command.Power += 20;
             }
 
-            if (!v.Caster.IsPlayer && v.Command.Data.aa.Vfx2 > 0) // Custom status for monsters (using the Animation 2 value in HW) 
+            if (!v.Caster.IsPlayer && v.Command.Data.aa.Vfx2 > 0)
             {
                 ulong AACustomStatus = v.Command.Data.aa.Vfx2;
 

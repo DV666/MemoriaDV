@@ -41,7 +41,7 @@ namespace Memoria.Scripts.Battle
                 {
                     _v.Target.TryRemoveStatuses(_v.Command.AbilityStatus);
                 }
-                else if (_v.Command.HitRate == 111)
+                else if (_v.Command.HitRate == 111) // Still used ? (old Reconstruction Black Waltz 1)
                 {
                     _v.Command.AbilityStatus |= BattleStatus.Regen;
                     TranceSeekAPI.TryAlterMagicStatuses(_v);

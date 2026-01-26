@@ -24,6 +24,14 @@ namespace Memoria.Scripts.Battle
             if (!_v.Target.CanBeAttacked())
                 return;
 
+            if (_v.Command.Power == 77 && _v.Command.HitRate == 77) // Reconstruction Black Waltz 1
+            {
+                _v.Target.Flags |= (CalcFlag.HpDamageOrHeal);
+                _v.Target.HpDamage = (int)_v.Target.MaximumHp;
+                TranceSeekAPI.TryAlterMagicStatuses(_v);
+                return;
+            }
+
             if (_v.Target.IsZombie)
             {
                 if (_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill))

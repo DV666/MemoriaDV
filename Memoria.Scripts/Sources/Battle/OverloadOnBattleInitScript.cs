@@ -1,4 +1,5 @@
-﻿using Assets.Sources.Scripts.UI.Common;
+﻿using Assets.Scripts.Common;
+using Assets.Sources.Scripts.UI.Common;
 using FF9;
 using Memoria.Assets;
 using Memoria.Data;
@@ -6,6 +7,7 @@ using Memoria.Database;
 using Memoria.DefaultScripts;
 using Memoria.Prime;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -21,15 +23,14 @@ namespace Memoria.Scripts.Battle
         public Boolean InitHUDMessageChild;
         public HUDMessageChild HUDToReset = null;
         public Int32 magiclampcooldown;
-        private const String StuffListedPath = "TranceSeek/StuffListed.txt";
-
-        public static Boolean DebugBattle = true;
-        private const String DebugFilePath = "TranceSeek/DebugBattle.txt";
 
         public void OnBattleInit()
         {
             // Zidane = 0, Vivi = 1, Eiko = 2, Kuja = 3, Necron = 4, Beatrix = 5, Ozma = 6, Garland = 7
-            // FF9StateSystem.EventState.gEventGlobal[1403] = 6; // Debug difficulty mode
+            //FF9StateSystem.EventState.gEventGlobal[1403] = 5; // Debug difficulty mode
+
+            if (FF9StateSystem.EventState.gEventGlobal[1403] >= 4 && FF9StateSystem.EventState.gEventGlobal[1403] <= 6) // Activate Hardcore IA
+                FF9StateSystem.EventState.gEventGlobal[1407] = 1;
 
             SB2_PATTERN sb2Pattern = FF9StateSystem.Battle.FF9Battle.btl_scene.PatAddr[FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum];
             KeyValuePair<Int32, Int32> BattleExID = new KeyValuePair<Int32, Int32>(FF9StateSystem.Battle.battleMapIndex, FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum);
@@ -90,12 +91,13 @@ namespace Memoria.Scripts.Battle
                 dictdifficulty[10] = 0; // Evade.M Bonus
                 dictdifficulty[11] = 0; // EXP Bonus
                 dictdifficulty[12] = 0; // Gils Bonus
+                dictdifficulty[13] = 0; // Power AA Bonus
 
                 if (FF9StateSystem.EventState.gEventGlobal[1403] == 3) // Kuja mode
                 {
                     if (FF9StateSystem.EventState.ScenarioCounter > 2250) // After Zidane/Vivi/Steiner get together in Evil Forest
                     {
-                        dictdifficulty[0] = 10;
+                        dictdifficulty[0] = 25;
                         dictdifficulty[4] = 25;
                         dictdifficulty[5] = 25;
                     }
@@ -110,17 +112,19 @@ namespace Memoria.Scripts.Battle
                 {
                     if (FF9StateSystem.EventState.ScenarioCounter > 2250) // After Zidane/Vivi/Steiner get together in Evil Forest
                     {
-                        dictdifficulty[0] = 25;
+                        dictdifficulty[0] = 50;
                         dictdifficulty[4] = 50;
                         dictdifficulty[5] = 50;
+                        dictdifficulty[13] = 10;
                     }
                     else
                     {
                         dictdifficulty[0] = 10;
                         dictdifficulty[4] = 20;
                         dictdifficulty[5] = 20;
+                        dictdifficulty[13] = 10;
                     }
-                    if (FF9StateSystem.EventState.gEventGlobal[1403] == 4)
+                    if (FF9StateSystem.EventState.gEventGlobal[1403] == 4) // Necron malus
                     {
                         dictdifficulty[11] = -50;
                         dictdifficulty[12] = -90;
@@ -131,10 +135,22 @@ namespace Memoria.Scripts.Battle
                     dictdifficulty[11] = 25;
                     dictdifficulty[12] = 25;
                 }
+
+                if (dictdifficulty[13] > 0)
+                {
+                    List<AA_DATA> attackList = FF9StateSystem.Battle.FF9Battle.enemy_attack;
+
+                    for (int i = 0; i < attackList.Count; i++)
+                    {
+                        AA_DATA attack = attackList[i];
+                        if ((attack.Type & 2) != 0) // Hide AP Figure, dummied for monsters
+                            attack.Ref.Power = attack.Ref.Power + Math.Max(1, (Int32)Math.Round((attack.Ref.Power * dictdifficulty[13]) / 100.0));
+                    }
+                }
             }
 
             if (Configuration.Mod.FolderNames.Contains("TranceSeek/StuffListed"))
-                WriteStuffInFile();
+                SpecialFilesTranceSeek.WriteStuffInFile();
 
             InitTSVariables();
 
@@ -523,8 +539,12 @@ namespace Memoria.Scripts.Battle
                 }
             }
 
-            if (DebugBattle)
-                WriteDebugBattleFile();
+            if (SpecialFilesTranceSeek.DebugBattle)
+            {
+                SpecialFilesTranceSeek.WriteDebugBattleFile();
+                SpecialFilesTranceSeek.WriteDebugMonsterAttacks();
+                PersistenSingleton<SceneDirector>.Instance.StartCoroutine(SpecialFilesTranceSeek.ReloadDebugFiles());
+            }
         }
 
         public static void InitTSVariables()
@@ -666,259 +686,6 @@ namespace Memoria.Scripts.Battle
                 foreach (Material mat in rend.materials)
                     mat.SetInt("_ZWrite", depthvalue);
             }
-        }
-
-        public static void WriteStuffInFile()
-        {
-            if (!File.Exists(StuffListedPath))
-                File.WriteAllText(StuffListedPath, "");
-
-            String data = "";
-
-            var SATranceSeek = new Dictionary<int, string>();
-            var RegularItemTranceSeek = new Dictionary<int, string>();
-
-            var SAfields = typeof(TranceSeekSupportAbility)
-                .GetFields(BindingFlags.Public | BindingFlags.Static);
-
-            foreach (var SAfield in SAfields)
-            {
-                int value = (int)(SupportAbility)SAfield.GetValue(null);
-                SATranceSeek[value] = SAfield.Name;
-            }
-
-            var Itemfields = typeof(TranceSeekRegularItem)
-             .GetFields(BindingFlags.Public | BindingFlags.Static);
-
-            foreach (var itemfield in Itemfields)
-            {
-                int value = (int)(RegularItem)itemfield.GetValue(null);
-                RegularItemTranceSeek[value] = itemfield.Name;
-            }
-
-            foreach (BattleUnit PlayerUnit in BattleState.EnumerateUnits())
-            {
-                if (!PlayerUnit.IsPlayer)
-                    continue;
-
-                data += $"################  {FF9TextTool.CharacterDefaultName(PlayerUnit.PlayerIndex)}  ################";
-
-                data += $"\n⚔️ Stuff";
-                if (RegularItemTranceSeek.TryGetValue((int)PlayerUnit.Weapon, out string WeaponName))
-                    data += "\n └→ 🗡️ Weapon = " + WeaponName;
-                else
-                    data += "\n └→ 🗡️ Weapon = " + PlayerUnit.Weapon;
-
-                if (RegularItemTranceSeek.TryGetValue((int)PlayerUnit.Head, out string HeadName))
-                    data += "\n └→ 🎩 Head = " + HeadName;
-                else
-                    data += "\n └→ 🎩 Head = " + PlayerUnit.Head;
-
-                if (RegularItemTranceSeek.TryGetValue((int)PlayerUnit.Wrist, out string WristName))
-                    data += "\n └→ 🔗 Wrist = " + WristName;
-                else
-                    data += "\n └→ 🔗 Wrist = " + PlayerUnit.Wrist;
-
-                if (RegularItemTranceSeek.TryGetValue((int)PlayerUnit.Armor, out string ArmorName))
-                    data += "\n └→ 🛡️ Armor = " + ArmorName;
-                else
-                    data += "\n └→ 🛡️ Armor = " + PlayerUnit.Armor;
-
-                if (RegularItemTranceSeek.TryGetValue((int)PlayerUnit.Accessory, out string AccessoryName))
-                    data += "\n └→ 💍 Accessory = " + AccessoryName;
-                else
-                    data += "\n └→ 💍 Accessory = " + PlayerUnit.Accessory;
-
-                data += $"\n\n📊 Stats";
-                data += "\n └→ ❤️ HP = " + PlayerUnit.CurrentHp + "/" + PlayerUnit.MaximumHp;
-                data += "\n └→ 🔷 MP = " + PlayerUnit.CurrentMp + "/" + PlayerUnit.MaximumMp;
-                data += "\n └→ 🏅 Level = " + PlayerUnit.Level;
-                data += "\n └→ 🏹 Dexterity = " + PlayerUnit.Dexterity;
-                data += "\n └→ 💪 Strength = " + PlayerUnit.Strength;
-                data += "\n └→ ✨ Magic = " + PlayerUnit.Magic;
-                data += "\n └→ 🧘 Will = " + PlayerUnit.Will;
-                data += "\n └→ 🛡️ PhysicalDefence = " + PlayerUnit.PhysicalDefence;
-                data += "\n └→ 🌀 PhysicalEvade = " + PlayerUnit.PhysicalEvade;
-                data += "\n └→ 🧙 MagicDefence = " + PlayerUnit.MagicDefence;
-                data += "\n └→ 💫 MagicEvade = " + PlayerUnit.MagicEvade;
-
-                if (PlayerUnit.Data.saExtended.Count > 0)
-                {
-                    List<String> PlayerSAName = new List<String>();
-                    foreach (SupportAbility saequipped in PlayerUnit.Data.saExtended)
-                        if (SATranceSeek.TryGetValue((int)saequipped, out string abilityName))
-                            PlayerSAName.Add(abilityName);
-                        else
-                            PlayerSAName.Add(saequipped.ToString());
-
-                    PlayerSAName.Sort();
-
-                    data += $"\n\n💎 SA equipped";
-                    for (Int32 i = 0; i < PlayerSAName.Count; i++) 
-                        data += "\n └→ " + PlayerSAName[i];
-                }
-
-                data += "\n\n";
-            }
-
-            File.WriteAllText(StuffListedPath, data);
-        }
-
-        public static void WriteDebugBattleFile()
-        {
-            if (!File.Exists(DebugFilePath))
-                File.WriteAllText(DebugFilePath, "");
-
-            String data = "";
-
-            foreach (BattleUnit unit in BattleState.EnumerateUnits())
-            {
-                if (unit.IsPlayer)
-                    data += $"################  ⭐ {FF9TextTool.CharacterDefaultName(unit.PlayerIndex)} ⭐  ################";
-                else
-                    data += $"################  👾 {RemoveTags(unit.Name)} 👾  ################";
-
-                data += "\n\n EDIT ? : " + "No";
-
-                data += $"\n\n📊 Stats";
-                data += "\n └→ ID = " + unit.Id;
-                data += "\n └→ ❤️ HP = " + unit.CurrentHp + "/" + unit.MaximumHp;
-                data += "\n └→ 🔷 MP = " + unit.CurrentMp + "/" + unit.MaximumMp;
-                data += "\n └→ 🏅 Level = " + unit.Level;
-                data += "\n └→ 🏹 Dexterity = " + unit.Dexterity;
-                data += "\n └→ 💪 Strength = " + unit.Strength;
-                data += "\n └→ ✨ Magic = " + unit.Magic;
-                data += "\n └→ 🧘 Will = " + unit.Will;
-                data += "\n └→ 🛡️ PhysicalDefence = " + unit.PhysicalDefence;
-                data += "\n └→ 🌀 PhysicalEvade = " + unit.PhysicalEvade;
-                data += "\n └→ 🧙 MagicDefence = " + unit.MagicDefence;
-                data += "\n └→ 💫 MagicEvade = " + unit.MagicEvade;
-
-
-                data += "\n\n └→ 🎭 Current Status = " + unit.CurrentStatus;
-                data += "\n └→ ♾️ Auto Status = " + unit.PermanentStatus;
-                data += "\n └→ 🚫 Resist Status = " + unit.ResistStatus;
-                data += "\n\n";
-            }
-
-            File.WriteAllText(DebugFilePath, data);
-        }
-
-        public static void ReadDebugBattleFile()
-        {
-            if (!File.Exists(DebugFilePath))
-                return;
-
-            string fullText = File.ReadAllText(DebugFilePath);
-
-            string[] unitBlocks = fullText.Split(new string[] { "################" }, StringSplitOptions.RemoveEmptyEntries);
-
-            foreach (string block in unitBlocks)
-            {
-                if (!Regex.IsMatch(block, @"EDIT \? :.*Yes", RegexOptions.IgnoreCase))
-                    continue;
-
-                Match matchID = Regex.Match(block, @"ID = (\d+)");
-                if (!matchID.Success) continue;
-
-                int unitId = int.Parse(matchID.Groups[1].Value);
-
-                BattleUnit unit = BattleState.EnumerateUnits().FirstOrDefault(u => u.Id == unitId);
-
-                if (unit == null)
-                    continue;
-
-                Match matchHP = Regex.Match(block, @"❤️ HP = (\d+)/(\d+)");
-                if (matchHP.Success)
-                {
-                    uint newCur = uint.Parse(matchHP.Groups[1].Value);
-                    uint newMax = uint.Parse(matchHP.Groups[2].Value);
-
-                    if (unit.MaximumHp != newMax) unit.MaximumHp = newMax;
-                    if (unit.CurrentHp != newCur) unit.CurrentHp = newCur;
-                }
-
-                Match matchMP = Regex.Match(block, @"🔷 MP = (\d+)/(\d+)");
-                if (matchMP.Success)
-                {
-                    uint newCur = uint.Parse(matchMP.Groups[1].Value);
-                    uint newMax = uint.Parse(matchMP.Groups[2].Value);
-
-                    if (unit.MaximumMp != newMax) unit.MaximumMp = newMax;
-                    if (unit.CurrentMp != newCur) unit.CurrentMp = newCur;
-                }
-
-                ApplyStat(block, @"🏅 Level = (\d+)", v => unit.Level = (byte)v);
-                ApplyStat(block, @"🏹 Dexterity = (\d+)", v => unit.Dexterity = (byte)v);
-                ApplyStat(block, @"💪 Strength = (\d+)", v => unit.Strength = (byte)v);
-                ApplyStat(block, @"✨ Magic = (\d+)", v => unit.Magic = (byte)v);
-                ApplyStat(block, @"🧘 Will = (\d+)", v => unit.Will = (byte)v);
-                ApplyStat(block, @"🛡️ PhysicalDefence = (\d+)", v => unit.PhysicalDefence = (byte)v);
-                ApplyStat(block, @"🌀 PhysicalEvade = (\d+)", v => unit.PhysicalEvade = (byte)v);
-                ApplyStat(block, @"🧙 MagicDefence = (\d+)", v => unit.MagicDefence = (byte)v);
-                ApplyStat(block, @"💫 MagicEvade = (\d+)", v => unit.MagicEvade = (byte)v);
-
-                UpdateStatusLogic(block, @"🎭 Current Status = (.*)", unit.CurrentStatus,
-                    (s) => btl_stat.AlterStatuses(unit, s, unit),
-                    (s) => btl_stat.RemoveStatuses(unit, s));
-
-                UpdateStatusLogic(block, @"♾️ Auto Status = (.*)", unit.PermanentStatus,
-                    (s) => btl_stat.MakeStatusesPermanent(unit, s, true),
-                    (s) => btl_stat.MakeStatusesPermanent(unit, s, false));
-
-                UpdateStatusLogic(block, @"🚫 Resist Status = (.*)", unit.ResistStatus,
-                    (s) => unit.Data.stat.invalid |= s,
-                    (s) => unit.Data.stat.invalid &= ~s);
-            }
-            WriteDebugBattleFile();
-        }
-
-        private static void ApplyStat(string block, string pattern, Action<int> applyAction)
-        {
-            Match m = Regex.Match(block, pattern);
-            if (m.Success && int.TryParse(m.Groups[1].Value, out int val))
-            {
-                applyAction(val);
-            }
-        }
-
-        private static void UpdateStatusLogic(string block, string pattern, BattleStatus currentStatus, Action<BattleStatus> onAdd, Action<BattleStatus> onRemove)
-        {
-            Match m = Regex.Match(block, pattern);
-            if (!m.Success) return;
-
-            string statusString = m.Groups[1].Value;
-
-            BattleStatus targetStatus = 0;
-            if (!string.IsNullOrEmpty(statusString) && statusString.Trim().Length > 0 && statusString.Trim() != "0")
-            {
-                try
-                {
-                    targetStatus = (BattleStatus)Enum.Parse(typeof(BattleStatus), statusString.Trim());
-                }
-                catch
-                {
-                    return;
-                }
-            }
-
-            BattleStatus statusToAdd = targetStatus & ~currentStatus;
-            BattleStatus statusToRemove = currentStatus & ~targetStatus;
-
-            if (statusToAdd != 0)
-            {
-                onAdd(statusToAdd);
-            }
-
-            if (statusToRemove != 0)
-            {
-                onRemove(statusToRemove);
-            }
-        }
-
-        public static String RemoveTags(string s)
-        {
-            return Regex.Replace(s, @"\[[^]]*\]", "");
         }
 
         public static Int32[,] BossBattleBonusHP = new Int32[,]

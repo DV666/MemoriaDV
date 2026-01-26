@@ -439,6 +439,7 @@
     <Compile Include="Sources\Battle\OverloadDamageModifierScript.cs" />
     <Compile Include="Sources\Battle\OverloadOnBattleInitScript.cs" />
     <Compile Include="Sources\Battle\OverloadOnBattleScriptEndScript.cs" />
+    <Compile Include="Sources\Battle\SpecialFilesTranceSeek.cs" />
     <Compile Include="Sources\Battle\OverloadUnitCheckPointScript.cs" />
     <Compile Include="Sources\Battle\OverloadPlayerUIScript.cs" />
     <Compile Include="Sources\Battle\OverloadOnBattleScriptStartScript.cs" />
