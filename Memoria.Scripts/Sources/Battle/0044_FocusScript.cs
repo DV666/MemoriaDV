@@ -131,7 +131,7 @@ namespace Memoria.Scripts.Battle
             }
             else
             {
-                _v.Target.AlterStatus(TranceSeekStatus.MagicUp, _v.Caster);
+                btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.MagicUp, parameters: $"+{_v.Command.Power}");
             }
         }
     }

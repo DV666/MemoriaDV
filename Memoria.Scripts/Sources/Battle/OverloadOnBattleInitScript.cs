@@ -7,12 +7,9 @@ using Memoria.Database;
 using Memoria.DefaultScripts;
 using Memoria.Prime;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Text.RegularExpressions;
 using UnityEngine;
 using static Memoria.Scripts.Battle.TranceSeekAPI;
 
@@ -27,10 +24,14 @@ namespace Memoria.Scripts.Battle
         public void OnBattleInit()
         {
             // Zidane = 0, Vivi = 1, Eiko = 2, Kuja = 3, Necron = 4, Beatrix = 5, Ozma = 6, Garland = 7
-            //FF9StateSystem.EventState.gEventGlobal[1403] = 5; // Debug difficulty mode
-
-            if (FF9StateSystem.EventState.gEventGlobal[1403] >= 4 && FF9StateSystem.EventState.gEventGlobal[1403] <= 6) // Activate Hardcore IA
-                FF9StateSystem.EventState.gEventGlobal[1407] = 1;
+            if (false)
+            {
+                FF9StateSystem.EventState.gEventGlobal[1403] = 5; // Debug difficulty mode
+                if (FF9StateSystem.EventState.gEventGlobal[1403] >= 4 && FF9StateSystem.EventState.gEventGlobal[1403] <= 6) // Activate Hardcore IA
+                    FF9StateSystem.EventState.gEventGlobal[1407] = 1;
+                else
+                    FF9StateSystem.EventState.gEventGlobal[1407] = 0;
+            }
 
             SB2_PATTERN sb2Pattern = FF9StateSystem.Battle.FF9Battle.btl_scene.PatAddr[FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum];
             KeyValuePair<Int32, Int32> BattleExID = new KeyValuePair<Int32, Int32>(FF9StateSystem.Battle.battleMapIndex, FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum);
