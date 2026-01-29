@@ -543,6 +543,7 @@ public class ButtonGroupState : MonoBehaviour
             Singleton<HelpDialog>.Instance.Depth = ButtonGroupState.pointerDepthList.TryGetValue(ButtonGroupState.activeGroup, out Int32 depth) ? depth - 1 : 4;
             Singleton<HelpDialog>.Instance.ShowDialog();
         }
+        VoiceHUD.ReplayHelpTextDialogAudio();
     }
 
     private static void ActiveButtonChanged(GameObject go, Boolean setSelect)
