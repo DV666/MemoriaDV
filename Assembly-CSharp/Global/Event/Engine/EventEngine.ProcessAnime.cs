@@ -1,4 +1,5 @@
 ﻿using FF9;
+using Memoria.Prime;
 using System;
 
 public partial class EventEngine
@@ -52,6 +53,7 @@ public partial class EventEngine
                         {
                             this.SetAnim(actor, (int)actor.idle);
                         }
+
                         actor.anim = actor.idle;
                     }
                     else if (parent.anim == parent.walk)

@@ -154,6 +154,13 @@ namespace Memoria.Patcher
                         Console.WriteLine("File is Signed but could not find magic number, file might be corrupted");
                         throw new InvalidDataException("File is Signed but could not find magic number, file might be corrupted");
                     }
+                    else
+                    {
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.Write("V ");
+                        Console.ResetColor();
+                        Console.WriteLine("File Validated Successfully");
+                    }
                 }
                 else
                 {

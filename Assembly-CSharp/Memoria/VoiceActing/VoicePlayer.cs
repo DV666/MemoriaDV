@@ -447,6 +447,27 @@ public class VoicePlayer : SoundPlayer
         return soundProfile;
     }
 
+    public static void PlayAnimationVoice(ushort animId, ushort count = 1)
+    {
+        if (!Configuration.VoiceActing.Enabled)
+            return;
+
+        Int32 va_id = String.Format("Voices/{0}/animation/va_{1}_{2}", Localization.CurrentSymbol, animId, count).GetHashCode();
+        String vaPath = String.Format("Voices/{0}/animation/va_{1}_{2}", Localization.CurrentSymbol, animId, count).ToLower();
+        if (!AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".akb", true, true) && !AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".ogg", true, false))
+        {
+            vaPath = String.Format("Voices/{0}/animation/va_{1}", Localization.CurrentSymbol, animId).ToLower();
+            va_id = String.Format("Voices/{0}/animation/va_{1}", Localization.CurrentSymbol, animId).GetHashCode();
+            if (!AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".akb", true, true) && !AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".ogg", true, false))
+            {
+                SoundLib.VALog(String.Format("animation:{0}, count:{1} path:{2} (not found)", animId, count, vaPath));
+                return;
+            }
+        }
+        SoundLib.VALog(String.Format("animation:{0}, count:{1} path:{2}", animId, count, vaPath));
+        CreateLoadThenPlayVoice(va_id, vaPath);
+    }
+
     public static void PlayBattleVoice(Int32 va_id, String text, Boolean asSharedMessage = false, Int32 battleId = -1)
     {
         if (!Configuration.VoiceActing.Enabled)

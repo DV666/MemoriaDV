@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Memoria.Prime;
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Actor : PosObj
@@ -125,7 +127,33 @@ public class Actor : PosObj
 
     public Byte outFrame;
 
-    public Byte animFlag;
+    private Dictionary<ushort, ushort> countAnimations = new Dictionary<ushort, ushort>();
+    private ushort _currAnim;
+
+    private Byte _animFlag;
+    public Byte animFlag {
+        get { 
+            return this._animFlag;
+        }
+        set
+        {
+            if(_currAnim != this.anim)
+            {
+                _currAnim = this.anim;
+                // we have changed to a new animation
+                if (countAnimations.ContainsKey(_currAnim))
+                {
+                    countAnimations[_currAnim]++;
+                }
+                else
+                {
+                    countAnimations[_currAnim] = 1;
+                }
+                VoicePlayer.PlayAnimationVoice(this.anim, this.cid, this.countAnimations[_currAnim]);
+            }
+            this._animFlag = value;
+        }
+    }
 
     public Byte loopCount;
 
