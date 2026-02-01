@@ -22,8 +22,10 @@ namespace Memoria.Scripts.Battle
         {
             if (_v.Command.AbilityId == BattleAbilityId.FrogDrop || _v.Command.Power == 18) // Flash
             {
-                if (_v.Target.Data != _v.Caster.Data)
-                    TranceSeekAPI.TryAlterCommandStatuses(_v);
+                if (_v.Target.Data == _v.Caster.Data)
+                    foreach (BattleUnit unit in BattleState.EnumerateUnits())
+                        if (unit.IsTargetable && !unit.IsUnderAnyStatus(BattleStatus.Petrify | BattleStatus.Death))
+                            unit.AlterStatus(BattleStatus.Blind, _v.Caster);
             }
             else if (_v.Command.Power == 0 && _v.Command.HitRate == 255)
             {
