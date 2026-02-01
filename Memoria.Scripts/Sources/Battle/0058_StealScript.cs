@@ -215,7 +215,7 @@ namespace Memoria.Scripts.Battle
                     return;
                 }
                 btl2d.Btl2dReqSymbolMessage(_v.Target.Data, "[FDEE00]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 5);
-                SoundLib.PlaySoundEffect(4005); //se511116
+                SoundLib.PlaySoundEffect(4005); //se511116 - Héhé !
                 return;
             }
             else if (GameRandom.Next8() < NewStealableItemRates(battleEnemy.StealableItemRates[3], _v.Caster) && battleEnemy.StealableItems[3] != RegularItem.NoItem)
@@ -242,7 +242,7 @@ namespace Memoria.Scripts.Battle
             }
             btl2d.Btl2dReqSymbolMessage(_v.Target.Data, "[FDEE00]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 5);
             if (_v.Caster.PlayerIndex == CharacterId.Zidane)
-                SoundLib.PlaySoundEffect(4005); //se511116
+                SoundLib.PlaySoundEffect(4005); //se511116 - Héhé !
         }
 
         public static float NewStealableItemRates(ushort StealableItemRates, BattleCaster Caster)

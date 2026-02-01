@@ -62,7 +62,7 @@ namespace Memoria.Scripts.Battle
                     TranceSeekAPI.RaiseTrouble(_v);
                 }
             }
-            else if (_v.Command.AbilityId == BattleAbilityId.MagicHammer || _v.Command.AbilityId == (BattleAbilityId)1525 || _v.Command.HitRate == 20)
+            else if (_v.Command.AbilityId == BattleAbilityId.MagicHammer || _v.Command.AbilityId == (BattleAbilityId)1525 || _v.Command.HitRate == 25)
             {
                 if (_v.Target.IsZombie)
                 {

@@ -119,7 +119,7 @@ namespace Memoria.Scripts.Battle
                     return;
             }
 
-            if (_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill) || !_v.Target.CanBeAttacked() || btl_util.getEnemyTypePtr(_v.Target.Data).category == 1)
+            if (_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill) || !_v.Target.CanBeAttacked() || btl_util.getEnemyTypePtr(_v.Target.Data).category == 1 && blueMagicId == 0)
             {
                 if (saAppetite || saGluttony)
                     return;
@@ -204,30 +204,14 @@ namespace Memoria.Scripts.Battle
                 }
                 else
                 {
-                    if (!_v.Caster.IsUnderAnyStatus(BattleStatus.Trance))
-                    {
-                        if (_v.Target.CurrentHp <= _v.Target.MaximumHp / PowerCMD)
-                            UIManager.Battle.SetBattleFollowMessage(3, Localization.GetWithDefault("Eat25"));
-                        else
-                            if (_v.Target.CurrentHp <= _v.Target.MaximumHp / PowerCMD)
-                                UIManager.Battle.SetBattleFollowMessage(3, Localization.GetWithDefault("Eat50"));
-                            else
-                                UiState.SetBattleFollowFormatMessage(BattleMesages.CannotEatStrong);
-                    } 
+                    if (_v.Target.CurrentHp <= _v.Target.MaximumHp / PowerCMD)
+                        UIManager.Battle.SetBattleFollowMessage(3, Localization.GetWithDefault("Eat25"));
                     else
-                    {
-                        if (!_v.Target.HasCategory(EnemyCategory.Humanoid) && blueMagicId != 0)
-                        {
-                            if (_v.Target.CurrentHp <= _v.Target.MaximumHp / PowerCMD)
-                                UIManager.Battle.SetBattleFollowMessage(3, Localization.GetWithDefault("Eat25"));
-                            else
-                                if (_v.Target.CurrentHp <= _v.Target.MaximumHp / PowerCMD)
-                                    UIManager.Battle.SetBattleFollowMessage(3, Localization.GetWithDefault("Eat50"));
-                                else
-                                    UiState.SetBattleFollowFormatMessage(BattleMesages.CannotEatStrong);
-                        }
-                    }
-                }
+                        if (_v.Target.CurrentHp <= _v.Target.MaximumHp / PowerCMD)
+                            UIManager.Battle.SetBattleFollowMessage(3, Localization.GetWithDefault("Eat50"));
+                        else
+                            UiState.SetBattleFollowFormatMessage(BattleMesages.CannotEatStrong);
+                } 
             }
         }
 
