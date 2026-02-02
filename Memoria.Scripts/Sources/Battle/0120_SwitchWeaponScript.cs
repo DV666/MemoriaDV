@@ -66,8 +66,8 @@ namespace Memoria.Scripts.Battle
                 FF9StateSystem.Common.FF9.player[CharacterId.Zidane].info.serial_no = ModelZidane == "GEO_MAIN_B0_001" ? CharacterSerialNumber.ZIDANE_SWORD : CharacterSerialNumber.ZIDANE_DAGGER;
                 if (_v.Caster.IsUnderAnyStatus(BattleStatus.Trance))
                 {
-                    _v.Caster.Data.gameObject = SwitchToAlt ? AltModel[_v.Caster.Data] : OriginalModel[_v.Caster.Data];
-                    _v.Caster.Data.originalGo = SwitchToAlt ? AltTranceModel[_v.Caster.Data] : OriginalTranceModel[_v.Caster.Data];
+                    _v.Caster.Data.gameObject = SwitchToAlt ? AltTranceModel[_v.Caster.Data] : OriginalTranceModel[_v.Caster.Data];
+                    _v.Caster.Data.originalGo = SwitchToAlt ? AltModel[_v.Caster.Data] : OriginalModel[_v.Caster.Data];
                     RefreshTranceModel(_v.Caster.Data);
                     _v.Caster.Data.originalGo.SetActive(false);
                 }
