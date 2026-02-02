@@ -17,6 +17,15 @@ namespace Memoria.Scripts.Battle
 
         private readonly BattleCalculator _v;
 
+        public static Dictionary<BTL_DATA, GameObject> OriginalModel = new Dictionary<BTL_DATA, GameObject>();
+        public static Dictionary<BTL_DATA, GameObject> AltModel = new Dictionary<BTL_DATA, GameObject>();
+
+        public static Dictionary<BTL_DATA, GameObject> OriginalTranceModel = new Dictionary<BTL_DATA, GameObject>();
+        public static Dictionary<BTL_DATA, GameObject> AltTranceModel = new Dictionary<BTL_DATA, GameObject>();
+
+        public static Dictionary<BTL_DATA, RegularItem> OriginalWeaponItem = new Dictionary<BTL_DATA, RegularItem>();
+        public static Dictionary<BTL_DATA, RegularItem> AltWeaponItem = new Dictionary<BTL_DATA, RegularItem>();
+
         public SwitchWeaponScript(BattleCalculator v)
         {
             _v = v;
@@ -32,20 +41,23 @@ namespace Memoria.Scripts.Battle
                     return;
                 }
 
+                if (OriginalModel[_v.Caster.Data] == null || AltModel[_v.Caster.Data] == null ||
+                    OriginalTranceModel[_v.Caster.Data] == null || AltTranceModel[_v.Caster.Data] == null)
+                {
+                    InitZidaneModel(_v.Caster);
+                }
+
                 string ModelZidane = null;
-                string ModelTranceZidane = null;
                 Vector3 ModelStatusScaleOld = _v.Caster.ModelStatusScale;
                 _v.Caster.ModelStatusScale += new Vector3(0.1f, 0.1f, 0.1f); // To force reset stack status.
                 if (btl_util.getSerialNumber(_v.Caster.Data) == CharacterSerialNumber.ZIDANE_DAGGER)
-                {
                     ModelZidane = "GEO_MAIN_B0_001"; // Model Zidane_Sword
-                    ModelTranceZidane = "GEO_MAIN_B0_023";
-                }
                 else
-                {
                     ModelZidane = "GEO_MAIN_B0_000"; // Model Zidane_Dagger
-                    ModelTranceZidane = "GEO_MAIN_B0_022";
-                }
+
+                Boolean SwitchToAlt = true;
+                if (_v.Caster.Data.gameObject == AltModel[_v.Caster.Data] || _v.Caster.Data.gameObject == AltTranceModel[_v.Caster.Data])
+                    SwitchToAlt = false;
 
                 Vector3 position = _v.Caster.Data.gameObject.transform.localPosition;
                 _v.Caster.Data.gameObject.SetActive(false);
@@ -54,33 +66,29 @@ namespace Memoria.Scripts.Battle
                 FF9StateSystem.Common.FF9.player[CharacterId.Zidane].info.serial_no = ModelZidane == "GEO_MAIN_B0_001" ? CharacterSerialNumber.ZIDANE_SWORD : CharacterSerialNumber.ZIDANE_DAGGER;
                 if (_v.Caster.IsUnderAnyStatus(BattleStatus.Trance))
                 {
-                    _v.Caster.Data.gameObject = ModelFactory.CreateModel(ModelTranceZidane, true);
-                    _v.Caster.Data.originalGo = ModelFactory.CreateModel(ModelZidane, true);
+                    _v.Caster.Data.gameObject = SwitchToAlt ? AltModel[_v.Caster.Data] : OriginalModel[_v.Caster.Data];
+                    _v.Caster.Data.originalGo = SwitchToAlt ? AltTranceModel[_v.Caster.Data] : OriginalTranceModel[_v.Caster.Data];
                     RefreshTranceModel(_v.Caster.Data);
                     _v.Caster.Data.originalGo.SetActive(false);
                 }
                 else
                 {
-                    _v.Caster.Data.gameObject = ModelFactory.CreateModel(ModelZidane, true);
+                    _v.Caster.Data.gameObject = SwitchToAlt ? AltModel[_v.Caster.Data] : OriginalModel[_v.Caster.Data];
                 }
-                RegularItem weaponchoose = ff9item._FF9Item_Data[_v.Caster.Weapon].shape == 1 ? Dagger_Sword_DB[_v.Caster.Weapon] : Dagger_Sword_DB.FirstOrDefault(Dagger => Dagger.Value == _v.Caster.Weapon).Key;
-                if (weaponchoose < 0)
-                {
-                    weaponchoose = btl_util.getWeaponNumber(_v.Caster.Data);
-                    _v.Context.Flags |= BattleCalcFlags.Miss;
-                }
-                else
-                {
-                    FF9StateSystem.Common.FF9.player[(CharacterId)_v.Caster.Data.bi.slot_no].equip[0] = weaponchoose;
-                }
-                _v.Caster.Data.weapon = ff9item.GetItemWeapon(weaponchoose);
+
+                FF9StateSystem.Common.FF9.player[(CharacterId)_v.Caster.Data.bi.slot_no].equip[0] = SwitchToAlt ? AltWeaponItem[_v.Caster.Data] : OriginalWeaponItem[_v.Caster.Data];
+                _v.Caster.Data.weapon = ff9item.GetItemWeapon(SwitchToAlt ? AltWeaponItem[_v.Caster.Data] : OriginalWeaponItem[_v.Caster.Data]);
+                btl_eqp.InitWeapon(FF9StateSystem.Common.FF9.player[CharacterId.Zidane], _v.Caster.Data);
+
                 for (Int32 i = 0; i < 34; i++)
                     _v.Caster.Data.mot[i] = btlParam.AnimationId[i];
+
                 _v.Caster.Data.gameObject.transform.localPosition = position;
                 _v.Caster.Data.dms_geo_id = btl_init.GetModelID(btl_util.getSerialNumber(_v.Caster.Data));
+
                 _v.Caster.Data.gameObject.SetActive(true);
                 _v.Caster.Data.weapon_geo.SetActive(true);
-                btl_eqp.InitWeapon(FF9StateSystem.Common.FF9.player[CharacterId.Zidane], _v.Caster.Data);
+
                 btl_mot.setMotion(_v.Caster.Data, BattlePlayerCharacter.PlayerMotionIndex.MP_WIN); //MP_MAGIC
                 _v.Caster.Data.evt.animFrame = 0;
                 geo.geoScaleUpdate(_v.Caster.Data, true);
@@ -99,6 +107,49 @@ namespace Memoria.Scripts.Battle
                 );
             }
         }
+
+        public static void InitZidaneModel(BattleUnit unit)
+        {
+            if (!Dagger_Sword_DB.ContainsKey(unit.Weapon) && !Dagger_Sword_DB.ContainsValue(unit.Weapon)) // If Zidane don't have a weapon to "switch" in battle, we skip the init.
+            {
+                OriginalModel[unit.Data] = null;
+                OriginalTranceModel[unit.Data] = null;
+                AltModel[unit.Data] = null;
+                AltTranceModel[unit.Data] = null;
+                return;
+            }
+
+            string ModelZidane = null;
+            string ModelTranceZidane = null;
+            Vector3 ZidanePosition = unit.Data.gameObject.transform.localPosition;
+
+            if (btl_util.getSerialNumber(unit.Data) == CharacterSerialNumber.ZIDANE_DAGGER)
+            {
+                ModelZidane = "GEO_MAIN_B0_001"; // Model Zidane_Sword
+                ModelTranceZidane = "GEO_MAIN_B0_023";
+            }
+            else
+            {
+                ModelZidane = "GEO_MAIN_B0_000"; // Model Zidane_Dagger
+                ModelTranceZidane = "GEO_MAIN_B0_022";
+            }
+
+            OriginalModel[unit.Data] = unit.Data.gameObject;
+            OriginalTranceModel[unit.Data] = unit.Data.tranceGo;
+
+            AltModel[unit.Data] = ModelFactory.CreateModel(ModelZidane, true);
+            AltTranceModel[unit.Data] = ModelFactory.CreateModel(ModelTranceZidane, true);
+
+            AltModel[unit.Data].transform.localPosition = ZidanePosition;
+            AltTranceModel[unit.Data].transform.localPosition = ZidanePosition;
+
+            AltModel[unit.Data].SetActive(false);
+            AltTranceModel[unit.Data].SetActive(false);
+
+            OriginalWeaponItem[unit.Data] = unit.Weapon;
+            AltWeaponItem[unit.Data] = ff9item._FF9Item_Data[unit.Weapon].shape == 1 ? Dagger_Sword_DB[unit.Weapon] : Dagger_Sword_DB.FirstOrDefault(Dagger => Dagger.Value == unit.Weapon).Key;
+        }
+
         public static void RefreshTranceModel(BTL_DATA btl)
         {
             CharacterSerialNumber serialNo = btl_util.getSerialNumber(btl);

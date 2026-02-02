@@ -354,6 +354,7 @@
     <Compile Include="Sources\Battle\0103_MagicApplyPositiveStatusScript.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
+    <Compile Include="Sources\Battle\0141_MagicWeaponSpecialScript - Copy.cs" />
     <Compile Include="Sources\Battle\0163_SpecialApplyPositiveStatusScript.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
@@ -399,7 +400,7 @@
     <Compile Include="Sources\Battle\0138_AlchemyScript.cs" />
     <Compile Include="Sources\Battle\0139_BakuScript.cs" />
     <Compile Include="Sources\Battle\0140_SummonMonsterScript.cs" />
-    <Compile Include="Sources\Battle\0141_MagicWeaponSpecialScript.cs" />
+    <Compile Include="Sources\Battle\0142_MagicHammerScript.cs" />
     <Compile Include="Sources\Battle\0164_TranceSeekSpecial.cs" />
     <Compile Include="Sources\Battle\0222_NewGamePlusScript.cs" />
     <Compile Include="Sources\Battle\0200_MixPotionScript.cs" />

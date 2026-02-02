@@ -574,6 +574,9 @@ namespace Memoria.Scripts.Battle
                 StateMoug[unit.Data] = 0;
                 ModelMoug[unit.Data] = null;
                 InfusedWeaponScript.CMDVanillaName[unit.Data] = [null, null];
+
+                if (unit.PlayerIndex == CharacterId.Zidane)
+                    SwitchWeaponScript.InitZidaneModel(unit);
             }
 
             if (FF9StateSystem.EventState.gEventGlobal[1403] == 4 || FF9StateSystem.EventState.gEventGlobal[1403] == 5 || FF9StateSystem.EventState.gEventGlobal[1403] == 6)

@@ -12,7 +12,6 @@ namespace Memoria.Scripts.Battle
 {
     public static class TranceSeekAPI
     {
-        public static Dictionary<BTL_DATA, Boolean> InitBTL = new Dictionary<BTL_DATA, Boolean>();
         public static Dictionary<BTL_DATA, Int32[]> ZidanePassive = new Dictionary<BTL_DATA, Int32[]>();
         // [0] => Dodge ; [1] => Critical ; [2] => Eye of the thief ; [3] => Master Thief ; [4] => Dagger Attack ; [5] => FirstItemMug ; [6] => SecondItemMug ; [7] => Mug+ ; [8] => Steal Gil ; [9] => Flexible
         // [10] => FirstItemMugMT ; [11] => SecondItemMugMT
@@ -1234,7 +1233,7 @@ namespace Memoria.Scripts.Battle
 
         public static void SpecialItems(this BattleCalculator v)
         {
-            if (ff9item._FF9Item_Data[v.Caster.Weapon].shape == 56 && v.Target.HpDamage > 0) // Axe
+            if (ff9item._FF9Item_Data[v.Caster.Weapon].shape == 56 && v.Target.HpDamage > 0 && v.Command.Id != BattleCommandId.Item && v.Command.Id != BattleCommandId.AutoPotion) // Axe
             {
                 v.Target.HpDamage = UnityEngine.Random.Range(v.Target.HpDamage / 10, v.Target.HpDamage);
             }
