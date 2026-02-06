@@ -64,7 +64,11 @@ namespace Assets.Scripts.Common
 
         public static void ReplaceNow(String nextScene)
         {
-            MemoriaExport();
+            if (Configuration.Export.Enabled)
+            {
+                MemoriaExport();
+                return;
+            }
 
             if (String.IsNullOrEmpty(nextScene))
                 Log.Error($"[{nameof(SceneDirector)}] Someone tried to change the current scene [{Instance.CurrentScene}] to the invalid scene: [{nextScene}]. Stack: " + Environment.NewLine + Environment.StackTrace);
@@ -215,10 +219,53 @@ namespace Assets.Scripts.Common
             {
                 this._OnGUI_FullscreenEffect();
             }
+            if (IsExporting)
+            {
+                _OnGUI_ExportProgress();
+            }
             if (this._logger.IsShowLog)
             {
                 this._logger.OnGUI();
             }
+        }
+
+        private void _OnGUI_ExportProgress()
+        {
+            float boxWidth = Mathf.Min(Screen.width * 0.8f, 800f);
+            float boxHeight = 120f;
+            float boxX = (Screen.width / 2f) - (boxWidth / 2f);
+            float boxY = (Screen.height * 0.80f) - (boxHeight / 2f);
+
+            GUI.Box(new Rect(boxX, boxY, boxWidth, boxHeight), "");
+
+            float margin = 25f;
+            float contentWidth = boxWidth - (margin * 2);
+            float contentStartX = boxX + margin;
+            float textPosY = boxY + 20f;
+            float barHeight = 30f;
+            float barPosY = textPosY + 35f;
+
+            GUIStyle style = new GUIStyle(GUI.skin.label);
+            style.alignment = TextAnchor.UpperCenter;
+            style.normal.textColor = Color.white;
+            style.fontSize = 16;
+
+            string text = ExportStatus + "(" + Mathf.FloorToInt(ExportProgress * 100) + "%)";
+            GUI.Label(new Rect(boxX, textPosY, boxWidth, 50f), text, style);
+
+            Color originalColor = GUI.color;
+            GUI.color = new Color(0.3f, 0.3f, 0.3f, 1f);
+            GUI.DrawTexture(new Rect(contentStartX, barPosY, contentWidth, barHeight), Texture2D.whiteTexture, ScaleMode.StretchToFill);
+
+            float currentBarWidth = contentWidth * ExportProgress;
+            currentBarWidth = Mathf.Clamp(currentBarWidth, 0, contentWidth);
+
+            if (currentBarWidth > 0)
+            {
+                GUI.color = Color.green;
+                GUI.DrawTexture(new Rect(contentStartX, barPosY, currentBarWidth, barHeight), Texture2D.whiteTexture, ScaleMode.StretchToFill);
+            }
+            GUI.color = originalColor;
         }
 
         private void OnEnable()
@@ -767,6 +814,10 @@ namespace Assets.Scripts.Common
         [NonSerialized]
         private static Int32 _discChange;
 
+        public static bool IsExporting = false;
+        public static float ExportProgress = 0f; // Max is 1.0f
+        public static string ExportStatus = "";
+
         private static void MemoriaExport()
         {
             if (Interlocked.CompareExchange(ref _initialized, 1, 0) == 0)
@@ -788,7 +839,11 @@ namespace Assets.Scripts.Common
                 }
                 else if (Configuration.Export.Enabled)
                 {
-                    FF9StateSystem.Settings.ReadSystemData(ResourceExporter.ExportSafe);
+                    //FF9StateSystem.Settings.ReadSystemData(ResourceExporter.ExportSafe);
+                    FF9StateSystem.Settings.ReadSystemData(() =>
+                    {
+                        PersistenSingleton<SceneDirector>.Instance.StartCoroutine(ResourceExporter.ExportSafe());
+                    });
                 }
             }
         }

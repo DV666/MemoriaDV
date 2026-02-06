@@ -1,27 +1,41 @@
+using Assets.Scripts.Common;
 using Memoria.Prime;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 
 namespace Memoria.Assets
 {
     public static class GraphicResourceExporter
     {
-        public static void ExportSafe()
+        public static IEnumerator ExportSafe()
         {
-            try
+            if (!Configuration.Export.Graphics)
             {
-                if (!Configuration.Export.Graphics)
-                {
-                    Log.Message("[GraphicResourceExporter] Pass through {Configuration.Export.Graphics = 0}.");
-                    return;
-                }
+                Log.Message("[GraphicResourceExporter] Pass through {Configuration.Export.Graphics = 0}.");
+                yield break;
+            }
 
-                foreach (String name in GraphicResources.AtlasList.Keys)
+            List<String> atlasNames = GraphicResources.AtlasList.Keys.ToList();
+            int total = atlasNames.Count + 1;
+            int current = 0;
+
+            foreach (String name in atlasNames)
+            {
+                current++;
+                SceneDirector.ExportStatus = "Exporting Graphics: " + name;
+                SceneDirector.ExportProgress = (float)current / total;
+
+                yield return new WaitForEndOfFrame();
+
+                try
                 {
                     String path = GraphicResources.Embedded.GetAtlasPath(name);
                     UIAtlas atlas = AssetManager.Load<UIAtlas>(path, true);
+
                     if (atlas != null)
                     {
                         path = GraphicResources.Export.GetAtlasPath(name);
@@ -32,19 +46,28 @@ namespace Memoria.Assets
                         Sprite[] spriteList = Resources.LoadAll<Sprite>(path);
                         if (spriteList == null || spriteList.Length == 0)
                         {
-                            Log.Message($"[GraphicResourceExporter] Failed to export '{path}' as an atlas or a sprite list");
                             continue;
                         }
                         path = GraphicResources.Export.GetAtlasPath(name);
                         ExportSpriteListSafe(path, spriteList);
                     }
                 }
+                catch (Exception ex)
+                {
+                    Log.Error(ex, "[GraphicResourceExporter] Failed: " + name);
+                }
+            }
 
+            SceneDirector.ExportStatus = "Exporting Graphics: EffectSPS";
+            yield return new WaitForEndOfFrame();
+
+            try
+            {
                 CommonSPSSystem.ExportAllSPSTextures(Path.Combine(Configuration.Export.Path, "EffectSPS"));
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "[GraphicResourceExporter] Failed to export graphic resources.");
+                Log.Error(ex, "EffectSPS Export Failed");
             }
         }
 

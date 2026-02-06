@@ -1,55 +1,73 @@
-﻿using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
-using UnityEngine;
+﻿using Assets.Scripts.Common;
 using Assets.Sources.Scripts.UI.Common;
 using Memoria.Data;
 using Memoria.Prime;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.IO;
+using System.Text.RegularExpressions;
+using UnityEngine;
 
 namespace Memoria.Assets
 {
     public static class TranslationExporter
     {
-        public static void ExportSafe()
+
+        public static IEnumerator ExportSafe()
         {
-            try
+            if (!Configuration.Export.Translation)
             {
-                if (!Configuration.Export.Translation)
-                {
-                    Log.Message("[TranslationExporter] Pass through {Configuration.Export.Translation = 0}.");
-                    return;
-                }
-
-                String exportSymbol = Localization.CurrentSymbol;
-                String modFolder = $"ExportedTranslation{exportSymbol}/";
-                if (Directory.Exists(modFolder))
-                {
-                    Log.Message($"[TranslationExporter] Translation export was skipped because a directory already exists [{modFolder}].");
-                    return;
-                }
-
-                InitialiseStaticBatches(exportSymbol);
-
-                ExportFieldTexts(exportSymbol, modFolder);
-                ExportBattleTexts(exportSymbol, modFolder);
-                ExportCommandTexts(exportSymbol, modFolder);
-                ExportAbilityTexts(exportSymbol, modFolder);
-                ExportSupportTexts(exportSymbol, modFolder);
-                ExportItemTexts(exportSymbol, modFolder);
-                ExportKeyItemTexts(exportSymbol, modFolder);
-                ExportLocationNames(exportSymbol, modFolder);
-                ExportCharacterNames(exportSymbol, modFolder);
-                ExportEtcTexts(exportSymbol, modFolder);
-                ExportLocalizationTexts(exportSymbol, modFolder);
-
-                ExportPlaceTitles(exportSymbol, modFolder);
-                ExportContinentTitles(exportSymbol, modFolder);
-                ExportMessageAtlases(exportSymbol, modFolder);
+                Log.Message("[TranslationExporter] Pass through {Configuration.Export.Translation = 0}.");
+                yield break;
             }
-            catch (Exception ex)
+
+            String exportSymbol = Localization.CurrentSymbol;
+            String modFolder = "ExportedTranslation" + exportSymbol + "/";
+
+            if (Directory.Exists(modFolder))
             {
-                Log.Error(ex, "Failed to export translation materials.");
+                Log.Message("[TranslationExporter] Skipped because directory exists.");
+                yield break;
+            }
+
+            InitialiseStaticBatches(exportSymbol);
+
+            var actions = new List<Action<String, String>>
+            {
+                ExportFieldTexts,
+                ExportBattleTexts,
+                ExportCommandTexts,
+                ExportAbilityTexts,
+                ExportSupportTexts,
+                ExportItemTexts,
+                ExportKeyItemTexts,
+                ExportLocationNames,
+                ExportCharacterNames,
+                ExportEtcTexts,
+                ExportLocalizationTexts,
+                ExportPlaceTitles,
+                ExportContinentTitles,
+                ExportMessageAtlases
+            };
+
+            int total = actions.Count;
+            for (int i = 0; i < total; i++)
+            {
+                var action = actions[i];
+
+                SceneDirector.ExportStatus = "Exporting Translation: " + action.Method.Name.Replace("Export", "");
+                SceneDirector.ExportProgress = (float)i / total;
+                yield return new WaitForEndOfFrame();
+
+                try
+                {
+                    action(exportSymbol, modFolder);
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex, "Failed step: " + action.Method.Name);
+                }
             }
         }
 

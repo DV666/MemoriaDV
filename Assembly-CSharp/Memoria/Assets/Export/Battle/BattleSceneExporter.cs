@@ -1,14 +1,17 @@
+using Assets.Scripts.Common;
 using Assets.Sources.Scripts.UI.Common;
 using Memoria.Data;
 using Memoria.Prime;
 using Memoria.Prime.CSV;
 using Memoria.Prime.Json;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using UnityEngine;
 
 namespace Memoria.Assets
 {
@@ -22,37 +25,52 @@ namespace Memoria.Assets
         private static Dictionary<KeyValuePair<Dictionary<String, String>, SB2_MON_PARM>, Context> Enemies = new Dictionary<KeyValuePair<Dictionary<String, String>, SB2_MON_PARM>, Context>(EnemyComparer.Instance);
         private static Dictionary<KeyValuePair<Dictionary<String, String>, AA_DATA>, Context> Actions = new Dictionary<KeyValuePair<Dictionary<String, String>, AA_DATA>, Context>(ActionComparer.Instance);
 
-        public static void ExportSafe()
+        public static IEnumerator ExportSafe()
         {
-            try
+            if (!Configuration.Export.Battle)
             {
-                if (!Configuration.Export.Battle)
-                {
-                    Log.Message("[BattleSceneExporter] Pass through {Configuration.Export.Battle = 0}.");
-                    return;
-                }
+                Log.Message("[BattleSceneExporter] Pass through {Configuration.Export.Battle = 0}.");
+                yield break;
+            }
 
-                Boolean old = AssetManager.UseBundles;
-                AssetManager.UseBundles = true;
+            Boolean old = AssetManager.UseBundles;
+            AssetManager.UseBundles = true;
 
-                //File.WriteAllText(@"D:\BattleMapList.txt", AssetManager.Load<TextAsset>("EmbeddedAsset/Manifest/BattleMap/BattleMapList.txt", false).text);
+            //File.WriteAllText(@"D:\BattleMapList.txt", AssetManager.Load<TextAsset>("EmbeddedAsset/Manifest/BattleMap/BattleMapList.txt", false).text);
+            var sceneList = CreateSceneList().ToList();
+            int totalScenes = sceneList.Count;
+            int currentParams = 0;
 
-                foreach (KeyValuePair<String, Int32> scene in CreateSceneList())
+            SceneDirector.ExportStatus = "Initializing Battle Export...";
+            yield return new WaitForEndOfFrame();
+
+            foreach (KeyValuePair<String, Int32> scene in sceneList)
+            {
+                currentParams++;
+                SceneDirector.ExportProgress = (float)currentParams / totalScenes;
+                SceneDirector.ExportStatus = $"Exporting Battle: {scene.Key}";
+
+                yield return new WaitForEndOfFrame();
+
+                try
                 {
                     FF9StateSystem.Battle.battleMapIndex = scene.Value;
                     ExportSceneSafe(scene.Key);
                 }
-
-                SerializeAllEnemies();
-                SerializeAllActions();
-
-                AssetManager.UseBundles = old;
-
+                catch (Exception ex)
+                {
+                    Log.Error(ex, $"[BattleSceneExporter] Error in {scene.Key}");
+                }
             }
-            catch (Exception ex)
-            {
-                Log.Error(ex, "[BattleSceneExporter] Failed to export field resources.");
-            }
+
+            SceneDirector.ExportStatus = "Exporting Global Battle Data...";
+            yield return new WaitForEndOfFrame();
+
+            SerializeAllEnemies();
+            SerializeAllActions();
+
+            AssetManager.UseBundles = old;
+            Log.Message("[BattleSceneExporter] Exporting completed successfully.");
         }
 
         private static void ExportSceneSafe(String battleSceneName)
@@ -488,7 +506,8 @@ namespace Memoria.Assets
 
                     SB2_MON_PARM baseValue = baseItem.Value;
                     Dictionary<String, String> names = group.First().Key;
-                    String outputPath = outputDirectory + FF9TextTool.RemoveOpCode(names["US"]) + ".json";
+                    String cleanName = String.Concat(FF9TextTool.RemoveOpCode(names["US"]).Split(Path.GetInvalidFileNameChars())); // To prevent some weird name like "Lich?"
+                    String outputPath = outputDirectory + cleanName + ".json";
 
                     using (JsonWriter writer = new JsonWriter(outputPath))
                     {

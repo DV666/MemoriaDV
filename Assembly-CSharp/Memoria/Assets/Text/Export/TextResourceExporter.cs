@@ -1,37 +1,63 @@
+using Assets.Scripts.Common;
 using Memoria.Prime;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
 
 namespace Memoria.Assets
 {
     public static class TextResourceExporter
     {
-        public static void ExportSafe()
+        public static IEnumerator ExportSafe()
         {
+            if (!Configuration.Export.Text)
+            {
+                Log.Message("[TextResourceExporter] Pass through {Configuration.Export.Text = 0}.");
+                yield break;
+            }
+
+            CreditsExporter credits = new CreditsExporter();
+            string[] languages = Configuration.Export.Languages;
+
+            var exporters = EnumerateExporters().ToList();
+            int totalSteps = languages.Length * (1 + exporters.Count);
+            int currentStep = 0;
+
+            SceneDirector.ExportStatus = "Initializing Text Export...";
+            yield return new WaitForEndOfFrame();
+
             try
             {
-                if (!Configuration.Export.Text)
-                {
-                    Log.Message("[TextResourceExporter] Pass through {Configuration.Export.Text = 0}.");
-                    return;
-                }
-
-                CreditsExporter credits = new CreditsExporter();
-
-                foreach (String symbol in Configuration.Export.Languages)
+                foreach (String symbol in languages)
                 {
                     EmbadedTextResources.CurrentSymbol = symbol;
                     ModTextResources.Export.CurrentSymbol = symbol;
 
-                    credits.Export();
+                    // UI Update
+                    SceneDirector.ExportStatus = "Exporting Text (" + symbol + "): Credits";
+                    SceneDirector.ExportProgress = (float)currentStep / totalSteps;
+                    yield return new WaitForEndOfFrame();
 
-                    foreach (IExporter exporter in EnumerateExporters())
-                        exporter.Export();
+                    try { credits.Export(); }
+                    catch (Exception ex) { Log.Error(ex, "Credits export failed"); }
+
+                    currentStep++;
+
+                    foreach (IExporter exporter in exporters)
+                    {
+                        // UI Update
+                        SceneDirector.ExportStatus = "Exporting Text (" + symbol + "): " + exporter.GetType().Name;
+                        SceneDirector.ExportProgress = (float)currentStep / totalSteps;
+                        yield return new WaitForEndOfFrame();
+
+                        try { exporter.Export(); }
+                        catch (Exception ex) { Log.Error(ex, "Exporter failed: " + exporter.GetType().Name); }
+
+                        currentStep++;
+                    }
                 }
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex, "Failed to export text resources.");
             }
             finally
             {

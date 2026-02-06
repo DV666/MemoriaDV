@@ -1,32 +1,42 @@
+using Assets.Scripts.Common;
 using Memoria.Prime;
 using System;
+using System.Collections;
+using System.Linq;
 using UnityEngine;
 
 namespace Memoria.Assets
 {
     public static class ResourceExporter
     {
-        public static void ExportSafe()
+        public static IEnumerator ExportSafe()
         {
+            SceneDirector.IsExporting = true;
+
             try
             {
                 if (!Configuration.Export.Enabled)
                 {
                     Log.Message("[ResourceExporter] Pass through {Configuration.Export.Enabled = 0}.");
-                    return;
+                    yield break;
                 }
 
-                TextResourceExporter.ExportSafe();
-                GraphicResourceExporter.ExportSafe();
-                FieldSceneExporter.ExportSafe();
-                BattleSceneExporter.ExportSafe();
-                TranslationExporter.ExportSafe();
-                Log.Message("[ResourceExporter] Application will now quit. Please disable Configuration.Export.Enabled and restart the game.");
+                yield return SceneDirector.Instance.StartCoroutine(BattleSceneExporter.ExportSafe());
+                yield return SceneDirector.Instance.StartCoroutine(TextResourceExporter.ExportSafe());
+                yield return SceneDirector.Instance.StartCoroutine(GraphicResourceExporter.ExportSafe());
+                yield return SceneDirector.Instance.StartCoroutine(FieldSceneExporter.ExportSafe());
+                yield return SceneDirector.Instance.StartCoroutine(TranslationExporter.ExportSafe());
+
+                Log.Message("[ResourceExporter] Application will now quit.");
+                SceneDirector.ExportStatus = "Done! Quitting...";
+                SceneDirector.ExportProgress = 1.0f;
+                yield return new WaitForSeconds(1f);
+
                 UIManager.Input.ConfirmQuit();
             }
-            catch (Exception ex)
+            finally
             {
-                Log.Error(ex, "[ResourceExporter] Failed to export resources.");
+                SceneDirector.IsExporting = false;
             }
         }
     }
