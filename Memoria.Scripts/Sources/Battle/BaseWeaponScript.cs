@@ -145,6 +145,12 @@ namespace Memoria.Scripts.Battle
                     TranceSeekAPI.InfusedWeaponStatus(_v);
                     TranceSeekAPI.TryAlterCommandStatuses(_v, false);
                     TranceSeekAPI.RaiseTrouble(_v);
+                    if (_v.Caster.PlayerIndex == CharacterId.Zidane && ff9item._FF9Item_Data[_v.Caster.Weapon].shape == 1) // Zidane - Dagger double hits
+                    { 
+                        _v.Target.HpDamage /= 2;
+                        if (_v.Command.Data.info.effect_counter == 1)
+                            _v.Command.AbilityCategory -= 64; // Hit Anim off
+                    }
                 }
             }
             else

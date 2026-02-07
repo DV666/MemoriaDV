@@ -286,13 +286,6 @@ namespace Memoria.Scripts.Battle
                 }
             }
 
-            if (v.Caster.PlayerIndex == CharacterId.Zidane && v.Command.Id == BattleCommandId.Attack && ff9item._FF9Item_Data[v.Caster.Weapon].shape == 1) // Zidane - Dagger double hits
-            {
-                ZidanePassive[v.Caster.Data][4] = ZidanePassive[v.Caster.Data][4] == 0 ? 1 : 2;
-                if ((v.Command.AbilityCategory & 64) != 0)
-                    v.Command.AbilityCategory -= 64;
-            }
-
             if (BeatrixPassive[v.Caster.Data][2] == 2) // Héroïsme de Beatrix => [TODO] Change to Context.Evade ?
                 v.Context.HitRate += 25;
 
@@ -1513,17 +1506,6 @@ namespace Memoria.Scripts.Battle
             {
                 v.Target.HpDamage /= 2;
                 v.Target.MpDamage /= 2;
-            }
-
-            if (v.Caster.PlayerIndex == CharacterId.Zidane && (v.Command.Id == BattleCommandId.Attack || v.Command.Id == BattleCommandId.Counter) && ff9item._FF9Item_Data[v.Caster.Weapon].shape == 1)
-            { // Zidane - Dagger double hits
-                v.Target.HpDamage /= 2;
-                if (ZidanePassive[v.Caster.Data][4] == 2)
-                {
-                    ZidanePassive[v.Caster.Data][4] = 0;
-                    if (v.Target.CurrentHp > v.Target.HpDamage)
-                        v.Command.AbilityCategory += 64;
-                }
             }
 
             int HealHP = SpecialSAEffect[v.Caster.Data][5];
