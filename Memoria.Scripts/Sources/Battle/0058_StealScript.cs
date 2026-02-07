@@ -1,11 +1,12 @@
+using Assets.Sources.Scripts.UI.Common;
+using FF9;
 using Memoria.Data;
+using Memoria.Prime;
 using System;
 using System.Collections.Generic;
-using FF9;
-using static Memoria.Scripts.Battle.TranceSeekAPI;
-using Assets.Sources.Scripts.UI.Common;
-using Memoria.Prime;
+using System.Linq;
 using System.Runtime.Remoting.Contexts;
+using static Memoria.Scripts.Battle.TranceSeekAPI;
 
 namespace Memoria.Scripts.Battle
 {
@@ -18,6 +19,8 @@ namespace Memoria.Scripts.Battle
         public const Int32 Id = 0058;
 
         private readonly BattleCalculator _v;
+
+        public static Boolean ForcedHeheZidane = Configuration.Mod.FolderNames.Contains("TranceSeek/HeheZidane");
 
         public StealScript(BattleCalculator v)
         {
@@ -173,6 +176,7 @@ namespace Memoria.Scripts.Battle
 
                 if (ShowHUDMessage)
                     UiState.SetBattleFollowFormatMessage(BattleMesages.CouldNotStealAnything);
+                return;
             }
         }
 
@@ -241,7 +245,7 @@ namespace Memoria.Scripts.Battle
                 return;
             }
             btl2d.Btl2dReqSymbolMessage(_v.Target.Data, "[FDEE00]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 5);
-            if (_v.Caster.PlayerIndex == CharacterId.Zidane)
+            if (_v.Caster.PlayerIndex == CharacterId.Zidane && !ForcedHeheZidane)
                 SoundLib.PlaySoundEffect(4005); //se511116 - Héhé !
         }
 
@@ -345,6 +349,8 @@ namespace Memoria.Scripts.Battle
                 UiState.SetBattleFollowFormatMessage(BattleMesages.Stole, FF9TextTool.ItemName(_v.Context.ItemSteal));
             }
             TranceSeekAPI.PhantomHandSA(_v);
+            if (ForcedHeheZidane)
+                SoundLib.PlaySoundEffect(4005); //se511116 - Héhé !
         }
 
         public static void ClassicSteal(BattleCalculator v, Boolean ShowHUDMessage = true)

@@ -65,7 +65,11 @@ namespace Memoria.Scripts.Battle
                         steal_text += " / " + FF9TextTool.ItemName(item);
                 }
                 if (!String.IsNullOrEmpty(steal_text))
+                {
                     UiState.SetBattleFollowFormatMessage(BattleMesages.Stole, steal_text);
+                    if (StealScript.ForcedHeheZidane)
+                        SoundLib.PlaySoundEffect(4005); //se511116 - Héhé !
+                }
             }
         }
 
