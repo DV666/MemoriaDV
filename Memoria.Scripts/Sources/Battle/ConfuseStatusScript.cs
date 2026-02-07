@@ -62,7 +62,7 @@ namespace Memoria.DefaultScripts
                 return true;
             if (btl_util.IsBtlUsingCommand(unit))
                 return true;
-            if (btl_mot.checkMotion(unit, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_NORMAL) || btl_mot.checkMotion(unit, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_DYING) || (unit.IsPlayer && btl_mot.checkMotion(unit, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_CMD)))
+            if (btl_mot.checkMotion(unit, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_NORMAL) || btl_mot.checkMotion(unit, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_DYING) || (unit.IsPlayer && btl_mot.checkMotion(unit, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_CMD)) || (unit.IsPlayer && btl_mot.checkMotion(unit, BattlePlayerCharacter.PlayerMotionIndex.MP_DEFENCE)))
                 unit.CurrentOrientationAngle += 11.25f;
             return true;
         }

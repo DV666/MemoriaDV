@@ -1244,7 +1244,7 @@ namespace Memoria.Scripts.Battle
                 {
                     Boolean TargetPreventStatus = v.Target.IsUnderAnyStatus(BattleStatusConst.PreventCounter | BattleStatus.Heat | BattleStatus.Zombie);
                     int PotionHeal = v.Target.HasSupportAbility(SupportAbility1.Chemist) ? 400 : 200;
-                    if (!TargetPreventStatus && v.Caster.IsPlayer != v.Target.IsPlayer && SpecialItemEffect[v.Target.Data][0] > 0 && (v.Target.MaximumHp - v.Target.CurrentHp + v.Target.HpDamage) > PotionHeal)
+                    if (!TargetPreventStatus && v.Caster.IsPlayer != v.Target.IsPlayer && SpecialItemEffect[v.Target.Data][0] > 0 && (v.Target.MaximumHp - v.Target.CurrentHp + v.Target.HpDamage) > PotionHeal && v.Command.Id <= BattleCommandId.BoundaryCheck)
                     {
                         btl_cmd.SetCounter(v.Target.Data, BattleCommandId.AutoPotion, (int)RegularItem.Potion, v.Target.Id);
                         SpecialItemEffect[v.Target.Data][0]--;
