@@ -98,6 +98,7 @@ namespace Memoria.Scripts.Battle
                         {
                             TranceSeekAPI.IpsenCastleMalus(_v);
                             _v.CalcPhysicalHpDamage();
+                            _v.Target.HpDamage *= 2;
                             if (_v.Command.AbilityId == (BattleAbilityId)1551)
                             {
                                 _v.Caster.Flags |= CalcFlag.HpDamageOrHeal;

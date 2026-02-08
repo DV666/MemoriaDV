@@ -48,12 +48,12 @@ namespace Memoria.Scripts.Battle
                 _v.CalcHpDamage();
             }
             TranceSeekAPI.TryAlterMagicStatuses(_v);
-            if (_v.Command.AbilityId == (BattleAbilityId)1044 || _v.Command.AbilityId == (BattleAbilityId)1056 || _v.Command.HitRate == 255)
+            /*if (_v.Command.AbilityId == (BattleAbilityId)1044 || _v.Command.AbilityId == (BattleAbilityId)1056 || _v.Command.HitRate == 255)
             {
                 _v.Target.Flags |= CalcFlag.MpAlteration;
                 int num = Math.Min(9999, _v.Context.PowerDifference * _v.Context.EnsureAttack);
                 _v.Target.MpDamage = num >> 4;
-            }
+            }*/          
         }
     }
 }

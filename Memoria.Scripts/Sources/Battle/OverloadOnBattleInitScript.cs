@@ -26,7 +26,7 @@ namespace Memoria.Scripts.Battle
             // Zidane = 0, Vivi = 1, Eiko = 2, Kuja = 3, Necron = 4, Beatrix = 5, Ozma = 6, Garland = 7
             if (false)
             {
-                FF9StateSystem.EventState.gEventGlobal[1403] = 5; // Debug difficulty mode
+                FF9StateSystem.EventState.gEventGlobal[1403] = 0; // Debug difficulty mode
                 if (FF9StateSystem.EventState.gEventGlobal[1403] >= 4 && FF9StateSystem.EventState.gEventGlobal[1403] <= 6) // Activate Hardcore IA
                     FF9StateSystem.EventState.gEventGlobal[1407] = 1;
                 else
@@ -640,7 +640,7 @@ namespace Memoria.Scripts.Battle
                 FF9TextTool.SetCommandName(BattleCommandId.SwordAct, TranceSeekBattleCommand.SwdArtCMDNameVanilla[Localization.CurrentDisplaySymbol] + " (" + SteinerPassive[unit.Data][0] + "/" + (SteinerPassive[unit.Data][0] + SteinerPassive[unit.Data][1]) + ")");
                 UIManager.Battle.OnLocalize();
                 SoundLib.PlaySoundEffect(1577);
-                unit.UILabelHP = $"{SteinerPassive[unit.Data][1]} [SPRT=IconAtlas,item200_00,32,32]\n{unit.CurrentHp}";
+                //unit.UILabelHP = $"{SteinerPassive[unit.Data][1]} [SPRT=IconAtlas,item200_00,32,32]\n{unit.CurrentHp}";
                 if (FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1000, out Dictionary<Int32, Int32> dictbattle))
                     dictbattle[1] = SteinerPassive[unit.Data][1];
             }
@@ -652,16 +652,16 @@ namespace Memoria.Scripts.Battle
                 FF9TextTool.SetCommandName(BattleCommandId.SwordAct, TranceSeekBattleCommand.SwdArtCMDNameVanilla[Localization.CurrentDisplaySymbol] + " (" + SteinerPassive[unit.Data][0] + "/" + (SteinerPassive[unit.Data][0] + SteinerPassive[unit.Data][1]) + ")");
                 UIManager.Battle.OnLocalize();
                 SoundLib.PlaySoundEffect(1577);
-                if (SteinerPassive[unit.Data][1] > 0)
-                    unit.UILabelHP = $"{SteinerPassive[unit.Data][1]} [SPRT=IconAtlas,item200_00,32,32]\n{unit.CurrentHp}";
-                else
-                    unit.UILabelHP = unit.CurrentHp.ToString();
-
                 if (FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1000, out Dictionary<Int32, Int32> dictbattle))
                     dictbattle[1] = SteinerPassive[unit.Data][1];
             }
 
-            if (!UIManager.Input.GetKey(Control.LeftTrigger) && !UIManager.Input.GetKey(Control.RightTrigger))
+            if (SteinerPassive[unit.Data][1] > 0)
+                unit.UILabelHP = $"{SteinerPassive[unit.Data][1]} [SPRT=IconAtlas,item200_00,32,32]\n{unit.CurrentHp}";
+            else
+                unit.UILabelHP = unit.CurrentHp.ToString();
+
+            if (!UIManager.Input.GetKey(Control.LeftTrigger) && !UIManager.Input.GetKey(Control.RightTrigger)) // Prevent to do it quickly
                 SteinerPassive[unit.Data][2] = 0;
 
             return true;

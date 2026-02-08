@@ -11,6 +11,9 @@ namespace Memoria.Scripts.Battle
     {
         public BattleStatus UpdatePointStatus(BattleUnit unit)
         {
+            if (!unit.IsPlayer)
+                return 0;
+
             Boolean HPColored = Configuration.Mod.FolderNames.Contains("TranceSeek/ColoredHP");
             Boolean MPColored = Configuration.Mod.FolderNames.Contains("TranceSeek/ColoredMP");
 
@@ -35,6 +38,7 @@ namespace Memoria.Scripts.Battle
                 unit.UIColorMP = new Color(0.28104f, 0.43712f, 0.96821f);
             else
                 unit.UIColorMP = unit.CurrentMp <= unit.MaximumMp / 6f ? FF9TextTool.Yellow : FF9TextTool.White;
+
             return isLowHP ? BattleStatus.LowHP : 0;
         }
     }
