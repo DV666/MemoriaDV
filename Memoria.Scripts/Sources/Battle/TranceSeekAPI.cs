@@ -1,10 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using Assets.Sources.Scripts.UI.Common;
+﻿using Assets.Sources.Scripts.UI.Common;
 using FF9;
 using Memoria.Assets;
 using Memoria.Data;
 using Memoria.Database;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using static SiliconStudio.Social.ResponseData;
 
@@ -46,6 +47,8 @@ namespace Memoria.Scripts.Battle
         public static Dictionary<BTL_DATA, Int32[]> RollBackStats = new Dictionary<BTL_DATA, Int32[]>();
         public static Dictionary<BTL_DATA, Boolean> TriggerSPSResistStatus = new Dictionary<BTL_DATA, Boolean>();
         public static Dictionary<BTL_DATA, BattleStatus> RollBackBattleStatus = new Dictionary<BTL_DATA, BattleStatus>();
+
+        public static Boolean ImmuneStatusPlayer = Configuration.Mod.FolderNames.Contains("TranceSeek/ImmuneStatusPlayer");
 
         public static Boolean EliteMonster(BTL_DATA Monster)
         {
@@ -1175,7 +1178,7 @@ namespace Memoria.Scripts.Battle
             //return;
 
             Boolean CommandAttack = v.Command.Id == BattleCommandId.Attack || (v.Command.Id == TranceSeekBattleCommand.MagicWeapon_Weak || v.Command.Id == TranceSeekBattleCommand.MagicWeapon_Normal || v.Command.Id == TranceSeekBattleCommand.MagicWeapon_Strong) && v.Command.Data.info.effect_counter == 1;
-            if ((((v.Target.ResistStatus & v.Command.AbilityStatus) != 0 || ((v.Target.ResistStatus & v.Caster.WeaponStatus) != 0 && v.Caster.HasSupportAbility(SupportAbility1.AddStatus) && CommandAttack)) && !v.Target.IsPlayer) || TriggerSPSResistStatus[v.Target]) // SPS immune status.
+            if ((((v.Target.ResistStatus & v.Command.AbilityStatus) != 0 || ((v.Target.ResistStatus & v.Caster.WeaponStatus) != 0 && v.Caster.HasSupportAbility(SupportAbility1.AddStatus) && CommandAttack)) && (!v.Target.IsPlayer || ImmuneStatusPlayer)) || TriggerSPSResistStatus[v.Target]) // SPS immune status.
             {
                 SPSEffect sps = HonoluluBattleMain.battleSPS.AddSequenceSPS(13, -1, 1);
                 TriggerSPSResistStatus[v.Target] = false;
