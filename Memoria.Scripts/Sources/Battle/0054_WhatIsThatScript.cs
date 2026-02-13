@@ -67,7 +67,7 @@ namespace Memoria.Scripts.Battle
                 if (!String.IsNullOrEmpty(steal_text))
                 {
                     UiState.SetBattleFollowFormatMessage(BattleMesages.Stole, steal_text);
-                    if (StealScript.ForcedHeheZidane)
+                    if (StealScript.ForcedHeheZidane && v.Caster.PlayerIndex == CharacterId.Zidane)
                         SoundLib.PlaySoundEffect(4005); //se511116 - Héhé !
                 }
             }

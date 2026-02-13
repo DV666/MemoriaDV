@@ -20,7 +20,7 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            if (_v.Target.IsUnderAnyStatus(BattleStatus.Mini))
+            if (_v.Target.IsUnderAnyStatus(BattleStatus.Mini) || _v.Command.HitRate == 255)
             {
                 TranceSeekAPI.TryAlterCommandStatuses(_v);
                 return;
