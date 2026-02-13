@@ -44,10 +44,7 @@ namespace Global.Sound.SaXAudio
             BusSoundEffect = SaXAudio.CreateBus();
             BusVoice = SaXAudio.CreateBus();
             AudioEffectManager.Initialize();
-            //GameObject go = new GameObject("SaXAudioUpdater");
-            //go.AddComponent<SaXAudio.SaXAudioUpdater>();
-            //GameObject.DontDestroyOnLoad(go);
-            Log.Message($"[SaXAudio] Initialized === BUILD TEST V4.2 FROM DV !");
+            Log.Message($"[SaXAudio] Initialized === BUILD TEST V4.3 FROM DV !");
             return 0;
         }
 
