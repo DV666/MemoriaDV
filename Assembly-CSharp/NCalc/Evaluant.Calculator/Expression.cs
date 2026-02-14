@@ -1,5 +1,4 @@
 ﻿using Antlr.Runtime;
-using Memoria;
 using NCalc.Domain;
 using System;
 using System.Collections;
@@ -10,15 +9,6 @@ using System.Threading;
 
 // Original author: sebastienros https://archive.codeplex.com/?p=ncalc
 // Author of this version: pitermarx https://github.com/pitermarx/NCalc-Edge
-
-/* Crash with mono.dll if too much log ?
-0x00000000064589BF(Mono JIT Code)(wrapper managed - to - native) System.Reflection.Assembly:GetCallingAssembly()
-0x00000000064588FD(Mono JIT Code) System.Diagnostics.Trace:TraceInformation(string)
-0x0000000006457A03(Mono JIT Code) NCalc.Expression:CleanCache()
-0x000000000643DD99(Mono JIT Code) NCalc.Expression:Compile(string, bool)
-0x000000000643D734(Mono JIT Code) NCalc.Expression:HasErrors()
-0x000000000643C8CF(Mono JIT Code) NCalc.Expression:Evaluate()
-*/
 
 namespace NCalc
 {
@@ -89,7 +79,7 @@ namespace NCalc
                 foreach (string key in keysToRemove)
                 {
                     compiledExpressions.Remove(key);
-                    //Trace.TraceInformation("Cache entry released: " + key);
+                    Trace.TraceInformation("Cache entry released: " + key);
                 }
             }
             finally
@@ -112,7 +102,7 @@ namespace NCalc
 
                     if (compiledExpressions.ContainsKey(expression))
                     {
-                        //Trace.TraceInformation("Expression retrieved from cache: " + expression);
+                        Trace.TraceInformation("Expression retrieved from cache: " + expression);
                         var wr = compiledExpressions[expression];
                         logicalExpression = wr.Target as LogicalExpression;
 
@@ -154,7 +144,7 @@ namespace NCalc
 
                     CleanCache();
 
-                    //Trace.TraceInformation("Expression added to cache: " + expression);
+                    Trace.TraceInformation("Expression added to cache: " + expression);
                 }
             }
 
