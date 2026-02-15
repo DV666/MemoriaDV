@@ -321,6 +321,7 @@ namespace Memoria.Scripts.Battle
             {
                 int ColorWing = GameRandom.Next16() % 5;
                 _v.Caster.Data.gameObject.SetActive(false);
+                Vector3 CurrentPosition = _v.Caster.Data.gameObject.transform.position;
                 _v.Caster.Data.gameObject = ModelFactory.CreateModel("GEO_MON_B3_159", true);
                 if (ColorWing == 0)
                 {
@@ -356,6 +357,7 @@ namespace Memoria.Scripts.Battle
                     _v.Caster.AbsorbElement = EffectElement.Holy;
                     UIManager.Battle.SetBattleFollowMessage(3, Localization.GetWithDefault("LadyBugWhite"));
                 }
+                _v.Caster.Data.gameObject.transform.position = CurrentPosition;
                 _v.Caster.Data.gameObject.SetActive(true);
                 return;
             }

@@ -53,7 +53,7 @@ namespace Memoria.Scripts.Battle
                     Memoria.Prime.Log.Message("_v.Target.PermanentStatus = " + _v.Target.PermanentStatus);
                     return;
                 }
-                if (_v.Command.AbilityId == (BattleAbilityId)1075 || (_v.Command.Power == 33 && _v.Command.HitRate == 33)) // Lani - Predator's Eye
+                if (_v.Command.AbilityId == (BattleAbilityId)1075) // Lani - Predator's Eye
                 {
                     _v.Target.Libra(BattleHUD.LibraInformation.Name | BattleHUD.LibraInformation.Category | BattleHUD.LibraInformation.ElementalAffinities | BattleHUD.LibraInformation.StatusAffinities);
                 }
@@ -93,7 +93,11 @@ namespace Memoria.Scripts.Battle
             }
             else
             {
-                if (_v.Command.Power == 1)
+                if (_v.Command.Power == 33 && _v.Command.HitRate == 33) // Lani - Predator's Eye
+                {
+                    _v.Target.Libra(BattleHUD.LibraInformation.Name | BattleHUD.LibraInformation.Category | BattleHUD.LibraInformation.ElementalAffinities | BattleHUD.LibraInformation.StatusAffinities);
+                }
+                else if (_v.Command.Power == 1)
                 {
                     _v.Target.Libra(BattleHUD.LibraInformation.Default);
                 }

@@ -24,6 +24,7 @@ namespace Memoria.DefaultScripts
         public Boolean Init;
         public string[] VanillaTextures = new string[10];
         public SPSEffect spsmonster;
+        public EFFECT_GLOW OldGlow;
 
         public override UInt32 Apply(BattleUnit target, BattleUnit inflicter, params Object[] parameters)
         {
@@ -85,11 +86,11 @@ namespace Memoria.DefaultScripts
             {
                 if (OldStatus)
                 {
-                    //btl_stat.AddCustomGlowEffect(target, 0, 80, new int[]{ 250, 250, 250 }, 0);
+                    EFFECT_GLOW OldGlow = btl_stat.AddCustomGlowEffect(target, 0, 100, new int[]{ 250, 250, 250 });
                 }
                 else
                 {
-                    //btl_stat.ClearAllCustomGlowEffect(target);
+                    btl_stat.RemoveGlowEffect(target, OldGlow);
                 }
             }
             else

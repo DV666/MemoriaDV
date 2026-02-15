@@ -1,5 +1,6 @@
-using Memoria.Data;
+﻿using Memoria.Data;
 using System;
+using System.Collections.Generic;
 using static Memoria.Scripts.Battle.TranceSeekAPI;
 
 namespace Memoria.Scripts.Battle
@@ -52,7 +53,25 @@ namespace Memoria.Scripts.Battle
             {
                 if (_v.Target.IsPlayer || _v.Command.Power == 250)
                 {
-                    _v.Target.Flags |= (CalcFlag.HpAlteration | CalcFlag.HpRecovery | CalcFlag.MpAlteration | CalcFlag.MpRecovery);
+                    if (_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill))
+                    {
+                        Dictionary<String, String> localizedMessage = new Dictionary<String, String>
+                        {
+                            { "US", "Recovered!" },
+                            { "UK", "Recovered!" },
+                            { "JP", "全回復！" },
+                            { "ES", "¡Recuperado!" },
+                            { "FR", "Restauré !" },
+                            { "GR", "Geheilt!" },
+                            { "IT", "Recuperato!" },
+                        };
+                        btl2d.Btl2dReqSymbolMessage(_v.Target.Data, "[FF59E6]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 0);
+                    }
+                    else
+                    {
+                        _v.Target.Flags |= (CalcFlag.HpAlteration | CalcFlag.HpRecovery | CalcFlag.MpAlteration | CalcFlag.MpRecovery);
+
+                    }
                     _v.Target.HpDamage = (int)_v.Target.MaximumHp;
                     _v.Target.MpDamage = (int)_v.Target.MaximumMp;
                 }

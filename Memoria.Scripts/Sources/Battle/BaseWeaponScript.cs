@@ -389,39 +389,50 @@ namespace Memoria.Scripts.Battle
                     TranceSeekAPI.ZidanePassive[_v.Caster.Data][11] = 1;
 
                 if (_v.Caster.PlayerIndex == CharacterId.Zidane && ff9item._FF9Item_Data[FF9StateSystem.Common.FF9.player[(CharacterId)_v.Caster.Data.bi.slot_no].equip.Weapon].shape == 2) // Thief Sword
+                {
                     UiState.SetBattleFollowFormatMessage(BattleMesages.Stole, FF9TextTool.ItemName(_v.Context.ItemSteal) + " X 2");
+                    if (StealScript.ForcedHeheZidane)
+                        SoundLib.PlaySoundEffect(4005); //se511116 - Héhé !
+                }
             }
             else
             {
                 BattleItem.AddToInventory(_v.Context.ItemSteal);
                 if (_v.Caster.PlayerIndex == CharacterId.Zidane && ff9item._FF9Item_Data[FF9StateSystem.Common.FF9.player[(CharacterId)_v.Caster.Data.bi.slot_no].equip.Weapon].shape == 2) // Thief Sword
+                {
                     UiState.SetBattleFollowFormatMessage(BattleMesages.Stole, FF9TextTool.ItemName(_v.Context.ItemSteal));
+                    if (StealScript.ForcedHeheZidane)
+                        SoundLib.PlaySoundEffect(4005); //se511116 - Héhé !
+                }
             }
             TranceSeekAPI.PhantomHandSA(_v);
         }
 
         public void ShowMugMessage()
         {
-            if (_v.Caster.PlayerIndex == CharacterId.Zidane && ff9item._FF9Item_Data[FF9StateSystem.Common.FF9.player[(CharacterId)_v.Caster.Data.bi.slot_no].equip.Weapon].shape == 1 && _v.Command.Data.info.effect_counter == 2) // Dagger
+            if (_v.Caster.PlayerIndex == CharacterId.Zidane)
             {
-                if (TranceSeekAPI.ZidanePassive[_v.Caster.Data][5] != 255 || TranceSeekAPI.ZidanePassive[_v.Caster.Data][5] != 255)
+                if (ff9item._FF9Item_Data[FF9StateSystem.Common.FF9.player[(CharacterId)_v.Caster.Data.bi.slot_no].equip.Weapon].shape == 1 && _v.Command.Data.info.effect_counter == 2) // Dagger
                 {
-                    RegularItem FirstItemMugged = (RegularItem)TranceSeekAPI.ZidanePassive[_v.Caster.Data][5];
-                    RegularItem SecondItemMugged = (RegularItem)TranceSeekAPI.ZidanePassive[_v.Caster.Data][6];
-                    string FirstItemMuggedText = TranceSeekAPI.ZidanePassive[_v.Caster.Data][10] > 0 ? $"{FF9TextTool.ItemName(FirstItemMugged)} X 2" : $"{FF9TextTool.ItemName(FirstItemMugged)}";
-                    string SecondItemMuggedText = TranceSeekAPI.ZidanePassive[_v.Caster.Data][11] > 0 ? $"{FF9TextTool.ItemName(SecondItemMugged)} X 2" : $"{FF9TextTool.ItemName(SecondItemMugged)}";
-                    if (FirstItemMugged != RegularItem.NoItem && SecondItemMugged != RegularItem.NoItem)
-                        UiState.SetBattleFollowFormatMessage(BattleMesages.Stole, FirstItemMuggedText + " / " + SecondItemMuggedText);
-                    else if (FirstItemMugged != RegularItem.NoItem)
-                        UiState.SetBattleFollowFormatMessage(BattleMesages.Stole, FirstItemMuggedText);
-                    else if (SecondItemMugged != RegularItem.NoItem)
-                        UiState.SetBattleFollowFormatMessage(BattleMesages.Stole, SecondItemMuggedText);
-                    TranceSeekAPI.ZidanePassive[_v.Caster.Data][5] = 255;
-                    TranceSeekAPI.ZidanePassive[_v.Caster.Data][6] = 255;
-                    TranceSeekAPI.ZidanePassive[_v.Caster.Data][10] = 0;
-                    TranceSeekAPI.ZidanePassive[_v.Caster.Data][11] = 0;
-                    if (StealScript.ForcedHeheZidane)
-                        SoundLib.PlaySoundEffect(4005); //se511116 - Héhé !
+                    if (TranceSeekAPI.ZidanePassive[_v.Caster.Data][5] != 255 || TranceSeekAPI.ZidanePassive[_v.Caster.Data][5] != 255)
+                    {
+                        RegularItem FirstItemMugged = (RegularItem)TranceSeekAPI.ZidanePassive[_v.Caster.Data][5];
+                        RegularItem SecondItemMugged = (RegularItem)TranceSeekAPI.ZidanePassive[_v.Caster.Data][6];
+                        string FirstItemMuggedText = TranceSeekAPI.ZidanePassive[_v.Caster.Data][10] > 0 ? $"{FF9TextTool.ItemName(FirstItemMugged)} X 2" : $"{FF9TextTool.ItemName(FirstItemMugged)}";
+                        string SecondItemMuggedText = TranceSeekAPI.ZidanePassive[_v.Caster.Data][11] > 0 ? $"{FF9TextTool.ItemName(SecondItemMugged)} X 2" : $"{FF9TextTool.ItemName(SecondItemMugged)}";
+                        if (FirstItemMugged != RegularItem.NoItem && SecondItemMugged != RegularItem.NoItem)
+                            UiState.SetBattleFollowFormatMessage(BattleMesages.Stole, FirstItemMuggedText + " / " + SecondItemMuggedText);
+                        else if (FirstItemMugged != RegularItem.NoItem)
+                            UiState.SetBattleFollowFormatMessage(BattleMesages.Stole, FirstItemMuggedText);
+                        else if (SecondItemMugged != RegularItem.NoItem)
+                            UiState.SetBattleFollowFormatMessage(BattleMesages.Stole, SecondItemMuggedText);
+                        TranceSeekAPI.ZidanePassive[_v.Caster.Data][5] = 255;
+                        TranceSeekAPI.ZidanePassive[_v.Caster.Data][6] = 255;
+                        TranceSeekAPI.ZidanePassive[_v.Caster.Data][10] = 0;
+                        TranceSeekAPI.ZidanePassive[_v.Caster.Data][11] = 0;
+                        if (StealScript.ForcedHeheZidane)
+                            SoundLib.PlaySoundEffect(4005); //se511116 - Héhé !
+                    }
                 }
             }
         }
