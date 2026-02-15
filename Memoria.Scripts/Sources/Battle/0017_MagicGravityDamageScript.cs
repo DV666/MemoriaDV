@@ -36,8 +36,8 @@ namespace Memoria.Scripts.Battle
             TranceSeekAPI.PenaltyCommandDividedAttack(_v);
             if (_v.Target.IsUnderStatus(BattleStatus.Shell))
                 _v.Context.DamageModifierCount -= 2;
-            if (_v.Target.HasCategory(EnemyCategory.Stone))
-                _v.Context.DamageModifierCount += _v.Target.IsUnderAnyStatus(BattleStatus.EasyKill) ? 2 : 1;
+            if (_v.Target.HasCategory(EnemyCategory.Stone) && !_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill))
+                _v.Context.DamageModifierCount++;
             TranceSeekAPI.BonusElement(_v);
             if (TranceSeekAPI.CanAttackMagic(_v))
             {
@@ -66,6 +66,8 @@ namespace Memoria.Scripts.Battle
                             _v.Target.HpDamage = (Int32)_v.Target.CurrentHp * _v.Context.Attack / 100;
 
                         _v.Target.HpDamage = Math.Max(1, (_v.Target.HpDamage / TranceSeekAPI.MonsterMechanic[_v.Target.Data][5]));
+                        if (_v.Target.HasCategory(EnemyCategory.Stone))
+                            _v.Target.HpDamage += (_v.Target.HpDamage * 10) / 100;
                         TranceSeekAPI.MonsterMechanic[_v.Target.Data][5] = TranceSeekAPI.MonsterMechanic[_v.Target.Data][5] * 2;
                     }
                 }

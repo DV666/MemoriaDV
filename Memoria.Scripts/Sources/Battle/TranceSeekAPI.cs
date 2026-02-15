@@ -760,7 +760,7 @@ namespace Memoria.Scripts.Battle
 
         public static void ReduceAccuracyEliteMonsters(this BattleCalculator v, Boolean MalusForced = false)
         {
-            BattleStatus LethalStatus = BattleStatus.Death | BattleStatus.Petrify | BattleStatus.Death | BattleStatus.Mini | BattleStatus.Heat |
+            BattleStatus LethalStatus = BattleStatus.Death | BattleStatus.Petrify | BattleStatus.Mini | BattleStatus.Heat |
                                         BattleStatus.Freeze | BattleStatus.Zombie | BattleStatus.Stop | TranceSeekStatus.Vieillissement;
             if (EliteMonster(v.Target.Data))
             {            

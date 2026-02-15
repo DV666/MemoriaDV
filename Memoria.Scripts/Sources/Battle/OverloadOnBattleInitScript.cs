@@ -338,12 +338,6 @@ namespace Memoria.Scripts.Battle
                             }
                         );
                     }
-                    if (unit.IsUnderAnyStatus(BattleStatus.EasyKill))
-                    {
-                        MonsterMechanic[unit.Data][4] = 100; // Reduce time for Sleep/Freeze/Stop
-                        MonsterMechanic[unit.Data][5] = 4; // Reduce gravity damage (start at 1 for Elite)
-                    }
-
                     if (unit.PlayerIndex == (CharacterId)14)
                     {
                         unit.SummonCount = 1; // [TODO] Change to Memoria Dict : Used for SA Take that!
@@ -446,6 +440,12 @@ namespace Memoria.Scripts.Battle
                                 ChangeStats = false;
                             }
                         }
+                    }
+
+                    if (unit.IsUnderAnyStatus(BattleStatus.EasyKill))
+                    {
+                        MonsterMechanic[unit.Data][4] = 100; // Reduce time for Sleep/Freeze/Stop
+                        MonsterMechanic[unit.Data][5] = 4; // Reduce gravity damage (start at 1 for Elite)
                     }
 
                     if (ChangeStats)
