@@ -27,6 +27,8 @@ namespace Memoria
         public const String MemoriaDictionaryPatcherPath = "DictionaryPatch.txt";
         public const String MemoriaBattlePatcherPath = "BattlePatch.txt";
         public const String MemoriaTextPatcherPath = "TextPatch.txt";
+        public const String MemoriaCardPatcherPath = "CardPatch.txt";
+        public static String CurrentModReading = "";
 
         public static Char[] SpaceSeparators = [' ', '\t'];
 
@@ -41,12 +43,15 @@ namespace Memoria
                 {
                     if (String.IsNullOrEmpty(folder.FolderPath))
                         continue;
+                    CurrentModReading = folder.FolderPath;
                     if (folder.TryFindAssetInModOnDisc(DataPatchers.MemoriaDictionaryPatcherPath, out String dictionaryPath))
                         DataPatchers.PatchDictionaries(File.ReadAllLines(dictionaryPath));
                     if (folder.TryFindAssetInModOnDisc(DataPatchers.MemoriaBattlePatcherPath, out String battlePath))
                         DataPatchers.PatchBattles(File.ReadAllLines(battlePath));
                     if (folder.TryFindAssetInModOnDisc(DataPatchers.MemoriaTextPatcherPath, out String textPath))
                         TextPatcher.PatchTexts(File.ReadAllLines(textPath));
+                    if (folder.TryFindAssetInModOnDisc(DataPatchers.MemoriaCardPatcherPath, out String cardPath))
+                        CardPatcher.Load(File.ReadAllLines(cardPath));
                 }
                 _isInitialized = true;
                 Log.Message($"[DataPatchers] Initialized");
@@ -529,6 +534,48 @@ namespace Memoria
                         TexturesList.Add(entry[i]);
                     String[] TexturesCustomModel = TexturesList.ToArray();
                     ModelFactory.CustomModelField.Add(new KeyValuePair<Int32, String>(fieldID, entry[2]), TexturesCustomModel);
+                }
+                else if (String.Equals(entry[0], "CustomAtlas"))
+                {
+                    // eg.: CustomAtlas "IconTranceSeek" "EmbeddedAsset/UI/CustomAtlas/Icon TranceSeek"
+                    var matches = System.Text.RegularExpressions.Regex.Matches(s, @"[\""].+?[\""]|[^ ]+");
+                    {
+                        String atlasName = matches[1].Value.Trim('"');
+                        String atlasPath = matches[2].Value.Trim('"');
+
+                        if (!GraphicResources.CustomAtlasList.ContainsKey(atlasName))
+                        {
+                            GraphicResources.CustomAtlasList.Add(atlasName, atlasPath);
+
+                            String texturePath = atlasPath.EndsWith(".png", StringComparison.OrdinalIgnoreCase) ? atlasPath : atlasPath + ".png";
+                            Texture2D atlasTexture = AssetManager.Load<Texture2D>(texturePath, false);
+
+                            if (atlasTexture != null)
+                            {
+                                GameObject atlasGO = new GameObject(atlasName);
+                                UnityEngine.Object.DontDestroyOnLoad(atlasGO);
+                                UIAtlas newAtlas = atlasGO.AddComponent<UIAtlas>();
+                                newAtlas.spriteMaterial = new Material(Shader.Find("Unlit/Transparent Colored"));
+                                newAtlas.spriteMaterial.mainTexture = atlasTexture;
+
+                                String baseAtlasPath = atlasPath.EndsWith(".png", StringComparison.OrdinalIgnoreCase) ? atlasPath.Substring(0, atlasPath.Length - 4) : atlasPath;
+                                String tpsheetPath = DataPatchers.CurrentModReading + AssetManagerUtil.GetResourcesAssetsPath(true) + "/" + baseAtlasPath + ".tpsheet";
+
+                                if (File.Exists(tpsheetPath))
+                                {
+                                    newAtlas.LoadCustomAtlasData(atlasTexture, tpsheetPath);
+                                    FF9UIDataTool.customAtlas[atlasName] = newAtlas;
+                                    Log.Message($"[DataPatchers] Custom Atlas successfully loaded: {atlasName}");
+                                }
+                                else
+                                    Log.Warning($"[DataPatchers] Custom Atlas texture provided without .tpsheet. Can't find {tpsheetPath}");
+                            }
+                            else
+                            {
+                                Log.Warning($"[DataPatchers] Fail to load {atlasName} from {texturePath}");
+                            }
+                        }
+                    }
                 }
             }
             if (shouldUpdateBattleStatus)

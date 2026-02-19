@@ -1,4 +1,5 @@
-﻿using Memoria;
+﻿using Assets.Sources.Scripts.UI.Common;
+using Memoria;
 using Memoria.Assets;
 using Memoria.Assets.TexturePacker;
 using Memoria.Prime;
@@ -165,6 +166,14 @@ public class UIAtlas : MonoBehaviour
             mReplacement = null;
             SetTexture(atlasTexture);
         }
+    }
+
+    public void LoadCustomAtlasData(Texture2D newTexture, String tpsheetPath)
+    {
+        if (File.Exists(tpsheetPath))
+            this.ReadTPSheetFromDisc(newTexture, tpsheetPath);
+        else
+            Log.Warning($"[UIAtlas] Custom atlas texture provided without .tpsheet. Can't find {tpsheetPath} => No sprites will be loaded.");
     }
 
     private void SetTexture(Texture newTexture)

@@ -1,5 +1,6 @@
 ﻿using Assets.Sources.Scripts.UI.Common;
 using Memoria;
+using Memoria.Prime;
 using System;
 using System.Collections;
 using UnityEngine;
@@ -13,6 +14,8 @@ public class QuadMistCardUI : MonoBehaviour
             cardDisplay.select.gameObject.transform.localPosition = isToDisplay ? originalPosition : farAwayPosition;
             isToDisplay = DateTime.Now.Millisecond <= 500;
         }
+        if (CardPatcher.IsUsed)
+            CardPatcher.Apply(_data, cardDisplay);
     }
 
     public Boolean Small
@@ -46,8 +49,8 @@ public class QuadMistCardUI : MonoBehaviour
         {
             _data.side = (Byte)value;
             cardDisplay.Side = value;
-            if (cardArrows.Arrow == Byte.MaxValue && QuadMistResourceManager.UseArrowGoldenFrame)
-                cardDisplay.frame.ID = 7 + value;
+            if (CardPatcher.IsUsed)
+                CardPatcher.Apply(_data, cardDisplay);
         }
     }
 
@@ -78,8 +81,6 @@ public class QuadMistCardUI : MonoBehaviour
                 cardDisplay.ID = (Int32)Data.id;
                 cardDisplay.Side = Data.side;
                 cardArrows.Arrow = Data.arrow;
-                if (cardArrows.Arrow == Byte.MaxValue && QuadMistResourceManager.UseArrowGoldenFrame)
-                    cardDisplay.frame.ID = 7 + Data.side;
             }
             else
             {

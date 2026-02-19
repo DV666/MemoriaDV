@@ -404,6 +404,7 @@
     <Compile Include="Memoria\Configuration\Access\Worldmap.cs" />
     <Compile Include="Memoria\Configuration\Access\Interface.cs" />
     <Compile Include="Memoria\Configuration\Access\Shaders.cs" />
+    <Compile Include="Memoria\Configuration\CardPatcher.cs" />
     <Compile Include="Memoria\Configuration\IniFile.cs" />
     <Compile Include="Memoria\Configuration\Structure\LangSection.cs" />
     <Compile Include="Memoria\Configuration\Structure\WorldmapSection.cs" />
