@@ -1094,7 +1094,7 @@ namespace SoundDebugRoom
                     if (GUILayout.Button("Enable All"))
                     {
                         presetChanged = true;
-                        soundViewController.CurrentEffect.Effects = AudioEffectManager.EffectPreset.Effect.All;
+                        soundViewController.CurrentEffect.Effects = EffectPreset.Effect.All;
 
                         soundViewController.SetReverb();
                         soundViewController.SetEq();
@@ -1217,11 +1217,11 @@ namespace SoundDebugRoom
                     }
                     GUILayout.EndHorizontal();
 
-                    GUILayout.Space(5);
+                    /*GUILayout.Space(5);
                     GUILayout.Label("NCalc Condition");
                     String condition = preset.Condition;
                     preset.Condition = GUILayout.TextField(preset.Condition);
-                    if (condition != preset.Condition) presetChanged = true;
+                    if (condition != preset.Condition) presetChanged = true;*/
 
                     GUILayout.Space(5);
 

@@ -44,7 +44,7 @@ namespace Global.Sound.SaXAudio
             BusSoundEffect = SaXAudio.CreateBus();
             BusVoice = SaXAudio.CreateBus();
             AudioEffectManager.Initialize();
-            Log.Message($"[SaXAudio] Initialized === BUILD TEST V4.3 FROM DV !");
+            Log.Message($"[SaXAudio] Initialized === BUILD TEST V4.4 FROM DV !");
             return 0;
         }
 
@@ -146,7 +146,7 @@ namespace Global.Sound.SaXAudio
                     break;
             }
 
-            AudioEffectManager.EffectPreset? preset = AudioEffectManager.GetPreset(data.Profile, busID);
+            EffectPreset preset = AudioEffectManager.GetPreset(data.Profile, busID);
             if (preset != null && busID != 0)
             {
                 Log.Message($"[AudioEffectManager] Filtered '{data.Profile.ResourceID}' from bus {busID}");
@@ -154,6 +154,7 @@ namespace Global.Sound.SaXAudio
             }
 
             Int32 soundID = SaXAudio.CreateVoice(bankID, busID);
+
             if (soundID >= 0)
             {
                 if (data.LoopEnd > 0)
@@ -166,7 +167,9 @@ namespace Global.Sound.SaXAudio
             }
 
             if (preset != null)
-                AudioEffectManager.ApplyPresetOnSound(preset.Value, soundID, data.Profile.Name);
+            {
+                AudioEffectManager.ApplyPresetOnSound(preset, soundID, data.Profile.Name);
+            }
 
             sounds[soundID] = bankID;
             LastSoundID = soundID;

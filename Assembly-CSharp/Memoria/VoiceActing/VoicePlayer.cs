@@ -18,6 +18,9 @@ public class VoicePlayer : SoundPlayer
 
     public static Boolean closeDialogOnFinish = false;
 
+    private static readonly object _finishedCallbacksLock = new object();
+    private static Queue<Action> _finishedCallbacks = new Queue<Action>();
+
     public VoicePlayer()
     {
         this.playerPitch = 1f;
@@ -72,8 +75,13 @@ public class VoicePlayer : SoundPlayer
                     if (soundProfile.SoundID == soundID)
                     {
                         SaXAudio.OnVoiceFinished -= handler;
-                        watcherOfSound.Remove(soundProfile);
-                        onFinished();
+                        lock (_finishedCallbacksLock)
+                        {
+                            _finishedCallbacks.Enqueue(() => {
+                                watcherOfSound.Remove(soundProfile);
+                                onFinished();
+                            });
+                        }
                     }
                 };
                 watcherOfSound[soundProfile] = null;
@@ -85,23 +93,30 @@ public class VoicePlayer : SoundPlayer
                 {
                     try
                     {
-                        // we need to delay if we run it instantly we're at 0 = 0 which is useless
                         Thread.Sleep(500);
                         while (true)
                         {
                             Int32 currentTime = ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_GetElapsedPlaybackTime(soundProfile.SoundID);
                             if (currentTime == 0)
                             {
-                                onFinished();
+                                lock (_finishedCallbacksLock)
+                                {
+                                    _finishedCallbacks.Enqueue(() => {
+                                        watcherOfSound.Remove(soundProfile);
+                                        onFinished();
+                                    });
+                                }
                                 break;
                             }
                             Thread.Sleep(50);
                         }
-                        watcherOfSound.Remove(soundProfile);
                     }
                     catch (Exception)
                     {
-                        watcherOfSound.Remove(soundProfile);
+                        lock (_finishedCallbacksLock)
+                        {
+                            _finishedCallbacks.Enqueue(() => { watcherOfSound.Remove(soundProfile); });
+                        }
                     }
                 });
                 watcherOfSound[soundProfile] = onFinishThread;
@@ -548,6 +563,22 @@ public class VoicePlayer : SoundPlayer
     {
         if (!Configuration.VoiceActing.Enabled)
             return;
+
+        lock (_finishedCallbacksLock)
+        {
+            while (_finishedCallbacks.Count > 0)
+            {
+                Action action = _finishedCallbacks.Dequeue();
+                try
+                {
+                    action?.Invoke();
+                }
+                catch (Exception e)
+                {
+                    Log.Error($"[VoicePlayer] Error in finished callback: {e.Message}");
+                }
+            }
+        }
 
         if (this.upcomingSoundProfile != null)
         {
