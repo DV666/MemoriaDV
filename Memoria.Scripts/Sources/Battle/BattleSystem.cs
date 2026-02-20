@@ -408,12 +408,17 @@ namespace Memoria.EchoS
 
                     foreach (BattleStatusId currentStatuses in speaker.CurrentStatus.ToStatusList())
                     {
-                        string speakerName = speaker.IsPlayer ? FF9TextTool.CharacterDefaultName(speaker.PlayerIndex) : MonsterNameWithoutTag[speaker.Id];
-                        AudioEffectManager.EffectPreset? preset = AudioEffectManager.GetUnlistedPreset($"{currentStatuses}{speakerName}");
+                        string speakerName = "Unknown";
+                        if (speaker.IsPlayer)
+                            speakerName = FF9TextTool.CharacterDefaultName(speaker.PlayerIndex);
+                        else if (!MonsterNameWithoutTag.TryGetValue(speaker.Id, out speakerName))
+                            speakerName = "Unknown";
+
+                        EffectPreset preset = AudioEffectManager.GetUnlistedPreset($"{currentStatuses}{speakerName}");
 
                         if (preset == null) continue;
 
-                        AudioEffectManager.ApplyPresetOnSound(preset.Value, soundId, path, 0f);
+                        AudioEffectManager.ApplyPresetOnSound(preset, soundId, path, 0f);
                         break;
                     }
 

@@ -104,10 +104,7 @@ namespace Memoria.EchoS
                 {
                     BattleUnit unit = new BattleUnit(monster);
                     if (monster.bi.player == 0 )
-                    {
                         MonsterNameWithoutTag[unit.Id] = unit.Name.RemoveTags(); // To avoid calculating Regex for each call.
-                        break;
-                    }
                 }
             }
 
