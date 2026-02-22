@@ -338,7 +338,13 @@ namespace Memoria.Scripts.Battle
                             }
                         );
                     }
-                    if (unit.PlayerIndex == (CharacterId)14)
+                    if (unit.PlayerIndex == CharacterId.Eiko) // Init Moug
+                    {
+                        PassiveEikoScript.ModelMoug[unit.Data] = ModelFactory.CreateModel("GEO_NPC_F4_MOG", true);
+                        PassiveEikoScript.ModelMoug[unit.Data].SetActive(false);
+                        PassiveEikoScript.StateMoug[unit.Data] = 0;
+                    }
+                    else if (unit.PlayerIndex == (CharacterId)14)
                     {
                         unit.SummonCount = 1; // [TODO] Change to Memoria Dict : Used for SA Take that!
                         SpecialSAEffect[unit.Data][13] = unit.PhysicalDefence; // In top form!
@@ -571,8 +577,7 @@ namespace Memoria.Scripts.Battle
                 InfusedWeaponScript.WeaponNewElement[unit.Data] = EffectElement.None;
                 InfusedWeaponScript.WeaponNewCustomElement[unit.Data] = 0;
                 InfusedWeaponScript.WeaponNewStatus[unit.Data] = 0;
-                StateMoug[unit.Data] = 0;
-                ModelMoug[unit.Data] = null;
+                AdditionalModel[unit.Data] = null;
                 InfusedWeaponScript.CMDVanillaName[unit.Data] = [null, null];
 
                 if (unit.PlayerIndex == CharacterId.Zidane)

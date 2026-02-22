@@ -22,6 +22,8 @@ namespace Memoria.Scripts.Battle
         }
 
         public static Dictionary<BTL_DATA, Int32> NumberTargets = new Dictionary<BTL_DATA, Int32>();
+        public static Dictionary<BTL_DATA, GameObject> ModelMoug = new Dictionary<BTL_DATA, GameObject>();
+        public static Dictionary<BTL_DATA, Int32> StateMoug = new Dictionary<BTL_DATA, Int32>();
 
         public void Perform()
         {
@@ -30,26 +32,28 @@ namespace Memoria.Scripts.Battle
                 if (!NumberTargets.TryGetValue(_v.Caster.Data, out Int32 Targets))
                     NumberTargets[_v.Caster.Data] = 0;
 
-                if (TranceSeekAPI.StateMoug[_v.Caster.Data] == 1 && TranceSeekAPI.ModelMoug[_v.Caster.Data] == null) // Moug appears.
+                if (StateMoug[_v.Caster.Data] == 1) // Moug appears.
                 {
+                    if (ModelMoug[_v.Caster.Data] == null) // For safety (normally, init in OverloadBattleInit).
+                        ModelMoug[_v.Caster.Data] = ModelFactory.CreateModel("GEO_NPC_F4_MOG", true);
+
                     if ((_v.Command.AbilityCategory & 16) != 0)
                         _v.Command.AbilityCategory -= 16; // Remove magical effect (for Vanish)
 
-                    TranceSeekAPI.ModelMoug[_v.Caster.Data] = ModelFactory.CreateModel("GEO_NPC_F4_MOG", true);
+                    ModelMoug[_v.Caster.Data].SetActive(true);
                     // ANH_NPC_F4_MOG_INTO_EIK_PASSIVE_1
                     // ANH_NPC_F4_MOG_INTO_EIK_PASSIVE_2
                     if (FF9StateSystem.EventState.ScenarioCounter > 9990) // Moug has a "phantom" effect after Mont Gulug.
-                        btl_util.GeoSetABR(TranceSeekAPI.ModelMoug[_v.Caster.Data], "GEO_POLYFLAGS_TRANS_100_PLUS_25");
-                    TranceSeekAPI.ModelMoug[_v.Caster.Data].transform.localPosition = _v.Caster.Data.gameObject.transform.localPosition;
-                    TranceSeekAPI.ModelMoug[_v.Caster.Data].transform.localRotation = _v.Caster.Data.gameObject.transform.localRotation;
-                    TranceSeekAPI.ModelMoug[_v.Caster.Data].transform.localScale = _v.Caster.Data.gameObject.transform.localScale;
-                    TranceSeekAPI.StateMoug[_v.Caster.Data] = 2;
-                    TranceSeekAPI.ModelMoug[_v.Caster.Data].SetActive(true);
-                    Animation animation = TranceSeekAPI.ModelMoug[_v.Caster.Data].GetComponent<Animation>();
+                        btl_util.GeoSetABR(ModelMoug[_v.Caster.Data], "GEO_POLYFLAGS_TRANS_100_PLUS_25");
+                    ModelMoug[_v.Caster.Data].transform.localPosition = _v.Caster.Data.gameObject.transform.localPosition;
+                    ModelMoug[_v.Caster.Data].transform.localRotation = _v.Caster.Data.gameObject.transform.localRotation;
+                    ModelMoug[_v.Caster.Data].transform.localScale = _v.Caster.Data.gameObject.transform.localScale;
+                    StateMoug[_v.Caster.Data] = 2;
+                    Animation animation = ModelMoug[_v.Caster.Data].GetComponent<Animation>();
                     if (animation.GetClip("ANH_NPC_F4_MOG_INTO_EIK_PASSIVE_1") == null)
-                        AnimationFactory.AddAnimWithAnimatioName(TranceSeekAPI.ModelMoug[_v.Caster.Data], "ANH_NPC_F4_MOG_INTO_EIK_PASSIVE_1");
+                        AnimationFactory.AddAnimWithAnimatioName(ModelMoug[_v.Caster.Data], "ANH_NPC_F4_MOG_INTO_EIK_PASSIVE_1");
                     if (animation.GetClip("ANH_NPC_F4_MOG_INTO_EIK_PASSIVE_2") == null)
-                        AnimationFactory.AddAnimWithAnimatioName(TranceSeekAPI.ModelMoug[_v.Caster.Data], "ANH_NPC_F4_MOG_INTO_EIK_PASSIVE_2");
+                        AnimationFactory.AddAnimWithAnimatioName(ModelMoug[_v.Caster.Data], "ANH_NPC_F4_MOG_INTO_EIK_PASSIVE_2");
                     if (animation != null)
                     {
                         animation.Play("ANH_NPC_F4_MOG_INTO_EIK_PASSIVE_1");
@@ -58,26 +62,26 @@ namespace Memoria.Scripts.Battle
                     }
                     return;
                 }
-                else if (TranceSeekAPI.StateMoug[_v.Caster.Data] == 2 && TranceSeekAPI.ModelMoug[_v.Caster.Data] != null) // Moug cast.
+                else if (StateMoug[_v.Caster.Data] == 2 && ModelMoug[_v.Caster.Data] != null) // Moug cast.
                 {
                     if ((_v.Command.AbilityCategory & 16) != 0)
                         _v.Command.AbilityCategory -= 16; // Remove magical effect (for Vanish)
 
-                    TranceSeekAPI.ModelMoug[_v.Caster.Data].transform.localPosition = _v.Caster.Data.gameObject.transform.localPosition + new Vector3(0f, 0f, 250f);
-                    Animation animation = TranceSeekAPI.ModelMoug[_v.Caster.Data].GetComponent<Animation>();
+                    ModelMoug[_v.Caster.Data].transform.localPosition = _v.Caster.Data.gameObject.transform.localPosition + new Vector3(0f, 0f, 250f);
+                    Animation animation = ModelMoug[_v.Caster.Data].GetComponent<Animation>();
                     if (animation != null)
                     {
                         animation.Play("ANH_NPC_F4_MOG_INTO_EIK_2");
                         if (animation["ANH_NPC_F4_MOG_INTO_EIK_2"] != null)
                             animation["ANH_NPC_F4_MOG_INTO_EIK_2"].speed = 1f;
                     }
-                    TranceSeekAPI.StateMoug[_v.Caster.Data] = 3;
+                    StateMoug[_v.Caster.Data] = 3;
                     NumberTargets[_v.Caster.Data] = _v.Command.TargetCount;
                     return;
                 }
-                else if (TranceSeekAPI.StateMoug[_v.Caster.Data] == 3 && TranceSeekAPI.ModelMoug[_v.Caster.Data] != null) // Moug cast
+                else if (StateMoug[_v.Caster.Data] == 3 && ModelMoug[_v.Caster.Data] != null) // Moug cast
                 {
-                    Animation animation = TranceSeekAPI.ModelMoug[_v.Caster.Data].GetComponent<Animation>();
+                    Animation animation = ModelMoug[_v.Caster.Data].GetComponent<Animation>();
                     if (animation != null)
                     {
                         animation.Play("ANH_NPC_F4_MOG_IDLE");
@@ -194,7 +198,7 @@ namespace Memoria.Scripts.Battle
                         if (!ff9abil.FF9Abil_IsMaster(_v.Caster.Player, (int)_v.Command.AbilityId))
                             ff9abil.FF9Abil_SetMaster(_v.Caster.Player, (int)_v.Command.AbilityId);
 
-                        TranceSeekAPI.ModelMoug[_v.Caster.Data].transform.localPosition = _v.Caster.Data.gameObject.transform.localPosition;
+                        ModelMoug[_v.Caster.Data].transform.localPosition = _v.Caster.Data.gameObject.transform.localPosition;
                         if (animation != null)
                         {
                             animation.Play("ANH_NPC_F4_MOG_INTO_EIK_PASSIVE_2");
@@ -207,9 +211,8 @@ namespace Memoria.Scripts.Battle
                             caster => (counter -= BattleState.ATBTickCount) > 0,
                             caster =>
                             {
-                                TranceSeekAPI.StateMoug[caster.Data] = 0;
-                                UnityEngine.Object.Destroy(TranceSeekAPI.ModelMoug[_v.Caster.Data]);
-                                TranceSeekAPI.ModelMoug[_v.Caster.Data] = null;
+                                StateMoug[caster.Data] = 0;
+                                ModelMoug[_v.Caster.Data].SetActive(false);
                             }
                         );
                     }

@@ -26,8 +26,7 @@ namespace Memoria.Scripts.Battle
 
         public static Dictionary<BTL_DATA, Dictionary<BattleStatus, Int32>> ProtectStatus = new Dictionary<BTL_DATA, Dictionary<BattleStatus, Int32>>();
         public static Dictionary<BTL_DATA, Int32> AbsorbElement = new Dictionary<BTL_DATA, Int32>();
-        public static Dictionary<BTL_DATA, Int32> StateMoug = new Dictionary<BTL_DATA, Int32>();
-        public static Dictionary<BTL_DATA, GameObject> ModelMoug = new Dictionary<BTL_DATA, GameObject>();
+        public static Dictionary<BTL_DATA, GameObject> AdditionalModel = new Dictionary<BTL_DATA, GameObject>();
         public static Dictionary<BTL_DATA, Int32[]> StackBreakOrUpStatus = new Dictionary<BTL_DATA, Int32[]>();
         // [0] => StackStrength ; [1] => StackMagic ; [2] => StackArmor ; [3] => StackMental
 
@@ -1525,22 +1524,7 @@ namespace Memoria.Scripts.Battle
             }
             if (v.Caster.HasSupportAbilityByIndex((SupportAbility)1061) && (v.Command.Id == BattleCommandId.Attack || v.Command.Id == BattleCommandId.Counter) && v.Target.Data != v.Caster.Data) // Mug+
             {
-                if (ff9item._FF9Item_Data[v.Caster.Weapon].shape == 1)
-                {
-                    if (v.Command.Data.info.effect_counter == 2)
-                    {
-                        HealHP += (v.Target.HpDamage / 4 + ZidanePassive[v.Caster.Data][7]);
-                        ZidanePassive[v.Caster.Data][7] = 0;
-                    }
-                    else
-                    {
-                        ZidanePassive[v.Caster.Data][7] = v.Target.HpDamage / 4;
-                    }
-                }
-                else
-                {
-                    HealHP += v.Target.HpDamage / 4;
-                }
+                HealHP += v.Target.HpDamage / 4;
             }
             if (v.Caster.Accessory == (RegularItem)1208 && (v.Target.Flags & CalcFlag.HpRecovery) == 0 && v.Target.Data != v.Caster.Data) // Materia Support
             {

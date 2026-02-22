@@ -79,12 +79,12 @@ namespace Memoria.DefaultScripts
                         target => target.Data.bi.def_idle == 1,
                         target =>
                         {
-                            if (ModelMoug[target.Data] == null) // TODO => Make new model for Beatrix wings.
+                            if (AdditionalModel[target.Data] == null) // TODO => Make new model for Beatrix wings.
                             {
                                 ModelFactory.ChangeModelTexture(target.Data.gameObject, new string[] { "CustomTextures/Players/BeatrixTranceWings/427_0_trance.png", "CustomTextures/Players/BeatrixTranceWings/427_1_trance.png" });
-                                ModelMoug[target.Data] = ModelFactory.CreateModel("GEO_NPC_GoldenWings", true);
-                                ModelMoug[target.Data].SetActive(true);
-                                GeoAttach(ModelMoug[target.Data], target.Data.gameObject, 11);
+                                AdditionalModel[target.Data] = ModelFactory.CreateModel("GEO_NPC_GoldenWings", true);
+                                AdditionalModel[target.Data].SetActive(true);
+                                GeoAttach(AdditionalModel[target.Data], target.Data.gameObject, 11);
                             }
                         }
                         );
@@ -127,11 +127,11 @@ namespace Memoria.DefaultScripts
                                 if (target.HasSupportAbilityByIndex((SupportAbility)1242))
                                     target.AlterStatus(BattleStatus.EasyKill);
                             }
-                            if (ModelMoug[target.Data] == null)
+                            if (AdditionalModel[target.Data] == null)
                             {
-                                ModelMoug[target.Data] = ModelFactory.CreateModel("GEO_NPC_DemonWings", true);
-                                ModelMoug[target.Data].SetActive(true);
-                                GeoAttach(ModelMoug[target.Data], target.Data.gameObject, 1);
+                                AdditionalModel[target.Data] = ModelFactory.CreateModel("GEO_NPC_DemonWings", true);
+                                AdditionalModel[target.Data].SetActive(true);
+                                GeoAttach(AdditionalModel[target.Data], target.Data.gameObject, 1);
                             }
                         }
                     );
@@ -142,11 +142,11 @@ namespace Memoria.DefaultScripts
                         target => !target.Data.tranceGo.activeSelf,
                         target =>
                         {
-                            if (ModelMoug[target.Data] == null)
+                            if (AdditionalModel[target.Data] == null)
                             {
-                                ModelMoug[target.Data] = ModelFactory.CreateModel("GEO_NPC_GoldenWings", true);
-                                ModelMoug[target.Data].SetActive(true);
-                                GeoAttach(ModelMoug[target.Data], target.Data.gameObject, 11);
+                                AdditionalModel[target.Data] = ModelFactory.CreateModel("GEO_NPC_GoldenWings", true);
+                                AdditionalModel[target.Data].SetActive(true);
+                                GeoAttach(AdditionalModel[target.Data], target.Data.gameObject, 11);
                             }
                         }
                     );
@@ -181,7 +181,7 @@ namespace Memoria.DefaultScripts
                         target =>
                         {
                             Vector3 position = target.Data.gameObject.transform.position;
-                            UnityEngine.Object.Destroy(ModelMoug[target.Data]);
+                            UnityEngine.Object.Destroy(AdditionalModel[target.Data]);
                             target.Data.weaponModels[0].geo.SetActive(false);
                             target.Data.gameObject.SetActive(false);
                             target.Data.gameObject = ModelFactory.CreateModel("GEO_MON_B3_155", true);

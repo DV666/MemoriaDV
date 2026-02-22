@@ -35,7 +35,12 @@ namespace Memoria.DefaultScripts
         {
             return true;
         }
-        public IOprStatusScript.SetupOprMethod SetupOpr => null;
+        public IOprStatusScript.SetupOprMethod SetupOpr => SetupVirusOpr;
+
+        public Int32 SetupVirusOpr()
+        {
+            return FF9StateSystem.EventState.gEventGlobal[1407] > 0 ? 0 : 30;
+        }
         public Boolean OnOpr()
         {
             if (Target.IsUnderAnyStatus(BattleStatus.Petrify))
@@ -45,6 +50,7 @@ namespace Memoria.DefaultScripts
                 Target.CurrentHp -= 1;
             else
                 Target.Kill(VirusInflicter);
+
             BattleVoice.TriggerOnStatusChange(Target, BattleVoice.BattleMoment.Used, BattleStatusId.Virus);
             return false;
         }

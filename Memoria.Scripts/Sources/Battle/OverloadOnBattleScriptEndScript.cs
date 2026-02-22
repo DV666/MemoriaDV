@@ -145,7 +145,7 @@ namespace Memoria.Scripts.Battle
                 if (Eiko == null)
                     return;
 
-                if (StateMoug[Eiko.Data] == 0 && !Eiko.IsUnderAnyStatus(BattleStatus.Death | BattleStatus.Petrify | BattleStatus.Jump | BattleStatus.Heat) && v.Caster.Data != Eiko.Data)
+                if (PassiveEikoScript.StateMoug[Eiko.Data] == 0 && !Eiko.IsUnderAnyStatus(BattleStatus.Death | BattleStatus.Petrify | BattleStatus.Jump | BattleStatus.Heat) && v.Caster.Data != Eiko.Data)
                 {
                     float ChanceMoug = (float)(Eiko.HasSupportAbilityByIndex((SupportAbility)1224) ? 12 : (Eiko.HasSupportAbilityByIndex((SupportAbility)224) ? 10 : 8));
 
@@ -153,7 +153,7 @@ namespace Memoria.Scripts.Battle
                         return;
 
                     ushort TargetId = v.Caster.Id;
-                    StateMoug[Eiko.Data] = 1;
+                    PassiveEikoScript.StateMoug[Eiko.Data] = 1;
                     Boolean TargetReflect = false;
                     List<BattleAbilityId> ClassicMougAAList = new List<BattleAbilityId>();
                     List<BattleAbilityId> SuperMougAAList = new List<BattleAbilityId>();

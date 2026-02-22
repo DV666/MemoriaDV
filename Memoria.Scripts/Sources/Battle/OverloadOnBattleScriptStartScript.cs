@@ -67,7 +67,7 @@ namespace Memoria.Scripts.Battle
                     v.Command.Power += 20;
             }
 
-            if (!v.Caster.IsPlayer && v.Command.Data.aa.Vfx2 > 0)
+            if (!v.Caster.IsPlayer && v.Command.Data.aa.Vfx2 > 0) // Animation 2
             {
                 ulong AACustomStatus = v.Command.Data.aa.Vfx2;
 
