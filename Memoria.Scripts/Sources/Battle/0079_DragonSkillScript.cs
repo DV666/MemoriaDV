@@ -65,7 +65,7 @@ namespace Memoria.Scripts.Battle
                 uint HPratio = (_v.Target.CurrentHp / _v.Target.MaximumHp) * 100;
                 _v.Target.Flags = CalcFlag.HpAlteration;
                 _v.NormalMagicParams();
-                TranceSeekAPI.CharacterBonusPassive(_v, "MagicAttack");
+                
                 TranceSeekAPI.CasterPenaltyMini(_v);
                 _v.CalcHpMagicRecovery();
                 if (!_v.Target.IsUnderAnyStatus(BattleStatus.Zombie))

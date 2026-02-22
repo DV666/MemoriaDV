@@ -3,6 +3,7 @@ using Memoria.Data;
 using System.Collections.Generic;
 using System;
 using FF9;
+using static Memoria.Scripts.Battle.TranceSeekBattleDictionary;
 
 namespace Memoria.Scripts.Battle
 {
@@ -82,8 +83,8 @@ namespace Memoria.Scripts.Battle
                     }
                     if (_v.Caster.PlayerIndex == CharacterId.Amarant)
                     {
-                        TranceSeekAPI.AmarantPassive(_v);
-                        if (_v.Caster.IsUnderAnyStatus(BattleStatus.Defend) && _v.Command.Id == BattleCommandId.Counter && TranceSeekAPI.SpecialSAEffect[_v.Caster.Data][0] == 1) // Duel Amarant
+                        TranceSeekCharacterMechanic.AmarantPassive(_v);
+                        if (_v.Caster.IsUnderAnyStatus(BattleStatus.Defend) && _v.Command.Id == BattleCommandId.Counter && SpecialSAEffect[_v.Caster.Data][0] == 1) // Duel Amarant
                         {
                             short previouscriticalbonus = _v.Caster.Data.critical_rate_deal_bonus;
                             _v.Caster.Data.critical_rate_deal_bonus += _v.Caster.Will;
@@ -102,7 +103,7 @@ namespace Memoria.Scripts.Battle
                             }
                             else if ((WeaponStatus & BattleStatus.Death) != 0 && _v.Target.IsUnderAnyStatus(BattleStatus.Death))
                             {
-                                TranceSeekAPI.TriggerSPSResistStatus[_v.Target] = true;
+                                TriggerSPSResistStatus[_v.Target] = true;
                             }
                             TranceSeekAPI.TryCriticalHit(_v);
                             _v.Caster.Data.critical_rate_deal_bonus = previouscriticalbonus;
@@ -137,7 +138,7 @@ namespace Memoria.Scripts.Battle
                         }
                         else if ((WeaponStatus & BattleStatus.Death) != 0 && _v.Target.IsUnderAnyStatus(BattleStatus.Death))
                         {
-                            TranceSeekAPI.TriggerSPSResistStatus[_v.Target] = true;
+                            TriggerSPSResistStatus[_v.Target] = true;
                         }
                     }
                     TranceSeekAPI.IpsenCastleMalus(_v);
@@ -184,7 +185,7 @@ namespace Memoria.Scripts.Battle
                     _v.Context.AttackPower = 15;
                     break;
             }
-            TranceSeekAPI.CharacterBonusPassive(_v, "MagicAttack");
+            
             TranceSeekAPI.CasterPenaltyMini(_v);
             TranceSeekAPI.EnemyTranceBonusAttack(_v);
             if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)102))
@@ -221,25 +222,25 @@ namespace Memoria.Scripts.Battle
             int SlotMugSteal = 4 + _v.Command.Data.info.effect_counter;
             if (GameRandom.Next8() < StealScript.NewStealableItemRates(battleEnemy.StealableItemRates[3], _v.Caster) && battleEnemy.StealableItems[3] != RegularItem.NoItem)
             {
-                TranceSeekAPI.ZidanePassive[_v.Caster.Data][SlotMugSteal] = (Int32)battleEnemy.StealableItems[3];
+                ZidanePassive[_v.Caster.Data][SlotMugSteal] = (Int32)battleEnemy.StealableItems[3];
                 MugItem(battleEnemy, 3);            
             }
             else if (GameRandom.Next8() < StealScript.NewStealableItemRates(battleEnemy.StealableItemRates[2], _v.Caster) && battleEnemy.StealableItems[2] != RegularItem.NoItem)
             {
-                TranceSeekAPI.ZidanePassive[_v.Caster.Data][SlotMugSteal] = (Int32)battleEnemy.StealableItems[2];
+                ZidanePassive[_v.Caster.Data][SlotMugSteal] = (Int32)battleEnemy.StealableItems[2];
                 MugItem(battleEnemy, 2);
             }
             else if (GameRandom.Next8() < StealScript.NewStealableItemRates(battleEnemy.StealableItemRates[1], _v.Caster) && battleEnemy.StealableItems[1] != RegularItem.NoItem)
             {
-                TranceSeekAPI.ZidanePassive[_v.Caster.Data][SlotMugSteal] = (Int32)battleEnemy.StealableItems[1];
+                ZidanePassive[_v.Caster.Data][SlotMugSteal] = (Int32)battleEnemy.StealableItems[1];
                 MugItem(battleEnemy, 1);
             }
             else if (GameRandom.Next8() < StealScript.NewStealableItemRates(battleEnemy.StealableItemRates[0], _v.Caster) && battleEnemy.StealableItems[0] != RegularItem.NoItem)
             {
-                TranceSeekAPI.ZidanePassive[_v.Caster.Data][SlotMugSteal] = (Int32)battleEnemy.StealableItems[0];
+                ZidanePassive[_v.Caster.Data][SlotMugSteal] = (Int32)battleEnemy.StealableItems[0];
                 MugItem(battleEnemy, 0);
             }
-            else if (TranceSeekAPI.ZidanePassive[_v.Target.Data][2] > 0) // Oeil de voleur activé
+            else if (ZidanePassive[_v.Target.Data][2] > 0) // Oeil de voleur activé
             {
                 AddBonusSteal();
                 Dictionary<String, String> localizedMessage = new Dictionary<String, String>
@@ -254,44 +255,44 @@ namespace Memoria.Scripts.Battle
                 };
                 if (GameRandom.Next8() < StealScript.NewStealableItemRates(battleEnemy.StealableItemRates[3], _v.Caster) && battleEnemy.StealableItems[3] != RegularItem.NoItem)
                 {
-                    TranceSeekAPI.ZidanePassive[_v.Caster.Data][SlotMugSteal] = (Int32)battleEnemy.StealableItems[3];
+                    ZidanePassive[_v.Caster.Data][SlotMugSteal] = (Int32)battleEnemy.StealableItems[3];
                     MugItem(battleEnemy, 3);
                 }
                 else if (GameRandom.Next8() < StealScript.NewStealableItemRates(battleEnemy.StealableItemRates[2], _v.Caster) && battleEnemy.StealableItems[2] != RegularItem.NoItem)
                 {
-                    TranceSeekAPI.ZidanePassive[_v.Caster.Data][SlotMugSteal] = (Int32)battleEnemy.StealableItems[2];
+                    ZidanePassive[_v.Caster.Data][SlotMugSteal] = (Int32)battleEnemy.StealableItems[2];
                     MugItem(battleEnemy, 2);
                 }
                 else if (GameRandom.Next8() < StealScript.NewStealableItemRates(battleEnemy.StealableItemRates[1], _v.Caster) && battleEnemy.StealableItems[1] != RegularItem.NoItem)
                 {
-                    TranceSeekAPI.ZidanePassive[_v.Caster.Data][SlotMugSteal] = (Int32)battleEnemy.StealableItems[1];
+                    ZidanePassive[_v.Caster.Data][SlotMugSteal] = (Int32)battleEnemy.StealableItems[1];
                     MugItem(battleEnemy, 1);
                 }
                 else if (GameRandom.Next8() < StealScript.NewStealableItemRates(battleEnemy.StealableItemRates[0], _v.Caster) && battleEnemy.StealableItems[0] != RegularItem.NoItem)
                 {
-                    TranceSeekAPI.ZidanePassive[_v.Caster.Data][SlotMugSteal] = (Int32)battleEnemy.StealableItems[0];
+                    ZidanePassive[_v.Caster.Data][SlotMugSteal] = (Int32)battleEnemy.StealableItems[0];
                     MugItem(battleEnemy, 0);
                 }
                 else if (_v.Caster.IsUnderAnyStatus(BattleStatus.Trance) && _v.Caster.PlayerIndex == CharacterId.Zidane)
                 {
                     if (battleEnemy.StealableItems[0] != RegularItem.NoItem)
                     {
-                        TranceSeekAPI.ZidanePassive[_v.Caster.Data][SlotMugSteal] = (Int32)battleEnemy.StealableItems[0];
+                        ZidanePassive[_v.Caster.Data][SlotMugSteal] = (Int32)battleEnemy.StealableItems[0];
                         MugItem(battleEnemy, 0);
                     }
                     else if (battleEnemy.StealableItems[1] != RegularItem.NoItem)
                     {
-                        TranceSeekAPI.ZidanePassive[_v.Caster.Data][SlotMugSteal] = (Int32)battleEnemy.StealableItems[1];
+                        ZidanePassive[_v.Caster.Data][SlotMugSteal] = (Int32)battleEnemy.StealableItems[1];
                         MugItem(battleEnemy, 1);
                     }
                     else if (battleEnemy.StealableItems[2] != RegularItem.NoItem)
                     {
-                        TranceSeekAPI.ZidanePassive[_v.Caster.Data][SlotMugSteal] = (Int32)battleEnemy.StealableItems[2];
+                        ZidanePassive[_v.Caster.Data][SlotMugSteal] = (Int32)battleEnemy.StealableItems[2];
                         MugItem(battleEnemy, 2);
                     }
                     else if (battleEnemy.StealableItems[3] != RegularItem.NoItem && GameRandom.Next8() < (127 + battleEnemy.StealableItemRates[3]))
                     {
-                        TranceSeekAPI.ZidanePassive[_v.Caster.Data][SlotMugSteal] = (Int32)battleEnemy.StealableItems[3];
+                        ZidanePassive[_v.Caster.Data][SlotMugSteal] = (Int32)battleEnemy.StealableItems[3];
                         MugItem(battleEnemy, 3);
                     }
                     else
@@ -312,22 +313,22 @@ namespace Memoria.Scripts.Battle
             {
                 if (battleEnemy.StealableItems[0] != RegularItem.NoItem)
                 {
-                    TranceSeekAPI.ZidanePassive[_v.Caster.Data][SlotMugSteal] = (Int32)battleEnemy.StealableItems[0];
+                    ZidanePassive[_v.Caster.Data][SlotMugSteal] = (Int32)battleEnemy.StealableItems[0];
                     MugItem(battleEnemy, 0);
                 }
                 else if (battleEnemy.StealableItems[1] != RegularItem.NoItem)
                 {
-                    TranceSeekAPI.ZidanePassive[_v.Caster.Data][SlotMugSteal] = (Int32)battleEnemy.StealableItems[1];
+                    ZidanePassive[_v.Caster.Data][SlotMugSteal] = (Int32)battleEnemy.StealableItems[1];
                     MugItem(battleEnemy, 1);
                 }
                 else if (battleEnemy.StealableItems[2] != RegularItem.NoItem)
                 {
-                    TranceSeekAPI.ZidanePassive[_v.Caster.Data][SlotMugSteal] = (Int32)battleEnemy.StealableItems[2];
+                    ZidanePassive[_v.Caster.Data][SlotMugSteal] = (Int32)battleEnemy.StealableItems[2];
                     MugItem(battleEnemy, 2);
                 }
                 else if (battleEnemy.StealableItems[3] != RegularItem.NoItem && GameRandom.Next8() < (127 + battleEnemy.StealableItemRates[3]))
                 {
-                    TranceSeekAPI.ZidanePassive[_v.Caster.Data][SlotMugSteal] = (Int32)battleEnemy.StealableItems[3];
+                    ZidanePassive[_v.Caster.Data][SlotMugSteal] = (Int32)battleEnemy.StealableItems[3];
                     MugItem(battleEnemy, 3);
                 }
                 else
@@ -384,9 +385,9 @@ namespace Memoria.Scripts.Battle
             {
                 ff9item.FF9Item_Add(_v.Context.ItemSteal, 2);
                 if (_v.Caster.HasSupportAbility(SupportAbility1.MasterThief) && slot == 0)
-                    TranceSeekAPI.ZidanePassive[_v.Caster.Data][10] = 1;
+                    ZidanePassive[_v.Caster.Data][10] = 1;
                 else if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1022) && slot == 1)
-                    TranceSeekAPI.ZidanePassive[_v.Caster.Data][11] = 1;
+                    ZidanePassive[_v.Caster.Data][11] = 1;
 
                 if (_v.Caster.PlayerIndex == CharacterId.Zidane && ff9item._FF9Item_Data[FF9StateSystem.Common.FF9.player[(CharacterId)_v.Caster.Data.bi.slot_no].equip.Weapon].shape == 2) // Thief Sword
                 {
@@ -414,22 +415,22 @@ namespace Memoria.Scripts.Battle
             {
                 if (ff9item._FF9Item_Data[FF9StateSystem.Common.FF9.player[(CharacterId)_v.Caster.Data.bi.slot_no].equip.Weapon].shape == 1 && _v.Command.Data.info.effect_counter == 2) // Dagger
                 {
-                    if (TranceSeekAPI.ZidanePassive[_v.Caster.Data][5] != 255 || TranceSeekAPI.ZidanePassive[_v.Caster.Data][5] != 255)
+                    if (ZidanePassive[_v.Caster.Data][5] != 255 || ZidanePassive[_v.Caster.Data][5] != 255)
                     {
-                        RegularItem FirstItemMugged = (RegularItem)TranceSeekAPI.ZidanePassive[_v.Caster.Data][5];
-                        RegularItem SecondItemMugged = (RegularItem)TranceSeekAPI.ZidanePassive[_v.Caster.Data][6];
-                        string FirstItemMuggedText = TranceSeekAPI.ZidanePassive[_v.Caster.Data][10] > 0 ? $"{FF9TextTool.ItemName(FirstItemMugged)} X 2" : $"{FF9TextTool.ItemName(FirstItemMugged)}";
-                        string SecondItemMuggedText = TranceSeekAPI.ZidanePassive[_v.Caster.Data][11] > 0 ? $"{FF9TextTool.ItemName(SecondItemMugged)} X 2" : $"{FF9TextTool.ItemName(SecondItemMugged)}";
+                        RegularItem FirstItemMugged = (RegularItem)ZidanePassive[_v.Caster.Data][5];
+                        RegularItem SecondItemMugged = (RegularItem)ZidanePassive[_v.Caster.Data][6];
+                        string FirstItemMuggedText = ZidanePassive[_v.Caster.Data][10] > 0 ? $"{FF9TextTool.ItemName(FirstItemMugged)} X 2" : $"{FF9TextTool.ItemName(FirstItemMugged)}";
+                        string SecondItemMuggedText = ZidanePassive[_v.Caster.Data][11] > 0 ? $"{FF9TextTool.ItemName(SecondItemMugged)} X 2" : $"{FF9TextTool.ItemName(SecondItemMugged)}";
                         if (FirstItemMugged != RegularItem.NoItem && SecondItemMugged != RegularItem.NoItem)
                             UiState.SetBattleFollowFormatMessage(BattleMesages.Stole, FirstItemMuggedText + " / " + SecondItemMuggedText);
                         else if (FirstItemMugged != RegularItem.NoItem)
                             UiState.SetBattleFollowFormatMessage(BattleMesages.Stole, FirstItemMuggedText);
                         else if (SecondItemMugged != RegularItem.NoItem)
                             UiState.SetBattleFollowFormatMessage(BattleMesages.Stole, SecondItemMuggedText);
-                        TranceSeekAPI.ZidanePassive[_v.Caster.Data][5] = 255;
-                        TranceSeekAPI.ZidanePassive[_v.Caster.Data][6] = 255;
-                        TranceSeekAPI.ZidanePassive[_v.Caster.Data][10] = 0;
-                        TranceSeekAPI.ZidanePassive[_v.Caster.Data][11] = 0;
+                        ZidanePassive[_v.Caster.Data][5] = 255;
+                        ZidanePassive[_v.Caster.Data][6] = 255;
+                        ZidanePassive[_v.Caster.Data][10] = 0;
+                        ZidanePassive[_v.Caster.Data][11] = 0;
                         if (StealScript.ForcedHeheZidane)
                             SoundLib.PlaySoundEffect(4005); //se511116 - Héhé !
                     }
@@ -458,12 +459,12 @@ namespace Memoria.Scripts.Battle
 
                 if (ff9item._FF9Item_Data[FF9StateSystem.Common.FF9.player[(CharacterId)_v.Caster.Data.bi.slot_no].equip.Weapon].shape == 1 && _v.Command.Data.info.effect_counter != 2)
                 {
-                    TranceSeekAPI.ZidanePassive[_v.Caster.Data][8] = bonusgil;
+                    ZidanePassive[_v.Caster.Data][8] = bonusgil;
                 }
                 else
                 {
-                    bonusgil = bonusgil + TranceSeekAPI.ZidanePassive[_v.Caster.Data][8];
-                    TranceSeekAPI.ZidanePassive[_v.Caster.Data][8] = 0;
+                    bonusgil = bonusgil + ZidanePassive[_v.Caster.Data][8];
+                    ZidanePassive[_v.Caster.Data][8] = 0;
                     Dictionary<String, String> localizedMessage = new Dictionary<String, String>
                         {
                           { "US", $"+{bonusgil} gils!" },

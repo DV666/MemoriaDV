@@ -24,7 +24,7 @@ namespace Memoria.Scripts.Battle
             if (!_v.Target.TryKillFrozen())
             {
                 _v.NormalPhysicalParams();
-                TranceSeekAPI.CharacterBonusPassive(_v, "PhysicalAttack");
+                
                 TranceSeekAPI.EnemyTranceBonusAttack(_v);
                 TranceSeekAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
                 TranceSeekAPI.TargetPhysicalPenaltyAndBonusAttack(_v);

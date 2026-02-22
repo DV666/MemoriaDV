@@ -5,6 +5,7 @@ using Memoria.Database;
 using System;
 using System.Collections.Generic;
 using static Memoria.Scripts.Battle.TranceSeekAPI;
+using static Memoria.Scripts.Battle.TranceSeekBattleDictionary;
 
 namespace Memoria.Scripts.Battle
 {
@@ -34,6 +35,9 @@ namespace Memoria.Scripts.Battle
             {
                 v.Target.CurrentHp = 10000;
             }
+
+            if (IsBackAttack[v.Caster.Data])
+                IsBackAttack[v.Caster.Data] = false;
 
             if (FF9StateSystem.Battle.battleMapIndex == 52 && FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum == 0 && FF9StateSystem.EventState.gEventGlobal[1305] > 0 && v.Caster.IsPlayer && v.Command.Id == BattleCommandId.Attack && v.Caster.Data != v.Target.Data)
             { // Black Waltz 3 Broken (Polarity Mechanic)
@@ -440,7 +444,7 @@ namespace Memoria.Scripts.Battle
                         }
                     }
                     BeatrixPassive[v.Caster.Data][3] = 1;
-                    UpdateRedemptionHUD(v.Caster);
+                    TranceSeekCharacterMechanic.UpdateRedemptionHUD(v.Caster);
                     v.Caster.AddDelayedModifier(
                         caster => caster.CurrentAtb >= caster.MaximumAtb,
                         caster =>
@@ -454,7 +458,7 @@ namespace Memoria.Scripts.Battle
             {
                 v.Target.AlterStatus(TranceSeekStatus.Redemption, v.Caster);
                 BeatrixPassive[v.Target.Data][3] = 1;
-                UpdateRedemptionHUD(v.Target);
+                TranceSeekCharacterMechanic.UpdateRedemptionHUD(v.Target);
                 v.Caster.AddDelayedModifier(
                     caster => caster.CurrentAtb >= caster.MaximumAtb,
                     caster =>
@@ -536,7 +540,7 @@ namespace Memoria.Scripts.Battle
 
             if (Configuration.Battle.Speed == 2)
             {
-                OverloadOnBattleScriptEndScript.EikoMougMechanic(v);
+                TranceSeekCharacterMechanic.EikoMougMechanic(v);
             }
             else // [TODO] Can be improved ?
             {
@@ -545,7 +549,7 @@ namespace Memoria.Scripts.Battle
                     caster => (counter -= BattleState.ATBTickCount) > 0,
                     caster =>
                     {
-                        OverloadOnBattleScriptEndScript.EikoMougMechanic(v);
+                        TranceSeekCharacterMechanic.EikoMougMechanic(v);
                     }
                 );
             }

@@ -1,7 +1,6 @@
 ﻿using Memoria.Data;
 using System;
 using System.Collections.Generic;
-using static Memoria.Scripts.Battle.TranceSeekAPI;
 
 namespace Memoria.Scripts.Battle
 {
@@ -24,7 +23,7 @@ namespace Memoria.Scripts.Battle
         {
             if (_v.Caster.PlayerIndex == CharacterId.Beatrix && (_v.Command.AbilityId == (BattleAbilityId)1012 || _v.Command.AbilityId == (BattleAbilityId)1054)) // Bravoure
             {
-                if (BeatrixPassive[_v.Caster.Data][2] > 0)
+                if (TranceSeekBattleDictionary.BeatrixPassive[_v.Caster.Data][2] > 0)
                 {
                     _v.Context.Flags |= BattleCalcFlags.Miss;
                     return;
@@ -37,15 +36,15 @@ namespace Memoria.Scripts.Battle
                     _v.Target.AlterStatus(TranceSeekStatus.Redemption, _v.Caster);
                 if (_v.Caster.IsUnderAnyStatus(BattleStatus.Trance))
                 {
-                    BeatrixPassive[_v.Caster.Data][2] = 2;
+                    TranceSeekBattleDictionary.BeatrixPassive[_v.Caster.Data][2] = 2;
                     _v.Command.AbilityStatus |= (BattleStatus.Regen | BattleStatus.AutoLife);
                     TranceSeekAPI.TryAlterCommandStatuses(_v);
                 }
                 else
                 {
-                    BeatrixPassive[_v.Caster.Data][2] = 1;
+                    TranceSeekBattleDictionary.BeatrixPassive[_v.Caster.Data][2] = 1;
                 }
-                UpdateRedemptionHUD(_v.Target);
+                TranceSeekCharacterMechanic.UpdateRedemptionHUD(_v.Target);
                 return;
             }
             else if (_v.Caster.Data.dms_geo_id == 410 && _v.Command.Power == 2 || (_v.Caster.Data.dms_geo_id == 410 && _v.Command.Power == 4 || _v.Command.AbilityId == (BattleAbilityId)1081)) // [Lani] Adrénaline + Super Muscles

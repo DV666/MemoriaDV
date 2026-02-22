@@ -12,6 +12,8 @@ using System.IO;
 using System.Linq;
 using UnityEngine;
 using static Memoria.Scripts.Battle.TranceSeekAPI;
+using static Memoria.Scripts.Battle.TranceSeekBattleDictionary;
+using static UIManager;
 
 namespace Memoria.Scripts.Battle
 {
@@ -33,6 +35,7 @@ namespace Memoria.Scripts.Battle
                     FF9StateSystem.EventState.gEventGlobal[1407] = 0;
             }
 
+            BTL_SCENE btl_scene = FF9StateSystem.Battle.FF9Battle.btl_scene;
             SB2_PATTERN sb2Pattern = FF9StateSystem.Battle.FF9Battle.btl_scene.PatAddr[FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum];
             KeyValuePair<Int32, Int32> BattleExID = new KeyValuePair<Int32, Int32>(FF9StateSystem.Battle.battleMapIndex, FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum);
 
@@ -161,6 +164,9 @@ namespace Memoria.Scripts.Battle
             {
                 if (unit.IsPlayer)
                 {
+                    if (btl_scene.Info.StartType == battle_start_type_tags.BTL_START_BACK_ATTACK)
+                        IsBackAttack[unit.Data] = true;
+
                     if ((FF9StateSystem.Battle.battleMapIndex == 334 || FF9StateSystem.Battle.battleMapIndex == 335)) // Add Steal command for Zidane/Marcus against Steiner 2nd
                     {
                         if (unit.PlayerIndex == CharacterId.Zidane || unit.PlayerIndex == CharacterId.Marcus)
@@ -435,6 +441,9 @@ namespace Memoria.Scripts.Battle
                 }
                 else // Monsters init
                 {
+                    if (btl_scene.Info.StartType == battle_start_type_tags.BTL_START_FIRST_ATTACK)
+                        IsBackAttack[unit.Data] = true;
+
                     BattleEnemy battleEnemy = BattleEnemy.Find(unit);
                     Boolean ChangeStats = true;
                     if (FF9StateSystem.EventState.gEventGlobal[1403] >= 3)
@@ -508,7 +517,6 @@ namespace Memoria.Scripts.Battle
                         TranceSeekSpecial.PolaritySPS[unit] = sps;
                     }
 
-                    BTL_SCENE btl_scene = FF9StateSystem.Battle.FF9Battle.btl_scene;
                     SB2_PUT enemyPlacement = btl_scene.PatAddr[FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum].Monster[unit.Data.bi.slot_no];
                     SB2_MON_PARM monParam = btl_scene.MonAddr[enemyPlacement.TypeNo];
 
@@ -579,17 +587,21 @@ namespace Memoria.Scripts.Battle
                 InfusedWeaponScript.WeaponNewStatus[unit.Data] = 0;
                 AdditionalModel[unit.Data] = null;
                 InfusedWeaponScript.CMDVanillaName[unit.Data] = [null, null];
+                IsBackAttack[unit.Data] = false;
 
                 if (unit.PlayerIndex == CharacterId.Zidane)
                     SwitchWeaponScript.InitZidaneModel(unit);
             }
 
-            if (FF9StateSystem.EventState.gEventGlobal[1403] == 4 || FF9StateSystem.EventState.gEventGlobal[1403] == 5 || FF9StateSystem.EventState.gEventGlobal[1403] == 6)
+            if (false)
             {
-                string fullPath = "TranceSeek/StreamingAssets/Data/Characters/Abilities/AbilityFeatures.txt";
-                Dictionary<SupportAbility, SupportingAbilityFeature> result = new Dictionary<SupportAbility, SupportingAbilityFeature>();
-                ff9abil.LoadAbilityFeatureFile(ref result, File.ReadAllText(fullPath), fullPath);
-                ff9abil._FF9Abil_SaFeature = result;
+                if (FF9StateSystem.EventState.gEventGlobal[1403] == 4 || FF9StateSystem.EventState.gEventGlobal[1403] == 5 || FF9StateSystem.EventState.gEventGlobal[1403] == 6)
+                {
+                    string fullPath = "TranceSeek/StreamingAssets/Data/Characters/Abilities/AbilityFeatures.txt";
+                    Dictionary<SupportAbility, SupportingAbilityFeature> result = new Dictionary<SupportAbility, SupportingAbilityFeature>();
+                    ff9abil.LoadAbilityFeatureFile(ref result, File.ReadAllText(fullPath), fullPath);
+                    ff9abil._FF9Abil_SaFeature = result;
+                }
             }
         }
 

@@ -36,7 +36,7 @@ namespace Memoria.Scripts.Battle
                     else
                     {
                         _v.NormalPhysicalParams();
-                        TranceSeekAPI.CharacterBonusPassive(_v, "PhysicalAttack");
+                        
                     }
                     TranceSeekAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
                     TranceSeekAPI.EnemyTranceBonusAttack(_v);

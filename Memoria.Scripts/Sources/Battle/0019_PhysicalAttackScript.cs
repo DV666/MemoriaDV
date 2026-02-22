@@ -29,7 +29,7 @@ namespace Memoria.Scripts.Battle
             {
                 _v.NormalPhysicalParams();
             }
-            TranceSeekAPI.CharacterBonusPassive(_v, "PhysicalAttack");
+            
             if ((_v.Command.AbilityId == (BattleAbilityId)1005 || _v.Command.AbilityId == (BattleAbilityId)1042) && _v.Command.IsATBCommand) // Attaque Eclair, Hikari
             {
                 _v.Command.Element = _v.Caster.WeaponElement;
@@ -77,7 +77,7 @@ namespace Memoria.Scripts.Battle
                 }
                 else if (_v.Command.AbilityId == (BattleAbilityId)1009) // Pluto Charge
                 {
-                    int factorDefense = _v.Caster.PhysicalDefence + (_v.Caster.PhysicalDefence * (TranceSeekAPI.StackBreakOrUpStatus[_v.Caster.Data][2]) / 100);
+                    int factorDefense = _v.Caster.PhysicalDefence + (_v.Caster.PhysicalDefence * (TranceSeekBattleDictionary.StackBreakOrUpStatus[_v.Caster.Data][2]) / 100);
                     _v.Target.HpDamage = (_v.Target.HpDamage * factorDefense) / 100;
                 }
                 else if (_v.Command.AbilityId == (BattleAbilityId)1043) // Fury of the general

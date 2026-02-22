@@ -251,7 +251,7 @@ namespace Memoria.Scripts.Battle
                             if (TranceSeekAPI.TryPhysicalHit(_v))
                             {
                                 _v.NormalPhysicalParams();
-                                TranceSeekAPI.CharacterBonusPassive(_v, "PhysicalAttack");
+                                
                                 TranceSeekAPI.EnemyTranceBonusAttack(_v);
                                 TranceSeekAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
                                 TranceSeekAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
@@ -334,7 +334,7 @@ namespace Memoria.Scripts.Battle
                     case (BattleAbilityId)1374: // Yeti - Blizzara
                     {
                         _v.NormalMagicParams();
-                        TranceSeekAPI.CharacterBonusPassive(_v, "MagicAttack");
+                        
                         TranceSeekAPI.CasterPenaltyMini(_v);
                         TranceSeekAPI.EnemyTranceBonusAttack(_v);
                         TranceSeekAPI.PenaltyShellAttack(_v);
@@ -362,7 +362,7 @@ namespace Memoria.Scripts.Battle
                             return;
                         }
                         _v.NormalMagicParams();
-                        TranceSeekAPI.CharacterBonusPassive(_v, "MagicAttack");
+                        
                         TranceSeekAPI.CasterPenaltyMini(_v);
                         TranceSeekAPI.EnemyTranceBonusAttack(_v);
                         TranceSeekAPI.PenaltyCommandDividedAttack(_v);
@@ -464,7 +464,7 @@ namespace Memoria.Scripts.Battle
                             return;
 
                         _v.NormalMagicParams();
-                        TranceSeekAPI.CharacterBonusPassive(_v, "MagicAttack");
+                        
                         TranceSeekAPI.CasterPenaltyMini(_v);
                         TranceSeekAPI.EnemyTranceBonusAttack(_v);
                         TranceSeekAPI.PenaltyShellAttack(_v);
@@ -499,7 +499,7 @@ namespace Memoria.Scripts.Battle
                         {
                             uint currentHp = _v.Target.CurrentHp;
                             _v.NormalMagicParams();
-                            TranceSeekAPI.CharacterBonusPassive(_v, "MagicAttack");
+                            
                             TranceSeekAPI.EnemyTranceBonusAttack(_v);
                             TranceSeekAPI.BonusElement(_v);
                             TranceSeekAPI.CasterPenaltyMini(_v);
@@ -592,12 +592,12 @@ namespace Memoria.Scripts.Battle
                         }
                         if (_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill))
                         {
-                            _v.Target.HpDamage = Math.Max(1, (_v.Target.HpDamage / TranceSeekAPI.MonsterMechanic[_v.Target.Data][5]));
-                            TranceSeekAPI.MonsterMechanic[_v.Target.Data][5] = TranceSeekAPI.MonsterMechanic[_v.Target.Data][5] * 2;
+                            _v.Target.HpDamage = Math.Max(1, (_v.Target.HpDamage / TranceSeekBattleDictionary.MonsterMechanic[_v.Target.Data][5]));
+                            TranceSeekBattleDictionary.MonsterMechanic[_v.Target.Data][5] = TranceSeekBattleDictionary.MonsterMechanic[_v.Target.Data][5] * 2;
                         }
                         TranceSeekAPI.TryAlterMagicStatuses(_v);
 
-                        if (TranceSeekAPI.AbsorbElement.TryGetValue(_v.Target.Data, out Int32 elementprotect))
+                        if (TranceSeekBattleDictionary.AbsorbElement.TryGetValue(_v.Target.Data, out Int32 elementprotect))
                             if (elementprotect == 256)
                                 _v.Target.Flags |= CalcFlag.HpRecovery;
                         break;
@@ -655,7 +655,7 @@ namespace Memoria.Scripts.Battle
                                     else
                                     {
                                         _v.NormalMagicParams();
-                                        TranceSeekAPI.CharacterBonusPassive(_v, "MagicAttack");
+                                        
                                         TranceSeekAPI.CasterPenaltyMini(_v);
                                         TranceSeekAPI.PenaltyShellAttack(_v);
                                         TranceSeekAPI.PenaltyCommandDividedAttack(_v);
@@ -775,7 +775,7 @@ namespace Memoria.Scripts.Battle
                             else
                             {
                                 _v.NormalMagicParams();
-                                TranceSeekAPI.CharacterBonusPassive(_v, "MagicAttack");
+                                
                                 TranceSeekAPI.CasterPenaltyMini(_v);
                                 TranceSeekAPI.PenaltyShellAttack(_v);
                                 TranceSeekAPI.PenaltyCommandDividedAttack(_v);
@@ -826,7 +826,7 @@ namespace Memoria.Scripts.Battle
                             if (_v.Caster.IsPlayer)
                             {
                                 _v.WeaponPhysicalParams();
-                                TranceSeekAPI.CharacterBonusPassive(_v, "LowPhysicalAttack");
+                                
                             }
                             else
                             {
@@ -862,7 +862,7 @@ namespace Memoria.Scripts.Battle
                             if (_v.Caster.IsPlayer)
                             {
                                 _v.WeaponPhysicalParams();
-                                TranceSeekAPI.CharacterBonusPassive(_v, "LowPhysicalAttack");
+                                
                             }
                             else
                             {
@@ -898,7 +898,7 @@ namespace Memoria.Scripts.Battle
                             if (_v.Caster.IsPlayer)
                             {
                                 _v.WeaponPhysicalParams();
-                                TranceSeekAPI.CharacterBonusPassive(_v, "LowPhysicalAttack");
+                                
                             }
                             else
                             {
@@ -944,7 +944,7 @@ namespace Memoria.Scripts.Battle
                                 if (TranceSeekAPI.TryPhysicalHit(_v))
                                 {
                                     _v.NormalPhysicalParams();
-                                    TranceSeekAPI.CharacterBonusPassive(_v, "PhysicalAttack");
+                                    
                                     TranceSeekAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
                                     TranceSeekAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
                                     TranceSeekAPI.BonusBackstabAndPenaltyLongDistance(_v);
@@ -1014,7 +1014,7 @@ namespace Memoria.Scripts.Battle
                         uint num = Math.Min(((_v.Caster.MaximumHp - _v.Caster.CurrentHp) / 33), 100);
                         _v.NormalMagicParams();
                         _v.Context.AttackPower = (int)(_v.Command.Power + num);
-                        TranceSeekAPI.CharacterBonusPassive(_v, "MagicAttack");
+                        
                         TranceSeekAPI.CasterPenaltyMini(_v);
                         TranceSeekAPI.PenaltyShellAttack(_v);
                         TranceSeekAPI.PenaltyCommandDividedAttack(_v);
@@ -1043,7 +1043,7 @@ namespace Memoria.Scripts.Battle
                         if (TranceSeekAPI.TryPhysicalHit(_v))
                         {
                             _v.NormalPhysicalParams();
-                            TranceSeekAPI.CharacterBonusPassive(_v, "PhysicalAttack");
+                            
                             TranceSeekAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
                             TranceSeekAPI.EnemyTranceBonusAttack(_v);
                             TranceSeekAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
@@ -1113,7 +1113,7 @@ namespace Memoria.Scripts.Battle
                             else
                             {
                                 _v.NormalPhysicalParams();
-                                TranceSeekAPI.CharacterBonusPassive(_v, "PhysicalAttack");
+                                
                             }
                             TranceSeekAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
                             TranceSeekAPI.EnemyTranceBonusAttack(_v);
@@ -1220,7 +1220,7 @@ namespace Memoria.Scripts.Battle
                     case (BattleAbilityId)1376: // Zombie - Poison
                     {
                         _v.NormalMagicParams();
-                        TranceSeekAPI.CharacterBonusPassive(_v, "MagicAttack");
+                        
                         TranceSeekAPI.CasterPenaltyMini(_v);
                         TranceSeekAPI.EnemyTranceBonusAttack(_v);
                         TranceSeekAPI.PenaltyShellAttack(_v);

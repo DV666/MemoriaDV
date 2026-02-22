@@ -36,7 +36,7 @@ namespace Memoria.Scripts.Battle
                 }
                 case (BattleAbilityId)1155: // Peuh!
                 {
-                    TranceSeekAPI.SpecialSAEffect[_v.Target.Data][11] = 1;
+                    TranceSeekBattleDictionary.SpecialSAEffect[_v.Target.Data][11] = 1;
                     break;
                 }
                 case (BattleAbilityId)1156: // A gift for you!
@@ -77,7 +77,7 @@ namespace Memoria.Scripts.Battle
                 }
                 case (BattleAbilityId)1158: // That's all?
                 {
-                    if (TranceSeekAPI.SpecialSAEffect[_v.Target.Data][12] != 0)
+                    if (TranceSeekBattleDictionary.SpecialSAEffect[_v.Target.Data][12] != 0)
                     {
                         _v.Context.Flags |= BattleCalcFlags.Miss;
                         return;
@@ -85,13 +85,13 @@ namespace Memoria.Scripts.Battle
 
                     uint VanillaMaxMP = _v.Target.MaximumHp;
                     _v.Target.MaximumHp *= 2;
-                    TranceSeekAPI.SpecialSAEffect[_v.Target.Data][12] = 1;
+                    TranceSeekBattleDictionary.SpecialSAEffect[_v.Target.Data][12] = 1;
                     _v.Target.AddDelayedModifier(
                         target => !target.IsUnderAnyStatus(BattleStatus.Death),
                         target =>
                         {
                             target.MaximumHp = VanillaMaxMP;
-                            TranceSeekAPI.SpecialSAEffect[_v.Target.Data][12] = 0;
+                            TranceSeekBattleDictionary.SpecialSAEffect[_v.Target.Data][12] = 0;
                         }
                     );
                     break;

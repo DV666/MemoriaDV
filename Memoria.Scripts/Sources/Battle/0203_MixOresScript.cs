@@ -225,16 +225,16 @@ namespace Memoria.Scripts.Battle
                     string ItemName = FF9TextTool.ItemName(_v.Command.ItemId);
 
                     if (ElementItem.ContainsKey(_v.Command.ItemId))
-                        TranceSeekAPI.AbsorbElement[_v.Target.Data] = (Int32)ElementItem[_v.Command.ItemId];
+                        TranceSeekBattleDictionary.AbsorbElement[_v.Target.Data] = (Int32)ElementItem[_v.Command.ItemId];
                     if (_v.Command.ItemId == (RegularItem)2345 || _v.Command.ItemId == (RegularItem)2356)
-                        TranceSeekAPI.AbsorbElement[_v.Target.Data] = 256; // Gravity
+                        TranceSeekBattleDictionary.AbsorbElement[_v.Target.Data] = 256; // Gravity
 
                     Int32 wait = (short)((400 + (_v.Caster.Will * 3)) * 30);
                     _v.Target.AddDelayedModifier(
                     target => (wait -= target.Data.cur.at_coef * BattleState.ATBTickCount) > 0,
                     target =>
                     {
-                        TranceSeekAPI.AbsorbElement[_v.Target.Data] = -1;
+                        TranceSeekBattleDictionary.AbsorbElement[_v.Target.Data] = -1;
                         if (!Message)
                         {
                             Dictionary<String, String> localizedStatusProtect = new Dictionary<String, String>

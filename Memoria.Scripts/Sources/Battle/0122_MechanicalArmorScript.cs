@@ -26,20 +26,20 @@ namespace Memoria.Scripts.Battle
             {
                 if (_v.Command.Power == 100 && _v.Command.HitRate == 100)
                 {
-                    TranceSeekAPI.MonsterMechanic[_v.Caster.Data][1] = 10;
+                    TranceSeekBattleDictionary.MonsterMechanic[_v.Caster.Data][1] = 10;
                     _v.Target.Data.mot[2] = "ANH_MON_B3_185_000";
                     _v.Target.Flags |= CalcFlag.HpDamageOrHeal;
                     _v.Target.HpDamage = 5000;
-                    _v.Target.TryAlterSingleStatus(TranceSeekStatusId.MechanicalArmor, true, _v.Caster, TranceSeekAPI.MonsterMechanic[_v.Caster.Data][1]);
+                    _v.Target.TryAlterSingleStatus(TranceSeekStatusId.MechanicalArmor, true, _v.Caster, TranceSeekBattleDictionary.MonsterMechanic[_v.Caster.Data][1]);
                 }
                 else if (_v.Command.Power == 200 && _v.Command.HitRate == 200)
                 {
-                    TranceSeekAPI.MonsterMechanic[_v.Caster.Data][1] = 20;
+                    TranceSeekBattleDictionary.MonsterMechanic[_v.Caster.Data][1] = 20;
                     _v.Target.Data.mot[2] = "ANH_MON_B3_185_000";
                     _v.Target.Flags |= CalcFlag.HpDamageOrHeal;
                     _v.Target.HpDamage = 9999;
                     _v.Target.PhysicalEvade = 0;
-                    _v.Target.TryAlterSingleStatus(TranceSeekStatusId.MechanicalArmor, true, _v.Caster, TranceSeekAPI.MonsterMechanic[_v.Caster.Data][1]);
+                    _v.Target.TryAlterSingleStatus(TranceSeekStatusId.MechanicalArmor, true, _v.Caster, TranceSeekBattleDictionary.MonsterMechanic[_v.Caster.Data][1]);
                 }
                 _v.Target.TryRemoveStatuses(_v.Command.AbilityStatus);
             }

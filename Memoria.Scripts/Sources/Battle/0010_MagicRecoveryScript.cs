@@ -30,7 +30,7 @@ namespace Memoria.Scripts.Battle
             else
             {
                 _v.NormalMagicParams();
-                TranceSeekAPI.CharacterBonusPassive(_v, "MagicAttack");
+                
                 TranceSeekAPI.CasterPenaltyMini(_v);
                 TranceSeekAPI.EnemyTranceBonusAttack(_v);
                 TranceSeekAPI.PenaltyCommandDividedAttack(_v);
@@ -62,7 +62,7 @@ namespace Memoria.Scripts.Battle
                         caster => caster.CurrentAtb >= caster.MaximumAtb,
                         caster =>
                         {
-                            TranceSeekAPI.MonsterMechanic[_v.Target.Data][1] = Math.Min((int)(PreviousHP - _v.Target.CurrentHp), 9999);
+                            TranceSeekBattleDictionary.MonsterMechanic[_v.Target.Data][1] = Math.Min((int)(PreviousHP - _v.Target.CurrentHp), 9999);
                         }
                     );
                     _v.Target.TryAlterSingleStatus(TranceSeekStatusId.ZombieArmor, true, _v.Caster, _v.Target.HpDamage);

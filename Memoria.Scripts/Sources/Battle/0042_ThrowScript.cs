@@ -85,7 +85,7 @@ namespace Memoria.Scripts.Battle
                                 _v.Context.Flags |= BattleCalcFlags.Miss;
                             }
                             _v.Caster.SetLowPhysicalAttack();
-                            TranceSeekAPI.CharacterBonusPassive(_v, "LowPhysicalAttack");
+                            
                             _v.Target.SetPhysicalDefense();
                             _v.Context.AttackPower = _v.Command.Weapon.Power << 1;
                             TranceSeekAPI.CasterPhysicalPenaltyAndBonusAttack(_v);

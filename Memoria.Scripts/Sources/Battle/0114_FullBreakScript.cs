@@ -36,7 +36,7 @@ namespace Memoria.Scripts.Battle
                 if (_v.Caster.IsPlayer)
                 {
                     _v.WeaponPhysicalParams();
-                    TranceSeekAPI.CharacterBonusPassive(_v, "LowPhysicalAttack");
+                    
                 }
                 else
                 {

@@ -26,7 +26,7 @@ namespace Memoria.Scripts.Battle
             if (_v.Caster.PlayerIndex != CharacterId.Steiner && data.dms_geo_id != 296 && data.dms_geo_id != 298)
             {
                 _v.NormalMagicParams();
-                TranceSeekAPI.CharacterBonusPassive(_v, "MagicAttack");
+                
                 if (data.dms_geo_id == 553)
                 {
                     if (_v.Target.Level == _v.Caster.Level)
@@ -70,8 +70,8 @@ namespace Memoria.Scripts.Battle
                     }
 
                     int ChanceDeathBlow = 33;
-                    if (TranceSeekAPI.SteinerPassive[_v.Caster.Data][1] > 0)
-                        ChanceDeathBlow += 10 * TranceSeekAPI.SteinerPassive[_v.Caster.Data][1];
+                    if (TranceSeekBattleDictionary.SteinerPassive[_v.Caster.Data][1] > 0)
+                        ChanceDeathBlow += 10 * TranceSeekBattleDictionary.SteinerPassive[_v.Caster.Data][1];
 
                     if (Comn.random16() % 100 > ChanceDeathBlow && _v.Command.AbilityId != (BattleAbilityId)1551)
                     {
@@ -109,8 +109,8 @@ namespace Memoria.Scripts.Battle
                         }
                     }
 
-                    if (TranceSeekAPI.SteinerPassive[_v.Caster.Data][1] > 0)
-                        TranceSeekAPI.ResetSteinerPassive(_v.Caster);
+                    if (TranceSeekBattleDictionary.SteinerPassive[_v.Caster.Data][1] > 0)
+                        TranceSeekCharacterMechanic.ResetSteinerPassive(_v.Caster);
                 }
             }
         }

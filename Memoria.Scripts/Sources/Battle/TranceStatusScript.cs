@@ -2,14 +2,10 @@
 using Memoria.Data;
 using FF9;
 using Object = System.Object;
-using static Memoria.Scripts.Battle.TranceSeekAPI;
-using Memoria.Prime;
 using UnityEngine;
-using System.IO;
 using System.Collections.Generic;
 using Memoria.Scripts.Battle;
-using System.Linq;
-using static SFXDataMesh.Raw;
+using static Memoria.Scripts.Battle.TranceSeekBattleDictionary;
 
 namespace Memoria.DefaultScripts
 {

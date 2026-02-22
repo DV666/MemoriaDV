@@ -35,17 +35,16 @@ namespace Memoria.Scripts.Battle
 
                 if (_v.Caster.IsPlayer)
                 {
-                    _v.WeaponPhysicalParams();
-                    TranceSeekAPI.CharacterBonusPassive(_v, "LowPhysicalAttack");
+                    _v.WeaponPhysicalParams();                    
                 }
                 else
                 {
                     _v.NormalPhysicalParams();
                 }
-                if (TranceSeekAPI.SteinerPassive[_v.Caster.Data][1] > 0)
+                if (TranceSeekBattleDictionary.SteinerPassive[_v.Caster.Data][1] > 0)
                 {
-                    _v.Command.HitRate += 10 * TranceSeekAPI.SteinerPassive[_v.Caster.Data][1];
-                    TranceSeekAPI.ResetSteinerPassive(_v.Caster);
+                    _v.Command.HitRate += 10 * TranceSeekBattleDictionary.SteinerPassive[_v.Caster.Data][1];
+                    TranceSeekCharacterMechanic.ResetSteinerPassive(_v.Caster);
                 }
 
                 TranceSeekAPI.MagicAccuracy(_v);

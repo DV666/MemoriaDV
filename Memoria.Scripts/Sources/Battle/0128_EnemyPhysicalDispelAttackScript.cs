@@ -36,7 +36,7 @@ namespace Memoria.Scripts.Battle
 
                 btl_stat.RemoveStatuses(_v.Target, _v.Command.AbilityStatus);
                 _v.NormalPhysicalParams();
-                TranceSeekAPI.CharacterBonusPassive(_v, "PhysicalAttack");
+                
                 TranceSeekAPI.EnemyTranceBonusAttack(_v);
                 TranceSeekAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
                 TranceSeekAPI.TargetPhysicalPenaltyAndBonusAttack(_v);

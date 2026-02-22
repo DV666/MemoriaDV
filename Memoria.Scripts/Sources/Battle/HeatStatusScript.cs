@@ -29,7 +29,7 @@ namespace Memoria.DefaultScripts
             if (Target.IsUnderAnyStatus(BattleStatus.Heat) && !Target.IsPlayer && Target.CurrentHp > 1) // Heat Damage on monsters
             {
                 UInt32 heat_damage = (uint)(Target.MaximumHp / (Target.IsUnderAnyStatus(BattleStatus.EasyKill) ? 128 : 32));
-                if (TranceSeekAPI.MonsterMechanic[Target.Data][3] > 0)
+                if (TranceSeekBattleDictionary.MonsterMechanic[Target.Data][3] > 0)
                     heat_damage = (uint)((Target.MaximumHp - 10000) / (Target.IsUnderAnyStatus(BattleStatus.EasyKill) ? 128 : 32));
                 if (heat_damage > 9999)
                     heat_damage = Math.Max(Target.CurrentHp, 9999);

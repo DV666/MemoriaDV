@@ -274,7 +274,7 @@ namespace Memoria.Scripts.Battle
                 _v.Target.Flags |= (CalcFlag.HpDamageOrHeal | CalcFlag.MpDamageOrHeal);
                 _v.Target.HpDamage = (int)(_v.Target.MaximumHp - 10000);
                 _v.Target.MpDamage = (int)(_v.Target.MaximumMp);
-                TranceSeekAPI.MonsterMechanic[_v.Target.Data][4] = 100;
+                TranceSeekBattleDictionary.MonsterMechanic[_v.Target.Data][4] = 100;
                 return;
             }
             else if (_v.Command.Power == 77 && _v.Command.HitRate == 177 && _v.Caster.Data.dms_geo_id == 546) // Mad Alchemist - Dragon Power
@@ -364,7 +364,7 @@ namespace Memoria.Scripts.Battle
             else if (_v.Command.Power == 25 && _v.Command.HitRate == 111 && _v.Caster.Data.dms_geo_id == 278) // Polarity (+) with SPS effect (Black Waltz 3)
             {
                 _v.NormalMagicParams();
-                TranceSeekAPI.CharacterBonusPassive(_v, "MagicAttack");
+                
                 TranceSeekAPI.CasterPenaltyMini(_v);
                 TranceSeekAPI.EnemyTranceBonusAttack(_v);
                 TranceSeekAPI.PenaltyShellAttack(_v);
@@ -529,8 +529,8 @@ namespace Memoria.Scripts.Battle
             {
                 _v.Target.Data.stat.invalid &= ~BattleStatus.Poison;
                 _v.Target.AlterStatus(BattleStatus.Poison, _v.Caster);
-                if ((TranceSeekAPI.NewEffectElement[_v.Target.Data][0] & 8) == 0)
-                    TranceSeekAPI.NewEffectElement[_v.Target.Data][0] = 8;
+                if ((TranceSeekBattleDictionary.NewEffectElement[_v.Target.Data][0] & 8) == 0)
+                    TranceSeekBattleDictionary.NewEffectElement[_v.Target.Data][0] = 8;
             }
             else if (_v.Command.Power == 199 && _v.Command.HitRate == 199 && _v.Command.AbilityStatus == BattleStatus.Reflect) // AntiBoom from Invincible (CD3 Kuja)
             {
@@ -564,14 +564,14 @@ namespace Memoria.Scripts.Battle
                         _v.Target.Data.stat.permanent_on_hold |= BattleStatus.Stop;
                         _v.Target.Data.stat.cur |= BattleStatus.Stop;
                         _v.Target.Data.bi.target = 0;
-                        TranceSeekAPI.MonsterMechanic[_v.Caster.Data][2] = _v.Target.Id;
+                        TranceSeekBattleDictionary.MonsterMechanic[_v.Caster.Data][2] = _v.Target.Id;
                         FF9StateSystem.EventState.gEventGlobal[1305] = (byte)_v.Target.Id;
                     }
                     else
                     {
                         foreach (BattleUnit unit in BattleState.EnumerateUnits())
                         {
-                            if (TranceSeekAPI.MonsterMechanic[_v.Caster.Data][2] == unit.Id)
+                            if (TranceSeekBattleDictionary.MonsterMechanic[_v.Caster.Data][2] == unit.Id)
                             {
                                 unit.Data.bi.target = 1;
                                 unit.Data.stat.permanent_on_hold &= ~BattleStatus.Stop;

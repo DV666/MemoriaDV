@@ -24,7 +24,7 @@ namespace Memoria.Scripts.Battle
             if (_v.Command.AbilityId == (BattleAbilityId)1140) // Electroshock
             {
                 _v.NormalMagicParams();
-                TranceSeekAPI.CharacterBonusPassive(_v, "MagicAttack");
+                
                 TranceSeekAPI.CasterPenaltyMini(_v);
                 TranceSeekAPI.EnemyTranceBonusAttack(_v);
                 TranceSeekAPI.PenaltyCommandDividedAttack(_v);

@@ -26,7 +26,7 @@ namespace Memoria.Scripts.Battle
         {
             if (_v.Command.AbilityId == (BattleAbilityId)1538 || _v.Command.AbilityId == (BattleAbilityId)1539) // AA Idea + Eureka
             {
-                if (TranceSeekAPI.ViviPassive[_v.Caster.Data][0] == 0)
+                if (TranceSeekBattleDictionary.ViviPassive[_v.Caster.Data][0] == 0)
                 {
                     _v.Context.Flags |= BattleCalcFlags.Miss;
                     return;
@@ -37,12 +37,12 @@ namespace Memoria.Scripts.Battle
                     TranceSeekStatusId.MagicUp, TranceSeekStatusId.MentalUp, TranceSeekStatusId.PowerUp};
 
                 BattleStatusId statusselected;
-                while (TranceSeekAPI.ViviPassive[_v.Caster.Data][0] > 0)
+                while (TranceSeekBattleDictionary.ViviPassive[_v.Caster.Data][0] > 0)
                 {
                     statusselected = statuslist[GameRandom.Next16() % statuslist.Count];
                     btl_stat.AlterStatus(_v.Target, statusselected, _v.Caster);
                     statuslist.Remove(statusselected);
-                    TranceSeekAPI.ViviPassive[_v.Caster.Data][0]--;
+                    TranceSeekBattleDictionary.ViviPassive[_v.Caster.Data][0]--;
                 }
                 return;
             }
@@ -70,26 +70,26 @@ namespace Memoria.Scripts.Battle
             if (_v.Command.AbilityId == (BattleAbilityId)1099) // Iron Clast
             {
                 _v.Command.AbilityStatus |= TranceSeekStatus.ArmorUp;
-                if (TranceSeekAPI.SteinerPassive[_v.Target.Data][1] > 0)
+                if (TranceSeekBattleDictionary.SteinerPassive[_v.Target.Data][1] > 0)
                 {
-                    btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.ArmorUp, parameters: $"+{TranceSeekAPI.SteinerPassive[_v.Target.Data][1]}");
-                    if (TranceSeekAPI.SteinerPassive[_v.Target.Data][1] == 5)
+                    btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.ArmorUp, parameters: $"+{TranceSeekBattleDictionary.SteinerPassive[_v.Target.Data][1]}");
+                    if (TranceSeekBattleDictionary.SteinerPassive[_v.Target.Data][1] == 5)
                         _v.Target.AlterStatus(BattleStatus.Protect);
-                    TranceSeekAPI.ResetSteinerPassive(_v.Caster);
+                    TranceSeekCharacterMechanic.ResetSteinerPassive(_v.Caster);
                 }
             }
             else if (_v.Command.AbilityId == (BattleAbilityId)1007) // Rempart
             {
                 _v.Command.AbilityStatus |= TranceSeekStatus.Bulwark;
-                if (TranceSeekAPI.SteinerPassive[_v.Caster.Data][1] > 0)
+                if (TranceSeekBattleDictionary.SteinerPassive[_v.Caster.Data][1] > 0)
                 {
-                    if (TranceSeekAPI.SteinerPassive[_v.Caster.Data][1] == 5)
+                    if (TranceSeekBattleDictionary.SteinerPassive[_v.Caster.Data][1] == 5)
                         btl_stat.RemoveStatus(_v.Target, TranceSeekStatusId.ArmorBreak);
 
                     btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.ArmorUp);
-                    if (TranceSeekAPI.SteinerPassive[_v.Caster.Data][1] >= 3)
+                    if (TranceSeekBattleDictionary.SteinerPassive[_v.Caster.Data][1] >= 3)
                         btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.ArmorUp);
-                    TranceSeekAPI.ResetSteinerPassive(_v.Caster);
+                    TranceSeekCharacterMechanic.ResetSteinerPassive(_v.Caster);
                 }
             }
             else if (_v.Command.AbilityId == (BattleAbilityId)1059) // Runic
@@ -151,12 +151,12 @@ namespace Memoria.Scripts.Battle
             TranceSeekAPI.TryAlterCommandStatuses(_v);
             if (_v.Command.AbilityId == (BattleAbilityId)1137) // Spring Boots
             {
-                TranceSeekAPI.SpecialSAEffect[_v.Target.Data][8] = 1;
+                TranceSeekBattleDictionary.SpecialSAEffect[_v.Target.Data][8] = 1;
                 _v.Context.Flags = 0;
             }
             if (_v.Command.AbilityId == (BattleAbilityId)1139) // Spring Boots
             {
-                TranceSeekAPI.SpecialSAEffect[_v.Target.Data][9] = 3;
+                TranceSeekBattleDictionary.SpecialSAEffect[_v.Target.Data][9] = 3;
                 _v.Context.Flags = 0;
             }
         }

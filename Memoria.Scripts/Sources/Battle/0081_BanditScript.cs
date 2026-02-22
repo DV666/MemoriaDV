@@ -39,7 +39,7 @@ namespace Memoria.Scripts.Battle
                 }
 
                 float BonusRatioHP = 0;
-                if (TranceSeekAPI.MonsterMechanic[_v.Target.Data][3] > 0)
+                if (TranceSeekBattleDictionary.MonsterMechanic[_v.Target.Data][3] > 0)
                     BonusRatioHP = 100 - ((_v.Target.CurrentHp * 100) / (_v.Target.MaximumHp - 10000));
                 else
                     BonusRatioHP = 100 - ((_v.Target.CurrentHp * 100)/ _v.Target.MaximumHp);
@@ -75,7 +75,7 @@ namespace Memoria.Scripts.Battle
             {
                 _v.NormalPhysicalParams();
             }
-            TranceSeekAPI.CharacterBonusPassive(_v, "PhysicalAttack");
+            
             TranceSeekAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
             TranceSeekAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
             TranceSeekAPI.EnemyTranceBonusAttack(_v);

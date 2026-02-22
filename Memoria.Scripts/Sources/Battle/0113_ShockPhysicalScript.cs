@@ -31,7 +31,7 @@ namespace Memoria.Scripts.Battle
                 }
 
                 _v.WeaponPhysicalParams();
-                TranceSeekAPI.CharacterBonusPassive(_v, "PhysicalAttack");
+                
                 TranceSeekAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
                 TranceSeekAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
                 if (_v.Target.IsUnderAnyStatus(BattleStatus.Protect))
@@ -55,7 +55,7 @@ namespace Memoria.Scripts.Battle
                     _v.Target.RemoveStatus(BattleStatus.Reflect);
                 }
                 _v.NormalPhysicalParams();
-                TranceSeekAPI.CharacterBonusPassive(_v, "PhysicalAttack");
+                
                 TranceSeekAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
                 TranceSeekAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
                 if (_v.Target.IsUnderAnyStatus(BattleStatus.Protect))

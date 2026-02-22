@@ -23,7 +23,7 @@ namespace Memoria.Scripts.Battle
             uint num = Math.Min(((_v.Caster.MaximumHp - _v.Caster.CurrentHp) / 33), 100);
             _v.NormalMagicParams();
             _v.Context.AttackPower = (int)(_v.Command.Power + num);
-            TranceSeekAPI.CharacterBonusPassive(_v, "MagicAttack");
+            
             TranceSeekAPI.CasterPenaltyMini(_v);
             TranceSeekAPI.PenaltyShellAttack(_v);
             TranceSeekAPI.PenaltyCommandDividedAttack(_v);

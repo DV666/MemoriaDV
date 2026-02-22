@@ -42,7 +42,7 @@ namespace Memoria.Scripts.Battle
                     _v.Target.HpDamage = 9999;
                     _v.Target.MpDamage = 999;
                     if (_v.Target.Data.dms_geo_id == 416)
-                        MonsterMechanic[_v.Target.Data][1] = 9999;
+                        TranceSeekBattleDictionary.MonsterMechanic[_v.Target.Data][1] = 9999;
 
                     return;
                 }

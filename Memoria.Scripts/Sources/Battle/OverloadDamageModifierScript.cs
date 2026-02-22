@@ -121,9 +121,9 @@ namespace Memoria.Scripts.Battle
             }
 
             TranceSeekAPI.SpecialEffect(v);
-            TranceSeekAPI.DragonMechanic(v); // Need to be in OverloadOnBattleScriptEndScript.cs
+            TranceSeekCharacterMechanic.GarnetGemMechanic(v);
 
-            if (v.Target.PlayerIndex == CharacterId.Amarant && SpecialSAEffect[v.Target.Data][0] == 1 && (v.Command.AbilityCategory & 8) != 0 && v.Target.IsUnderAnyStatus(BattleStatus.Defend)) // Duel Amarant
+            if (v.Target.PlayerIndex == CharacterId.Amarant && TranceSeekBattleDictionary.SpecialSAEffect[v.Target.Data][0] == 1 && (v.Command.AbilityCategory & 8) != 0 && v.Target.IsUnderAnyStatus(BattleStatus.Defend)) // Duel Amarant
             {
                 if (v.Target.HasSupportAbilityByIndex((SupportAbility)231) && (v.Target.HasSupportAbilityByIndex((SupportAbility)1231) ? 50 : 25) > Comn.random16() % 100) // SA Ferocity
                 {
@@ -141,7 +141,7 @@ namespace Memoria.Scripts.Battle
                 }
                 else
                 {
-                    SpecialSAEffect[v.Target.Data][0] = 0;
+                    TranceSeekBattleDictionary.SpecialSAEffect[v.Target.Data][0] = 0;
                 }
             }
 
@@ -168,9 +168,9 @@ namespace Memoria.Scripts.Battle
                     v.Target.MpDamage = Math.Min(v.Target.MpDamage, 9999);
             }
 
-            if (SpecialSAEffect[v.Target.Data][11] == 1 && v.Target.HpDamage < v.Target.CurrentHp && (v.Command.AbilityCategory & 8) != 0 && (v.Target.Flags & CalcFlag.HpRecovery) == 0) // Peuh!
+            if (TranceSeekBattleDictionary.SpecialSAEffect[v.Target.Data][11] == 1 && v.Target.HpDamage < v.Target.CurrentHp && (v.Command.AbilityCategory & 8) != 0 && (v.Target.Flags & CalcFlag.HpRecovery) == 0) // Peuh!
             {
-                SpecialSAEffect[v.Target.Data][11] = 0;
+                TranceSeekBattleDictionary.SpecialSAEffect[v.Target.Data][11] = 0;
                 v.Context.Flags |= BattleCalcFlags.Guard;
                 v.Target.HpDamage = 0;
                 Dictionary<String, String> localizedMessage = new Dictionary<String, String>
@@ -205,8 +205,8 @@ namespace Memoria.Scripts.Battle
                 btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[FF19EE]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 0);
                 SoundLib.PlaySoundEffect(4004); //se511115
             }
-                
-            TranceSeekAPI.SpecialItems(v);
+
+            TranceSeekRegularItem.SpecialItems(v);
         }
     }
 }

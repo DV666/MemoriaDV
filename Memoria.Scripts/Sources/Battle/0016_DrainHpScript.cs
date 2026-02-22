@@ -33,7 +33,7 @@ namespace Memoria.Scripts.Battle
 
                     Int32 damage = 0;
                     _v.NormalMagicParams();
-                    TranceSeekAPI.CharacterBonusPassive(_v, "MagicAttack");
+                    
                     TranceSeekAPI.CasterPenaltyMini(_v);
                     TranceSeekAPI.EnemyTranceBonusAttack(_v);
                     TranceSeekAPI.PenaltyShellAttack(_v);
@@ -81,7 +81,7 @@ namespace Memoria.Scripts.Battle
             {
                 uint currentHp = _v.Target.CurrentHp;
                 _v.NormalMagicParams();
-                TranceSeekAPI.CharacterBonusPassive(_v, "MagicAttack");
+                
                 TranceSeekAPI.EnemyTranceBonusAttack(_v);
                 TranceSeekAPI.BonusElement(_v);
                 TranceSeekAPI.CasterPenaltyMini(_v);

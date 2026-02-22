@@ -60,22 +60,29 @@ namespace Memoria.Scripts.Battle
                     _v.CalcCannonProportionDamage();
                     if (_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill) || TranceSeekAPI.EliteMonster(_v.Target.Data))
                     {
-                        if (TranceSeekAPI.MonsterMechanic[_v.Target.Data][3] == 1 && _v.Target.CurrentHp > 10000)
+                        if (TranceSeekBattleDictionary.MonsterMechanic[_v.Target.Data][3] == 1 && _v.Target.CurrentHp > 10000)
                             _v.Target.HpDamage = (Int32)(_v.Target.CurrentHp - 10000) * _v.Context.Attack / 100;
                         else
                             _v.Target.HpDamage = (Int32)_v.Target.CurrentHp * _v.Context.Attack / 100;
 
-                        _v.Target.HpDamage = Math.Max(1, (_v.Target.HpDamage / TranceSeekAPI.MonsterMechanic[_v.Target.Data][5]));
+                        _v.Target.HpDamage = Math.Max(1, (_v.Target.HpDamage / TranceSeekBattleDictionary.MonsterMechanic[_v.Target.Data][5]));
                         if (_v.Target.HasCategory(EnemyCategory.Stone))
                             _v.Target.HpDamage += (_v.Target.HpDamage * 10) / 100;
-                        TranceSeekAPI.MonsterMechanic[_v.Target.Data][5] = TranceSeekAPI.MonsterMechanic[_v.Target.Data][5] * 2;
+                        TranceSeekBattleDictionary.MonsterMechanic[_v.Target.Data][5] = TranceSeekBattleDictionary.MonsterMechanic[_v.Target.Data][5] * 2;
                     }
                 }
-
+                if (_v.Caster.Data.dms_geo_id == 5 || _v.Caster.Data.dms_geo_id == 267) // Kuja (multiple target malus)
+                {
+                    if (_v.Context.sfxThread.targetId != 1 && _v.Context.sfxThread.targetId != 2 && _v.Context.sfxThread.targetId != 4 && _v.Context.sfxThread.targetId != 8)
+                    {
+                        _v.Context.Attack /= 2;
+                        _v.Context.HitRate /= 2;
+                    }
+                }
                 TranceSeekAPI.TryAlterMagicStatuses(_v);
             }
 
-            if (TranceSeekAPI.AbsorbElement.TryGetValue(_v.Target.Data, out Int32 elementprotect))
+            if (TranceSeekBattleDictionary.AbsorbElement.TryGetValue(_v.Target.Data, out Int32 elementprotect))
                 if (elementprotect == 256)
                     _v.Target.Flags |= CalcFlag.HpRecovery;
         }

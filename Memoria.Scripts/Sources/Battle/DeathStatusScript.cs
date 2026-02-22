@@ -27,11 +27,11 @@ namespace Memoria.DefaultScripts
             }
             target.CurrentAtb = 0;
 
-            if (!SpecialSAEffect.TryGetValue(target.Data, out var sa))
+            if (!TranceSeekBattleDictionary.SpecialSAEffect.TryGetValue(target.Data, out var sa))
             {
-                SpecialSAEffect[target.Data] = new int[18];
-                SpecialSAEffect[target.Data][15] = (int)target.Player.max.hp;
-                SpecialSAEffect[target.Data][16] = (int)target.Player.max.mp;
+                TranceSeekBattleDictionary.SpecialSAEffect[target.Data] = new int[18];
+                TranceSeekBattleDictionary.SpecialSAEffect[target.Data][15] = (int)target.Player.max.hp;
+                TranceSeekBattleDictionary.SpecialSAEffect[target.Data][16] = (int)target.Player.max.mp;
             }
 
             if (!target.IsPlayer)
@@ -47,9 +47,9 @@ namespace Memoria.DefaultScripts
             }         
             if (target.IsUnderAnyStatus(BattleStatus.Trance) && btl_cmd.KillSpecificCommand(target, BattleCommandId.SysTrans))
             {
-                SpecialSAEffect[target][3] = 1; // Fix SFX "Trance__Out" if character die in a combo attack
+                TranceSeekBattleDictionary.SpecialSAEffect[target][3] = 1; // Fix SFX "Trance__Out" if character die in a combo attack
                 btl_stat.RemoveStatus(target, BattleStatusId.Trance);
-                SpecialSAEffect[target][3] = 0;
+                TranceSeekBattleDictionary.SpecialSAEffect[target][3] = 0;
                 target.Trance = 254;
             }          
             if (target.IsPlayer)
@@ -57,8 +57,8 @@ namespace Memoria.DefaultScripts
                 // SpecialSAEffect[target.Data][14] = 0; // Reset SOS trigger
 
                 // Reset stats
-                target.MaximumHp = (uint)SpecialSAEffect[target.Data][15];
-                target.MaximumMp = (uint)SpecialSAEffect[target.Data][16];
+                target.MaximumHp = (uint)TranceSeekBattleDictionary.SpecialSAEffect[target.Data][15];
+                target.MaximumMp = (uint)TranceSeekBattleDictionary.SpecialSAEffect[target.Data][16];
                 // target.Level = target.Player.level; // Too sensible
                 target.Dexterity = target.Player.elem.dex;
                 target.Strength = target.Player.elem.str;
@@ -71,17 +71,17 @@ namespace Memoria.DefaultScripts
 
                 if (target.PlayerIndex == CharacterId.Beatrix)
                 {
-                    if (!BeatrixPassive.TryGetValue(target.Data, out Int32[] beatrixpassive))
-                        BeatrixPassive[target.Data] = [0, 0, 0, 0];
-                    BeatrixPassive[target.Data][2] = 0;
+                    if (!TranceSeekBattleDictionary.BeatrixPassive.TryGetValue(target.Data, out Int32[] beatrixpassive))
+                        TranceSeekBattleDictionary.BeatrixPassive[target.Data] = [0, 0, 0, 0];
+                    TranceSeekBattleDictionary.BeatrixPassive[target.Data][2] = 0;
                 }
                 else if (target.PlayerIndex == CharacterId.Vivi)
                 {
-                    if (!ViviPassive.TryGetValue(target.Data, out var focus))
+                    if (!TranceSeekBattleDictionary.ViviPassive.TryGetValue(target.Data, out var focus))
                     {
-                        ViviPassive[target.Data] = [0, 0, 0];
+                        TranceSeekBattleDictionary.ViviPassive[target.Data] = [0, 0, 0];
                     }
-                    ViviPassive[target.Data][0] = 0;
+                    TranceSeekBattleDictionary.ViviPassive[target.Data][0] = 0;
                 }
             }
             if (!target.HasSupportAbilityByIndex((SupportAbility)1232)) // SA Expiation+
@@ -101,7 +101,7 @@ namespace Memoria.DefaultScripts
             btl.killer_track = null;
 
             if (Target.IsPlayer)
-                SpecialSAEffect[Target.Data][14] = 0; // Reset SOS trigger
+                TranceSeekBattleDictionary.SpecialSAEffect[Target.Data][14] = 0; // Reset SOS trigger
 
             if (btl_mot.checkMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_DISABLE) || btl_mot.checkMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_DOWN_DISABLE))
             {

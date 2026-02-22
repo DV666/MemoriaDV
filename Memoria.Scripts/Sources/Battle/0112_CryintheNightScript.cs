@@ -28,7 +28,7 @@ namespace Memoria.Scripts.Battle
                 return;
             }
             _v.NormalMagicParams();
-            TranceSeekAPI.CharacterBonusPassive(_v, "MagicAttack");
+            
             TranceSeekAPI.CasterPenaltyMini(_v);
             TranceSeekAPI.EnemyTranceBonusAttack(_v);
             TranceSeekAPI.PenaltyShellAttack(_v);

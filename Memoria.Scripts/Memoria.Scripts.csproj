@@ -468,6 +468,8 @@
     <Compile Include="Sources\Battle\SlowStatusScript.cs" />
     <Compile Include="Sources\Battle\SpecialStatusScript.cs" />
     <Compile Include="Sources\Battle\StopStatusScript.cs" />
+    <Compile Include="Sources\Battle\TranceSeekBattleDictionary.cs" />
+    <Compile Include="Sources\Battle\TranceSeekCharacterMechanic.cs" />
     <Compile Include="Sources\Battle\TranceSeekAPI.cs" />
     <Compile Include="Sources\Battle\TranceSeekBattleAbility.cs" />
     <Compile Include="Sources\Battle\TranceSeekBattleCommand.cs" />

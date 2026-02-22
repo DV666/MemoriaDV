@@ -2,53 +2,16 @@
 using FF9;
 using Memoria.Assets;
 using Memoria.Data;
-using Memoria.Database;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
-using static SiliconStudio.Social.ResponseData;
+using static Memoria.Scripts.Battle.TranceSeekBattleDictionary;
+using static Memoria.Scripts.Battle.TranceSeekCharacterMechanic;
 
 namespace Memoria.Scripts.Battle
 {
     public static class TranceSeekAPI
     {
-        public static Dictionary<BTL_DATA, Int32[]> ZidanePassive = new Dictionary<BTL_DATA, Int32[]>();
-        // [0] => Dodge ; [1] => Critical ; [2] => Eye of the thief ; [3] => Master Thief ; [4] => Dagger Attack ; [5] => FirstItemMug ; [6] => SecondItemMug ; [7] => Mug+ ; [8] => Steal Gil ; [9] => Flexible
-        // [10] => FirstItemMugMT ; [11] => SecondItemMugMT
-
-        public static Dictionary<BTL_DATA, Int32[]> ViviPassive = new Dictionary<BTL_DATA, Int32[]>(); // [0] => Focus ; [1] => NumberTargets ; [2] => TriggerOneTime
-        public static Dictionary<BTL_DATA, BattleAbilityId> ViviPreviousSpell = new Dictionary<BTL_DATA, BattleAbilityId>();
-
-        public static Dictionary<BTL_DATA, Int32[]> FreyaPassive = new Dictionary<BTL_DATA, Int32[]>(); // [0] => DragonChanceStack
-        public static Dictionary<BTL_DATA, Int32[]> SteinerPassive = new Dictionary<BTL_DATA, Int32[]>(); // [0] => StackCMD ; [1] => StackCMD ; [2] => TriggerOneTime
-        public static Dictionary<BTL_DATA, Int32[]> BeatrixPassive = new Dictionary<BTL_DATA, Int32[]>(); // [0] => StackCMD ; [1] => Magic (Dummied) ; [2] => Bravoure ; [3] => TargetCount
-
-        public static Dictionary<BTL_DATA, Dictionary<BattleStatus, Int32>> ProtectStatus = new Dictionary<BTL_DATA, Dictionary<BattleStatus, Int32>>();
-        public static Dictionary<BTL_DATA, Int32> AbsorbElement = new Dictionary<BTL_DATA, Int32>();
-        public static Dictionary<BTL_DATA, GameObject> AdditionalModel = new Dictionary<BTL_DATA, GameObject>();
-        public static Dictionary<BTL_DATA, Int32[]> StackBreakOrUpStatus = new Dictionary<BTL_DATA, Int32[]>();
-        // [0] => StackStrength ; [1] => StackMagic ; [2] => StackArmor ; [3] => StackMental
-
-        public static Dictionary<BTL_DATA, Int32[]> MonsterMechanic = new Dictionary<BTL_DATA, Int32[]>();
-        // [0] => Trance Activated ; [1] => Special1 ; [2] => Special2 ; [3] => HPBoss10000? ; [4] => ResistStatusEasyKill ; [5] => NerfGravity ; [6] => NoDodge
-        
-        public static Dictionary<BTL_DATA, Int32[]> SpecialSAEffect = new Dictionary<BTL_DATA, Int32[]>();
-        // [0] => Sentinel/Duel ; [1] => LastStand ; [2] => Instinct ; [3] => PreventTranceSFX ; [4] => Mode EX ; [5] => HealHP ; [6] => HealMP ; [7] => TargetCount ; [8] => SpringBoots ; [9] => CriticalHit100 ;
-        // [10] => SteinerEnchantedBlade ; [11] => Peuh! ; [12] => That's all ; [13] => In top form! ; [14] => OneTriggerSOS ; [15] => NewMaximumHP ; [16] => NewMaximumMP
-
-        public static Dictionary<BTL_DATA, Int32[]> SpecialItemEffect = new Dictionary<BTL_DATA, Int32[]>();
-        // [0] => Emergency Satchel ; [1] => Magical Satchel
-
-        public static Dictionary<BTL_DATA, Int32[]> NewEffectElement = new Dictionary<BTL_DATA, Int32[]>(); // 0 = None, 1 = Weak, 2 = Half, 4 = Immune, 8 = Absorb
-        // [0] => Poison ; [1] => Gravity
-
-        public static Dictionary<BTL_DATA, Int32[]> RollBackStats = new Dictionary<BTL_DATA, Int32[]>();
-        public static Dictionary<BTL_DATA, Boolean> TriggerSPSResistStatus = new Dictionary<BTL_DATA, Boolean>();
-        public static Dictionary<BTL_DATA, BattleStatus> RollBackBattleStatus = new Dictionary<BTL_DATA, BattleStatus>();
-
-        public static Boolean ImmuneStatusPlayer = Configuration.Mod.FolderNames.Contains("TranceSeek/ImmuneStatusPlayer");
-
         public static Boolean EliteMonster(BTL_DATA Monster)
         {
             if (Monster.bi.player != 0)
@@ -103,8 +66,7 @@ namespace Memoria.Scripts.Battle
             if (v.Caster.HasSupportAbilityByIndex((SupportAbility)1102)) // Archimage+ (10% crit en bonus)
                 ZidanePassive[v.Caster.Data][1] = 40;
             Int32 quarterWill = (v.Caster.Data.elem.wpr + ZidanePassive[v.Caster.Data][1]) >> 2;
-            BonusCriticalFromWeapon(v.Caster.Weapon, out Int32 BonusWeaponCritical);
-            if (quarterWill != 0 && (((Comn.random16() % quarterWill) + v.Caster.Data.critical_rate_deal_bonus + v.Target.Data.critical_rate_receive_resistance + BonusWeaponCritical + BonusCrit) > Comn.random16() % 100) || v.Caster.IsUnderAnyStatus(TranceSeekStatus.PerfectCrit) || SpecialSAEffect[v.Target.Data][9] > 0)
+            if (quarterWill != 0 && (((Comn.random16() % quarterWill) + v.Caster.Data.critical_rate_deal_bonus + v.Target.Data.critical_rate_receive_resistance + TranceSeekRegularItem.BonusCriticalFromWeapon(v.Caster.Weapon) + BonusCrit) > Comn.random16() % 100) || v.Caster.IsUnderAnyStatus(TranceSeekStatus.PerfectCrit) || SpecialSAEffect[v.Target.Data][9] > 0)
             {
                 if (SpecialSAEffect[v.Target.Data][9] > 0)
                     SpecialSAEffect[v.Target.Data][9]--;
@@ -133,101 +95,6 @@ namespace Memoria.Scripts.Battle
                 btl2d.Btl2dReqSymbolMessage(v.Caster.Data, "[FFFF00]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 15);
             }
         }
-
-        public static void TryApplyDragon(this BattleCalculator v)
-        {
-            if (v.Caster.PlayerIndex == CharacterId.Freya)
-            {
-                Int32 quarterWill = v.Caster.Data.elem.wpr >> 2;
-                Int32 bonusdragon = 2;
-                switch (v.Caster.Weapon)
-                {
-                    case RegularItem.MythrilSpear:
-                        bonusdragon = 4;
-                        break;
-                    case RegularItem.Partisan:
-                        bonusdragon = 5;
-                        break;
-                    case RegularItem.IceLance:
-                        bonusdragon = 6;
-                        break;
-                    case RegularItem.Trident:
-                        bonusdragon = 7;
-                        break;
-                    case RegularItem.HeavyLance:
-                        bonusdragon = 8;
-                        break;
-                    case RegularItem.Obelisk:
-                        bonusdragon = 9;
-                        break;
-                    case RegularItem.HolyLance:
-                        bonusdragon = 10;
-                        break;
-                    case RegularItem.KainLance:
-                        bonusdragon = 12;
-                        break;
-                    case RegularItem.DragonHair:
-                        bonusdragon = 15;
-                        break;
-                }
-
-                FreyaPassive[v.Target.Data][0] += bonusdragon;
-
-                if (quarterWill != 0)
-                {
-                    if ((((Comn.random16() % quarterWill) + FreyaPassive[v.Target.Data][0]) > Comn.random16() % 100) || ((v.Target.Flags & CalcFlag.Critical) != 0 && v.Command.Id == BattleCommandId.Attack))
-                    {
-                        v.Target.AlterStatus(TranceSeekStatus.Dragon, v.Caster);
-                        FreyaPassive[v.Target.Data][0] = 0;
-                    }
-                }
-            }
-        }
-
-        public static void BonusCriticalFromWeapon(RegularItem Weapon, out Int32 BonusWeaponCritical)
-        {
-            BonusWeaponCritical = 0;
-            switch (Weapon)
-            {
-                case RegularItem.ButterflySword:
-                    BonusWeaponCritical += 1;
-                    break;
-                case RegularItem.TheOgre:
-                    BonusWeaponCritical += 2;
-                    break;
-                case (RegularItem)1004: // Gladius Sword
-                    BonusWeaponCritical += 2;
-                    break;
-                case RegularItem.Exploda:
-                    BonusWeaponCritical += 3;
-                    break;
-                case RegularItem.RuneTooth:
-                    BonusWeaponCritical += 3;
-                    break;
-                case (RegularItem)1005: // Zorlin Sword
-                    BonusWeaponCritical += 4;
-                    break;
-                case RegularItem.AngelBless:
-                    BonusWeaponCritical += 5;
-                    break;
-                case RegularItem.Sargatanas:
-                    BonusWeaponCritical += 6;
-                    break;
-                case RegularItem.Masamune:
-                    BonusWeaponCritical += 7;
-                    break;
-                case (RegularItem)1006: // Orichalcon Sword
-                    BonusWeaponCritical += 8;
-                    break;
-                case RegularItem.TheTower:
-                    BonusWeaponCritical += 9;
-                    break;
-                case RegularItem.UltimaWeapon:
-                    BonusWeaponCritical += 10;
-                    break;
-            }
-        }
-
         public static void IpsenCastleMalus(this BattleCalculator v)
         {
             if (!FF9StateSystem.Battle.FF9Battle.btl_scene.Info.ReverseAttack || !v.Caster.IsPlayer)
@@ -331,8 +198,22 @@ namespace Memoria.Scripts.Battle
             foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(v.Target.Data.saExtended))
                 saFeature.TriggerOnAbility(v, "HitRateSetup", true);
 
-            if (v.Caster.HasSupportAbility(SupportAbility1.Healer) && v.Target.IsPlayer) // SA Healer never miss on Player.
-                v.Context.Evade = 0;
+            TranceSeekCharacterMechanic.GarnetGemMechanic(v, GarnetGemMechanic_Type.BoostPhysicalEvade);
+            int CasterWeaponShape = ff9item._FF9Item_Data[v.Caster.Weapon].shape;
+
+            if (CasterWeaponShape == 42) // Heavy Spear
+                v.Context.HitRate /= 2;
+            else if (CasterWeaponShape == 63) // Boomerang
+            {
+                v.Context.HitRate += (v.Context.HitRate) / 2;
+                v.Context.Evade /= 4;
+                v.Command.IsShortRange = false;
+                if (v.Target.IsLevitate)
+                    v.Context.DamageModifierCount++;
+            }
+
+            //if (v.Caster.HasSupportAbility(SupportAbility1.Healer) && v.Target.IsPlayer) // SA Healer never miss on Player.
+            //v.Context.Evade = 0;
 
             if ((v.Context.HitRate <= Comn.random16() % 100) || v.Target.PhysicalEvade == 255 || v.Target.IsUnderAnyStatus(BattleStatus.Vanish))
             {
@@ -376,228 +257,16 @@ namespace Memoria.Scripts.Battle
             return false;
         }
 
-        public static void ViviFocus(BattleCalculator v)
-        {
-            if (v.Command.Id != BattleCommandId.BlackMagic && v.Command.Id != BattleCommandId.DoubleBlackMagic && v.Command.Id != BattleCommandId.MagicSword && v.Command.Id != TranceSeekBattleCommand.Witchcraft)
-                return;
-
-            if (ViviPassive[v.Caster.Data][2] == 0)
-            {
-                ViviPassive[v.Caster.Data][2] = 1;
-                Int32 counter = 25;
-                v.Caster.AddDelayedModifier(
-                    caster => (counter -= 1) > 0,
-                    caster =>
-                    {
-                        ViviPassive[v.Caster.Data][1] = 0;
-                        ViviPassive[v.Caster.Data][2] = 0;
-                    }
-                );
-                if (v.Caster.PlayerIndex == CharacterId.Vivi)
-                {
-                    if ((v.Command.Id == BattleCommandId.BlackMagic || v.Command.Id == BattleCommandId.DoubleBlackMagic) || v.Command.Id == TranceSeekBattleCommand.Witchcraft)
-                    {
-                        if (ViviPassive[v.Caster.Data][1] == 0)
-                        {
-                            ViviPassive[v.Caster.Data][1] = (ushort)(v.Command.TargetCount);
-                            if (FF9TextTool.ActionAbilityName(ViviPreviousSpell[v.Caster.Data]) != v.Command.AbilityName)
-                            {
-                                Int32 BonusFocusMax = 0;
-                                switch (v.Caster.Weapon)
-                                {
-                                    case RegularItem.OakStaff:
-                                        BonusFocusMax += 10;
-                                        break;
-                                    case RegularItem.CypressPile:
-                                        BonusFocusMax += 10;
-                                        break;
-                                    case RegularItem.OctagonRod:
-                                        BonusFocusMax += 15;
-                                        break;
-                                    case RegularItem.HighMageStaff:
-                                        BonusFocusMax += 25;
-                                        break;
-                                    case RegularItem.MaceOfZeus:
-                                        BonusFocusMax += 50;
-                                        break;
-                                }
-                                if (ViviPassive[v.Caster.Data][0] < (50 + BonusFocusMax))
-                                {
-                                    ViviPassive[v.Caster.Data][0] += v.Caster.HasSupportAbilityByIndex((SupportAbility)207) ? 10 : 5; // SA Bobbin
-                                }
-                                Dictionary<String, String> localizedMessage = new Dictionary<String, String>
-                                {
-                                    { "US", $"Focus +{ViviPassive[v.Caster.Data][0]}%!" },
-                                    { "UK", $"Focus +{ViviPassive[v.Caster.Data][0]}%!" },
-                                    { "JP", $"フォーカス +{ViviPassive[v.Caster.Data][0]}%!" },
-                                    { "ES", $"¡Focus +{ViviPassive[v.Caster.Data][0]}%!" },
-                                    { "FR", $"Focus +{ViviPassive[v.Caster.Data][0]}% !" },
-                                    { "GR", $"Focus +{ViviPassive[v.Caster.Data][0]}%!" },
-                                    { "IT", $"Focus +{ViviPassive[v.Caster.Data][0]}%!" },
-                                };
-                                btl2d.Btl2dReqSymbolMessage(v.Caster.Data, "[BA55D3]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 40);
-                            }
-                            else
-                            {
-                                if (v.Caster.HasSupportAbilityByIndex((SupportAbility)1207)) // SA Bobbin+
-                                {
-                                    ViviPassive[v.Caster.Data][0] /= 2;
-                                    if (ViviPassive[v.Caster.Data][0] % 10U == 5)
-                                        ViviPassive[v.Caster.Data][0] += 5;
-
-                                    Dictionary<String, String> localizedMessage = new Dictionary<String, String>
-                                    {
-                                        { "US", $"Focus +{ViviPassive[v.Caster.Data][0]}%!" },
-                                        { "UK", $"Focus +{ViviPassive[v.Caster.Data][0]}%!" },
-                                        { "JP", $"フォーカス +{ViviPassive[v.Caster.Data][0]}%!" },
-                                        { "ES", $"¡Focus +{ViviPassive[v.Caster.Data][0]}%!" },
-                                        { "FR", $"Focus +{ViviPassive[v.Caster.Data][0]}% !" },
-                                        { "GR", $"Focus +{ViviPassive[v.Caster.Data][0]}%!" },
-                                        { "IT", $"Focus +{ViviPassive[v.Caster.Data][0]}%!" },
-                                    };
-                                    btl2d.Btl2dReqSymbolMessage(v.Caster.Data, "[BA55D3]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 40);
-                                }
-                                else
-                                {
-                                    ViviPassive[v.Caster.Data][0] = 0;
-                                    Dictionary<String, String> localizedMessage = new Dictionary<String, String>
-                                    {
-                                        { "US", "- Focus!" },
-                                        { "UK", "- Focus!" },
-                                        { "JP", "- フォーカス!" },
-                                        { "ES", "¡- Focus!" },
-                                        { "FR", "- Focus !" },
-                                        { "GR", "- Focus!" },
-                                        { "IT", "- Focus!" },
-                                    };
-                                    btl2d.Btl2dReqSymbolMessage(v.Caster.Data, "[DC143C]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 40);
-                                }
-                            }
-
-                            if (v.Caster.Weapon == (RegularItem)1163 && !v.Target.IsPlayer)
-                            {
-                                if (v.Command.TargetCount > 1)
-                                    WhatIsThatScript.MultipleSteal(v, false);
-                                else
-                                    StealScript.ClassicSteal(v, false);
-                            }
-                            ViviPreviousSpell[v.Caster.Data] = v.Command.AbilityId;
-                        }
-                        ViviPassive[v.Caster.Data][1]--;
-                        if (ViviPassive[v.Caster.Data][1] < 0)
-                            ViviPassive[v.Caster.Data][1] = 0;
-
-                        if (v.Command.ScriptId != 17) // Magic Gravity didn't get damage boost.
-                        {
-                            v.Context.Attack += (v.Context.Attack * ViviPassive[v.Caster.Data][0]) / 100;
-                            v.Command.HitRate += (v.Command.HitRate * ViviPassive[v.Caster.Data][0]) / 100;
-                        }
-                    }
-                }
-                else if (v.Caster.PlayerIndex == CharacterId.Steiner && v.Command.Id == BattleCommandId.MagicSword && v.Command.AbilityId != TranceSeekBattleAbility.MagicSword_Aero &&
-                v.Command.AbilityId != TranceSeekBattleAbility.MagicSword_Aera && v.Command.AbilityId != TranceSeekBattleAbility.MagicSword_Aeraga && v.Command.AbilityId != TranceSeekBattleAbility.MagicSword_Holy)
-                {
-                    if (ViviPassive[v.Caster.Data][1] == 0)
-                    {
-                        ViviPassive[v.Caster.Data][1] = (ushort)(v.Command.TargetCount);
-                        foreach (BattleUnit Vivi in BattleState.EnumerateUnits())
-                        {
-                            if (Vivi.IsPlayer && Vivi.PlayerIndex == CharacterId.Vivi)
-                            {
-                                if (FF9TextTool.ActionAbilityName(ViviPreviousSpell[Vivi.Data]) != v.Command.AbilityName)
-                                {
-                                    Int32 BonusFocusMax = 0;
-                                    switch (Vivi.Weapon)
-                                    {
-                                        case RegularItem.OakStaff:
-                                            BonusFocusMax += 10;
-                                            break;
-                                        case RegularItem.CypressPile:
-                                            BonusFocusMax += 10;
-                                            break;
-                                        case RegularItem.OctagonRod:
-                                            BonusFocusMax += 15;
-                                            break;
-                                        case RegularItem.HighMageStaff:
-                                            BonusFocusMax += 25;
-                                            break;
-                                        case RegularItem.MaceOfZeus:
-                                            BonusFocusMax += 50;
-                                            break;
-                                    }
-                                    if (ViviPassive[Vivi.Data][0] < (50 + BonusFocusMax))
-                                    {
-                                        ViviPassive[Vivi.Data][0] += Vivi.HasSupportAbilityByIndex((SupportAbility)207) ? 10 : 5; // SA Bobbin;
-                                    }
-                                    Dictionary<String, String> localizedMessage = new Dictionary<String, String>
-                                    {
-                                        { "US", $"Focus +{ViviPassive[Vivi.Data][0]}%!" },
-                                        { "UK", $"Focus +{ViviPassive[Vivi.Data][0]}%!" },
-                                        { "JP", $"フォーカス +{ViviPassive[Vivi.Data][0]}%!" },
-                                        { "ES", $"¡Focus +{ViviPassive[Vivi.Data][0]}%!" },
-                                        { "FR", $"Focus +{ViviPassive[Vivi.Data][0]}% !" },
-                                        { "GR", $"Focus +{ViviPassive[Vivi.Data][0]}%!" },
-                                        { "IT", $"Focus +{ViviPassive[Vivi.Data][0]}%!" },
-                                    };
-                                    btl2d.Btl2dReqSymbolMessage(Vivi.Data, "[BA55D3]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 40);
-                                    v.Context.Attack += v.Context.Attack * (ViviPassive[Vivi.Data][0] / 100);
-                                    v.Command.HitRate += v.Command.HitRate * (ViviPassive[Vivi.Data][0] / 100);
-                                }
-                                else
-                                {
-                                    if (v.Caster.HasSupportAbilityByIndex((SupportAbility)1207)) // SA Bobbin+
-                                    {
-                                        ViviPassive[Vivi.Data][0] /= 2;
-                                        if (ViviPassive[Vivi.Data][0] % 10U == 5)
-                                            ViviPassive[Vivi.Data][0] += 5;
-
-                                        Dictionary<String, String> localizedMessage = new Dictionary<String, String>
-                                        {
-                                            { "US", $"Focus +{ViviPassive[Vivi.Data][0]}%!" },
-                                            { "UK", $"Focus +{ViviPassive[Vivi.Data][0]}%!" },
-                                            { "JP", $"フォーカス +{ViviPassive[Vivi.Data][0]}%!" },
-                                            { "ES", $"¡Focus +{ViviPassive[Vivi.Data][0]}%!" },
-                                            { "FR", $"Focus +{ViviPassive[Vivi.Data][0]}% !" },
-                                            { "GR", $"Focus +{ViviPassive[Vivi.Data][0]}%!" },
-                                            { "IT", $"Focus +{ViviPassive[Vivi.Data][0]}%!" },
-                                        };
-                                        btl2d.Btl2dReqSymbolMessage(Vivi.Data, "[BA55D3]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 40);
-                                    }
-                                    else
-                                    {
-                                        ViviPassive[Vivi.Data][0] = 0;
-                                        Dictionary<String, String> localizedMessage = new Dictionary<String, String>
-                                        {
-                                            { "US", "- Focus!" },
-                                            { "UK", "- Focus!" },
-                                            { "JP", "- フォーカス!" },
-                                            { "ES", "¡- Focus!" },
-                                            { "FR", "- Focus !" },
-                                            { "GR", "- Focus!" },
-                                            { "IT", "- Focus!" },
-                                        };
-                                        btl2d.Btl2dReqSymbolMessage(Vivi.Data, "[DC143C]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 40);
-                                    }
-                                }
-                                ViviPreviousSpell[Vivi.Data] = v.Command.AbilityId;
-                            }
-                        }
-                    }
-                    ViviPassive[v.Caster.Data][1]--;
-                    if (ViviPassive[v.Caster.Data][1] < 0)
-                        ViviPassive[v.Caster.Data][1] = 0;
-                }
-            }
-        }
-
         public static Boolean TryMagicHit(this BattleCalculator v)
         {
-            ViviFocus(v);
+            TranceSeekCharacterMechanic.ViviFocus(v);
 
             foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(v.Caster))
                 saFeature.TriggerOnAbility(v, "HitRateSetup", false);
             foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(v.Target))
                 saFeature.TriggerOnAbility(v, "HitRateSetup", true);
+
+            TranceSeekCharacterMechanic.GarnetGemMechanic(v, GarnetGemMechanic_Type.BoostMagicalEvade);
 
             if (v.Context.HitRate <= Comn.random16() % 100)
             {
@@ -618,12 +287,14 @@ namespace Memoria.Scripts.Battle
 
         public static Boolean TryMagicHitWithoutBattleCalcFlag(this BattleCalculator v)
         {
-            ViviFocus(v);
+            TranceSeekCharacterMechanic.ViviFocus(v);
 
             foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(v.Caster))
                 saFeature.TriggerOnAbility(v, "HitRateSetup", false);
             foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(v.Target))
                 saFeature.TriggerOnAbility(v, "HitRateSetup", true);
+
+            TranceSeekCharacterMechanic.GarnetGemMechanic(v, GarnetGemMechanic_Type.BoostMagicalEvade);
 
             if (v.Context.HitRate <= Comn.random16() % 100)
             {
@@ -642,7 +313,7 @@ namespace Memoria.Scripts.Battle
 
         public static void TryAlterMagicStatuses(this BattleCalculator v)
         {
-            ViviFocus(v);
+            TranceSeekCharacterMechanic.ViviFocus(v);
 
             foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(v.Caster))
                 saFeature.TriggerOnAbility(v, "HitRateSetup", false);
@@ -709,15 +380,29 @@ namespace Memoria.Scripts.Battle
 
         public static void BonusBackstabAndPenaltyLongDistance(this BattleCalculator v)
         {
-            if ((Math.Abs(v.Caster.Data.evt.rotBattle.eulerAngles.y - v.Target.Data.evt.rotBattle.eulerAngles.y) < 0.1) || v.Target.IsRunningAway())
-                ++v.Context.DamageModifierCount;
+            if (IsBackAttack[v.Target.Data] || v.Target.IsRunningAway())
+            {
+                IsBackAttack[v.Target.Data] = false;
+                v.Context.DamageModifierCount += 2;
+
+                Dictionary<String, String> localizedMessage = new Dictionary<String, String> // For debug
+                    {
+                        { "US", "BACK ATTACK !" },
+                        { "UK", "BACK ATTACK !" },
+                        { "JP", "BACK ATTACK !" },
+                        { "ES", "BACK ATTACK !" },
+                        { "FR", "BACK ATTACK !" },
+                        { "GR", "BACK ATTACK !" },
+                        { "IT", "BACK ATTACK !" },
+                    };
+                btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[FF00FF]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 10);
+            }
 
             if (Mathf.Abs(v.Caster.Row - v.Target.Row) > 1 && !v.Caster.HasLongRangeWeapon && v.Command.IsShortRange && v.Caster.IsPlayer)
             {
                 v.Context.DamageModifierCount -= 2;
-                return;
             }
-            if (!v.Caster.IsPlayer)
+            else if (!v.Caster.IsPlayer)
             {
                 Boolean longDistance = false;
                 if (v.Target.IsPlayer && Mathf.Abs(v.Caster.Row - v.Target.Row) > 1)
@@ -744,7 +429,7 @@ namespace Memoria.Scripts.Battle
             //    v.Context.HitRate = 100;
 
             if (v.Caster.HasSupportAbilityByIndex((SupportAbility)230))
-                AmarantPassive(v);
+                TranceSeekCharacterMechanic.AmarantPassive(v);
 
             ReduceAccuracyEliteMonsters(v);
 
@@ -926,7 +611,7 @@ namespace Memoria.Scripts.Battle
 
         public static Boolean CanAttackMagic(this BattleCalculator v)
         {
-            ViviFocus(v);
+            TranceSeekCharacterMechanic.ViviFocus(v);
 
             if ((v.Context.Flags & TranceSeekBattleCalcFlags.PropagationFail) != 0)
             {
@@ -1014,68 +699,6 @@ namespace Memoria.Scripts.Battle
                     TriggerSPSResistStatus[v.Target] = true;
             }
         } 
-
-        public static void AmarantPassive(this BattleCalculator v)
-        {
-            Int32 factor = 0;
-            List<BattleStatusId> statuschoosen = new List<BattleStatusId>{ BattleStatusId.Poison, BattleStatusId.Venom, BattleStatusId.Blind, BattleStatusId.Silence, BattleStatusId.Trouble,
-                    BattleStatusId.Sleep, BattleStatusId.Freeze, BattleStatusId.Heat, BattleStatusId.Doom, BattleStatusId.Mini, BattleStatusId.Petrify, BattleStatusId.GradualPetrify,
-                    BattleStatusId.Berserk, BattleStatusId.Confuse, BattleStatusId.Stop, BattleStatusId.Zombie, BattleStatusId.Slow, TranceSeekStatusId.Vieillissement,
-                    TranceSeekStatusId.ArmorBreak, TranceSeekStatusId.MagicBreak, TranceSeekStatusId.MentalBreak, TranceSeekStatusId.PowerBreak};
-
-            for (Int32 i = 0; i < (statuschoosen.Count - 1); i++)
-            {
-                if (v.Target.IsUnderAnyStatus(statuschoosen[i].ToBattleStatus()))
-                {
-                    factor++;
-                }
-            }
-
-            int bonus = v.Caster.HasSupportAbilityByIndex((SupportAbility)1228) ? 12 : (v.Caster.HasSupportAbilityByIndex((SupportAbility)228) ? 10 : 8);
-
-            if (factor > 0)
-            {
-                if (v.Caster.HasSupportAbilityByIndex((SupportAbility)230)) // Venefic
-                {
-                    if (v.Caster.HasSupportAbilityByIndex((SupportAbility)1230))
-                        v.Context.Attack += (v.Context.Attack * factor * bonus) / 100;
-
-                    v.Context.HitRate += (v.Context.HitRate * factor * bonus) / 100;
-                }
-                else
-                    v.Context.Attack += (v.Context.Attack * factor * bonus) / 100;
-            }
-        }
-
-        public static void DragonMechanic(this BattleCalculator v)
-        {
-            if (v.Caster.PlayerIndex == CharacterId.Freya)
-            {
-                if (v.Command.AbilityId == BattleAbilityId.Luna) // Luna effect handle in 0079_DragonSkillScript.cs
-                    return;
-
-                if (v.Target.IsUnderAnyStatus(TranceSeekStatus.Dragon) && !v.Caster.IsUnderStatus(BattleStatus.Trance) && v.Command.Id == BattleCommandId.DragonAct)
-                {
-                    float DragonRemove = v.Caster.HasSupportAbilityByIndex((SupportAbility)1122) ? 25 : (v.Caster.HasSupportAbilityByIndex((SupportAbility)122) ? 12.5f : 0); // Eye of the dragon
-                    if (DragonRemove < Comn.random16() % 100)
-                        btl_stat.AlterStatus(v.Target, TranceSeekStatusId.Dragon, v.Caster, parameters: "Remove");
-                }
-                else if (v.Command.Id == BattleCommandId.Attack || v.Command.Id == BattleCommandId.Spear || v.Command.Id == BattleCommandId.SpearInTrance || (v.Command.Id == BattleCommandId.DragonAct && !v.Target.IsUnderAnyStatus(TranceSeekStatus.Dragon)))
-                {
-                    TryApplyDragon(v);
-                }
-            }
-        }
-        public static void CharacterBonusPassive(this BattleCalculator v, string mode = "") // [TODO] Rename + delete this from most functions (deprecaticed old Beatrix passive)
-        {
-            if (v.Caster.PlayerIndex == CharacterId.Marcus)
-            {
-                if (mode == "MagicAttack")
-                {
-                    v.Context.Attack = (Int16)(v.Caster.Strength + Comn.random16() % (1 + v.Caster.Level));
-                }
-            }
-        }
 
         public static void TryAlterCommandStatuses(this BattleCalculator v, Boolean ChangeContext = true)
         {
@@ -1228,59 +851,6 @@ namespace Memoria.Scripts.Battle
                 btl_stat.AlterStatus(unit, BattleStatusId.Trance);
         }
 
-        public static void SpecialItems(this BattleCalculator v)
-        {
-            if (ff9item._FF9Item_Data[v.Caster.Weapon].shape == 56 && v.Target.HpDamage > 0 && v.Command.Id != BattleCommandId.Item && v.Command.Id != BattleCommandId.AutoPotion) // Axe
-            {
-                v.Target.HpDamage = UnityEngine.Random.Range(v.Target.HpDamage / 10, v.Target.HpDamage);
-            }
-
-            switch (v.Target.Accessory)
-            {
-                case TranceSeekRegularItem.EmergencySatchel:
-                {
-                    Boolean TargetPreventStatus = v.Target.IsUnderAnyStatus(BattleStatusConst.PreventCounter | BattleStatus.Heat | BattleStatus.Zombie);
-                    int PotionHeal = v.Target.HasSupportAbility(SupportAbility1.Chemist) ? 400 : 200;
-                    if (!TargetPreventStatus && v.Caster.IsPlayer != v.Target.IsPlayer && SpecialItemEffect[v.Target.Data][0] > 0 && (v.Target.MaximumHp - v.Target.CurrentHp + v.Target.HpDamage) > PotionHeal && v.Command.Id <= BattleCommandId.BoundaryCheck)
-                    {
-                        btl_cmd.SetCounter(v.Target.Data, BattleCommandId.AutoPotion, (int)RegularItem.Potion, v.Target.Id);
-                        SpecialItemEffect[v.Target.Data][0]--;
-                    }
-                    break;
-                }
-                case TranceSeekRegularItem.MagicalSatchel:
-                {
-                    Boolean TargetPreventStatus = v.Target.IsUnderAnyStatus(BattleStatusConst.PreventCounter | BattleStatus.Heat);
-                    if (!TargetPreventStatus && v.Caster.IsPlayer != v.Target.IsPlayer && SpecialItemEffect[v.Target.Data][1] > 0 && v.Target.IsUnderAnyStatus(BattleStatusConst.AnyNegative))
-                    {
-                        RegularItem PotionChoosen = RegularItem.NoItem;
-                        if (v.Target.IsUnderAnyStatus(BattleStatus.GradualPetrify))
-                            PotionChoosen = RegularItem.Soft;
-                        else if (v.Target.IsUnderAnyStatus(BattleStatus.Poison | BattleStatus.Venom))
-                            PotionChoosen = RegularItem.Antidote;
-                        else if (v.Target.IsUnderAnyStatus(BattleStatus.Zombie))
-                            PotionChoosen = RegularItem.MagicTag;
-                        else if (v.Target.IsUnderAnyStatus(BattleStatus.Silence))
-                            PotionChoosen = RegularItem.EchoScreen;
-                        else if (v.Target.IsUnderAnyStatus(BattleStatus.Virus))
-                            PotionChoosen = RegularItem.Vaccine;
-                        else if (v.Target.IsUnderAnyStatus(BattleStatus.Blind))
-                            PotionChoosen = RegularItem.EyeDrops;
-                        else if (v.Target.IsUnderAnyStatus(BattleStatus.Trouble | TranceSeekStatus.Vieillissement))
-                            PotionChoosen = RegularItem.Annoyntment;
-
-                        if (PotionChoosen != RegularItem.NoItem)
-                        {
-                            ff9item.FF9Item_Add(PotionChoosen, 1);
-                            btl_cmd.SetCounter(v.Target.Data, BattleCommandId.AutoPotion, (int)PotionChoosen, v.Target.Id);
-                            SpecialItemEffect[v.Target.Data][1]--;
-                        }
-                    }
-                    break;
-                }
-            }
-        }
-
         public static void AlterStatusDuration(this BattleCalculator v, BattleStatus targetstatus, int NewFormula = 0, Boolean Add = true)
         {
             int Formula = 400 + v.Caster.Will * 2 - v.Target.Will;
@@ -1333,51 +903,6 @@ namespace Memoria.Scripts.Battle
 
                 v.Target.Data.stat.conti[statusId] = (Int16)((statusData.ContiCnt * durationfactor) * v.Target.Data.stat.duration_factor[statusId]);
             }
-        }
-
-        public static void ResetSteinerPassive(BattleUnit unit)
-        {
-            FF9TextTool.SetCommandName(BattleCommandId.SwordAct, TranceSeekBattleCommand.SwdArtCMDNameVanilla[Localization.CurrentDisplaySymbol]);
-            unit.UILabelHP = unit.CurrentHp.ToString();
-
-            unit.AddDelayedModifier(
-            caster => caster.CurrentAtb >= caster.MaximumAtb,
-            caster =>
-            {
-                SteinerPassive[unit.Data][1] = 0;
-                if (FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1000, out Dictionary<Int32, Int32> dictbattle)) 
-                    dictbattle[1] = 0;
-            }
-            );
-        }
-
-        public static void UpdateRedemptionHUD(BattleUnit unit)
-        {
-            int RedemptionStack = (int)unit.GetPropertyByName("StatusProperty CustomStatus12 Stack");
-            if (RedemptionStack > 0 && BeatrixPassive[unit.Data][0] != RedemptionStack)
-            {
-                BeatrixPassive[unit.Data][0] = RedemptionStack;
-                FF9TextTool.SetCommandName(BattleCommandId.HolySword1, TranceSeekBattleCommand.SeikenCMDNameVanilla[Localization.CurrentDisplaySymbol] + " (" + RedemptionStack + " [SPRT=IconAtlas,item200_01,40,40] )");
-                FF9TextTool.SetCommandName(BattleCommandId.HolySword2, TranceSeekBattleCommand.SeikenPlusCMDNameVanilla[Localization.CurrentDisplaySymbol] + " (" + RedemptionStack + " [SPRT=IconAtlas,item200_01,40,40] )");
-                Dictionary<String, String> BeatrixPassiveMessage = new Dictionary<String, String>
-                    {
-                        { "US", "[SPRT=IconAtlas,item200_01] Redemption!" },
-                        { "UK", "[SPRT=IconAtlas,item200_01] Redemption!" },
-                        { "JP", "[SPRT=IconAtlas,item200_01] Redemption!" },
-                        { "ES", "[SPRT=IconAtlas,item200_01] Redemption!" },
-                        { "FR", "[SPRT=IconAtlas,item200_01] Redemption !" },
-                        { "GR", "[SPRT=IconAtlas,item200_01] Redemption!" },
-                        { "IT", "[SPRT=IconAtlas,item200_01] Redemption!" },
-                    };
-                btl2d.Btl2dReqSymbolMessage(unit.Data, "[FFFFFF]", BeatrixPassiveMessage, HUDMessage.MessageStyle.DAMAGE, 30);
-            }
-            else if (RedemptionStack == 0)
-            {
-                BeatrixPassive[unit.Data][0] = RedemptionStack;
-                FF9TextTool.SetCommandName(BattleCommandId.HolySword1, TranceSeekBattleCommand.SeikenCMDNameVanilla[Localization.CurrentDisplaySymbol]);
-                FF9TextTool.SetCommandName(BattleCommandId.HolySword2, TranceSeekBattleCommand.SeikenPlusCMDNameVanilla[Localization.CurrentDisplaySymbol]);
-            }
-
         }
 
         public static void SpecialEffect(this BattleCalculator v)

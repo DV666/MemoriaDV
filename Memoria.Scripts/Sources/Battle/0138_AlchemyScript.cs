@@ -49,7 +49,7 @@ namespace Memoria.Scripts.Battle
 
                     _v.WeaponPhysicalParams();
                     TranceSeekAPI.MagicAccuracy(_v);
-                    TranceSeekAPI.CharacterBonusPassive(_v, "PhysicalAttack");
+                    
                     TranceSeekAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
                     TranceSeekAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
                     TranceSeekAPI.EnemyTranceBonusAttack(_v);
@@ -124,7 +124,7 @@ namespace Memoria.Scripts.Battle
                             {
                                 if (_v.Target.Data.dms_geo_id == 416)
                                 {
-                                    TranceSeekAPI.MonsterMechanic[_v.Target.Data][1] = 9999;
+                                    TranceSeekBattleDictionary.MonsterMechanic[_v.Target.Data][1] = 9999;
                                     _v.Target.CurrentHp = 1;
                                     return;
                                 }

@@ -53,7 +53,7 @@ namespace Memoria.Scripts.Battle
                 else
                     _v.NormalMagicParams();
 
-                TranceSeekAPI.CharacterBonusPassive(_v, "MagicAttack");
+                
                 TranceSeekAPI.CasterPenaltyMini(_v);
                 TranceSeekAPI.EnemyTranceBonusAttack(_v);
                 TranceSeekAPI.PenaltyShellAttack(_v);
@@ -97,7 +97,7 @@ namespace Memoria.Scripts.Battle
         public Single RateTarget()
         {
             _v.NormalMagicParams();
-            TranceSeekAPI.CharacterBonusPassive(_v, "MagicAttack");
+            
             TranceSeekAPI.CasterPenaltyMini(_v);
             TranceSeekAPI.PenaltyShellAttack(_v);
             TranceSeekAPI.PenaltyCommandDividedAttack(_v);

@@ -34,7 +34,11 @@ namespace Memoria.Scripts.Battle
                 MultipleSteal(_v, false);
 
             if (boss == null)
+            {
                 _v.Target.FaceAsUnit(_v.Caster);
+                if (!_v.Target.IsPlayer)
+                    TranceSeekBattleDictionary.IsBackAttack[_v.Target.Data] = true;
+            }
 
             if (_v.Target.IsPlayer && _v.Target.Row != _v.Target.Player.info.row)
                 TranceSeekAPI.ChangeRow(_v.Target);
@@ -111,7 +115,7 @@ namespace Memoria.Scripts.Battle
                 ItemStolen = battleEnemy.StealableItems[0];
                 StealScript.StealItem(v, battleEnemy, 0, false);
             }
-            else if (TranceSeekAPI.ZidanePassive[monster.Data][2] > 0 && caster.PlayerIndex == CharacterId.Zidane) // Oeil de voleur activé
+            else if (TranceSeekBattleDictionary.ZidanePassive[monster.Data][2] > 0 && caster.PlayerIndex == CharacterId.Zidane) // Oeil de voleur activé
             {
                 if (caster.PlayerIndex == CharacterId.Zidane)
                     AddBonusSteal(monster);

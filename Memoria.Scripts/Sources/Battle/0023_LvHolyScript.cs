@@ -22,7 +22,7 @@ namespace Memoria.Scripts.Battle
             if (_v.IsTargetLevelMultipleOfCommandRate() && _v.Target.CanBeAttacked())
             {
                 _v.NormalMagicParams();
-                TranceSeekAPI.CharacterBonusPassive(_v, "MagicAttack");
+                
                 TranceSeekAPI.EnemyTranceBonusAttack(_v);
                 TranceSeekAPI.CasterPenaltyMini(_v);
                 TranceSeekAPI.PenaltyShellAttack(_v);

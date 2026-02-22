@@ -99,7 +99,7 @@ namespace Memoria.Scripts.Battle
                 case (RegularItem)2097: // Anticorps amélioré
                 {
                     TranceSeekAPI.TryRemoveItemStatuses(_v);
-                    if (TranceSeekAPI.ProtectStatus.TryGetValue(_v.Target.Data, out Dictionary<BattleStatus, Int32> statusprotect))
+                    if (TranceSeekBattleDictionary.ProtectStatus.TryGetValue(_v.Target.Data, out Dictionary<BattleStatus, Int32> statusprotect))
                     {
                         foreach (BattleStatusId statusID in _v.Command.Item.Status.ToStatusList())
                         {
@@ -118,7 +118,7 @@ namespace Memoria.Scripts.Battle
                 case (RegularItem)2098: // Puissant Anticorps
                 {
                     TranceSeekAPI.TryRemoveItemStatuses(_v);
-                    if (TranceSeekAPI.ProtectStatus.TryGetValue(_v.Target.Data, out Dictionary<BattleStatus, Int32> statusprotect))
+                    if (TranceSeekBattleDictionary.ProtectStatus.TryGetValue(_v.Target.Data, out Dictionary<BattleStatus, Int32> statusprotect))
                     {
                         foreach (BattleStatusId statusID in _v.Command.Item.Status.ToStatusList())
                         {
@@ -160,7 +160,7 @@ namespace Memoria.Scripts.Battle
                     }
 
                     TranceSeekAPI.TryRemoveItemStatuses(_v);
-                    if (TranceSeekAPI.ProtectStatus.TryGetValue(_v.Target.Data, out Dictionary<BattleStatus, Int32> statusprotect))
+                    if (TranceSeekBattleDictionary.ProtectStatus.TryGetValue(_v.Target.Data, out Dictionary<BattleStatus, Int32> statusprotect))
                     {
                         Boolean Message = false;
                         string ItemName = FF9TextTool.ItemName(_v.Command.ItemId);
@@ -227,7 +227,7 @@ namespace Memoria.Scripts.Battle
                 case (RegularItem)2159: // Remède V +
                 {
                     TranceSeekAPI.TryRemoveItemStatuses(_v);
-                    if (TranceSeekAPI.ProtectStatus.TryGetValue(_v.Target.Data, out Dictionary<BattleStatus, Int32> statusprotect))
+                    if (TranceSeekBattleDictionary.ProtectStatus.TryGetValue(_v.Target.Data, out Dictionary<BattleStatus, Int32> statusprotect))
                     {
                         Boolean Message = false;
                         string ItemName = FF9TextTool.ItemName(_v.Command.ItemId);

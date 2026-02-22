@@ -45,11 +45,11 @@ namespace Memoria.DefaultScripts
         {
             if (Target.IsUnderAnyStatus(BattleStatus.Petrify))
                 return false;
-            uint TargetMaxHP = TranceSeekAPI.MonsterMechanic[Target.Data][3] != 0 ? (Target.MaximumHp - 10000) : Target.MaximumHp;
+            uint TargetMaxHP = TranceSeekBattleDictionary.MonsterMechanic[Target.Data][3] != 0 ? (Target.MaximumHp - 10000) : Target.MaximumHp;
             UInt32 damage = (UInt32)Math.Round(Target.IsUnderAnyStatus(BattleStatus.EasyKill) ? (TargetMaxHP / 256.0) : (TargetMaxHP / 32.0));
             Boolean isDmg = false;
 
-            if (!Target.IsZombie && (Int32)Target.GetPropertyByName("StatusProperty CustomStatus21 CursedBlood") == 0 && (TranceSeekAPI.NewEffectElement[Target.Data][0] & 8) == 0)
+            if (!Target.IsZombie && (Int32)Target.GetPropertyByName("StatusProperty CustomStatus21 CursedBlood") == 0 && (TranceSeekBattleDictionary.NewEffectElement[Target.Data][0] & 8) == 0)
             {
                 isDmg = true;
                 if (Target.CurrentHp > damage)
