@@ -56,6 +56,8 @@ namespace Memoria.Scripts.Battle
                 SoundLib.PlaySoundEffect(5003); //se770003
             }
 
+            TranceSeekRegularItem.SpecialItems(v);
+
             Single modifier_factor = 1f; // [TODO] Make something more cleaner about PowerUp status like here ?
             if (v.Context.DamageModifierCount >= 0)
                 modifier_factor += v.Context.DamageModifierCount * 0.25f;
@@ -205,8 +207,6 @@ namespace Memoria.Scripts.Battle
                 btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[FF19EE]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 0);
                 SoundLib.PlaySoundEffect(4004); //se511115
             }
-
-            TranceSeekRegularItem.SpecialItems(v);
         }
     }
 }

@@ -24,7 +24,9 @@ namespace Memoria.Scripts.Battle
         {
             Int32 baseDamage = Comn.random16() % (1 + (v.Caster.Level + v.Caster.Strength >> 3));
             v.Context.AttackPower = v.Caster.GetWeaponPower(v.Command);
-            v.Target.SetPhysicalDefense();
+            if ((!v.Caster.HasSupportAbility(SupportAbility1.Healer) && !v.Caster.IsHealingRod) && v.Target.IsPlayer)
+                v.Target.SetPhysicalDefense();
+
             switch (bonus)
             {
                 case CalcAttackBonus.Simple:
@@ -212,8 +214,8 @@ namespace Memoria.Scripts.Battle
                     v.Context.DamageModifierCount++;
             }
 
-            //if (v.Caster.HasSupportAbility(SupportAbility1.Healer) && v.Target.IsPlayer) // SA Healer never miss on Player.
-            //v.Context.Evade = 0;
+            if ((v.Caster.HasSupportAbility(SupportAbility1.Healer) || v.Caster.IsHealingRod) && v.Target.IsPlayer) // SA Healer never miss on Player.
+                v.Context.Evade = 0;
 
             if ((v.Context.HitRate <= Comn.random16() % 100) || v.Target.PhysicalEvade == 255 || v.Target.IsUnderAnyStatus(BattleStatus.Vanish))
             {
