@@ -164,6 +164,7 @@ namespace Assets.Sources.Scripts.UI.Common
                     statusSprite.alpha = 1f;
                 }
             }
+            ff9play.FF9Play_UpdateSerialNumber(player); // [DV] To refresh if swapped with SA.
         }
 
         public static void DisplayCharacterAvatar(PLAYER player, Vector3 frontPos, Vector3 backPos, UISprite avatarSprite, Boolean rowUpdate)
