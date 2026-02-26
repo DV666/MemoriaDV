@@ -509,6 +509,7 @@ public class QuadMistDatabase : MonoBehaviour
             deepCopy.mdef = quadMistCard.mdef;
             deepCopy.cpoint = quadMistCard.cpoint;
             deepCopy.arrow = quadMistCard.arrow;
+            deepCopy.OriginalCard = quadMistCard.OriginalCard;
             ff9SAVE_MINIGAME.MiniGameCard.Add(deepCopy);
         }
         return ff9SAVE_MINIGAME;

@@ -22,42 +22,49 @@ public class QuadMistCard
         mdef = card.mdef;
         cpoint = card.cpoint;
         arrow = card.arrow;
+        OriginalCard = card.OriginalCard;
     }
+
+    public QuadMistCard OriginalCard; // Original Card for LevelUp (for CardPatcher)
 
     public void LevelUpInMatch()
     {
+        QuadMistCard target = OriginalCard != null ? OriginalCard : this;
+
         switch (UnityEngine.Random.Range(0, 3))
         {
             case 0:
-                if (atk != CardPool.GetMaxStatCard(id).atk)
-                    atk++;
+                if (target.atk != CardPool.GetMaxStatCard(target.id).atk)
+                    target.atk++;
                 break;
             case 1:
-                if (pdef != CardPool.GetMaxStatCard(id).pdef)
-                    pdef++;
+                if (target.pdef != CardPool.GetMaxStatCard(target.id).pdef)
+                    target.pdef++;
                 break;
             case 2:
-                if (mdef != CardPool.GetMaxStatCard(id).mdef)
-                    mdef++;
+                if (target.mdef != CardPool.GetMaxStatCard(target.id).mdef)
+                    target.mdef++;
                 break;
         }
     }
 
     public void LevelUpInBattle()
     {
-        switch (type)
+        QuadMistCard target = OriginalCard != null ? OriginalCard : this;
+
+        switch (target.type)
         {
             case QuadMistCard.Type.PHYSICAL:
                 if (UnityEngine.Random.Range(0, 64) == 0)
-                    type = QuadMistCard.Type.FLEXIABLE;
+                    target.type = QuadMistCard.Type.FLEXIABLE;
                 break;
             case QuadMistCard.Type.MAGIC:
                 if (UnityEngine.Random.Range(0, 64) == 0)
-                    type = QuadMistCard.Type.FLEXIABLE;
+                    target.type = QuadMistCard.Type.FLEXIABLE;
                 break;
             case QuadMistCard.Type.FLEXIABLE:
                 if (UnityEngine.Random.Range(0, 128) == 0)
-                    type = QuadMistCard.Type.ASSAULT;
+                    target.type = QuadMistCard.Type.ASSAULT;
                 break;
         }
     }

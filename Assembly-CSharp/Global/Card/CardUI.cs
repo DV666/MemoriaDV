@@ -37,6 +37,10 @@ public class CardUI : UIScene
     public override void Hide(UIScene.SceneVoidDelegate afterFinished = null)
     {
         base.Hide(afterFinished);
+
+        if (CardPatcher.IsUsed)
+            CardPatcher.RestoreOriginalStats(FF9StateSystem.MiniGame.SavedData.MiniGameCard);
+
         if (!fastSwitch)
         {
             PersistenSingleton<UIManager>.Instance.MainMenuScene.StartSubmenuTweenIn();
@@ -430,7 +434,12 @@ public class CardUI : UIScene
         }
 
         foreach (QuadMistCard quadMistCard in FF9StateSystem.MiniGame.SavedData.MiniGameCard)
+        {
+            if (CardPatcher.IsUsed)
+                CardPatcher.ApplyStatPatches(quadMistCard);
+
             count[(Int32)quadMistCard.id]++;
+        }
 
         FF9FCard_GetPoint();
     }

@@ -20,6 +20,12 @@ namespace Memoria
             public String AtlasName;
             public String SpriteName;
             public Expression CompiledExpression;
+
+            public Byte? Atk;
+            public Byte? PDef;
+            public Byte? MDef;
+            public Byte? CPoint;
+            public QuadMistCard.Type? Type;
         }
 
         private static List<Patch> _patches = new List<Patch>();
@@ -44,7 +50,7 @@ namespace Memoria
 
                 if (trim == ">TETRAMASTER") continue;
 
-                if (trim == "BorderSprite" || trim == "ImageSprite" || trim == "BackgroundSprite")
+                if (trim == "BorderSprite" || trim == "ImageSprite" || trim == "BackgroundSprite" || trim == "Statistics")
                 {
                     currentPatch = new Patch { TargetElement = trim };
                     _patches.Add(currentPatch);
@@ -72,6 +78,34 @@ namespace Memoria
                 else if (trim.StartsWith("Sprite:"))
                 {
                     currentPatch.SpriteName = trim.Substring(7).Trim();
+                }
+                else if (trim.StartsWith("Atk:"))
+                {
+                    if (Byte.TryParse(trim.Substring(4).Trim(), out Byte val)) currentPatch.Atk = val;
+                }
+                else if (trim.StartsWith("Pdef:"))
+                {
+                    if (Byte.TryParse(trim.Substring(5).Trim(), out Byte val)) currentPatch.PDef = val;
+                }
+                else if (trim.StartsWith("Mdef:"))
+                {
+                    if (Byte.TryParse(trim.Substring(5).Trim(), out Byte val)) currentPatch.MDef = val;
+                }
+                else if (trim.StartsWith("Cpoint:"))
+                {
+                    if (Byte.TryParse(trim.Substring(7).Trim(), out Byte val)) currentPatch.CPoint = val;
+                }
+                else if (trim.StartsWith("Type:"))
+                {
+                    String typeStr = trim.Substring(5).Trim();
+                    try
+                    {
+                        currentPatch.Type = (QuadMistCard.Type)Enum.Parse(typeof(QuadMistCard.Type), typeStr, true);
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error($"[CardPatcher] Parsing error for <Type> : {typeStr}. {ex.Message}");
+                    }
                 }
             }
             Log.Message($"[CardPatcher] Loaded {_patches.Count} patches.");
@@ -215,8 +249,6 @@ namespace Memoria
 
             try
             {
-                int arrowNum = FF9.Comn.countBits(card.arrow);
-
                 patch.CompiledExpression.Parameters["Id"] = (int)card.id;
                 patch.CompiledExpression.Parameters["Side"] = (int)card.side;
                 patch.CompiledExpression.Parameters["PlayerSide"] = (int)card.side == QuadMistCardUI.PLAYER_SIDE;
@@ -224,8 +256,9 @@ namespace Memoria
                 patch.CompiledExpression.Parameters["Atk"] = (int)card.atk;
                 patch.CompiledExpression.Parameters["PDef"] = (int)card.pdef;
                 patch.CompiledExpression.Parameters["MDef"] = (int)card.mdef;
+                patch.CompiledExpression.Parameters["CPoint"] = (int)card.cpoint;
                 patch.CompiledExpression.Parameters["Arrow"] = (int)card.arrow;
-                patch.CompiledExpression.Parameters["ArrowNumber"] = arrowNum;
+                patch.CompiledExpression.Parameters["ArrowNumber"] = MathEx.BitCount(card.arrow);
                 patch.CompiledExpression.Parameters["Type"] = (int)card.type;
                 patch.CompiledExpression.Parameters["IsBlock"] = card.IsBlock;
 
@@ -261,6 +294,60 @@ namespace Memoria
             {
                 cardHud.CardBorderSprite.atlas = FF9UIDataTool.QuadMistImageAtlas;
                 cardHud.CardBorderSprite.spriteName = "card_player_frame";
+            }
+        }
+
+        private static Dictionary<QuadMistCard, QuadMistCard> _originalCards = new Dictionary<QuadMistCard, QuadMistCard>();
+        private static Dictionary<QuadMistCard, QuadMistCard> _patchedBaselines = new Dictionary<QuadMistCard, QuadMistCard>();
+
+        public static void ApplyStatPatches(QuadMistCard card)
+        {
+            if (_patches.Count == 0 || card == null) return;
+
+            QuadMistCard tempCard = new QuadMistCard(card);
+            bool isPatched = false;
+
+            foreach (var patch in _patches)
+            {
+                if (patch.TargetElement != "Statistics") continue;
+
+                if (EvaluatePatch(patch, tempCard))
+                {
+                    if (patch.Atk.HasValue) tempCard.atk = patch.Atk.Value;
+                    if (patch.PDef.HasValue) tempCard.pdef = patch.PDef.Value;
+                    if (patch.MDef.HasValue) tempCard.mdef = patch.MDef.Value;
+                    if (patch.CPoint.HasValue) tempCard.cpoint = patch.CPoint.Value;
+                    if (patch.Type.HasValue) tempCard.type = patch.Type.Value;
+                    isPatched = true;
+                }
+            }
+
+            if (isPatched)
+            {
+                if (card.OriginalCard == null)
+                    card.OriginalCard = new QuadMistCard(card);
+
+                card.atk = tempCard.atk;
+                card.pdef = tempCard.pdef;
+                card.mdef = tempCard.mdef;
+                card.cpoint = tempCard.cpoint;
+                card.type = tempCard.type;
+            }
+        }
+
+        public static void RestoreOriginalStats(IEnumerable<QuadMistCard> cards)
+        {
+            if (cards == null) return;
+            foreach (QuadMistCard card in cards)
+            {
+                if (card.OriginalCard != null)
+                {
+                    card.atk = card.OriginalCard.atk;
+                    card.pdef = card.OriginalCard.pdef;
+                    card.mdef = card.OriginalCard.mdef;
+                    card.type = card.OriginalCard.type;
+                    card.OriginalCard = null;
+                }
             }
         }
     }
