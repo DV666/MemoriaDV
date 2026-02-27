@@ -104,7 +104,7 @@ namespace Assets.Sources.Scripts.UI.Common
 
         public static void DisplayCharacterDetail(PLAYER player, CharacterDetailHUD charHud)
         {
-            /*IOverloadPlayerUIScript overloadedMethod = ScriptsLoader.GetOverloadedMethod(typeof(IOverloadPlayerUIScript)) as IOverloadPlayerUIScript;
+            IOverloadPlayerUIScript overloadedMethod = ScriptsLoader.GetOverloadedMethod(typeof(IOverloadPlayerUIScript)) as IOverloadPlayerUIScript;
             if (overloadedMethod != null)
             {
                 IOverloadPlayerUIScript.Result ui = overloadedMethod.UpdatePointStatus(player);
@@ -114,14 +114,14 @@ namespace Assets.Sources.Scripts.UI.Common
                     charHud.MagicStoneTextColor = ui.ColorMagicStone;
             }
             else
-            {*/
+            {
                 // Default method
                 charHud.HPTextColor = (player.cur.hp == 0) ? FF9TextTool.Red
                                     : (player.cur.hp <= player.max.hp / 6) ? FF9TextTool.Yellow : FF9TextTool.White;
                 charHud.MPTextColor = (player.cur.mp <= player.max.mp / 6) ? FF9TextTool.Yellow : FF9TextTool.White;
                 if (charHud.MagicStoneLabel != null)
                     charHud.MagicStoneTextColor = (player.cur.capa == 0) ? FF9TextTool.Yellow : FF9TextTool.White;
-            //}
+            }
             charHud.Self.SetActive(true);
             charHud.NameLabel.SetText(player.NameTag);
             charHud.LvLabel.rawText = player.level.ToString();
