@@ -21,7 +21,7 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            if (_v.Caster.Data.dms_geo_id == 446 && TranceSeekBattleDictionary.MonsterMechanic[_v.Caster.Data][2] == 1) // Garland - Final Meteor
+            if (_v.Caster.Data.dms_geo_id == 446 && _v.CasterState().Monster.Special2 == 1) // Garland - Final Meteor
             {            
                 _v.Caster.Data.mot[0] = "ANH_MON_B3_185_008";
                 _v.Caster.Data.mot[1] = "ANH_MON_B3_185_000";

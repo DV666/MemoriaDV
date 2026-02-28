@@ -1,6 +1,7 @@
-using System;
 using FF9;
 using Memoria.Data;
+using Memoria.Prime;
+using System;
 
 namespace Memoria.Scripts.Battle
 {
@@ -77,7 +78,7 @@ namespace Memoria.Scripts.Battle
                 }
                 else if (_v.Command.AbilityId == (BattleAbilityId)1009) // Pluto Charge
                 {
-                    int factorDefense = _v.Caster.PhysicalDefence + (_v.Caster.PhysicalDefence * (TranceSeekBattleDictionary.StackBreakOrUpStatus[_v.Caster.Data][2]) / 100);
+                    int factorDefense = _v.Caster.PhysicalDefence + (_v.Caster.PhysicalDefence * (_v.CasterState().StackStatus.PDefence) / 100);
                     _v.Target.HpDamage = (_v.Target.HpDamage * factorDefense) / 100;
                 }
                 else if (_v.Command.AbilityId == (BattleAbilityId)1043) // Fury of the general

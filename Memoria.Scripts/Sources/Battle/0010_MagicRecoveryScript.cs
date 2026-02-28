@@ -62,7 +62,7 @@ namespace Memoria.Scripts.Battle
                         caster => caster.CurrentAtb >= caster.MaximumAtb,
                         caster =>
                         {
-                            TranceSeekBattleDictionary.MonsterMechanic[_v.Target.Data][1] = Math.Min((int)(PreviousHP - _v.Target.CurrentHp), 9999);
+                            _v.TargetState().Monster.Special1 = Math.Min((int)(PreviousHP - _v.Target.CurrentHp), 9999);
                         }
                     );
                     _v.Target.TryAlterSingleStatus(TranceSeekStatusId.ZombieArmor, true, _v.Caster, _v.Target.HpDamage);

@@ -1,4 +1,5 @@
 ﻿using Memoria.Data;
+using Memoria.Prime;
 using System;
 using System.Collections.Generic;
 
@@ -30,7 +31,9 @@ namespace Memoria.Scripts.Battle
                     VanishRemove = true;
                 }
 
-                if (_v.Target.PhysicalEvade == 255 || TranceSeekBattleDictionary.ZidanePassive[_v.Target.Data][2] > 0)
+                var Target_TSVar = _v.TargetState();
+
+                if (_v.Target.PhysicalEvade == 255 || _v.TargetState().Zidane.EyeOfTheThief)
                 {
                     if (!VanishRemove)
                         _v.Context.Flags |= BattleCalcFlags.Miss;
@@ -48,7 +51,7 @@ namespace Memoria.Scripts.Battle
                     { "IT", "Occhio del ladro!" },
                 };
                 btl2d.Btl2dReqSymbolMessage(_v.Target.Data, "[FDEE00]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 5);
-                TranceSeekBattleDictionary.ZidanePassive[_v.Target.Data][2] = 1;
+                _v.TargetState().Zidane.EyeOfTheThief = true;
             }
             else
             {

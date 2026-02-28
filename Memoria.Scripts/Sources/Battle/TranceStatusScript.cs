@@ -1,11 +1,12 @@
-﻿using System;
+﻿using FF9;
 using Memoria.Data;
-using FF9;
-using Object = System.Object;
-using UnityEngine;
-using System.Collections.Generic;
 using Memoria.Scripts.Battle;
+using System;
+using System.Collections.Generic;
+using UnityEngine;
+using static BTL_DATA;
 using static Memoria.Scripts.Battle.TranceSeekBattleDictionary;
+using Object = System.Object;
 
 namespace Memoria.DefaultScripts
 {
@@ -49,9 +50,9 @@ namespace Memoria.DefaultScripts
         {
             base.Apply(target, inflicter, parameters);
             btl_cmd.SetCommand(target.Data.cmd[4], BattleCommandId.SysTrans, 0, target.Id, 0u);
-            if (!Target.IsPlayer && MonsterMechanic[Target.Data][0] == 0 && !Target.IsUnderAnyStatus(BattleStatus.EasyKill)) // +50% HP/MP Max if monster get under Trance
+            var Target_TSVar = target.State();
+            if (!Target.IsPlayer && !Target.IsUnderAnyStatus(BattleStatus.EasyKill)) // +50% HP/MP Max if monster get under Trance
             {
-                MonsterMechanic[Target.Data][0] = 1;
                 Target.MaximumHp += (Target.MaximumHp / 2);
                 Target.MaximumMp += (Target.MaximumMp / 2);
                 Target.CurrentHp = Target.MaximumHp;
@@ -75,13 +76,11 @@ namespace Memoria.DefaultScripts
                         target => target.Data.bi.def_idle == 1,
                         target =>
                         {
-                            if (AdditionalModel[target.Data] == null) // TODO => Make new model for Beatrix wings.
-                            {
-                                ModelFactory.ChangeModelTexture(target.Data.gameObject, new string[] { "CustomTextures/Players/BeatrixTranceWings/427_0_trance.png", "CustomTextures/Players/BeatrixTranceWings/427_1_trance.png" });
-                                AdditionalModel[target.Data] = ModelFactory.CreateModel("GEO_NPC_GoldenWings", true);
-                                AdditionalModel[target.Data].SetActive(true);
-                                GeoAttach(AdditionalModel[target.Data], target.Data.gameObject, 11);
-                            }
+                            ModelFactory.ChangeModelTexture(target.Data.gameObject, new string[] { "CustomTextures/Players/BeatrixTranceWings/427_0_trance.png", "CustomTextures/Players/BeatrixTranceWings/427_1_trance.png" });
+                            WEAPON_MODEL GoldenWings = new WEAPON_MODEL { geo = ModelFactory.CreateModel("GEO_NPC_GoldenWings", true) };
+                            GoldenWings.geo.SetActive(true);
+                            GeoAttach(GoldenWings.geo, target.Data.gameObject, 11);
+                            Target_TSVar.AdditionalModel.Add(GoldenWings);
                         }
                         );
                 }
@@ -90,8 +89,7 @@ namespace Memoria.DefaultScripts
             {
                 if (target.PlayerIndex == CharacterId.Garnet)
                     target.AddDelayedModifier(ProcessPhantomRecast, ClearPhantomRecast);
-
-                if (target.PlayerIndex == CharacterId.Marcus)
+                else if (target.PlayerIndex == CharacterId.Marcus)
                     target.AddDelayedModifier(
                         target => !target.Data.tranceGo.activeSelf,
                         target =>
@@ -123,27 +121,44 @@ namespace Memoria.DefaultScripts
                                 if (target.HasSupportAbilityByIndex((SupportAbility)1242))
                                     target.AlterStatus(BattleStatus.EasyKill);
                             }
-                            if (AdditionalModel[target.Data] == null)
-                            {
-                                AdditionalModel[target.Data] = ModelFactory.CreateModel("GEO_NPC_DemonWings", true);
-                                AdditionalModel[target.Data].SetActive(true);
-                                GeoAttach(AdditionalModel[target.Data], target.Data.gameObject, 1);
-                            }
+                            WEAPON_MODEL DemonWings = new WEAPON_MODEL { geo = ModelFactory.CreateModel("GEO_NPC_DemonWings", true) };
+                            DemonWings.geo.SetActive(true);
+                            GeoAttach(DemonWings.geo, target.Data.gameObject, 1);
+                            Target_TSVar.AdditionalModel.Add(DemonWings);
                         }
                     );
-
-                if (target.PlayerIndex == CharacterId.Beatrix)
+                else if (target.PlayerIndex == CharacterId.Beatrix)
                 {
                     target.AddDelayedModifier(
                         target => !target.Data.tranceGo.activeSelf,
                         target =>
                         {
-                            if (AdditionalModel[target.Data] == null)
-                            {
-                                AdditionalModel[target.Data] = ModelFactory.CreateModel("GEO_NPC_GoldenWings", true);
-                                AdditionalModel[target.Data].SetActive(true);
-                                GeoAttach(AdditionalModel[target.Data], target.Data.gameObject, 11);
-                            }
+                            WEAPON_MODEL GoldenWings = new WEAPON_MODEL { geo = ModelFactory.CreateModel("GEO_NPC_GoldenWings", true) };
+                            GoldenWings.geo.SetActive(true);
+                            GeoAttach(GoldenWings.geo, target.Data.gameObject, 11);
+                            Target_TSVar.AdditionalModel.Add(GoldenWings);
+                        }
+                    );
+                }
+                else if (target.PlayerIndex == (CharacterId)12) // Lani
+                {
+                    target.AddDelayedModifier(
+                        target => !target.Data.tranceGo.activeSelf,
+                        target =>
+                        {
+                            WEAPON_MODEL FirstAxe = new WEAPON_MODEL { geo = ModelFactory.CreateModel("GEO_ACC_F0_LNW", true) };
+                            GeoAttach(FirstAxe.geo, target.Data.gameObject, 14);
+                            FirstAxe.geo.transform.localPosition = new Vector3(-130.5f, 87f, 106f);
+                            FirstAxe.geo.transform.localRotation = Quaternion.Euler(new Vector3(17.35538f, 121.1880f, 247.1161f));
+                            FirstAxe.geo.SetActive(true);
+                            Target_TSVar.AdditionalModel.Add(FirstAxe);
+
+                            WEAPON_MODEL SecondAxe = new WEAPON_MODEL { geo = ModelFactory.CreateModel("GEO_ACC_F0_LNW", true) };
+                            GeoAttach(SecondAxe.geo, target.Data.gameObject, 14);
+                            SecondAxe.geo.transform.localPosition = new Vector3(114.5f, 84.5f, 183f);
+                            SecondAxe.geo.transform.localRotation = Quaternion.Euler(new Vector3(16.64425f, 212.1457f, 111.8135f));
+                            SecondAxe.geo.SetActive(true);
+                            Target_TSVar.AdditionalModel.Add(SecondAxe);
                         }
                     );
                 }
@@ -155,6 +170,7 @@ namespace Memoria.DefaultScripts
         public override Boolean Remove()
         {
             Target.Trance = 0;
+            var Target_TSVar = Target.State();
             if (Target.IsUnderAnyStatus(BattleStatus.Jump))
             {
                 btl_stat.RemoveStatus(Target, BattleStatusId.Jump);
@@ -164,7 +180,7 @@ namespace Memoria.DefaultScripts
                 Target.Data.evt.animFrame = 0;
             }
 
-            if (!Target.IsMonsterTransform && SpecialSAEffect[Target][3] == 0)
+            if (!Target.IsMonsterTransform && !Target_TSVar.PreventTranceSFX)
                 btl_cmd.SetCommand(Target.Data.cmd[4], BattleCommandId.SysTrans, 0, Target.Id, 0u);
 
             if (!Target.IsPlayer)
@@ -177,7 +193,10 @@ namespace Memoria.DefaultScripts
                         target =>
                         {
                             Vector3 position = target.Data.gameObject.transform.position;
-                            UnityEngine.Object.Destroy(AdditionalModel[target.Data]);
+                            foreach (var model in Target_TSVar.AdditionalModel)
+                                if (model != null && model.geo != null)
+                                    UnityEngine.Object.Destroy(model.geo);
+
                             target.Data.weaponModels[0].geo.SetActive(false);
                             target.Data.gameObject.SetActive(false);
                             target.Data.gameObject = ModelFactory.CreateModel("GEO_MON_B3_155", true);

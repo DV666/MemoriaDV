@@ -36,103 +36,44 @@ namespace Memoria.Scripts.Battle
 
         public static void SOS_SA(BattleCalculator v)
         {
-            if (v.Target.CurrentHp > (v.Target.MaximumHp / 2) && SpecialSAEffect[v.Target.Data][14] > 0 &&
-                (v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.SOS_Protect_Boosted) || v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.SOS_Shell_Boosted) ||
-                v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.SOS_Regen_Boosted) || v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.SOS_Haste_Boosted) ||
-                v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.SOS_Reflect_Boosted) || v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.SOS_Vanish_Boosted)))
+            var targetState = v.TargetState();
+
+            bool isHpBelowHalf = v.Target.CurrentHp <= (v.Target.MaximumHp / 2);
+            bool isLowHp = v.Target.IsUnderAnyStatus(BattleStatus.LowHP);
+
+            if (!isHpBelowHalf)
             {
-                if ((SpecialSAEffect[v.Target.Data][14] & 1) > 0)
-                    SpecialSAEffect[v.Target.Data][14] -= 1;
-                if ((SpecialSAEffect[v.Target.Data][14] & 4) > 0)
-                    SpecialSAEffect[v.Target.Data][14] -= 4;
-                if ((SpecialSAEffect[v.Target.Data][14] & 16) > 0)
-                    SpecialSAEffect[v.Target.Data][14] -= 16;
-                if ((SpecialSAEffect[v.Target.Data][14] & 64) > 0)
-                    SpecialSAEffect[v.Target.Data][14] -= 64;
-                if ((SpecialSAEffect[v.Target.Data][14] & 256) > 0)
-                    SpecialSAEffect[v.Target.Data][14] -= 256;
-                if ((SpecialSAEffect[v.Target.Data][14] & 1024) > 0)
-                    SpecialSAEffect[v.Target.Data][14] -= 1024;
-            }
-            else if (!v.Target.IsUnderAnyStatus(BattleStatus.LowHP) && SpecialSAEffect[v.Target.Data][14] > 0 &&
-                (v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.SOS_Protect) || v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.SOS_Shell) ||
-                v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.SOS_Regen) || v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.SOS_Haste) ||
-                v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.SOS_Reflect) || v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.SOS_Vanish)))
-            {
-                if ((SpecialSAEffect[v.Target.Data][14] & 2) > 0)
-                    SpecialSAEffect[v.Target.Data][14] -= 2;
-                if ((SpecialSAEffect[v.Target.Data][14] & 8) > 0)
-                    SpecialSAEffect[v.Target.Data][14] -= 8;
-                if ((SpecialSAEffect[v.Target.Data][14] & 32) > 0)
-                    SpecialSAEffect[v.Target.Data][14] -= 32;
-                if ((SpecialSAEffect[v.Target.Data][14] & 128) > 0)
-                    SpecialSAEffect[v.Target.Data][14] -= 128;
-                if ((SpecialSAEffect[v.Target.Data][14] & 512) > 0)
-                    SpecialSAEffect[v.Target.Data][14] -= 512;
-                if ((SpecialSAEffect[v.Target.Data][14] & 2048) > 0)
-                    SpecialSAEffect[v.Target.Data][14] -= 2048;
+                targetState.SpecialSA.OneTriggerSOS &= ~(1 | 4 | 16 | 64 | 256 | 1024);
             }
 
-            if (v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.SOS_Protect_Boosted) && (SpecialSAEffect[v.Target.Data][14] & 1) == 0 && v.Target.CurrentHp <= (v.Target.MaximumHp / 2))
+            if (!isLowHp)
             {
-                v.Target.AlterStatus(BattleStatus.Protect, v.Target);
-                SpecialSAEffect[v.Target.Data][14] += 1;
+                targetState.SpecialSA.OneTriggerSOS &= ~(2 | 8 | 32 | 128 | 512 | 2048);
             }
-            if (v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.SOS_Protect) && (SpecialSAEffect[v.Target.Data][14] & 2) == 0 && v.Target.IsUnderAnyStatus(BattleStatus.LowHP) && !v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.SOS_Protect_Boosted))
+
+            void CheckAndTriggerSOS(SupportAbility normalAbility, SupportAbility boostedAbility, BattleStatus statusToApply, int normalBit, int boostedBit)
             {
-                v.Target.AlterStatus(BattleStatus.Protect, v.Target);
-                SpecialSAEffect[v.Target.Data][14] += 2;
+                bool hasBoosted = v.Target.HasSupportAbilityByIndex(boostedAbility);
+                bool hasNormal = v.Target.HasSupportAbilityByIndex(normalAbility);
+
+                if (hasBoosted && isHpBelowHalf && (targetState.SpecialSA.OneTriggerSOS & boostedBit) == 0)
+                {
+                    v.Target.AlterStatus(statusToApply, v.Target);
+                    targetState.SpecialSA.OneTriggerSOS |= boostedBit;
+                }
+                else if (hasNormal && !hasBoosted && isLowHp && (targetState.SpecialSA.OneTriggerSOS & normalBit) == 0)
+                {
+                    v.Target.AlterStatus(statusToApply, v.Target);
+                    targetState.SpecialSA.OneTriggerSOS |= normalBit;
+                }
             }
-            if (v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.SOS_Shell_Boosted) && (SpecialSAEffect[v.Target.Data][14] & 4) == 0 && v.Target.CurrentHp <= (v.Target.MaximumHp / 2))
-            {
-                v.Target.AlterStatus(BattleStatus.Shell, v.Target);
-                SpecialSAEffect[v.Target.Data][14] += 4;
-            }
-            if (v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.SOS_Shell) && (SpecialSAEffect[v.Target.Data][14] & 8) == 0 && v.Target.IsUnderAnyStatus(BattleStatus.LowHP) && !v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.SOS_Shell_Boosted))
-            {
-                v.Target.AlterStatus(BattleStatus.Shell, v.Target);
-                SpecialSAEffect[v.Target.Data][14] += 8;
-            }
-            if (v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.SOS_Regen_Boosted) && (SpecialSAEffect[v.Target.Data][14] & 16) == 0 && v.Target.CurrentHp <= (v.Target.MaximumHp / 2))
-            {
-                v.Target.AlterStatus(BattleStatus.Regen, v.Target);
-                SpecialSAEffect[v.Target.Data][14] += 16;
-            }
-            if (v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.SOS_Regen) && (SpecialSAEffect[v.Target.Data][14] & 32) == 0 && v.Target.IsUnderAnyStatus(BattleStatus.LowHP) && !v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.SOS_Regen_Boosted)) 
-            {
-                v.Target.AlterStatus(BattleStatus.Regen, v.Target);
-                SpecialSAEffect[v.Target.Data][14] += 32;
-            }
-            if (v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.SOS_Haste_Boosted) && (SpecialSAEffect[v.Target.Data][14] & 64) == 0 && v.Target.CurrentHp <= (v.Target.MaximumHp / 2))
-            {
-                v.Target.AlterStatus(BattleStatus.Haste, v.Target);
-                SpecialSAEffect[v.Target.Data][14] += 64;
-            }
-            if (v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.SOS_Haste) && (SpecialSAEffect[v.Target.Data][14] & 128) == 0 && v.Target.IsUnderAnyStatus(BattleStatus.LowHP) && !v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.SOS_Haste_Boosted))
-            {
-                v.Target.AlterStatus(BattleStatus.Haste, v.Target);
-                SpecialSAEffect[v.Target.Data][14] += 128;
-            }
-            if (v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.SOS_Reflect_Boosted) && (SpecialSAEffect[v.Target.Data][14] & 256) == 0 && v.Target.CurrentHp <= (v.Target.MaximumHp / 2))
-            {
-                v.Target.AlterStatus(BattleStatus.Reflect, v.Target);
-                SpecialSAEffect[v.Target.Data][14] += 256;
-            }
-            if (v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.SOS_Reflect) && (SpecialSAEffect[v.Target.Data][14] & 512) == 0 && v.Target.IsUnderAnyStatus(BattleStatus.LowHP) && !v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.SOS_Reflect_Boosted))
-            {
-                v.Target.AlterStatus(BattleStatus.Reflect, v.Target);
-                SpecialSAEffect[v.Target.Data][14] += 512;
-            }
-            if (v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.SOS_Vanish_Boosted) && (SpecialSAEffect[v.Target.Data][14] & 1024) == 0 && v.Target.CurrentHp <= (v.Target.MaximumHp / 2))
-            {
-                v.Target.AlterStatus(BattleStatus.Vanish, v.Target);
-                SpecialSAEffect[v.Target.Data][14] += 1024;
-            }
-            if (v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.SOS_Vanish) && (SpecialSAEffect[v.Target.Data][14] & 2048) == 0 && v.Target.IsUnderAnyStatus(BattleStatus.LowHP) && !v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.SOS_Vanish_Boosted))
-            {
-                v.Target.AlterStatus(BattleStatus.Vanish, v.Target);
-                SpecialSAEffect[v.Target.Data][14] += 2048;
-            }
+
+            CheckAndTriggerSOS(TranceSeekSupportAbility.SOS_Protect, TranceSeekSupportAbility.SOS_Protect_Boosted, BattleStatus.Protect, 2, 1);
+            CheckAndTriggerSOS(TranceSeekSupportAbility.SOS_Shell, TranceSeekSupportAbility.SOS_Shell_Boosted, BattleStatus.Shell, 8, 4);
+            CheckAndTriggerSOS(TranceSeekSupportAbility.SOS_Regen, TranceSeekSupportAbility.SOS_Regen_Boosted, BattleStatus.Regen, 32, 16);
+            CheckAndTriggerSOS(TranceSeekSupportAbility.SOS_Haste, TranceSeekSupportAbility.SOS_Haste_Boosted, BattleStatus.Haste, 128, 64);
+            CheckAndTriggerSOS(TranceSeekSupportAbility.SOS_Reflect, TranceSeekSupportAbility.SOS_Reflect_Boosted, BattleStatus.Reflect, 512, 256);
+            CheckAndTriggerSOS(TranceSeekSupportAbility.SOS_Vanish, TranceSeekSupportAbility.SOS_Vanish_Boosted, BattleStatus.Vanish, 2048, 1024);
         }
     }
 }

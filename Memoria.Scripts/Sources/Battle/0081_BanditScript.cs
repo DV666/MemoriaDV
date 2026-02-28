@@ -39,7 +39,7 @@ namespace Memoria.Scripts.Battle
                 }
 
                 float BonusRatioHP = 0;
-                if (TranceSeekBattleDictionary.MonsterMechanic[_v.Target.Data][3] > 0)
+                if (_v.TargetState().Monster.HPBoss10000)
                     BonusRatioHP = 100 - ((_v.Target.CurrentHp * 100) / (_v.Target.MaximumHp - 10000));
                 else
                     BonusRatioHP = 100 - ((_v.Target.CurrentHp * 100)/ _v.Target.MaximumHp);

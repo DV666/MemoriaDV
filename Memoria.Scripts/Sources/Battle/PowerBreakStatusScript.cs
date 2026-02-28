@@ -76,7 +76,7 @@ namespace Memoria.DefaultScripts
             if (BasicStrength == 0)
                 BasicStrength = Target.Strength;
 
-            StackBreakOrUpStatus[Target.Data][0] = -(Stack * 10);
+            Target.State().StackStatus.Strength = -(Stack * 10);
 
             if (Stack > StackMaximum)
             {

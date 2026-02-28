@@ -24,22 +24,23 @@ namespace Memoria.Scripts.Battle
         {
             if (_v.Caster.Data.dms_geo_id == 446) // Garland - Armor Mechanic
             {
+                var Caster_TSVar = _v.CasterState();
                 if (_v.Command.Power == 100 && _v.Command.HitRate == 100)
                 {
-                    TranceSeekBattleDictionary.MonsterMechanic[_v.Caster.Data][1] = 10;
+                    Caster_TSVar.SpecialItem.MechanicalArmor = 10;
                     _v.Target.Data.mot[2] = "ANH_MON_B3_185_000";
                     _v.Target.Flags |= CalcFlag.HpDamageOrHeal;
                     _v.Target.HpDamage = 5000;
-                    _v.Target.TryAlterSingleStatus(TranceSeekStatusId.MechanicalArmor, true, _v.Caster, TranceSeekBattleDictionary.MonsterMechanic[_v.Caster.Data][1]);
+                    _v.Target.TryAlterSingleStatus(TranceSeekStatusId.MechanicalArmor, true, _v.Caster, Caster_TSVar.SpecialItem.MechanicalArmor);
                 }
                 else if (_v.Command.Power == 200 && _v.Command.HitRate == 200)
                 {
-                    TranceSeekBattleDictionary.MonsterMechanic[_v.Caster.Data][1] = 20;
+                    Caster_TSVar.SpecialItem.MechanicalArmor = 20;
                     _v.Target.Data.mot[2] = "ANH_MON_B3_185_000";
                     _v.Target.Flags |= CalcFlag.HpDamageOrHeal;
                     _v.Target.HpDamage = 9999;
                     _v.Target.PhysicalEvade = 0;
-                    _v.Target.TryAlterSingleStatus(TranceSeekStatusId.MechanicalArmor, true, _v.Caster, TranceSeekBattleDictionary.MonsterMechanic[_v.Caster.Data][1]);
+                    _v.Target.TryAlterSingleStatus(TranceSeekStatusId.MechanicalArmor, true, _v.Caster, Caster_TSVar.SpecialItem.MechanicalArmor);
                 }
                 _v.Target.TryRemoveStatuses(_v.Command.AbilityStatus);
             }

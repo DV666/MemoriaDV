@@ -20,6 +20,7 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
+            var Target_TSVar = _v.TargetState();
             switch (_v.Command.AbilityId)
             {
                 case (BattleAbilityId)1153: // You there!
@@ -36,7 +37,7 @@ namespace Memoria.Scripts.Battle
                 }
                 case (BattleAbilityId)1155: // Peuh!
                 {
-                    TranceSeekBattleDictionary.SpecialSAEffect[_v.Target.Data][11] = 1;
+                    Target_TSVar.Baku.Peuh = true;
                     break;
                 }
                 case (BattleAbilityId)1156: // A gift for you!
@@ -77,7 +78,7 @@ namespace Memoria.Scripts.Battle
                 }
                 case (BattleAbilityId)1158: // That's all?
                 {
-                    if (TranceSeekBattleDictionary.SpecialSAEffect[_v.Target.Data][12] != 0)
+                    if (Target_TSVar.Baku.ThatsAll)
                     {
                         _v.Context.Flags |= BattleCalcFlags.Miss;
                         return;
@@ -85,13 +86,13 @@ namespace Memoria.Scripts.Battle
 
                     uint VanillaMaxMP = _v.Target.MaximumHp;
                     _v.Target.MaximumHp *= 2;
-                    TranceSeekBattleDictionary.SpecialSAEffect[_v.Target.Data][12] = 1;
+                    Target_TSVar.Baku.ThatsAll = true;
                     _v.Target.AddDelayedModifier(
                         target => !target.IsUnderAnyStatus(BattleStatus.Death),
                         target =>
                         {
                             target.MaximumHp = VanillaMaxMP;
-                            TranceSeekBattleDictionary.SpecialSAEffect[_v.Target.Data][12] = 0;
+                            Target_TSVar.Baku.ThatsAll = false;
                         }
                     );
                     break;

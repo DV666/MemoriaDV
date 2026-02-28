@@ -69,9 +69,10 @@ namespace Memoria.Scripts.Battle
                         TranceSeekAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
                     }
 
+                    var Caster_TSVar = _v.CasterState();
                     int ChanceDeathBlow = 33;
-                    if (TranceSeekBattleDictionary.SteinerPassive[_v.Caster.Data][1] > 0)
-                        ChanceDeathBlow += 10 * TranceSeekBattleDictionary.SteinerPassive[_v.Caster.Data][1];
+                    if (Caster_TSVar.Steiner.StackCMD1 > 0)
+                        ChanceDeathBlow += 10 * Caster_TSVar.Steiner.StackCMD1;
 
                     if (Comn.random16() % 100 > ChanceDeathBlow && _v.Command.AbilityId != (BattleAbilityId)1551)
                     {
@@ -109,7 +110,7 @@ namespace Memoria.Scripts.Battle
                         }
                     }
 
-                    if (TranceSeekBattleDictionary.SteinerPassive[_v.Caster.Data][1] > 0)
+                    if (Caster_TSVar.Steiner.StackCMD1 > 0)
                         TranceSeekCharacterMechanic.ResetSteinerPassive(_v.Caster);
                 }
             }

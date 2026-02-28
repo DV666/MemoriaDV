@@ -17,6 +17,7 @@ namespace Memoria.Scripts.Battle
         {
             if (v.Caster.PlayerIndex == CharacterId.Freya)
             {
+                var Freya_TSVar = v.TargetState();
                 Int32 quarterWill = v.Caster.Data.elem.wpr >> 2;
                 Int32 bonusdragon = 2;
                 switch (v.Caster.Weapon)
@@ -50,14 +51,14 @@ namespace Memoria.Scripts.Battle
                         break;
                 }
 
-                FreyaPassive[v.Target.Data][0] += bonusdragon;
+                Freya_TSVar.DragonChanceProc += bonusdragon;
 
                 if (quarterWill != 0)
                 {
-                    if ((((Comn.random16() % quarterWill) + FreyaPassive[v.Target.Data][0]) > Comn.random16() % 100) || ((v.Target.Flags & CalcFlag.Critical) != 0 && v.Command.Id == BattleCommandId.Attack))
+                    if ((((Comn.random16() % quarterWill) + Freya_TSVar.DragonChanceProc) > Comn.random16() % 100) || ((v.Target.Flags & CalcFlag.Critical) != 0 && v.Command.Id == BattleCommandId.Attack))
                     {
                         v.Target.AlterStatus(TranceSeekStatus.Dragon, v.Caster);
-                        FreyaPassive[v.Target.Data][0] = 0;
+                        Freya_TSVar.DragonChanceProc = 0;
                     }
                 }
             }
@@ -210,7 +211,7 @@ namespace Memoria.Scripts.Battle
             caster => caster.CurrentAtb >= caster.MaximumAtb,
             caster =>
             {
-                SteinerPassive[unit.Data][1] = 0;
+                unit.State().Steiner.StackCMD2 = 0;
                 if (FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1000, out Dictionary<Int32, Int32> dictbattle))
                     dictbattle[1] = 0;
             }
@@ -220,9 +221,11 @@ namespace Memoria.Scripts.Battle
         public static void UpdateRedemptionHUD(BattleUnit unit)
         {
             int RedemptionStack = (int)unit.GetPropertyByName("StatusProperty CustomStatus12 Stack");
-            if (RedemptionStack > 0 && BeatrixPassive[unit.Data][0] != RedemptionStack)
+            var BeatrixPassive = unit.State().Beatrix;
+
+            if (RedemptionStack > 0 && BeatrixPassive.StackCMD != RedemptionStack)
             {
-                BeatrixPassive[unit.Data][0] = RedemptionStack;
+                BeatrixPassive.StackCMD = RedemptionStack;
                 FF9TextTool.SetCommandName(BattleCommandId.HolySword1, TranceSeekBattleCommand.SeikenCMDNameVanilla[Localization.CurrentDisplaySymbol] + " (" + RedemptionStack + " [SPRT=IconAtlas,item200_01,40,40] )");
                 FF9TextTool.SetCommandName(BattleCommandId.HolySword2, TranceSeekBattleCommand.SeikenPlusCMDNameVanilla[Localization.CurrentDisplaySymbol] + " (" + RedemptionStack + " [SPRT=IconAtlas,item200_01,40,40] )");
                 Dictionary<String, String> BeatrixPassiveMessage = new Dictionary<String, String>
@@ -239,7 +242,7 @@ namespace Memoria.Scripts.Battle
             }
             else if (RedemptionStack == 0)
             {
-                BeatrixPassive[unit.Data][0] = RedemptionStack;
+                BeatrixPassive.StackCMD = RedemptionStack;
                 FF9TextTool.SetCommandName(BattleCommandId.HolySword1, TranceSeekBattleCommand.SeikenCMDNameVanilla[Localization.CurrentDisplaySymbol]);
                 FF9TextTool.SetCommandName(BattleCommandId.HolySword2, TranceSeekBattleCommand.SeikenPlusCMDNameVanilla[Localization.CurrentDisplaySymbol]);
             }
@@ -251,26 +254,28 @@ namespace Memoria.Scripts.Battle
             if (v.Command.Id != BattleCommandId.BlackMagic && v.Command.Id != BattleCommandId.DoubleBlackMagic && v.Command.Id != BattleCommandId.MagicSword && v.Command.Id != TranceSeekBattleCommand.Witchcraft)
                 return;
 
-            if (ViviPassive[v.Caster.Data][2] == 0)
+            var Vivi_TSVar = v.CasterState().Vivi;
+
+            if (!Vivi_TSVar.TriggerOneTime)
             {
-                ViviPassive[v.Caster.Data][2] = 1;
+                Vivi_TSVar.TriggerOneTime = true;
                 Int32 counter = 25;
                 v.Caster.AddDelayedModifier(
                     caster => (counter -= 1) > 0,
                     caster =>
                     {
-                        ViviPassive[v.Caster.Data][1] = 0;
-                        ViviPassive[v.Caster.Data][2] = 0;
+                        Vivi_TSVar.NumberTargets = 0;
+                        Vivi_TSVar.TriggerOneTime = false;
                     }
                 );
                 if (v.Caster.PlayerIndex == CharacterId.Vivi)
                 {
                     if ((v.Command.Id == BattleCommandId.BlackMagic || v.Command.Id == BattleCommandId.DoubleBlackMagic) || v.Command.Id == TranceSeekBattleCommand.Witchcraft)
                     {
-                        if (ViviPassive[v.Caster.Data][1] == 0)
+                        if (Vivi_TSVar.NumberTargets == 0)
                         {
-                            ViviPassive[v.Caster.Data][1] = (ushort)(v.Command.TargetCount);
-                            if (FF9TextTool.ActionAbilityName(ViviPreviousSpell[v.Caster.Data]) != v.Command.AbilityName)
+                            Vivi_TSVar.NumberTargets = v.Command.TargetCount;
+                            if (FF9TextTool.ActionAbilityName(Vivi_TSVar.PreviousSpell) != v.Command.AbilityName)
                             {
                                 Int32 BonusFocusMax = 0;
                                 switch (v.Caster.Weapon)
@@ -291,19 +296,20 @@ namespace Memoria.Scripts.Battle
                                         BonusFocusMax += 50;
                                         break;
                                 }
-                                if (ViviPassive[v.Caster.Data][0] < (50 + BonusFocusMax))
+                                if (Vivi_TSVar.Focus < (50 + BonusFocusMax))
                                 {
-                                    ViviPassive[v.Caster.Data][0] += v.Caster.HasSupportAbilityByIndex((SupportAbility)207) ? 10 : 5; // SA Bobbin
+                                    Vivi_TSVar.Focus += v.Caster.HasSupportAbilityByIndex((SupportAbility)207) ? 10 : 5; // SA Bobbin
                                 }
+                                int ViviFocus = Vivi_TSVar.Focus;
                                 Dictionary<String, String> localizedMessage = new Dictionary<String, String>
                                 {
-                                    { "US", $"Focus +{ViviPassive[v.Caster.Data][0]}%!" },
-                                    { "UK", $"Focus +{ViviPassive[v.Caster.Data][0]}%!" },
-                                    { "JP", $"フォーカス +{ViviPassive[v.Caster.Data][0]}%!" },
-                                    { "ES", $"¡Focus +{ViviPassive[v.Caster.Data][0]}%!" },
-                                    { "FR", $"Focus +{ViviPassive[v.Caster.Data][0]}% !" },
-                                    { "GR", $"Focus +{ViviPassive[v.Caster.Data][0]}%!" },
-                                    { "IT", $"Focus +{ViviPassive[v.Caster.Data][0]}%!" },
+                                    { "US", $"Focus +{ViviFocus}%!" },
+                                    { "UK", $"Focus +{ViviFocus}%!" },
+                                    { "JP", $"フォーカス +{ViviFocus}%!" },
+                                    { "ES", $"¡Focus +{ViviFocus}%!" },
+                                    { "FR", $"Focus +{ViviFocus}% !" },
+                                    { "GR", $"Focus +{ViviFocus}%!" },
+                                    { "IT", $"Focus +{ViviFocus}%!" },
                                 };
                                 btl2d.Btl2dReqSymbolMessage(v.Caster.Data, "[BA55D3]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 40);
                             }
@@ -311,25 +317,26 @@ namespace Memoria.Scripts.Battle
                             {
                                 if (v.Caster.HasSupportAbilityByIndex((SupportAbility)1207)) // SA Bobbin+
                                 {
-                                    ViviPassive[v.Caster.Data][0] /= 2;
-                                    if (ViviPassive[v.Caster.Data][0] % 10U == 5)
-                                        ViviPassive[v.Caster.Data][0] += 5;
+                                    Vivi_TSVar.Focus /= 2;
+                                    if (Vivi_TSVar.Focus % 10U == 5)
+                                        Vivi_TSVar.Focus += 5;
 
+                                    int ViviFocus = Vivi_TSVar.Focus;
                                     Dictionary<String, String> localizedMessage = new Dictionary<String, String>
                                     {
-                                        { "US", $"Focus +{ViviPassive[v.Caster.Data][0]}%!" },
-                                        { "UK", $"Focus +{ViviPassive[v.Caster.Data][0]}%!" },
-                                        { "JP", $"フォーカス +{ViviPassive[v.Caster.Data][0]}%!" },
-                                        { "ES", $"¡Focus +{ViviPassive[v.Caster.Data][0]}%!" },
-                                        { "FR", $"Focus +{ViviPassive[v.Caster.Data][0]}% !" },
-                                        { "GR", $"Focus +{ViviPassive[v.Caster.Data][0]}%!" },
-                                        { "IT", $"Focus +{ViviPassive[v.Caster.Data][0]}%!" },
+                                        { "US", $"Focus +{ViviFocus}%!" },
+                                        { "UK", $"Focus +{ViviFocus}%!" },
+                                        { "JP", $"フォーカス +{ViviFocus}%!" },
+                                        { "ES", $"¡Focus +{ViviFocus}%!" },
+                                        { "FR", $"Focus +{ViviFocus}% !" },
+                                        { "GR", $"Focus +{ViviFocus}%!" },
+                                        { "IT", $"Focus +{ViviFocus}%!" },
                                     };
                                     btl2d.Btl2dReqSymbolMessage(v.Caster.Data, "[BA55D3]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 40);
                                 }
                                 else
                                 {
-                                    ViviPassive[v.Caster.Data][0] = 0;
+                                    Vivi_TSVar.Focus = 0;
                                     Dictionary<String, String> localizedMessage = new Dictionary<String, String>
                                     {
                                         { "US", "- Focus!" },
@@ -351,30 +358,30 @@ namespace Memoria.Scripts.Battle
                                 else
                                     StealScript.ClassicSteal(v, false);
                             }
-                            ViviPreviousSpell[v.Caster.Data] = v.Command.AbilityId;
+                            Vivi_TSVar.PreviousSpell = v.Command.AbilityId;
                         }
-                        ViviPassive[v.Caster.Data][1]--;
-                        if (ViviPassive[v.Caster.Data][1] < 0)
-                            ViviPassive[v.Caster.Data][1] = 0;
+                        Vivi_TSVar.NumberTargets--;
+                        if (Vivi_TSVar.NumberTargets < 0)
+                            Vivi_TSVar.NumberTargets = 0;
 
                         if (v.Command.ScriptId != 17) // Magic Gravity didn't get damage boost.
                         {
-                            v.Context.Attack += (v.Context.Attack * ViviPassive[v.Caster.Data][0]) / 100;
-                            v.Command.HitRate += (v.Command.HitRate * ViviPassive[v.Caster.Data][0]) / 100;
+                            v.Context.Attack += (v.Context.Attack * Vivi_TSVar.Focus) / 100;
+                            v.Command.HitRate += (v.Command.HitRate * Vivi_TSVar.Focus) / 100;
                         }
                     }
                 }
                 else if (v.Caster.PlayerIndex == CharacterId.Steiner && v.Command.Id == BattleCommandId.MagicSword && v.Command.AbilityId != TranceSeekBattleAbility.MagicSword_Aero &&
                 v.Command.AbilityId != TranceSeekBattleAbility.MagicSword_Aera && v.Command.AbilityId != TranceSeekBattleAbility.MagicSword_Aeraga && v.Command.AbilityId != TranceSeekBattleAbility.MagicSword_Holy)
                 {
-                    if (ViviPassive[v.Caster.Data][1] == 0)
+                    if (Vivi_TSVar.NumberTargets == 0)
                     {
-                        ViviPassive[v.Caster.Data][1] = (ushort)(v.Command.TargetCount);
+                        Vivi_TSVar.NumberTargets = v.Command.TargetCount;
                         foreach (BattleUnit Vivi in BattleState.EnumerateUnits())
                         {
                             if (Vivi.IsPlayer && Vivi.PlayerIndex == CharacterId.Vivi)
                             {
-                                if (FF9TextTool.ActionAbilityName(ViviPreviousSpell[Vivi.Data]) != v.Command.AbilityName)
+                                if (FF9TextTool.ActionAbilityName(Vivi_TSVar.PreviousSpell) != v.Command.AbilityName)
                                 {
                                     Int32 BonusFocusMax = 0;
                                     switch (Vivi.Weapon)
@@ -395,47 +402,49 @@ namespace Memoria.Scripts.Battle
                                             BonusFocusMax += 50;
                                             break;
                                     }
-                                    if (ViviPassive[Vivi.Data][0] < (50 + BonusFocusMax))
+                                    if (Vivi_TSVar.Focus < (50 + BonusFocusMax))
                                     {
-                                        ViviPassive[Vivi.Data][0] += Vivi.HasSupportAbilityByIndex((SupportAbility)207) ? 10 : 5; // SA Bobbin;
+                                        Vivi_TSVar.Focus += Vivi.HasSupportAbilityByIndex((SupportAbility)207) ? 10 : 5; // SA Bobbin;
                                     }
+                                    int ViviFocus = Vivi_TSVar.Focus;
                                     Dictionary<String, String> localizedMessage = new Dictionary<String, String>
                                     {
-                                        { "US", $"Focus +{ViviPassive[Vivi.Data][0]}%!" },
-                                        { "UK", $"Focus +{ViviPassive[Vivi.Data][0]}%!" },
-                                        { "JP", $"フォーカス +{ViviPassive[Vivi.Data][0]}%!" },
-                                        { "ES", $"¡Focus +{ViviPassive[Vivi.Data][0]}%!" },
-                                        { "FR", $"Focus +{ViviPassive[Vivi.Data][0]}% !" },
-                                        { "GR", $"Focus +{ViviPassive[Vivi.Data][0]}%!" },
-                                        { "IT", $"Focus +{ViviPassive[Vivi.Data][0]}%!" },
+                                        { "US", $"Focus +{ViviFocus}%!" },
+                                        { "UK", $"Focus +{ViviFocus}%!" },
+                                        { "JP", $"フォーカス +{ViviFocus}%!" },
+                                        { "ES", $"¡Focus +{ViviFocus}%!" },
+                                        { "FR", $"Focus +{ViviFocus}% !" },
+                                        { "GR", $"Focus +{ViviFocus}%!" },
+                                        { "IT", $"Focus +{ViviFocus}%!" },
                                     };
                                     btl2d.Btl2dReqSymbolMessage(Vivi.Data, "[BA55D3]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 40);
-                                    v.Context.Attack += v.Context.Attack * (ViviPassive[Vivi.Data][0] / 100);
-                                    v.Command.HitRate += v.Command.HitRate * (ViviPassive[Vivi.Data][0] / 100);
+                                    v.Context.Attack += v.Context.Attack * (ViviFocus / 100);
+                                    v.Command.HitRate += v.Command.HitRate * (ViviFocus / 100);
                                 }
                                 else
                                 {
                                     if (v.Caster.HasSupportAbilityByIndex((SupportAbility)1207)) // SA Bobbin+
                                     {
-                                        ViviPassive[Vivi.Data][0] /= 2;
-                                        if (ViviPassive[Vivi.Data][0] % 10U == 5)
-                                            ViviPassive[Vivi.Data][0] += 5;
+                                        Vivi_TSVar.Focus /= 2;
+                                        if (Vivi_TSVar.Focus % 10U == 5)
+                                            Vivi_TSVar.Focus += 5;
 
+                                        int ViviFocus = Vivi_TSVar.Focus;
                                         Dictionary<String, String> localizedMessage = new Dictionary<String, String>
                                         {
-                                            { "US", $"Focus +{ViviPassive[Vivi.Data][0]}%!" },
-                                            { "UK", $"Focus +{ViviPassive[Vivi.Data][0]}%!" },
-                                            { "JP", $"フォーカス +{ViviPassive[Vivi.Data][0]}%!" },
-                                            { "ES", $"¡Focus +{ViviPassive[Vivi.Data][0]}%!" },
-                                            { "FR", $"Focus +{ViviPassive[Vivi.Data][0]}% !" },
-                                            { "GR", $"Focus +{ViviPassive[Vivi.Data][0]}%!" },
-                                            { "IT", $"Focus +{ViviPassive[Vivi.Data][0]}%!" },
+                                            { "US", $"Focus +{ViviFocus}%!" },
+                                            { "UK", $"Focus +{ViviFocus}%!" },
+                                            { "JP", $"フォーカス +{ViviFocus}%!" },
+                                            { "ES", $"¡Focus +{ViviFocus}%!" },
+                                            { "FR", $"Focus +{ViviFocus}% !" },
+                                            { "GR", $"Focus +{ViviFocus}%!" },
+                                            { "IT", $"Focus +{ViviFocus}%!" },
                                         };
                                         btl2d.Btl2dReqSymbolMessage(Vivi.Data, "[BA55D3]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 40);
                                     }
                                     else
                                     {
-                                        ViviPassive[Vivi.Data][0] = 0;
+                                        Vivi_TSVar.Focus = 0;
                                         Dictionary<String, String> localizedMessage = new Dictionary<String, String>
                                         {
                                             { "US", "- Focus!" },
@@ -449,13 +458,13 @@ namespace Memoria.Scripts.Battle
                                         btl2d.Btl2dReqSymbolMessage(Vivi.Data, "[DC143C]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 40);
                                     }
                                 }
-                                ViviPreviousSpell[Vivi.Data] = v.Command.AbilityId;
+                                Vivi_TSVar.PreviousSpell = v.Command.AbilityId;
                             }
                         }
                     }
-                    ViviPassive[v.Caster.Data][1]--;
-                    if (ViviPassive[v.Caster.Data][1] < 0)
-                        ViviPassive[v.Caster.Data][1] = 0;
+                    Vivi_TSVar.NumberTargets--;
+                    if (Vivi_TSVar.NumberTargets < 0)
+                        Vivi_TSVar.NumberTargets = 0;
                 }
             }
         }
@@ -482,6 +491,7 @@ namespace Memoria.Scripts.Battle
                     ushort TargetId = v.Caster.Id;
                     PassiveEikoScript.StateMoug[Eiko.Data] = 1;
                     Boolean TargetReflect = false;
+                    var Eiko_TSVar = Eiko.State();
                     List<BattleAbilityId> ClassicMougAAList = new List<BattleAbilityId>();
                     List<BattleAbilityId> SuperMougAAList = new List<BattleAbilityId>();
                     foreach (BattleAbilityId abilId in CharacterCommands.Commands[(BattleCommandId)1049].EnumerateAbilities()) // CMD Kupo (not used for Eiko)
@@ -527,7 +537,7 @@ namespace Memoria.Scripts.Battle
                             }
                             case (BattleAbilityId)2007: // Mog Support
                             {
-                                if (Eiko.Level >= 30 && (StackBreakOrUpStatus[Eiko.Data][1] < 50 || StackBreakOrUpStatus[Eiko.Data][3] < 50))
+                                if (Eiko.Level >= 30 && (Eiko_TSVar.StackStatus.Magic < 50 || Eiko_TSVar.StackStatus.MDefence < 50))
                                     AddAA = true;
                                 break;
                             }
@@ -647,8 +657,9 @@ namespace Memoria.Scripts.Battle
                                 {
                                     Boolean StatusToApply = false;
                                     foreach (BattleUnit unit in BattleState.EnumerateUnits())
-                                        if (unit.IsPlayer && unit.IsTargetable && !unit.IsUnderAnyStatus(BattleStatus.Death | BattleStatus.Petrify | BattleStatus.Jump) && (StackBreakOrUpStatus[unit.Data][1] < 50 || StackBreakOrUpStatus[unit.Data][3] < 50))
-                                            StatusToApply = true;
+                                        if (unit.IsPlayer && unit.IsTargetable && !unit.IsUnderAnyStatus(BattleStatus.Death | BattleStatus.Petrify | BattleStatus.Jump))
+                                            if ((unit.State().StackStatus.Magic < 50 || unit.State().StackStatus.MDefence < 50))
+                                                StatusToApply = true;
 
                                     if (StatusToApply)
                                         AddAA = true;

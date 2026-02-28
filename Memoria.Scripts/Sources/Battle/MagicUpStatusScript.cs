@@ -76,7 +76,7 @@ namespace Memoria.DefaultScripts
             if (BasicMagic == 0)
                 BasicMagic = Target.Magic;
 
-            StackBreakOrUpStatus[Target.Data][1] = (Stack * 10);
+            Target.State().StackStatus.Magic = (Stack * 10);
 
             if (Stack > StackMaximum)
             {

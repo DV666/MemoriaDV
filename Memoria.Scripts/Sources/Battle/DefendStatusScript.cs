@@ -32,9 +32,9 @@ namespace Memoria.DefaultScripts
                 if (target.PlayerIndex == CharacterId.Amarant)
                 {
                     Duel = 1;
-                    TranceSeekBattleDictionary.SpecialSAEffect[target.Data][0] = 1;
+                    target.State().Amarant.Duel = true;
                     target.AddDelayedModifier(
-                        target => TranceSeekBattleDictionary.SpecialSAEffect[target.Data][0] > 0,
+                        target => target.State().Amarant.Duel,
                         target =>
                         {
                             Duel = 0;

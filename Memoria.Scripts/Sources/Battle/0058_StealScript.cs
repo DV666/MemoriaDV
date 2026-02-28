@@ -135,7 +135,7 @@ namespace Memoria.Scripts.Battle
             {
                 StealItem(battleEnemy, 3);
             }
-            else if (TranceSeekBattleDictionary.ZidanePassive[_v.Target.Data][2] > 0) // Oeil de voleur activé
+            else if (_v.TargetState().Zidane.EyeOfTheThief) // Oeil de voleur activé
             {
                 EyeOfThief();
             }
@@ -165,7 +165,7 @@ namespace Memoria.Scripts.Battle
             {
                 StealItem(battleEnemy, 0, ShowHUDMessage);
             }
-            else if (TranceSeekBattleDictionary.ZidanePassive[_v.Target.Data][2] > 0) // Oeil de voleur activé
+            else if (_v.TargetState().Zidane.EyeOfTheThief) // Oeil de voleur activé
             {
                 EyeOfThief();
             }
@@ -299,7 +299,7 @@ namespace Memoria.Scripts.Battle
             }
 
             if (Caster.HasSupportAbilityByIndex((SupportAbility)200) && Caster.PlayerIndex == CharacterId.Zidane) // SA Knavery
-                BonusWeaponSteal += TranceSeekBattleDictionary.ZidanePassive[Caster.Data][0];
+                BonusWeaponSteal += Caster.State().Zidane.Dodge;
 
             return (StealableItemRates + ((float)(StealableItemRates * BonusWeaponSteal) / 100));
         }

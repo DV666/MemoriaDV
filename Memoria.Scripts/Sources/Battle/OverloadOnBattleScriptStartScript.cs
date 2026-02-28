@@ -31,13 +31,14 @@ namespace Memoria.Scripts.Battle
 
         public Boolean OnBattleScriptStart(BattleCalculator v)
         {
-            if (MonsterMechanic[v.Target.Data][3] == 1 && v.Target.CurrentHp <= 10000) // Prevent boss to die => Maybe use CustomBattleFlagsMeaning ?
-            {
-                v.Target.CurrentHp = 10000;
-            }
+            var Caster_TSVar = v.CasterState();
+            var Target_TSVar = v.TargetState();
 
-            if (IsBackAttack[v.Caster.Data])
-                IsBackAttack[v.Caster.Data] = false;
+            if (Target_TSVar.Monster.HPBoss10000 && v.Target.CurrentHp <= 10000) // Prevent boss to die => Maybe use CustomBattleFlagsMeaning ?
+                v.Target.CurrentHp = 10000;
+
+            if (Caster_TSVar.IsBackAttack)
+                Caster_TSVar.IsBackAttack = false;
 
             if (FF9StateSystem.Battle.battleMapIndex == 52 && FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum == 0 && FF9StateSystem.EventState.gEventGlobal[1305] > 0 && v.Caster.IsPlayer && v.Command.Id == BattleCommandId.Attack && v.Caster.Data != v.Target.Data)
             { // Black Waltz 3 Broken (Polarity Mechanic)
@@ -53,7 +54,7 @@ namespace Memoria.Scripts.Battle
                     TranceSeekSpecial.PolaritySPS[v.Target.Data].meshRenderer.enabled = false;
                     TranceSeekSpecial.PolaritySPS[v.Target.Data] = null;
                     v.Context.Flags |= BattleCalcFlags.Guard;
-                    MonsterMechanic[v.Caster.Data][6] = 1; // Don't miss the attack.
+                    Caster_TSVar.Monster.NoDodge = true; // Don't miss the attack.
                     btl_stat.RemoveStatus(v.Target, BattleStatusId.Haste);
                     FF9StateSystem.EventState.gEventGlobal[1305] = 0;
                     UIManager.Battle.SetBattleFollowMessage(3, Localization.GetWithDefault("PolarityOFF"));
@@ -80,16 +81,16 @@ namespace Memoria.Scripts.Battle
                         v.Command.AbilityStatus |= CustomStatusAAMonster[i];
             }
 
-            if (v.Caster.HasSupportAbilityByIndex((SupportAbility)117) && SpecialSAEffect[v.Caster][4] == 0 && v.Caster.IsUnderAnyStatus(BattleStatus.Trance)) // Mode EX
+            if (v.Caster.HasSupportAbilityByIndex((SupportAbility)117) && !Caster_TSVar.SpecialSA.ModeEX && v.Caster.IsUnderAnyStatus(BattleStatus.Trance)) // Mode EX
             {
                 Int32 HealHPSAOrItem = (int)(v.Caster.MaximumHp * (v.Caster.HasSupportAbilityByIndex((SupportAbility)1117) ? 16 : 8) / 100);
                 Int32 HealMPSAOrItem = (int)(v.Caster.MaximumMp * (v.Caster.HasSupportAbilityByIndex((SupportAbility)1117) ? 16 : 8) / 100);
-                SpecialSAEffect[v.Caster][4] = 1;
+                Caster_TSVar.SpecialSA.ModeEX = true;
                 v.Caster.AddDelayedModifier(
                 caster => caster.CurrentAtb >= caster.MaximumAtb,
                 caster =>
                 {
-                    SpecialSAEffect[v.Caster][4] = 0;
+                    Caster_TSVar.SpecialSA.ModeEX = false;
                     if (HealHPSAOrItem > 0)
                     {
                         caster.CurrentHp = Math.Min(caster.CurrentHp + (uint)HealHPSAOrItem, caster.MaximumHp);
@@ -159,7 +160,7 @@ namespace Memoria.Scripts.Battle
                     }
                 }
 
-                ViviPassive[v.Caster.Data][0] = InventionsCD;
+                Caster_TSVar.Cinna.InventionCoolDown = InventionsCD;
 
                 if (v.Command.AbilityId == (BattleAbilityId)1138 || v.Command.Id == BattleCommandId.Attack && v.Caster.HasSupportAbilityByIndex((SupportAbility)244)) // Accelerator hammer / SA Mecano
                 {
@@ -257,7 +258,7 @@ namespace Memoria.Scripts.Battle
                     }
                 }
             }
-            if (SpecialSAEffect[v.Caster.Data][8] > 0) // AA SpringBoots
+            if (Caster_TSVar.Cinna.SpringBoots > 0) // AA SpringBoots
             {
                 v.Caster.AddDelayedModifier(
                     caster => caster.CurrentAtb >= caster.MaximumAtb,
@@ -265,12 +266,12 @@ namespace Memoria.Scripts.Battle
                     {
                         if (!caster.IsUnderAnyStatus(BattleStatusConst.StopAtb) && caster.CurrentAtb < (4 * caster.MaximumAtb / 5))
                             caster.CurrentAtb += (Int16)(4 * caster.MaximumAtb / 5);
-                        SpecialSAEffect[v.Caster.Data][8]--;
+                        Caster_TSVar.Cinna.SpringBoots--;
                     }
                 );
             }
 
-            if (v.Caster.HasSupportAbilityByIndex((SupportAbility)203) && v.Caster.PlayerIndex == CharacterId.Zidane && ZidanePassive[v.Caster.Data][4] == 0
+            if (v.Caster.HasSupportAbilityByIndex((SupportAbility)203) && v.Caster.PlayerIndex == CharacterId.Zidane && Caster_TSVar.Zidane.DaggerAttack == 0
                 && v.Command.Id != BattleCommandId.Counter && v.Command.Id != BattleCommandId.RushAttack) // SA Flexible
             {
                 // Permanent [code=Condition] WeaponId == 1 || WeaponId == 2 || WeaponId == 3 || WeaponId == 1153 || WeaponId == 1155 || WeaponId == 1158 || WeaponId == 1161 || WeaponId == 1164 || WeaponId == 1167 [/code] [code=BanishSAByLvl] 203 ; -1 [/code]
@@ -278,12 +279,12 @@ namespace Memoria.Scripts.Battle
                 (RegularItem)1155, (RegularItem)1158, (RegularItem)1161, (RegularItem)1164, (RegularItem)1167 };
                 if (!BlackListedWeapon.Contains(v.Caster.Weapon))
                 {
-                    ZidanePassive[v.Caster.Data][9]++;
+                    Caster_TSVar.Zidane.Flexible++;
                     btl_stat.AlterStatus(v.Caster, TranceSeekStatusId.Special, parameters: "Flexible0");
                     int FlexibleTurn = v.Caster.HasSupportAbilityByIndex((SupportAbility)1203) ? 2 : 4;
-                    if (ZidanePassive[v.Caster.Data][9] >= FlexibleTurn)
+                    if (Caster_TSVar.Zidane.Flexible >= FlexibleTurn)
                     {
-                        ZidanePassive[v.Caster.Data][9] = 0;
+                        Caster_TSVar.Zidane.Flexible = 0;
                         if (btl_util.getSerialNumber(v.Caster.Data) == CharacterSerialNumber.ZIDANE_SWORD)
                             BattleState.EnqueueCounter(v.Caster, BattleCommandId.RushAttack, (BattleAbilityId)1000, v.Caster.Id);
                         else
@@ -297,34 +298,27 @@ namespace Memoria.Scripts.Battle
                 }
             }
 
-            if (v.Command.AbilityStatus > 0 && ProtectStatus.TryGetValue(v.Target.Data, out Dictionary<BattleStatus, Int32> statusprotect))
+            if (v.Command.AbilityStatus > 0 && Target_TSVar.ProtectStatus.Count > 1)
             {
-                if (statusprotect.Count > 1)
+                foreach (BattleStatusId statusID in v.Command.AbilityStatus.ToStatusList())
                 {
-                    foreach (BattleStatusId statusID in v.Command.AbilityStatus.ToStatusList())
+                    BattleStatus status = statusID.ToBattleStatus();
+
+                    if (Target_TSVar.ProtectStatus.TryGetValue(status, out int protectCount) && protectCount > 0)
                     {
-                        BattleStatus status = statusID.ToBattleStatus();
-                        if (statusprotect.ContainsKey(status))
+                        v.Command.AbilityStatus &= ~status;
+
+                        if (protectCount != 255)
                         {
-                            if (statusprotect[status] > 0)
+                            Target_TSVar.ProtectStatus[status]--;
+                            string message = $"-{status}";
+                            Dictionary<string, string> localizedStatusProtect = new Dictionary<string, string>
                             {
-                                v.Command.AbilityStatus &= ~status;
-                                if (statusprotect[status] != 255)
-                                {
-                                    statusprotect[status]--;
-                                    Dictionary<String, String> localizedStatusProtect = new Dictionary<String, String>
-                                    {
-                                        { "US", $"-{status}" },
-                                        { "UK", $"-{status}" },
-                                        { "JP", $"-{status}" },
-                                        { "ES", $"-{status}" },
-                                        { "FR", $"-{status}" },
-                                        { "GR", $"-{status}" },
-                                        { "IT", $"-{status}" },
-                                    };
-                                    btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[38FF1F]", localizedStatusProtect, HUDMessage.MessageStyle.DAMAGE, 5);
-                                }
-                            }
+                                { "US", message }, { "UK", message }, { "JP", message },
+                                { "ES", message }, { "FR", message }, { "GR", message }, { "IT", message }
+                            };
+
+                            btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[38FF1F]", localizedStatusProtect, HUDMessage.MessageStyle.DAMAGE, 5);
                         }
                     }
                 }
@@ -388,12 +382,12 @@ namespace Memoria.Scripts.Battle
                         ElementInfused = 512;
 
                     InfusedWeaponScript.InfuseWeapon(v, v.Caster.Data, ElementInfused, StatusInfused);
-                    SpecialSAEffect[v.Caster.Data][10] = v.Caster.HasSupportAbilityByIndex((SupportAbility)1214) ? 2 : 1;
+                    Caster_TSVar.Steiner.SteinerEnchantedBlade = v.Caster.HasSupportAbilityByIndex((SupportAbility)1214) ? 2 : 1;
                 }
-                else if (SpecialSAEffect[v.Caster.Data][10] > 0)
+                else if (Caster_TSVar.Steiner.SteinerEnchantedBlade > 0)
                 {
-                    SpecialSAEffect[v.Caster.Data][10]--;
-                    if (SpecialSAEffect[v.Caster.Data][10] <= 0)
+                    Caster_TSVar.Steiner.SteinerEnchantedBlade--;
+                    if (Caster_TSVar.Steiner.SteinerEnchantedBlade <= 0)
                     {
                         InfusedWeaponScript.WeaponNewElement[v.Caster.Data] = 0;
                         InfusedWeaponScript.WeaponNewCustomElement[v.Caster.Data] = 0;
@@ -423,7 +417,7 @@ namespace Memoria.Scripts.Battle
 
             if (v.Caster.PlayerIndex == CharacterId.Beatrix) // Redemption mechanic
             {
-                if (BeatrixPassive[v.Caster.Data][3] == 0 && v.Caster.PlayerIndex == CharacterId.Beatrix)
+                if (!Caster_TSVar.Beatrix.RedemptionTrigger && v.Caster.PlayerIndex == CharacterId.Beatrix)
                 {
                     if (v.Command.Id == BattleCommandId.Attack || v.Command.Id == BattleCommandId.Defend || v.Command.Id == BattleCommandId.Counter && v.Command.AbilityId == BattleAbilityId.Attack ||
                         v.Command.Id == BattleCommandId.HolyWhiteMagic || v.Caster.IsUnderAnyStatus(BattleStatus.Trance))
@@ -443,27 +437,27 @@ namespace Memoria.Scripts.Battle
                             v.Caster.RemoveStatus(TranceSeekStatus.Redemption);
                         }
                     }
-                    BeatrixPassive[v.Caster.Data][3] = 1;
+                    Caster_TSVar.Beatrix.RedemptionTrigger = true;
                     TranceSeekCharacterMechanic.UpdateRedemptionHUD(v.Caster);
                     v.Caster.AddDelayedModifier(
                         caster => caster.CurrentAtb >= caster.MaximumAtb,
                         caster =>
                         {
-                            BeatrixPassive[v.Caster.Data][3] = 0;
+                            Caster_TSVar.Beatrix.RedemptionTrigger = false;
                         }
                     );
                 }
             }
-            else if (BeatrixPassive[v.Target.Data][3] == 0 && v.Target.PlayerIndex == CharacterId.Beatrix && v.Target.IsCovering)
+            else if (!Target_TSVar.Beatrix.RedemptionTrigger && v.Target.PlayerIndex == CharacterId.Beatrix && v.Target.IsCovering)
             {
                 v.Target.AlterStatus(TranceSeekStatus.Redemption, v.Caster);
-                BeatrixPassive[v.Target.Data][3] = 1;
+                Target_TSVar.Beatrix.RedemptionTrigger = true;
                 TranceSeekCharacterMechanic.UpdateRedemptionHUD(v.Target);
                 v.Caster.AddDelayedModifier(
                     caster => caster.CurrentAtb >= caster.MaximumAtb,
                     caster =>
                     {
-                        BeatrixPassive[v.Target.Data][3] = 0;
+                        Target_TSVar.Beatrix.RedemptionTrigger = false;
                     }
                 );
             }
@@ -502,7 +496,7 @@ namespace Memoria.Scripts.Battle
                     caster =>
                     {
                         int RatioHP = (int)((v.Target.CurrentHp * 100) / v.Target.MaximumHp);
-                        v.Target.PhysicalDefence = (SpecialSAEffect[v.Target.Data][13] * ((v.Target.HasSupportAbilityByIndex((SupportAbility)1254) ? 50 : 25) + RatioHP)) / 100;
+                        v.Target.PhysicalDefence = (Target_TSVar.Baku.InTopForm * ((v.Target.HasSupportAbilityByIndex((SupportAbility)1254) ? 50 : 25) + RatioHP)) / 100;
                     }
                 );
             }

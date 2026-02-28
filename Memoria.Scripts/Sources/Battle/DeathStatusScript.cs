@@ -27,12 +27,7 @@ namespace Memoria.DefaultScripts
             }
             target.CurrentAtb = 0;
 
-            if (!TranceSeekBattleDictionary.SpecialSAEffect.TryGetValue(target.Data, out var sa))
-            {
-                TranceSeekBattleDictionary.SpecialSAEffect[target.Data] = new int[18];
-                TranceSeekBattleDictionary.SpecialSAEffect[target.Data][15] = (int)target.Player.max.hp;
-                TranceSeekBattleDictionary.SpecialSAEffect[target.Data][16] = (int)target.Player.max.mp;
-            }
+            var Target_TSVar = target.State();
 
             if (!target.IsPlayer)
             {
@@ -47,9 +42,9 @@ namespace Memoria.DefaultScripts
             }         
             if (target.IsUnderAnyStatus(BattleStatus.Trance) && btl_cmd.KillSpecificCommand(target, BattleCommandId.SysTrans))
             {
-                TranceSeekBattleDictionary.SpecialSAEffect[target][3] = 1; // Fix SFX "Trance__Out" if character die in a combo attack
+                Target_TSVar.PreventTranceSFX = true; // Fix SFX "Trance__Out" if character die in a combo attack
                 btl_stat.RemoveStatus(target, BattleStatusId.Trance);
-                TranceSeekBattleDictionary.SpecialSAEffect[target][3] = 0;
+                Target_TSVar.PreventTranceSFX = false;
                 target.Trance = 254;
             }          
             if (target.IsPlayer)
@@ -57,8 +52,12 @@ namespace Memoria.DefaultScripts
                 // SpecialSAEffect[target.Data][14] = 0; // Reset SOS trigger
 
                 // Reset stats
-                target.MaximumHp = (uint)TranceSeekBattleDictionary.SpecialSAEffect[target.Data][15];
-                target.MaximumMp = (uint)TranceSeekBattleDictionary.SpecialSAEffect[target.Data][16];
+                Target_TSVar.SpecialSA = new SpecialSAEffects();
+                Target_TSVar.SpecialSA.NewMaximumHP = (int)target.Player.max.hp;
+                Target_TSVar.SpecialSA.NewMaximumMP = (int)target.Player.max.mp;
+
+                target.MaximumHp = (uint)Target_TSVar.SpecialSA.NewMaximumHP;
+                target.MaximumMp = (uint)Target_TSVar.SpecialSA.NewMaximumMP;
                 // target.Level = target.Player.level; // Too sensible
                 target.Dexterity = target.Player.elem.dex;
                 target.Strength = target.Player.elem.str;
@@ -71,17 +70,11 @@ namespace Memoria.DefaultScripts
 
                 if (target.PlayerIndex == CharacterId.Beatrix)
                 {
-                    if (!TranceSeekBattleDictionary.BeatrixPassive.TryGetValue(target.Data, out Int32[] beatrixpassive))
-                        TranceSeekBattleDictionary.BeatrixPassive[target.Data] = [0, 0, 0, 0];
-                    TranceSeekBattleDictionary.BeatrixPassive[target.Data][2] = 0;
+                    Target_TSVar.Beatrix = new BeatrixPassives();
                 }
                 else if (target.PlayerIndex == CharacterId.Vivi)
                 {
-                    if (!TranceSeekBattleDictionary.ViviPassive.TryGetValue(target.Data, out var focus))
-                    {
-                        TranceSeekBattleDictionary.ViviPassive[target.Data] = [0, 0, 0];
-                    }
-                    TranceSeekBattleDictionary.ViviPassive[target.Data][0] = 0;
+                    Target_TSVar.Vivi = new ViviPassives();
                 }
             }
             if (!target.HasSupportAbilityByIndex((SupportAbility)1232)) // SA Expiation+
@@ -101,7 +94,7 @@ namespace Memoria.DefaultScripts
             btl.killer_track = null;
 
             if (Target.IsPlayer)
-                TranceSeekBattleDictionary.SpecialSAEffect[Target.Data][14] = 0; // Reset SOS trigger
+                Target.State().SpecialSA.OneTriggerSOS = 0; // Reset SOS trigger
 
             if (btl_mot.checkMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_DISABLE) || btl_mot.checkMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_DOWN_DISABLE))
             {

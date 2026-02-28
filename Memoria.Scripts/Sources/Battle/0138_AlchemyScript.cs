@@ -124,7 +124,7 @@ namespace Memoria.Scripts.Battle
                             {
                                 if (_v.Target.Data.dms_geo_id == 416)
                                 {
-                                    TranceSeekBattleDictionary.MonsterMechanic[_v.Target.Data][1] = 9999;
+                                    _v.TargetState().Monster.Special1 = 9999;
                                     _v.Target.CurrentHp = 1;
                                     return;
                                 }

@@ -274,7 +274,7 @@ namespace Memoria.Scripts.Battle
                 _v.Target.Flags |= (CalcFlag.HpDamageOrHeal | CalcFlag.MpDamageOrHeal);
                 _v.Target.HpDamage = (int)(_v.Target.MaximumHp - 10000);
                 _v.Target.MpDamage = (int)(_v.Target.MaximumMp);
-                TranceSeekBattleDictionary.MonsterMechanic[_v.Target.Data][4] = 100;
+                _v.TargetState().Monster.DurationDeadlyStatus = 100;
                 return;
             }
             else if (_v.Command.Power == 77 && _v.Command.HitRate == 177 && _v.Caster.Data.dms_geo_id == 546) // Mad Alchemist - Dragon Power
@@ -529,8 +529,8 @@ namespace Memoria.Scripts.Battle
             {
                 _v.Target.Data.stat.invalid &= ~BattleStatus.Poison;
                 _v.Target.AlterStatus(BattleStatus.Poison, _v.Caster);
-                if ((TranceSeekBattleDictionary.NewEffectElement[_v.Target.Data][0] & 8) == 0)
-                    TranceSeekBattleDictionary.NewEffectElement[_v.Target.Data][0] = 8;
+                if ((_v.TargetState().EffectElement.Poison & 8) == 0)
+                    _v.TargetState().EffectElement.Poison = 8;
             }
             else if (_v.Command.Power == 199 && _v.Command.HitRate == 199 && _v.Command.AbilityStatus == BattleStatus.Reflect) // AntiBoom from Invincible (CD3 Kuja)
             {
@@ -564,14 +564,14 @@ namespace Memoria.Scripts.Battle
                         _v.Target.Data.stat.permanent_on_hold |= BattleStatus.Stop;
                         _v.Target.Data.stat.cur |= BattleStatus.Stop;
                         _v.Target.Data.bi.target = 0;
-                        TranceSeekBattleDictionary.MonsterMechanic[_v.Caster.Data][2] = _v.Target.Id;
+                        _v.CasterState().Monster.Special2 = _v.Target.Id;
                         FF9StateSystem.EventState.gEventGlobal[1305] = (byte)_v.Target.Id;
                     }
                     else
                     {
                         foreach (BattleUnit unit in BattleState.EnumerateUnits())
                         {
-                            if (TranceSeekBattleDictionary.MonsterMechanic[_v.Caster.Data][2] == unit.Id)
+                            if (_v.CasterState().Monster.Special2 == unit.Id)
                             {
                                 unit.Data.bi.target = 1;
                                 unit.Data.stat.permanent_on_hold &= ~BattleStatus.Stop;

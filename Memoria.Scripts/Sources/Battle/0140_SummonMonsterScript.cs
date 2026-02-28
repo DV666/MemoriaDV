@@ -590,16 +590,17 @@ namespace Memoria.Scripts.Battle
                                 _v.CalcCannonProportionDamage();
                             }
                         }
+                        var Target_TSVar = _v.TargetState();
                         if (_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill))
                         {
-                            _v.Target.HpDamage = Math.Max(1, (_v.Target.HpDamage / TranceSeekBattleDictionary.MonsterMechanic[_v.Target.Data][5]));
-                            TranceSeekBattleDictionary.MonsterMechanic[_v.Target.Data][5] = TranceSeekBattleDictionary.MonsterMechanic[_v.Target.Data][5] * 2;
+                            _v.Target.HpDamage = Math.Max(1, (_v.Target.HpDamage / Target_TSVar.Monster.NerfGravity));
+                            Target_TSVar.Monster.NerfGravity = Target_TSVar.Monster.NerfGravity * 2;
                         }
                         TranceSeekAPI.TryAlterMagicStatuses(_v);
 
-                        if (TranceSeekBattleDictionary.AbsorbElement.TryGetValue(_v.Target.Data, out Int32 elementprotect))
-                            if (elementprotect == 256)
-                                _v.Target.Flags |= CalcFlag.HpRecovery;
+                        if (Target_TSVar.AbsorbElement == 256)
+                            _v.Target.Flags |= CalcFlag.HpRecovery;
+
                         break;
                     }
                     // METEORITE (RANDOM MAGIC) - Script 18

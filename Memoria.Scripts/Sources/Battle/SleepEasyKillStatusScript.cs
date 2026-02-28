@@ -12,10 +12,11 @@ namespace Memoria.DefaultScripts
         public override UInt32 Apply(BattleUnit target, BattleUnit inflicter, params Object[] parameters)
         {
             base.Apply(target, inflicter, parameters);
-            if (TranceSeekBattleDictionary.MonsterMechanic[target.Data][4] > 0)
-            {                                     
-                Target.Data.stat.duration_factor[BattleStatusId.CustomStatus17] = (Target.Data.stat.duration_factor[BattleStatusId.CustomStatus17] * (TranceSeekBattleDictionary.MonsterMechanic[target.Data][4]) / 100);
-                TranceSeekBattleDictionary.MonsterMechanic[target.Data][4] -= 20;
+            var Target_TSVar = target.State();
+            if (Target_TSVar.Monster.DurationDeadlyStatus > 0)
+            {
+                Target.Data.stat.duration_factor[BattleStatusId.CustomStatus17] = (Target.Data.stat.duration_factor[BattleStatusId.CustomStatus17] * (Target_TSVar.Monster.DurationDeadlyStatus) / 100);
+                Target_TSVar.Monster.DurationDeadlyStatus -= 20;
             }
             else
                 return btl_stat.ALTER_RESIST;

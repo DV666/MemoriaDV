@@ -1,11 +1,10 @@
 using System;
-using System.Runtime.Remoting.Contexts;
 using Memoria.Data;
 
 namespace Memoria.Scripts.Battle
 {
     /// <summary>
-    /// Lancer
+    /// Lancer (Rollback)
     /// </summary>
     [BattleScript(Id)]
     public sealed class Rollback : IBattleScript
@@ -21,37 +20,44 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            if (_v.Command.Power == 0 && TranceSeekBattleDictionary.RollBackStats[_v.Target.Data][0] == 0)
+            var targetState = _v.TargetState();
+
+            if (_v.Command.Power == 0 && !targetState.Rollback.IsSaved)
             {
-                TranceSeekBattleDictionary.RollBackStats[_v.Target.Data][0] = 1;
-                TranceSeekBattleDictionary.RollBackStats[_v.Target.Data][1] = (int)_v.Target.CurrentHp;
-                TranceSeekBattleDictionary.RollBackStats[_v.Target.Data][2] = (int)_v.Target.CurrentMp;
-                TranceSeekBattleDictionary.RollBackStats[_v.Target.Data][3] = _v.Target.Strength;
-                TranceSeekBattleDictionary.RollBackStats[_v.Target.Data][4] = _v.Target.Magic;
-                TranceSeekBattleDictionary.RollBackStats[_v.Target.Data][5] = _v.Target.Will;
-                TranceSeekBattleDictionary.RollBackStats[_v.Target.Data][6] = _v.Target.PhysicalDefence;
-                TranceSeekBattleDictionary.RollBackStats[_v.Target.Data][7] = _v.Target.PhysicalEvade;
-                TranceSeekBattleDictionary.RollBackStats[_v.Target.Data][8] = _v.Target.MagicDefence;
-                TranceSeekBattleDictionary.RollBackStats[_v.Target.Data][9] = _v.Target.MagicEvade;
-                TranceSeekBattleDictionary.RollBackStats[_v.Target.Data][10] = _v.Target.Trance;
-                TranceSeekBattleDictionary.RollBackBattleStatus[_v.Target.Data] = _v.Target.CurrentStatus;
+                targetState.Rollback.IsSaved = true;
+
+                targetState.Rollback.CurrentHp = _v.Target.CurrentHp;
+                targetState.Rollback.CurrentMp = _v.Target.CurrentMp;
+                targetState.Rollback.Strength = _v.Target.Strength;
+                targetState.Rollback.Magic = _v.Target.Magic;
+                targetState.Rollback.Will = _v.Target.Will;
+                targetState.Rollback.PhysicalDefence = _v.Target.PhysicalDefence;
+                targetState.Rollback.PhysicalEvade = _v.Target.PhysicalEvade;
+                targetState.Rollback.MagicDefence = _v.Target.MagicDefence;
+                targetState.Rollback.MagicEvade = _v.Target.MagicEvade;
+                targetState.Rollback.Trance = _v.Target.Trance;
+
+                targetState.Rollback.SavedStatus = _v.Target.CurrentStatus;
             }
-            else if (_v.Command.Power == 1 && TranceSeekBattleDictionary.RollBackStats[_v.Target.Data][0] == 1)
+            else if (_v.Command.Power == 1 && targetState.Rollback.IsSaved)
             {
-                TranceSeekBattleDictionary.RollBackStats[_v.Target.Data][0] = 0;
-                _v.Target.CurrentHp = (uint)TranceSeekBattleDictionary.RollBackStats[_v.Target.Data][1];
-                _v.Target.CurrentMp = (uint)TranceSeekBattleDictionary.RollBackStats[_v.Target.Data][2];
-                _v.Target.Strength = (byte)TranceSeekBattleDictionary.RollBackStats[_v.Target.Data][3];
-                _v.Target.Magic = (byte)TranceSeekBattleDictionary.RollBackStats[_v.Target.Data][4];
-                _v.Target.Will = (byte)TranceSeekBattleDictionary.RollBackStats[_v.Target.Data][5];
-                _v.Target.PhysicalDefence = (byte)TranceSeekBattleDictionary.RollBackStats[_v.Target.Data][6];
-                _v.Target.PhysicalEvade = (byte)TranceSeekBattleDictionary.RollBackStats[_v.Target.Data][7];
-                _v.Target.MagicDefence = (byte)TranceSeekBattleDictionary.RollBackStats[_v.Target.Data][8];
-                _v.Target.MagicEvade = (byte)TranceSeekBattleDictionary.RollBackStats[_v.Target.Data][9];
-                if ((TranceSeekBattleDictionary.RollBackBattleStatus[_v.Target.Data] & BattleStatus.Trance) == 0 && _v.Target.IsUnderStatus(BattleStatus.Trance))
+                targetState.Rollback.IsSaved = false; // On reset la sauvegarde
+
+                _v.Target.CurrentHp = targetState.Rollback.CurrentHp;
+                _v.Target.CurrentMp = targetState.Rollback.CurrentMp;
+                _v.Target.Strength = targetState.Rollback.Strength;
+                _v.Target.Magic = targetState.Rollback.Magic;
+                _v.Target.Will = targetState.Rollback.Will;
+                _v.Target.PhysicalDefence = targetState.Rollback.PhysicalDefence;
+                _v.Target.PhysicalEvade = targetState.Rollback.PhysicalEvade;
+                _v.Target.MagicDefence = targetState.Rollback.MagicDefence;
+                _v.Target.MagicEvade = targetState.Rollback.MagicEvade;
+
+                if ((targetState.Rollback.SavedStatus & BattleStatus.Trance) == 0 && _v.Target.IsUnderStatus(BattleStatus.Trance))
                     _v.Target.RemoveStatus(BattleStatus.Trance);
-                _v.Target.AlterStatus(TranceSeekBattleDictionary.RollBackBattleStatus[_v.Target.Data], _v.Caster);
-                _v.Target.Trance = (byte)TranceSeekBattleDictionary.RollBackStats[_v.Target.Data][10];
+
+                _v.Target.AlterStatus(targetState.Rollback.SavedStatus, _v.Caster);
+                _v.Target.Trance = targetState.Rollback.Trance;
             }
         }
     }

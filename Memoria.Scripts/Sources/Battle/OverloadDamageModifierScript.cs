@@ -124,8 +124,9 @@ namespace Memoria.Scripts.Battle
 
             TranceSeekAPI.SpecialEffect(v);
             TranceSeekCharacterMechanic.GarnetGemMechanic(v);
+            var Target_TSVar = v.TargetState();
 
-            if (v.Target.PlayerIndex == CharacterId.Amarant && TranceSeekBattleDictionary.SpecialSAEffect[v.Target.Data][0] == 1 && (v.Command.AbilityCategory & 8) != 0 && v.Target.IsUnderAnyStatus(BattleStatus.Defend)) // Duel Amarant
+            if (v.Target.PlayerIndex == CharacterId.Amarant && Target_TSVar.Amarant.Duel && (v.Command.AbilityCategory & 8) != 0 && v.Target.IsUnderAnyStatus(BattleStatus.Defend)) // Duel Amarant
             {
                 if (v.Target.HasSupportAbilityByIndex((SupportAbility)231) && (v.Target.HasSupportAbilityByIndex((SupportAbility)1231) ? 50 : 25) > Comn.random16() % 100) // SA Ferocity
                 {
@@ -143,7 +144,7 @@ namespace Memoria.Scripts.Battle
                 }
                 else
                 {
-                    TranceSeekBattleDictionary.SpecialSAEffect[v.Target.Data][0] = 0;
+                    Target_TSVar.Amarant.Duel = false;
                 }
             }
 
@@ -170,9 +171,9 @@ namespace Memoria.Scripts.Battle
                     v.Target.MpDamage = Math.Min(v.Target.MpDamage, 9999);
             }
 
-            if (TranceSeekBattleDictionary.SpecialSAEffect[v.Target.Data][11] == 1 && v.Target.HpDamage < v.Target.CurrentHp && (v.Command.AbilityCategory & 8) != 0 && (v.Target.Flags & CalcFlag.HpRecovery) == 0) // Peuh!
+            if (Target_TSVar.Baku.Peuh && v.Target.HpDamage < v.Target.CurrentHp && (v.Command.AbilityCategory & 8) != 0 && (v.Target.Flags & CalcFlag.HpRecovery) == 0) // Peuh!
             {
-                TranceSeekBattleDictionary.SpecialSAEffect[v.Target.Data][11] = 0;
+                Target_TSVar.Baku.Peuh = false;
                 v.Context.Flags |= BattleCalcFlags.Guard;
                 v.Target.HpDamage = 0;
                 Dictionary<String, String> localizedMessage = new Dictionary<String, String>

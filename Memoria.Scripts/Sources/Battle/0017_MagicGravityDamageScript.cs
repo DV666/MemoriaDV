@@ -39,6 +39,7 @@ namespace Memoria.Scripts.Battle
             if (_v.Target.HasCategory(EnemyCategory.Stone) && !_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill))
                 _v.Context.DamageModifierCount++;
             TranceSeekAPI.BonusElement(_v);
+            var Target_TSVar = _v.TargetState();
             if (TranceSeekAPI.CanAttackMagic(_v))
             {
                 if (_v.Command.HitRate == 255)
@@ -60,15 +61,15 @@ namespace Memoria.Scripts.Battle
                     _v.CalcCannonProportionDamage();
                     if (_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill) || TranceSeekAPI.EliteMonster(_v.Target.Data))
                     {
-                        if (TranceSeekBattleDictionary.MonsterMechanic[_v.Target.Data][3] == 1 && _v.Target.CurrentHp > 10000)
+                        if (Target_TSVar.Monster.HPBoss10000 && _v.Target.CurrentHp > 10000)
                             _v.Target.HpDamage = (Int32)(_v.Target.CurrentHp - 10000) * _v.Context.Attack / 100;
                         else
                             _v.Target.HpDamage = (Int32)_v.Target.CurrentHp * _v.Context.Attack / 100;
 
-                        _v.Target.HpDamage = Math.Max(1, (_v.Target.HpDamage / TranceSeekBattleDictionary.MonsterMechanic[_v.Target.Data][5]));
+                        _v.Target.HpDamage = Math.Max(1, (_v.Target.HpDamage / Target_TSVar.Monster.NerfGravity));
                         if (_v.Target.HasCategory(EnemyCategory.Stone))
                             _v.Target.HpDamage += (_v.Target.HpDamage * 10) / 100;
-                        TranceSeekBattleDictionary.MonsterMechanic[_v.Target.Data][5] = TranceSeekBattleDictionary.MonsterMechanic[_v.Target.Data][5] * 2;
+                        Target_TSVar.Monster.NerfGravity = Target_TSVar.Monster.NerfGravity * 2;
                     }
                 }
                 if (_v.Caster.Data.dms_geo_id == 5 || _v.Caster.Data.dms_geo_id == 267) // Kuja (multiple target malus)
@@ -82,9 +83,8 @@ namespace Memoria.Scripts.Battle
                 TranceSeekAPI.TryAlterMagicStatuses(_v);
             }
 
-            if (TranceSeekBattleDictionary.AbsorbElement.TryGetValue(_v.Target.Data, out Int32 elementprotect))
-                if (elementprotect == 256)
-                    _v.Target.Flags |= CalcFlag.HpRecovery;
+            if (Target_TSVar.AbsorbElement == 256)
+                _v.Target.Flags |= CalcFlag.HpRecovery;
         }
 
         public static Int32[,] ImmuneGravity = new Int32[,]

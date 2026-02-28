@@ -3,6 +3,7 @@ using UnityEngine;
 using Memoria.Data;
 using static Memoria.Scripts.Battle.TranceSeekBattleDictionary;
 using Object = System.Object;
+using Memoria.Scripts.Battle;
 
 namespace Memoria.DefaultScripts
 {
@@ -76,7 +77,7 @@ namespace Memoria.DefaultScripts
             if (BasicPhysicalDefence == 0)
                 BasicPhysicalDefence = Target.PhysicalDefence;
 
-            StackBreakOrUpStatus[Target.Data][2] = -(Stack * 10);
+            Target.State().StackStatus.PDefence = -(Stack * 10);
 
             if (Stack > StackMaximum)
             {

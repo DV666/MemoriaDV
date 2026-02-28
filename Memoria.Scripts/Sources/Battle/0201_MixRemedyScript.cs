@@ -99,14 +99,9 @@ namespace Memoria.Scripts.Battle
                 case (RegularItem)2097: // Anticorps amélioré
                 {
                     TranceSeekAPI.TryRemoveItemStatuses(_v);
-                    if (TranceSeekBattleDictionary.ProtectStatus.TryGetValue(_v.Target.Data, out Dictionary<BattleStatus, Int32> statusprotect))
-                    {
-                        foreach (BattleStatusId statusID in _v.Command.Item.Status.ToStatusList())
-                        {
-                            BattleStatus status = statusID.ToBattleStatus();
-                            statusprotect.Add(status, 2);
-                        }
-                    }
+                    foreach (BattleStatusId statusID in _v.Command.Item.Status.ToStatusList())
+                        _v.TargetState().ProtectStatus.Add(statusID.ToBattleStatus(), 2);
+
                     break;
                 }
                 case (RegularItem)2043: // Puissant sérum
@@ -118,14 +113,9 @@ namespace Memoria.Scripts.Battle
                 case (RegularItem)2098: // Puissant Anticorps
                 {
                     TranceSeekAPI.TryRemoveItemStatuses(_v);
-                    if (TranceSeekBattleDictionary.ProtectStatus.TryGetValue(_v.Target.Data, out Dictionary<BattleStatus, Int32> statusprotect))
-                    {
-                        foreach (BattleStatusId statusID in _v.Command.Item.Status.ToStatusList())
-                        {
-                            BattleStatus status = statusID.ToBattleStatus();
-                            statusprotect.Add(status, 3);
-                        }
-                    }
+                    foreach (BattleStatusId statusID in _v.Command.Item.Status.ToStatusList())
+                        _v.TargetState().ProtectStatus.Add(statusID.ToBattleStatus(), 3);
+
                     break;
                 }
                 case (RegularItem)2108: // Remontant
@@ -160,39 +150,36 @@ namespace Memoria.Scripts.Battle
                     }
 
                     TranceSeekAPI.TryRemoveItemStatuses(_v);
-                    if (TranceSeekBattleDictionary.ProtectStatus.TryGetValue(_v.Target.Data, out Dictionary<BattleStatus, Int32> statusprotect))
+                    Boolean Message = false;
+                    string ItemName = FF9TextTool.ItemName(_v.Command.ItemId);
+                    foreach (BattleStatusId statusID in _v.Command.Item.Status.ToStatusList())
                     {
-                        Boolean Message = false;
-                        string ItemName = FF9TextTool.ItemName(_v.Command.ItemId);
-                        foreach (BattleStatusId statusID in _v.Command.Item.Status.ToStatusList())
-                        {
-                            BattleStatus status = statusID.ToBattleStatus();
-                            statusprotect.Add(status, 255);
+                        BattleStatus status = statusID.ToBattleStatus();
+                        _v.TargetState().ProtectStatus.Add(status, 255);
 
-                            Int32 wait = (short)((400 + (_v.Caster.Will * 3)) * 30);
-                            _v.Target.AddDelayedModifier(
-                            target => (wait -= target.Data.cur.at_coef * BattleState.ATBTickCount) > 0,
-                            target =>
+                        Int32 wait = (short)((400 + (_v.Caster.Will * 3)) * 30);
+                        _v.Target.AddDelayedModifier(
+                        target => (wait -= target.Data.cur.at_coef * BattleState.ATBTickCount) > 0,
+                        target =>
+                        {
+                            _v.TargetState().ProtectStatus.Remove(status);
+                            if (!Message)
                             {
-                                statusprotect.Remove(status);
-                                if (!Message)
+                                Dictionary<String, String> localizedStatusProtect = new Dictionary<String, String>
                                 {
-                                    Dictionary<String, String> localizedStatusProtect = new Dictionary<String, String>
-                                    {
-                                    { "US", $"- {ItemName}" },
-                                    { "UK", $"- {ItemName}" },
-                                    { "JP", $"- {ItemName}" },
-                                    { "ES", $"- {ItemName}" },
-                                    { "FR", $"- {ItemName}" },
-                                    { "GR", $"- {ItemName}" },
-                                    { "IT", $"- {ItemName}" },
-                                    };
-                                    btl2d.Btl2dReqSymbolMessage(target.Data, "[38FF1F]", localizedStatusProtect, HUDMessage.MessageStyle.DAMAGE, 5);
-                                    Message = true;
-                                }
+                                { "US", $"- {ItemName}" },
+                                { "UK", $"- {ItemName}" },
+                                { "JP", $"- {ItemName}" },
+                                { "ES", $"- {ItemName}" },
+                                { "FR", $"- {ItemName}" },
+                                { "GR", $"- {ItemName}" },
+                                { "IT", $"- {ItemName}" },
+                                };
+                                btl2d.Btl2dReqSymbolMessage(target.Data, "[38FF1F]", localizedStatusProtect, HUDMessage.MessageStyle.DAMAGE, 5);
+                                Message = true;
                             }
-                            );                         
                         }
+                        );                         
                     }
                     break;
                 }
@@ -227,39 +214,36 @@ namespace Memoria.Scripts.Battle
                 case (RegularItem)2159: // Remède V +
                 {
                     TranceSeekAPI.TryRemoveItemStatuses(_v);
-                    if (TranceSeekBattleDictionary.ProtectStatus.TryGetValue(_v.Target.Data, out Dictionary<BattleStatus, Int32> statusprotect))
+                    Boolean Message = false;
+                    string ItemName = FF9TextTool.ItemName(_v.Command.ItemId);
+                    foreach (BattleStatusId statusID in _v.Command.Item.Status.ToStatusList())
                     {
-                        Boolean Message = false;
-                        string ItemName = FF9TextTool.ItemName(_v.Command.ItemId);
-                        foreach (BattleStatusId statusID in _v.Command.Item.Status.ToStatusList())
-                        {
-                            BattleStatus status = statusID.ToBattleStatus();
-                            statusprotect.Add(status, 255);
+                        BattleStatus status = statusID.ToBattleStatus();
+                        _v.TargetState().ProtectStatus.Add(status, 255);
 
-                            Int32 wait = (short)((400 + (_v.Caster.Will * 3)) * 30);
-                            _v.Target.AddDelayedModifier(
-                            target => (wait -= target.Data.cur.at_coef * BattleState.ATBTickCount) > 0,
-                            target =>
+                        Int32 wait = (short)((400 + (_v.Caster.Will * 3)) * 30);
+                        _v.Target.AddDelayedModifier(
+                        target => (wait -= target.Data.cur.at_coef * BattleState.ATBTickCount) > 0,
+                        target =>
+                        {
+                            _v.TargetState().ProtectStatus.Remove(status);
+                            if (!Message)
                             {
-                                statusprotect.Remove(status);
-                                if (!Message)
+                                Dictionary<String, String> localizedStatusProtect = new Dictionary<String, String>
                                 {
-                                    Dictionary<String, String> localizedStatusProtect = new Dictionary<String, String>
-                                    {
-                                    { "US", $"- {ItemName}" },
-                                    { "UK", $"- {ItemName}" },
-                                    { "JP", $"- {ItemName}" },
-                                    { "ES", $"- {ItemName}" },
-                                    { "FR", $"- {ItemName}" },
-                                    { "GR", $"- {ItemName}" },
-                                    { "IT", $"- {ItemName}" },
-                                    };
-                                    btl2d.Btl2dReqSymbolMessage(target.Data, "[38FF1F]", localizedStatusProtect, HUDMessage.MessageStyle.DAMAGE, 5);
-                                    Message = true;
-                                }
+                                { "US", $"- {ItemName}" },
+                                { "UK", $"- {ItemName}" },
+                                { "JP", $"- {ItemName}" },
+                                { "ES", $"- {ItemName}" },
+                                { "FR", $"- {ItemName}" },
+                                { "GR", $"- {ItemName}" },
+                                { "IT", $"- {ItemName}" },
+                                };
+                                btl2d.Btl2dReqSymbolMessage(target.Data, "[38FF1F]", localizedStatusProtect, HUDMessage.MessageStyle.DAMAGE, 5);
+                                Message = true;
                             }
-                            );
                         }
+                        );
                     }
                     break;
                 }

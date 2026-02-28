@@ -1,8 +1,9 @@
 ﻿using Assets.Sources.Scripts.UI.Common;
-using System;
 using Memoria.Data;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 namespace Memoria.Scripts.Battle
 {
@@ -37,7 +38,7 @@ namespace Memoria.Scripts.Battle
             {
                 _v.Target.FaceAsUnit(_v.Caster);
                 if (!_v.Target.IsPlayer)
-                    TranceSeekBattleDictionary.IsBackAttack[_v.Target.Data] = true;
+                    _v.TargetState().IsBackAttack = true;
             }
 
             if (_v.Target.IsPlayer && _v.Target.Row != _v.Target.Player.info.row)
@@ -115,7 +116,7 @@ namespace Memoria.Scripts.Battle
                 ItemStolen = battleEnemy.StealableItems[0];
                 StealScript.StealItem(v, battleEnemy, 0, false);
             }
-            else if (TranceSeekBattleDictionary.ZidanePassive[monster.Data][2] > 0 && caster.PlayerIndex == CharacterId.Zidane) // Oeil de voleur activé
+            else if (monster.State().Zidane.EyeOfTheThief && caster.PlayerIndex == CharacterId.Zidane) // Oeil de voleur activé
             {
                 if (caster.PlayerIndex == CharacterId.Zidane)
                     AddBonusSteal(monster);

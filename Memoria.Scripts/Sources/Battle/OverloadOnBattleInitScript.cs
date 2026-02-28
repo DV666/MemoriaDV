@@ -11,9 +11,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEngine;
+using static BTL_DATA;
 using static Memoria.Scripts.Battle.TranceSeekAPI;
-using static Memoria.Scripts.Battle.TranceSeekBattleDictionary;
-using static UIManager;
 
 namespace Memoria.Scripts.Battle
 {
@@ -162,10 +161,12 @@ namespace Memoria.Scripts.Battle
 
             foreach (BattleUnit unit in BattleState.EnumerateUnits())
             {
+                var StateDict = TranceSeekBattleDictionary.GetState(unit.Data);
+
                 if (unit.IsPlayer)
                 {
                     if (btl_scene.Info.StartType == battle_start_type_tags.BTL_START_BACK_ATTACK)
-                        IsBackAttack[unit.Data] = true;
+                        StateDict.IsBackAttack = true;
 
                     if ((FF9StateSystem.Battle.battleMapIndex == 334 || FF9StateSystem.Battle.battleMapIndex == 335)) // Add Steal command for Zidane/Marcus against Steiner 2nd
                     {
@@ -179,45 +180,45 @@ namespace Memoria.Scripts.Battle
 
                     // Poison element
                     if (ItemAffinitiesPoison.ContainsKey(unit.Weapon))
-                        if (NewEffectElement[unit.Data][0] < ItemAffinitiesPoison[unit.Weapon])
-                            NewEffectElement[unit.Data][0] = ItemAffinitiesPoison[unit.Weapon];
+                        if (StateDict.EffectElement.Poison < ItemAffinitiesPoison[unit.Weapon])
+                            StateDict.EffectElement.Poison = ItemAffinitiesPoison[unit.Weapon];
                     if (ItemAffinitiesPoison.ContainsKey(unit.Head))
-                        if (NewEffectElement[unit.Data][0] < ItemAffinitiesPoison[unit.Head])
-                         NewEffectElement[unit.Data][0] = ItemAffinitiesPoison[unit.Head];
+                        if (StateDict.EffectElement.Poison < ItemAffinitiesPoison[unit.Head])
+                            StateDict.EffectElement.Poison = ItemAffinitiesPoison[unit.Head];
                     if (ItemAffinitiesPoison.ContainsKey(unit.Armor))
-                        if (NewEffectElement[unit.Data][0] < ItemAffinitiesPoison[unit.Armor])
-                            NewEffectElement[unit.Data][0] = ItemAffinitiesPoison[unit.Armor];
+                        if (StateDict.EffectElement.Poison < ItemAffinitiesPoison[unit.Armor])
+                            StateDict.EffectElement.Poison = ItemAffinitiesPoison[unit.Armor];
                     if (ItemAffinitiesPoison.ContainsKey(unit.Wrist))
-                        if (NewEffectElement[unit.Data][0] < ItemAffinitiesPoison[unit.Wrist])
-                            NewEffectElement[unit.Data][0] = ItemAffinitiesPoison[unit.Wrist];
+                        if (StateDict.EffectElement.Poison < ItemAffinitiesPoison[unit.Wrist])
+                            StateDict.EffectElement.Poison = ItemAffinitiesPoison[unit.Wrist];
                     if (ItemAffinitiesPoison.ContainsKey(unit.Accessory))
-                        if (NewEffectElement[unit.Data][0] < ItemAffinitiesPoison[unit.Accessory])
-                            NewEffectElement[unit.Data][0] = ItemAffinitiesPoison[unit.Accessory];
+                        if (StateDict.EffectElement.Poison < ItemAffinitiesPoison[unit.Accessory])
+                            StateDict.EffectElement.Poison = ItemAffinitiesPoison[unit.Accessory];
 
                     // Gravity element
                     if (ItemAffinitiesGravity.ContainsKey(unit.Weapon))
-                        if (NewEffectElement[unit.Data][1] < ItemAffinitiesGravity[unit.Weapon])
-                            NewEffectElement[unit.Data][1] = ItemAffinitiesGravity[unit.Weapon];
+                        if (StateDict.EffectElement.Gravity < ItemAffinitiesGravity[unit.Weapon])
+                            StateDict.EffectElement.Gravity = ItemAffinitiesGravity[unit.Weapon];
                     if (ItemAffinitiesGravity.ContainsKey(unit.Head))
-                        if (NewEffectElement[unit.Data][1] < ItemAffinitiesGravity[unit.Head])
-                            NewEffectElement[unit.Data][1] = ItemAffinitiesGravity[unit.Head];
+                        if (StateDict.EffectElement.Gravity < ItemAffinitiesGravity[unit.Head])
+                            StateDict.EffectElement.Gravity = ItemAffinitiesGravity[unit.Head];
                     if (ItemAffinitiesGravity.ContainsKey(unit.Armor))
-                        if (NewEffectElement[unit.Data][1] < ItemAffinitiesGravity[unit.Armor])
-                            NewEffectElement[unit.Data][1] = ItemAffinitiesGravity[unit.Armor];
+                        if (StateDict.EffectElement.Gravity < ItemAffinitiesGravity[unit.Armor])
+                            StateDict.EffectElement.Gravity = ItemAffinitiesGravity[unit.Armor];
                     if (ItemAffinitiesGravity.ContainsKey(unit.Wrist))
-                        if (NewEffectElement[unit.Data][1] < ItemAffinitiesGravity[unit.Wrist])
-                            NewEffectElement[unit.Data][1] = ItemAffinitiesGravity[unit.Wrist];
+                        if (StateDict.EffectElement.Gravity < ItemAffinitiesGravity[unit.Wrist])
+                            StateDict.EffectElement.Gravity = ItemAffinitiesGravity[unit.Wrist];
                     if (ItemAffinitiesGravity.ContainsKey(unit.Accessory))
-                        if (NewEffectElement[unit.Data][1] < ItemAffinitiesGravity[unit.Accessory])
-                            NewEffectElement[unit.Data][1] = ItemAffinitiesGravity[unit.Accessory];
-
+                        if (StateDict.EffectElement.Gravity < ItemAffinitiesGravity[unit.Accessory])
+                            StateDict.EffectElement.Gravity = ItemAffinitiesGravity[unit.Accessory];
+                        
                     if (unit.HasSupportAbilityByIndex((SupportAbility)1041)) // Alert+
                     {
                         btl_stat.AlterStatus(unit, TranceSeekStatusId.PerfectDodge, parameters: "+2");
                     }
                     if (unit.HasSupportAbilityByIndex((SupportAbility)52)) // Last Stand
                     {
-                        SpecialSAEffect[unit.Data][1] = unit.HasSupportAbilityByIndex((SupportAbility)1052) ? 2 : 1;
+                        StateDict.SpecialSA.LastStand = unit.HasSupportAbilityByIndex((SupportAbility)1052) ? 2 : 1;
                     }
                     if (unit.HasSupportAbilityByIndex((SupportAbility)1252)) // SA I'm all set
                     {
@@ -255,12 +256,12 @@ namespace Memoria.Scripts.Battle
                     {
                         foreach (BattleUnit monster in BattleState.EnumerateUnits())
                             if (!monster.IsPlayer)
-                                ZidanePassive[monster.Data][2] = 1;
+                                TranceSeekBattleDictionary.GetState(monster.Data).Zidane.EyeOfTheThief = true;
                     }
                     if (unit.Armor == (RegularItem)1220) // Mechanical Armor
                     {
-                        MonsterMechanic[unit.Data][1] = 10;
-                        btl_stat.AlterStatus(unit, TranceSeekStatusId.MechanicalArmor, parameters: MonsterMechanic[unit.Data][1]);
+                        StateDict.SpecialItem.MechanicalArmor = 10;
+                        btl_stat.AlterStatus(unit, TranceSeekStatusId.MechanicalArmor, parameters: StateDict.SpecialItem.MechanicalArmor);
                     }
                     if (unit.Accessory == (RegularItem)1253) // Ishgard Scarf
                     {
@@ -281,11 +282,11 @@ namespace Memoria.Scripts.Battle
                     else if (unit.Accessory == (RegularItem)1254) // Strange Cube
                     {
                         unit.MaximumHp = (uint)UnityEngine.Random.Range(unit.MaximumHp - (unit.MaximumHp / 2), unit.MaximumHp + (unit.MaximumHp / 2));
-                        SpecialSAEffect[unit.Data][15] = (int)unit.MaximumHp;
+                        StateDict.SpecialSA.NewMaximumHP = (int)unit.MaximumHp;
                         if (unit.CurrentHp > unit.MaximumHp)
                             unit.CurrentHp = unit.MaximumHp;
                         unit.MaximumMp = (uint)UnityEngine.Random.Range(unit.MaximumMp - (unit.MaximumMp / 2), unit.MaximumMp + (unit.MaximumMp / 2));
-                        SpecialSAEffect[unit.Data][16] = (int)unit.MaximumMp;
+                        StateDict.SpecialSA.NewMaximumMP = (int)unit.MaximumMp;
                         if (unit.CurrentMp > unit.MaximumMp)
                             unit.CurrentMp = unit.MaximumMp;
                         unit.Dexterity = (byte)UnityEngine.Random.Range(unit.Dexterity - (unit.Dexterity / 2), unit.Dexterity + (unit.Dexterity / 2));
@@ -353,7 +354,7 @@ namespace Memoria.Scripts.Battle
                     else if (unit.PlayerIndex == (CharacterId)14)
                     {
                         unit.SummonCount = 1; // [TODO] Change to Memoria Dict : Used for SA Take that!
-                        SpecialSAEffect[unit.Data][13] = unit.PhysicalDefence; // In top form!
+                        StateDict.Baku.InTopForm = unit.PhysicalDefence;
                     }
                     else if (unit.PlayerIndex == (CharacterId)15) // Reset CMD Komrade
                     {
@@ -400,8 +401,8 @@ namespace Memoria.Scripts.Battle
                             unit.CurrentHp = unit.MaximumHp;
                         if (unit.CurrentMp > unit.MaximumMp)
                             unit.CurrentMp = unit.MaximumMp;
-                        SpecialSAEffect[unit.Data][15] = (int)unit.MaximumHp;
-                        SpecialSAEffect[unit.Data][16] = (int)unit.MaximumMp;
+                        StateDict.SpecialSA.NewMaximumHP = (int)unit.MaximumHp;
+                        StateDict.SpecialSA.NewMaximumMP = (int)unit.MaximumMp;
                     }
 
                     if (unit.HasSupportAbilityByIndex((SupportAbility)1212)) // SA Protector+
@@ -442,7 +443,7 @@ namespace Memoria.Scripts.Battle
                 else // Monsters init
                 {
                     if (btl_scene.Info.StartType == battle_start_type_tags.BTL_START_FIRST_ATTACK)
-                        IsBackAttack[unit.Data] = true;
+                        StateDict.IsBackAttack = true;
 
                     BattleEnemy battleEnemy = BattleEnemy.Find(unit);
                     Boolean ChangeStats = true;
@@ -459,8 +460,8 @@ namespace Memoria.Scripts.Battle
 
                     if (unit.IsUnderAnyStatus(BattleStatus.EasyKill))
                     {
-                        MonsterMechanic[unit.Data][4] = 100; // Reduce time for Sleep/Freeze/Stop
-                        MonsterMechanic[unit.Data][5] = 4; // Reduce gravity damage (start at 1 for Elite)
+                        StateDict.Monster.DurationDeadlyStatus = 100; // Reduce time for Sleep/Freeze/Stop
+                        StateDict.Monster.NerfGravity = 4; // Reduce gravity damage (start at 1 for Elite)
                     }
 
                     if (ChangeStats)
@@ -474,7 +475,7 @@ namespace Memoria.Scripts.Battle
                                 uint bonusHP = unit.MaximumHp - 10000;
                                 unit.MaximumHp += (uint)((bonusHP * dictdifficulty[0]) / 100);
                                 unit.CurrentHp = unit.MaximumHp;
-                                MonsterMechanic[unit.Data][3] = 1;
+                                StateDict.Monster.HPBoss10000 = true;
                                 break;
                             }
                         }
@@ -530,21 +531,21 @@ namespace Memoria.Scripts.Battle
                     if (monParam.Pad1 > 0)
                     {
                         if ((monParam.Pad1 & 1) != 0)
-                            NewEffectElement[unit.Data][0] += 1;
+                            StateDict.EffectElement.Poison += 1;
                         if ((monParam.Pad1 & 2) != 0)
-                            NewEffectElement[unit.Data][0] += 2;
+                            StateDict.EffectElement.Poison += 2;
                         if ((monParam.Pad1 & 4) != 0)
-                            NewEffectElement[unit.Data][0] += 4;
+                            StateDict.EffectElement.Poison += 4;
                         if ((monParam.Pad1 & 8) != 0)
-                            NewEffectElement[unit.Data][0] += 8;
+                            StateDict.EffectElement.Poison += 8;
                         if ((monParam.Pad1 & 16) != 0)
-                            NewEffectElement[unit.Data][1] += 1;
+                            StateDict.EffectElement.Gravity += 1;
                         if ((monParam.Pad1 & 32) != 0)
-                            NewEffectElement[unit.Data][1] += 2;
+                            StateDict.EffectElement.Gravity += 2;
                         if ((monParam.Pad1 & 64) != 0)
-                            NewEffectElement[unit.Data][1] += 4;
+                            StateDict.EffectElement.Gravity += 4;
                         if ((monParam.Pad1 & 128) != 0)
-                            NewEffectElement[unit.Data][1] += 8;
+                            StateDict.EffectElement.Gravity += 8;
                     }
 
                     if (Configuration.Battle.Speed == 2)
@@ -566,28 +567,25 @@ namespace Memoria.Scripts.Battle
         {
             foreach (BattleUnit unit in BattleState.EnumerateUnits())
             {
-                ZidanePassive[unit.Data] = [0, 0, 0, 0, 0, 255, 255, 0, 0, 0, 0, 0];
-                ViviPreviousSpell[unit.Data] = BattleAbilityId.Void;
-                ViviPassive[unit.Data] = [0, 0, 0];
-                FreyaPassive[unit.Data] = [0];
-                SteinerPassive[unit.Data] = [0, 0, 0, 0];             
-                BeatrixPassive[unit.Data] = [0, 0, 0, 0];
-                ProtectStatus[unit.Data] = new Dictionary<BattleStatus, Int32> { { 0, 0 } };
-                AbsorbElement[unit.Data] = -1;
-                StackBreakOrUpStatus[unit.Data] = [0, 0, 0, 0];
-                MonsterMechanic[unit.Data] = [0, 0, 0, 0, 100, 2, 0];
-                SpecialSAEffect[unit.Data] = [0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, (int)unit.MaximumHp, (int)unit.MaximumMp];
-                SpecialItemEffect[unit.Data] = [3, 3];
-                NewEffectElement[unit.Data] = [0, 0];
-                TriggerSPSResistStatus[unit.Data] = false;
-                RollBackStats[unit.Data] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-                RollBackBattleStatus[unit.Data] = 0;
+                var state = TranceSeekBattleDictionary.GetState(unit.Data);
+
+                state.Zidane.FirstItemMug = RegularItem.NoItem;
+                state.Zidane.SecondItemMug = RegularItem.NoItem;
+                state.Vivi.PreviousSpell = BattleAbilityId.Void;
+                state.ProtectStatus = new Dictionary<BattleStatus, int> { { (BattleStatus)0, 0 } };
+                state.AbsorbElement = -1;
+                state.Monster.DurationDeadlyStatus = 100;
+                state.Monster.NerfGravity = 2;
+                state.SpecialSA.Instinct = 2;
+                state.SpecialSA.NewMaximumHP = (int)unit.MaximumHp;
+                state.SpecialSA.NewMaximumMP = (int)unit.MaximumMp;
+                state.SpecialItem.EmergencySatchel = 3;
+                state.SpecialItem.MagicalSatchel = 3;
+
                 InfusedWeaponScript.WeaponNewElement[unit.Data] = EffectElement.None;
                 InfusedWeaponScript.WeaponNewCustomElement[unit.Data] = 0;
                 InfusedWeaponScript.WeaponNewStatus[unit.Data] = 0;
-                AdditionalModel[unit.Data] = null;
-                InfusedWeaponScript.CMDVanillaName[unit.Data] = [null, null];
-                IsBackAttack[unit.Data] = false;
+                InfusedWeaponScript.CMDVanillaName[unit.Data] = new string[] { null, null };
 
                 if (unit.PlayerIndex == CharacterId.Zidane)
                     SwitchWeaponScript.InitZidaneModel(unit);
@@ -649,37 +647,39 @@ namespace Memoria.Scripts.Battle
 
         private Boolean SteinerMechanic(BattleUnit unit)
         {
-            if (UIManager.Input.GetKey(Control.RightTrigger) && SteinerPassive[unit.Data][0] > 0 && SteinerPassive[unit.Data][2] == 0 && unit.Data.bi.line_no == UIManager.Battle.CurrentPlayerIndex)
+            var StateDict = TranceSeekBattleDictionary.GetState(unit.Data);
+
+            if (UIManager.Input.GetKey(Control.RightTrigger) && StateDict.Steiner.StackCMD1 > 0 && !StateDict.Steiner.TriggerOneTime && unit.Data.bi.line_no == UIManager.Battle.CurrentPlayerIndex)
             {
-                SteinerPassive[unit.Data][2] = 1;
-                SteinerPassive[unit.Data][0]--;
-                SteinerPassive[unit.Data][1]++;
-                FF9TextTool.SetCommandName(BattleCommandId.SwordAct, TranceSeekBattleCommand.SwdArtCMDNameVanilla[Localization.CurrentDisplaySymbol] + " (" + SteinerPassive[unit.Data][0] + "/" + (SteinerPassive[unit.Data][0] + SteinerPassive[unit.Data][1]) + ")");
+                StateDict.Steiner.TriggerOneTime = true;
+                StateDict.Steiner.StackCMD1--;
+                StateDict.Steiner.StackCMD2++;
+                FF9TextTool.SetCommandName(BattleCommandId.SwordAct, TranceSeekBattleCommand.SwdArtCMDNameVanilla[Localization.CurrentDisplaySymbol] + " (" + StateDict.Steiner.StackCMD1 + "/" + (StateDict.Steiner.StackCMD1 + StateDict.Steiner.StackCMD2) + ")");
                 UIManager.Battle.OnLocalize();
                 SoundLib.PlaySoundEffect(1577);
                 //unit.UILabelHP = $"{SteinerPassive[unit.Data][1]} [SPRT=IconAtlas,item200_00,32,32]\n{unit.CurrentHp}";
                 if (FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1000, out Dictionary<Int32, Int32> dictbattle))
-                    dictbattle[1] = SteinerPassive[unit.Data][1];
+                    dictbattle[1] = StateDict.Steiner.StackCMD2;
             }
-            else if (UIManager.Input.GetKey(Control.LeftTrigger) && SteinerPassive[unit.Data][1] > 0 && SteinerPassive[unit.Data][2] == 0 && unit.Data.bi.line_no == UIManager.Battle.CurrentPlayerIndex)
+            else if (UIManager.Input.GetKey(Control.LeftTrigger) && StateDict.Steiner.StackCMD2 > 0 && !StateDict.Steiner.TriggerOneTime && unit.Data.bi.line_no == UIManager.Battle.CurrentPlayerIndex)
             {
-                SteinerPassive[unit.Data][2] = 1;
-                SteinerPassive[unit.Data][0]++;
-                SteinerPassive[unit.Data][1]--;
-                FF9TextTool.SetCommandName(BattleCommandId.SwordAct, TranceSeekBattleCommand.SwdArtCMDNameVanilla[Localization.CurrentDisplaySymbol] + " (" + SteinerPassive[unit.Data][0] + "/" + (SteinerPassive[unit.Data][0] + SteinerPassive[unit.Data][1]) + ")");
+                StateDict.Steiner.TriggerOneTime = true;
+                StateDict.Steiner.StackCMD1++;
+                StateDict.Steiner.StackCMD2--;
+                FF9TextTool.SetCommandName(BattleCommandId.SwordAct, TranceSeekBattleCommand.SwdArtCMDNameVanilla[Localization.CurrentDisplaySymbol] + " (" + StateDict.Steiner.StackCMD1 + "/" + (StateDict.Steiner.StackCMD1 + StateDict.Steiner.StackCMD2) + ")");
                 UIManager.Battle.OnLocalize();
                 SoundLib.PlaySoundEffect(1577);
                 if (FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1000, out Dictionary<Int32, Int32> dictbattle))
-                    dictbattle[1] = SteinerPassive[unit.Data][1];
+                    dictbattle[1] = StateDict.Steiner.StackCMD2;
             }
 
-            if (SteinerPassive[unit.Data][1] > 0)
-                unit.UILabelHP = $"{SteinerPassive[unit.Data][1]} [SPRT=IconAtlas,item200_00,32,32]\n{unit.CurrentHp}";
+            if (StateDict.Steiner.StackCMD2 > 0)
+                unit.UILabelHP = $"{StateDict.Steiner.StackCMD2} [SPRT=IconAtlas,item200_00,32,32]\n{unit.CurrentHp}";
             else
                 unit.UILabelHP = unit.CurrentHp.ToString();
 
             if (!UIManager.Input.GetKey(Control.LeftTrigger) && !UIManager.Input.GetKey(Control.RightTrigger)) // Prevent to do it quickly
-                SteinerPassive[unit.Data][2] = 0;
+                StateDict.Steiner.TriggerOneTime = false;
 
             return true;
         }
@@ -742,7 +742,7 @@ namespace Memoria.Scripts.Battle
             { 302, 0 }, // Maton + Grenat
             { 301, 0 }, // Maton + Vivi
             { 682, 0 }, { 686, 0 }, { 687, 0 }, { 689, 0 }, { 270, 0 }, { 235, 0 }, { 841, 0 }, { 239, 0 }, // Friendly Miskoxy
-            { 112, 2 }, // Lamie 2nd
+            { 112, 2 }, // Lani 2nd
             { 636, 0 }, { 637, 0 }, { 641, 0 }, { 268, 0 }, { 647, 0 }, { 188, 0 }, { 189, 0 }, // Friendly Nymphe
             { 525, 0 }, // Obélisk
             { 191, 0 }, // Pluton

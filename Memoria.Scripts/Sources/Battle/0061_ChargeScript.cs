@@ -33,6 +33,8 @@ namespace Memoria.Scripts.Battle
             }
 
             Boolean canAttack = false;
+            var Caster_TSVar = _v.CasterState();
+
             foreach (BattleUnit unit in BattleState.EnumerateUnits())
             {
                 if (((BattleCalcFlags)unit.Id & _v.Context.Flags) == 0 || unit.IsUnderAnyStatus(cannotAttack))
@@ -44,17 +46,17 @@ namespace Memoria.Scripts.Battle
                     return;
 
                 BattleState.EnqueueCounter(unit, BattleCommandId.RushAttack, BattleAbilityId.Attack, randomEnemy);
-                if (TranceSeekBattleDictionary.SteinerPassive[_v.Caster.Data][1] == 5)
+                if (Caster_TSVar.Steiner.StackCMD1 == 5)
                 {
                     unit.AlterStatus(BattleStatus.Haste);
                     btl_stat.AlterStatus(unit, TranceSeekStatusId.PowerUp, parameters: $"+2");
                 }
-                else if (TranceSeekBattleDictionary.SteinerPassive[_v.Caster.Data][1] >= 3)
+                else if (Caster_TSVar.Steiner.StackCMD1 >= 3)
                 {
                     unit.AlterStatus(BattleStatus.Haste);
                     btl_stat.AlterStatus(unit, TranceSeekStatusId.PowerUp);
                 }
-                else if (TranceSeekBattleDictionary.SteinerPassive[_v.Caster.Data][1] > 0)
+                else if (Caster_TSVar.Steiner.StackCMD1 > 0)
                 {
                     unit.AlterStatus(BattleStatus.Haste);
                 }
@@ -65,7 +67,7 @@ namespace Memoria.Scripts.Battle
                 _v.Context.Flags = 0;
                 UiState.SetBattleFollowFormatMessage(BattleMesages.ChargeFailed);
             }
-            else if (TranceSeekBattleDictionary.SteinerPassive[_v.Caster.Data][1] > 0)
+            else if (Caster_TSVar.Steiner.StackCMD1 > 0)
                 TranceSeekCharacterMechanic.ResetSteinerPassive(_v.Caster);
         }
     }

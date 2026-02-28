@@ -39,7 +39,7 @@ namespace Memoria.Scripts.Battle
                 _v.Caster.Data.mot[0] = "ANH_MON_B3_185_011";
                 _v.Caster.Data.mot[1] = "ANH_MON_B3_185_000";
                 _v.Caster.Data.mot[2] = "ANH_MON_B3_185_011";
-                TranceSeekBattleDictionary.MonsterMechanic[_v.Caster.Data][2] = 1;
+                _v.CasterState().Monster.Special2 = 1;
                 return;
             }
             else if (_v.Caster.Data.dms_geo_id == 410 && _v.Command.Power == 10 && _v.Command.HitRate == 10) // Runic Lamie

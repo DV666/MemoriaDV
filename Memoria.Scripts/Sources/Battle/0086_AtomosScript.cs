@@ -42,16 +42,17 @@ namespace Memoria.Scripts.Battle
             TranceSeekAPI.BonusElement(_v);
             if (TranceSeekAPI.CanAttackMagic(_v))
             {
+                var Target_TSVar = _v.TargetState();
                 _v.CalcCannonProportionDamage();
                 if (_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill) || TranceSeekAPI.EliteMonster(_v.Target.Data))
                 {
-                    if (TranceSeekBattleDictionary.MonsterMechanic[_v.Target.Data][3] == 1 && _v.Target.CurrentHp > 10000)
+                    if (Target_TSVar.Monster.HPBoss10000 && _v.Target.CurrentHp > 10000)
                         _v.Target.HpDamage = (Int32)(_v.Target.CurrentHp - 10000) * _v.Context.Attack / 100;
                     else
                         _v.Target.HpDamage = (Int32)_v.Target.CurrentHp * _v.Context.Attack / 100;
 
-                    _v.Target.HpDamage = Math.Max(1, (_v.Target.HpDamage / TranceSeekBattleDictionary.MonsterMechanic[_v.Target.Data][5]));
-                    TranceSeekBattleDictionary.MonsterMechanic[_v.Target.Data][5] = TranceSeekBattleDictionary.MonsterMechanic[_v.Target.Data][5] * 2;
+                    _v.Target.HpDamage = Math.Max(1, (_v.Target.HpDamage / Target_TSVar.Monster.NerfGravity));
+                    Target_TSVar.Monster.NerfGravity = Target_TSVar.Monster.NerfGravity * 2;
                 }
                 if ((ff9item.FF9Item_GetCount(RegularItem.Amethyst)) > Comn.random16() % 100)
                     _v.Target.TryAlterStatuses(_v.Command.AbilityStatus, false, _v.Caster);

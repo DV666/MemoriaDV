@@ -25,7 +25,7 @@ namespace Memoria.Scripts.Battle
             if (_v.Command.AbilityStatus == BattleStatus.AutoLife)
             {
                 _v.Target.RemoveStatus(BattleStatus.AutoLife);
-                TranceSeekBattleDictionary.SpecialSAEffect[_v.Target.Data][1] = 0;
+                _v.TargetState().SpecialSA.LastStand = 0;
             }
             _v.Target.Flags |= CalcFlag.HpAlteration;
             if (_v.Command.Power == 99 & _v.Command.HitRate == 99) // Explosion to make a game over.

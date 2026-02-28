@@ -682,6 +682,8 @@ namespace Memoria.Scripts.Battle
                     v.Target.HpDamage += ((v.Target.HpDamage * BonusDamageFromWeapon(v.Caster.Weapon)) / 100);
                 else if (CasterWeaponShape == 56 && v.Target.HpDamage > 0 && v.Command.Id != BattleCommandId.Item && v.Command.Id != BattleCommandId.AutoPotion) // Axe
                     v.Target.HpDamage = UnityEngine.Random.Range(v.Target.HpDamage / 10, v.Target.HpDamage);
+                else if (v.Caster.Weapon == GoblinSword && v.Caster.Level == v.Target.Level && v.Command.AbilityId == BattleAbilityId.Attack)
+                    v.Target.HpDamage = v.Target.HpDamage * 3;
 
                 switch (v.Caster.Accessory)
                 {
@@ -694,6 +696,8 @@ namespace Memoria.Scripts.Battle
             }
             if (v.Target.IsPlayer)
             {
+                var Target_TSVar = v.TargetState();
+
                 switch (v.Target.Wrist)
                 {
                     case TetraWrist:
@@ -711,17 +715,17 @@ namespace Memoria.Scripts.Battle
                     {
                         Boolean TargetPreventStatus = v.Target.IsUnderAnyStatus(BattleStatusConst.PreventCounter | BattleStatus.Heat | BattleStatus.Zombie);
                         int PotionHeal = v.Target.HasSupportAbility(SupportAbility1.Chemist) ? 400 : 200;
-                        if (!TargetPreventStatus && v.Caster.IsPlayer != v.Target.IsPlayer && TranceSeekBattleDictionary.SpecialItemEffect[v.Target.Data][0] > 0 && (v.Target.MaximumHp - v.Target.CurrentHp + v.Target.HpDamage) > PotionHeal && v.Command.Id <= BattleCommandId.BoundaryCheck)
+                        if (!TargetPreventStatus && v.Caster.IsPlayer != v.Target.IsPlayer && Target_TSVar.SpecialItem.EmergencySatchel > 0 && (v.Target.MaximumHp - v.Target.CurrentHp + v.Target.HpDamage) > PotionHeal && v.Command.Id <= BattleCommandId.BoundaryCheck)
                         {
                             btl_cmd.SetCounter(v.Target.Data, BattleCommandId.AutoPotion, (int)RegularItem.Potion, v.Target.Id);
-                            TranceSeekBattleDictionary.SpecialItemEffect[v.Target.Data][0]--;
+                            Target_TSVar.SpecialItem.EmergencySatchel--;
                         }
                         break;
                     }
                     case MagicalSatchel:
                     {
                         Boolean TargetPreventStatus = v.Target.IsUnderAnyStatus(BattleStatusConst.PreventCounter | BattleStatus.Heat);
-                        if (!TargetPreventStatus && v.Caster.IsPlayer != v.Target.IsPlayer && TranceSeekBattleDictionary.SpecialItemEffect[v.Target.Data][1] > 0 && v.Target.IsUnderAnyStatus(BattleStatusConst.AnyNegative))
+                        if (!TargetPreventStatus && v.Caster.IsPlayer != v.Target.IsPlayer && Target_TSVar.SpecialItem.MagicalSatchel > 0 && v.Target.IsUnderAnyStatus(BattleStatusConst.AnyNegative))
                         {
                             RegularItem PotionChoosen = RegularItem.NoItem;
                             if (v.Target.IsUnderAnyStatus(BattleStatus.GradualPetrify))
@@ -743,7 +747,7 @@ namespace Memoria.Scripts.Battle
                             {
                                 ff9item.FF9Item_Add(PotionChoosen, 1);
                                 btl_cmd.SetCounter(v.Target.Data, BattleCommandId.AutoPotion, (int)PotionChoosen, v.Target.Id);
-                                TranceSeekBattleDictionary.SpecialItemEffect[v.Target.Data][1]--;
+                                Target_TSVar.SpecialItem.MagicalSatchel--;
                             }
                         }
                         break;

@@ -14,11 +14,12 @@ namespace Memoria.DefaultScripts
             target.UISpriteATB = BattleHUD.ATEGray;
             if (Target.IsUnderAnyStatus(BattleStatus.EasyKill))
             {
-                if (TranceSeekBattleDictionary.MonsterMechanic[target.Data][4] > 0)
+                var Target_TSVar = target.State();
+                if (Target_TSVar.Monster.DurationDeadlyStatus > 0)
                 {
                     BattleStatusDataEntry statusData = FF9StateSystem.Battle.FF9Battle.status_data[BattleStatusId.Poison];
                     Int32 wait = (short)(((200 + (inflicter.Will * 2) - target.Will) * statusData.ContiCnt) * (inflicter.HasSupportAbilityByIndex((SupportAbility)1124) ? (150 / 100) : inflicter.HasSupportAbilityByIndex((SupportAbility)124) ? (125 / 100) : 1)); ;
-                    wait = (wait * TranceSeekBattleDictionary.MonsterMechanic[target.Data][4]) / 100;
+                    wait = (wait * Target_TSVar.Monster.DurationDeadlyStatus) / 100;
                     Target.AddDelayedModifier(
                     target => (wait -= target.Data.cur.at_coef * BattleState.ATBTickCount) > 0,
                     target =>
@@ -26,7 +27,7 @@ namespace Memoria.DefaultScripts
                         target.RemoveStatus(BattleStatus.Stop);
                     }
                     );
-                    TranceSeekBattleDictionary.MonsterMechanic[target.Data][4] -= 20;
+                    Target_TSVar.Monster.DurationDeadlyStatus -= 20;
                 }
                 else
                     return btl_stat.ALTER_RESIST;

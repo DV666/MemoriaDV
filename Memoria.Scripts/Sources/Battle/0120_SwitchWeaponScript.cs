@@ -92,8 +92,9 @@ namespace Memoria.Scripts.Battle
                 btl_mot.setMotion(_v.Caster.Data, BattlePlayerCharacter.PlayerMotionIndex.MP_WIN); //MP_MAGIC
                 _v.Caster.Data.evt.animFrame = 0;
                 geo.geoScaleUpdate(_v.Caster.Data, true);
-                TranceSeekBattleDictionary.ZidanePassive[_v.Caster.Data][4] = 0;
-                TranceSeekBattleDictionary.ZidanePassive[_v.Caster.Data][9] = 0;
+                var Zidane_TSVar = _v.CasterState().Zidane;
+                Zidane_TSVar.DaggerAttack = 0;
+                Zidane_TSVar.Flexible = 0;
 
                 _v.Caster.AddDelayedModifier(
                     caster => caster.CurrentAtb >= caster.MaximumAtb,

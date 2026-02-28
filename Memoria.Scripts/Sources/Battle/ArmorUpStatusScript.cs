@@ -76,7 +76,7 @@ namespace Memoria.DefaultScripts
             if (BasicPhysicalDefence == 0)
                 BasicPhysicalDefence = Target.PhysicalDefence;
 
-            StackBreakOrUpStatus[Target.Data][2] = (Stack * 10);
+            Target.State().StackStatus.PDefence = (Stack * 10);
 
             if (Stack > StackMaximum)
             {

@@ -34,7 +34,7 @@ namespace Memoria.Scripts.Battle
         {
             WeaponNewElement[_v.Target.Data] = _v.Command.Element;
             InfusedWeaponScript.WeaponNewStatus[_v.Target.Data] = _v.Command.AbilityStatus;
-            TranceSeekBattleDictionary.ViviPreviousSpell[_v.Target.Data] = _v.Command.AbilityId; // SA Maximum infusion for Lani/Vivi
+            _v.TargetState().Vivi.PreviousSpell = _v.Command.AbilityId; // SA Maximum infusion for Lani/Vivi
 
             int Element = (int)_v.Command.Element;
             if (_v.Command.Element == 0 && _v.Command.AbilityId != TranceSeekBattleAbility.SFlare)

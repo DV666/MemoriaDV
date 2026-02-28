@@ -23,7 +23,8 @@ namespace Memoria.Scripts.Battle
         {
             if (_v.Caster.PlayerIndex == CharacterId.Beatrix && (_v.Command.AbilityId == (BattleAbilityId)1012 || _v.Command.AbilityId == (BattleAbilityId)1054)) // Bravoure
             {
-                if (TranceSeekBattleDictionary.BeatrixPassive[_v.Caster.Data][2] > 0)
+                var Caster_TSVar = _v.CasterState();
+                if (Caster_TSVar.Beatrix.Braver > 0)
                 {
                     _v.Context.Flags |= BattleCalcFlags.Miss;
                     return;
@@ -36,13 +37,13 @@ namespace Memoria.Scripts.Battle
                     _v.Target.AlterStatus(TranceSeekStatus.Redemption, _v.Caster);
                 if (_v.Caster.IsUnderAnyStatus(BattleStatus.Trance))
                 {
-                    TranceSeekBattleDictionary.BeatrixPassive[_v.Caster.Data][2] = 2;
+                    Caster_TSVar.Beatrix.Braver = 2;
                     _v.Command.AbilityStatus |= (BattleStatus.Regen | BattleStatus.AutoLife);
                     TranceSeekAPI.TryAlterCommandStatuses(_v);
                 }
                 else
                 {
-                    TranceSeekBattleDictionary.BeatrixPassive[_v.Caster.Data][2] = 1;
+                    Caster_TSVar.Beatrix.Braver = 1;
                 }
                 TranceSeekCharacterMechanic.UpdateRedemptionHUD(_v.Target);
                 return;
