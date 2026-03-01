@@ -24,7 +24,7 @@ namespace Memoria.Scripts.Battle
         {
             Int32 baseDamage = Comn.random16() % (1 + (v.Caster.Level + v.Caster.Strength >> 3));
             v.Context.AttackPower = v.Caster.GetWeaponPower(v.Command);
-            if ((!v.Caster.HasSupportAbility(SupportAbility1.Healer) && !v.Caster.IsHealingRod) && v.Target.IsPlayer)
+            if ((!v.Caster.HasSupportAbility(SupportAbility1.Healer) && !v.Caster.IsHealingRod) || !v.Target.IsPlayer)
                 v.Target.SetPhysicalDefense();
 
             switch (bonus)

@@ -84,6 +84,29 @@ namespace Memoria.DefaultScripts
                         }
                         );
                 }
+                else if (target.Data.dms_geo_id == 410)
+                {
+                    target.AddDelayedModifier(
+                        target => !target.Data.enable_trance_glow,
+                        target =>
+                        {
+                            ModelFactory.ChangeModelTexture(target.Data.gameObject, new string[] { "CustomTextures/Players/LaniTrance/410_0_trance.png", "CustomTextures/Players/LaniTrance/410_1_trance.png", "CustomTextures/Players/LaniTrance/410_2_trance.png", "CustomTextures/Players/LaniTrance/410_3_trance.png" });
+                            WEAPON_MODEL FirstAxe = new WEAPON_MODEL { geo = ModelFactory.CreateModel("GEO_ACC_F0_LNW", true) };
+                            GeoAttach(FirstAxe.geo, target.Data.gameObject, 14);
+                            FirstAxe.geo.transform.localPosition = new Vector3(-130.5f, 87f, 106f);
+                            FirstAxe.geo.transform.localRotation = Quaternion.Euler(new Vector3(17.35538f, 121.1880f, 247.1161f));
+                            FirstAxe.geo.SetActive(true);
+                            Target_TSVar.AdditionalModel.Add(FirstAxe);
+
+                            WEAPON_MODEL SecondAxe = new WEAPON_MODEL { geo = ModelFactory.CreateModel("GEO_ACC_F0_LNW", true) };
+                            GeoAttach(SecondAxe.geo, target.Data.gameObject, 14);
+                            SecondAxe.geo.transform.localPosition = new Vector3(114.5f, 84.5f, 183f);
+                            SecondAxe.geo.transform.localRotation = Quaternion.Euler(new Vector3(16.64425f, 212.1457f, 111.8135f));
+                            SecondAxe.geo.SetActive(true);
+                            Target_TSVar.AdditionalModel.Add(SecondAxe);
+                        }
+                    );
+                }
             }
             else
             {
@@ -205,6 +228,24 @@ namespace Memoria.DefaultScripts
                             GeoAttach(target.Data.weaponModels[0].geo, target.Data.gameObject, 16);
                             target.Data.gameObject.SetActive(true);
                             target.Data.weaponModels[0].geo.SetActive(true);
+                        }
+                    );
+                }
+                else if (Target.Data.dms_geo_id == 410)
+                {
+                    Target.AddDelayedModifier(
+                        target => target.Data.enable_trance_glow,
+                        target =>
+                        {
+                            Vector3 position = target.Data.gameObject.transform.position;
+                            foreach (var model in Target_TSVar.AdditionalModel)
+                                if (model != null && model.geo != null)
+                                    UnityEngine.Object.Destroy(model.geo);
+
+                            target.Data.gameObject.SetActive(false);
+                            target.Data.gameObject = ModelFactory.CreateModel("GEO_MON_B3_122", true);
+                            target.Data.gameObject.transform.position = position;
+                            target.Data.gameObject.SetActive(true);
                         }
                     );
                 }

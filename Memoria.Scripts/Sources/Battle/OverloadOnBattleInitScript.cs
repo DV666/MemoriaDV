@@ -47,13 +47,9 @@ namespace Memoria.Scripts.Battle
             if (BattleExID.Equals(new KeyValuePair<Int32, Int32>(93, 3))) // Prison Cage + Little Girl
                 HonoluluBattleMain.SetupAttachModel(FF9StateSystem.Battle.FF9Battle.btl_data[4], FF9StateSystem.Battle.FF9Battle.btl_data[5], 55, 25);
 
-            if (!InitHUDMessageChild)
-            {
-                foreach (HUDMessageChild HUDToReset in Singleton<HUDMessage>.Instance.AllMessagePool)
-                    HUDToReset.FontSize = 36;
-                OverlapSHP.ClearInBattleInit();
-                InitHUDMessageChild = true;
-            }
+            foreach (HUDMessageChild HUDToReset in Singleton<HUDMessage>.Instance.AllMessagePool)
+            HUDToReset.FontSize = 36;
+            OverlapSHP.ClearInBattleInit();
 
             FF9StateSystem.EventState.gEventGlobal[1544] = 0; // Reset Charm Target
 

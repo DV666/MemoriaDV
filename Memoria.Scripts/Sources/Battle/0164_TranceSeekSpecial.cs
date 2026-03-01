@@ -361,6 +361,19 @@ namespace Memoria.Scripts.Battle
                 _v.Caster.Data.gameObject.SetActive(true);
                 return;
             }
+            else if (_v.Command.Power == 67 && _v.Command.HitRate == 67 && _v.Caster.Data.dms_geo_id == 362) // Giant Scream - Hilgigars
+            {
+                if (!_v.Target.IsPlayer)
+                {
+                    _v.Target.AlterStatus(BattleStatus.Haste, _v.Target);
+                    _v.Target.AlterStatus(TranceSeekStatus.PowerUp | TranceSeekStatus.MagicUp | TranceSeekStatus.ArmorUp | TranceSeekStatus.MentalUp, _v.Target);
+                }
+                else
+                {
+                    _v.Target.RemoveStatus(BattleStatusConst.AnyPositive);
+                    _v.Target.AlterStatus(TranceSeekStatus.PowerBreak | TranceSeekStatus.MagicBreak | TranceSeekStatus.ArmorBreak | TranceSeekStatus.MentalBreak, _v.Target);
+                }
+            }
             else if (_v.Command.Power == 25 && _v.Command.HitRate == 111 && _v.Caster.Data.dms_geo_id == 278) // Polarity (+) with SPS effect (Black Waltz 3)
             {
                 _v.NormalMagicParams();
