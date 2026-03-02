@@ -343,7 +343,7 @@ namespace Memoria.Scripts.Battle
                 if (_v.Caster.PlayerIndex == CharacterId.Zidane && ff9item._FF9Item_Data[FF9StateSystem.Common.FF9.player[(CharacterId)_v.Caster.Data.bi.slot_no].equip.Weapon].shape == 2)
                 {
                     UiState.SetBattleFollowFormatMessage(BattleMesages.Stole, FF9TextTool.ItemName(_v.Context.ItemSteal) + " X 2");
-                    if (StealScript.ForcedHeheZidane) SoundLib.PlaySoundEffect(4005);
+                    TranceSeekCharacterMechanic.Hehe(_v, false);
                 }
             }
             else
@@ -352,7 +352,7 @@ namespace Memoria.Scripts.Battle
                 if (_v.Caster.PlayerIndex == CharacterId.Zidane && ff9item._FF9Item_Data[FF9StateSystem.Common.FF9.player[(CharacterId)_v.Caster.Data.bi.slot_no].equip.Weapon].shape == 2)
                 {
                     UiState.SetBattleFollowFormatMessage(BattleMesages.Stole, FF9TextTool.ItemName(_v.Context.ItemSteal));
-                    if (StealScript.ForcedHeheZidane) SoundLib.PlaySoundEffect(4005);
+                    TranceSeekCharacterMechanic.Hehe(_v, false);
                 }
             }
             TranceSeekAPI.PhantomHandSA(_v);
@@ -385,7 +385,7 @@ namespace Memoria.Scripts.Battle
                     casterState.Zidane.SecondItemMug = RegularItem.NoItem;
                     casterState.Zidane.ItemMugMasterThief = 0;
 
-                    if (StealScript.ForcedHeheZidane) SoundLib.PlaySoundEffect(4005);
+                    TranceSeekCharacterMechanic.Hehe(_v, false);
                 }
             }
         }

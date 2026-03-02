@@ -106,7 +106,12 @@ namespace Memoria.Scripts.Battle
             {
                 if (!_v.Target.TryKillFrozen())
                 {
-                    if (_v.Target.IsUnderAnyStatus(BattleStatus.Vanish))
+                    if (_v.Target.IsUnderAnyStatus(TranceSeekStatus.PerfectDodge))
+                    {
+                        _v.Context.Flags |= BattleCalcFlags.Miss | BattleCalcFlags.Dodge;
+                        btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.PerfectDodge, parameters: "Remove");
+                    }
+                    else if (_v.Target.IsUnderAnyStatus(BattleStatus.Vanish))
                     {
                         _v.Context.Flags |= BattleCalcFlags.Miss;
                     }
@@ -117,8 +122,12 @@ namespace Memoria.Scripts.Battle
                         TranceSeekAPI.EnemyTranceBonusAttack(_v);
                         TranceSeekAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
                         TranceSeekAPI.BonusBackstabAndPenaltyLongDistance(_v);
-                        _v.CalcHpDamage();
-                        TranceSeekAPI.RaiseTrouble(_v);
+                        TranceSeekAPI.BonusElement(_v);
+                        if (_v.CanAttackMagic())
+                        {
+                            _v.CalcHpDamage();
+                            TranceSeekAPI.RaiseTrouble(_v);
+                        }
                         TranceSeekAPI.TryAlterMagicStatuses(_v);
                     }
                 }

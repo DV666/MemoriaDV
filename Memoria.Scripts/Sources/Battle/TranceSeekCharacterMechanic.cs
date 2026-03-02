@@ -742,5 +742,13 @@ namespace Memoria.Scripts.Battle
                 }
             }
         }
+
+        public static void Hehe(BattleCalculator v, Boolean ClassicSteal)
+        {
+            if (v.Caster.PlayerIndex != CharacterId.Zidane) return;
+
+            if (StealScript.ForcedHeheZidane || ClassicSteal)
+                SoundLib.PlaySoundEffect(4500 + (Comn.random8() % 6));
+        }
     }
 }

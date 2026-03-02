@@ -30,7 +30,7 @@ namespace Memoria.Scripts.Battle
 
             if (!_v.Target.IsPlayer)
             {
-                if ((_v.Command.AbilityStatus & BattleStatus.Death) == 0 && TranceSeekAPI.CheckUnsafetyOrGuard(_v))
+                if ((_v.Command.AbilityStatus & BattleStatus.Death) == 0)
                     TranceSeekAPI.TryAlterCommandStatuses(_v);
                 else
                     _v.Context.Flags |= BattleCalcFlags.Miss;

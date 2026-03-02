@@ -219,7 +219,7 @@ namespace Memoria.Scripts.Battle
                     return;
                 }
                 btl2d.Btl2dReqSymbolMessage(_v.Target.Data, "[FDEE00]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 5);
-                SoundLib.PlaySoundEffect(4005); //se511116 - Héhé !
+                TranceSeekCharacterMechanic.Hehe(_v, true);
                 return;
             }
             else if (GameRandom.Next8() < NewStealableItemRates(battleEnemy.StealableItemRates[3], _v.Caster) && battleEnemy.StealableItems[3] != RegularItem.NoItem)
@@ -245,8 +245,7 @@ namespace Memoria.Scripts.Battle
                 return;
             }
             btl2d.Btl2dReqSymbolMessage(_v.Target.Data, "[FDEE00]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 5);
-            if (_v.Caster.PlayerIndex == CharacterId.Zidane && !ForcedHeheZidane)
-                SoundLib.PlaySoundEffect(4005); //se511116 - Héhé !
+            TranceSeekCharacterMechanic.Hehe(_v, false);
         }
 
         public static float NewStealableItemRates(ushort StealableItemRates, BattleCaster Caster)
@@ -349,8 +348,7 @@ namespace Memoria.Scripts.Battle
                 UiState.SetBattleFollowFormatMessage(BattleMesages.Stole, FF9TextTool.ItemName(_v.Context.ItemSteal));
             }
             TranceSeekAPI.PhantomHandSA(_v);
-            if (ForcedHeheZidane)
-                SoundLib.PlaySoundEffect(4005); //se511116 - Héhé !
+            TranceSeekCharacterMechanic.Hehe(_v, false);
         }
 
         public static void ClassicSteal(BattleCalculator v, Boolean ShowHUDMessage = true)
