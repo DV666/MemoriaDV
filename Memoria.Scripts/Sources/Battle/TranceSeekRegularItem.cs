@@ -678,7 +678,7 @@ namespace Memoria.Scripts.Battle
 
                 if (CasterWeaponShape == 7 && v.Target.HpDamage > 0 && v.Command.ScriptId == 10) // Air Racket (nerf White Mage heal)
                     v.Target.HpDamage /= 2;
-                else if (CasterWeaponShape == 42 && v.Target.HpDamage > 0 && (v.Command.ScriptId == 48 || v.Command.ScriptId == 83)) // Heavy Spear
+                else if (CasterWeaponShape == 42 && v.Target.HpDamage > 0 && (v.Command.ScriptId == 48 || v.Command.ScriptId == 83)) // Heavy Spear (on Jump)
                     v.Target.HpDamage += ((v.Target.HpDamage * BonusDamageFromWeapon(v.Caster.Weapon)) / 100);
                 else if (CasterWeaponShape == 56 && v.Target.HpDamage > 0 && v.Command.Id != BattleCommandId.Item && v.Command.Id != BattleCommandId.AutoPotion) // Axe
                     v.Target.HpDamage = UnityEngine.Random.Range(v.Target.HpDamage / 10, v.Target.HpDamage);
