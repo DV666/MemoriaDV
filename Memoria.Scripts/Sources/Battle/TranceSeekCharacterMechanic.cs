@@ -232,11 +232,11 @@ namespace Memoria.Scripts.Battle
                     {
                         { "US", "[SPRT=IconAtlas,item200_01] Redemption!" },
                         { "UK", "[SPRT=IconAtlas,item200_01] Redemption!" },
-                        { "JP", "[SPRT=IconAtlas,item200_01] Redemption!" },
-                        { "ES", "[SPRT=IconAtlas,item200_01] Redemption!" },
-                        { "FR", "[SPRT=IconAtlas,item200_01] Redemption !" },
-                        { "GR", "[SPRT=IconAtlas,item200_01] Redemption!" },
-                        { "IT", "[SPRT=IconAtlas,item200_01] Redemption!" },
+                        { "JP", "[SPRT=IconAtlas,item200_01] 贖罪！" },
+                        { "ES", "[SPRT=IconAtlas,item200_01] ¡Redención!" },
+                        { "FR", "[SPRT=IconAtlas,item200_01] Rédemption !" },
+                        { "GR", "[SPRT=IconAtlas,item200_01] Erlösung!" },
+                        { "IT", "[SPRT=IconAtlas,item200_01] Redenzione!" }
                     };
                 btl2d.Btl2dReqSymbolMessage(unit.Data, "[FFFFFF]", BeatrixPassiveMessage, HUDMessage.MessageStyle.DAMAGE, 30);
             }

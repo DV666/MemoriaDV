@@ -31,13 +31,13 @@ namespace Memoria.DefaultScripts
                     Secretingredient++;
                     Dictionary<String, String> localizedStatusProtect = new Dictionary<String, String>
                     {
-                        { "US", $"Secret ingredient x {Secretingredient} !" },
+                        { "US", $"Secret ingredient x {Secretingredient}" },
                         { "UK", $"Secret ingredient x {Secretingredient}" },
-                        { "JP", $"Secret ingredient x {Secretingredient}" },
-                        { "ES", $"Secret ingredient x {Secretingredient}" },
+                        { "JP", $"隠し味 x {Secretingredient}" },
+                        { "ES", $"Ingrediente secreto x {Secretingredient}" },
                         { "FR", $"Ingrédient secret x {Secretingredient}" },
-                        { "GR", $"Secret ingredient x {Secretingredient}" },
-                        { "IT", $"Secret ingredient x {Secretingredient}" },
+                        { "GR", $"Geheime Zutat x {Secretingredient}" },
+                        { "IT", $"Ingrediente segreto x {Secretingredient}" }
                     };
                     btl2d.Btl2dReqSymbolMessage(target.Data, "[25BB00]", localizedStatusProtect, HUDMessage.MessageStyle.DAMAGE, 5);
                 }

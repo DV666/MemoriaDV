@@ -148,11 +148,11 @@ namespace Memoria.Scripts.Battle
                         {
                             { "US", "Instinct!" },
                             { "UK", "Instinct!" },
-                            { "JP", "Instinct!" },
-                            { "ES", "Instinct!" },
+                            { "JP", "直感！" },
+                            { "ES", "¡Instinto!" },
                             { "FR", "Instinct !" },
-                            { "GR", "Instinct!" },
-                            { "IT", "Instinct!" },
+                            { "GR", "Instinkt!" },
+                            { "IT", "Istinto!" }
                         };
                         btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[FDEE00]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 10);
                     }
@@ -1132,11 +1132,11 @@ namespace Memoria.Scripts.Battle
                     {
                         { "US", "Last Stand!" },
                         { "UK", "Last Stand!" },
-                        { "JP", "Last Stand!" },
-                        { "ES", "Last Stand!" },
-                        { "FR", "Echapée belle !" },
-                        { "GR", "Last Stand!" },
-                        { "IT", "Last Stand!" },
+                        { "JP", "背水の陣！" },
+                        { "ES", "¡Resistencia final!" },
+                        { "FR", "Échappée belle !" },
+                        { "GR", "Letzter Widerstand!" },
+                        { "IT", "Ultima resistenza!" },
                     };
                     btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[FDEE00]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 10);
                 }
@@ -1223,11 +1223,11 @@ namespace Memoria.Scripts.Battle
                 {
                     { "US", "Bodyguard!" },
                     { "UK", "Bodyguard!" },
-                    { "JP", "Bodyguard!" },
-                    { "ES", "Bodyguard!" },
+                    { "JP", "用心棒！" },
+                    { "ES", "¡Guardaespaldas!" },
                     { "FR", "Garde du corps !" },
-                    { "GR", "Bodyguard!" },
-                    { "IT", "Bodyguard!" },
+                    { "GR", "Leibwächter!" },
+                    { "IT", "Guardia del corpo!" }
                 };
                 btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[FF00EA]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 8);
             }
@@ -1310,11 +1310,11 @@ namespace Memoria.Scripts.Battle
                 {
                     { "US", "[SPRT=IconAtlas,item200_00] Pluto!" },
                     { "UK", "[SPRT=IconAtlas,item200_00] Pluto!" },
-                    { "JP", "[SPRT=IconAtlas,item200_00] Pluto!" },
-                    { "ES", "[SPRT=IconAtlas,item200_00] Pluto!" },
+                    { "JP", "[SPRT=IconAtlas,item200_00] プルート！" },
+                    { "ES", "[SPRT=IconAtlas,item200_00] ¡Pluto!" },
                     { "FR", "[SPRT=IconAtlas,item200_00] Brutos !" },
                     { "GR", "[SPRT=IconAtlas,item200_00] Pluto!" },
-                    { "IT", "[SPRT=IconAtlas,item200_00] Pluto!" },
+                    { "IT", "[SPRT=IconAtlas,item200_00] Plutò!" }
                 };
                 btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[5C5C5C]", SteinerPassiveMessage, HUDMessage.MessageStyle.DAMAGE, 30);
             }

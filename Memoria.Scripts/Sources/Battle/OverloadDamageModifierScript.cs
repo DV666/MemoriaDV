@@ -132,13 +132,13 @@ namespace Memoria.Scripts.Battle
                 {
                     Dictionary<String, String> localizedMessage = new Dictionary<String, String>
                     {
-                        { "US", "Ferocity !" },
-                        { "UK", "Ferocity !" },
-                        { "JP", "Ferocity !" },
-                        { "ES", "Ferocity !" },
-                        { "FR", "Férocité !" },
-                        { "GR", "Ferocity !" },
-                        { "IT", "Ferocity !" },
+                          { "US", "Ferocity!" },
+                          { "UK", "Ferocity!" },
+                          { "JP", "凶暴！" },
+                          { "ES", "¡Ferocidad!" },
+                          { "FR", "Férocité !" },
+                          { "DE", "Ferozität!" },
+                          { "IT", "Ferocia!" }
                     };
                     btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[FF2716]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 10);
                 }
@@ -177,15 +177,15 @@ namespace Memoria.Scripts.Battle
                 v.Context.Flags |= BattleCalcFlags.Guard;
                 v.Target.HpDamage = 0;
                 Dictionary<String, String> localizedMessage = new Dictionary<String, String>
-                    {
-                        { "US", "--Peuh !" },
-                        { "UK", "--Peuh !" },
-                        { "JP", "--Peuh !" },
-                        { "ES", "--Peuh !" },
-                        { "FR", "--Peuh !" },
-                        { "GR", "--Peuh !" },
-                        { "IT", "--Peuh !" },
-                    };
+                {
+                    { "US", "--Hmph!" },
+                    { "UK", "--Hmph!" },
+                    { "JP", "--ふん！" },
+                    { "ES", "--¡Bah!" },
+                    { "FR", "--Peuh !" },
+                    { "DE", "--Pah!" },
+                    { "IT", "--Pah!" }
+                };
                 btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[FF0000]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 10);
             }
 
@@ -196,15 +196,15 @@ namespace Memoria.Scripts.Battle
             {
                 v.Target.Flags = CalcFlag.HpRecovery;
                 Dictionary<String, String> localizedMessage = new Dictionary<String, String>
-                    {
-                        { "US", "C'est non !" },
-                        { "UK", "C'est non !" },
-                        { "JP", "C'est non !" },
-                        { "ES", "C'est non !" },
-                        { "FR", "C'est non !" },
-                        { "GR", "C'est non !" },
-                        { "IT", "C'est non !" },
-                    };
+                {
+                    { "US", "It's a NO!" },
+                    { "UK", "It's a NO!" },
+                    { "JP", "ダメだ！" },
+                    { "ES", "¡Es un NO!" },
+                    { "FR", "C'est non !" },
+                    { "DE", "Das ist ein NEIN!" },
+                    { "IT", "È un NO!" }
+                };
                 btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[FF19EE]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 0);
                 SoundLib.PlaySoundEffect(4004); //se511115
             }
