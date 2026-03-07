@@ -409,7 +409,7 @@ namespace Memoria.Scripts.Battle
 
             if (Mathf.Abs(v.Caster.Row - v.Target.Row) > 1 && !v.Caster.HasLongRangeWeapon && v.Command.IsShortRange && v.Caster.IsPlayer)
             {
-                v.Context.DamageModifierCount -= 2;
+                v.Context.Attack /= 2;
             }
             else if (!v.Caster.IsPlayer)
             {
@@ -426,7 +426,7 @@ namespace Memoria.Scripts.Battle
                     }
                 }
                 if (longDistance)
-                    v.Context.DamageModifierCount -= 2;
+                    v.Context.Attack /= 2;
             }
         }
 
