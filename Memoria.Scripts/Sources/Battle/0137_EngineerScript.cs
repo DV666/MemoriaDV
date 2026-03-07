@@ -43,13 +43,18 @@ namespace Memoria.Scripts.Battle
                 for (Int32 i = 0; i < 8; i++)
                 {
                     int idAA = 1136 + i;
+
                     if (idAA == 1142)
                         continue;
-                    if (FF9StateSystem.Battle.FF9Battle.aa_data[(BattleAbilityId)idAA].MP > 0)
-                        FF9StateSystem.Battle.FF9Battle.aa_data[(BattleAbilityId)idAA].MP--;
 
-                    if (FF9StateSystem.Battle.FF9Battle.aa_data[(BattleAbilityId)idAA].MP > 0)
-                        FF9StateSystem.Battle.FF9Battle.aa_data[(BattleAbilityId)idAA].MP--;
+                    BattleAbilityId abilityId = (BattleAbilityId)idAA;
+
+                    if (FF9StateSystem.Battle.FF9Battle.aa_data.ContainsKey(abilityId))
+                        if (FF9StateSystem.Battle.FF9Battle.aa_data[abilityId] != null)
+                            if (FF9StateSystem.Battle.FF9Battle.aa_data[abilityId].MP >= 2)
+                                FF9StateSystem.Battle.FF9Battle.aa_data[abilityId].MP -= 2;
+                            else
+                                FF9StateSystem.Battle.FF9Battle.aa_data[abilityId].MP = 0;
                 }
             }
             else if (_v.Command.AbilityId == (BattleAbilityId)1143) // Hymn of the Tantalas

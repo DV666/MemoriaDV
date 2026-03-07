@@ -152,12 +152,17 @@ namespace Memoria.Scripts.Battle
 
                 foreach (BattleAbilityId AA in InventionAA)
                 {
-                    if (FF9StateSystem.Battle.FF9Battle.aa_data[AA].MP > 0)
-                    {
-                        FF9StateSystem.Battle.FF9Battle.aa_data[AA].MP--;
-                        if (AA != (BattleAbilityId)1538 && AA != (BattleAbilityId)1539) // Genie & Eureka
-                            InventionsCD++;
-                    }
+
+                    if (FF9StateSystem.Battle.FF9Battle.aa_data.ContainsKey(AA))
+                        if (FF9StateSystem.Battle.FF9Battle.aa_data[AA] != null)
+                        {
+                            if (FF9StateSystem.Battle.FF9Battle.aa_data[AA].MP > 0)
+                            {
+                                FF9StateSystem.Battle.FF9Battle.aa_data[AA].MP--;
+                                if (AA != (BattleAbilityId)1538 && AA != (BattleAbilityId)1539) // Genie & Eureka
+                                    InventionsCD++;
+                            }
+                        }
                 }
 
                 Caster_TSVar.Cinna.InventionCoolDown = InventionsCD;

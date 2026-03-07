@@ -56,7 +56,11 @@ namespace Memoria.Scripts.Battle
             for (Int32 i = 0; i < 8; i++) // CMD Engineer reset
             {
                 int idAA = 1136 + i;
-                FF9StateSystem.Battle.FF9Battle.aa_data[(BattleAbilityId)idAA].MP = 0;
+                BattleAbilityId abilityId = (BattleAbilityId)idAA;
+
+                if (FF9StateSystem.Battle.FF9Battle.aa_data.ContainsKey(abilityId))
+                    if (FF9StateSystem.Battle.FF9Battle.aa_data[abilityId] != null)
+                        FF9StateSystem.Battle.FF9Battle.aa_data[abilityId].MP = 0;
             }
 
             if (!FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1000, out Dictionary<Int32, Int32> dictbattle)) // Modificators for battle
