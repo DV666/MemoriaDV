@@ -730,17 +730,21 @@ namespace Memoria.Scripts.Battle
                             RegularItem PotionChoosen = RegularItem.NoItem;
                             if (v.Target.IsUnderAnyStatus(BattleStatus.GradualPetrify))
                                 PotionChoosen = RegularItem.Soft;
-                            else if (v.Target.IsUnderAnyStatus(BattleStatus.Poison | BattleStatus.Venom))
+                            else if (v.Target.IsUnderAnyStatus(BattleStatus.Poison) && !v.Target.IsUnderPermanentStatus(BattleStatus.Poison))
                                 PotionChoosen = RegularItem.Antidote;
-                            else if (v.Target.IsUnderAnyStatus(BattleStatus.Zombie))
+                            else if (v.Target.IsUnderAnyStatus(BattleStatus.Venom) && !v.Target.IsUnderPermanentStatus(BattleStatus.Venom))
+                                PotionChoosen = RegularItem.Antidote;
+                            else if (v.Target.IsUnderAnyStatus(BattleStatus.Zombie) && !v.Target.IsUnderPermanentStatus(BattleStatus.Zombie))
                                 PotionChoosen = RegularItem.MagicTag;
-                            else if (v.Target.IsUnderAnyStatus(BattleStatus.Silence))
+                            else if (v.Target.IsUnderAnyStatus(BattleStatus.Silence) && !v.Target.IsUnderPermanentStatus(BattleStatus.Silence))
                                 PotionChoosen = RegularItem.EchoScreen;
-                            else if (v.Target.IsUnderAnyStatus(BattleStatus.Virus))
+                            else if (v.Target.IsUnderAnyStatus(BattleStatus.Virus) && !v.Target.IsUnderPermanentStatus(BattleStatus.Virus))
                                 PotionChoosen = RegularItem.Vaccine;
-                            else if (v.Target.IsUnderAnyStatus(BattleStatus.Blind))
+                            else if (v.Target.IsUnderAnyStatus(BattleStatus.Blind) && !v.Target.IsUnderPermanentStatus(BattleStatus.Blind))
                                 PotionChoosen = RegularItem.EyeDrops;
-                            else if (v.Target.IsUnderAnyStatus(BattleStatus.Trouble | TranceSeekStatus.Vieillissement))
+                            else if (v.Target.IsUnderAnyStatus(BattleStatus.Trouble) && !v.Target.IsUnderPermanentStatus(BattleStatus.Trouble))
+                                PotionChoosen = RegularItem.Annoyntment;
+                            else if (v.Target.IsUnderAnyStatus(TranceSeekStatus.Vieillissement) && !v.Target.IsUnderPermanentStatus(TranceSeekStatus.Vieillissement))
                                 PotionChoosen = RegularItem.Annoyntment;
 
                             if (PotionChoosen != RegularItem.NoItem)

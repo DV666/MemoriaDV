@@ -111,7 +111,7 @@ namespace Memoria.Scripts.Battle
                         dictdifficulty[5] = 10;
                     }
                 }
-                else if (FF9StateSystem.EventState.gEventGlobal[1403] == 4 || FF9StateSystem.EventState.gEventGlobal[1403] == 5) // Necron mode + Beatrix Mode
+                else if (FF9StateSystem.EventState.gEventGlobal[1403] == 5 || FF9StateSystem.EventState.gEventGlobal[1403] == 6) // Necron mode + Ozma Mode
                 {
                     if (FF9StateSystem.EventState.ScenarioCounter > 2250) // After Zidane/Vivi/Steiner get together in Evil Forest
                     {
@@ -127,11 +127,25 @@ namespace Memoria.Scripts.Battle
                         dictdifficulty[5] = 20;
                         dictdifficulty[13] = 10;
                     }
-                    if (FF9StateSystem.EventState.gEventGlobal[1403] == 4) // Necron malus
+                }
+                else if (FF9StateSystem.EventState.gEventGlobal[1403] == 4 ) // Necron mode
+                {
+                    if (FF9StateSystem.EventState.ScenarioCounter > 2250) // After Zidane/Vivi/Steiner get together in Evil Forest
                     {
-                        dictdifficulty[11] = -50;
-                        dictdifficulty[12] = -90;
+                        dictdifficulty[0] = 80;
+                        dictdifficulty[4] = 75;
+                        dictdifficulty[5] = 75;
+                        dictdifficulty[13] = 10;
                     }
+                    else
+                    {
+                        dictdifficulty[0] = 20;
+                        dictdifficulty[4] = 25;
+                        dictdifficulty[5] = 25;
+                        dictdifficulty[13] = 10;
+                    }
+                    
+                    dictdifficulty[12] = -90; // Gils Malus
                 }
                 else if (FF9StateSystem.EventState.gEventGlobal[1403] == 1) // Vivi mode
                 {
@@ -380,7 +394,7 @@ namespace Memoria.Scripts.Battle
                     if (FF9StateSystem.EventState.gScriptDictionary.ContainsKey(ID)) // Reset infused weapon.
                         FF9StateSystem.EventState.gScriptDictionary.Remove(ID);
 
-                    if (Configuration.TetraMaster.TripleTriad >= 16388 && Configuration.TetraMaster.TripleTriad != 16390)
+                    if (DifficultyDebugMenu.MegaCheat > 0)
                     {
                         unit.MagicDefence = 254;
                         unit.PhysicalDefence = 254;

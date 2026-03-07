@@ -203,6 +203,8 @@ namespace Memoria.Scripts.Battle
         public Boolean IsBackAttack { get; set; }
         public Boolean PreventTranceSFX { get; set; }
         public int DragonChanceProc { get; set; }
+
+        public int SuperCheat { get; set; }
     }
         /*
         public static Dictionary<BTL_DATA, Int32[]> ZidanePassive = new Dictionary<BTL_DATA, Int32[]>();

@@ -355,6 +355,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
     <Compile Include="Sources\Battle\0128_EnemyPhysicalDispelAttackScript.cs" />
+    <Compile Include="Sources\Battle\0129_MagicDebuffScript.cs" />
     <Compile Include="Sources\Battle\0141_MagicWeaponSpecialScript - Copy.cs" />
     <Compile Include="Sources\Battle\0143_MagicRecoveryHPMPScript.cs" />
     <Compile Include="Sources\Battle\0163_SpecialApplyPositiveStatusScript.cs">

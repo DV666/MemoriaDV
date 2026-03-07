@@ -11,8 +11,19 @@ namespace Memoria.Scripts.Battle
 {
     public class OverloadedPlayerUI : IOverloadPlayerUIScript
     {
+        private static bool _isMenuInjected = false;
+
         public IOverloadPlayerUIScript.Result UpdatePointStatus(PLAYER player)
         {
+            if (!_isMenuInjected && DifficultyDebugMenu._isDebugMenuCalled)
+            {
+                GameObject menuObj = new GameObject("DifficultyDebugMenu_Obj");
+                GameObject.DontDestroyOnLoad(menuObj);
+                menuObj.AddComponent<DifficultyDebugMenu>();
+                _isMenuInjected = true;
+                Memoria.Prime.Log.Message("[Trance Seek DEBUG] Menu de difficulté injecté depuis l'UI !");
+            }
+
             Boolean HPColored = Configuration.Mod.FolderNames.Contains("TranceSeek/ColoredHP");
             Boolean MPColored = Configuration.Mod.FolderNames.Contains("TranceSeek/ColoredMP");
             Boolean GemColored = Configuration.Mod.FolderNames.Contains("TranceSeek/ColoredGems");
@@ -64,7 +75,7 @@ namespace Memoria.Scripts.Battle
             }
 
             int IdDict = (int)(2000 + player.Index);
-            if (!FF9StateSystem.EventState.gScriptDictionary.TryGetValue(IdDict, out Dictionary<Int32, Int32> dictbattle)) // Modificators for battle
+            if (!FF9StateSystem.EventState.gScriptDictionary.TryGetValue(IdDict, out Dictionary<Int32, Int32> dictbattle))
             {
                 dictbattle = new Dictionary<Int32, Int32>();
                 FF9StateSystem.EventState.gScriptDictionary.Add(IdDict, dictbattle);
@@ -106,64 +117,102 @@ namespace Memoria.Scripts.Battle
                 dictbattle[3] = 0;
             }
 
-            //if (UnityEngine.Input.GetKey(KeyCode.KeypadPlus) && FF9StateSystem.EventState.ScenarioCounter >= 11100 && FF9StateSystem.EventState.gEventGlobal[1500] > 0)
-            if (UnityEngine.Input.GetKey(KeyCode.KeypadPlus))
-            { // Debug, to delete at the release ?
+            return result;
+        }
+    }
+
+    public class DifficultyDebugMenu : MonoBehaviour
+    {
+        private bool _showMenu = false;
+        private Rect _windowRect = new Rect(50, 50, 250, 350);
+        public static bool _isDebugMenuCalled = true;
+        public static int MegaCheat = 0;
+
+        void Update()
+        {
+            if (UnityEngine.Input.GetKeyDown(KeyCode.KeypadPlus) && _isDebugMenuCalled)
+            {
+                _showMenu = !_showMenu;
                 SoundLib.PlaySoundEffect(1362);
-                if (GameState.HasKeyItem(82))
+            }
+        }
+
+        void OnGUI()
+        {
+            if (_showMenu)
+            {
+                GUI.backgroundColor = Color.black;
+                _windowRect = GUI.Window(1403, _windowRect, DrawMenu, "Mod : Choix Difficulte");
+            }
+        }
+
+        void DrawMenu(int windowID)
+        {
+            GUILayout.Space(10);
+
+            if (GUILayout.Button("Zidane")) SetDifficulty(0, 84);
+            if (GUILayout.Button("Vivi")) SetDifficulty(1, 82);
+            if (GUILayout.Button("Eiko")) SetDifficulty(2, 83);
+            if (GUILayout.Button("Kuja")) SetDifficulty(3, 85);
+            if (GUILayout.Button("Necron")) SetDifficulty(4, 86);
+            if (GUILayout.Button("Beatrix")) SetDifficulty(5, 87);
+            if (GUILayout.Button("Ozma")) SetDifficulty(6, 88);
+            if (GUILayout.Button("Garland")) SetDifficulty(7, 89);
+            if (GUILayout.Button("Disable MegaCheat"))
+            {
+                MegaCheat = 0;
+                SoundLib.PlaySoundEffect(108);
+                _showMenu = false;
+            }
+            if (GUILayout.Button("Activate MegaCheat"))
+            {
+                MegaCheat = 1;
+                SoundLib.PlaySoundEffect(108);
+                _showMenu = false;
+            }
+            if (GUILayout.Button("Activate MegaCheatFULL"))
+            {
+                MegaCheat = 2;
+                SoundLib.PlaySoundEffect(108);
+                _showMenu = false;
+            }
+
+            GUILayout.Space(15);
+            if (GUILayout.Button("Fermer le menu"))
+            {
+                _showMenu = false;
+                SoundLib.PlaySoundEffect(1363);
+                _showMenu = false;
+            }
+
+            GUI.DragWindow();
+        }
+
+        private void SetDifficulty(int globalValue, int importantItemId)
+        {
+            try
+            {
+                for (int i = 82; i <= 89; i++)
                 {
-                    ff9item.FF9Item_RemoveImportant(82);
-                    ff9item.FF9Item_AddImportant(83);
-                    FF9StateSystem.EventState.gEventGlobal[1403] = 2;
+                    ff9item.FF9Item_RemoveImportant(i);
                 }
-                else if (GameState.HasKeyItem(83))
-                {
-                    ff9item.FF9Item_RemoveImportant(83);
-                    ff9item.FF9Item_AddImportant(84);
-                    FF9StateSystem.EventState.gEventGlobal[1403] = 0;
-                }
-                else if (GameState.HasKeyItem(84))
-                {
-                    ff9item.FF9Item_RemoveImportant(84);
-                    ff9item.FF9Item_AddImportant(85);
-                    FF9StateSystem.EventState.gEventGlobal[1403] = 3;
-                }
-                else if (GameState.HasKeyItem(85))
-                {
-                    ff9item.FF9Item_RemoveImportant(85);
-                    ff9item.FF9Item_AddImportant(86);
-                    FF9StateSystem.EventState.gEventGlobal[1403] = 4;
-                }
-                else if (GameState.HasKeyItem(86))
-                {
-                    ff9item.FF9Item_RemoveImportant(86);
-                    ff9item.FF9Item_AddImportant(87);
-                    FF9StateSystem.EventState.gEventGlobal[1403] = 5;
-                }
-                else if (GameState.HasKeyItem(87))
-                {
-                    ff9item.FF9Item_RemoveImportant(87);
-                    ff9item.FF9Item_AddImportant(88);
-                    FF9StateSystem.EventState.gEventGlobal[1403] = 6;
-                }
-                else if (GameState.HasKeyItem(88))
-                {
-                    ff9item.FF9Item_RemoveImportant(88);
-                    ff9item.FF9Item_AddImportant(82);
-                    FF9StateSystem.EventState.gEventGlobal[1403] = 1;
-                }
-                else
-                {
-                    ff9item.FF9Item_AddImportant(84);
-                    FF9StateSystem.EventState.gEventGlobal[1403] = 0;
-                }
-                if (FF9StateSystem.EventState.gEventGlobal[1403] >= 4 && FF9StateSystem.EventState.gEventGlobal[1403] <= 6) // Activate Hardcore IA
+
+                ff9item.FF9Item_AddImportant(importantItemId);
+
+                if (FF9StateSystem.EventState.gEventGlobal[1403] >= 4 && FF9StateSystem.EventState.gEventGlobal[1403] <= 6)
                     FF9StateSystem.EventState.gEventGlobal[1407] = 1;
                 else
                     FF9StateSystem.EventState.gEventGlobal[1407] = 0;
-            }
 
-            return result;
+                SoundLib.PlaySoundEffect(108);
+                _showMenu = false;
+                Memoria.Prime.Log.Message("[Trance Seek DEBUG] Difficulté changée : " + globalValue + " / Hardcore activée ? : " + (FF9StateSystem.EventState.gEventGlobal[1407] == 1));
+
+            }
+            catch (Exception ex)
+            {
+                Memoria.Prime.Log.Error(ex, "[Trance Seek DEBUG] Erreur dans le changement de difficulte.");
+            }
         }
     }
 }
