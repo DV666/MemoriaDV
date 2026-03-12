@@ -7,13 +7,13 @@ namespace Memoria.Scripts.Battle
     /// Armour Break
     /// </summary>
     [BattleScript(Id)]
-    public sealed class ArmourBreakScript : IBattleScript
+    public sealed class ArmorBreakScript : IBattleScript
     {
         public const Int32 Id = 0033;
 
         private readonly BattleCalculator _v;
 
-        public ArmourBreakScript(BattleCalculator v)
+        public ArmorBreakScript(BattleCalculator v)
         {
             _v = v;
         }
@@ -42,9 +42,9 @@ namespace Memoria.Scripts.Battle
                 {
                     _v.NormalPhysicalParams();
                 }
-                if (_v.CasterState().Steiner.StackCMD1 > 0)
+                if (_v.CasterState().Steiner.StackCMD2 > 0)
                 {
-                    _v.Command.HitRate += 10 * _v.CasterState().Steiner.StackCMD1;
+                    _v.Command.HitRate += 10 * _v.CasterState().Steiner.StackCMD2;
                     TranceSeekCharacterMechanic.ResetSteinerPassive(_v.Caster);
                 }
 

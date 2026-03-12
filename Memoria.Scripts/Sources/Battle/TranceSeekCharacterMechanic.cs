@@ -202,6 +202,45 @@ namespace Memoria.Scripts.Battle
             }
         }
 
+        public static Boolean SteinerMechanic(BattleUnit unit)
+        {
+            var StateDict = TranceSeekBattleDictionary.GetState(unit.Data);
+
+            if (UIManager.Input.GetKey(Control.RightTrigger) && StateDict.Steiner.StackCMD1 > 0 && !StateDict.Steiner.TriggerOneTime && unit.Data.bi.line_no == UIManager.Battle.CurrentPlayerIndex)
+            {
+                StateDict.Steiner.TriggerOneTime = true;
+                StateDict.Steiner.StackCMD1--;
+                StateDict.Steiner.StackCMD2++;
+                FF9TextTool.SetCommandName(BattleCommandId.SwordAct, TranceSeekBattleCommand.SwdArtCMDNameVanilla[Localization.CurrentDisplaySymbol] + " (" + StateDict.Steiner.StackCMD1 + "/" + (StateDict.Steiner.StackCMD1 + StateDict.Steiner.StackCMD2) + ")");
+                UIManager.Battle.OnLocalize();
+                SoundLib.PlaySoundEffect(1577);
+                //unit.UILabelHP = $"{SteinerPassive[unit.Data][1]} [SPRT=IconAtlas,item200_00,32,32]\n{unit.CurrentHp}";
+                if (FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1000, out Dictionary<Int32, Int32> dictbattle))
+                    dictbattle[1] = StateDict.Steiner.StackCMD2;
+            }
+            else if (UIManager.Input.GetKey(Control.LeftTrigger) && StateDict.Steiner.StackCMD2 > 0 && !StateDict.Steiner.TriggerOneTime && unit.Data.bi.line_no == UIManager.Battle.CurrentPlayerIndex)
+            {
+                StateDict.Steiner.TriggerOneTime = true;
+                StateDict.Steiner.StackCMD1++;
+                StateDict.Steiner.StackCMD2--;
+                FF9TextTool.SetCommandName(BattleCommandId.SwordAct, TranceSeekBattleCommand.SwdArtCMDNameVanilla[Localization.CurrentDisplaySymbol] + " (" + StateDict.Steiner.StackCMD1 + "/" + (StateDict.Steiner.StackCMD1 + StateDict.Steiner.StackCMD2) + ")");
+                UIManager.Battle.OnLocalize();
+                SoundLib.PlaySoundEffect(1577);
+                if (FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1000, out Dictionary<Int32, Int32> dictbattle))
+                    dictbattle[1] = StateDict.Steiner.StackCMD2;
+            }
+
+            if (StateDict.Steiner.StackCMD2 > 0)
+                unit.UILabelHP = $"{StateDict.Steiner.StackCMD2} [SPRT=IconAtlas,item200_00,32,32]\n{unit.CurrentHp}";
+            else
+                unit.UILabelHP = unit.CurrentHp.ToString();
+
+            if (!UIManager.Input.GetKey(Control.LeftTrigger) && !UIManager.Input.GetKey(Control.RightTrigger)) // Prevent to do it quickly
+                StateDict.Steiner.TriggerOneTime = false;
+
+            return true;
+        }
+
         public static void ResetSteinerPassive(BattleUnit unit)
         {
             FF9TextTool.SetCommandName(BattleCommandId.SwordAct, TranceSeekBattleCommand.SwdArtCMDNameVanilla[Localization.CurrentDisplaySymbol]);

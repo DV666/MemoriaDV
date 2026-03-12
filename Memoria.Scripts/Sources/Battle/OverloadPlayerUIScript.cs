@@ -150,42 +150,67 @@ namespace Memoria.Scripts.Battle
         {
             GUILayout.Space(10);
 
-            if (GUILayout.Button("Zidane")) SetDifficulty(0, 84);
-            if (GUILayout.Button("Vivi")) SetDifficulty(1, 82);
-            if (GUILayout.Button("Eiko")) SetDifficulty(2, 83);
-            if (GUILayout.Button("Kuja")) SetDifficulty(3, 85);
-            if (GUILayout.Button("Necron")) SetDifficulty(4, 86);
-            if (GUILayout.Button("Beatrix")) SetDifficulty(5, 87);
-            if (GUILayout.Button("Ozma")) SetDifficulty(6, 88);
-            if (GUILayout.Button("Garland")) SetDifficulty(7, 89);
-            if (GUILayout.Button("Disable MegaCheat"))
+            GUI.skin.button.richText = true;
+
+            if (GUILayout.Button(FormatDifficultyText("Zidane", 0))) SetDifficulty(0, 84);
+            if (GUILayout.Button(FormatDifficultyText("Vivi", 1))) SetDifficulty(1, 82);
+            if (GUILayout.Button(FormatDifficultyText("Eiko", 2))) SetDifficulty(2, 83);
+            if (GUILayout.Button(FormatDifficultyText("Kuja", 3))) SetDifficulty(3, 85);
+            if (GUILayout.Button(FormatDifficultyText("Necron", 4))) SetDifficulty(4, 86);
+            if (GUILayout.Button(FormatDifficultyText("Beatrix", 5))) SetDifficulty(5, 87);
+            if (GUILayout.Button(FormatDifficultyText("Ozma", 6))) SetDifficulty(6, 88);
+            if (GUILayout.Button(FormatDifficultyText("Garland", 7))) SetDifficulty(7, 89);
+
+            GUILayout.Space(10);
+
+            if (GUILayout.Button(FormatCheatText("Disable MegaCheat", 0)))
             {
                 MegaCheat = 0;
-                SoundLib.PlaySoundEffect(108);
+                SoundLib.PlaySoundEffect(4505);
                 _showMenu = false;
             }
-            if (GUILayout.Button("Activate MegaCheat"))
+            if (GUILayout.Button(FormatCheatText("Activate MegaCheat", 1)))
             {
                 MegaCheat = 1;
-                SoundLib.PlaySoundEffect(108);
+                SoundLib.PlaySoundEffect(4504);
                 _showMenu = false;
             }
-            if (GUILayout.Button("Activate MegaCheatFULL"))
+            if (GUILayout.Button(FormatCheatText("Activate MegaCheatFULL", 2)))
             {
                 MegaCheat = 2;
-                SoundLib.PlaySoundEffect(108);
+                SoundLib.PlaySoundEffect(4502);
                 _showMenu = false;
             }
 
             GUILayout.Space(15);
+
             if (GUILayout.Button("Fermer le menu"))
             {
                 _showMenu = false;
                 SoundLib.PlaySoundEffect(1363);
-                _showMenu = false;
             }
 
             GUI.DragWindow();
+        }
+        private string FormatDifficultyText(string name, int difficultyId)
+        {
+            if (FF9StateSystem.EventState != null && FF9StateSystem.EventState.gEventGlobal != null)
+            {
+                if (FF9StateSystem.EventState.gEventGlobal[1403] == difficultyId)
+                {
+                    return $"<color=yellow><b>{name}</b></color>";
+                }
+            }
+            return name;
+        }
+
+        private string FormatCheatText(string name, int cheatId)
+        {
+            if (MegaCheat == cheatId)
+            {
+                return $"<color=green><b>{name}</b></color>";
+            }
+            return name;
         }
 
         private void SetDifficulty(int globalValue, int importantItemId)
@@ -198,6 +223,7 @@ namespace Memoria.Scripts.Battle
                 }
 
                 ff9item.FF9Item_AddImportant(importantItemId);
+                FF9StateSystem.EventState.gEventGlobal[1403] = (byte)globalValue;
 
                 if (FF9StateSystem.EventState.gEventGlobal[1403] >= 4 && FF9StateSystem.EventState.gEventGlobal[1403] <= 6)
                     FF9StateSystem.EventState.gEventGlobal[1407] = 1;

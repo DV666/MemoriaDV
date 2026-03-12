@@ -44,7 +44,8 @@ namespace Memoria.DefaultScripts
             Int32 dmg = fig >> 1;
             foreach (BattleUnit unit in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
             {
-                if (unit.IsPlayer == Target.IsPlayer && unit.Id != Target.Id && unit.IsTargetable && !unit.IsUnderAnyStatus(BattleStatus.Death))
+                if (unit.IsPlayer == Target.IsPlayer && unit.Id != Target.Id && unit.IsTargetable
+                    && unit.PhysicalDefence != 255 && unit.PhysicalEvade != 255 && unit.MagicDefence != 255 && unit.MagicEvade != 255)
                 {
                     btl_para.SetDamage(unit, dmg, 0, requestFigureNow: true);
                     BattleVoice.TriggerOnStatusChange(Target, BattleVoice.BattleMoment.Used, BattleStatusId.Trouble);

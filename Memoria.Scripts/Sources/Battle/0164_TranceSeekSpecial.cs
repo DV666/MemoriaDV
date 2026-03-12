@@ -545,6 +545,10 @@ namespace Memoria.Scripts.Battle
                 if ((_v.TargetState().EffectElement.Poison & 8) == 0)
                     _v.TargetState().EffectElement.Poison = 8;
             }
+            else if (_v.Command.Power == 66 && _v.Command.HitRate == 66 && _v.Caster.Data.dms_geo_id == 66) // Jump (Burmecian Soldier)
+            {
+                FF9StateSystem.EventState.gEventGlobal[1305] |= (byte)_v.Caster.Id;
+            }
             else if (_v.Command.Power == 199 && _v.Command.HitRate == 199 && _v.Command.AbilityStatus == BattleStatus.Reflect) // AntiBoom from Invincible (CD3 Kuja)
             {
                 _v.Target.Flags = CalcFlag.HpAlteration | CalcFlag.MpAlteration;
@@ -613,36 +617,25 @@ namespace Memoria.Scripts.Battle
             if (FF9StateSystem.EventState.gEventGlobal[1307] == 0)
                 return false;
 
-            // 1. Récupération des données
             BTL_DATA bertha = FF9StateSystem.Battle.FF9Battle.btl_data[4];
             BTL_DATA misty = FF9StateSystem.Battle.FF9Battle.btl_data[5];
 
-            // Sécurité de base
             if (bertha == null || bertha.gameObject == null || misty == null || misty.gameObject == null)
                 return false;
 
-            // 2. Caching du Bone (Optimisation)
-            // Si on n'a pas encore trouvé le bone, on le cherche maintenant.
             if (_berthaCannonBone == null)
             {
                 _berthaCannonBone = bertha.gameObject.transform.GetChildByName("bone018");
 
-                // Si après recherche c'est toujours null (ex: modèle pas chargé), on attend la prochaine frame.
                 if (_berthaCannonBone == null)
                     return false;
             }
 
-            // 3. Réglages de décalage
-            // (Tu peux modifier ces valeurs pour ajuster la position visuelle)
             Vector3 positionOffset = new Vector3(0, 200, -250);
             Vector3 rotationOffset = new Vector3(0, 180, 180);
 
-            // 4. Calcul et Application
-            // On utilise _berthaCannonBone qui est maintenant mémorisé
             misty.gameObject.transform.position = _berthaCannonBone.position + (_berthaCannonBone.rotation * positionOffset);
             misty.gameObject.transform.rotation = _berthaCannonBone.rotation * Quaternion.Euler(rotationOffset);
-
-            // 5. Mise à jour interne du moteur
             misty.pos[0] = misty.gameObject.transform.position.x;
             misty.pos[1] = misty.gameObject.transform.position.y;
             misty.pos[2] = misty.gameObject.transform.position.z;

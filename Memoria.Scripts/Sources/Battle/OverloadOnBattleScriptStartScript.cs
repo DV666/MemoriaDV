@@ -26,7 +26,8 @@ namespace Memoria.Scripts.Battle
             TranceSeekStatus.PerfectDodge,  // Bit 9 (valeur 512) -> CustomStatus14
             TranceSeekStatus.PerfectCrit,   // Bit 10 (valeur 1024) -> CustomStatus15
             TranceSeekStatus.Vieillissement,// Bit 11 (valeur 2048) -> CustomStatus16
-            TranceSeekStatus.Charm          // Bit 12 (valeur 4096) -> CustomStatus23
+            TranceSeekStatus.Charm,         // Bit 12 (valeur 4096) -> CustomStatus23
+            TranceSeekStatus.Dragon         // Bit 13 (valeur 8192) -> CustomStatus9
         };
 
         public Boolean OnBattleScriptStart(BattleCalculator v)

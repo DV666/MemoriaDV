@@ -786,7 +786,7 @@ namespace Memoria.Scripts.Battle
 
         public static void RaiseTrouble(this BattleCalculator v)
         {
-            if (v.Target.PhysicalDefence != 255 || v.Target.PhysicalDefence != 255 || v.Target.MagicDefence != 255 || v.Target.MagicEvade != 255 && !v.Command.IsManyTarget)
+            if (v.Target.PhysicalDefence != 255 && v.Target.PhysicalEvade != 255 && v.Target.MagicDefence != 255 && v.Target.MagicEvade != 255 && !v.Command.IsManyTarget)
                 v.RaiseTrouble();
         }
 

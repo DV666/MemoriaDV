@@ -43,9 +43,9 @@ namespace Memoria.Scripts.Battle
                 {
                     _v.NormalPhysicalParams();
                 }
-                if (_v.CasterState().Steiner.StackCMD1 > 0)
+                if (_v.CasterState().Steiner.StackCMD2 > 0)
                 {
-                    _v.Command.HitRate += 10 * _v.CasterState().Steiner.StackCMD1;
+                    _v.Command.HitRate += 10 * _v.CasterState().Steiner.StackCMD2;
                     TranceSeekCharacterMechanic.ResetSteinerPassive(_v.Caster);
                 }
 

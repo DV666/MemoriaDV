@@ -49,7 +49,7 @@ namespace Memoria.Scripts.Battle
                 else
                 {
                     int num = Comn.random16() % (1 + (_v.Caster.Level + _v.Caster.Strength >> 3));
-                    _v.Context.AttackPower = _v.Caster.WeaponPower;
+                    _v.Context.AttackPower = _v.Caster.IsPlayer ? _v.Caster.WeaponPower : _v.Caster.Strength;
                     _v.Context.Attack = ((short)(_v.Caster.Strength + num));
                     _v.Context.DefensePower = _v.Target.PhysicalDefence / 2;
                     TranceSeekAPI.TargetPhysicalPenaltyAndBonusAttack(_v);

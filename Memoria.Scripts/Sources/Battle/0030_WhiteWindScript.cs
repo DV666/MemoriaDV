@@ -100,7 +100,7 @@ namespace Memoria.Scripts.Battle
                         }
                     }
                 }
-                else
+                else // Telekenesis
                 {
                     if (_v.Target.MagicDefence == 255)
                     {
@@ -116,9 +116,10 @@ namespace Memoria.Scripts.Battle
                         TranceSeekAPI.BonusElement(_v);
                         if (TranceSeekAPI.CanAttackMagic(_v))
                         {
-                            if (_v.Target.IsLevitate) // Telekenesis (x 3 against Flying)
+                            if (_v.Target.IsLevitate) // (x 3 against Flying)
                                _v.Context.DamageModifierCount += 8;
                             _v.CalcHpDamage();
+                            TranceSeekAPI.RaiseTrouble(_v);
                         }
                         TranceSeekAPI.TryAlterMagicStatuses(_v);
                     }

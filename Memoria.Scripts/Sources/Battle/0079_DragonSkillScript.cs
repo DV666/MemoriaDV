@@ -56,7 +56,7 @@ namespace Memoria.Scripts.Battle
                     _v.Target.MpDamage = (int)(_v.Target.MaximumMp / 4);
                 }
             }
-            else if (_v.Command.AbilityId == BattleAbilityId.ReisWind || _v.Caster.Data.dms_geo_id == 297) // Rei's Wind
+            else if (_v.Command.AbilityId == BattleAbilityId.ReisWind || (!_v.Caster.IsPlayer && _v.Command.HitRate == 79)) // Rei's Wind
 			{
                 if (!_v.Target.CanBeAttacked())
                 {

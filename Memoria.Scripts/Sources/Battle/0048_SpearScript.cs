@@ -22,6 +22,9 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
+            if (!_v.Caster.IsPlayer && _v.Caster.Data.dms_geo_id == 66)
+                FF9StateSystem.EventState.gEventGlobal[1305] &= (byte)~_v.Caster.Id;
+
             if (_v.Target.PhysicalDefence == 255)
             {
                 _v.Context.Flags |= BattleCalcFlags.Guard;
@@ -51,7 +54,7 @@ namespace Memoria.Scripts.Battle
                 else
                 {
                     int num = Comn.random16() % (1 + (_v.Caster.Level + _v.Caster.Strength >> 3));
-                    _v.Context.AttackPower = _v.Caster.WeaponPower;
+                    _v.Context.AttackPower = _v.Caster.IsPlayer ? _v.Caster.WeaponPower : _v.Caster.Strength;
                     _v.Context.Attack = ((short)(_v.Caster.Strength + num));
                     _v.Context.DefensePower = _v.Target.PhysicalDefence / 2; // [TODO] Change maybe with this formula ? => Math.Max(1, (_v.Target.PhysicalDefence / 2) - _v.Caster.Level + _v.Target.Level)
                     TranceSeekAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
