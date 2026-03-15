@@ -71,8 +71,8 @@ namespace Memoria.Scripts.Battle
 
                     var Caster_TSVar = _v.CasterState();
                     int ChanceDeathBlow = 33;
-                    if (Caster_TSVar.Steiner.StackCMD1 > 0)
-                        ChanceDeathBlow += 10 * Caster_TSVar.Steiner.StackCMD1;
+                    if (Caster_TSVar.Steiner.PlutoStackUsed > 0)
+                        ChanceDeathBlow += 10 * Caster_TSVar.Steiner.PlutoStackUsed;
 
                     if (Comn.random16() % 100 > ChanceDeathBlow && _v.Command.AbilityId != (BattleAbilityId)1551)
                     {
@@ -110,7 +110,7 @@ namespace Memoria.Scripts.Battle
                         }
                     }
 
-                    if (Caster_TSVar.Steiner.StackCMD1 > 0)
+                    if (Caster_TSVar.Steiner.PlutoStackUsed > 0)
                         TranceSeekCharacterMechanic.ResetSteinerPassive(_v.Caster);
                 }
             }

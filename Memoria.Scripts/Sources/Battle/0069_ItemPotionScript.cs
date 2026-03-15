@@ -63,6 +63,26 @@ namespace Memoria.Scripts.Battle
                     _v.Context.Attack = 1;
                     _v.Context.AttackPower = 1250;
                 }
+                else if (_v.Command.Power == 85 && _v.Command.HitRate == 85) // Burmecian Dew
+                {
+                    _v.Context.Attack = 1;
+                    _v.Context.AttackPower = 3000;
+
+                    BattleStatusId[] statuslist = { BattleStatusId.Regen, BattleStatusId.Haste, BattleStatusId.Float, BattleStatusId.Shell, BattleStatusId.Vanish,
+                    BattleStatusId.Protect, BattleStatusId.AutoLife, TranceSeekStatusId.PowerUp, TranceSeekStatusId.MagicUp, TranceSeekStatusId.ArmorUp, TranceSeekStatusId.MentalUp};
+
+                    List<BattleStatusId> statuschoosen = new List<BattleStatusId>();
+
+                    for (Int32 i = 0; i < statuslist.Length; i++)
+                        if ((statuslist[i].ToBattleStatus() & _v.Target.CurrentStatus) == 0)
+                            statuschoosen.Add(statuslist[i]);
+
+                    if (statuschoosen.Count > 0)
+                    {
+                        BattleStatusId statusselected = statuschoosen[GameRandom.Next16() % statuschoosen.Count];
+                        btl_stat.AlterStatus(_v.Target, statusselected, _v.Caster);
+                    }
+                }
                 _v.Context.DefensePower = 0;
                 _v.Target.Flags |= CalcFlag.HpAlteration;
                 if (!_v.Target.IsZombie)

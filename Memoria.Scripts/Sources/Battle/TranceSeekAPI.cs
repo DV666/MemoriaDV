@@ -1302,10 +1302,10 @@ namespace Memoria.Scripts.Battle
                     v.Target.RemoveStatus(BattleStatusConst.AnyNegative &~BattleStatus.Death);
             }
 
-            if (v.Target.PlayerIndex == CharacterId.Steiner && v.Target.IsCovering && (Target_TSVar.Steiner.StackCMD1 + Target_TSVar.Steiner.StackCMD2) < 5)
+            if (v.Target.PlayerIndex == CharacterId.Steiner && v.Target.IsCovering && (Target_TSVar.Steiner.PlutoStackUsed + Target_TSVar.Steiner.PlutoStackRemain) < 5)
             {
-                Target_TSVar.Steiner.StackCMD1++;
-                FF9TextTool.SetCommandName(BattleCommandId.SwordAct, TranceSeekBattleCommand.SwdArtCMDNameVanilla[Localization.CurrentSymbol] + " (" + Target_TSVar.Steiner.StackCMD1 + "/" + (Target_TSVar.Steiner.StackCMD1 + Target_TSVar.Steiner.StackCMD2) + ")");
+                Target_TSVar.Steiner.PlutoStackUsed++;
+                FF9TextTool.SetCommandName(BattleCommandId.SwordAct, TranceSeekBattleCommand.SwdArtCMDNameVanilla[Localization.CurrentSymbol] + " (" + Target_TSVar.Steiner.PlutoStackUsed + "/" + (Target_TSVar.Steiner.PlutoStackUsed + Target_TSVar.Steiner.PlutoStackRemain) + ")");
                 Dictionary<String, String> SteinerPassiveMessage = new Dictionary<String, String>
                 {
                     { "US", "[SPRT=IconAtlas,item200_00] Pluto!" },

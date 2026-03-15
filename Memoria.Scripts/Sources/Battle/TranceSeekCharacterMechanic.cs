@@ -206,32 +206,32 @@ namespace Memoria.Scripts.Battle
         {
             var StateDict = TranceSeekBattleDictionary.GetState(unit.Data);
 
-            if (UIManager.Input.GetKey(Control.RightTrigger) && StateDict.Steiner.StackCMD1 > 0 && !StateDict.Steiner.TriggerOneTime && unit.Data.bi.line_no == UIManager.Battle.CurrentPlayerIndex)
+            if (UIManager.Input.GetKey(Control.RightTrigger) && StateDict.Steiner.PlutoStackUsed > 0 && !StateDict.Steiner.TriggerOneTime && unit.Data.bi.line_no == UIManager.Battle.CurrentPlayerIndex)
             {
                 StateDict.Steiner.TriggerOneTime = true;
-                StateDict.Steiner.StackCMD1--;
-                StateDict.Steiner.StackCMD2++;
-                FF9TextTool.SetCommandName(BattleCommandId.SwordAct, TranceSeekBattleCommand.SwdArtCMDNameVanilla[Localization.CurrentDisplaySymbol] + " (" + StateDict.Steiner.StackCMD1 + "/" + (StateDict.Steiner.StackCMD1 + StateDict.Steiner.StackCMD2) + ")");
+                StateDict.Steiner.PlutoStackUsed--;
+                StateDict.Steiner.PlutoStackRemain++;
+                FF9TextTool.SetCommandName(BattleCommandId.SwordAct, TranceSeekBattleCommand.SwdArtCMDNameVanilla[Localization.CurrentDisplaySymbol] + " (" + StateDict.Steiner.PlutoStackUsed + "/" + (StateDict.Steiner.PlutoStackUsed + StateDict.Steiner.PlutoStackRemain) + ")");
                 UIManager.Battle.OnLocalize();
                 SoundLib.PlaySoundEffect(1577);
                 //unit.UILabelHP = $"{SteinerPassive[unit.Data][1]} [SPRT=IconAtlas,item200_00,32,32]\n{unit.CurrentHp}";
                 if (FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1000, out Dictionary<Int32, Int32> dictbattle))
-                    dictbattle[1] = StateDict.Steiner.StackCMD2;
+                    dictbattle[1] = StateDict.Steiner.PlutoStackRemain;
             }
-            else if (UIManager.Input.GetKey(Control.LeftTrigger) && StateDict.Steiner.StackCMD2 > 0 && !StateDict.Steiner.TriggerOneTime && unit.Data.bi.line_no == UIManager.Battle.CurrentPlayerIndex)
+            else if (UIManager.Input.GetKey(Control.LeftTrigger) && StateDict.Steiner.PlutoStackRemain > 0 && !StateDict.Steiner.TriggerOneTime && unit.Data.bi.line_no == UIManager.Battle.CurrentPlayerIndex)
             {
                 StateDict.Steiner.TriggerOneTime = true;
-                StateDict.Steiner.StackCMD1++;
-                StateDict.Steiner.StackCMD2--;
-                FF9TextTool.SetCommandName(BattleCommandId.SwordAct, TranceSeekBattleCommand.SwdArtCMDNameVanilla[Localization.CurrentDisplaySymbol] + " (" + StateDict.Steiner.StackCMD1 + "/" + (StateDict.Steiner.StackCMD1 + StateDict.Steiner.StackCMD2) + ")");
+                StateDict.Steiner.PlutoStackUsed++;
+                StateDict.Steiner.PlutoStackRemain--;
+                FF9TextTool.SetCommandName(BattleCommandId.SwordAct, TranceSeekBattleCommand.SwdArtCMDNameVanilla[Localization.CurrentDisplaySymbol] + " (" + StateDict.Steiner.PlutoStackUsed + "/" + (StateDict.Steiner.PlutoStackUsed + StateDict.Steiner.PlutoStackRemain) + ")");
                 UIManager.Battle.OnLocalize();
                 SoundLib.PlaySoundEffect(1577);
                 if (FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1000, out Dictionary<Int32, Int32> dictbattle))
-                    dictbattle[1] = StateDict.Steiner.StackCMD2;
+                    dictbattle[1] = StateDict.Steiner.PlutoStackRemain;
             }
 
-            if (StateDict.Steiner.StackCMD2 > 0)
-                unit.UILabelHP = $"{StateDict.Steiner.StackCMD2} [SPRT=IconAtlas,item200_00,32,32]\n{unit.CurrentHp}";
+            if (StateDict.Steiner.PlutoStackRemain > 0)
+                unit.UILabelHP = $"{StateDict.Steiner.PlutoStackRemain} [SPRT=IconAtlas,item200_00,32,32]\n{unit.CurrentHp}";
             else
                 unit.UILabelHP = unit.CurrentHp.ToString();
 
@@ -250,7 +250,7 @@ namespace Memoria.Scripts.Battle
             caster => caster.CurrentAtb >= caster.MaximumAtb,
             caster =>
             {
-                unit.State().Steiner.StackCMD2 = 0;
+                unit.State().Steiner.PlutoStackRemain = 0;
                 if (FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1000, out Dictionary<Int32, Int32> dictbattle))
                     dictbattle[1] = 0;
             }

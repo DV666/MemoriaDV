@@ -20,11 +20,15 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            if (_v.Caster.PlayerIndex == CharacterId.Freya)
+            if (_v.Caster.PlayerIndex == CharacterId.Freya || (!_v.Caster.IsPlayer && _v.Caster.Data.dms_geo_id == 66))
             {
                 if (_v.IsCasterNotTarget() && _v.Target.CanBeAttacked() && !_v.Target.TryKillFrozen())
                 {
-                    _v.WeaponPhysicalParams();
+                    if (_v.Caster.IsPlayer)
+                        _v.WeaponPhysicalParams();
+                    else
+                        _v.NormalPhysicalParams();
+
                     TranceSeekAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
                     TranceSeekAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
                     _v.Caster.Flags |= CalcFlag.HpAlteration;

@@ -73,8 +73,8 @@ namespace Memoria.Scripts.Battle
 
     public class SteinerPassives
     {
-        public int StackCMD1 { get; set; }
-        public int StackCMD2 { get; set; }
+        public int PlutoStackUsed { get; set; }
+        public int PlutoStackRemain { get; set; }
         public Boolean TriggerOneTime { get; set; }
         public int SteinerEnchantedBlade { get; set; } // Need to be replace with infused weapon ?
         public Boolean Sentinel { get; set; }

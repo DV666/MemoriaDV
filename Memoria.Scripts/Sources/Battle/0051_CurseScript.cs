@@ -72,24 +72,20 @@ namespace Memoria.Scripts.Battle
             }
             if (_v.Caster.Data.dms_geo_id == 328) // Fandalf Curse
             {
-                int num4 = GameRandom.Next16() % 3;
-                if (num4 == 0)
-                {
+                if (FF9StateSystem.EventState.gEventGlobal[1305] == 0)
                     _v.Command.Element = EffectElement.Fire;
-                }
-                else if (num4 == 1)
-                {
+                else if (FF9StateSystem.EventState.gEventGlobal[1305] == 1)
                     _v.Command.Element = EffectElement.Cold;
-                }
-                else if (num4 == 2)
-                {
+                else if (FF9StateSystem.EventState.gEventGlobal[1305] == 2)
                     _v.Command.Element = EffectElement.Thunder;
-                }
+
+                FF9StateSystem.EventState.gEventGlobal[1305]++;
+                if (FF9StateSystem.EventState.gEventGlobal[1305] > 2)
+                    FF9StateSystem.EventState.gEventGlobal[1305] = 0;
             }
             if (_v.Command.Element == 0)
-            {
                 _v.Command.Element = (EffectElement)(1 << (GameRandom.Next16() % 8));
-            }
+
             UiState.SetBattleFollowMessage(BattleMesages.BecameWeakAgainst, _v.Command.Element);
             _v.Context.Flags = 0;
             if ((_v.Command.Element & _v.Target.AbsorbElement) > 0)

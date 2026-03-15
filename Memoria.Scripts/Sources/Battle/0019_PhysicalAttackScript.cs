@@ -23,13 +23,9 @@ namespace Memoria.Scripts.Battle
         public void Perform()
         {
             if (_v.Caster.IsPlayer)
-            {
                 _v.WeaponPhysicalParams();
-            }
             else
-            {
                 _v.NormalPhysicalParams();
-            }
             
             if ((_v.Command.AbilityId == (BattleAbilityId)1005 || _v.Command.AbilityId == (BattleAbilityId)1042) && _v.Command.IsATBCommand) // Attaque Eclair, Hikari
             {
@@ -102,6 +98,8 @@ namespace Memoria.Scripts.Battle
                     if (_v.Caster.IsUnderAnyStatus(BattleStatus.Float))
                         _v.Command.AbilityStatus |= BattleStatus.GradualPetrify;
                 }
+                else if (!_v.Caster.IsPlayer && _v.Caster.Data.dms_geo_id == 66 && _v.Target.IsUnderAnyStatus(TranceSeekStatus.Dragon)) // Dragon's Crest from Burmecian
+                    _v.Target.TryAlterStatuses(BattleStatus.Doom, false, _v.Caster);
                 else
                     TranceSeekAPI.TryAlterMagicStatuses(_v);
             }

@@ -46,17 +46,17 @@ namespace Memoria.Scripts.Battle
                     return;
 
                 BattleState.EnqueueCounter(unit, BattleCommandId.RushAttack, BattleAbilityId.Attack, randomEnemy);
-                if (Caster_TSVar.Steiner.StackCMD1 == 5)
+                if (Caster_TSVar.Steiner.PlutoStackUsed == 5)
                 {
                     unit.AlterStatus(BattleStatus.Haste);
                     btl_stat.AlterStatus(unit, TranceSeekStatusId.PowerUp, parameters: $"+2");
                 }
-                else if (Caster_TSVar.Steiner.StackCMD1 >= 3)
+                else if (Caster_TSVar.Steiner.PlutoStackUsed >= 3)
                 {
                     unit.AlterStatus(BattleStatus.Haste);
                     btl_stat.AlterStatus(unit, TranceSeekStatusId.PowerUp);
                 }
-                else if (Caster_TSVar.Steiner.StackCMD1 > 0)
+                else if (Caster_TSVar.Steiner.PlutoStackUsed > 0)
                 {
                     unit.AlterStatus(BattleStatus.Haste);
                 }
@@ -67,7 +67,7 @@ namespace Memoria.Scripts.Battle
                 _v.Context.Flags = 0;
                 UiState.SetBattleFollowFormatMessage(BattleMesages.ChargeFailed);
             }
-            else if (Caster_TSVar.Steiner.StackCMD1 > 0)
+            else if (Caster_TSVar.Steiner.PlutoStackUsed > 0)
                 TranceSeekCharacterMechanic.ResetSteinerPassive(_v.Caster);
         }
     }
