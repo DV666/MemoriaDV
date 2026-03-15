@@ -107,6 +107,25 @@ namespace Memoria.DefaultScripts
                         }
                     );
                 }
+                else if (target.Data.dms_geo_id == 5414)
+                {
+                    target.AddDelayedModifier(
+                        target => !target.Data.enable_trance_glow,
+                        target =>
+                        {
+                            Vector3 position = target.Data.gameObject.transform.position;
+                            target.Data.gameObject.SetActive(false);
+                            target.Data.gameObject = ModelFactory.CreateModel("GEO_MAIN_B0_022", true);
+                            for (Int16 j = 0; j < target.Data.mot.Length; j++) // [DV] Check each anims if a clip exist, otherwise create them (if we don't that for custom anim, the battle is frozen).
+                                AnimationFactory.AddAnimWithAnimatioName(target.Data.gameObject, target.Data.mot[j]);
+                            target.Data.gameObject.transform.position = position;
+
+                            WEAPON_MODEL Dagger = new WEAPON_MODEL { geo = ModelFactory.CreateModel("GEO_WEP_B1_012", true), bone = 13 };  
+                            target.Data.weaponModels.Add(Dagger);
+                            GeoAttach(Dagger.geo, target.Data.gameObject, Dagger.bone);
+                        }
+                    );
+                }
             }
             else
             {

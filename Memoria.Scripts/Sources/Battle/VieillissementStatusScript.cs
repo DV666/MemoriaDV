@@ -9,7 +9,7 @@ using Object = System.Object;
 
 namespace Memoria.DefaultScripts
 {
-    [StatusScript(BattleStatusId.CustomStatus16)] // Vieillissement
+    [StatusScript(BattleStatusId.CustomStatus16)] // Old
     public class VieillissementStatusScript : StatusScriptBase
     {
         public Int32 BasicLevel;
@@ -28,7 +28,7 @@ namespace Memoria.DefaultScripts
 
         public override UInt32 Apply(BattleUnit target, BattleUnit inflicter, params Object[] parameters)
         {
-            if (target.IsUnderAnyStatus(BattleStatus.EasyKill) || target.IsUnderAnyStatus(BattleStatus.Trance) || target.IsUnderAnyStatus(BattleStatus.CustomStatus16))
+            if (target.IsUnderAnyStatus(BattleStatus.Trance) || target.IsUnderAnyStatus(BattleStatus.CustomStatus16))
                 return btl_stat.ALTER_INVALID;
 
             base.Apply(target, inflicter, parameters);

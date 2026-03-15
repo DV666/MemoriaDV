@@ -533,9 +533,9 @@ namespace Memoria.Scripts.Battle
                     // Pad 0 (byte) => Unused (1) ; Pad 1 (uint16) => Unused (2) ; Pad 2 (uint16) => Unused (3)
                     // Pad 1 :
                     // 1 -> Weak Poison     16 -> Weak Gravity
-                    // 2 -> Half Poison     32 -> Weak Gravity
-                    // 4 -> Immune Poison   64 -> Weak Gravity
-                    // 8 -> Absorb Poison   128 -> Weak Gravity
+                    // 2 -> Half Poison     32 -> Half Gravity
+                    // 4 -> Immune Poison   64 -> Immune Gravity
+                    // 8 -> Absorb Poison   128 -> Absorb Gravity
 
                     if (monParam.Pad1 > 0)
                     {

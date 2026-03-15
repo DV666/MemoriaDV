@@ -154,9 +154,7 @@
     <Compile Include="Sources\Battle\0032_DarksideScript.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Include="Sources\Battle\0033_ArmourBreakScript.cs">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Compile>
+    <Compile Include="Sources\Battle\0033_ArmorBreakScript.cs" />
     <Compile Include="Sources\Battle\0034_PowerBreakScript.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
@@ -355,7 +353,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
     <Compile Include="Sources\Battle\0128_EnemyPhysicalDispelAttackScript.cs" />
-    <Compile Include="Sources\Battle\0129_MagicDebuffScript.cs" />
+    <Compile Include="Sources\Battle\0129_MagicPhysicalDispelAttackScript.cs" />
     <Compile Include="Sources\Battle\0141_MagicWeaponSpecialScript - Copy.cs" />
     <Compile Include="Sources\Battle\0143_MagicRecoveryHPMPScript.cs" />
     <Compile Include="Sources\Battle\0163_SpecialApplyPositiveStatusScript.cs">
@@ -427,6 +425,7 @@
     <Compile Include="Sources\Battle\DefendStatusScript.cs" />
     <Compile Include="Sources\Battle\DoomStatusScript.cs" />
     <Compile Include="Sources\Battle\DragonStatusScript.cs" />
+    <Compile Include="Sources\Battle\EasyKillStatusScript.cs" />
     <Compile Include="Sources\Battle\FloatStatusScript.cs" />
     <Compile Include="Sources\Battle\FreezeStatusScript.cs" />
     <Compile Include="Sources\Battle\GradualPetrifyStatusScript.cs" />

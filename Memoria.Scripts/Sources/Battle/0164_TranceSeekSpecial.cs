@@ -204,6 +204,26 @@ namespace Memoria.Scripts.Battle
                 );
                 return;
             }
+            else if (_v.Caster.Data.dms_geo_id == 221 && _v.Command.AbilityStatus == BattleStatus.Trance) // Mirror - Trance Zidane
+            {
+                    Int32 counter = 15;
+                    _v.Caster.AddDelayedModifier(
+                    caster => (counter -= BattleState.ATBTickCount) > 0,
+                    caster =>
+                    {
+                        foreach (BattleUnit zidanemonster in BattleState.EnumerateUnits())
+                        {
+                            if (!zidanemonster.IsPlayer && zidanemonster.Data.dms_geo_id == 5414 && zidanemonster.IsTargetable)
+                            {
+                                zidanemonster.ResistStatus &= ~BattleStatus.Trance;
+                                btl_stat.MakeStatusesPermanent(zidanemonster, BattleStatus.Trance);
+                                break;
+                            }
+
+                        }
+                    }
+                    );
+            }
             else if (_v.Command.Power == 11 && _v.Command.HitRate == 11) // Ironite (Dragon Force)
             {
                 _v.Target.TryAlterSingleStatus(BattleStatusId.ChangeStat, true, _v.Caster, "PhysicalDefence", Math.Min(255, _v.Target.PhysicalDefence + 2));
