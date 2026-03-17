@@ -72,7 +72,6 @@ namespace Memoria.Scripts.Battle
                     TranceSeekAPI.PenaltyShellAttack(_v);
                 }
 
-                _v.BonusKillerAbilities();
                 TranceSeekAPI.BonusWeaponElement(_v);
                 if (TranceSeekAPI.CanAttackWeaponElementalCommand(_v))
                 {

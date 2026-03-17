@@ -60,7 +60,6 @@ namespace Memoria.Scripts.Battle
                     TranceSeekAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
                 }
 
-                _v.BonusKillerAbilities();
                 TranceSeekAPI.CasterPenaltyMini(_v);
                 TranceSeekAPI.EnemyTranceBonusAttack(_v);
                 TranceSeekAPI.BonusWeaponElement(_v);

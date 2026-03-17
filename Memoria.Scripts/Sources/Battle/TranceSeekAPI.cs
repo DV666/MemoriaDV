@@ -36,10 +36,10 @@ namespace Memoria.Scripts.Battle
                     v.Context.Attack = (v.Caster.Strength + v.Caster.Will >> 1) + baseDamage;
                     break;
                 case CalcAttackBonus.Dexterity:
-                    v.Context.Attack = (v.Caster.Strength + v.Caster.Data.elem.dex >> 1) + baseDamage;
+                    v.Context.Attack = (v.Caster.Strength + v.Caster.Dexterity >> 1) + baseDamage;
                     break;
                 case CalcAttackBonus.Magic:
-                    v.Context.Attack = (v.Caster.Strength + v.Caster.Data.elem.mgc) + baseDamage;
+                    v.Context.Attack = (v.Caster.Strength + v.Caster.Magic) + baseDamage;
                     break;
                 case CalcAttackBonus.Random:
                 {

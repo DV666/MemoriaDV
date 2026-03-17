@@ -395,11 +395,6 @@ namespace Memoria.Scripts.Battle
                     if (FF9StateSystem.EventState.gScriptDictionary.ContainsKey(ID)) // Reset infused weapon.
                         FF9StateSystem.EventState.gScriptDictionary.Remove(ID);
 
-                    if (DifficultyDebugMenu.MegaCheat > 0)
-                    {
-                        unit.MagicDefence = 254;
-                        unit.PhysicalDefence = 254;
-                    }
                     if (FF9StateSystem.EventState.ScenarioCounter >= 11100 && FF9StateSystem.EventState.gEventGlobal[1500] == 0)
                     {
                         unit.AlterStatus(BattleStatus.Death, unit);

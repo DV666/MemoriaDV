@@ -103,7 +103,11 @@ namespace Memoria.Scripts.Battle
                 v.Caster.MpDamage = (Int32)Math.Round(modifier_factor * v.Caster.MpDamage) * reflectMultiplier;
 
             if ((DifficultyDebugMenu.MegaCheat == 2) && v.Caster.IsPlayer)
+            {
                 v.Target.HpDamage = 9999;
+                if (v.Target.IsPlayer)
+                    v.Caster.Flags |= CalcFlag.HpAlteration;
+            }
 
             if (v.Target.HasTrance && v.Target.Data.cur.hp > 0 && !btl_stat.CheckStatus(v.Target.Data, BattleStatusConst.CannotTrance)) // Prevent to earn easy Trance.
             {
