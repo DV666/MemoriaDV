@@ -198,57 +198,79 @@ namespace Memoria.Scripts.Battle
         {
             if (mob.IsUnderAnyStatus(BattleStatusConst.BattleEndFull) || btl_para.IsNonDyingVanillaBoss(mob) && mob.CurrentHp <= 10000)
             {
-                btl2d.StatusMessages.Remove(ATBRedBarHUD[mob.Data]);
-                btl2d.StatusMessages.Remove(ATBGreenBarHUD[mob.Data]);
-                Singleton<HUDMessage>.Instance.ReleaseObject(ATBRedBarHUD[mob.Data]);
-                Singleton<HUDMessage>.Instance.ReleaseObject(ATBGreenBarHUD[mob.Data]);
-                ATBRedBarHUD[mob.Data] = null;
-                ATBGreenBarHUD[mob.Data] = null;
+                if (ATBRedBarHUD[mob.Data] != null)
+                {
+                    btl2d.StatusMessages.Remove(ATBRedBarHUD[mob.Data]);
+                    Singleton<HUDMessage>.Instance.ReleaseObject(ATBRedBarHUD[mob.Data]);
+                    ATBRedBarHUD[mob.Data] = null;
+                }
+
+                if (ATBGreenBarHUD[mob.Data] != null)
+                {
+                    btl2d.StatusMessages.Remove(ATBGreenBarHUD[mob.Data]);
+                    Singleton<HUDMessage>.Instance.ReleaseObject(ATBGreenBarHUD[mob.Data]);
+                    ATBGreenBarHUD[mob.Data] = null;
+                }
                 return false;
             }
+
             if (FF9StateSystem.Battle.FF9Battle.btl_phase < FF9StateBattleSystem.PHASE_MENU_ON) // Don't show ATB Bar in intro
                 return true;
 
-            short ATBValue = (short)((mob.CurrentAtb * 150) / mob.MaximumAtb);
+            float atbPercent = (float)mob.CurrentAtb / (float)mob.MaximumAtb;
+            atbPercent = Mathf.Clamp01(atbPercent);
+
+            string ATBSprite = "battle_bar_atb";
+            if (mob.IsUnderAnyStatus(BattleStatus.Slow))
+                ATBSprite = "battle_bar_slow";
+            else if (mob.IsUnderAnyStatus(BattleStatus.Haste))
+                ATBSprite = "battle_bar_haste";
+
             if (ATBGreenBarHUD[mob.Data] == null && ATBRedBarHUD[mob.Data] == null)
             {
                 BattleStatusDataEntry statusData = FF9StateSystem.Battle.FF9Battle.status_data[BattleStatusId.Poison];
                 btl2d.GetIconPosition(mob.Data, btl2d.ICON_POS_HEAD, out Transform attachTransf, out Vector3 iconOff);
-                Vector3 HPBarHUD_Offset = statusData.SHPExtraPos + iconOff + new Vector3(200, 150, 0);
 
-                // Red ATB Bar (background)
-                ATBRedBarHUD[mob.Data] = Singleton<HUDMessage>.Instance.Show(attachTransf, "[SPRT=GeneralAtlas,ap_bar_complete,150,15]", HUDMessage.MessageStyle.DEATH_SENTENCE, HPBarHUD_Offset, 0);
+                Vector3 ATB_BG_HUD_Offset = statusData.SHPExtraPos + iconOff + new Vector3(200, 150, 0);
+                Vector3 ATB_BAR_HUD_Offset = statusData.SHPExtraPos + iconOff + new Vector3(220, 160, 0);
+
+                // ATB BG Bar (background)
+                ATBRedBarHUD[mob.Data] = Singleton<HUDMessage>.Instance.Show(attachTransf, "[SPRT=GeneralAtlas,battle_bar_bg,150,18]", HUDMessage.MessageStyle.DEATH_SENTENCE, ATB_BG_HUD_Offset, 0);
                 ATBRedBarHUD[mob.Data].Follower.clampToScreen = false;
                 btl2d.StatusMessages.Add(ATBRedBarHUD[mob.Data]);
 
-                // Blue ATB Bar (actual)               
-                ATBGreenBarHUD[mob.Data] = Singleton<HUDMessage>.Instance.Show(attachTransf, $"[SPRT=GeneralAtlas,slider_bar,{ATBValue},15]", HUDMessage.MessageStyle.DEATH_SENTENCE, HPBarHUD_Offset, 0);
+                // Blue ATB Bar (actual)
+                ATBGreenBarHUD[mob.Data] = Singleton<HUDMessage>.Instance.Show(attachTransf, $"[SPRT=GeneralAtlas,{ATBSprite},145,14]", HUDMessage.MessageStyle.DEATH_SENTENCE, ATB_BAR_HUD_Offset, 0);
+
                 UILabel UILabelHPGreenBarHUD = ATBGreenBarHUD[mob.Data].GetComponent<UILabel>();
                 ATBGreenBarHUD[mob.Data].Follower.clampToScreen = false;
                 UILabelHPGreenBarHUD.spacingY = -10;
+                UILabelHPGreenBarHUD.pivot = UIWidget.Pivot.Left;
+
                 btl2d.StatusMessages.Add(ATBGreenBarHUD[mob.Data]);
             }
-            ATBGreenBarHUD[mob.Data].Label = $"[SPRT=GeneralAtlas,slider_bar,{ATBValue},15]";
 
-            if (ATBGreenBarHUD[mob.Data] != null && ATBRedBarHUD[mob.Data] != null && (Input.GetKey(KeyCode.Alpha2) || UIManager.Input.GetKey(Control.Special)) && !TriggerOneTime[mob.Data])
+            string currentText = $"[SPRT=GeneralAtlas,{ATBSprite},145,14]";
+            if (ATBGreenBarHUD[mob.Data].Label != currentText)
             {
-                HPBarHidden[mob.Data] = !HPBarHidden[mob.Data];
-                TriggerOneTime[mob.Data] = true;
+                ATBGreenBarHUD[mob.Data].Label = currentText;
+            }
 
-                if (HPBarHidden[mob.Data])
-                {
-                    ATBRedBarHUD[mob.Data].gameObject.SetActive(false);
-                    ATBGreenBarHUD[mob.Data].gameObject.SetActive(false);
-                }
-                else
+            if (ATBGreenBarHUD[mob.Data] != null)
+                ATBGreenBarHUD[mob.Data].transform.localScale = new Vector3(atbPercent, 1f, 1f);
+
+            if (ATBGreenBarHUD[mob.Data] != null && ATBRedBarHUD[mob.Data] != null)
+            {
+                if (PersistenSingleton<BattleHUD>.Instance.AllMenuPanel.gameObject.activeSelf)
                 {
                     ATBRedBarHUD[mob.Data].gameObject.SetActive(true);
                     ATBGreenBarHUD[mob.Data].gameObject.SetActive(true);
                 }
-            }
-            else if (!Input.GetKey(KeyCode.Alpha2) && !UIManager.Input.GetKey(Control.Special))
-            {
-                TriggerOneTime[mob.Data] = false;
+                else
+                {
+                    ATBRedBarHUD[mob.Data].gameObject.SetActive(false);
+                    ATBGreenBarHUD[mob.Data].gameObject.SetActive(false);
+                }
             }
             return true;
         }

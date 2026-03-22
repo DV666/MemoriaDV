@@ -26,7 +26,7 @@ namespace Memoria.DefaultScripts
 
         public void OnFinishCommand(CMD_DATA cmd, Int32 tranceDecrease)
         {
-            if (Target.IsUnderAnyStatus(BattleStatus.Heat) && !Target.IsPlayer && Target.CurrentHp > 1) // Heat Damage on monsters
+            if (Target.IsUnderAnyStatus(BattleStatus.Heat) && Target.CurrentHp > 1) // Heat Damage on monsters
             {
                 UInt32 heat_damage = (uint)(Target.MaximumHp / (Target.IsUnderAnyStatus(BattleStatus.EasyKill) ? 128 : 32));
                 if (Target.State().Monster.HPBoss10000)
@@ -36,21 +36,25 @@ namespace Memoria.DefaultScripts
 
                 if (heat_damage > 0)
                 {
-                    if ((EffectElement.Fire & Target.AbsorbElement) != 0)
+                    if ((EffectElement.Fire & Target.AbsorbElement) != 0 || Target.Accessory == TranceSeekRegularItem.SolarCrown)
                     {
                         Target.Data.fig.info = FF9.Param.FIG_INFO_HP_RECOVER;
                         Target.CurrentHp = Math.Min(Target.CurrentHp + heat_damage, Target.MaximumHp);
                         btl2d.Btl2dStatReq(Target, -(Int32)heat_damage, 0);
                     }
-                    else
+                    else if (!Target.IsPlayer)
                     {
                         Target.Data.fig.info = FF9.Param.FIG_INFO_DISP_HP;
-                        if (Target.CurrentHp > heat_damage)
-                            Target.CurrentHp -= heat_damage;
-                        else
-                            Target.CurrentHp = 1;
-
                         btl2d.Btl2dStatReq(Target, (Int32)heat_damage, 0);
+                        if (Target.CurrentHp > heat_damage)
+                        {
+                            Target.CurrentHp -= heat_damage;
+                        }
+                        else if (btl_stat.AlterStatus(new BattleUnit(Target), BattleStatusId.Death) == btl_stat.ALTER_SUCCESS)
+                        {
+                            BattleVoice.TriggerOnStatusChange(Target, BattleVoice.BattleMoment.Used, BattleStatusId.Heat);
+                            btl_cmd.KillCommand(cmd);
+                        }
                     }
                 }
             }
@@ -58,20 +62,18 @@ namespace Memoria.DefaultScripts
 
         public Boolean OnCommandRun(BattleCommand cmd)
         {
-            if (cmd.Data.regist != null && (cmd.Data.cmd_no < BattleCommandId.EnemyReaction || cmd.Data.cmd_no > BattleCommandId.BoundaryUpperCheck))
+            BTL_DATA btl = cmd.Data.regist;
+            if (btl != null && (cmd.Data.cmd_no < BattleCommandId.EnemyReaction || cmd.Data.cmd_no > BattleCommandId.BoundaryUpperCheck) && btl_stat.CheckStatus(btl, BattleStatus.Heat))
             {
-                BTL_DATA btl = cmd.Data.regist;
-                Boolean FireMonster = ((byte)EffectElement.Fire & btl.def_attr.absorb) != 0 && btl.bi.player == 0;
+                BattleUnit unit = new BattleUnit(btl);
+                Boolean DontKillUnderHeat = (unit.Accessory == TranceSeekRegularItem.SolarCrown || ((byte)EffectElement.Fire & btl.def_attr.absorb) != 0 && btl.bi.player == 0);
 
-                if (!btl_stat.CheckStatus(btl, BattleStatus.EasyKill) && !FireMonster)
+                if (!btl_stat.CheckStatus(btl, BattleStatus.EasyKill) && !DontKillUnderHeat)
                 {
-                    if (btl_stat.CheckStatus(btl, BattleStatus.Heat))
+                    if (btl_stat.AlterStatus(new BattleUnit(btl), BattleStatusId.Death) == btl_stat.ALTER_SUCCESS)
                     {
-                        if (btl_stat.AlterStatus(new BattleUnit(btl), BattleStatusId.Death) == btl_stat.ALTER_SUCCESS)
-                        {
-                            BattleVoice.TriggerOnStatusChange(btl, BattleVoice.BattleMoment.Used, BattleStatusId.Heat);
-                            btl_cmd.KillCommand(cmd);
-                        }
+                        BattleVoice.TriggerOnStatusChange(btl, BattleVoice.BattleMoment.Used, BattleStatusId.Heat);
+                        btl_cmd.KillCommand(cmd);
                     }
                 }
             }

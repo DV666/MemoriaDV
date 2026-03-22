@@ -108,13 +108,9 @@ namespace Memoria.Scripts.Battle
                 if (_v.Command.AbilityStatus != 0)
                 {
                     if (_v.Command.HitRate == 255)
-                    {
                         TranceSeekAPI.TryRemoveAbilityStatuses(_v);
-                    }
                     else
-                    {
                         TranceSeekAPI.TryAlterMagicStatuses(_v);
-                    }
                 }
             }
             if (_v.Caster.PlayerIndex == CharacterId.Amarant && _v.Command.AbilityId == BattleAbilityId.Curse2) // Sort+

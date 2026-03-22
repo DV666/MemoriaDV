@@ -147,28 +147,13 @@ namespace Memoria.Scripts.Battle
                                     _v.Context.DefensePower = (_v.Context.DefensePower / 2);
                                 _v.Target.TryAlterStatuses(TranceSeekStatus.MentalBreak, false, _v.Caster);
                                 break;
-                            case BattleAbilityId.WhiteDraw:
-                                _v.Caster.Flags = (CalcFlag.HpAlteration | CalcFlag.HpRecovery);
-                                _v.Caster.HpDamage = (_v.Context.EnsureAttack * _v.Context.EnsurePowerDifference) / 2;
-                                foreach (BattleUnit battleUnit in BattleState.EnumerateUnits())
-                                {
-                                    if (battleUnit.IsPlayer && battleUnit.IsTargetable && !battleUnit.IsUnderAnyStatus(BattleStatus.Death | BattleStatus.Petrify))
-                                    {
-                                        _v.Caster.Change(battleUnit);
-                                        SBattleCalculator.CalcResult(_v);
-                                        BattleState.Unit2DReq(battleUnit);
-                                    }
-                                }
-                                _v.Caster.Flags = 0;
-                                _v.Caster.HpDamage = 0;
-                                break;
                             case TranceSeekBattleAbility.Hraesvelgr:
                                 _v.Caster.RemoveStatus(BattleStatusConst.AnyNegative);
                                 _v.Caster.Flags |= CalcFlag.HpDamageOrHeal;
                                 _v.Caster.HpDamage = (int)_v.Caster.MaximumHp;
                                 break;
                         }
-                    } 
+                    }
                 }
                 else if (_v.Caster.PlayerIndex == CharacterId.Beatrix && _v.Command.AbilityId == (BattleAbilityId)1043)
                 {

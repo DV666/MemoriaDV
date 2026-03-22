@@ -26,7 +26,7 @@ namespace Memoria.Scripts.Battle
             v.Context.AttackPower = v.Caster.GetWeaponPower(v.Command);
             if ((!v.Caster.HasSupportAbility(SupportAbility1.Healer) && !v.Caster.IsHealingRod) || !v.Target.IsPlayer)
                 v.Target.SetPhysicalDefense();
-
+            
             switch (bonus)
             {
                 case CalcAttackBonus.Simple:
@@ -177,9 +177,12 @@ namespace Memoria.Scripts.Battle
             if (v.Caster.IsUnderAnyStatus(BattleStatus.Trance | BattleStatus.Vanish) || v.Target.IsUnderAnyStatus(BattleStatusConst.PenaltyEvade))
                 v.Context.Evade = 0;
 
+            if (v.Target.HasSupportAbilityByIndex(SupportAbility.AutoFloat) && v.Target.IsUnderAnyStatus(BattleStatus.Float)) // Light Step
+                v.Context.Evade += v.Context.Evade / (v.Target.HasSupportAbilityByIndex((SupportAbility)1001) ? 2 : 4);
+
             if (v.Target.IsUnderAnyStatus(BattleStatus.Defend))
             {
-                if (v.Target.HasSupportAbilityByIndex(SupportAbility.AutoFloat)) // Pas Léger
+                if (v.Target.HasSupportAbilityByIndex(SupportAbility.AutoFloat)) // Light Step
                     v.Context.Evade /= v.Target.HasSupportAbilityByIndex((SupportAbility)1001) ? 1 : 2;
                 else
                     v.Context.Evade = 0;
@@ -952,10 +955,8 @@ namespace Memoria.Scripts.Battle
                     v.Target.TryAlterSingleStatus(TranceSeekStatusId.MechanicalArmor, true, v.Caster, Target_TSVar.SpecialItem.MechanicalArmor);
             }
             if (v.Context.IsAbsorb)
-            {
                 v.Target.Flags |= CalcFlag.HpDamageOrHeal;
 
-            }
             if (v.Target.HasSupportAbilityByIndex(SupportAbility.Counter) && v.Target.HasSupportAbilityByIndex((SupportAbility)234) &&
                 (int)v.Target.GetPropertyByName("StatusProperty CustomStatus12 Stack") >= 2 && v.Target.Will < Comn.random16() % 100 && !v.Caster.IsPlayer) // SA Dominance
             {
@@ -1275,6 +1276,21 @@ namespace Memoria.Scripts.Battle
                             v.Target.MaximumHp = OldMaximumHP;
                         }
                     );
+                }
+            }
+
+
+            if (v.Command.AbilityId == BattleAbilityId.WhiteDraw)
+            {
+                if (v.Target.IsUnderAnyStatus(TranceSeekStatus.Dragon) || v.Caster.IsUnderStatus(BattleStatus.Trance))
+                {
+                    int HealAmount = v.Target.HpDamage / 2;
+                    foreach (BattleUnit battleUnit in BattleState.EnumerateUnits())
+                        if (battleUnit.IsPlayer && battleUnit.IsTargetable && !battleUnit.IsUnderAnyStatus(BattleStatus.Death | BattleStatus.Petrify))
+                        {
+                            battleUnit.CurrentHp = Math.Max(battleUnit.CurrentHp + (uint)HealAmount, 0);
+                            btl2d.Btl2dStatReq(battleUnit.Data, -HealAmount, 0);
+                        }
                 }
             }
 
