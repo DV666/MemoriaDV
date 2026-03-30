@@ -10,7 +10,7 @@ using Object = System.Object;
 namespace Memoria.DefaultScripts
 {
     [StatusScript(BattleStatusId.CustomStatus16)] // Old
-    public class VieillissementStatusScript : StatusScriptBase
+    public class OldStatusScript : StatusScriptBase
     {
         public Int32 BasicLevel;
         public Int32 BasicStrength;

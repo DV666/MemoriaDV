@@ -47,32 +47,7 @@ namespace Memoria.Scripts.Battle
             {
                 _v.CalcHpDamage();
 
-                if (_v.Command.Id == BattleCommandId.DragonAct)
-                {
-                    if (_v.Command.AbilityId == TranceSeekBattleAbility.Geirskögul)
-                        _v.Target.HpDamage /= 3;
-
-                    if (_v.Target.IsUnderAnyStatus(TranceSeekStatus.Dragon) || (_v.Caster.IsUnderStatus(BattleStatus.Trance)))
-                    {
-                        switch (_v.Command.AbilityId)
-                        {
-                            case BattleAbilityId.CherryBlossom:
-                                if (_v.Target.IsUnderAnyStatus(BattleStatus.Poison))
-                                    _v.Target.TryAlterStatuses(BattleStatus.Venom, false, _v.Caster);
-                                else
-                                    TranceSeekAPI.TryAlterMagicStatuses(_v);
-                                break;
-                            case BattleAbilityId.DragonCrest:
-                                _v.Target.TryAlterStatuses(BattleStatus.Doom, false, _v.Caster);
-                                break;
-                            case TranceSeekBattleAbility.Geirskögul:
-                                TranceSeekAPI.TryCriticalHit(_v, 255);
-                                break;
-
-                        }
-                    }
-                }
-                else if (_v.Command.AbilityId == (BattleAbilityId)1009) // Pluto Charge
+                if (_v.Command.AbilityId == (BattleAbilityId)1009) // Pluto Charge
                 {
                     int factorDefense = _v.Caster.PhysicalDefence + (_v.Caster.PhysicalDefence * (_v.CasterState().StackStatus.PDefence) / 100);
                     _v.Target.HpDamage = (_v.Target.HpDamage * factorDefense) / 100;
@@ -98,8 +73,6 @@ namespace Memoria.Scripts.Battle
                     if (_v.Caster.IsUnderAnyStatus(BattleStatus.Float))
                         _v.Command.AbilityStatus |= BattleStatus.GradualPetrify;
                 }
-                else if (!_v.Caster.IsPlayer && _v.Caster.Data.dms_geo_id == 66 && _v.Target.IsUnderAnyStatus(TranceSeekStatus.Dragon)) // Dragon's Crest from Burmecian
-                    _v.Target.TryAlterStatuses(BattleStatus.Doom, false, _v.Caster);
                 else
                     TranceSeekAPI.TryAlterMagicStatuses(_v);
             }

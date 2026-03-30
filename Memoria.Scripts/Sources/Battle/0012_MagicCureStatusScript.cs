@@ -27,7 +27,8 @@ namespace Memoria.Scripts.Battle
             }
             if (_v.Command.HitRate == 255)
             {
-                _v.Command.AbilityStatus |= (TranceSeekStatus.PowerUp | TranceSeekStatus.MagicUp | TranceSeekStatus.ArmorUp
+                _v.Command.AbilityStatus |= (TranceSeekStatus.PowerBreak | TranceSeekStatus.MagicBreak | TranceSeekStatus.ArmorBreak
+                    | TranceSeekStatus.MentalBreak | TranceSeekStatus.PowerUp | TranceSeekStatus.MagicUp | TranceSeekStatus.ArmorUp
                     | TranceSeekStatus.MentalUp | TranceSeekStatus.Bulwark | TranceSeekStatus.PerfectCrit | TranceSeekStatus.PerfectDodge);
             }
             TranceSeekAPI.TryRemoveAbilityStatuses(_v);

@@ -66,21 +66,19 @@ namespace Memoria.Scripts.Battle
 
         public static void DragonMechanic(this BattleCalculator v)
         {
-            if (v.Caster.PlayerIndex == CharacterId.Freya)
+            if (v.Target.IsUnderAnyStatus(TranceSeekStatus.Dragon))
             {
                 if (v.Command.AbilityId == BattleAbilityId.Luna) // Luna effect handle in 0079_DragonSkillScript.cs
                     return;
 
-                if (v.Target.IsUnderAnyStatus(TranceSeekStatus.Dragon) && !v.Caster.IsUnderStatus(BattleStatus.Trance) && v.Command.Id == BattleCommandId.DragonAct)
+                if (v.Target.IsUnderAnyStatus(TranceSeekStatus.Dragon) && !v.Caster.IsUnderStatus(BattleStatus.Trance) && v.Command.ScriptId == 79) // Only used with DragonSkillScript
                 {
                     float DragonRemove = v.Caster.HasSupportAbilityByIndex((SupportAbility)1122) ? 25 : (v.Caster.HasSupportAbilityByIndex((SupportAbility)122) ? 12.5f : 0); // Eye of the dragon
                     if (DragonRemove < Comn.random16() % 100)
                         btl_stat.AlterStatus(v.Target, TranceSeekStatusId.Dragon, v.Caster, parameters: "Remove");
                 }
-                else if (v.Command.Id == BattleCommandId.Attack || v.Command.Id == BattleCommandId.Spear || v.Command.Id == BattleCommandId.SpearInTrance || (v.Command.Id == BattleCommandId.DragonAct && !v.Target.IsUnderAnyStatus(TranceSeekStatus.Dragon)))
-                {
+                else if (v.Command.Id == BattleCommandId.Attack || v.Command.Id == BattleCommandId.Spear || v.Command.Id == BattleCommandId.SpearInTrance || (v.Command.ScriptId == 79 && !v.Target.IsUnderAnyStatus(TranceSeekStatus.Dragon)))
                     TryApplyDragon(v);
-                }
             }
         }
 
@@ -255,6 +253,32 @@ namespace Memoria.Scripts.Battle
                     dictbattle[1] = 0;
             }
             );
+        }
+
+        public static void TriggerSteinerPassive(this BattleCalculator v)
+        {
+            if (v.Target.PlayerIndex == CharacterId.Steiner && v.Target.IsPlayer != v.Caster.IsPlayer)
+            {
+                var Steiner_TSVar = v.TargetState().Steiner;
+                if ((Steiner_TSVar.PlutoStackUsed + Steiner_TSVar.PlutoStackRemain) < 5)
+                {
+                    Steiner_TSVar.PlutoStackUsed++;
+                    if (v.Target.IsCovering && (Steiner_TSVar.PlutoStackUsed + Steiner_TSVar.PlutoStackRemain) < 5)
+                        Steiner_TSVar.PlutoStackUsed++;
+                    FF9TextTool.SetCommandName(BattleCommandId.SwordAct, TranceSeekBattleCommand.SwdArtCMDNameVanilla[Localization.CurrentSymbol] + " (" + Steiner_TSVar.PlutoStackUsed + "/" + (Steiner_TSVar.PlutoStackUsed + Steiner_TSVar.PlutoStackRemain) + ")");
+                    Dictionary<String, String> SteinerPassiveMessage = new Dictionary<String, String>
+                    {
+                        { "US", "[SPRT=IconAtlas,item200_00] Pluto!" },
+                        { "UK", "[SPRT=IconAtlas,item200_00] Pluto!" },
+                        { "JP", "[SPRT=IconAtlas,item200_00] プルート！" },
+                        { "ES", "[SPRT=IconAtlas,item200_00] ¡Pluto!" },
+                        { "FR", "[SPRT=IconAtlas,item200_00] Brutos !" },
+                        { "GR", "[SPRT=IconAtlas,item200_00] Pluto!" },
+                        { "IT", "[SPRT=IconAtlas,item200_00] Plutò!" }
+                    };
+                    btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[5C5C5C]", SteinerPassiveMessage, HUDMessage.MessageStyle.DAMAGE, 30);
+                }
+            }
         }
 
         public static void UpdateRedemptionHUD(BattleUnit unit)

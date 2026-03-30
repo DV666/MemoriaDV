@@ -354,7 +354,8 @@
     </Compile>
     <Compile Include="Sources\Battle\0128_EnemyPhysicalDispelAttackScript.cs" />
     <Compile Include="Sources\Battle\0129_MagicPhysicalDispelAttackScript.cs" />
-    <Compile Include="Sources\Battle\0141_MagicWeaponSpecialScript - Copy.cs" />
+    <Compile Include="Sources\Battle\0130_TranceZidaneSkill.cs" />
+    <Compile Include="Sources\Battle\0141_MagicWeaponSpecialScript.cs" />
     <Compile Include="Sources\Battle\0143_MagicRecoveryHPMPScript.cs" />
     <Compile Include="Sources\Battle\0163_SpecialApplyPositiveStatusScript.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -482,7 +483,7 @@
     <Compile Include="Sources\Battle\TroubleStatusScript.cs" />
     <Compile Include="Sources\Battle\VanishStatusScript.cs" />
     <Compile Include="Sources\Battle\VenomStatusScript.cs" />
-    <Compile Include="Sources\Battle\VieillissementStatusScript.cs" />
+    <Compile Include="Sources\Battle\OldStatusScript.cs" />
     <Compile Include="Sources\Battle\VirusStatusScript.cs" />
     <Compile Include="Sources\Battle\ZombieArmorStatusScript.cs" />
     <Compile Include="Sources\Battle\ZombieStatusScript.cs" />

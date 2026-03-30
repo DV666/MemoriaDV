@@ -11,22 +11,24 @@ namespace Memoria.Scripts.Battle
 {
     public class OverloadedPlayerUI : IOverloadPlayerUIScript
     {
+        public static PLAYER CurrentPlayer;
         private static bool _isMenuInjected = false;
 
         public IOverloadPlayerUIScript.Result UpdatePointStatus(PLAYER player)
         {
-            if (!_isMenuInjected && DifficultyDebugMenu._isDebugMenuCalled)
+            if (!_isMenuInjected)
             {
-                GameObject menuObj = new GameObject("DifficultyDebugMenu_Obj");
-                GameObject.DontDestroyOnLoad(menuObj);
-                menuObj.AddComponent<DifficultyDebugMenu>();
+                GameObject go = new GameObject("Mod_SAClearHandler");
+                go.AddComponent<SAClearInputHandler>();
+                UnityEngine.Object.DontDestroyOnLoad(go); // Pour qu'il survive aux changements de menus/scènes
                 _isMenuInjected = true;
-                Memoria.Prime.Log.Message("[Trance Seek DEBUG] Menu de difficulté injecté depuis l'UI !");
             }
 
             Boolean HPColored = Configuration.Mod.FolderNames.Contains("TranceSeek/ColoredHP");
             Boolean MPColored = Configuration.Mod.FolderNames.Contains("TranceSeek/ColoredMP");
             Boolean GemColored = Configuration.Mod.FolderNames.Contains("TranceSeek/ColoredGems");
+
+            CurrentPlayer = player;
 
             IOverloadPlayerUIScript.Result result = new IOverloadPlayerUIScript.Result();
             result.ColorHP = (player.cur.hp == 0) ? FF9TextTool.Red
@@ -119,126 +121,137 @@ namespace Memoria.Scripts.Battle
 
             return result;
         }
-    }
 
-    public class DifficultyDebugMenu : MonoBehaviour
-    {
-        private bool _showMenu = false;
-        private Rect _windowRect = new Rect(50, 50, 250, 350);
-        public static bool _isDebugMenuCalled = true;
-        public static int MegaCheat = 0;
-
-        void Update()
+        public class SAClearInputHandler : MonoBehaviour
         {
-            if (UnityEngine.Input.GetKeyDown(KeyCode.KeypadPlus) && _isDebugMenuCalled)
+            private bool _isActionTriggered = false;
+
+            private void Update()
             {
-                _showMenu = !_showMenu;
-                SoundLib.PlaySoundEffect(1362);
-            }
-        }
+                if (ButtonGroupState.ActiveGroup != "Ability.SupportAbility")
+                    return;
 
-        void OnGUI()
-        {
-            if (_showMenu)
-            {
-                GUI.backgroundColor = Color.black;
-                _windowRect = GUI.Window(1403, _windowRect, DrawMenu, "Mod : Choix Difficulte");
-            }
-        }
-
-        void DrawMenu(int windowID)
-        {
-            GUILayout.Space(10);
-
-            GUI.skin.button.richText = true;
-
-            if (GUILayout.Button(FormatDifficultyText("Zidane", 0))) SetDifficulty(0, 84);
-            if (GUILayout.Button(FormatDifficultyText("Vivi", 1))) SetDifficulty(1, 82);
-            if (GUILayout.Button(FormatDifficultyText("Eiko", 2))) SetDifficulty(2, 83);
-            if (GUILayout.Button(FormatDifficultyText("Kuja", 3))) SetDifficulty(3, 85);
-            if (GUILayout.Button(FormatDifficultyText("Necron", 4))) SetDifficulty(4, 86);
-            if (GUILayout.Button(FormatDifficultyText("Beatrix", 5))) SetDifficulty(5, 87);
-            if (GUILayout.Button(FormatDifficultyText("Ozma", 6))) SetDifficulty(6, 88);
-            if (GUILayout.Button(FormatDifficultyText("Garland", 7))) SetDifficulty(7, 89);
-
-            GUILayout.Space(10);
-
-            if (GUILayout.Button(FormatCheatText("Disable MegaCheat", 0)))
-            {
-                MegaCheat = 0;
-                SoundLib.PlaySoundEffect(4505);
-                _showMenu = false;
-            }
-            if (GUILayout.Button(FormatCheatText("Activate MegaCheat", 1)))
-            {
-                MegaCheat = 1;
-                SoundLib.PlaySoundEffect(4504);
-                _showMenu = false;
-            }
-            if (GUILayout.Button(FormatCheatText("Activate MegaCheatFULL", 2)))
-            {
-                MegaCheat = 2;
-                SoundLib.PlaySoundEffect(4502);
-                _showMenu = false;
-            }
-
-            GUILayout.Space(15);
-
-            if (GUILayout.Button("Fermer le menu"))
-            {
-                _showMenu = false;
-                SoundLib.PlaySoundEffect(1363);
-            }
-
-            GUI.DragWindow();
-        }
-        private string FormatDifficultyText(string name, int difficultyId)
-        {
-            if (FF9StateSystem.EventState != null && FF9StateSystem.EventState.gEventGlobal != null)
-            {
-                if (FF9StateSystem.EventState.gEventGlobal[1403] == difficultyId)
+                if (PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.LeftTrigger) || UIManager.Input.GetKey(Control.LeftTrigger))
                 {
-                    return $"<color=yellow><b>{name}</b></color>";
+                    if (!_isActionTriggered)
+                    {
+                        ClearSupportAbilities();
+                        _isActionTriggered = true;
+                    }
                 }
-            }
-            return name;
-        }
-
-        private string FormatCheatText(string name, int cheatId)
-        {
-            if (MegaCheat == cheatId)
-            {
-                return $"<color=green><b>{name}</b></color>";
-            }
-            return name;
-        }
-
-        private void SetDifficulty(int globalValue, int importantItemId)
-        {
-            try
-            {
-                for (int i = 82; i <= 89; i++)
-                {
-                    ff9item.FF9Item_RemoveImportant(i);
-                }
-
-                ff9item.FF9Item_AddImportant(importantItemId);
-                FF9StateSystem.EventState.gEventGlobal[1403] = (byte)globalValue;
-
-                if (FF9StateSystem.EventState.gEventGlobal[1403] >= 4 && FF9StateSystem.EventState.gEventGlobal[1403] <= 6)
-                    FF9StateSystem.EventState.gEventGlobal[1407] = 1;
                 else
-                    FF9StateSystem.EventState.gEventGlobal[1407] = 0;
-
-                SoundLib.PlaySoundEffect(108);
-                _showMenu = false;
-                Memoria.Prime.Log.Message("[Trance Seek DEBUG] Difficulté changée : " + globalValue + " / Hardcore activée ? : " + (FF9StateSystem.EventState.gEventGlobal[1407] == 1));
-
+                {
+                    _isActionTriggered = false;
+                }
             }
-            catch (Exception ex)
+
+            private void ClearSupportAbilities()
             {
-                Memoria.Prime.Log.Error(ex, "[Trance Seek DEBUG] Erreur dans le changement de difficulte.");
+                PLAYER player = OverloadedPlayerUI.CurrentPlayer;
+                if (player == null) return;
+
+                Boolean hasChanged = false;
+                List<SupportAbility> toRemove = new List<SupportAbility>();
+
+                foreach (SupportAbility sa in player.saExtended)
+                    if (!player.saForced.Contains(sa))
+                        toRemove.Add(sa);
+
+                foreach (SupportAbility sa in toRemove)
+                {
+                    ff9abil.FF9Abil_SetEnableSA(player, sa, false, true);
+                    hasChanged = true;
+                }
+
+                if (hasChanged)
+                {
+                    FF9Sfx.FF9SFX_Play(107);
+                    ff9play.FF9Play_Update(player);
+
+                    AbilityUI abilityScene = PersistenSingleton<UIManager>.Instance.AbilityScene;
+                    if (abilityScene != null && abilityScene.isActiveAndEnabled)
+                    {
+                        Type abilityUiType = typeof(AbilityUI);
+                        var flags = System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance;
+
+                        var displaySAMethod = abilityUiType.GetMethod("DisplaySA", flags);
+                        displaySAMethod?.Invoke(abilityScene, null);
+
+                        var displayCharMethod = abilityUiType.GetMethod("DisplayCharacter", flags);
+                        displayCharMethod?.Invoke(abilityScene, new object[] { true });
+
+                        var setAbilityInfoMethod = abilityUiType.GetMethod("SetAbilityInfo", flags);
+                        setAbilityInfoMethod?.Invoke(abilityScene, new object[] { true });
+                    }
+                }
             }
         }
+
+        // For Memoria ? In the Update fonction
+
+        /*private void Update()
+        {
+            if (!this.isActiveAndEnabled)
+                return;
+
+            // Logique existante pour le trier (Sorter)
+            if (_sortingSourceIndex != -1 && (UIManager.Input.L2Down || UIManager.Input.R2Down))
+            {
+                this.ResetSorter();
+                return;
+            }
+
+            // NOTRE NOUVELLE LOGIQUE : Si on est dans le menu SA et qu'on fait L2
+            if (ButtonGroupState.ActiveGroup == SupportAbilityGroupButton && UIManager.Input.L2Down)
+            {
+                this.ClearSupportAbilities();
+            }
+        }
+
+        private void ClearSupportAbilities()
+        {
+            // On récupère le personnage actuellement affiché
+            PLAYER player = FF9StateSystem.Common.FF9.party.member[this.currentPartyIndex];
+            if (player == null) return;
+
+            Boolean hasChanged = false;
+            List<SupportAbility> toRemove = new List<SupportAbility>();
+
+            // On liste les SA équipées, en ignorant celles "Forcées" par l'équipement
+            foreach (SupportAbility sa in player.saExtended)
+            {
+                if (!player.saForced.Contains(sa))
+                    toRemove.Add(sa);
+            }
+
+            // Optionnel : S'il n'y a rien à enlever, on fait un bruit d'erreur (Buzzer)
+            if (toRemove.Count == 0)
+            {
+                FF9Sfx.FF9SFX_Play(102);
+                return;
+            }
+
+            // On déséquipe les SA et on rembourse les gemmes manuellement (comme le fait déjà Memoria)
+            foreach (SupportAbility sa in toRemove)
+            {
+                ff9abil.FF9Abil_SetEnableSA(player, sa, false);
+                player.cur.capa += (UInt32)ff9abil.GetSAGemCostFromPlayer(player, sa);
+                hasChanged = true;
+            }
+
+            if (hasChanged)
+            {
+                // Bruitage d'équipement
+                FF9Sfx.FF9SFX_Play(107);
+
+                // Mise à jour des stats du joueur
+                ff9play.FF9Play_Update(player);
+
+                // Rafraîchissement NOUVELLE GÉNÉRATION : Appels directs aux méthodes de la classe !
+                this.DisplaySA();              // Recrée la liste et met à jour les icônes de pierres
+                this.DisplayCharacter(true);   // Met à jour la jauge de gemmes du perso en haut à droite
+                this.SetAbilityInfo(true);     // Met à jour l'entête
+            }
+        }*/
     }
 }

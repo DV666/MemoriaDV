@@ -1,16 +1,11 @@
-﻿using Assets.Scripts.Common;
-using Assets.Sources.Scripts.UI.Common;
+﻿using Assets.Sources.Scripts.UI.Common;
 using FF9;
 using Memoria.Data;
-using Memoria.Prime;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using UnityEngine;
 
 namespace Memoria.Scripts.Battle
 {
@@ -176,117 +171,6 @@ namespace Memoria.Scripts.Battle
             File.WriteAllText(DebugFilePath, data);
         }
 
-        public static void ReadDebugBattleFile()
-        {
-            if (!File.Exists(DebugFilePath))
-                return;
-
-            string fullText = File.ReadAllText(DebugFilePath);
-
-
-            if (Regex.IsMatch(fullText, @"Refresh \? :.*Yes", RegexOptions.IgnoreCase))
-                WriteDebugBattleFile();
-
-            if (!Regex.IsMatch(fullText, @"EDIT \? :.*Yes", RegexOptions.IgnoreCase))
-                return;
-
-            Match matchDiff = Regex.Match(fullText, @"💀 TranceSeek Difficulty : (.*)");
-            if (matchDiff.Success)
-            {
-                string diffVal = matchDiff.Groups[1].Value.Trim();
-                try
-                {
-                    TSDifficulty newDiff = (TSDifficulty)Enum.Parse(typeof(TSDifficulty), diffVal, true);
-                    FF9StateSystem.EventState.gEventGlobal[1403] = (byte)newDiff;
-                    if (FF9StateSystem.EventState.gEventGlobal[1403] >= 4 && FF9StateSystem.EventState.gEventGlobal[1403] <= 6) // Activate Hardcore IA
-                        FF9StateSystem.EventState.gEventGlobal[1407] = 1;
-                    else
-                        FF9StateSystem.EventState.gEventGlobal[1407] = 0;
-                }
-                catch { }
-            }
-
-            string[] unitBlocks = fullText.Split(new string[] { "################" }, StringSplitOptions.RemoveEmptyEntries);
-
-            foreach (string block in unitBlocks)
-            {
-                Match matchID = Regex.Match(block, @"ID = (\d+)");
-                if (!matchID.Success) continue;
-
-                int unitId = int.Parse(matchID.Groups[1].Value);
-                BattleUnit unit = BattleState.EnumerateUnits().FirstOrDefault(u => u.Id == unitId);
-
-                if (unit == null) continue;
-
-                Match matchHP = Regex.Match(block, @"❤️ HP = (\d+)/(\d+)");
-                if (matchHP.Success)
-                {
-                    uint newCur = uint.Parse(matchHP.Groups[1].Value);
-                    uint newMax = uint.Parse(matchHP.Groups[2].Value);
-                    if (unit.MaximumHp != newMax) unit.MaximumHp = newMax;
-                    if (unit.CurrentHp != newCur) unit.CurrentHp = newCur;
-                }
-
-                Match matchMP = Regex.Match(block, @"🔷 MP = (\d+)/(\d+)");
-                if (matchMP.Success)
-                {
-                    uint newCur = uint.Parse(matchMP.Groups[1].Value);
-                    uint newMax = uint.Parse(matchMP.Groups[2].Value);
-                    if (unit.MaximumMp != newMax) unit.MaximumMp = newMax;
-                    if (unit.CurrentMp != newCur) unit.CurrentMp = newCur;
-                }
-
-                ApplyStat(block, @"🏅 Level = (\d+)", v => unit.Level = (byte)v);
-                ApplyStat(block, @"🏹 Dexterity = (\d+)", v => unit.Dexterity = (byte)v);
-                ApplyStat(block, @"💪 Strength = (\d+)", v => unit.Strength = (byte)v);
-                ApplyStat(block, @"✨ Magic = (\d+)", v => unit.Magic = (byte)v);
-                ApplyStat(block, @"🧘 Will = (\d+)", v => unit.Will = (byte)v);
-                ApplyStat(block, @"🛡️ PhysicalDefence = (\d+)", v => unit.PhysicalDefence = (byte)v);
-                ApplyStat(block, @"🌀 PhysicalEvade = (\d+)", v => unit.PhysicalEvade = (byte)v);
-                ApplyStat(block, @"🧙 MagicDefence = (\d+)", v => unit.MagicDefence = (byte)v);
-                ApplyStat(block, @"💫 MagicEvade = (\d+)", v => unit.MagicEvade = (byte)v);
-
-                if (!unit.IsPlayer)
-                {
-                    Match matchCat = Regex.Match(block, @"🐾 Category = (.*)");
-                    if (matchCat.Success)
-                    {
-                        try
-                        {
-                            EnemyCategory newCat = (EnemyCategory)Enum.Parse(typeof(EnemyCategory), matchCat.Groups[1].Value.Trim());
-                            btl_util.getEnemyTypePtr(unit.Data).category = (byte)newCat;
-                        }
-                        catch { }
-                    }
-                }
-
-                UpdateElementLogic(block, @"⚠️ Weak Element = (.*)", unit.WeakElement,
-                    (v) => unit.WeakElement |= v, (v) => unit.WeakElement &= ~v);
-
-                UpdateElementLogic(block, @"🌗 Half Element = (.*)", unit.HalfElement,
-                    (v) => unit.HalfElement |= v, (v) => unit.HalfElement &= ~v);
-
-                UpdateElementLogic(block, @"🧱 Guard Element = (.*)", unit.GuardElement,
-                    (v) => unit.GuardElement |= v, (v) => unit.GuardElement &= ~v);
-
-                UpdateElementLogic(block, @"💖 Absorb Element = (.*)", unit.AbsorbElement,
-                    (v) => unit.AbsorbElement |= v, (v) => unit.AbsorbElement &= ~v);
-
-                UpdateStatusLogic(block, @"🎭 Current Status = (.*)", unit.CurrentStatus,
-                    (s) => btl_stat.AlterStatuses(unit, s, unit),
-                    (s) => btl_stat.RemoveStatuses(unit, s));
-
-                UpdateStatusLogic(block, @"💎 Auto Status = (.*)", unit.PermanentStatus,
-                    (s) => btl_stat.MakeStatusesPermanent(unit, s, true),
-                    (s) => btl_stat.MakeStatusesPermanent(unit, s, false));
-
-                UpdateStatusLogic(block, @"🧿 Resist Status = (.*)", unit.ResistStatus,
-                    (s) => unit.Data.stat.invalid |= s,
-                    (s) => unit.Data.stat.invalid &= ~s);
-            }
-
-            WriteDebugBattleFile();
-        }
         public static void WriteDebugMonsterAttacks()
         {
             if (!File.Exists(DebugAAMonstersPath))
@@ -309,167 +193,12 @@ namespace Memoria.Scripts.Battle
                 data += "\n └→ 🌊 Elements = " + (EffectElement)attack.Ref.Elements;
                 data += "\n └→ 🧪 Add Status Set = " + attack.AddStatusNo;
                 data += "\n └→ 💧 MP Cost = " + attack.MP;
-                data += "\n └→ 🏷️ Category = " + attack.Category;              
+                data += "\n └→ 🏷️ Category = " + attack.Category;
                 data += "\n └→ 📜 Script ID = " + attack.Ref.ScriptId;
                 data += "\n\n";
             }
 
             File.WriteAllText(DebugAAMonstersPath, data);
-        }
-
-        public static void ReadDebugMonsterAttacks()
-        {
-            if (!File.Exists(DebugAAMonstersPath))
-                return;
-
-            string fullText = File.ReadAllText(DebugAAMonstersPath);
-
-            if (Regex.IsMatch(fullText, @"Refresh \? :.*Yes", RegexOptions.IgnoreCase))
-                WriteDebugMonsterAttacks();
-
-            if (!Regex.IsMatch(fullText, @"EDIT \? :.*Yes", RegexOptions.IgnoreCase))
-                return;
-
-            Log.Message("[TranceSeek] Start reading Monster Attacks debug file...");
-
-            List<AA_DATA> attackList = FF9StateSystem.Battle.FF9Battle.enemy_attack;
-
-            MatchCollection idMatches = Regex.Matches(fullText, @"\[ID:(\d+)\]");
-
-            for (int i = 0; i < idMatches.Count; i++)
-            {
-                Match currentMatch = idMatches[i];
-                int unitIndex = int.Parse(currentMatch.Groups[1].Value);
-
-                if (unitIndex < 0 || unitIndex >= attackList.Count) continue;
-
-                int startParams = currentMatch.Index;
-                int endParams = (i < idMatches.Count - 1) ? idMatches[i + 1].Index : fullText.Length;
-
-                string block = fullText.Substring(startParams, endParams - startParams);
-
-                AA_DATA attack = attackList[unitIndex];
-
-                ApplyStatDebug(block, @"Power\s*=\s*(\d+)", v => {
-                    if (attack.Ref.Power != v) Log.Message($"[TranceSeek] Attack {unitIndex}: Power changed {attack.Ref.Power} -> {v}");
-                    attack.Ref.Power = v;
-                });
-
-                ApplyStatDebug(block, @"Hit Rate\s*=\s*(\d+)", v => attack.Ref.Rate = v);
-                ApplyStatDebug(block, @"Script ID\s*=\s*(\d+)", v => attack.Ref.ScriptId = v);
-                ApplyStatDebug(block, @"MP Cost\s*=\s*(\d+)", v => attack.MP = v);
-                ApplyStatDebug(block, @"Category\s*=\s*(\d+)", v => attack.Category = (byte)v);
-
-                Match matchStatus = Regex.Match(block, @"Add Status Set\s*=\s*(.*)");
-                if (matchStatus.Success)
-                {
-                    try
-                    {
-                        attack.AddStatusNo = (StatusSetId)Enum.Parse(typeof(StatusSetId), matchStatus.Groups[1].Value.Trim());
-                    }
-                    catch { }
-                }
-
-                Match matchElem = Regex.Match(block, @"Elements\s*=\s*(.*)");
-                if (matchElem.Success)
-                {
-                    try
-                    {
-                        string val = matchElem.Groups[1].Value.Trim();
-                        if (val.Equals("None", StringComparison.OrdinalIgnoreCase))
-                            attack.Ref.Elements = 0;
-                        else
-                        {
-                            EffectElement elems = (EffectElement)Enum.Parse(typeof(EffectElement), val);
-                            attack.Ref.Elements = (byte)elems;
-                        }
-                    }
-                    catch { }
-                }
-            }
-
-            Log.Message("[TranceSeek] Reading done. Rewriting file...");
-            WriteDebugMonsterAttacks();
-        }
-
-        private static void ApplyStatDebug(string block, string pattern, Action<int> applyAction)
-        {
-            Match m = Regex.Match(block, pattern, RegexOptions.IgnoreCase);
-            if (m.Success && int.TryParse(m.Groups[1].Value, out int val))
-            {
-                applyAction(val);
-            }
-        }
-        private static void ApplyStat(string block, string pattern, Action<int> applyAction)
-        {
-            Match m = Regex.Match(block, pattern);
-            if (m.Success && int.TryParse(m.Groups[1].Value, out int val))
-                applyAction(val);
-        }
-
-        private static void UpdateStatusLogic(string block, string pattern, BattleStatus currentStatus, Action<BattleStatus> onAdd, Action<BattleStatus> onRemove)
-        {
-            Match m = Regex.Match(block, pattern);
-            if (!m.Success) return;
-
-            string statusString = m.Groups[1].Value;
-            BattleStatus targetStatus = 0;
-
-            if (!string.IsNullOrEmpty(statusString) && statusString.Trim().Length > 0 && statusString.Trim() != "0")
-            {
-                try { targetStatus = (BattleStatus)Enum.Parse(typeof(BattleStatus), statusString.Trim()); }
-                catch { return; }
-            }
-
-            BattleStatus statusToAdd = targetStatus & ~currentStatus;
-            BattleStatus statusToRemove = currentStatus & ~targetStatus;
-
-            if (statusToAdd != 0) onAdd(statusToAdd);
-            if (statusToRemove != 0) onRemove(statusToRemove);
-        }
-
-        private static void UpdateElementLogic(string block, string pattern, EffectElement currentElement, Action<EffectElement> onAdd, Action<EffectElement> onRemove)
-        {
-            Match m = Regex.Match(block, pattern);
-            if (!m.Success) return;
-
-            string elemString = m.Groups[1].Value;
-            EffectElement targetElement = 0;
-
-            if (!string.IsNullOrEmpty(elemString) && elemString.Trim().Length > 0 && elemString.Trim() != "0")
-            {
-                try { targetElement = (EffectElement)Enum.Parse(typeof(EffectElement), elemString.Trim()); }
-                catch { return; }
-            }
-
-            EffectElement elemToAdd = targetElement & ~currentElement;
-            EffectElement elemToRemove = currentElement & ~targetElement;
-
-            if (elemToAdd != 0) onAdd(elemToAdd);
-            if (elemToRemove != 0) onRemove(elemToRemove);
-        }
-
-        public static IEnumerator ReloadDebugFiles() // The Unit Delayer here don't work in some case, like against PlantBrain if a put the code on the first character... ?
-        {
-            while (SceneDirector.IsBattleScene())
-            {
-                float start = Time.realtimeSinceStartup;
-
-                while (Time.realtimeSinceStartup < start + 1.0f)
-                {
-                    yield return null;
-                }
-
-                try
-                {
-                    ReadDebugBattleFile();
-                    ReadDebugMonsterAttacks();
-                }
-                catch (Exception)
-                {
-                    Log.Message("[TranceSeek] Error while reading DEBUG files :(");
-                }
-            }
         }
 
         public static String RemoveTags(string s)

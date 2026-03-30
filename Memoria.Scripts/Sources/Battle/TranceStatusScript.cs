@@ -51,14 +51,17 @@ namespace Memoria.DefaultScripts
             base.Apply(target, inflicter, parameters);
             btl_cmd.SetCommand(target.Data.cmd[4], BattleCommandId.SysTrans, 0, target.Id, 0u);
             var Target_TSVar = target.State();
-            if (!Target.IsPlayer && !Target.IsUnderAnyStatus(BattleStatus.EasyKill)) // +50% HP/MP Max if monster get under Trance
+            if (!Target.IsPlayer)
             {
-                Target.MaximumHp += (Target.MaximumHp / 2);
-                Target.MaximumMp += (Target.MaximumMp / 2);
-                Target.CurrentHp = Target.MaximumHp;
-                Target.CurrentMp = Target.MaximumMp;
+                if (!Target.IsUnderAnyStatus(BattleStatus.EasyKill))  // +50% HP/MP Max if monster get under Trance
+                {
+                    Target.MaximumHp += (Target.MaximumHp / 2);
+                    Target.MaximumMp += (Target.MaximumMp / 2);
+                    Target.CurrentHp = Target.MaximumHp;
+                    Target.CurrentMp = Target.MaximumMp;
+                    Target.AlterStatus(BattleStatus.EasyKill);
+                }
                 Target.RemoveStatus(BattleStatusConst.AnyNegative);
-                Target.AlterStatus(BattleStatus.EasyKill);
             }
 
             if (target.HasSupportAbilityByIndex(TranceSeekSupportAbility.HighTide_Boosted))

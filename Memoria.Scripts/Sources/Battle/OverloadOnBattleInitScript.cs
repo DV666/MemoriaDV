@@ -23,6 +23,9 @@ namespace Memoria.Scripts.Battle
         public HUDMessageChild HUDToReset = null;
         public Int32 magiclampcooldown;
 
+        private BattleUnit Sister = null; // TO DELETE - After Memoria Update :) (fix cover)
+        private Vector3 SisterPosition = Vector3.zero; // TO DELETE - After Memoria Update :) (fix cover)
+
         public void OnBattleInit()
         {
             // Zidane = 0, Vivi = 1, Eiko = 2, Kuja = 3, Necron = 4, Beatrix = 5, Ozma = 6, Garland = 7
@@ -35,9 +38,12 @@ namespace Memoria.Scripts.Battle
                     FF9StateSystem.EventState.gEventGlobal[1407] = 0;
             }*/
 
+            int BattleID = FF9StateSystem.Battle.battleMapIndex;
+            int GroupeBattleID = FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum;
+
             BTL_SCENE btl_scene = FF9StateSystem.Battle.FF9Battle.btl_scene;
-            SB2_PATTERN sb2Pattern = FF9StateSystem.Battle.FF9Battle.btl_scene.PatAddr[FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum];
-            KeyValuePair<Int32, Int32> BattleExID = new KeyValuePair<Int32, Int32>(FF9StateSystem.Battle.battleMapIndex, FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum);
+            SB2_PATTERN sb2Pattern = FF9StateSystem.Battle.FF9Battle.btl_scene.PatAddr[GroupeBattleID];
+            KeyValuePair<Int32, Int32> BattleExID = new KeyValuePair<Int32, Int32>(BattleID, GroupeBattleID);
 
             if (CustomBBGfromBattleID.ContainsKey(BattleExID)) // Change BBG for specific, to have a better camera.
                 ChangeBBG(CustomBBGfromBattleID[BattleExID]);
@@ -178,12 +184,26 @@ namespace Memoria.Scripts.Battle
             {
                 var StateDict = TranceSeekBattleDictionary.GetState(unit.Data);
 
+                if ((BattleID == 849 || GroupeBattleID == 2) && !unit.IsPlayer) // TO DELETE - After Memoria Update :) (fix cover)
+                {
+                    if (unit.Data.dms_geo_id == 592)
+                    {
+                        Log.Message("[FIX DV] Fix cover visual for the battle");
+                        unit.AddDelayedModifier(FixCoverVisualForBrother, null);
+                    }
+                    else if (unit.Data.dms_geo_id == 591)
+                    {
+                        Sister = unit;
+                        SisterPosition = unit.Data.pos;
+                    }
+                }
+
                 if (unit.IsPlayer)
                 {
                     if (btl_scene.Info.StartType == battle_start_type_tags.BTL_START_BACK_ATTACK)
                         StateDict.IsBackAttack = true;
 
-                    if ((FF9StateSystem.Battle.battleMapIndex == 334 || FF9StateSystem.Battle.battleMapIndex == 335)) // Add Steal command for Zidane/Marcus against Steiner 2nd
+                    if ((BattleID == 334 || BattleID == 335)) // Add Steal command for Zidane/Marcus against Steiner 2nd
                     {
                         if (unit.PlayerIndex == CharacterId.Zidane || unit.PlayerIndex == CharacterId.Marcus)
                         {
@@ -507,7 +527,7 @@ namespace Memoria.Scripts.Battle
                         battleEnemy.Data.bonus_gil = (uint)(battleEnemy.Data.bonus_gil + ((battleEnemy.Data.bonus_gil * dictdifficulty[12]) / 100));
                     }
 
-                    if (FF9StateSystem.Battle.battleMapIndex == 838 && sb2Pattern.Monster[unit.Data.bi.slot_no].TypeNo == 1) // Golden Pidove (fake Sleep)
+                    if (BattleID == 838 && sb2Pattern.Monster[unit.Data.bi.slot_no].TypeNo == 1) // Golden Pidove (fake Sleep)
                     {
                         if (!TranceSeekSpecial.PolaritySPS.TryGetValue(unit, out SPSEffect sps))
                             TranceSeekSpecial.PolaritySPS[unit] = null;
@@ -522,7 +542,7 @@ namespace Memoria.Scripts.Battle
                         TranceSeekSpecial.PolaritySPS[unit] = sps;
                     }
 
-                    SB2_PUT enemyPlacement = btl_scene.PatAddr[FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum].Monster[unit.Data.bi.slot_no];
+                    SB2_PUT enemyPlacement = btl_scene.PatAddr[GroupeBattleID].Monster[unit.Data.bi.slot_no];
                     SB2_MON_PARM monParam = btl_scene.MonAddr[enemyPlacement.TypeNo];
 
                     // Pad 0 (byte) => Unused (1) ; Pad 1 (uint16) => Unused (2) ; Pad 2 (uint16) => Unused (3)
@@ -563,7 +583,6 @@ namespace Memoria.Scripts.Battle
             {
                 SpecialFilesTranceSeek.WriteDebugBattleFile();
                 SpecialFilesTranceSeek.WriteDebugMonsterAttacks();
-                PersistenSingleton<SceneDirector>.Instance.StartCoroutine(SpecialFilesTranceSeek.ReloadDebugFiles());
             }
         }
 
@@ -594,6 +613,19 @@ namespace Memoria.Scripts.Battle
                 if (unit.PlayerIndex == CharacterId.Zidane)
                     SwitchWeaponScript.InitZidaneModel(unit);
             }
+        }
+
+        private Boolean FixCoverVisualForBrother(BattleUnit brother) // TO DELETE AFTER MEMORIA UPDATE
+        {
+            if (brother == null || Sister == null)
+                return true;
+
+            if (brother.IsCovering)
+                Sister.Data.pos[2] = SisterPosition[2] + 400f;
+            else if (Sister.Data.pos[2] != SisterPosition[2] && !btlseq.BtlSeqBusy())
+                Sister.Data.pos[2] = SisterPosition[2];
+
+            return true;
         }
 
         private Boolean ProcessMagicLampRecast(BattleUnit caster)

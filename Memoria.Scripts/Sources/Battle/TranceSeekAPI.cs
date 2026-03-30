@@ -83,7 +83,7 @@ namespace Memoria.Scripts.Battle
                 v.Target.MpDamage *= 2;
                 v.Target.Flags |= CalcFlag.Critical;
             }
-            else if (v.Caster.PlayerIndex == CharacterId.Zidane && btl_util.getSerialNumber(v.Caster.Data) == CharacterSerialNumber.ZIDANE_SWORD)
+            else if (v.Caster.PlayerIndex == CharacterId.Zidane && btl_util.getSerialNumber(v.Caster.Data) == CharacterSerialNumber.ZIDANE_SWORD && v.Command.AbilityId == BattleAbilityId.Attack)
             {
                 Caster_TSVar.Zidane.Critical += 5;
                 Dictionary<String, String> localizedMessage = new Dictionary<String, String>
@@ -351,7 +351,8 @@ namespace Memoria.Scripts.Battle
 
             if (v.Target.IsUnderAnyStatus(BattleStatus.Defend))
             {
-                v.Context.DamageModifierCount -= 2;
+                TranceSeekCharacterMechanic.TriggerSteinerPassive(v);
+                v.Context.Attack /= 2;
                 SoundLib.PlaySoundEffect(356); //se050010
             }
 
@@ -506,6 +507,13 @@ namespace Memoria.Scripts.Battle
 
             if (v.Target.IsUnderAnyStatus(BattleStatus.Shell))
                 v.Context.Attack >>= 1;
+
+            if (v.Target.IsUnderAnyStatus(BattleStatus.Defend) && v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.SuperGuard))
+            {
+                TranceSeekCharacterMechanic.TriggerSteinerPassive(v);
+                v.Context.Attack /= v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.SuperGuard_Boosted) ? 4 : 2;
+                SoundLib.PlaySoundEffect(356); //se050010
+            }
 
             if (v.Caster.IsUnderAnyStatus(BattleStatus.CustomStatus18)) // Silence Easy Kill - 25% magic attack malus for bosses with Silence.
                 v.Context.DamageModifierCount--;
@@ -1279,18 +1287,30 @@ namespace Memoria.Scripts.Battle
                 }
             }
 
-
-            if (v.Command.AbilityId == BattleAbilityId.WhiteDraw)
+            if (v.Command.ScriptId == 79)
             {
-                if (v.Target.IsUnderAnyStatus(TranceSeekStatus.Dragon) || v.Caster.IsUnderStatus(BattleStatus.Trance))
+                if (v.Command.AbilityId == BattleAbilityId.WhiteDraw || (!v.Caster.IsPlayer && v.Command.Data.aa.Vfx2 == (ushort)v.Command.AbilityId))
                 {
-                    int HealAmount = v.Target.HpDamage / 2;
-                    foreach (BattleUnit battleUnit in BattleState.EnumerateUnits())
-                        if (battleUnit.IsPlayer && battleUnit.IsTargetable && !battleUnit.IsUnderAnyStatus(BattleStatus.Death | BattleStatus.Petrify))
-                        {
-                            battleUnit.CurrentHp = Math.Max(battleUnit.CurrentHp + (uint)HealAmount, 0);
-                            btl2d.Btl2dStatReq(battleUnit.Data, -HealAmount, 0);
-                        }
+                    if (v.Target.IsUnderAnyStatus(TranceSeekStatus.Dragon) || v.Caster.IsUnderStatus(BattleStatus.Trance))
+                    {
+                        int HealAmount = v.Target.HpDamage / 2;
+                        foreach (BattleUnit battleUnit in BattleState.EnumerateUnits())
+                            if (battleUnit.IsPlayer && battleUnit.IsTargetable && !battleUnit.IsUnderAnyStatus(BattleStatus.Death | BattleStatus.Petrify))
+                            {
+                                battleUnit.CurrentHp = Math.Max(battleUnit.CurrentHp + (uint)HealAmount, 0);
+                                btl2d.Btl2dStatReq(battleUnit.Data, -HealAmount, 0);
+                            }
+                    }
+                }
+            }
+            else if (v.Command.ScriptId == 130)
+            {
+                if (v.Command.AbilityId == BattleAbilityId.StellarCircle5 && ((v.Caster.CurrentMp + FF9StateSystem.Battle.FF9Battle.aa_data[v.Command.AbilityId].MP) % 10) == 5)
+                {
+                    v.Target.HpDamage /= 5;
+                    HealHP = (int)(v.Target.HpDamage / 4);
+                    v.Caster.CurrentHp = Math.Min(v.Caster.CurrentHp + (uint)HealHP, v.Caster.MaximumHp);
+                    btl2d.Btl2dStatReq(v.Caster.Data, -HealHP, 0);
                 }
             }
 
@@ -1316,23 +1336,6 @@ namespace Memoria.Scripts.Battle
                     v.Target.AlterStatus(BattleStatus.Regen);
                 if (Mog.HasSupportAbilityByIndex((SupportAbility)1259))
                     v.Target.RemoveStatus(BattleStatusConst.AnyNegative &~BattleStatus.Death);
-            }
-
-            if (v.Target.PlayerIndex == CharacterId.Steiner && v.Target.IsCovering && (Target_TSVar.Steiner.PlutoStackUsed + Target_TSVar.Steiner.PlutoStackRemain) < 5)
-            {
-                Target_TSVar.Steiner.PlutoStackUsed++;
-                FF9TextTool.SetCommandName(BattleCommandId.SwordAct, TranceSeekBattleCommand.SwdArtCMDNameVanilla[Localization.CurrentSymbol] + " (" + Target_TSVar.Steiner.PlutoStackUsed + "/" + (Target_TSVar.Steiner.PlutoStackUsed + Target_TSVar.Steiner.PlutoStackRemain) + ")");
-                Dictionary<String, String> SteinerPassiveMessage = new Dictionary<String, String>
-                {
-                    { "US", "[SPRT=IconAtlas,item200_00] Pluto!" },
-                    { "UK", "[SPRT=IconAtlas,item200_00] Pluto!" },
-                    { "JP", "[SPRT=IconAtlas,item200_00] プルート！" },
-                    { "ES", "[SPRT=IconAtlas,item200_00] ¡Pluto!" },
-                    { "FR", "[SPRT=IconAtlas,item200_00] Brutos !" },
-                    { "GR", "[SPRT=IconAtlas,item200_00] Pluto!" },
-                    { "IT", "[SPRT=IconAtlas,item200_00] Plutò!" }
-                };
-                btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[5C5C5C]", SteinerPassiveMessage, HUDMessage.MessageStyle.DAMAGE, 30);
             }
         }
     }

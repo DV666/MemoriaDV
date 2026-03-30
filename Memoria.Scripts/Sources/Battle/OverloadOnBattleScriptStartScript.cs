@@ -83,7 +83,7 @@ namespace Memoria.Scripts.Battle
                     v.Command.Power += 20;
             }
 
-            if (!v.Caster.IsPlayer && v.Command.Data.aa.Vfx2 > 0) // Animation 2
+            if (!v.Caster.IsPlayer && v.Command.Data.aa.Vfx2 > 0 && v.Command.ScriptId != 79) // Animation 2 (use a CustomStatus or specify a DragonSkill)
             {
                 ulong AACustomStatus = v.Command.Data.aa.Vfx2;
 
