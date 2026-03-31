@@ -20,7 +20,7 @@ namespace Memoria.Scripts.Battle
             {
                 GameObject go = new GameObject("Mod_SAClearHandler");
                 go.AddComponent<SAClearInputHandler>();
-                UnityEngine.Object.DontDestroyOnLoad(go); // Pour qu'il survive aux changements de menus/scènes
+                UnityEngine.Object.DontDestroyOnLoad(go);
                 _isMenuInjected = true;
             }
 
@@ -194,14 +194,12 @@ namespace Memoria.Scripts.Battle
             if (!this.isActiveAndEnabled)
                 return;
 
-            // Logique existante pour le trier (Sorter)
             if (_sortingSourceIndex != -1 && (UIManager.Input.L2Down || UIManager.Input.R2Down))
             {
                 this.ResetSorter();
                 return;
             }
 
-            // NOTRE NOUVELLE LOGIQUE : Si on est dans le menu SA et qu'on fait L2
             if (ButtonGroupState.ActiveGroup == SupportAbilityGroupButton && UIManager.Input.L2Down)
             {
                 this.ClearSupportAbilities();
@@ -210,28 +208,24 @@ namespace Memoria.Scripts.Battle
 
         private void ClearSupportAbilities()
         {
-            // On récupère le personnage actuellement affiché
             PLAYER player = FF9StateSystem.Common.FF9.party.member[this.currentPartyIndex];
             if (player == null) return;
 
             Boolean hasChanged = false;
             List<SupportAbility> toRemove = new List<SupportAbility>();
 
-            // On liste les SA équipées, en ignorant celles "Forcées" par l'équipement
             foreach (SupportAbility sa in player.saExtended)
             {
                 if (!player.saForced.Contains(sa))
                     toRemove.Add(sa);
             }
 
-            // Optionnel : S'il n'y a rien à enlever, on fait un bruit d'erreur (Buzzer)
             if (toRemove.Count == 0)
             {
                 FF9Sfx.FF9SFX_Play(102);
                 return;
             }
 
-            // On déséquipe les SA et on rembourse les gemmes manuellement (comme le fait déjà Memoria)
             foreach (SupportAbility sa in toRemove)
             {
                 ff9abil.FF9Abil_SetEnableSA(player, sa, false);
@@ -241,16 +235,11 @@ namespace Memoria.Scripts.Battle
 
             if (hasChanged)
             {
-                // Bruitage d'équipement
                 FF9Sfx.FF9SFX_Play(107);
-
-                // Mise à jour des stats du joueur
                 ff9play.FF9Play_Update(player);
-
-                // Rafraîchissement NOUVELLE GÉNÉRATION : Appels directs aux méthodes de la classe !
-                this.DisplaySA();              // Recrée la liste et met à jour les icônes de pierres
-                this.DisplayCharacter(true);   // Met à jour la jauge de gemmes du perso en haut à droite
-                this.SetAbilityInfo(true);     // Met à jour l'entête
+                this.DisplaySA();
+                this.DisplayCharacter(true);
+                this.SetAbilityInfo(true);
             }
         }*/
     }

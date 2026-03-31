@@ -33,6 +33,9 @@ namespace Memoria.Scripts.Battle
             bool IsAbility(BattleAbilityId targetId) => abilityId == targetId || (!_v.Caster.IsPlayer && _v.Command.Data.aa.Vfx2 == (ushort)targetId);
             bool isDragonOrTrance = _v.Target.IsUnderAnyStatus(TranceSeekStatus.Dragon) || _v.Caster.IsUnderStatus(BattleStatus.Trance);
 
+            if (_v.Target.IsUnderAnyStatus(TranceSeekStatus.Dragon))
+                _v.Context.DamageModifierCount++;
+
             if (IsAbility(BattleAbilityId.Lancer))
             {
                 if (_v.IsCasterNotTarget() && _v.Target.CanBeAttacked() && !_v.Target.TryKillFrozen())
