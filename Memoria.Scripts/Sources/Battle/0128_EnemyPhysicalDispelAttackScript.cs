@@ -4,9 +4,6 @@ using System;
 
 namespace Memoria.Scripts.Battle
 {
-    /// <summary>
-    /// Weapon: Blood Sword
-    /// </summary>
     [BattleScript(Id)]
     public sealed class EnemyPhysicalDispelAttackScript : IBattleScript
     {

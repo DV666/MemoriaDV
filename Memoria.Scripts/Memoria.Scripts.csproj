@@ -504,7 +504,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Sources\Battle\AbilityFeaturesTSBackup.txt" />
+    <Content Include="Sources\Battle\AbilityFeaturesBackup.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
