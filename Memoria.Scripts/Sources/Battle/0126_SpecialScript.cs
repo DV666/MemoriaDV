@@ -1,8 +1,8 @@
 ﻿using Memoria.Data;
 using System;
-using static Memoria.Scripts.Battle.TranceSeekAPI;
+using static Memoria.Scripts.TranceSeek.TranceSeekAPI;
 
-namespace Memoria.Scripts.Battle
+namespace Memoria.Scripts.TranceSeek
 {
     /// <summary>
     /// Regen, Shell, Protect, Haste, Reflect, Float, Carbuncle, Mighty Guard, Vanish, Auto-Life, Reis’s Wind, Luna, Aura, Defend

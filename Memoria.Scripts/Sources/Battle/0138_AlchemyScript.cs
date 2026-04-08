@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using static Memoria.Assets.DataResources;
 
-namespace Memoria.Scripts.Battle
+namespace Memoria.Scripts.TranceSeek
 {
     [BattleScript(Id)]
     public sealed class AlchemyScript : IBattleScript

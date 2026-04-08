@@ -1,7 +1,7 @@
 using System;
 using Memoria.Data;
 
-namespace Memoria.Scripts.Battle
+namespace Memoria.Scripts.TranceSeek
 {
     /// <summary>
     /// Life, Full-Life, Rebirth Flame, Revive

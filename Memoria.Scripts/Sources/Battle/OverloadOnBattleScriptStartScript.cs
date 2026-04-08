@@ -4,10 +4,10 @@ using Memoria.Data;
 using Memoria.Database;
 using System;
 using System.Collections.Generic;
-using static Memoria.Scripts.Battle.TranceSeekAPI;
-using static Memoria.Scripts.Battle.TranceSeekBattleDictionary;
+using static Memoria.Scripts.TranceSeek.TranceSeekAPI;
+using static Memoria.Scripts.TranceSeek.TranceSeekBattleDictionary;
 
-namespace Memoria.Scripts.Battle
+namespace Memoria.Scripts.TranceSeek
 {
     public class OverloadOnBattleScriptStartScript : IOverloadOnBattleScriptStartScript
     {

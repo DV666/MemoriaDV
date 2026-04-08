@@ -4,7 +4,7 @@ using Memoria.Data;
 using FF9;
 using Object = System.Object;
 using System.Security.Cryptography;
-using Memoria.Scripts.Battle;
+using Memoria.Scripts.TranceSeek;
 
 namespace Memoria.DefaultScripts
 {

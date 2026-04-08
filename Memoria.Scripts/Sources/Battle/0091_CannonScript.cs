@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Memoria.Scripts.Battle
+namespace Memoria.Scripts.TranceSeek
 {
     /// <summary>
     /// Cannon

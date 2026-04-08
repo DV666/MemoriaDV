@@ -3,9 +3,9 @@ using Memoria.Data;
 using System.Collections.Generic;
 using System;
 using FF9;
-using static Memoria.Scripts.Battle.TranceSeekBattleDictionary;
+using static Memoria.Scripts.TranceSeek.TranceSeekBattleDictionary;
 
-namespace Memoria.Scripts.Battle
+namespace Memoria.Scripts.TranceSeek
 {
     /// <summary>
     /// Weapon 1-5, 7

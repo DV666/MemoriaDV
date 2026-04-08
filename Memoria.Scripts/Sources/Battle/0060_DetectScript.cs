@@ -3,7 +3,7 @@ using Memoria.Prime;
 using System;
 using System.Collections.Generic;
 
-namespace Memoria.Scripts.Battle
+namespace Memoria.Scripts.TranceSeek
 {
     /// <summary>
     /// Detect

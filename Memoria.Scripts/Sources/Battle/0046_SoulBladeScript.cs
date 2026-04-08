@@ -2,7 +2,7 @@ using System;
 using Memoria.Data;
 using Memoria.Prime;
 
-namespace Memoria.Scripts.Battle
+namespace Memoria.Scripts.TranceSeek
 {
     /// <summary>
     /// Soul Blade

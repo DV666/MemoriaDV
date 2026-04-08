@@ -1,11 +1,11 @@
 ﻿using FF9;
 using Memoria.Data;
-using Memoria.Scripts.Battle;
+using Memoria.Scripts.TranceSeek;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
 using static BTL_DATA;
-using static Memoria.Scripts.Battle.TranceSeekBattleDictionary;
+using static Memoria.Scripts.TranceSeek.TranceSeekBattleDictionary;
 using Object = System.Object;
 
 namespace Memoria.DefaultScripts

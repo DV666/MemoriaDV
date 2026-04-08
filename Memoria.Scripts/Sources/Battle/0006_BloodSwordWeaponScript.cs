@@ -1,7 +1,7 @@
 using Memoria.Data;
 using System;
 
-namespace Memoria.Scripts.Battle
+namespace Memoria.Scripts.TranceSeek
 {
     /// <summary>
     /// Weapon: Blood Sword

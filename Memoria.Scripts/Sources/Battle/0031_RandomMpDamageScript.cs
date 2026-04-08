@@ -4,7 +4,7 @@ using Memoria.Data;
 using Memoria.Prime;
 using System.Runtime.Remoting.Contexts;
 
-namespace Memoria.Scripts.Battle
+namespace Memoria.Scripts.TranceSeek
 {
     /// <summary>
     /// Magic Hammer, Flare Star

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System;
 
-namespace Memoria.Scripts.Battle
+namespace Memoria.Scripts.TranceSeek
 {
     public static class TranceSeekBattleCommand
     {

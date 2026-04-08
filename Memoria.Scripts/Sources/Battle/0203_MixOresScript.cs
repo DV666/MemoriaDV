@@ -6,7 +6,7 @@ using Memoria.Data;
 using Memoria.Prime;
 using static TitleUI;
 
-namespace Memoria.Scripts.Battle
+namespace Memoria.Scripts.TranceSeek
 {
     /// <summary>
     /// Special

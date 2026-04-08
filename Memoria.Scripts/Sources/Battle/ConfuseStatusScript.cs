@@ -3,7 +3,7 @@ using UnityEngine;
 using Memoria.Data;
 using FF9;
 using Object = System.Object;
-using Memoria.Scripts.Battle;
+using Memoria.Scripts.TranceSeek;
 
 namespace Memoria.DefaultScripts
 {

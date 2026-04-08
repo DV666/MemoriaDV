@@ -3,7 +3,7 @@ using Memoria.Data;
 using Memoria.Prime;
 using System;
 
-namespace Memoria.Scripts.Battle
+namespace Memoria.Scripts.TranceSeek
 {
     /// <summary>
     /// Atomos

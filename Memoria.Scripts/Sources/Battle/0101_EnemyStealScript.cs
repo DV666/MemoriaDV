@@ -2,7 +2,7 @@ using Assets.Sources.Scripts.UI.Common;
 using Memoria.Data;
 using System;
 
-namespace Memoria.Scripts.Battle
+namespace Memoria.Scripts.TranceSeek
 {
     /// <summary>
     /// Steal (enemy)

@@ -5,7 +5,7 @@ using FF9;
 using Memoria.Data;
 using UnityEngine;
 
-namespace Memoria.Scripts.Battle
+namespace Memoria.Scripts.TranceSeek
 {
     /// <summary>
     /// Special

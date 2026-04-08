@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Memoria.Data;
 
-namespace Memoria.Scripts.Battle
+namespace Memoria.Scripts.TranceSeek
 {
     /// <summary>
     /// Magic Break

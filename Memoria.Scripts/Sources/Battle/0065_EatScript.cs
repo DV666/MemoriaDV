@@ -8,7 +8,7 @@ using Memoria.Data;
 using Memoria.Prime;
 using Memoria.Test;
 
-namespace Memoria.Scripts.Battle
+namespace Memoria.Scripts.TranceSeek
 {
     /// <summary>
     /// Eat, Cook

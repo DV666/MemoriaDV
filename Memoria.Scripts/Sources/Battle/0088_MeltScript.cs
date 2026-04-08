@@ -1,9 +1,9 @@
 using FF9;
 using System;
 using Memoria.Data;
-using static Memoria.Scripts.Battle.TranceSeekAPI;
+using static Memoria.Scripts.TranceSeek.TranceSeekAPI;
 
-namespace Memoria.Scripts.Battle
+namespace Memoria.Scripts.TranceSeek
 {
     /// <summary>
     /// Melt, Blowup

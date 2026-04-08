@@ -3,7 +3,7 @@ using FF9;
 using Memoria.Data;
 using static SiliconStudio.Social.ResponseData;
 
-namespace Memoria.Scripts.Battle
+namespace Memoria.Scripts.TranceSeek
 {
     /// <summary>
     /// Shiva, Ifrit, Ramuh, Leviathan, Bahamut, Ark, Fenrir, Madeen, Terra Homing

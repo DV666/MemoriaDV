@@ -1,6 +1,6 @@
 using System;
 
-namespace Memoria.Scripts.Battle
+namespace Memoria.Scripts.TranceSeek
 {
     /// <summary>
     /// Dragon Breath

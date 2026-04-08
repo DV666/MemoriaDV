@@ -9,7 +9,7 @@ using Memoria.Prime;
 using Memoria.Prime.PsdFile;
 using UnityEngine;
 
-namespace Memoria.Scripts.Battle
+namespace Memoria.Scripts.TranceSeek
 {
     [BattleScript(Id)]
     public sealed class SummonMonsterScript : IBattleScript

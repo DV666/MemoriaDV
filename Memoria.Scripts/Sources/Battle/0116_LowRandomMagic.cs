@@ -2,7 +2,7 @@ using System;
 using System.Runtime.Remoting.Contexts;
 using Memoria.Data;
 
-namespace Memoria.Scripts.Battle
+namespace Memoria.Scripts.TranceSeek
 {
     /// <summary>
     /// Lancer

@@ -2,7 +2,7 @@
 using Memoria.Prime;
 using System;
 
-namespace Memoria.Scripts.Battle
+namespace Memoria.Scripts.TranceSeek
 {
     public static class TranceSeekRegularItem
     {

@@ -2,7 +2,7 @@
 using Memoria.Data;
 using Memoria.Prime;
 
-namespace Memoria.Scripts.Battle
+namespace Memoria.Scripts.TranceSeek
 {
     /// <summary>
     /// Matra Magic, Blue Shockwave, Judgment Sword, Helm Divide

@@ -1,6 +1,6 @@
 using System;
 
-namespace Memoria.Scripts.Battle
+namespace Memoria.Scripts.TranceSeek
 {
     [BattleScript(Id)]
     public sealed class MagicWeaponScript : BaseWeaponScript

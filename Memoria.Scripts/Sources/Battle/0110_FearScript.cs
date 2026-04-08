@@ -1,7 +1,7 @@
 using System;
 using FF9;
 
-namespace Memoria.Scripts.Battle
+namespace Memoria.Scripts.TranceSeek
 {
     [BattleScript(Id)]
     public sealed class FearScript : IBattleScript

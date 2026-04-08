@@ -2,7 +2,7 @@ using System;
 using FF9;
 using Memoria.Data;
 
-namespace Memoria.Scripts.Battle
+namespace Memoria.Scripts.TranceSeek
 {
     /// <summary>
     /// White Draw

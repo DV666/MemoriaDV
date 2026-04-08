@@ -2,7 +2,7 @@ using Memoria.Data;
 using System;
 using System.Collections.Generic;
 
-namespace Memoria.Scripts.Battle
+namespace Memoria.Scripts.TranceSeek
 {
     [BattleScript(Id)]
     public sealed class MagicRecoveryScript : IBattleScript

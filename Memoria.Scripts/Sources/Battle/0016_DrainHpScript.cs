@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.Remoting.Contexts;
 
-namespace Memoria.Scripts.Battle
+namespace Memoria.Scripts.TranceSeek
 {
     /// <summary>
     /// Absorb Strength

@@ -13,9 +13,9 @@ using System.Linq;
 using System.Threading;
 using UnityEngine;
 using static BTL_DATA;
-using static Memoria.Scripts.Battle.TranceSeekAPI;
+using static Memoria.Scripts.TranceSeek.TranceSeekAPI;
 
-namespace Memoria.Scripts.Battle
+namespace Memoria.Scripts.TranceSeek
 {
     public class OverloadOnBattleInitScript : IOverloadOnBattleInitScript
     {

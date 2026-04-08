@@ -7,7 +7,7 @@ using Memoria.Data;
 using Memoria.Database;
 using UnityEngine;
 
-namespace Memoria.Scripts.Battle
+namespace Memoria.Scripts.TranceSeek
 {
     /// <summary>
     /// Special

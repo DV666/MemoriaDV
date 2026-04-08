@@ -1,7 +1,7 @@
 using Memoria.Data;
 using System;
 
-namespace Memoria.Scripts.Battle
+namespace Memoria.Scripts.TranceSeek
 {
     /// <summary>
     /// Gems: Garnet, Amethyst, Aquamarine, Diamond, Emerald, Moonstone, Ruby, Peridot, Sapphire, Opal, Topaz, Lapis Lazuli, Ore

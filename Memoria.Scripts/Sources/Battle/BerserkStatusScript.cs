@@ -1,7 +1,7 @@
 ﻿using FF9;
 using Memoria.Data;
 using Memoria.Database;
-using Memoria.Scripts.Battle;
+using Memoria.Scripts.TranceSeek;
 using System;
 using System.Collections.Generic;
 using Object = System.Object;

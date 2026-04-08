@@ -1,6 +1,6 @@
 ﻿using System;
 using Memoria.Data;
-using Memoria.Scripts.Battle;
+using Memoria.Scripts.TranceSeek;
 using UnityEngine;
 using static SiliconStudio.Social.ResponseData;
 using Object = System.Object;

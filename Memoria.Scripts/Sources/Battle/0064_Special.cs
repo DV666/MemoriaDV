@@ -5,7 +5,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using Memoria.Assets;
 
-namespace Memoria.Scripts.Battle
+namespace Memoria.Scripts.TranceSeek
 {
     /// <summary>
     /// Special

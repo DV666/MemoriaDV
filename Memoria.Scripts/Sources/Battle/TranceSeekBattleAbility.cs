@@ -1,6 +1,6 @@
 ﻿using Memoria.Data;
 
-namespace Memoria.Scripts.Battle
+namespace Memoria.Scripts.TranceSeek
 {
     public static class TranceSeekBattleAbility
     {

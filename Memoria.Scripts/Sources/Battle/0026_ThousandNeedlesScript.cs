@@ -1,7 +1,7 @@
 using System;
 using Memoria.Data;
 
-namespace Memoria.Scripts.Battle
+namespace Memoria.Scripts.TranceSeek
 {
     /// <summary>
     /// 1,000 Needles, Pyro, Medeo, Poly

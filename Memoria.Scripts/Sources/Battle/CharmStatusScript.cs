@@ -2,7 +2,7 @@
 using Memoria.Data;
 using Memoria.Database;
 using Memoria.Prime;
-using Memoria.Scripts.Battle;
+using Memoria.Scripts.TranceSeek;
 using System;
 using System.Collections.Generic;
 using UnityEngine.Networking;

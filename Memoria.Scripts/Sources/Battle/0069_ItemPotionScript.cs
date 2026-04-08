@@ -4,7 +4,7 @@ using Memoria.Data;
 using Memoria.Prime;
 using static UIRoot;
 
-namespace Memoria.Scripts.Battle
+namespace Memoria.Scripts.TranceSeek
 {
     /// <summary>
     /// Item, Hi-Potion

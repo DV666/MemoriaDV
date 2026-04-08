@@ -1,7 +1,7 @@
 ﻿using System;
 using Memoria.Data;
 using System.Collections.Generic;
-using Memoria.Scripts.Battle;
+using Memoria.Scripts.TranceSeek;
 
 namespace Memoria.DefaultScripts
 {

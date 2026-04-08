@@ -1,6 +1,6 @@
 ﻿using System;
 using Memoria.Data;
-using Memoria.Scripts.Battle;
+using Memoria.Scripts.TranceSeek;
 using UnityEngine;
 using Object = System.Object;
 

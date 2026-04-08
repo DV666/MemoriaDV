@@ -1,7 +1,7 @@
 using System;
 using Memoria.Data;
 
-namespace Memoria.Scripts.Battle
+namespace Memoria.Scripts.TranceSeek
 {
     /// <summary>
     /// LV5 Death, Smash, Climhazzard(Story), Stock Break

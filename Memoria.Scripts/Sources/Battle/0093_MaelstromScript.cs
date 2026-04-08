@@ -4,7 +4,7 @@ using System;
 using System.Collections;
 using System.Runtime.InteropServices;
 
-namespace Memoria.Scripts.Battle
+namespace Memoria.Scripts.TranceSeek
 {
     /// <summary>
     /// Maelstrom

@@ -2,7 +2,7 @@ using FF9;
 using Memoria.Data;
 using System;
 
-namespace Memoria.Scripts.Battle
+namespace Memoria.Scripts.TranceSeek
 {
     /// <summary>
     /// Osmose, Absorb MP

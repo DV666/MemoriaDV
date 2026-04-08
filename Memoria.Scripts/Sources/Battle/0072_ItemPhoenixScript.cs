@@ -2,7 +2,7 @@ using System;
 using Memoria.Data;
 using static SiliconStudio.Social.ResponseData;
 
-namespace Memoria.Scripts.Battle
+namespace Memoria.Scripts.TranceSeek
 {
     /// <summary>
     ///  Phoenix Down, Phoenix Pinion

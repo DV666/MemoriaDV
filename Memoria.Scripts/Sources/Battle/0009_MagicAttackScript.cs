@@ -4,7 +4,7 @@ using FF9;
 using Memoria.Data;
 using Memoria.Prime;
 
-namespace Memoria.Scripts.Battle
+namespace Memoria.Scripts.TranceSeek
 {
     [BattleScript(Id)]
     public sealed class MagicAttackScript : IBattleScript, IEstimateBattleScript

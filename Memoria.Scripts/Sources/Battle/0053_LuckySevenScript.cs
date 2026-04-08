@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using Assets.Sources.Scripts.UI.Common;
 
-namespace Memoria.Scripts.Battle
+namespace Memoria.Scripts.TranceSeek
 {
     /// <summary>
     /// Lucky Seven

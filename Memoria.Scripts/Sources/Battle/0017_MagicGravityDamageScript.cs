@@ -3,7 +3,7 @@ using Memoria.Prime;
 using System;
 using System.Runtime.Remoting.Contexts;
 
-namespace Memoria.Scripts.Battle
+namespace Memoria.Scripts.TranceSeek
 {
     /// <summary>
     /// Demi, Aqua Breath, Demi Shock, Worm Hole

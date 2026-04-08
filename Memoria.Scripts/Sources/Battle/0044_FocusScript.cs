@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Memoria.Data;
 using Memoria.Prime;
 
-namespace Memoria.Scripts.Battle
+namespace Memoria.Scripts.TranceSeek
 {
     /// <summary>
     /// Focus

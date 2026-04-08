@@ -2,8 +2,8 @@
 using Memoria.Data;
 using FF9;
 using Object = System.Object;
-using static Memoria.Scripts.Battle.TranceSeekAPI;
-using Memoria.Scripts.Battle;
+using static Memoria.Scripts.TranceSeek.TranceSeekAPI;
+using Memoria.Scripts.TranceSeek;
 
 namespace Memoria.DefaultScripts
 {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using FF9;
 using Memoria.Data;
 using Memoria.Prime;
-using Memoria.Scripts.Battle;
+using Memoria.Scripts.TranceSeek;
 using Object = System.Object;
 
 namespace Memoria.DefaultScripts

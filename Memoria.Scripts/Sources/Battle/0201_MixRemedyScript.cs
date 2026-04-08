@@ -6,7 +6,7 @@ using Memoria.Data;
 using static Memoria.Assets.DataResources;
 using static SiliconStudio.Social.ResponseData;
 
-namespace Memoria.Scripts.Battle
+namespace Memoria.Scripts.TranceSeek
 {
     /// <summary>
     /// Special

@@ -1,6 +1,6 @@
 using System;
 
-namespace Memoria.Scripts.Battle
+namespace Memoria.Scripts.TranceSeek
 {
     /// <summary>
     /// Double cast with the spells defined by "Power" and "Accuracy"

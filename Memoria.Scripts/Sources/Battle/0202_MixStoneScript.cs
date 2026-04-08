@@ -5,7 +5,7 @@ using Memoria.Data;
 using Memoria.Prime;
 using static SiliconStudio.Social.ResponseData;
 
-namespace Memoria.Scripts.Battle
+namespace Memoria.Scripts.TranceSeek
 {
     /// <summary>
     /// Special

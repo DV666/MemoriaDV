@@ -2,7 +2,7 @@
 using FF9;
 using Memoria.Data;
 
-namespace Memoria.Scripts.Battle
+namespace Memoria.Scripts.TranceSeek
 {
     public class OverloadOnGameOverScript : IOverloadOnGameOverScript
     {

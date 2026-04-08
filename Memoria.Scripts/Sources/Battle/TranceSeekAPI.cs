@@ -5,10 +5,10 @@ using Memoria.Data;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using static Memoria.Scripts.Battle.TranceSeekBattleDictionary;
-using static Memoria.Scripts.Battle.TranceSeekCharacterMechanic;
+using static Memoria.Scripts.TranceSeek.TranceSeekBattleDictionary;
+using static Memoria.Scripts.TranceSeek.TranceSeekCharacterMechanic;
 
-namespace Memoria.Scripts.Battle
+namespace Memoria.Scripts.TranceSeek
 {
     public static class TranceSeekAPI
     {

@@ -2,7 +2,7 @@ using System;
 using Assets.Sources.Scripts.UI.Common;
 using Memoria.Data;
 
-namespace Memoria.Scripts.Battle
+namespace Memoria.Scripts.TranceSeek
 {
     /// <summary>
     /// Mug (enemy)

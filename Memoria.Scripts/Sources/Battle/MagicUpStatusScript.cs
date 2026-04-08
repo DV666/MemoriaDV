@@ -1,9 +1,9 @@
 ﻿using System;
 using UnityEngine;
 using Memoria.Data;
-using static Memoria.Scripts.Battle.TranceSeekBattleDictionary;
+using static Memoria.Scripts.TranceSeek.TranceSeekBattleDictionary;
 using Object = System.Object;
-using Memoria.Scripts.Battle;
+using Memoria.Scripts.TranceSeek;
 
 namespace Memoria.DefaultScripts
 {

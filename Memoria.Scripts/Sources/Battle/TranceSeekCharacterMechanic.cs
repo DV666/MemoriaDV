@@ -6,10 +6,10 @@ using Memoria.Database;
 using Memoria.Prime;
 using System;
 using System.Collections.Generic;
-using static Memoria.Scripts.Battle.TranceSeekBattleDictionary;
+using static Memoria.Scripts.TranceSeek.TranceSeekBattleDictionary;
 using static SFX;
 
-namespace Memoria.Scripts.Battle
+namespace Memoria.Scripts.TranceSeek
 {
     public static class TranceSeekCharacterMechanic
     {

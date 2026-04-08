@@ -6,9 +6,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Remoting.Contexts;
-using static Memoria.Scripts.Battle.TranceSeekAPI;
+using static Memoria.Scripts.TranceSeek.TranceSeekAPI;
 
-namespace Memoria.Scripts.Battle
+namespace Memoria.Scripts.TranceSeek
 {
     /// <summary>
     /// Steal, Mug

@@ -7,7 +7,7 @@ using System.Linq;
 using UnityEngine;
 using static UIManager;
 
-namespace Memoria.Scripts.Battle
+namespace Memoria.Scripts.TranceSeek
 {
     public class OverloadedPlayerUI : IOverloadPlayerUIScript
     {

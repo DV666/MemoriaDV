@@ -5,7 +5,7 @@ using System.Linq;
 using UnityEngine;
 using static BTL_DATA;
 
-namespace Memoria.Scripts.Battle
+namespace Memoria.Scripts.TranceSeek
 {
     public static class TranceSeekBattleDictionary
     {

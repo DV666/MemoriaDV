@@ -1,7 +1,7 @@
 using System;
 using Memoria.Data;
 
-namespace Memoria.Scripts.Battle
+namespace Memoria.Scripts.TranceSeek
 {
     [BattleScript(Id)]
     public sealed class PoisonMagicLancerScript : IBattleScript
