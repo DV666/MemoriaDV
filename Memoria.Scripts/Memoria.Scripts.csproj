@@ -361,6 +361,7 @@
     <Compile Include="Sources\Battle\0130_TranceZidaneSkill.cs" />
     <Compile Include="Sources\Battle\0141_MagicWeaponSpecialScript.cs" />
     <Compile Include="Sources\Battle\0143_MagicRecoveryHPMPScript.cs" />
+    <Compile Include="Sources\Battle\0144_MetronomeScript.cs" />
     <Compile Include="Sources\Battle\0163_SpecialApplyPositiveStatusScript.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
