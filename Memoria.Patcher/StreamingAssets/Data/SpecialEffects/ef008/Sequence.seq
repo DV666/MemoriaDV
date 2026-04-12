@@ -1,6 +1,5 @@
 // Shared sequence of SFX Cure__Single
 
-StartThread: Condition=!CasterHasSA(1027)
 PlaySound: Sound=16
 PlaySound: Sound=6
 PlaySound: Sound=78
@@ -9,14 +8,3 @@ EffectPoint: Char=AllTargets ; Type=Effect
 Wait: Time=22
 EffectPoint: Char=Everyone ; Type=Figure
 Wait: Time=10
-EndThread
-StartThread: Condition=CasterHasSA(1027)
-PlaySound: Sound=59
-PlaySound: Sound=50
-PlaySound: Sound=98
-Wait: Time=5
-EffectPoint: Char=AllTargets ; Type=Effect
-Wait: Time=42
-EffectPoint: Char=Everyone ; Type=Figure
-Wait: Time=10
-EndThread
