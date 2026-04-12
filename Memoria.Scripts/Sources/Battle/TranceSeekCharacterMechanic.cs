@@ -444,6 +444,7 @@ namespace Memoria.Scripts.TranceSeek
                         {
                             if (Vivi.IsPlayer && Vivi.PlayerIndex == CharacterId.Vivi)
                             {
+                                Vivi_TSVar = Vivi.State().Vivi;
                                 if (FF9TextTool.ActionAbilityName(Vivi_TSVar.PreviousSpell) != v.Command.AbilityName)
                                 {
                                     Int32 BonusFocusMax = 0;
