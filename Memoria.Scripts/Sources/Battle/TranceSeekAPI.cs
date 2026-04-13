@@ -397,18 +397,6 @@ namespace Memoria.Scripts.TranceSeek
             {
                 Target_TSVar.IsBackAttack = false;
                 v.Context.DamageModifierCount += 2;
-
-                Dictionary<String, String> localizedMessage = new Dictionary<String, String> // For debug
-                    {
-                        { "US", "BACK ATTACK !" },
-                        { "UK", "BACK ATTACK !" },
-                        { "JP", "BACK ATTACK !" },
-                        { "ES", "BACK ATTACK !" },
-                        { "FR", "BACK ATTACK !" },
-                        { "GR", "BACK ATTACK !" },
-                        { "IT", "BACK ATTACK !" },
-                    };
-                btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[FF00FF]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 10);
             }
 
             if (Mathf.Abs(v.Caster.Row - v.Target.Row) > 1 && !v.Caster.HasLongRangeWeapon && v.Command.IsShortRange && v.Caster.IsPlayer)
@@ -598,6 +586,11 @@ namespace Memoria.Scripts.TranceSeek
                 v.Context.DamageModifierCount += 2;
         }
 
+        public static Boolean IsAttackElement(this BattleCalculator v, EffectElement element)
+        {
+            return (v.Command.Element & element) != 0 || (InfusedWeaponScript.WeaponNewElement[v.Caster.Data] & element) != 0 || (v.Command.Weapon.Element & element) != 0;
+        }
+
         public static Boolean CanAttackWeaponElementalCommand(this BattleCalculator v)
         {
             EffectElement WeaponElement = v.Caster.WeaponElement;
@@ -679,7 +672,7 @@ namespace Memoria.Scripts.TranceSeek
             }
 
             if (v.Target.IsHalfElement(Element) || ((v.Command.ScriptId == 118 || v.Command.ScriptId == 119) && (Target_TSVar.EffectElement.Poison & 2) != 0) || ((v.Command.ScriptId == 17 || v.Command.ScriptId == 86) && (Target_TSVar.EffectElement.Gravity & 2) != 0))
-                v.Context.DamageModifierCount -= 2;
+                v.Context.Attack /= 2;
 
             if (v.Target.IsWeakElement(Element) || ((v.Command.ScriptId == 118 || v.Command.ScriptId == 119) && (Target_TSVar.EffectElement.Poison & 1) != 0) || ((v.Command.ScriptId == 17 || v.Command.ScriptId == 86) && (Target_TSVar.EffectElement.Gravity & 1) != 0))
                 v.Context.DamageModifierCount += 2;
@@ -729,7 +722,7 @@ namespace Memoria.Scripts.TranceSeek
                 if ((v.Target.ResistStatus & InfusedWeaponScript.WeaponNewStatus[v.Caster.Data]) != 0 && !v.Target.IsPlayer)
                     v.TargetState().TriggerSPSResistStatus = true;
             }
-        } 
+        }
 
         public static void TryAlterCommandStatuses(this BattleCalculator v, Boolean ChangeContext = true)
         {

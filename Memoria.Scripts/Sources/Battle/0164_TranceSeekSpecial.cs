@@ -50,7 +50,7 @@ namespace Memoria.Scripts.TranceSeek
                 }
                 );
             }
-            else if (_v.Caster.Data.dms_geo_id == 338 && _v.Command.Power == 11 && _v.Command.HitRate == 11) // Hiberation - Ice Dragon
+            else if (_v.Caster.Data.dms_geo_id == 338 && _v.Command.Power == 33 && _v.Command.HitRate == 33) // Hiberation - Ice Dragon
             {
                 var Caster_TSVar = _v.CasterState();
                 int OriginalPhysicalDefence = _v.Caster.PhysicalDefence;

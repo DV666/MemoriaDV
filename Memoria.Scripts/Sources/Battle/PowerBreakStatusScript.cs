@@ -12,7 +12,6 @@ namespace Memoria.DefaultScripts
     public class PowerBreakStatusScript : StatusScriptBase
     {
         public HUDMessageChild NumberHUD = null;
-        public Int32 BasicStrength;
         public Int32 Stack;
         public Int32 DefautSize;
         public Boolean ShowNumberHUD;
@@ -73,8 +72,6 @@ namespace Memoria.DefaultScripts
                     }
                 }
             }
-            if (BasicStrength == 0)
-                BasicStrength = Target.Strength;
 
             Target.State().StackStatus.Strength = -(Stack * 10);
 

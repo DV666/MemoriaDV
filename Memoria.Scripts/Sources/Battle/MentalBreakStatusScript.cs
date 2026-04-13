@@ -12,7 +12,6 @@ namespace Memoria.DefaultScripts
     public class MentalBreakStatusScript : StatusScriptBase
     {
         public HUDMessageChild NumberHUD = null;
-        public Int32 BasicMagicDefence;
         public Int32 Stack;
         public Int32 DefautSize;
         public Boolean ShowNumberHUD;
@@ -73,8 +72,6 @@ namespace Memoria.DefaultScripts
                     }
                 }
             }
-            if (BasicMagicDefence == 0)
-                BasicMagicDefence = Target.MagicDefence;
 
             Target.State().StackStatus.MDefence = -(Stack * 10);
 

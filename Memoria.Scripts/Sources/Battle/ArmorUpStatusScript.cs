@@ -12,7 +12,6 @@ namespace Memoria.DefaultScripts
     public class ArmorUpStatusScript : StatusScriptBase
     {
         public HUDMessageChild NumberHUD = null;
-        public Int32 BasicPhysicalDefence;
         public Int32 Stack;
         public Int32 DefautSize;
         public Boolean ShowNumberHUD;
@@ -73,8 +72,6 @@ namespace Memoria.DefaultScripts
                     }
                 }
             }
-            if (BasicPhysicalDefence == 0)
-                BasicPhysicalDefence = Target.PhysicalDefence;
 
             Target.State().StackStatus.PDefence = (Stack * 10);
 
@@ -109,7 +106,6 @@ namespace Memoria.DefaultScripts
                     Singleton<HUDMessage>.Instance.ReleaseObject(NumberHUD);
                 }
             }
-            target.PhysicalDefence = (byte)Math.Min(BasicPhysicalDefence + ((BasicPhysicalDefence * Stack) / 10), 255);
             TranceSeekAPI.SA_StatusApply(inflicter, true);
             return btl_stat.ALTER_SUCCESS;
         }
@@ -123,7 +119,6 @@ namespace Memoria.DefaultScripts
                 btl2d.StatusMessages.Remove(NumberHUD);
                 Singleton<HUDMessage>.Instance.ReleaseObject(NumberHUD);
             }
-            Target.PhysicalDefence = (Byte)BasicPhysicalDefence;
             return true;
         }
 

@@ -12,7 +12,6 @@ namespace Memoria.DefaultScripts
     public class MagicUpStatusScript : StatusScriptBase
     {
         public HUDMessageChild NumberHUD = null;
-        public Int32 BasicMagic;
         public Int32 Stack;
         public Int32 DefautSize;
         public Boolean ShowNumberHUD;
@@ -73,8 +72,6 @@ namespace Memoria.DefaultScripts
                     }
                 }
             }
-            if (BasicMagic == 0)
-                BasicMagic = Target.Magic;
 
             Target.State().StackStatus.Magic = (Stack * 10);
 

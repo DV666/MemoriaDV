@@ -169,8 +169,10 @@ namespace Memoria.Scripts.TranceSeek
                 int BattleID = FF9StateSystem.Battle.battleMapIndex;
 
                 if (BattleID == 28 && v.Target.Data.dms_geo_id == 338 && FF9StateSystem.EventState.gEventGlobal[1305] > 0)
-                    if ((v.Command.Element & EffectElement.Fire) != 0 || (v.Command.AbilityId == BattleAbilityId.Attack && (v.Caster.WeaponElement & EffectElement.Fire) != 0)) // Hibernation - Ice Dragon
+                {
+                    if (TranceSeekAPI.IsAttackElement(v, EffectElement.Fire)) // Hibernation - Ice Dragon
                         FF9StateSystem.EventState.gEventGlobal[1305]--;
+                }
 
                 if (v.Command.Element == 0 && (v.Target.Flags & CalcFlag.HpRecovery) == 0 && (v.Target.Data.dms_geo_id == 354 || v.Target.Data.dms_geo_id == 221 || v.Target.Data.dms_geo_id == 83)) // Stone monsters
                 {

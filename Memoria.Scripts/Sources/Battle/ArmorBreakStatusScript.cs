@@ -12,7 +12,6 @@ namespace Memoria.DefaultScripts
     public class ArmorBreakStatusScript : StatusScriptBase
     {
         public HUDMessageChild NumberHUD = null;
-        public Int32 BasicPhysicalDefence;
         public Int32 Stack;
         public Int32 DefautSize;
         public Boolean ShowNumberHUD;
@@ -73,9 +72,6 @@ namespace Memoria.DefaultScripts
                     }
                 }
             }
-
-            if (BasicPhysicalDefence == 0)
-                BasicPhysicalDefence = Target.PhysicalDefence;
 
             Target.State().StackStatus.PDefence = -(Stack * 10);
 
