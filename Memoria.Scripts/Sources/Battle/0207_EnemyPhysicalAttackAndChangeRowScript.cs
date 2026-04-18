@@ -44,9 +44,9 @@ namespace Memoria.Scripts.TranceSeek
                     {
                         _v.Target.ChangeRow();
                         if (_v.Target.Row == 1)
-                            btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.Special, parameters: "CanCover1");
+                            _v.TargetState().CanCover = 1;
                         else
-                            btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.Special, parameters: "CanCover0");
+                            _v.TargetState().CanCover = 0;
                     }
                 }
                 TranceSeekAPI.TryAlterMagicStatuses(_v);

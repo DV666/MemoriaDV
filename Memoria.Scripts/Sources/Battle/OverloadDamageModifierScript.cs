@@ -27,17 +27,20 @@ namespace Memoria.Scripts.TranceSeek
                 v.Context.Flags = 0;
                 return;
             }
-            if (!v.Caster.IsPlayer && (FF9StateSystem.EventState.gEventGlobal[1403] == 1 || FF9StateSystem.EventState.gEventGlobal[1403] == 2)) // Lower Difficulty
+
+            int difficultyMode = FF9StateSystem.EventState.gEventGlobal[1403];
+
+            if (!v.Caster.IsPlayer && (difficultyMode == 1 || difficultyMode == 2)) // Lower Difficulty
             {
                 Int32 malusHPdamage = 0;
                 Int32 malusMPdamage = 0;
-                if (FF9StateSystem.EventState.gEventGlobal[1403] == 1) // Vivi mode
+                if (difficultyMode == 1) // Vivi mode
                 {
                     malusHPdamage = v.Target.HpDamage / 2;
                     malusMPdamage = v.Target.MpDamage / 2;
                 }
 
-                else if (FF9StateSystem.EventState.gEventGlobal[1403] == 2) // Eiko mode
+                else if (difficultyMode == 2) // Eiko mode
                 {
                     malusHPdamage = v.Target.HpDamage / 4;
                     malusMPdamage = v.Target.MpDamage / 4;
@@ -51,6 +54,7 @@ namespace Memoria.Scripts.TranceSeek
 
             TranceSeekAPI.SpecialEffect(v);
             TranceSeekCharacterMechanic.GarnetGemMechanic(v);
+            var Caster_TSVar = v.CasterState();
             var Target_TSVar = v.TargetState();
 
             if (v.Caster.IsPlayer)
@@ -62,39 +66,24 @@ namespace Memoria.Scripts.TranceSeek
                         v.Caster.Flags |= CalcFlag.HpAlteration;
                 }
 
-                if (FF9StateSystem.Settings.IsDmg9999 && FF9StateSystem.EventState.gEventGlobal[1403] >= 3)
+                if (FF9StateSystem.Settings.IsDmg9999 && difficultyMode >= 3)
                 {
                     v.Target.Flags = CalcFlag.HpRecovery;
-                    Dictionary<String, String> localizedMessage = new Dictionary<String, String>
-                {
-                    { "US", "It's a NO!" },
-                    { "UK", "It's a NO!" },
-                    { "JP", "ダメだ！" },
-                    { "ES", "¡Es un NO!" },
-                    { "FR", "C'est non !" },
-                    { "DE", "Das ist ein NEIN!" },
-                    { "IT", "È un NO!" }
-                };
-                    btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[FF19EE]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 0);
+                    btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[FF19EE]", MessageNope, HUDMessage.MessageStyle.DAMAGE, 0);
                     SoundLib.PlaySoundEffect(4004); //se511115
                 }
 
-                if (v.Caster.IsUnderAnyStatus(TranceSeekStatus.Special) && v.Command.Id == BattleCommandId.Item && (v.Target.Flags & CalcFlag.HpRecovery) != 0) // Secret ingredient
+                if (Caster_TSVar.Blank.SecretIngredient > 0 && v.Command.Id == BattleCommandId.Item && (v.Target.Flags & CalcFlag.HpRecovery) != 0) // Secret ingredient
                 {
-                    object Secretingredient = v.Caster.GetPropertyByName("StatusProperty CustomStatus21 Secretingredient");
-                    if ((int)Secretingredient > 0)
-                    {
-                        v.Target.HpDamage *= 2;
-                        btl_stat.AlterStatus(v.Caster, TranceSeekStatusId.Special, parameters: "Secretingredient--");
-                    }
+                    v.Target.HpDamage *= 2;
+                    Caster_TSVar.Blank.SecretIngredient--;
                 }
             }
             if (v.Target.IsPlayer)
             {
                 if (v.Target.HasTrance && v.Target.Data.cur.hp > 0 && !btl_stat.CheckStatus(v.Target.Data, BattleStatusConst.CannotTrance)) // Prevent to earn easy Trance.
                 {
-                    float ratio = (v.Target.HpDamage * 100) / v.Target.MaximumHp; // En %
-                    if (ratio <= 10)
+                    if (v.Target.HpDamage * 10 <= v.Target.MaximumHp)
                         v.Context.TranceIncrease = 0;
                 }
 
@@ -115,23 +104,9 @@ namespace Memoria.Scripts.TranceSeek
                 if (v.Target.PlayerIndex == CharacterId.Amarant && Target_TSVar.Amarant.Duel && (v.Command.AbilityCategory & 8) != 0 && v.Target.IsUnderAnyStatus(BattleStatus.Defend)) // Duel Amarant
                 {
                     if (v.Target.HasSupportAbilityByIndex((SupportAbility)231) && (v.Target.HasSupportAbilityByIndex((SupportAbility)1231) ? 50 : 25) > Comn.random16() % 100) // SA Ferocity
-                    {
-                        Dictionary<String, String> localizedMessage = new Dictionary<String, String>
-                    {
-                          { "US", "Ferocity!" },
-                          { "UK", "Ferocity!" },
-                          { "JP", "凶暴！" },
-                          { "ES", "¡Ferocidad!" },
-                          { "FR", "Férocité !" },
-                          { "DE", "Ferozität!" },
-                          { "IT", "Ferocia!" }
-                    };
-                        btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[FF2716]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 10);
-                    }
+                        btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[FF2716]", MessageFerocity, HUDMessage.MessageStyle.DAMAGE, 10);
                     else
-                    {
                         Target_TSVar.Amarant.Duel = false;
-                    }
                 }
                 else if (v.Target.PlayerIndex == CharacterId.Marcus && (v.Command.Element & EffectElement.Darkness) != 0
                     && (v.Target.Flags & CalcFlag.HpAlteration) != 0 && (v.Target.Flags & CalcFlag.MpAlteration) == 0) // Marcus mechanic
@@ -148,21 +123,11 @@ namespace Memoria.Scripts.TranceSeek
                     Target_TSVar.Baku.Peuh = false;
                     v.Context.Flags |= BattleCalcFlags.Guard;
                     v.Target.HpDamage = 0;
-                    Dictionary<String, String> localizedMessage = new Dictionary<String, String>
-                {
-                    { "US", "--Hmph!" },
-                    { "UK", "--Hmph!" },
-                    { "JP", "--ふん！" },
-                    { "ES", "--¡Bah!" },
-                    { "FR", "--Peuh !" },
-                    { "DE", "--Pah!" },
-                    { "IT", "--Pah!" }
-                };
-                    btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[FF0000]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 10);
+                    btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[FF0000]", MessagePeuh, HUDMessage.MessageStyle.DAMAGE, 10);
                 }
 
                 if (v.Target.IsCovering && v.Target.HasSupportAbilityByIndex((SupportAbility)213)) // SA Duelist
-                    btl_stat.AlterStatus(v.Target, TranceSeekStatusId.Special, parameters: "Duelist++");
+                    v.TargetState().Steiner.Duelist++;
             }
             else
             {
@@ -215,5 +180,23 @@ namespace Memoria.Scripts.TranceSeek
             if ((v.Caster.Flags & CalcFlag.MpAlteration) != 0)
                 v.Caster.MpDamage = (Int32)Math.Round(modifier_factor * v.Caster.MpDamage) * reflectMultiplier;
         }
+
+        private static readonly Dictionary<String, String> MessageNope = new Dictionary<String, String>
+        {
+            { "US", "It's a NO!" }, { "UK", "It's a NO!" }, { "JP", "ダメだ！" },
+            { "ES", "¡Es un NO!" }, { "FR", "C'est non !" }, { "DE", "Das ist ein NEIN!" }, { "IT", "È un NO!" }
+        };
+
+        private static readonly Dictionary<String, String> MessageFerocity = new Dictionary<String, String>
+        {
+            { "US", "Ferocity!" }, { "UK", "Ferocity!" }, { "JP", "凶暴！" },
+            { "ES", "¡Ferocidad!" }, { "FR", "Férocité !" }, { "DE", "Ferozität!" }, { "IT", "Ferocia!" }
+        };
+
+        private static readonly Dictionary<String, String> MessagePeuh = new Dictionary<String, String>
+        {
+            { "US", "--Hmph!" }, { "UK", "--Hmph!" }, { "JP", "--ふん！" },
+            { "ES", "--¡Bah!" }, { "FR", "--Peuh !" }, { "DE", "--Pah!" }, { "IT", "--Pah!" }
+        };
     }
 }

@@ -106,7 +106,7 @@ namespace Memoria.Scripts.TranceSeek
                                 _v.Caster.HpDamage = _v.Target.HpDamage / 2;
                             }
                             TranceSeekAPI.RaiseTrouble(_v);
-                            btl_stat.AlterStatus(_v.Caster, TranceSeekStatusId.Special, parameters: "Duelist--");
+                            _v.CasterState().Steiner.Duelist = 0;
                         }
                     }
 

@@ -42,6 +42,7 @@ namespace Memoria.DefaultScripts
                     Offset = FixedOffset;
 
                 _sps.posOffset = Offset;
+                target.AddDelayedModifier(UpdateSPS, null);
             }
             return btl_stat.ALTER_SUCCESS;
         }
@@ -73,6 +74,23 @@ namespace Memoria.DefaultScripts
                 _sps.Unload();
                 _sps = null;
             }
+        }
+
+        private Boolean UpdateSPS(BattleUnit unit)
+        {
+            if (_sps == null)
+                return false;
+
+            if (_sps != null && unit != null && unit.Data?.gameObject != null)
+            {
+                if (_sps.charTran != unit.Data.gameObject.transform)
+                {
+                    btl2d.GetIconPosition(unit, btl2d.ICON_POS_HEAD, out Transform attachTransf, out Vector3 iconOff);
+                    _sps.charTran = unit.Data.gameObject.transform;
+                    _sps.boneTran = attachTransf;
+                }
+            }
+            return true;
         }
     }
 }

@@ -28,7 +28,7 @@ namespace Memoria.Scripts.TranceSeek
                 _v.Context.Flags = 0;
             }
             if (_v.Caster.PlayerIndex == CharacterId.Blank && _v.Command.Id == BattleCommandId.Item)
-                btl_stat.AlterStatus(_v.Caster, TranceSeekStatusId.Special, _v.Caster, true, "SoakedBlade", _v.Command.ItemId);
+                _v.CasterState().Blank.SoakedBlade = _v.Command.ItemId;
         }
 
         public Single RateTarget()

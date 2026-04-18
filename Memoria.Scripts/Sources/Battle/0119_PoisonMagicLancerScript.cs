@@ -32,7 +32,7 @@ namespace Memoria.Scripts.TranceSeek
                 if (TranceSeekAPI.CanAttackMagic(_v))
                 {
                     _v.Target.Flags |= (CalcFlag.HpAlteration | CalcFlag.MpAlteration);
-                    if (_v.Target.HasCategory(EnemyCategory.Humanoid))
+                    if (_v.Target.HasCategory(EnemyCategory.Humanoid) && !_v.Target.IsPlayer)
                         _v.Context.DamageModifierCount += 2;
                     if (_v.Target.IsZombie || _v.Context.IsAbsorb)
                         _v.Target.Flags = CalcFlag.HpDamageOrHeal;

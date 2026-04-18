@@ -23,7 +23,7 @@ namespace Memoria.Scripts.TranceSeek
         {
             if (_v.Command.AbilityId == (BattleAbilityId)1102) // Sang Maudit
             {
-                btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.Special, _v.Caster, true, "CursedBlood");
+                _v.TargetState().Marcus.CursedBlood = 1; // [TODO] Do a timer ? To make it not infinite.
             }
             else if (_v.Caster.Data.dms_geo_id == 349 && _v.Command.Power == 10 && _v.Command.HitRate == 10) // Gisamark - Plongée
             {

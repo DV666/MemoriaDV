@@ -61,6 +61,27 @@ namespace Memoria.Scripts.TranceSeek
         public int MugPlus { get; set; }
         public int StealGil { get; set; }
         public int Flexible { get; set; }
+        public int FlexibleLvl
+        {
+            get
+            {
+                if (FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1000, out Dictionary<Int32, Int32> dictbattle))
+                    if (dictbattle.TryGetValue(5, out int flexibleValue))
+                        return flexibleValue;
+
+                return 0;
+            }
+            set
+            {
+                if (!FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1000, out Dictionary<Int32, Int32> dictbattle))
+                {
+                    dictbattle = new Dictionary<Int32, Int32>();
+                    FF9StateSystem.EventState.gScriptDictionary.Add(1000, dictbattle);
+                }
+
+                dictbattle[5] = value;
+            }
+        }
     }
 
     public class ViviPassives
@@ -78,6 +99,28 @@ namespace Memoria.Scripts.TranceSeek
         public Boolean TriggerOneTime { get; set; }
         public int SteinerEnchantedBlade { get; set; } // Need to be replace with infused weapon ?
         public Boolean Sentinel { get; set; }
+
+        public int Duelist
+        {
+            get
+            {
+                if (FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1000, out Dictionary<Int32, Int32> dictbattle))
+                    if (dictbattle.TryGetValue(4, out int duelistValue))
+                        return duelistValue;
+
+                return 0;
+            }
+            set
+            {
+                if (!FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1000, out Dictionary<Int32, Int32> dictbattle))
+                {
+                    dictbattle = new Dictionary<Int32, Int32>();
+                    FF9StateSystem.EventState.gScriptDictionary.Add(1000, dictbattle);
+                }
+
+                dictbattle[4] = value;
+            }
+        }
     }
 
     public class BeatrixPassives
@@ -97,6 +140,40 @@ namespace Memoria.Scripts.TranceSeek
     {
         public int InventionCoolDown { get; set; }
         public int SpringBoots { get; set; }
+    }
+
+    public class BlankPassives
+    {
+        public RegularItem SoakedBlade { get; set; }
+        public int SecretIngredient { get; set; }
+
+        public int MasterOfAlchemy
+        {
+            get
+            {
+                if (FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1000, out Dictionary<Int32, Int32> dictbattle))
+                    if (dictbattle.TryGetValue(3, out int alchemyValue))
+                        return alchemyValue;
+
+                return 0;
+            }
+            set
+            {
+                if (!FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1000, out Dictionary<Int32, Int32> dictbattle))
+                {
+                    dictbattle = new Dictionary<Int32, Int32>();
+                    FF9StateSystem.EventState.gScriptDictionary.Add(1000, dictbattle);
+                }
+
+                dictbattle[3] = value;
+            }
+        }
+
+    }
+    public class MarcusPassives
+    {
+        public int CursedBlood { get; set; }
+        public Boolean LifeOrDeath { get; set; }
     }
 
     public class BakuPassives
@@ -143,6 +220,7 @@ namespace Memoria.Scripts.TranceSeek
         public int OneTriggerSOS { get; set; }
         public int NewMaximumHP { get; set; }
         public int NewMaximumMP { get; set; }
+        public int Propagation { get; set; }
     }
 
     public class SpecialItemEffects
@@ -155,7 +233,11 @@ namespace Memoria.Scripts.TranceSeek
     public class NewEffectElements
     {
         public int Poison { get; set; }
+        public int WeaponPoison { get; set; }
+
         public int Gravity { get; set; }
+        public int WeaponGravity { get; set; }
+
     }
 
     public class RollbackData
@@ -182,7 +264,9 @@ namespace Memoria.Scripts.TranceSeek
         public SteinerPassives Steiner { get; set; } = new SteinerPassives();
         public AmarantPassives Amarant { get; set; } = new AmarantPassives();
         public BeatrixPassives Beatrix { get; set; } = new BeatrixPassives();
+        public BlankPassives Blank { get; set; } = new BlankPassives();
         public CinnaPassives Cinna { get; set; } = new CinnaPassives();
+        public MarcusPassives Marcus { get; set; } = new MarcusPassives();
         public BakuPassives Baku { get; set; } = new BakuPassives();
 
         public GeneralPassives General { get; set; } = new GeneralPassives();
@@ -203,6 +287,28 @@ namespace Memoria.Scripts.TranceSeek
         public Boolean IsBackAttack { get; set; }
         public Boolean PreventTranceSFX { get; set; }
         public int DragonChanceProc { get; set; }
+
+        public int CanCover
+        {
+            get
+            {
+                if (FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1000, out Dictionary<Int32, Int32> dictbattle))
+                    if (dictbattle.TryGetValue(6, out int canCoverValue))
+                        return canCoverValue;
+
+                return 0;
+            }
+            set
+            {
+                if (!FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1000, out Dictionary<Int32, Int32> dictbattle))
+                {
+                    dictbattle = new Dictionary<Int32, Int32>();
+                    FF9StateSystem.EventState.gScriptDictionary.Add(1000, dictbattle);
+                }
+
+                dictbattle[6] = value;
+            }
+        }
 
         public int SuperCheat { get; set; }
     }

@@ -38,6 +38,8 @@ namespace Memoria.Scripts.TranceSeek
                     FF9StateSystem.EventState.gEventGlobal[1407] = 0;
             }*/
 
+            OverloadOnBattleScriptStartScript.InitProtectMessages();
+
             int BattleID = FF9StateSystem.Battle.battleMapIndex;
             int GroupeBattleID = FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum;
 
@@ -45,11 +47,11 @@ namespace Memoria.Scripts.TranceSeek
             SB2_PATTERN sb2Pattern = FF9StateSystem.Battle.FF9Battle.btl_scene.PatAddr[GroupeBattleID];
             KeyValuePair<Int32, Int32> BattleExID = new KeyValuePair<Int32, Int32>(BattleID, GroupeBattleID);
 
-            if (CustomBBGfromBattleID.ContainsKey(BattleExID)) // Change BBG for specific, to have a better camera.
-                ChangeBBG(CustomBBGfromBattleID[BattleExID]);
+            if (CustomBBGfromBattleID.TryGetValue(BattleExID, out string customBBG)) // Change BBG for specific, to have a better camera.
+                ChangeBBG(customBBG);
 
-            if (ChangeDepthBBGfromBattleID.ContainsKey(BattleExID)) // Change BBG for specific, to have a better camera.
-                ChangeDepthBBG(ChangeDepthBBGfromBattleID[BattleExID]);
+            if (ChangeDepthBBGfromBattleID.TryGetValue(BattleExID, out int customDepth)) // Fix depth for specific battles, to avoid some weird graphical bugs.
+                ChangeDepthBBG(customDepth);
 
             if (BattleExID.Equals(new KeyValuePair<Int32, Int32>(93, 3))) // Prison Cage + Little Girl
                 HonoluluBattleMain.SetupAttachModel(FF9StateSystem.Battle.FF9Battle.btl_data[4], FF9StateSystem.Battle.FF9Battle.btl_data[5], 55, 25);
@@ -78,6 +80,10 @@ namespace Memoria.Scripts.TranceSeek
             dictbattle[0] = 0; // Bonus gils from SA or items
             dictbattle[1] = 0; // Steiner mechanic
             dictbattle[2] = 0; // Beatrix mechanic
+            dictbattle[3] = 0; // Master Alchemy
+            dictbattle[4] = 0; // Duelist
+            dictbattle[5] = 0; // FlexibleLevel
+            dictbattle[6] = 0; // CanCover
 
             if (!FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1001, out Dictionary<Int32, Int32> dictdifficulty)) // Modificators from difficulties
             {
@@ -85,90 +91,80 @@ namespace Memoria.Scripts.TranceSeek
                 FF9StateSystem.EventState.gScriptDictionary.Add(1001, dictdifficulty);
             }
 
-            if (FF9StateSystem.EventState.gEventGlobal[1403] < 7)
+            int difficultyMode = FF9StateSystem.EventState.gEventGlobal[1403];
+
+            if (difficultyMode < 7)
             {
-                // Bonuses here are written in % (positive or negative)
-                dictdifficulty[0] = 0; // HP Bonus
-                dictdifficulty[1] = 0; // MP Bonus
-                dictdifficulty[2] = 0; // Level Bonus
-                dictdifficulty[3] = 0; // Dexterity Bonus
-                dictdifficulty[4] = 0; // Strength Bonus
-                dictdifficulty[5] = 0; // Magic Bonus
-                dictdifficulty[6] = 0; // Spirit Bonus
-                dictdifficulty[7] = 0; // Defence.P Bonus
-                dictdifficulty[8] = 0; // Evade.P Bonus
-                dictdifficulty[9] = 0; // Defence.M Bonus
-                dictdifficulty[10] = 0; // Evade.M Bonus
-                dictdifficulty[11] = 0; // EXP Bonus
-                dictdifficulty[12] = 0; // Gils Bonus
-                dictdifficulty[13] = 0; // Power AA Bonus
+                for (int i = 0; i <= DifficultyParameters.Bonus_PowerAA; i++)
+                    dictdifficulty[i] = 0;
 
-                if (FF9StateSystem.EventState.gEventGlobal[1403] == 3) // Kuja mode
+                switch (difficultyMode)
                 {
-                    if (FF9StateSystem.EventState.ScenarioCounter > 2250) // After Zidane/Vivi/Steiner get together in Evil Forest
-                    {
-                        dictdifficulty[0] = 25;
-                        dictdifficulty[4] = 25;
-                        dictdifficulty[5] = 25;
-                    }
-                    else
-                    {
-                        dictdifficulty[0] = 5;
-                        dictdifficulty[4] = 10;
-                        dictdifficulty[5] = 10;
-                    }
-                }
-                else if (FF9StateSystem.EventState.gEventGlobal[1403] == 5 || FF9StateSystem.EventState.gEventGlobal[1403] == 6) // Necron mode + Ozma Mode
-                {
-                    if (FF9StateSystem.EventState.ScenarioCounter > 2250) // After Zidane/Vivi/Steiner get together in Evil Forest
-                    {
-                        dictdifficulty[0] = 50;
-                        dictdifficulty[4] = 50;
-                        dictdifficulty[5] = 50;
-                        dictdifficulty[13] = 10;
-                    }
-                    else
-                    {
-                        dictdifficulty[0] = 10;
-                        dictdifficulty[4] = 20;
-                        dictdifficulty[5] = 20;
-                        dictdifficulty[13] = 10;
-                    }
-                }
-                else if (FF9StateSystem.EventState.gEventGlobal[1403] == 4 ) // Necron mode
-                {
-                    if (FF9StateSystem.EventState.ScenarioCounter > 2250) // After Zidane/Vivi/Steiner get together in Evil Forest
-                    {
-                        dictdifficulty[0] = 80;
-                        dictdifficulty[4] = 75;
-                        dictdifficulty[5] = 75;
-                        dictdifficulty[13] = 10;
-                    }
-                    else
-                    {
-                        dictdifficulty[0] = 20;
-                        dictdifficulty[4] = 25;
-                        dictdifficulty[5] = 25;
-                        dictdifficulty[13] = 10;
-                    }
-                    
-                    dictdifficulty[12] = -90; // Gils Malus
-                }
-                else if (FF9StateSystem.EventState.gEventGlobal[1403] == 1) // Vivi mode
-                {
-                    dictdifficulty[11] = 25;
-                    dictdifficulty[12] = 25;
+                    case 1: // Vivi mode
+                        dictdifficulty[DifficultyParameters.Bonus_EXP] = 25;
+                        dictdifficulty[DifficultyParameters.Bonus_Gil] = 25;
+                        break;
+
+                    case 3: // Kuja mode
+                        if (FF9StateSystem.EventState.ScenarioCounter > 2250)
+                        {
+                            dictdifficulty[DifficultyParameters.Bonus_MaxHP] = 25;
+                            dictdifficulty[DifficultyParameters.Bonus_Strength] = 25;
+                            dictdifficulty[DifficultyParameters.Bonus_Magic] = 25;
+                        }
+                        else
+                        {
+                            dictdifficulty[DifficultyParameters.Bonus_MaxHP] = 5;
+                            dictdifficulty[DifficultyParameters.Bonus_Strength] = 10;
+                            dictdifficulty[DifficultyParameters.Bonus_Magic] = 10;
+                        }
+                        break;
+
+                    case 4: // Necron mode
+                        if (FF9StateSystem.EventState.ScenarioCounter > 2250)
+                        {
+                            dictdifficulty[DifficultyParameters.Bonus_MaxHP] = 80;
+                            dictdifficulty[DifficultyParameters.Bonus_Strength] = 75;
+                            dictdifficulty[DifficultyParameters.Bonus_Magic] = 75;
+                            dictdifficulty[DifficultyParameters.Bonus_PowerAA] = 10;
+                        }
+                        else
+                        {
+                            dictdifficulty[DifficultyParameters.Bonus_MaxHP] = 20;
+                            dictdifficulty[DifficultyParameters.Bonus_Strength] = 25;
+                            dictdifficulty[DifficultyParameters.Bonus_Magic] = 25;
+                            dictdifficulty[DifficultyParameters.Bonus_PowerAA] = 10;
+                        }
+                        dictdifficulty[12] = -90; // Gils Malus
+                        break;
+
+                    case 5: // Beatrix mode + Ozma Mode
+                    case 6:
+                        if (FF9StateSystem.EventState.ScenarioCounter > 2250)
+                        {
+                            dictdifficulty[DifficultyParameters.Bonus_MaxHP] = 50;
+                            dictdifficulty[DifficultyParameters.Bonus_Strength] = 50;
+                            dictdifficulty[DifficultyParameters.Bonus_Magic] = 50;
+                            dictdifficulty[DifficultyParameters.Bonus_PowerAA] = 10;
+                        }
+                        else
+                        {
+                            dictdifficulty[DifficultyParameters.Bonus_MaxHP] = 10;
+                            dictdifficulty[DifficultyParameters.Bonus_Strength] = 20;
+                            dictdifficulty[DifficultyParameters.Bonus_Magic] = 20;
+                            dictdifficulty[DifficultyParameters.Bonus_PowerAA] = 10;
+                        }
+                        break;
                 }
 
-                if (dictdifficulty[13] > 0)
+                if (dictdifficulty[DifficultyParameters.Bonus_PowerAA] > 0)
                 {
                     List<AA_DATA> attackList = FF9StateSystem.Battle.FF9Battle.enemy_attack;
-
                     for (int i = 0; i < attackList.Count; i++)
                     {
                         AA_DATA attack = attackList[i];
-                        if ((attack.Type & 2) != 0) // Hide AP Figure, dummied for monsters
-                            attack.Ref.Power = attack.Ref.Power + Math.Max(1, (Int32)Math.Round((attack.Ref.Power * dictdifficulty[13]) / 100.0));
+                        if ((attack.Type & 2) != 0) // Boost Power for monsters in Hardcore (using the Hide AP Figure, dummied for monsters)
+                            attack.Ref.Power = attack.Ref.Power + Math.Max(1, (Int32)Math.Round((attack.Ref.Power * dictdifficulty[DifficultyParameters.Bonus_PowerAA]) / 100.0));
                     }
                 }
             }
@@ -214,38 +210,37 @@ namespace Memoria.Scripts.TranceSeek
                     }
 
                     // Poison element
-                    if (ItemAffinitiesPoison.ContainsKey(unit.Weapon))
-                        if (StateDict.EffectElement.Poison < ItemAffinitiesPoison[unit.Weapon])
-                            StateDict.EffectElement.Poison = ItemAffinitiesPoison[unit.Weapon];
-                    if (ItemAffinitiesPoison.ContainsKey(unit.Head))
-                        if (StateDict.EffectElement.Poison < ItemAffinitiesPoison[unit.Head])
-                            StateDict.EffectElement.Poison = ItemAffinitiesPoison[unit.Head];
-                    if (ItemAffinitiesPoison.ContainsKey(unit.Armor))
-                        if (StateDict.EffectElement.Poison < ItemAffinitiesPoison[unit.Armor])
-                            StateDict.EffectElement.Poison = ItemAffinitiesPoison[unit.Armor];
-                    if (ItemAffinitiesPoison.ContainsKey(unit.Wrist))
-                        if (StateDict.EffectElement.Poison < ItemAffinitiesPoison[unit.Wrist])
-                            StateDict.EffectElement.Poison = ItemAffinitiesPoison[unit.Wrist];
-                    if (ItemAffinitiesPoison.ContainsKey(unit.Accessory))
-                        if (StateDict.EffectElement.Poison < ItemAffinitiesPoison[unit.Accessory])
-                            StateDict.EffectElement.Poison = ItemAffinitiesPoison[unit.Accessory];
+                    if (ItemAffinitiesPoison.TryGetValue(unit.Weapon, out int poisonWeapon) && StateDict.EffectElement.Poison < poisonWeapon)
+                        StateDict.EffectElement.Poison = poisonWeapon;
+
+                    if (ItemAffinitiesPoison.TryGetValue(unit.Head, out int poisonHead) && StateDict.EffectElement.Poison < poisonHead)
+                        StateDict.EffectElement.Poison = poisonHead;
+
+                    if (ItemAffinitiesPoison.TryGetValue(unit.Armor, out int poisonArmor) && StateDict.EffectElement.Poison < poisonArmor)
+                        StateDict.EffectElement.Poison = poisonArmor;
+
+                    if (ItemAffinitiesPoison.TryGetValue(unit.Wrist, out int poisonWrist) && StateDict.EffectElement.Poison < poisonWrist)
+                        StateDict.EffectElement.Poison = poisonWrist;
+
+                    if (ItemAffinitiesPoison.TryGetValue(unit.Accessory, out int poisonAccessory) && StateDict.EffectElement.Poison < poisonAccessory)
+                        StateDict.EffectElement.Poison = poisonAccessory;
 
                     // Gravity element
-                    if (ItemAffinitiesGravity.ContainsKey(unit.Weapon))
-                        if (StateDict.EffectElement.Gravity < ItemAffinitiesGravity[unit.Weapon])
-                            StateDict.EffectElement.Gravity = ItemAffinitiesGravity[unit.Weapon];
-                    if (ItemAffinitiesGravity.ContainsKey(unit.Head))
-                        if (StateDict.EffectElement.Gravity < ItemAffinitiesGravity[unit.Head])
-                            StateDict.EffectElement.Gravity = ItemAffinitiesGravity[unit.Head];
-                    if (ItemAffinitiesGravity.ContainsKey(unit.Armor))
-                        if (StateDict.EffectElement.Gravity < ItemAffinitiesGravity[unit.Armor])
-                            StateDict.EffectElement.Gravity = ItemAffinitiesGravity[unit.Armor];
-                    if (ItemAffinitiesGravity.ContainsKey(unit.Wrist))
-                        if (StateDict.EffectElement.Gravity < ItemAffinitiesGravity[unit.Wrist])
-                            StateDict.EffectElement.Gravity = ItemAffinitiesGravity[unit.Wrist];
-                    if (ItemAffinitiesGravity.ContainsKey(unit.Accessory))
-                        if (StateDict.EffectElement.Gravity < ItemAffinitiesGravity[unit.Accessory])
-                            StateDict.EffectElement.Gravity = ItemAffinitiesGravity[unit.Accessory];
+                    if (ItemAffinitiesGravity.TryGetValue(unit.Weapon, out int gravityWeapon) && StateDict.EffectElement.Gravity < gravityWeapon)
+                        StateDict.EffectElement.Gravity = gravityWeapon;
+
+                    if (ItemAffinitiesGravity.TryGetValue(unit.Head, out int gravityHead) && StateDict.EffectElement.Gravity < gravityHead)
+                        StateDict.EffectElement.Gravity = gravityHead;
+
+                    if (ItemAffinitiesGravity.TryGetValue(unit.Armor, out int gravityArmor) && StateDict.EffectElement.Gravity < gravityArmor)
+                        StateDict.EffectElement.Gravity = gravityArmor;
+
+                    if (ItemAffinitiesGravity.TryGetValue(unit.Wrist, out int gravityWrist) && StateDict.EffectElement.Gravity < gravityWrist)
+                        StateDict.EffectElement.Gravity = gravityWrist;
+
+                    if (ItemAffinitiesGravity.TryGetValue(unit.Accessory, out int gravityAccessory) && StateDict.EffectElement.Gravity < gravityAccessory)
+                        StateDict.EffectElement.Gravity = gravityAccessory;
+
                         
                     if (unit.HasSupportAbilityByIndex((SupportAbility)1041)) // Alert+
                     {
@@ -337,15 +332,7 @@ namespace Memoria.Scripts.TranceSeek
                         unit.GuardElement = (EffectElement)(1 << Comn.random16() % 8);
                         unit.AbsorbElement = (EffectElement)(1 << Comn.random16() % 8);
 
-                    List<BattleStatusId> statuschoosen = new List<BattleStatusId>{ BattleStatusId.Poison, BattleStatusId.Venom, BattleStatusId.Blind, BattleStatusId.Silence, BattleStatusId.Trouble,
-                    BattleStatusId.Sleep, BattleStatusId.Freeze, BattleStatusId.Heat, BattleStatusId.Doom, BattleStatusId.Mini, BattleStatusId.Petrify, BattleStatusId.GradualPetrify,
-                    BattleStatusId.Berserk, BattleStatusId.Confuse, BattleStatusId.Stop, BattleStatusId.Zombie, BattleStatusId.Slow, TranceSeekStatusId.Vieillissement,
-                    TranceSeekStatusId.ArmorBreak, TranceSeekStatusId.MagicBreak, TranceSeekStatusId.MentalBreak, TranceSeekStatusId.PowerBreak, BattleStatusId.Virus, BattleStatusId.Regen,
-                    BattleStatusId.Haste, BattleStatusId.Float, BattleStatusId.Shell, BattleStatusId.Protect, BattleStatusId.Vanish, BattleStatusId.Reflect, TranceSeekStatusId.PowerUp,
-                    TranceSeekStatusId.MagicUp, TranceSeekStatusId.ArmorUp, TranceSeekStatusId.MentalUp, TranceSeekStatusId.PowerBreak, TranceSeekStatusId.Dragon, TranceSeekStatusId.Bulwark,
-                    TranceSeekStatusId.PerfectDodge, TranceSeekStatusId.PerfectCrit };
-
-                        btl_stat.AlterStatus(unit, statuschoosen[Comn.random16() % statuschoosen.Count]);
+                        btl_stat.AlterStatus(unit, StrangeCubeStatuses[Comn.random16() % StrangeCubeStatuses.Length]);
                     }
                     else if (unit.Accessory == (RegularItem)1256) // Magic Lamp
                     {
@@ -393,22 +380,19 @@ namespace Memoria.Scripts.TranceSeek
                     }
                     else if (unit.PlayerIndex == (CharacterId)15) // Reset CMD Komrade
                     {
-                        List<BattleAbilityId> ListAAKomrade = CharacterCommands.Commands[(BattleCommandId)1030].EnumerateAbilities().ToList();
-                        int TotalAAKomrade = 2 * ListAAKomrade.Count;
-                        int FirstAAKomradeId = (Int32)ListAAKomrade[0];
+                        var komradeAbilities = CharacterCommands.Commands[(BattleCommandId)1030].EnumerateAbilities();
+
+                        int firstAAKomradeId = (int)komradeAbilities.First();
+                        int totalAAKomrade = 2 * komradeAbilities.Count();
+
                         if (!FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1030, out Dictionary<Int32, Int32> dict))
                         {
                             dict = new Dictionary<Int32, Int32>();
-                            for (Int32 i = 0; i < TotalAAKomrade; i++)
-                                dict[FirstAAKomradeId + i] = 1;
-
                             FF9StateSystem.EventState.gScriptDictionary.Add(1030, dict);
                         }
-                        else
-                        {
-                            for (Int32 i = 0; i < TotalAAKomrade; i++)
-                                dict[FirstAAKomradeId + i] = 1;
-                        }
+
+                        for (int i = 0; i < totalAAKomrade; i++)
+                            dict[firstAAKomradeId + i] = 1;
                     }
 
                     int ID = 2000 + (int)unit.PlayerIndex;
@@ -447,9 +431,9 @@ namespace Memoria.Scripts.TranceSeek
                     }
 
                     if (unit.Row == 1)
-                        btl_stat.AlterStatus(unit, TranceSeekStatusId.Special, parameters: "CanCover1");
+                        unit.State().CanCover = 1;
                     else
-                        btl_stat.AlterStatus(unit, TranceSeekStatusId.Special, parameters: "CanCover0");
+                        unit.State().CanCover = 0;
 
                     if (unit.PlayerIndex == CharacterId.Steiner)
                     {
@@ -491,40 +475,40 @@ namespace Memoria.Scripts.TranceSeek
                             if (bonusHP > 10000)
                             {
                                 bonusHP = unit.MaximumHp - 10000;
-                                unit.MaximumHp += (uint)((bonusHP * dictdifficulty[0]) / 100);
+                                unit.MaximumHp += (uint)((bonusHP * dictdifficulty[DifficultyParameters.Bonus_MaxHP]) / 100);
                                 unit.CurrentHp = unit.MaximumHp;
                                 StateDict.Monster.HPBoss10000 = true;
                             }
                             else
                             {
                                 Log.Message($"[Trance Seek] Boss HP Bonus can't be applied on {unit.Name} : HP is under 10000.");
-                                unit.MaximumHp += (uint)((bonusHP * dictdifficulty[0]) / 100);
+                                unit.MaximumHp += (uint)((bonusHP * dictdifficulty[DifficultyParameters.Bonus_MaxHP]) / 100);
                                 unit.CurrentHp = unit.MaximumHp;
                             }
 
                         }
                         else
                         {
-                            unit.MaximumHp += (uint)((bonusHP * dictdifficulty[0]) / 100);
+                            unit.MaximumHp += (uint)((bonusHP * dictdifficulty[DifficultyParameters.Bonus_MaxHP]) / 100);
                             unit.CurrentHp = unit.MaximumHp;
                         }
 
-                        unit.MaximumMp += (uint)((unit.MaximumMp * dictdifficulty[1]) / 100);
+                        unit.MaximumMp += (uint)((unit.MaximumMp * dictdifficulty[DifficultyParameters.Bonus_MaxMP]) / 100);
                         unit.CurrentMp = unit.MaximumMp;
 
-                        unit.Level = (byte)Math.Min((unit.Level + (unit.Level * dictdifficulty[2]) / 100), byte.MaxValue);
-                        unit.Dexterity = (byte)Math.Min((unit.Dexterity + (unit.Dexterity * dictdifficulty[3]) / 100), 50);
-                        unit.Strength = (byte)Math.Min((unit.Strength + (unit.Strength * dictdifficulty[4]) / 100), byte.MaxValue);
-                        unit.Magic = (byte)Math.Min((unit.Magic + (unit.Magic * dictdifficulty[5]) / 100), byte.MaxValue);
-                        unit.Will = (byte)Math.Min((unit.Will + (unit.Will * dictdifficulty[6]) / 100), 50);
-                        unit.PhysicalDefence = (byte)Math.Min((unit.PhysicalDefence + (unit.PhysicalDefence * dictdifficulty[7]) / 100), byte.MaxValue);
-                        unit.PhysicalEvade = (byte)Math.Min((unit.PhysicalEvade + (unit.PhysicalEvade * dictdifficulty[8]) / 100), byte.MaxValue);
-                        unit.MagicDefence = (byte)Math.Min((unit.MagicDefence + (unit.MagicDefence * dictdifficulty[9]) / 100), byte.MaxValue);
-                        unit.MagicEvade = (byte)Math.Min((unit.MagicEvade + (unit.MagicEvade * dictdifficulty[10]) / 100), byte.MaxValue);
+                        unit.Level = (byte)Math.Min((unit.Level + (unit.Level * dictdifficulty[DifficultyParameters.Bonus_Level]) / 100), byte.MaxValue);
+                        unit.Dexterity = (byte)Math.Min((unit.Dexterity + (unit.Dexterity * dictdifficulty[DifficultyParameters.Bonus_Dexterity]) / 100), 50);
+                        unit.Strength = (byte)Math.Min((unit.Strength + (unit.Strength * dictdifficulty[DifficultyParameters.Bonus_Strength]) / 100), byte.MaxValue);
+                        unit.Magic = (byte)Math.Min((unit.Magic + (unit.Magic * dictdifficulty[DifficultyParameters.Bonus_Magic]) / 100), byte.MaxValue);
+                        unit.Will = (byte)Math.Min((unit.Will + (unit.Will * dictdifficulty[DifficultyParameters.Bonus_Will]) / 100), 50);
+                        unit.PhysicalDefence = (byte)Math.Min((unit.PhysicalDefence + (unit.PhysicalDefence * dictdifficulty[DifficultyParameters.Bonus_PhysicalDefence]) / 100), byte.MaxValue);
+                        unit.PhysicalEvade = (byte)Math.Min((unit.PhysicalEvade + (unit.PhysicalEvade * dictdifficulty[DifficultyParameters.Bonus_PhysicalEvade]) / 100), byte.MaxValue);
+                        unit.MagicDefence = (byte)Math.Min((unit.MagicDefence + (unit.MagicDefence * dictdifficulty[DifficultyParameters.Bonus_MagicDefence]) / 100), byte.MaxValue);
+                        unit.MagicEvade = (byte)Math.Min((unit.MagicEvade + (unit.MagicEvade * dictdifficulty[DifficultyParameters.Bonus_MagicEvade]) / 100), byte.MaxValue);
 
 
-                        battleEnemy.Data.bonus_exp = (uint)(battleEnemy.Data.bonus_exp + ((battleEnemy.Data.bonus_exp * dictdifficulty[11]) / 100));
-                        battleEnemy.Data.bonus_gil = (uint)(battleEnemy.Data.bonus_gil + ((battleEnemy.Data.bonus_gil * dictdifficulty[12]) / 100));
+                        battleEnemy.Data.bonus_exp = (uint)(battleEnemy.Data.bonus_exp + ((battleEnemy.Data.bonus_exp * dictdifficulty[DifficultyParameters.Bonus_EXP]) / 100));
+                        battleEnemy.Data.bonus_gil = (uint)(battleEnemy.Data.bonus_gil + ((battleEnemy.Data.bonus_gil * dictdifficulty[DifficultyParameters.Bonus_Gil]) / 100));
                     }
 
                     if (BattleID == 838 && sb2Pattern.Monster[unit.Data.bi.slot_no].TypeNo == 1) // Golden Pidove (fake Sleep)
@@ -546,7 +530,8 @@ namespace Memoria.Scripts.TranceSeek
                     SB2_MON_PARM monParam = btl_scene.MonAddr[enemyPlacement.TypeNo];
 
                     // Pad 0 (byte) => Unused (1) ; Pad 1 (uint16) => Unused (2) ; Pad 2 (uint16) => Unused (3)
-                    // Pad 1 :
+
+                    // Pad 1 - Unused (2)
                     // 1 -> Weak Poison     16 -> Weak Gravity
                     // 2 -> Half Poison     32 -> Half Gravity
                     // 4 -> Immune Poison   64 -> Immune Gravity
@@ -604,6 +589,7 @@ namespace Memoria.Scripts.TranceSeek
                 state.SpecialSA.NewMaximumMP = (int)unit.MaximumMp;
                 state.SpecialItem.EmergencySatchel = 3;
                 state.SpecialItem.MagicalSatchel = 3;
+                state.Blank.SoakedBlade = RegularItem.NoItem;
 
                 InfusedWeaponScript.WeaponNewElement[unit.Data] = EffectElement.None;
                 InfusedWeaponScript.WeaponNewCustomElement[unit.Data] = 0;
@@ -632,11 +618,7 @@ namespace Memoria.Scripts.TranceSeek
         {
             if (magiclampcooldown <= 0)
             {
-                List<BattleAbilityId> MagicLampSummon = new List<BattleAbilityId> { BattleAbilityId.DiamondDust, BattleAbilityId.FlamesofHell, BattleAbilityId.JudgementBolt, BattleAbilityId.WormHole,
-                BattleAbilityId.Zantetsuken, BattleAbilityId.Tsunami, BattleAbilityId.MegaFlare, BattleAbilityId.EternalDarkness, (BattleAbilityId)1576, (BattleAbilityId)1577, (BattleAbilityId)1578,
-                (BattleAbilityId)1579, (BattleAbilityId)1580, (BattleAbilityId)1581, (BattleAbilityId)1582, (BattleAbilityId)1583};
-
-                BattleAbilityId SummonChoosen = MagicLampSummon[Comn.random16() % MagicLampSummon.Count];
+                BattleAbilityId SummonChoosen = MagicLampSummons[Comn.random16() % MagicLampSummons.Length];
                 ushort target = 0;
 
                 if (SummonChoosen == (BattleAbilityId)1578 || SummonChoosen == (BattleAbilityId)1579 || SummonChoosen == (BattleAbilityId)1580 || SummonChoosen == (BattleAbilityId)1581) // Carbuncle
@@ -718,11 +700,49 @@ namespace Memoria.Scripts.TranceSeek
             { TranceSeekRegularItem.CursedCoin, 4 }
         };
 
+
         private static readonly Dictionary<RegularItem, Int32> ItemAffinitiesGravity = new Dictionary<RegularItem, Int32>
         {
             { RegularItem.PlatinaArmor, 2 },
             { RegularItem.DarkGear, 4 },
             { RegularItem.BlackBelt, 8 }
+        };
+
+        public static class DifficultyParameters
+        {
+            public const int Bonus_MaxHP = 0;
+            public const int Bonus_MaxMP = 1;
+            public const int Bonus_Level = 2;
+            public const int Bonus_Dexterity = 3;
+            public const int Bonus_Strength = 4;
+            public const int Bonus_Magic = 5;
+            public const int Bonus_Will = 6;
+            public const int Bonus_PhysicalDefence = 7;
+            public const int Bonus_PhysicalEvade = 8;
+            public const int Bonus_MagicDefence = 9;
+            public const int Bonus_MagicEvade = 10;
+            public const int Bonus_EXP = 11;
+            public const int Bonus_Gil = 12;
+            public const int Bonus_PowerAA = 13;
+        }
+
+        private static readonly BattleStatusId[] StrangeCubeStatuses =
+{
+            BattleStatusId.Poison, BattleStatusId.Venom, BattleStatusId.Blind, BattleStatusId.Silence, BattleStatusId.Trouble,
+            BattleStatusId.Sleep, BattleStatusId.Freeze, BattleStatusId.Heat, BattleStatusId.Doom, BattleStatusId.Mini, BattleStatusId.Petrify, BattleStatusId.GradualPetrify,
+            BattleStatusId.Berserk, BattleStatusId.Confuse, BattleStatusId.Stop, BattleStatusId.Zombie, BattleStatusId.Slow, TranceSeekStatusId.Vieillissement,
+            TranceSeekStatusId.ArmorBreak, TranceSeekStatusId.MagicBreak, TranceSeekStatusId.MentalBreak, TranceSeekStatusId.PowerBreak, BattleStatusId.Virus, BattleStatusId.Regen,
+            BattleStatusId.Haste, BattleStatusId.Float, BattleStatusId.Shell, BattleStatusId.Protect, BattleStatusId.Vanish, BattleStatusId.Reflect, TranceSeekStatusId.PowerUp,
+            TranceSeekStatusId.MagicUp, TranceSeekStatusId.ArmorUp, TranceSeekStatusId.MentalUp, TranceSeekStatusId.PowerBreak, TranceSeekStatusId.Dragon, TranceSeekStatusId.Bulwark,
+            TranceSeekStatusId.PerfectDodge, TranceSeekStatusId.PerfectCrit
+        };
+
+        private static readonly BattleAbilityId[] MagicLampSummons =
+        {
+            BattleAbilityId.DiamondDust, BattleAbilityId.FlamesofHell, BattleAbilityId.JudgementBolt, BattleAbilityId.WormHole,
+            BattleAbilityId.Zantetsuken, BattleAbilityId.Tsunami, BattleAbilityId.MegaFlare, BattleAbilityId.EternalDarkness,
+            (BattleAbilityId)1576, (BattleAbilityId)1577, (BattleAbilityId)1578, (BattleAbilityId)1579, (BattleAbilityId)1580,
+            (BattleAbilityId)1581, (BattleAbilityId)1582, (BattleAbilityId)1583
         };
     }
 }

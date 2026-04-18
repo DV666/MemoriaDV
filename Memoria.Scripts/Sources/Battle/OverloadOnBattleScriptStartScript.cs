@@ -2,8 +2,10 @@
 using Memoria.Assets;
 using Memoria.Data;
 using Memoria.Database;
+using Memoria.Prime;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using static Memoria.Scripts.TranceSeek.TranceSeekAPI;
 using static Memoria.Scripts.TranceSeek.TranceSeekBattleDictionary;
 
@@ -158,21 +160,14 @@ namespace Memoria.Scripts.TranceSeek
             {
                 int InventionsCD = 0; // For Genie/Eureka mechanic.
 
-                List<BattleAbilityId> InventionAA = new List<BattleAbilityId>{ (BattleAbilityId)1136, (BattleAbilityId)1137, (BattleAbilityId)1138, (BattleAbilityId)1139,
-                    (BattleAbilityId)1140, (BattleAbilityId)1141, (BattleAbilityId)1142, (BattleAbilityId)1143, (BattleAbilityId)1538, (BattleAbilityId)1539};
-
-                foreach (BattleAbilityId AA in InventionAA)
+                foreach (BattleAbilityId AA in InventionAAs)
                 {
-
-                    if (FF9StateSystem.Battle.FF9Battle.aa_data.ContainsKey(AA))
-                        if (FF9StateSystem.Battle.FF9Battle.aa_data[AA] != null)
+                    if (FF9StateSystem.Battle.FF9Battle.aa_data.TryGetValue(AA, out AA_DATA aaData) && aaData != null)
+                        if (aaData.MP > 0)
                         {
-                            if (FF9StateSystem.Battle.FF9Battle.aa_data[AA].MP > 0)
-                            {
-                                FF9StateSystem.Battle.FF9Battle.aa_data[AA].MP--;
-                                if (AA != (BattleAbilityId)1538 && AA != (BattleAbilityId)1539) // Genie & Eureka
-                                    InventionsCD++;
-                            }
+                            aaData.MP--;
+                            if (AA != (BattleAbilityId)1538 && AA != (BattleAbilityId)1539) // Genie & Eureka
+                                InventionsCD++;
                         }
                 }
 
@@ -204,37 +199,15 @@ namespace Memoria.Scripts.TranceSeek
                 if (FF9StateSystem.Battle.FF9Battle.aa_data[v.Command.AbilityId].MP > 0 && v.Caster.HasSupportAbilityByIndex((SupportAbility)246))
                 {
                     v.Caster.CurrentMp = 0;
-                    Dictionary<String, String> localizedMessage = new Dictionary<String, String>
-                    {
-                        { "US", "Emergency Plan!" },
-                        { "UK", "Emergency Plan!" },
-                        { "JP", "緊急時対策!" },
-                        { "ES", "¡Plan de emergencia!" },
-                        { "FR", "Plan d'urgence !" },
-                        { "GR", "Notfallplan!" },
-                        { "IT", "Piano di emergenza!" },
-                    };
-                    btl2d.Btl2dReqSymbolMessage(v.Caster.Data, "[FFFF00]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 10);
+                    btl2d.Btl2dReqSymbolMessage(v.Caster.Data, "[FFFF00]", MessageEmergencyPlan, HUDMessage.MessageStyle.DAMAGE, 10);
                 }
 
                 if (v.Command.Id == (BattleCommandId)1021 || v.Command.Id == (BattleCommandId)1036 || v.Command.Id == (BattleCommandId)1037)  // CMD Invention
                 {
                     int mpCost = 0;
                     KeyValuePair<RegularItem, BattleAbilityId> PassiveHammer = new KeyValuePair<RegularItem, BattleAbilityId>(v.Caster.Weapon, v.Command.AbilityId);
-                    if ((GameRandom.Next8() % 100) < 25 && InventionPreserved.Contains(PassiveHammer))
-                    {
-                        Dictionary<String, String> localizedMessage = new Dictionary<String, String>
-                        {
-                            { "US", "Preserved!" },
-                            { "UK", "Preserved!" },
-                            { "JP", "プリザーブド！" },
-                            { "ES", "¡Conservado!" },
-                            { "FR", "Conservée !" },
-                            { "GR", "Erhalten!" },
-                            { "IT", "Conservata!" },
-                        };
-                        btl2d.Btl2dReqSymbolMessage(v.Caster.Data, "[FFC000]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 10);
-                    }
+                    if ((GameRandom.Next8() % 100) < 25 && InventionPreserved.TryGetValue(v.Caster.Weapon, out BattleAbilityId preservedAA) && preservedAA == v.Command.AbilityId)
+                        btl2d.Btl2dReqSymbolMessage(v.Caster.Data, "[FFC000]", MessagePreserved, HUDMessage.MessageStyle.DAMAGE, 10);
                     else
                     {
                         switch (v.Command.AbilityId)
@@ -288,15 +261,15 @@ namespace Memoria.Scripts.TranceSeek
             }
 
             if (v.Caster.HasSupportAbilityByIndex((SupportAbility)203) && v.Caster.PlayerIndex == CharacterId.Zidane && Caster_TSVar.Zidane.DaggerAttack == 0
-                && v.Command.Id != BattleCommandId.Counter && v.Command.Id != BattleCommandId.RushAttack) // SA Flexible
+                && v.Command.Id != BattleCommandId.Counter && v.Command.Id != BattleCommandId.RushAttack && v.Command.Data.info.effect_counter == 1) // SA Flexible
             {
                 // Permanent [code=Condition] WeaponId == 1 || WeaponId == 2 || WeaponId == 3 || WeaponId == 1153 || WeaponId == 1155 || WeaponId == 1158 || WeaponId == 1161 || WeaponId == 1164 || WeaponId == 1167 [/code] [code=BanishSAByLvl] 203 ; -1 [/code]
-                List<RegularItem> BlackListedWeapon = new List<RegularItem>{ RegularItem.Dagger, RegularItem.MageMasher, RegularItem.MythrilDagger, (RegularItem)1153,
-                (RegularItem)1155, (RegularItem)1158, (RegularItem)1161, (RegularItem)1164, (RegularItem)1167 };
-                if (!BlackListedWeapon.Contains(v.Caster.Weapon))
+                if (!BlackListedWeaponForFlexible.Contains(v.Caster.Weapon))
                 {
+                    if (Caster_TSVar.Zidane.FlexibleLvl > 0)
+                        Caster_TSVar.Zidane.FlexibleLvl = 0;
+
                     Caster_TSVar.Zidane.Flexible++;
-                    btl_stat.AlterStatus(v.Caster, TranceSeekStatusId.Special, parameters: "Flexible0");
                     int FlexibleTurn = v.Caster.HasSupportAbilityByIndex((SupportAbility)1203) ? 2 : 4;
                     if (Caster_TSVar.Zidane.Flexible >= FlexibleTurn)
                     {
@@ -307,9 +280,9 @@ namespace Memoria.Scripts.TranceSeek
                             BattleState.EnqueueCounter(v.Caster, BattleCommandId.RushAttack, (BattleAbilityId)1001, v.Caster.Id);
 
                         if (v.Caster.HasSupportAbilityByIndex((SupportAbility)1203))
-                            btl_stat.AlterStatus(v.Caster, TranceSeekStatusId.Special, parameters: "Flexible2"); // SA Flexible+
+                            Caster_TSVar.Zidane.FlexibleLvl = 2;
                         else
-                            btl_stat.AlterStatus(v.Caster, TranceSeekStatusId.Special, parameters: "Flexible1"); // SA Flexible
+                            Caster_TSVar.Zidane.FlexibleLvl = 1;
                     }
                 }
             }
@@ -328,13 +301,10 @@ namespace Memoria.Scripts.TranceSeek
                         {
                             Target_TSVar.ProtectStatus[status]--;
                             string message = $"-{status}";
-                            Dictionary<string, string> localizedStatusProtect = new Dictionary<string, string>
+                            if (ProtectMessages.TryGetValue(status, out var localizedStatusProtect))
                             {
-                                { "US", message }, { "UK", message }, { "JP", message },
-                                { "ES", message }, { "FR", message }, { "GR", message }, { "IT", message }
-                            };
-
-                            btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[38FF1F]", localizedStatusProtect, HUDMessage.MessageStyle.DAMAGE, 5);
+                                btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[38FF1F]", localizedStatusProtect, HUDMessage.MessageStyle.DAMAGE, 5);
+                            }
                         }
                     }
                 }
@@ -358,27 +328,30 @@ namespace Memoria.Scripts.TranceSeek
             }
 
             if (v.Command.Id == (BattleCommandId)1032 && !v.Caster.HasSupportAbilityByIndex((SupportAbility)1205)) // Witchcraft (Vivi's SA)
-            {
                 v.Command.HitRate /= 2;
-            }
 
-            if (v.Command.IsManyTarget && v.Command.AbilityId >= (BattleAbilityId)1500 && v.Command.AbilityId <= (BattleAbilityId)1526)
+            if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Propagation) && v.Command.IsManyTarget && v.Command.AbilityId >= (BattleAbilityId)1500 && v.Command.AbilityId <= (BattleAbilityId)1526)
             {
                 if (v.Caster.HasSupportAbilityByIndex((SupportAbility)1126))
                     v.Command.HitRate = (v.Command.HitRate * 3) / 4;
                 else
                     v.Command.HitRate /= 2;
 
-                if (v.Caster.HasSupportAbilityByIndex((SupportAbility)1126))
-                    btl_stat.AlterStatus(v.Caster, TranceSeekStatusId.Special, parameters: "Propagation2"); // SA Propagation+
-                else
-                    btl_stat.AlterStatus(v.Caster, TranceSeekStatusId.Special, parameters: "Propagation1"); // SA Propagation
+                if (Caster_TSVar.SpecialSA.Propagation > 0)
+                {
+                    int CostMP = FF9StateSystem.Battle.FF9Battle.aa_data[v.Command.AbilityId].MP;
+                    if (v.Caster.CurrentMp < CostMP)
+                        v.Context.Flags |= (TranceSeekBattleCalcFlags.PropagationFail | BattleCalcFlags.Miss);
+                    else
+                        v.Caster.CurrentMp -= (uint)CostMP;
+                }
+                Caster_TSVar.SpecialSA.Propagation++;
 
                 v.Caster.AddDelayedModifier(
                     caster => caster.CurrentAtb >= caster.MaximumAtb,
                     caster =>
                     {
-                        btl_stat.AlterStatus(caster, TranceSeekStatusId.Special, parameters: "Propagation--");
+                        Caster_TSVar.SpecialSA.Propagation = 0;
                     }
                 );
             }
@@ -517,15 +490,6 @@ namespace Memoria.Scripts.TranceSeek
                 );
             }
 
-            if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Propagation) && v.Command.IsManyTarget && v.Command.Data.info.effect_counter > 1 && v.Command.AbilityId >= (BattleAbilityId)1499 && v.Command.AbilityId <= (BattleAbilityId)1526)
-            {
-                int CostMP = FF9StateSystem.Battle.FF9Battle.aa_data[v.Command.AbilityId].MP;
-                if (v.Caster.CurrentMp < CostMP)
-                    v.Context.Flags |= TranceSeekBattleCalcFlags.PropagationFail;
-                else
-                    v.Caster.CurrentMp -= (uint)CostMP;
-            }
-
             if (v.Caster.PlayerIndex == (CharacterId)14)
             {
                 CharacterPresetId presetId = v.Caster.Player.PresetId;
@@ -566,16 +530,56 @@ namespace Memoria.Scripts.TranceSeek
             return false;
         }
 
-        public static List<KeyValuePair<RegularItem, BattleAbilityId>> InventionPreserved = new List<KeyValuePair<RegularItem, BattleAbilityId>>
+        private static readonly Dictionary<BattleStatus, Dictionary<string, string>> ProtectMessages = new Dictionary<BattleStatus, Dictionary<string, string>>();
+
+        public static void InitProtectMessages()
         {
-            { new KeyValuePair<RegularItem, BattleAbilityId>((RegularItem)1108, (BattleAbilityId)1136) }, // Steel Hammer
-            { new KeyValuePair<RegularItem, BattleAbilityId>((RegularItem)1109, (BattleAbilityId)1137) }, // Boing Hammer
-            { new KeyValuePair<RegularItem, BattleAbilityId>((RegularItem)1110, (BattleAbilityId)1138) }, // OverHammerClock
-            { new KeyValuePair<RegularItem, BattleAbilityId>((RegularItem)1111, (BattleAbilityId)1139) }, // Mithril Hammer
-            { new KeyValuePair<RegularItem, BattleAbilityId>((RegularItem)1112, (BattleAbilityId)1140) }, // Tazermmer
-            { new KeyValuePair<RegularItem, BattleAbilityId>((RegularItem)1113, (BattleAbilityId)1141) }, // Fiery Hammer
-            { new KeyValuePair<RegularItem, BattleAbilityId>((RegularItem)1114, (BattleAbilityId)1142) }, // GregTech Hammer
-            { new KeyValuePair<RegularItem, BattleAbilityId>((RegularItem)1115, (BattleAbilityId)1143) } // E=MCinna²
+            foreach (BattleStatus status in Enum.GetValues(typeof(BattleStatus))) // Don't work with customstatus... maybe later, with a Memoria update ? (or made it here)
+            {
+                string message = $"-{status}";
+                ProtectMessages[status] = new Dictionary<string, string>
+                {
+                    { "US", message }, { "UK", message }, { "JP", message },
+                    { "ES", message }, { "FR", message }, { "GR", message }, { "IT", message }
+                };
+            }
+        }
+
+        private static readonly BattleAbilityId[] InventionAAs =
+        {
+            (BattleAbilityId)1136, (BattleAbilityId)1137, (BattleAbilityId)1138, (BattleAbilityId)1139,
+            (BattleAbilityId)1140, (BattleAbilityId)1141, (BattleAbilityId)1142, (BattleAbilityId)1143,
+            (BattleAbilityId)1538, (BattleAbilityId)1539
+        };
+
+        private static readonly RegularItem[] BlackListedWeaponForFlexible =
+{
+            RegularItem.Dagger, RegularItem.MageMasher, RegularItem.MythrilDagger, (RegularItem)1153,
+            (RegularItem)1155, (RegularItem)1158, (RegularItem)1161, (RegularItem)1164, (RegularItem)1167
+        };
+
+        public static readonly Dictionary<RegularItem, BattleAbilityId> InventionPreserved = new Dictionary<RegularItem, BattleAbilityId>
+        {
+            { (RegularItem)1108, (BattleAbilityId)1136 }, // Steel Hammer
+            { (RegularItem)1109, (BattleAbilityId)1137 }, // Boing Hammer
+            { (RegularItem)1110, (BattleAbilityId)1138 }, // OverHammerClock
+            { (RegularItem)1111, (BattleAbilityId)1139 }, // Mithril Hammer
+            { (RegularItem)1112, (BattleAbilityId)1140 }, // Tazermmer
+            { (RegularItem)1113, (BattleAbilityId)1141 }, // Fiery Hammer
+            { (RegularItem)1114, (BattleAbilityId)1142 }, // GregTech Hammer
+            { (RegularItem)1115, (BattleAbilityId)1143 }, // E=MCinna²
+        };
+
+        private static readonly Dictionary<String, String> MessageEmergencyPlan = new Dictionary<String, String>
+        {
+            { "US", "Emergency Plan!" }, { "UK", "Emergency Plan!" }, { "JP", "緊急時対策!" },
+            { "ES", "¡Plan de emergencia!" }, { "FR", "Plan d'urgence !" }, { "GR", "Notfallplan!" }, { "IT", "Piano di emergenza!" }
+        };
+
+        private static readonly Dictionary<String, String> MessagePreserved = new Dictionary<String, String>
+        {
+            { "US", "Preserved!" }, { "UK", "Preserved!" }, { "JP", "プリザーブド！" },
+            { "ES", "¡Conservado!" }, { "FR", "Conservée !" }, { "GR", "Erhalten!" }, { "IT", "Conservata!" }
         };
     }
 }

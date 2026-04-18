@@ -1,9 +1,10 @@
-﻿using System;
+﻿using FF9;
+using Memoria.Data;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using FF9;
-using Memoria.Data;
 using UnityEngine;
+using static SiliconStudio.Social.ResponseData;
 
 namespace Memoria.Scripts.TranceSeek
 {

@@ -533,7 +533,7 @@ namespace Memoria.Scripts.TranceSeek
             v.Target.Flags |= CalcFlag.HpAlteration;
             v.Caster.Flags |= CalcFlag.HpAlteration;
 
-            if (v.Target.IsZombie || v.Context.IsAbsorb || (Int32)v.Target.GetPropertyByName("StatusProperty CustomStatus21 CursedBlood") != 0)
+            if (v.Target.IsZombie || v.Context.IsAbsorb || v.TargetState().Marcus.CursedBlood > 0)
                 v.Target.Flags |= CalcFlag.HpRecovery;
             else
                 v.Caster.Flags |= CalcFlag.HpRecovery;
@@ -544,16 +544,15 @@ namespace Memoria.Scripts.TranceSeek
         public static void BonusWeaponElement(this BattleCalculator v)
         {
             if ((v.Caster.WeaponElement & v.Caster.BonusElement) != 0)
-                ++v.Context.DamageModifierCount;
-
-            if ((InfusedWeaponScript.WeaponNewElement[v.Caster.Data] & v.Caster.BonusElement) != 0)
-                ++v.Context.DamageModifierCount;
+                v.Context.DamageModifierCount++;
+            else if ((InfusedWeaponScript.WeaponNewElement[v.Caster.Data] & v.Caster.BonusElement) != 0)
+                v.Context.DamageModifierCount++;
         }
 
         public static void BonusElement(this BattleCalculator v)
         {
             if ((v.Command.ElementForBonus & v.Caster.BonusElement) != 0)
-                v.Context.DamageModifierCount += 2;
+                v.Context.DamageModifierCount++;
         }
 
         public static Boolean IsAttackElement(this BattleCalculator v, EffectElement element)
@@ -635,16 +634,24 @@ namespace Memoria.Scripts.TranceSeek
 
             var Target_TSVar = v.TargetState();
 
-            if (v.Target.IsGuardElement(Element) || ((v.Command.ScriptId == 118 || v.Command.ScriptId == 119) && (Target_TSVar.EffectElement.Poison & 4) != 0) || ((v.Command.ScriptId == 17 || v.Command.ScriptId == 86) && (Target_TSVar.EffectElement.Gravity & 4) != 0))
+            Boolean IsWeaponPoison = false;
+            Boolean IsWeaponGravity = false;
+            if (v.Command.Id == BattleCommandId.Attack)
+            {
+                IsWeaponPoison = TranceSeekRegularItem.WeaponAffinitiesPoison.Contains(v.Caster.Weapon);
+                IsWeaponGravity = TranceSeekRegularItem.WeaponAffinitiesGravity.Contains(v.Caster.Weapon);
+            }
+
+            if (v.Target.IsGuardElement(Element) || ((v.Command.ScriptId == 118 || v.Command.ScriptId == 119 || IsWeaponPoison) && (Target_TSVar.EffectElement.Poison & 4) != 0) || ((v.Command.ScriptId == 17 || v.Command.ScriptId == 86 || IsWeaponGravity) && (Target_TSVar.EffectElement.Gravity & 4) != 0))
             {
                 v.Context.Flags |= BattleCalcFlags.Guard;
                 return false;
             }
 
-            if (v.Target.IsHalfElement(Element) || ((v.Command.ScriptId == 118 || v.Command.ScriptId == 119) && (Target_TSVar.EffectElement.Poison & 2) != 0) || ((v.Command.ScriptId == 17 || v.Command.ScriptId == 86) && (Target_TSVar.EffectElement.Gravity & 2) != 0))
+            if (v.Target.IsHalfElement(Element) || ((v.Command.ScriptId == 118 || v.Command.ScriptId == 119 || IsWeaponPoison) && (Target_TSVar.EffectElement.Poison & 2) != 0) || ((v.Command.ScriptId == 17 || v.Command.ScriptId == 86 || IsWeaponGravity) && (Target_TSVar.EffectElement.Gravity & 2) != 0))
                 v.Context.Attack /= 2;
 
-            if (v.Target.IsWeakElement(Element) || ((v.Command.ScriptId == 118 || v.Command.ScriptId == 119) && (Target_TSVar.EffectElement.Poison & 1) != 0) || ((v.Command.ScriptId == 17 || v.Command.ScriptId == 86) && (Target_TSVar.EffectElement.Gravity & 1) != 0))
+            if (v.Target.IsWeakElement(Element) || ((v.Command.ScriptId == 118 || v.Command.ScriptId == 119 || IsWeaponPoison) && (Target_TSVar.EffectElement.Poison & 1) != 0) || ((v.Command.ScriptId == 17 || v.Command.ScriptId == 86 || IsWeaponGravity) && (Target_TSVar.EffectElement.Gravity & 1) != 0))
                 v.Context.DamageModifierCount += 2;
 
             if (v.Target.CanAbsorbElement(Element))
@@ -768,9 +775,9 @@ namespace Memoria.Scripts.TranceSeek
         {
             btl_para.SwitchPlayerRow(unit.Data);
             if (unit.Row == 1)
-                btl_stat.AlterStatus(unit, TranceSeekStatusId.Special, parameters: "CanCover1");
+                unit.State().CanCover = 1;
             else
-                btl_stat.AlterStatus(unit, TranceSeekStatusId.Special, parameters: "CanCover0");
+                unit.State().CanCover = 0;
         }
 
         public static void SA_StatusApply(BattleUnit inflicter, Boolean StatusIsPositive)

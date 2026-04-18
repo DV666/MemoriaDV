@@ -1,6 +1,7 @@
 ﻿using Memoria.Data;
 using Memoria.Prime;
 using System;
+using System.Collections.Generic;
 
 namespace Memoria.Scripts.TranceSeek
 {
@@ -670,6 +671,9 @@ namespace Memoria.Scripts.TranceSeek
         public const RegularItem ProtonBomb = (RegularItem)2488;
         public const RegularItem SuperNova = (RegularItem)2489;
 
+        public static readonly HashSet<RegularItem> WeaponAffinitiesPoison = new HashSet<RegularItem>(new[] { RegularItem.RuneTooth, RuneToothDagger, RegularItem.ScissorFangs });
+
+        public static readonly HashSet<RegularItem> WeaponAffinitiesGravity = new HashSet<RegularItem>(new[] { AtomosScepter });
         public static void SpecialItems(this BattleCalculator v)
         {
             if (v.Caster.IsPlayer)

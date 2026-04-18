@@ -24,7 +24,7 @@ namespace Memoria.Scripts.TranceSeek
         public const BattleStatus SilenceEasyKill = BattleStatus.CustomStatus18;
         public const BattleStatus Rage = BattleStatus.CustomStatus19;
         public const BattleStatus Runic = BattleStatus.CustomStatus20;
-        public const BattleStatus Special = BattleStatus.CustomStatus21;
+        public const BattleStatus Special = BattleStatus.CustomStatus21; // Can be recycled
         public const BattleStatus Provok = BattleStatus.CustomStatus22;
         public const BattleStatus Charm = BattleStatus.CustomStatus23;
     }

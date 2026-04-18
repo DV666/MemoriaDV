@@ -84,7 +84,7 @@ BattleStart
 
 #### Sentinel Steiner ####
 Command
-[code=Condition] CharacterIndex == CharacterId_Steiner && !IsTargeted && IsAllyOfTarget && CommandId == BattleCommandId_EnemyAtk && (AbilityCategory & 8) != 0 && IsSingleTarget && !CheckAnyStatus(CurrentStatus, BattleStatus_Heat) && CheckAnyStatus(CurrentStatus, BattleStatus_Defend) && PropertyByName('StatusProperty Defend Gardien') == 1 && PropertyByName('StatusProperty CustomStatus21 CanCover') == 1 [/code]
+[code=Condition] CharacterIndex == CharacterId_Steiner && !IsTargeted && IsAllyOfTarget && CommandId == BattleCommandId_EnemyAtk && (AbilityCategory & 8) != 0 && IsSingleTarget && !CheckAnyStatus(CurrentStatus, BattleStatus_Heat) && CheckAnyStatus(CurrentStatus, BattleStatus_Defend) && PropertyByName('StatusProperty Defend Gardien') == 1 && GetMemoriaDictionary(1000, 6) == 1 [/code]
 [code=TryCover] !CheckAnyStatus(TargetCurrentStatus, BattleStatus_Death | BattleStatus_Petrify) [/code]
 
 #### Duel Amarant ####
@@ -183,7 +183,7 @@ ________________________________________________________________________________
 [code=Patch] GetMemoriaDictionary(2000 + CharacterIndex, 0) > 0 ? (2000 + CharacterIndex) : (CharacterIndex == CharacterId_Marcus && CheckAnyStatus(CurrentStatus, BattleStatus_Trance) ? 1028 : ((WeaponId == 59 || WeaponId == 71 || WeaponId == 72 || WeaponId == 73 || WeaponId == 1028 || WeaponId == 1029 || WeaponId == 1030 || WeaponId == 1031 ) ? (GetRandom(0, 3) != 0 ? ((WeaponId == 59 || WeaponId == 71 || WeaponId == 72 || WeaponId == 73) ? 1050 : 1051) : ((WeaponId == 59 || WeaponId == 71 || WeaponId == 72 || WeaponId == 73) ? 1051 : 1052)) : -1)) [/code]
 
 >CMD 2 Steal
-[code=Patch] (((CharacterIndex == CharacterId_Blank && ScenarioCounter >= 11100 && Trance > 128) || PropertyByName('StatusProperty CustomStatus21 MasterofAlchemy') != 0)) ? 1020 : (HasSA(1247) ? 1037 : (HasSA(247) ? 1036 : 2)) [/code]
+[code=Patch] (((CharacterIndex == CharacterId_Blank && ScenarioCounter >= 11100 && Trance > 128) || GetMemoriaDictionary(1000, 3) != 0)) ? 1020 : (HasSA(1247) ? 1037 : (HasSA(247) ? 1036 : 2)) [/code]
 
 #### Zidane (switch weapons) ####
 >CMD 25 Replace Skill by Bandit
@@ -202,7 +202,7 @@ ________________________________________________________________________________
 #### SA CMD for Steiner ####
 
 >AA 142 Deathblow
-[code=Patch] HasSA(1213) && GetUnitProperty(CharacterId_Steiner, 'StatusProperty CustomStatus21 Duelist') >= 2 ? 1551 : (HasSA(213) && GetUnitProperty(CharacterId_Steiner, 'StatusProperty CustomStatus21 Duelist') > 0 ? 1550 : -1) [/code]
+[code=Patch] HasSA(1213) && GetMemoriaDictionary(1000, 3) >= 2 ? 1551 : (HasSA(213) && GetMemoriaDictionary(1000, 3) > 0 ? 1550 : -1) [/code]
 
 #### SA CMD for Vivi ####
 >CMD 13
@@ -714,43 +714,43 @@ ________________________________________________________________________________
 ############# SA Flexible #################
 
 >AA 101 Flee
-[code=MPCost] CasterPropertyByName('StatusProperty CustomStatus21 Flexible') == 2 ? 0 : (CasterPropertyByName('StatusProperty CustomStatus21 Flexible') == 1 ? (MPCost / 2) : MPCost) [/code]
+[code=MPCost] GetMemoriaDictionary(1000, 5) == 2 ? 0 : (GetMemoriaDictionary(1000, 5) == 1 ? (MPCost / 2) : MPCost) [/code]
 
 >AA 102 Eye of the thief
-[code=MPCost] CasterPropertyByName('StatusProperty CustomStatus21 Flexible') == 2 ? 0 : (CasterPropertyByName('StatusProperty CustomStatus21 Flexible') == 1 ? (MPCost / 2) : MPCost) [/code]
+[code=MPCost] GetMemoriaDictionary(1000, 5) == 2 ? 0 : (GetMemoriaDictionary(1000, 5) == 1 ? (MPCost / 2) : MPCost) [/code]
 
 >AA 103 What’s That!?
-[code=MPCost] CasterPropertyByName('StatusProperty CustomStatus21 Flexible') == 2 ? 0 : (CasterPropertyByName('StatusProperty CustomStatus21 Flexible') == 1 ? (MPCost / 2) : MPCost) [/code]
+[code=MPCost] GetMemoriaDictionary(1000, 5) == 2 ? 0 : (GetMemoriaDictionary(1000, 5) == 1 ? (MPCost / 2) : MPCost) [/code]
 
 >AA 104 Soul Blade
-[code=MPCost] CasterPropertyByName('StatusProperty CustomStatus21 Flexible') == 2 ? 0 : (CasterPropertyByName('StatusProperty CustomStatus21 Flexible') == 1 ? (MPCost / 2) : MPCost) [/code]
+[code=MPCost] GetMemoriaDictionary(1000, 5) == 2 ? 0 : (GetMemoriaDictionary(1000, 5) == 1 ? (MPCost / 2) : MPCost) [/code]
 
 >AA 105 Trickery
-[code=MPCost] CasterPropertyByName('StatusProperty CustomStatus21 Flexible') == 2 ? 0 : (CasterPropertyByName('StatusProperty CustomStatus21 Flexible') == 1 ? (MPCost / 2) : MPCost) [/code]
+[code=MPCost] GetMemoriaDictionary(1000, 5) == 2 ? 0 : (GetMemoriaDictionary(1000, 5) == 1 ? (MPCost / 2) : MPCost) [/code]
 
 >AA 106 Annoy
-[code=MPCost] CasterPropertyByName('StatusProperty CustomStatus21 Flexible') == 2 ? 0 : (CasterPropertyByName('StatusProperty CustomStatus21 Flexible') == 1 ? (MPCost / 2) : MPCost) [/code]
+[code=MPCost] GetMemoriaDictionary(1000, 5) == 2 ? 0 : (GetMemoriaDictionary(1000, 5) == 1 ? (MPCost / 2) : MPCost) [/code]
 
 >AA 107 Extort
-[code=MPCost] CasterPropertyByName('StatusProperty CustomStatus21 Flexible') == 2 ? 0 : (CasterPropertyByName('StatusProperty CustomStatus21 Flexible') == 1 ? (MPCost / 2) : MPCost) [/code]
+[code=MPCost] GetMemoriaDictionary(1000, 5) == 2 ? 0 : (GetMemoriaDictionary(1000, 5) == 1 ? (MPCost / 2) : MPCost) [/code]
 
 >AA 108 Thievery
-[code=MPCost] CasterPropertyByName('StatusProperty CustomStatus21 Flexible') == 2 ? 0 : (CasterPropertyByName('StatusProperty CustomStatus21 Flexible') == 1 ? (MPCost / 2) : MPCost) [/code]
+[code=MPCost] GetMemoriaDictionary(1000, 5) == 2 ? 0 : (GetMemoriaDictionary(1000, 5) == 1 ? (MPCost / 2) : MPCost) [/code]
 
 >AA 1002 Windy Blade
-[code=MPCost] CasterPropertyByName('StatusProperty CustomStatus21 Flexible') == 2 ? 0 : (CasterPropertyByName('StatusProperty CustomStatus21 Flexible') == 1 ? (MPCost / 2) : MPCost) [/code]
+[code=MPCost] GetMemoriaDictionary(1000, 5) == 2 ? 0 : (GetMemoriaDictionary(1000, 5) == 1 ? (MPCost / 2) : MPCost) [/code]
 
 >AA 1003 Extreme Speed
-[code=MPCost] CasterPropertyByName('StatusProperty CustomStatus21 Flexible') == 2 ? 0 : (CasterPropertyByName('StatusProperty CustomStatus21 Flexible') == 1 ? (MPCost / 2) : MPCost) [/code]
+[code=MPCost] GetMemoriaDictionary(1000, 5) == 2 ? 0 : (GetMemoriaDictionary(1000, 5) == 1 ? (MPCost / 2) : MPCost) [/code]
 
 >AA 1004 Warm-Up
-[code=MPCost] CasterPropertyByName('StatusProperty CustomStatus21 Flexible') == 2 ? 0 : (CasterPropertyByName('StatusProperty CustomStatus21 Flexible') == 1 ? (MPCost / 2) : MPCost) [/code]
+[code=MPCost] GetMemoriaDictionary(1000, 5) == 2 ? 0 : (GetMemoriaDictionary(1000, 5) == 1 ? (MPCost / 2) : MPCost) [/code]
 
 >AA 1005 Quick Attack
-[code=MPCost] CasterPropertyByName('StatusProperty CustomStatus21 Flexible') == 2 ? 0 : (CasterPropertyByName('StatusProperty CustomStatus21 Flexible') == 1 ? (MPCost / 2) : MPCost) [/code]
+[code=MPCost] GetMemoriaDictionary(1000, 5) == 2 ? 0 : (GetMemoriaDictionary(1000, 5) == 1 ? (MPCost / 2) : MPCost) [/code]
 
 >AA 1006 Bandit
-[code=MPCost] CasterPropertyByName('StatusProperty CustomStatus21 Flexible') == 2 ? 0 : (CasterPropertyByName('StatusProperty CustomStatus21 Flexible') == 1 ? (MPCost / 2) : MPCost) [/code]
+[code=MPCost] GetMemoriaDictionary(1000, 5) == 2 ? 0 : (GetMemoriaDictionary(1000, 5) == 1 ? (MPCost / 2) : MPCost) [/code]
 
 #### ??? ####
 
@@ -1657,12 +1657,12 @@ DisableSA 1036 36 1054 54 1056 56
 
 >SA 37 Cover
 Command
-[code=Condition] !IsTargeted && IsAllyOfTarget && CommandId == BattleCommandId_EnemyAtk && (AbilityCategory & 8) != 0 && IsSingleTarget && !CheckAnyStatus(CurrentStatus, BattleStatus_Heat) && PropertyByName('StatusProperty CustomStatus21 CanCover') == 1 [/code]
+[code=Condition] !IsTargeted && IsAllyOfTarget && CommandId == BattleCommandId_EnemyAtk && (AbilityCategory & 8) != 0 && IsSingleTarget && !CheckAnyStatus(CurrentStatus, BattleStatus_Heat) && GetMemoriaDictionary(1000, 6) == 1 [/code]
 [code=TryCover] !CheckAnyStatus(TargetCurrentStatus, BattleStatus_Death, BattleStatus_Petrify) && CheckAnyStatus(TargetCurrentStatus, BattleStatus_LowHP) [/code]
 
 >SA 38 Protect Girls
 Command
-[code=Condition] !IsTargeted && IsAllyOfTarget && CommandId == BattleCommandId_EnemyAtk && (AbilityCategory & 8) != 0 && IsSingleTarget && !CheckAnyStatus(CurrentStatus, BattleStatus_Heat) && PropertyByName('StatusProperty CustomStatus21 CanCover') == 1 [/code]
+[code=Condition] !IsTargeted && IsAllyOfTarget && CommandId == BattleCommandId_EnemyAtk && (AbilityCategory & 8) != 0 && IsSingleTarget && !CheckAnyStatus(CurrentStatus, BattleStatus_Heat) && GetMemoriaDictionary(1000, 6) == 1 [/code]
 [code=TryCover] !CheckAnyStatus(TargetCurrentStatus, BattleStatus_Death, BattleStatus_Petrify) && (TargetPlayerCategory & CharacterCategory_Female) != 0 && TargetHP < TargetMaxHP / 2 [/code]
 
 >SA 39 Super Guard (coded in TranceSeekAPI.cs)
@@ -2198,12 +2198,12 @@ DisableSA 1036 36 1054 54 1056 56
 
 >SA 1037 Cover+
 Command
-[code=Condition] !IsTargeted && IsAllyOfTarget && CommandId == BattleCommandId_EnemyAtk && (AbilityCategory & 8) != 0 && IsSingleTarget && !CheckAnyStatus(CurrentStatus, BattleStatus_Heat) && PropertyByName('StatusProperty CustomStatus21 CanCover') == 1 [/code]
+[code=Condition] !IsTargeted && IsAllyOfTarget && CommandId == BattleCommandId_EnemyAtk && (AbilityCategory & 8) != 0 && IsSingleTarget && !CheckAnyStatus(CurrentStatus, BattleStatus_Heat) && GetMemoriaDictionary(1000, 6) == 1 [/code]
 [code=TryCover] !CheckAnyStatus(TargetCurrentStatus, BattleStatus_Death, BattleStatus_Petrify) && TargetHP < TargetMaxHP / 2 [/code]
 
 >SA 1038 Protect Girls+
 Command
-[code=Condition] !IsTargeted && IsAllyOfTarget && CommandId == BattleCommandId_EnemyAtk && (AbilityCategory & 8) != 0 && IsSingleTarget && !CheckAnyStatus(CurrentStatus, BattleStatus_Heat) && PropertyByName('StatusProperty CustomStatus21 CanCover') == 1 [/code]
+[code=Condition] !IsTargeted && IsAllyOfTarget && CommandId == BattleCommandId_EnemyAtk && (AbilityCategory & 8) != 0 && IsSingleTarget && !CheckAnyStatus(CurrentStatus, BattleStatus_Heat) && GetMemoriaDictionary(1000, 6) == 1 [/code]
 [code=TryCover] !CheckAnyStatus(TargetCurrentStatus, BattleStatus_Death, BattleStatus_Petrify) && (TargetPlayerCategory & CharacterCategory_Female) != 0 [/code]
 
 >SA 1039 Super Guard+ (coded in TranceSeekAPI.cs)

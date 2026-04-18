@@ -412,9 +412,9 @@ namespace Memoria.Scripts.TranceSeek
                 casterState.Zidane.StealGil = 0;
 
                 var localizedMessage = new Dictionary<string, string> {
-            { "US", $"+{bonusgil} gils!" }, { "UK", $"+{bonusgil} gils!" }, { "JP", $"+{bonusgil} ギル!" },
-            { "ES", $"+{bonusgil} guiles!" }, { "FR", $"+{bonusgil} gils !" }, { "GR", $"+{bonusgil} Gil!" }, { "IT", $"+{bonusgil} Guil!" }
-        };
+                    { "US", $"+{bonusgil} gils!" }, { "UK", $"+{bonusgil} gils!" }, { "JP", $"+{bonusgil} ギル!" },
+                    { "ES", $"+{bonusgil} guiles!" }, { "FR", $"+{bonusgil} gils !" }, { "GR", $"+{bonusgil} Gil!" }, { "IT", $"+{bonusgil} Guil!" }
+                };
                 btl2d.Btl2dReqSymbolMessage(_v.Caster.Data, NGUIText.FF9YellowColor, localizedMessage, HUDMessage.MessageStyle.DAMAGE, delay);
                 GameState.Gil += (uint)bonusgil;
             }

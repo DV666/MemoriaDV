@@ -171,18 +171,10 @@ namespace Memoria.Scripts.TranceSeek
         public static void AmarantPassive(this BattleCalculator v)
         {
             Int32 factor = 0;
-            List<BattleStatusId> statuschoosen = new List<BattleStatusId>{ BattleStatusId.Poison, BattleStatusId.Venom, BattleStatusId.Blind, BattleStatusId.Silence, BattleStatusId.Trouble,
-                    BattleStatusId.Sleep, BattleStatusId.Freeze, BattleStatusId.Heat, BattleStatusId.Doom, BattleStatusId.Mini, BattleStatusId.Petrify, BattleStatusId.GradualPetrify,
-                    BattleStatusId.Berserk, BattleStatusId.Confuse, BattleStatusId.Stop, BattleStatusId.Zombie, BattleStatusId.Slow, TranceSeekStatusId.Vieillissement,
-                    TranceSeekStatusId.ArmorBreak, TranceSeekStatusId.MagicBreak, TranceSeekStatusId.MentalBreak, TranceSeekStatusId.PowerBreak};
 
-            for (Int32 i = 0; i < (statuschoosen.Count - 1); i++)
-            {
-                if (v.Target.IsUnderAnyStatus(statuschoosen[i].ToBattleStatus()))
-                {
+            for (Int32 i = 0; i < AmarantPassiveStatuses.Length; i++)
+                if (v.Target.IsUnderAnyStatus(AmarantPassiveStatuses[i].ToBattleStatus()))
                     factor++;
-                }
-            }
 
             int bonus = v.Caster.HasSupportAbilityByIndex((SupportAbility)1228) ? 12 : (v.Caster.HasSupportAbilityByIndex((SupportAbility)228) ? 10 : 8);
 
@@ -266,17 +258,7 @@ namespace Memoria.Scripts.TranceSeek
                     if (v.Target.IsCovering && (Steiner_TSVar.PlutoStackUsed + Steiner_TSVar.PlutoStackRemain) < 5)
                         Steiner_TSVar.PlutoStackUsed++;
                     FF9TextTool.SetCommandName(BattleCommandId.SwordAct, TranceSeekBattleCommand.SwdArtCMDNameVanilla[Localization.CurrentSymbol] + " (" + Steiner_TSVar.PlutoStackUsed + "/" + (Steiner_TSVar.PlutoStackUsed + Steiner_TSVar.PlutoStackRemain) + ")");
-                    Dictionary<String, String> SteinerPassiveMessage = new Dictionary<String, String>
-                    {
-                        { "US", "[SPRT=IconAtlas,item200_00] Pluto!" },
-                        { "UK", "[SPRT=IconAtlas,item200_00] Pluto!" },
-                        { "JP", "[SPRT=IconAtlas,item200_00] プルート！" },
-                        { "ES", "[SPRT=IconAtlas,item200_00] ¡Pluto!" },
-                        { "FR", "[SPRT=IconAtlas,item200_00] Brutos !" },
-                        { "GR", "[SPRT=IconAtlas,item200_00] Pluto!" },
-                        { "IT", "[SPRT=IconAtlas,item200_00] Plutò!" }
-                    };
-                    btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[5C5C5C]", SteinerPassiveMessage, HUDMessage.MessageStyle.DAMAGE, 30);
+                    btl2d.Btl2dReqSymbolMessage(v.Target, "[A0A0A0]", MessagePlutoStack, HUDMessage.MessageStyle.DAMAGE, 40);
                 }
             }
         }
@@ -291,17 +273,7 @@ namespace Memoria.Scripts.TranceSeek
                 BeatrixPassive.StackCMD = RedemptionStack;
                 FF9TextTool.SetCommandName(BattleCommandId.HolySword1, TranceSeekBattleCommand.SeikenCMDNameVanilla[Localization.CurrentDisplaySymbol] + " (" + RedemptionStack + " [SPRT=IconAtlas,item200_01,40,40] )");
                 FF9TextTool.SetCommandName(BattleCommandId.HolySword2, TranceSeekBattleCommand.SeikenPlusCMDNameVanilla[Localization.CurrentDisplaySymbol] + " (" + RedemptionStack + " [SPRT=IconAtlas,item200_01,40,40] )");
-                Dictionary<String, String> BeatrixPassiveMessage = new Dictionary<String, String>
-                    {
-                        { "US", "[SPRT=IconAtlas,item200_01] Redemption!" },
-                        { "UK", "[SPRT=IconAtlas,item200_01] Redemption!" },
-                        { "JP", "[SPRT=IconAtlas,item200_01] 贖罪！" },
-                        { "ES", "[SPRT=IconAtlas,item200_01] ¡Redención!" },
-                        { "FR", "[SPRT=IconAtlas,item200_01] Rédemption !" },
-                        { "GR", "[SPRT=IconAtlas,item200_01] Erlösung!" },
-                        { "IT", "[SPRT=IconAtlas,item200_01] Redenzione!" }
-                    };
-                btl2d.Btl2dReqSymbolMessage(unit.Data, "[FFFFFF]", BeatrixPassiveMessage, HUDMessage.MessageStyle.DAMAGE, 30);
+                btl2d.Btl2dReqSymbolMessage(unit.Data, "[FFFFFF]", MessageRedemptionStack, HUDMessage.MessageStyle.DAMAGE, 30);
             }
             else if (RedemptionStack == 0)
             {
@@ -364,17 +336,7 @@ namespace Memoria.Scripts.TranceSeek
                                     Vivi_TSVar.Focus += v.Caster.HasSupportAbilityByIndex((SupportAbility)207) ? 10 : 5; // SA Bobbin
                                 }
                                 int ViviFocus = Vivi_TSVar.Focus;
-                                Dictionary<String, String> localizedMessage = new Dictionary<String, String>
-                                {
-                                    { "US", $"Focus +{ViviFocus}%!" },
-                                    { "UK", $"Focus +{ViviFocus}%!" },
-                                    { "JP", $"フォーカス +{ViviFocus}%!" },
-                                    { "ES", $"¡Focus +{ViviFocus}%!" },
-                                    { "FR", $"Focus +{ViviFocus}% !" },
-                                    { "GR", $"Focus +{ViviFocus}%!" },
-                                    { "IT", $"Focus +{ViviFocus}%!" },
-                                };
-                                btl2d.Btl2dReqSymbolMessage(v.Caster.Data, "[BA55D3]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 40);
+                                ShowFocusMessage(v.Caster, "[BA55D3]", MessageFocusViviPlus, ViviFocus);
                             }
                             else
                             {
@@ -385,32 +347,12 @@ namespace Memoria.Scripts.TranceSeek
                                         Vivi_TSVar.Focus += 5;
 
                                     int ViviFocus = Vivi_TSVar.Focus;
-                                    Dictionary<String, String> localizedMessage = new Dictionary<String, String>
-                                    {
-                                        { "US", $"Focus +{ViviFocus}%!" },
-                                        { "UK", $"Focus +{ViviFocus}%!" },
-                                        { "JP", $"フォーカス +{ViviFocus}%!" },
-                                        { "ES", $"¡Focus +{ViviFocus}%!" },
-                                        { "FR", $"Focus +{ViviFocus}% !" },
-                                        { "GR", $"Focus +{ViviFocus}%!" },
-                                        { "IT", $"Focus +{ViviFocus}%!" },
-                                    };
-                                    btl2d.Btl2dReqSymbolMessage(v.Caster.Data, "[BA55D3]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 40);
+                                    ShowFocusMessage(v.Caster, "[BA55D3]", MessageFocusViviPlus, ViviFocus);
                                 }
                                 else
                                 {
                                     Vivi_TSVar.Focus = 0;
-                                    Dictionary<String, String> localizedMessage = new Dictionary<String, String>
-                                    {
-                                        { "US", "- Focus!" },
-                                        { "UK", "- Focus!" },
-                                        { "JP", "- フォーカス!" },
-                                        { "ES", "¡- Focus!" },
-                                        { "FR", "- Focus !" },
-                                        { "GR", "- Focus!" },
-                                        { "IT", "- Focus!" },
-                                    };
-                                    btl2d.Btl2dReqSymbolMessage(v.Caster.Data, "[DC143C]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 40);
+                                    btl2d.Btl2dReqSymbolMessage(v.Caster, "[BA55D3]", MessageFocusViviLost, HUDMessage.MessageStyle.DAMAGE, 40);
                                 }
                             }
 
@@ -471,17 +413,7 @@ namespace Memoria.Scripts.TranceSeek
                                         Vivi_TSVar.Focus += Vivi.HasSupportAbilityByIndex((SupportAbility)207) ? 10 : 5; // SA Bobbin;
                                     }
                                     int ViviFocus = Vivi_TSVar.Focus;
-                                    Dictionary<String, String> localizedMessage = new Dictionary<String, String>
-                                    {
-                                        { "US", $"Focus +{ViviFocus}%!" },
-                                        { "UK", $"Focus +{ViviFocus}%!" },
-                                        { "JP", $"フォーカス +{ViviFocus}%!" },
-                                        { "ES", $"¡Focus +{ViviFocus}%!" },
-                                        { "FR", $"Focus +{ViviFocus}% !" },
-                                        { "GR", $"Focus +{ViviFocus}%!" },
-                                        { "IT", $"Focus +{ViviFocus}%!" },
-                                    };
-                                    btl2d.Btl2dReqSymbolMessage(Vivi.Data, "[BA55D3]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 40);
+                                    ShowFocusMessage(Vivi, "[BA55D3]", MessageFocusViviPlus, ViviFocus);
                                     v.Context.Attack += v.Context.Attack * (ViviFocus / 100);
                                     v.Command.HitRate += v.Command.HitRate * (ViviFocus / 100);
                                 }
@@ -494,32 +426,12 @@ namespace Memoria.Scripts.TranceSeek
                                             Vivi_TSVar.Focus += 5;
 
                                         int ViviFocus = Vivi_TSVar.Focus;
-                                        Dictionary<String, String> localizedMessage = new Dictionary<String, String>
-                                        {
-                                            { "US", $"Focus +{ViviFocus}%!" },
-                                            { "UK", $"Focus +{ViviFocus}%!" },
-                                            { "JP", $"フォーカス +{ViviFocus}%!" },
-                                            { "ES", $"¡Focus +{ViviFocus}%!" },
-                                            { "FR", $"Focus +{ViviFocus}% !" },
-                                            { "GR", $"Focus +{ViviFocus}%!" },
-                                            { "IT", $"Focus +{ViviFocus}%!" },
-                                        };
-                                        btl2d.Btl2dReqSymbolMessage(Vivi.Data, "[BA55D3]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 40);
+                                        ShowFocusMessage(Vivi, "[BA55D3]", MessageFocusViviPlus, ViviFocus);
                                     }
                                     else
                                     {
                                         Vivi_TSVar.Focus = 0;
-                                        Dictionary<String, String> localizedMessage = new Dictionary<String, String>
-                                        {
-                                            { "US", "- Focus!" },
-                                            { "UK", "- Focus!" },
-                                            { "JP", "- フォーカス!" },
-                                            { "ES", "¡- Focus!" },
-                                            { "FR", "- Focus !" },
-                                            { "GR", "- Focus!" },
-                                            { "IT", "- Focus!" },
-                                        };
-                                        btl2d.Btl2dReqSymbolMessage(Vivi.Data, "[DC143C]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 40);
+                                        btl2d.Btl2dReqSymbolMessage(Vivi, "[BA55D3]", MessageFocusViviLost, HUDMessage.MessageStyle.DAMAGE, 40);
                                     }
                                 }
                                 Vivi_TSVar.PreviousSpell = v.Command.AbilityId;
@@ -565,44 +477,37 @@ namespace Memoria.Scripts.TranceSeek
                         {
                             case (BattleAbilityId)2000: // Mog Cure
                             {
-                                if (Eiko.CurrentHp <= Eiko.MaximumHp / 2)
-                                    AddAA = true;
+                                AddAA = Eiko.CurrentHp <= Eiko.MaximumHp / 2;
                                 break;
                             }
                             case (BattleAbilityId)2001: // Mog Hug
                             {
-                                if (Eiko.CurrentMp <= Eiko.MaximumMp / 2)
-                                    AddAA = true;
+                                AddAA = Eiko.CurrentMp <= Eiko.MaximumMp / 2;
                                 break;
                             }
                             case (BattleAbilityId)2002: // Mog Regen
                             {
-                                if (!Eiko.IsUnderAnyStatus(BattleStatus.Regen))
-                                    AddAA = true;
+                                AddAA = !Eiko.IsUnderAnyStatus(BattleStatus.Regen | BattleStatus.Zombie);
                                 break;
                             }
                             case (BattleAbilityId)2004: // Mog Mirror
                             {
-                                if (!Eiko.IsUnderAnyStatus(BattleStatus.Vanish))
-                                    AddAA = true;
+                                AddAA = !Eiko.IsUnderAnyStatus(BattleStatus.Vanish);
                                 break;
                             }
                             case (BattleAbilityId)2005: // Mog AutoLife
                             {
-                                if (Eiko.Level >= 35 && !Eiko.IsUnderAnyStatus(BattleStatus.AutoLife))
-                                    AddAA = true;
+                                AddAA = Eiko.Level >= 35 && !Eiko.IsUnderAnyStatus(BattleStatus.AutoLife);
                                 break;
                             }
                             case (BattleAbilityId)2006: // Mog Esuna
                             {
-                                if (Eiko.IsUnderAnyStatus(BattleStatus.Poison | BattleStatus.Venom | BattleStatus.Silence | BattleStatus.Blind | BattleStatus.Trouble | BattleStatus.Berserk | BattleStatus.Mini | TranceSeekStatus.Vieillissement))
-                                    AddAA = true;
+                                AddAA = Eiko.IsUnderAnyStatus(BattleStatus.Poison | BattleStatus.Venom | BattleStatus.Silence | BattleStatus.Blind | BattleStatus.Trouble | BattleStatus.Berserk | BattleStatus.Mini | TranceSeekStatus.Vieillissement);
                                 break;
                             }
                             case (BattleAbilityId)2007: // Mog Support
                             {
-                                if (Eiko.Level >= 30 && (Eiko_TSVar.StackStatus.Magic < 50 || Eiko_TSVar.StackStatus.MDefence < 50))
-                                    AddAA = true;
+                                AddAA = Eiko.Level >= 30 && (Eiko_TSVar.StackStatus.Magic < 50 || Eiko_TSVar.StackStatus.MDefence < 50);
                                 break;
                             }
                             case (BattleAbilityId)2009: // Mog Flare
@@ -619,7 +524,6 @@ namespace Memoria.Scripts.TranceSeek
                                         if (monster.IsUnderAnyStatus(BattleStatus.Reflect))
                                             TargetReflect = true;
                                     }
-
 
                                     if (TargetAvailable)
                                         AddAA = true;
@@ -683,8 +587,7 @@ namespace Memoria.Scripts.TranceSeek
                             }
                             case (BattleAbilityId)2014: // Moga Shield
                             {
-                                if (Eiko.Level >= 60)
-                                    AddAA = true;
+                                AddAA = Eiko.Level >= 60;
                                 break;
                             }
                             case (BattleAbilityId)2015: // Moga Mirror
@@ -807,6 +710,16 @@ namespace Memoria.Scripts.TranceSeek
             }
         }
 
+        public static void ShowFocusMessage(BattleUnit unit, String color, Dictionary<String, String> baseMessage, int FocusValue)
+        {
+            Dictionary<String, String> formattedMessage = new Dictionary<String, String>();
+
+            foreach (var kvp in baseMessage)
+                formattedMessage[kvp.Key] = string.Format(kvp.Value, FocusValue);
+
+            btl2d.Btl2dReqSymbolMessage(unit.Data, color, formattedMessage, HUDMessage.MessageStyle.DAMAGE, 40);
+        }
+
         public static void Hehe(BattleCalculator v, Boolean ClassicSteal)
         {
             if (v.Caster.PlayerIndex != CharacterId.Zidane) return;
@@ -814,5 +727,37 @@ namespace Memoria.Scripts.TranceSeek
             if (StealScript.ForcedHeheZidane || ClassicSteal)
                 SoundLib.PlaySoundEffect(4500 + (Comn.random8() % 6));
         }
+
+        private static readonly Dictionary<String, String> MessageFocusViviPlus = new Dictionary<String, String>
+        {
+            { "US", "Focus +{0}%!" }, { "UK", "Focus +{0}%!" }, { "JP", "フォーカス +{0}%!" },
+            { "ES", "¡Focus +{0}%!" }, { "FR", "Focus +{0}% !" }, { "GR", "Focus +{0}%!" }, { "IT", "Focus +{0}%!" }
+        };
+
+        private static readonly Dictionary<String, String> MessageFocusViviLost = new Dictionary<String, String>
+        {
+            { "US", "- Focus!" }, { "UK", "- Focus!" }, { "JP", "- フォーカス!" },
+            { "ES", "¡- Focus!" }, { "FR", "- Focus !" }, { "GR", "- Focus!" }, { "IT", "- Focus!" }
+        };
+
+        private static readonly Dictionary<String, String> MessagePlutoStack = new Dictionary<String, String>
+        {
+            { "US", "[SPRT=IconAtlas,item200_00] Pluto!" }, { "UK", "[SPRT=IconAtlas,item200_00] Pluto!" }, { "JP", "[SPRT=IconAtlas,item200_00] プルート！" },
+            { "ES", "[SPRT=IconAtlas,item200_00] ¡Pluto!" }, { "FR", "[SPRT=IconAtlas,item200_00] Brutos !" }, { "GR", "[SPRT=IconAtlas,item200_00] Pluto!" }, { "IT", "[SPRT=IconAtlas,item200_00] Plutò!" }
+        };
+
+        private static readonly Dictionary<String, String> MessageRedemptionStack = new Dictionary<String, String>
+        {
+            { "US", "[SPRT=IconAtlas,item200_01] Redemption!" }, { "UK", "[SPRT=IconAtlas,item200_01] Redemption!" }, { "JP", "[SPRT=IconAtlas,item200_01] 贖罪！" },
+            { "ES", "[SPRT=IconAtlas,item200_01] ¡Redención!" }, { "FR", "[SPRT=IconAtlas,item200_01] Rédemption !" }, { "GR", "[SPRT=IconAtlas,item200_01] Erlösung!" }, { "IT", "[SPRT=IconAtlas,item200_01] Redenzione!" }
+        };
+
+        private static readonly BattleStatusId[] AmarantPassiveStatuses =
+        {
+            BattleStatusId.Poison, BattleStatusId.Venom, BattleStatusId.Blind, BattleStatusId.Silence, BattleStatusId.Trouble,
+            BattleStatusId.Sleep, BattleStatusId.Freeze, BattleStatusId.Heat, BattleStatusId.Doom, BattleStatusId.Mini, BattleStatusId.Petrify, BattleStatusId.GradualPetrify,
+            BattleStatusId.Berserk, BattleStatusId.Confuse, BattleStatusId.Stop, BattleStatusId.Zombie, BattleStatusId.Slow, TranceSeekStatusId.Vieillissement,
+            TranceSeekStatusId.ArmorBreak, TranceSeekStatusId.MagicBreak, TranceSeekStatusId.MentalBreak, TranceSeekStatusId.PowerBreak
+        };
     }
 }

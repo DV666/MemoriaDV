@@ -50,21 +50,28 @@ namespace Memoria.Scripts.TranceSeek
                 return;
             }
 
-            if ( _v.Command.AbilityId == (BattleAbilityId)1104 && (_v.Caster.ResistStatus & BattleStatus.Doom) == 0) // Sang Maudit
+            if ( _v.Command.AbilityId == (BattleAbilityId)1104) // Sang Maudit
             {
+                if (Target_TSVar.Marcus.LifeOrDeath || (_v.Target.ResistStatus & BattleStatus.Doom) != 0)
+                {
+                    _v.Context.Flags |= BattleCalcFlags.Miss;
+                    return;
+                }
+
                 btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.PowerUp, parameters: $"+{_v.Command.Power}");
                 btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.MagicUp, parameters: $"+{_v.Command.Power}");
                 btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.ArmorUp, parameters: $"+{_v.Command.Power}");
                 btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.MentalUp, parameters: $"+{_v.Command.Power}");
-                btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.Special, parameters: "LifeorDeath++");
                 btl_stat.MakeStatusesPermanent(_v.Target, BattleStatus.Doom, true);
+                Target_TSVar.Marcus.LifeOrDeath = true;
+
                 _v.Target.AddDelayedModifier(
                     target => !target.IsUnderAnyStatus(BattleStatus.Death),
                     target =>
                     {
                         btl_stat.MakeStatusesPermanent(target, BattleStatus.Doom, false);
-                        btl_stat.AlterStatus(target, TranceSeekStatusId.Special, parameters: "LifeorDeath--");
                         btl_stat.RemoveStatus(target, BattleStatusId.Doom);
+                        Target_TSVar.Marcus.LifeOrDeath = false;
                     }
                 );
                 return;

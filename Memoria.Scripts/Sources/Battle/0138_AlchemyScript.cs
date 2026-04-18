@@ -38,14 +38,14 @@ namespace Memoria.Scripts.TranceSeek
                 }
                 case (BattleAbilityId)1146: // Ingrédient secret
                 {
-                    btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.Special, parameters: "Secretingredient++");
+                    _v.CasterState().Blank.SecretIngredient++;
                     break;
                 }
                 case (BattleAbilityId)1147: // Lame trempée
                 {
-                    object SoakedBladeItem = _v.Caster.GetPropertyByName("StatusProperty CustomStatus21 SoakedBlade");
-                    if ((int)SoakedBladeItem > 0)
-                        _v.Command.AbilityStatus = ff9item.GetItemEffect((RegularItem)SoakedBladeItem).status;
+                    RegularItem SoakedBladeItem = _v.CasterState().Blank.SoakedBlade;
+                    if (SoakedBladeItem != RegularItem.NoItem)
+                        _v.Command.AbilityStatus = ff9item.GetItemEffect(SoakedBladeItem).status;
 
                     _v.WeaponPhysicalParams();
                     TranceSeekAPI.MagicAccuracy(_v);
@@ -70,7 +70,7 @@ namespace Memoria.Scripts.TranceSeek
                 case (BattleAbilityId)1148: // Traitement urgent
                 case (BattleAbilityId)1150: // Traitement collectif
                 {
-                    RegularItem ItemChoosen = (RegularItem)_v.Caster.GetPropertyByName("StatusProperty CustomStatus21 SoakedBlade"); // Last item used
+                    RegularItem ItemChoosen = _v.CasterState().Blank.SoakedBlade; // Last item used
 
                     if (ItemChoosen == 0 || GameState.ItemCount(ItemChoosen) <= 0)
                         _v.Context.Flags = BattleCalcFlags.Miss;
@@ -237,7 +237,7 @@ namespace Memoria.Scripts.TranceSeek
                 }
                 case (BattleAbilityId)1151: // Maître Alchimiste
                 {
-                    btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.Special, parameters: "MasterofAlchemy");
+                    _v.CasterState().Blank.MasterOfAlchemy++;
                     break;
                 }                
             }
