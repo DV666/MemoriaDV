@@ -1838,7 +1838,29 @@ namespace Memoria.Scripts.TranceSeek
 
         private int DrawStatUI(string k, string l, int v, int w = 75) { GUILayout.BeginHorizontal(); GUILayout.Label(l, GUILayout.Width(w)); if (GUILayout.Button("-", GUILayout.Width(20))) { v--; _statTextCache[k] = v.ToString(); GUI.FocusControl(null); } if (!_statTextCache.ContainsKey(k)) _statTextCache[k] = v.ToString(); GUI.SetNextControlName(k); _statTextCache[k] = GUILayout.TextField(_statTextCache[k], GUILayout.Width(45)); if (GUILayout.Button("+", GUILayout.Width(20))) { v++; _statTextCache[k] = v.ToString(); GUI.FocusControl(null); } GUILayout.EndHorizontal(); if (int.TryParse(_statTextCache[k], out int p)) return p; return v; }
         private string GetAbilityName(int id) { var f = typeof(TranceSeekBattleAbility).GetFields(BindingFlags.Public | BindingFlags.Static); foreach (var fi in f) if ((int)(BattleAbilityId)fi.GetValue(null) == id) return fi.Name; if (Enum.IsDefined(typeof(BattleAbilityId), id)) return Enum.GetName(typeof(BattleAbilityId), id); return "Unknown"; }
-        private string GetItemName(int id) { var f = typeof(TranceSeekRegularItem).GetFields(BindingFlags.Public | BindingFlags.Static); foreach (var fi in f) if ((int)(RegularItem)fi.GetValue(null) == id) return fi.Name; if (Enum.IsDefined(typeof(RegularItem), id)) return Enum.GetName(typeof(RegularItem), id); return "Unknown"; }
+        private string GetItemName(int id)
+        {
+            try
+            {
+                var fields = typeof(TranceSeekRegularItem).GetFields(BindingFlags.Public | BindingFlags.Static);
+                foreach (var fi in fields)
+                {
+                    if (fi.FieldType == typeof(RegularItem))
+                    {
+                        if ((int)(RegularItem)fi.GetValue(null) == id)
+                            return fi.Name;
+                    }
+                }
+
+                if (Enum.IsDefined(typeof(RegularItem), id))
+                    return Enum.GetName(typeof(RegularItem), id);
+            }
+            catch (Exception)
+            {
+            }
+
+            return "Unknown";
+        }
         private string FormatDifficultyText(string n, int d) { if (FF9StateSystem.EventState?.gEventGlobal?[1403] == d) return $"<color=yellow><b>{n}</b></color>"; return n; }
         private string FormatCheatText(string n, int c) { if (MegaCheat == c) return $"<color=green><b>{n}</b></color>"; return n; }
         private void SetDifficulty(int g, int i) { try { for (int x = 82; x <= 89; x++) ff9item.FF9Item_RemoveImportant(x); ff9item.FF9Item_AddImportant(i); FF9StateSystem.EventState.gEventGlobal[1403] = (byte)g; FF9StateSystem.EventState.gEventGlobal[1407] = (byte)(g >= 4 && g <= 6 ? 1 : 0); SoundLib.PlaySoundEffect(108); } catch { } }

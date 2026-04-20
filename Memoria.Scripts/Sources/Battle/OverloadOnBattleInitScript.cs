@@ -461,6 +461,9 @@ namespace Memoria.Scripts.TranceSeek
 
                     BattleEnemy battleEnemy = BattleEnemy.Find(unit);
 
+                    if (GameState.ModelKillCount(unit.Data.dms_geo_id) > 0 && (GameState.ModelKillCount(unit.Data.dms_geo_id) % 10) == 0)
+                        OverTranceTrigger(unit);
+
                     if (unit.IsUnderAnyStatus(BattleStatus.EasyKill))
                     {
                         StateDict.Monster.DurationDeadlyStatus = 100; // Reduce time for Sleep/Freeze/Stop

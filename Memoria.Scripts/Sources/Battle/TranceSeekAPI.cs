@@ -896,6 +896,36 @@ namespace Memoria.Scripts.TranceSeek
             }
         }
 
+        public static void OverTranceTrigger(BattleUnit mob)
+        {
+            Boolean AlreadyOvertrance = false;
+            List<BattleUnit> candidates = new List<BattleUnit>();
+            foreach (BattleUnit monster in BattleState.EnumerateUnits())
+            {
+                if (!monster.IsPlayer && monster.Data.dms_geo_id == mob.Data.dms_geo_id)
+                {
+                    if ((monster.PermanentStatus & BattleStatus.Trance) != 0)
+                    {
+                        AlreadyOvertrance = true;
+                        break;
+                    }
+                    else if (!monster.IsUnderAnyStatus(BattleStatus.EasyKill) && !monster.InTrance && monster.CurrentHp > 0)
+                        candidates.Add(monster);
+                }
+            }
+
+            if (candidates.Count > 0 && !AlreadyOvertrance)
+            {
+                BattleUnit MobToTrance = candidates[UnityEngine.Random.Range(0, candidates.Count)];
+                BattleEnemy battleEnemy = BattleEnemy.Find(MobToTrance);
+                MobToTrance.ResistStatus &= ~BattleStatus.Trance;
+                btl_stat.MakeStatusesPermanent(MobToTrance, BattleStatus.Trance);
+                battleEnemy.Data.bonus_exp *= 2;
+                battleEnemy.Data.bonus_gil += (battleEnemy.Data.bonus_gil / 2);
+                battle.btl_bonus.ap *= 2;
+            }
+        }
+
         public static void SpecialEffect(this BattleCalculator v)
         {
             var Caster_TSVar = v.CasterState();
