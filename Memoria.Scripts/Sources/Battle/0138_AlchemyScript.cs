@@ -1,4 +1,4 @@
-using FF9;
+ï»¿using FF9;
 using Memoria.Data;
 using NCalc;
 using System;
@@ -23,25 +23,25 @@ namespace Memoria.Scripts.TranceSeek
         {
             switch (_v.Command.AbilityId)
             {
-                case (BattleAbilityId)1144: // Concoction
+                case TranceSeekBattleAbility.Concoction: // Concoction
                 {
                     TranceSeekAPI.TryRemoveAbilityStatuses(_v);
                     break;
                 }
-                case (BattleAbilityId)1145: // Bandage
-                case (BattleAbilityId)1149: // Premiers soins
+                case TranceSeekBattleAbility.Pansement: // Bandage
+                case TranceSeekBattleAbility.FirstAid: // Premiers soins
                 {
                     _v.Target.Flags |= CalcFlag.HpDamageOrHeal;
                     _v.CalcDamageCommon();
                     _v.Target.HpDamage = (int)((_v.Target.MaximumHp * _v.Command.Power) / 100);
                     break;
                 }
-                case (BattleAbilityId)1146: // Ingrédient secret
+                case TranceSeekBattleAbility.Secretingredient: // IngrÃ©dient secret
                 {
                     _v.CasterState().Blank.SecretIngredient++;
                     break;
                 }
-                case (BattleAbilityId)1147: // Lame trempée
+                case TranceSeekBattleAbility.Soakedblade: // Lame trempÃ©e
                 {
                     RegularItem SoakedBladeItem = _v.CasterState().Blank.SoakedBlade;
                     if (SoakedBladeItem != RegularItem.NoItem)
@@ -67,8 +67,8 @@ namespace Memoria.Scripts.TranceSeek
                     }
                     break;
                 }
-                case (BattleAbilityId)1148: // Traitement urgent
-                case (BattleAbilityId)1150: // Traitement collectif
+                case TranceSeekBattleAbility.UrgentTreatment: // Traitement urgent
+                case TranceSeekBattleAbility.MassTreatment: // Traitement collectif
                 {
                     RegularItem ItemChoosen = _v.CasterState().Blank.SoakedBlade; // Last item used
 
@@ -79,7 +79,7 @@ namespace Memoria.Scripts.TranceSeek
                     {
                         case RegularItem.Potion:
                         case RegularItem.HiPotion:
-                        case (RegularItem)1000: // Ultra Potion
+                        case TranceSeekRegularItem.UltraPotion: // Ultra Potion
                         {
                             _v.Context.AttackPower = ff9item.GetItemEffect(ItemChoosen).Ref.Power;
                             _v.Context.DefensePower = 0;
@@ -99,14 +99,14 @@ namespace Memoria.Scripts.TranceSeek
                                 _v.Context.AttackPower = 1250;
                             }
 
-                            if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)100)) // Medecin
-                                _v.Target.HpDamage += _v.Caster.HpDamage / (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1100) ? 2 : 4);
+                            if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Doctor)) // Medecin
+                                _v.Target.HpDamage += _v.Caster.HpDamage / (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Doctor_Boosted) ? 2 : 4);
 
                             _v.CalcHpMagicRecovery();
                             break;
                         }
                         case RegularItem.Ether:
-                        case (RegularItem)1001: // Ether +
+                        case TranceSeekRegularItem.HiEther: // Ether +
                         {
                             _v.Context.Attack = 15;
                             _v.Context.AttackPower = ff9item.GetItemEffect(ItemChoosen).Ref.Power;
@@ -115,7 +115,7 @@ namespace Memoria.Scripts.TranceSeek
                             break;
                         }
                         case RegularItem.Elixir:
-                        case (RegularItem)1002: // Megalixir
+                        case TranceSeekRegularItem.Megalixir: // Megalixir
                         {
                             if (!_v.Target.CanBeAttacked())
                                 return;
@@ -164,7 +164,7 @@ namespace Memoria.Scripts.TranceSeek
                             if (!_v.Target.CanBeRevived())
                                 return;
 
-                            if (_v.Target.Accessory == (RegularItem)1213) // Anneau Maudit
+                            if (_v.Target.Accessory == TranceSeekRegularItem.CursedRing) // Anneau Maudit
                             {
                                 if (_v.Command.ItemId == RegularItem.PhoenixPinion && (_v.Target.Data.stat.permanent & BattleStatus.Doom) != 0 && !_v.Target.IsUnderAnyStatus(BattleStatus.Death))
                                 {
@@ -181,7 +181,7 @@ namespace Memoria.Scripts.TranceSeek
                             else if (_v.Target.CheckIsPlayer())
                             {
                                 if (_v.Target.IsUnderStatus(BattleStatus.Death))
-                                    if (_v.Target.HasSupportAbilityByIndex((SupportAbility)1004)) // Invincible+
+                                    if (_v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.AutoLife_Boosted)) // Invincible+
                                     {
                                         _v.Target.Flags |= CalcFlag.HpAlteration | CalcFlag.HpRecovery | CalcFlag.MpAlteration | CalcFlag.MpRecovery;
                                         _v.Target.HpDamage = (int)_v.Target.MaximumHp;
@@ -203,10 +203,10 @@ namespace Memoria.Scripts.TranceSeek
                         case RegularItem.Vaccine:
                         case RegularItem.Remedy:
                         case RegularItem.Annoyntment:
-                        case (RegularItem)1003:
+                        case TranceSeekRegularItem.HiRemedy:
                         {
                             _v.Command.AbilityStatus = ff9item.GetItemEffect(ItemChoosen).status;
-                            if ((_v.Command.ItemId == RegularItem.Remedy || _v.Command.ItemId == RegularItem.Annoyntment || _v.Command.ItemId == (RegularItem)1003) && _v.Target.IsUnderAnyStatus(TranceSeekStatus.Vieillissement))
+                            if ((_v.Command.ItemId == RegularItem.Remedy || _v.Command.ItemId == RegularItem.Annoyntment || _v.Command.ItemId == TranceSeekRegularItem.HiRemedy) && _v.Target.IsUnderAnyStatus(TranceSeekStatus.Vieillissement))
                             {
                                 _v.Command.AbilityStatus |= TranceSeekStatus.Vieillissement;
                             }
@@ -235,7 +235,7 @@ namespace Memoria.Scripts.TranceSeek
                     BattleItem.RemoveFromInventory(ItemChoosen);
                     break;
                 }
-                case (BattleAbilityId)1151: // Maître Alchimiste
+                case TranceSeekBattleAbility.MasterofAlchemy: // MaÃ®tre Alchimiste
                 {
                     _v.CasterState().Blank.MasterOfAlchemy++;
                     break;
@@ -244,4 +244,7 @@ namespace Memoria.Scripts.TranceSeek
         }
     }
 }
+
+
+
 

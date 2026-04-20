@@ -1,4 +1,4 @@
-using Memoria.Data;
+﻿using Memoria.Data;
 using System;
 using UnityEngine;
 
@@ -33,14 +33,14 @@ namespace Memoria.Scripts.TranceSeek
                 TranceSeekAPI.InfusedWeaponStatus(_v);
                 if (_v.Command.HitRate == 255)
                 {
-                    if ((Mathf.Abs((_v.Caster.Row - _v.Target.Row)) <= 1) && (!_v.Target.HasSupportAbilityByIndex((SupportAbility)1026))) // Stone Skin+
+                    if ((Mathf.Abs((_v.Caster.Row - _v.Target.Row)) <= 1) && (!_v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.StoneSkin_Boosted))) // Stone Skin+
                     {
                         _v.Target.ChangeRow();
                     }
                 }
                 else
                 {
-                    if ((_v.Target.Row > 0) && (!_v.Target.HasSupportAbilityByIndex((SupportAbility)1026))) // Stone Skin+
+                    if ((_v.Target.Row > 0) && (!_v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.StoneSkin_Boosted))) // Stone Skin+
                     {
                         _v.Target.ChangeRow();
                         if (_v.Target.Row == 1)
@@ -54,3 +54,4 @@ namespace Memoria.Scripts.TranceSeek
         }
     }
 }
+

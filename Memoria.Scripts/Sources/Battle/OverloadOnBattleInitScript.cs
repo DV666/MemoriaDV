@@ -242,20 +242,20 @@ namespace Memoria.Scripts.TranceSeek
                         StateDict.EffectElement.Gravity = gravityAccessory;
 
                         
-                    if (unit.HasSupportAbilityByIndex((SupportAbility)1041)) // Alert+
+                    if (unit.HasSupportAbilityByIndex(TranceSeekSupportAbility.Alert_Boosted)) // Alert+
                     {
                         btl_stat.AlterStatus(unit, TranceSeekStatusId.PerfectDodge, parameters: "+2");
                     }
                     if (unit.HasSupportAbilityByIndex((SupportAbility)52)) // Last Stand
                     {
-                        StateDict.SpecialSA.LastStand = unit.HasSupportAbilityByIndex((SupportAbility)1052) ? 2 : 1;
+                        StateDict.SpecialSA.LastStand = unit.HasSupportAbilityByIndex(TranceSeekSupportAbility.LastStand_Boosted) ? 2 : 1;
                     }
-                    if (unit.HasSupportAbilityByIndex((SupportAbility)1252)) // SA I'm all set
+                    if (unit.HasSupportAbilityByIndex(TranceSeekSupportAbility.ImAllSet_Boosted)) // SA I'm all set
                     {
                         unit.AlterStatus(TranceSeekStatus.ArmorUp, unit);
                         unit.AlterStatus(TranceSeekStatus.MentalUp, unit);
                     }
-                    if (unit.HasSupportAbilityByIndex((SupportAbility)1045)) // Pluriche+
+                    if (unit.HasSupportAbilityByIndex(TranceSeekSupportAbility.Millionaire_Boosted)) // Pluriche+
                     {
                         dictbattle[0] += 3;
                         foreach (BattleUnit monster in BattleState.EnumerateUnits())
@@ -273,7 +273,7 @@ namespace Memoria.Scripts.TranceSeek
                     {
                         dictbattle[0] += 2;
                     }
-                    if (unit.Accessory == (RegularItem)1212) // Cait's Eye
+                    if (unit.Accessory == TranceSeekRegularItem.CaitsEye) // Cait's Eye
                     {
                         dictbattle[0] += 1;
                     }
@@ -288,12 +288,12 @@ namespace Memoria.Scripts.TranceSeek
                             if (!monster.IsPlayer)
                                 TranceSeekBattleDictionary.GetState(monster.Data).Zidane.EyeOfTheThief = true;
                     }
-                    if (unit.Armor == (RegularItem)1220) // Mechanical Armor
+                    if (unit.Armor == TranceSeekRegularItem.GarlandsArmor) // Mechanical Armor
                     {
                         StateDict.SpecialItem.MechanicalArmor = 10;
                         btl_stat.AlterStatus(unit, TranceSeekStatusId.MechanicalArmor, parameters: StateDict.SpecialItem.MechanicalArmor);
                     }
-                    if (unit.Accessory == (RegularItem)1253) // Ishgard Scarf
+                    if (unit.Accessory == TranceSeekRegularItem.IshgardScarf) // Ishgard Scarf
                     {
                         unit.AddDelayedModifier(
                             caster => FF9StateSystem.Battle.FF9Battle.btl_phase < FF9StateBattleSystem.PHASE_MENU_ON,
@@ -309,7 +309,7 @@ namespace Memoria.Scripts.TranceSeek
                             }
                         );
                     }
-                    else if (unit.Accessory == (RegularItem)1254) // Strange Cube
+                    else if (unit.Accessory == TranceSeekRegularItem.StrangeCube) // Strange Cube
                     {
                         unit.MaximumHp = (uint)UnityEngine.Random.Range(unit.MaximumHp - (unit.MaximumHp / 2), unit.MaximumHp + (unit.MaximumHp / 2));
                         StateDict.SpecialSA.NewMaximumHP = (int)unit.MaximumHp;
@@ -334,21 +334,21 @@ namespace Memoria.Scripts.TranceSeek
 
                         btl_stat.AlterStatus(unit, StrangeCubeStatuses[Comn.random16() % StrangeCubeStatuses.Length]);
                     }
-                    else if (unit.Accessory == (RegularItem)1256) // Magic Lamp
+                    else if (unit.Accessory == TranceSeekRegularItem.MagicLamp) // Magic Lamp
                     {
                         magiclampcooldown = (60 - unit.Will) * UnityEngine.Random.Range(1, 11) * 100;
                         unit.AddDelayedModifier(ProcessMagicLampRecast, null);
                     }
-                    else if (unit.Accessory == (RegularItem)1257) // Cursed Coin
+                    else if (unit.Accessory == TranceSeekRegularItem.CursedCoin) // Cursed Coin
                     {
                         if (DarkBBG.Contains(battlebg.nf_BbgNumber))
                         {
                             CharacterPresetId presetId = unit.Player.PresetId;
-                            unit.ChangeToMonster("GZ_R002", 0, CharacterCommands.CommandSets[presetId].Regular[2], (BattleCommandId)1111, false, false, false, false, false);
+                            unit.ChangeToMonster("GZ_R002", 0, CharacterCommands.CommandSets[presetId].Regular[2], TranceSeekBattleCommand.Monster, false, false, false, false, false);
                             CharacterCommands.CommandSets[presetId].Regular[3] = BattleCommandId.None;
                         }
                     }
-                    else if (unit.Accessory == (RegularItem)1261 && !RefinedMonocleTrigger) // Refined Monocle
+                    else if (unit.Accessory == TranceSeekRegularItem.RefinedMonocle && !RefinedMonocleTrigger) // Refined Monocle
                     {
                         RefinedMonocleTrigger = true;
                         unit.AddDelayedModifier(
@@ -380,7 +380,7 @@ namespace Memoria.Scripts.TranceSeek
                     }
                     else if (unit.PlayerIndex == (CharacterId)15) // Reset CMD Komrade
                     {
-                        var komradeAbilities = CharacterCommands.Commands[(BattleCommandId)1030].EnumerateAbilities();
+                        var komradeAbilities = CharacterCommands.Commands[TranceSeekBattleCommand.Komrade].EnumerateAbilities();
 
                         int firstAAKomradeId = (int)komradeAbilities.First();
                         int totalAAKomrade = 2 * komradeAbilities.Count();
@@ -404,9 +404,9 @@ namespace Memoria.Scripts.TranceSeek
                         unit.AlterStatus(BattleStatus.Death, unit);
                         unit.CurrentHp = 0;
                     }
-                    if (unit.HasSupportAbilityByIndex((SupportAbility)132) && false) // SA Anastrophe
+                    if (unit.HasSupportAbilityByIndex(TranceSeekSupportAbility.Anastrophe) && false) // SA Anastrophe
                     {
-                        int factor = unit.HasSupportAbilityByIndex((SupportAbility)1132) ? 1 : 2;
+                        int factor = unit.HasSupportAbilityByIndex(TranceSeekSupportAbility.Anastrophe_Boosted) ? 1 : 2;
                         uint UnitOldMaximumHP = unit.MaximumHp;
                         uint UnitOldMaximumMP = unit.MaximumMp;
                         unit.MaximumHp = (uint)(UnitOldMaximumMP / factor);
@@ -419,12 +419,12 @@ namespace Memoria.Scripts.TranceSeek
                         StateDict.SpecialSA.NewMaximumMP = (int)unit.MaximumMp;
                     }
 
-                    if (unit.HasSupportAbilityByIndex((SupportAbility)1212)) // SA Protector+
+                    if (unit.HasSupportAbilityByIndex(TranceSeekSupportAbility.Protector_Boosted)) // SA Protector+
                     {
                         btl_stat.AlterStatus(unit, TranceSeekStatusId.PowerBreak, parameters: "+4");
                         btl_stat.AlterStatus(unit, TranceSeekStatusId.ArmorUp, parameters: "+4");
                     }
-                    else if (unit.HasSupportAbilityByIndex((SupportAbility)212)) // SA Protector
+                    else if (unit.HasSupportAbilityByIndex(TranceSeekSupportAbility.Protector)) // SA Protector
                     {
                         btl_stat.AlterStatus(unit, TranceSeekStatusId.PowerBreak, parameters: "+2");
                         btl_stat.AlterStatus(unit, TranceSeekStatusId.ArmorUp, parameters: "+2");
@@ -621,7 +621,7 @@ namespace Memoria.Scripts.TranceSeek
                 BattleAbilityId SummonChoosen = MagicLampSummons[Comn.random16() % MagicLampSummons.Length];
                 ushort target = 0;
 
-                if (SummonChoosen == (BattleAbilityId)1578 || SummonChoosen == (BattleAbilityId)1579 || SummonChoosen == (BattleAbilityId)1580 || SummonChoosen == (BattleAbilityId)1581) // Carbuncle
+                if (SummonChoosen == TranceSeekBattleAbility.RubyLight || SummonChoosen == TranceSeekBattleAbility.EmeraldLight || SummonChoosen == TranceSeekBattleAbility.PearlLight || SummonChoosen == TranceSeekBattleAbility.DiamondLight) // Carbuncle
                     target = btl_util.GetStatusBtlID(0u, 0);
                 else
                     target = btl_util.GetStatusBtlID(1u, 0);
@@ -741,8 +741,12 @@ namespace Memoria.Scripts.TranceSeek
         {
             BattleAbilityId.DiamondDust, BattleAbilityId.FlamesofHell, BattleAbilityId.JudgementBolt, BattleAbilityId.WormHole,
             BattleAbilityId.Zantetsuken, BattleAbilityId.Tsunami, BattleAbilityId.MegaFlare, BattleAbilityId.EternalDarkness,
-            (BattleAbilityId)1576, (BattleAbilityId)1577, (BattleAbilityId)1578, (BattleAbilityId)1579, (BattleAbilityId)1580,
-            (BattleAbilityId)1581, (BattleAbilityId)1582, (BattleAbilityId)1583
+            TranceSeekBattleAbility.TerrestrialRage, TranceSeekBattleAbility.MillennialDecay, TranceSeekBattleAbility.RubyLight, TranceSeekBattleAbility.EmeraldLight, TranceSeekBattleAbility.PearlLight,
+            TranceSeekBattleAbility.DiamondLight, TranceSeekBattleAbility.RebirthFlame, TranceSeekBattleAbility.TerraHoming
         };
     }
 }
+
+
+
+

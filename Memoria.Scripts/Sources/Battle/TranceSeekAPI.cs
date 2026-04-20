@@ -43,9 +43,9 @@ namespace Memoria.Scripts.TranceSeek
                     break;
                 case CalcAttackBonus.Random:
                 {
-                    if (v.Caster.HasSupportAbilityByIndex((SupportAbility)222)) // SA Sharpening
+                    if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Sharpening)) // SA Sharpening
                     {
-                        if (v.Caster.HasSupportAbilityByIndex((SupportAbility)1222)) // SA Sharpening +
+                        if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Sharpening_Boosted)) // SA Sharpening +
                             v.Context.Attack = v.Caster.Strength + baseDamage;
                         else
                             v.Context.Attack = UnityEngine.Random.Range(v.Caster.Strength / 2, v.Caster.Strength) + baseDamage;
@@ -67,7 +67,7 @@ namespace Memoria.Scripts.TranceSeek
         {
             var Caster_TSVar = v.CasterState();
 
-            if (v.Caster.HasSupportAbilityByIndex((SupportAbility)1102)) // Archimage+ (10% crit en bonus)
+            if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Archmage_Boosted)) // Archimage+ (10% crit en bonus)
                 Caster_TSVar.General.Critical = 40;
             Int32 quarterWill = (v.Caster.Data.elem.wpr + Caster_TSVar.General.Critical) >> 2;
             if (quarterWill != 0 && (((Comn.random16() % quarterWill) + v.Caster.Data.critical_rate_deal_bonus + v.Target.Data.critical_rate_receive_resistance + TranceSeekRegularItem.BonusCriticalFromWeapon(v.Caster.Weapon) + BonusCrit) > Comn.random16() % 100) || v.Caster.IsUnderAnyStatus(TranceSeekStatus.PerfectCrit) || Caster_TSVar.SpecialSA.CriticalHit100 > 0)
@@ -126,9 +126,9 @@ namespace Memoria.Scripts.TranceSeek
             if (v.Target.Data != v.Caster.Data) {
                 foreach (BattleUnit unit in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
                 {
-                    if (v.Target.Row != unit.Row && unit.IsUnderAnyStatus(BattleStatus.Death) && (unit.Position == v.Target.Position + 1 || unit.Position == v.Target.Position - 1) && v.Target.HasSupportAbilityByIndex((SupportAbility)109) && Target_TSVar.SpecialSA.Instinct > 0) // Instinct
+                    if (v.Target.Row != unit.Row && unit.IsUnderAnyStatus(BattleStatus.Death) && (unit.Position == v.Target.Position + 1 || unit.Position == v.Target.Position - 1) && v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.Instinct) && Target_TSVar.SpecialSA.Instinct > 0) // Instinct
                     {
-                        if (v.Target.HasSupportAbilityByIndex((SupportAbility)1109)) // Instinct+
+                        if (v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.Instinct_Boosted)) // Instinct+
                             Target_TSVar.SpecialSA.Instinct--;
                         else
                             Target_TSVar.SpecialSA.Instinct = 0;
@@ -142,10 +142,10 @@ namespace Memoria.Scripts.TranceSeek
             if (Caster_TSVar.Beatrix.Braver == 2) // Héroïsme de Beatrix => [TODO] Change to Context.Evade ?
                 v.Context.HitRate += 25;
 
-            if (v.Caster.HasSupportAbilityByIndex((SupportAbility)235) && v.Command.Id == BattleCommandId.Attack) // SA Fencing
-                v.Context.Evade = Math.Min(0, v.Context.Evade - (v.Caster.HasSupportAbilityByIndex((SupportAbility)1235) ? v.Context.Evade / 4 : v.Context.Evade / 8));
+            if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Fencing) && v.Command.Id == BattleCommandId.Attack) // SA Fencing
+                v.Context.Evade = Math.Min(0, v.Context.Evade - (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Fencing_Boosted) ? v.Context.Evade / 4 : v.Context.Evade / 8));
 
-            if (v.Caster.HasSupportAbilityByIndex((SupportAbility)201) && v.Caster.PlayerIndex == CharacterId.Zidane) // SA Gorilla
+            if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Gorilla) && v.Caster.PlayerIndex == CharacterId.Zidane) // SA Gorilla
                 v.Context.HitRate += Caster_TSVar.Zidane.Critical;
 
             if (v.Target.PlayerIndex == CharacterId.Zidane)
@@ -158,12 +158,12 @@ namespace Memoria.Scripts.TranceSeek
                 v.Context.Evade = 0;
 
             if (v.Target.HasSupportAbilityByIndex(SupportAbility.AutoFloat) && v.Target.IsUnderAnyStatus(BattleStatus.Float)) // Light Step
-                v.Context.Evade += v.Context.Evade / (v.Target.HasSupportAbilityByIndex((SupportAbility)1001) ? 2 : 4);
+                v.Context.Evade += v.Context.Evade / (v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.LightStep_Boosted) ? 2 : 4);
 
             if (v.Target.IsUnderAnyStatus(BattleStatus.Defend))
             {
                 if (v.Target.HasSupportAbilityByIndex(SupportAbility.AutoFloat)) // Light Step
-                    v.Context.Evade /= v.Target.HasSupportAbilityByIndex((SupportAbility)1001) ? 1 : 2;
+                    v.Context.Evade /= v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.LightStep_Boosted) ? 1 : 2;
                 else
                     v.Context.Evade = 0;
             }
@@ -338,7 +338,7 @@ namespace Memoria.Scripts.TranceSeek
             if (Target_TSVar.StackStatus.PDefence != 0)
                 v.Context.Attack -= ((Target_TSVar.StackStatus.PDefence * v.Context.Attack) / 100);
 
-            if (v.Target.Weapon == (RegularItem)1156 && v.Target.IsUnderAnyStatus(BattleStatus.Defend)) // Sea Spear
+            if (v.Target.Weapon == TranceSeekRegularItem.SeaSpear && v.Target.IsUnderAnyStatus(BattleStatus.Defend)) // Sea Spear
                 v.Context.Attack = 1;
 
             if (v.Context.Attack < 1)
@@ -399,7 +399,7 @@ namespace Memoria.Scripts.TranceSeek
             //if (v.Context.HitRate > 100)
             //    v.Context.HitRate = 100;
 
-            if (v.Caster.HasSupportAbilityByIndex((SupportAbility)230))
+            if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Venefic))
                 TranceSeekCharacterMechanic.AmarantPassive(v);
 
             ReduceAccuracyEliteMonsters(v);
@@ -409,7 +409,7 @@ namespace Memoria.Scripts.TranceSeek
 
             v.Context.Evade = v.Target.MagicEvade;
 
-            if (v.Caster.HasSupportAbilityByIndex((SupportAbility)1200) && v.Caster.PlayerIndex == CharacterId.Zidane) // SA Knavery+
+            if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Knavery_Boosted) && v.Caster.PlayerIndex == CharacterId.Zidane) // SA Knavery+
                 v.Context.Evade += v.CasterState().Zidane.Dodge;
         }
 
@@ -448,7 +448,7 @@ namespace Memoria.Scripts.TranceSeek
             var Caster_TSVar = v.CasterState();
             var Target_TSVar = v.TargetState();
 
-            if (v.Caster.HasSupportAbilityByIndex((SupportAbility)1257)) // SA Mania+ [TODO] Need a new function for that ? Like HitRateBonus()
+            if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Mania_Boosted)) // SA Mania+ [TODO] Need a new function for that ? Like HitRateBonus()
             {
                 if (FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1030, out Dictionary<Int32, Int32> dict))
                 {
@@ -574,11 +574,11 @@ namespace Memoria.Scripts.TranceSeek
                 if (v.Caster.PlayerIndex == (CharacterId)12 & v.Target.IsWeakElement(WeaponElement)) // SA Maximum infusion
                 {
                     BattleAbilityId InfusedAA = v.CasterState().Vivi.PreviousSpell;
-                    if (InfusedAA == (BattleAbilityId)1091 || InfusedAA == (BattleAbilityId)1092 || InfusedAA == (BattleAbilityId)1093 || InfusedAA == (BattleAbilityId)1094)
+                    if (InfusedAA == TranceSeekBattleAbility.SFira || InfusedAA == TranceSeekBattleAbility.SBlizzara || InfusedAA == TranceSeekBattleAbility.SThundara || InfusedAA == TranceSeekBattleAbility.SWatera)
                     {
                         v.Context.DamageModifierCount++;
                     }
-                    if (InfusedAA == (BattleAbilityId)1095 || InfusedAA == (BattleAbilityId)1096 || InfusedAA == (BattleAbilityId)1097 || InfusedAA == (BattleAbilityId)1098)
+                    if (InfusedAA == TranceSeekBattleAbility.SFiraga || InfusedAA == TranceSeekBattleAbility.SBlizzaga || InfusedAA == TranceSeekBattleAbility.SThundaga || InfusedAA == TranceSeekBattleAbility.SWaterga)
                     {
                         v.Context.DamageModifierCount += 2;
                     }
@@ -656,10 +656,10 @@ namespace Memoria.Scripts.TranceSeek
 
             if (v.Target.CanAbsorbElement(Element))
             {
-                if (v.Target.HasSupportAbilityByIndex((SupportAbility)241) && (Element & EffectElement.Darkness) != 0) // SA Dark side
+                if (v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.DarkSide) && (Element & EffectElement.Darkness) != 0) // SA Dark side
                 {
                     v.Context.DefensePower = 0;
-                    if (v.Target.HasSupportAbilityByIndex((SupportAbility)1241))
+                    if (v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.DarkSide_Boosted))
                         IncreaseTrance(v.Caster.Data, Comn.random16() % (v.Target.Will / 2));
                 }
             }
@@ -720,11 +720,11 @@ namespace Memoria.Scripts.TranceSeek
                 return;
             }
 
-            if (v.Caster.HasSupportAbilityByIndex((SupportAbility)249) && v.Command.AbilityStatus > 0) // SA Assistance
+            if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Benevolent) && v.Command.AbilityStatus > 0) // SA Assistance
             {
                 foreach (BattleStatusId status in v.Command.AbilityStatus.ToStatusList())
                 {
-                    if (status == BattleStatusId.Death && !v.Caster.HasSupportAbilityByIndex((SupportAbility)1249))
+                    if (status == BattleStatusId.Death && !v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Benevolent_Boosted))
                         continue;
 
                     if (v.Target.IsUnderAnyStatus(status))
@@ -738,11 +738,11 @@ namespace Memoria.Scripts.TranceSeek
 
         public static void TryRemoveItemStatuses(this BattleCalculator v)
         {
-            if (v.Caster.HasSupportAbilityByIndex((SupportAbility)249) && v.Command.Item.Status > 0) // SA Assistance
+            if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Benevolent) && v.Command.Item.Status > 0) // SA Assistance
             {
                 foreach (BattleStatusId status in v.Command.Item.Status.ToStatusList())
                 {
-                    if (status == BattleStatusId.Death && !v.Caster.HasSupportAbilityByIndex((SupportAbility)1249))
+                    if (status == BattleStatusId.Death && !v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Benevolent_Boosted))
                         continue;
 
                     if (v.Target.IsUnderAnyStatus(status))
@@ -784,15 +784,15 @@ namespace Memoria.Scripts.TranceSeek
         {
             if (inflicter != null)
             {
-                if (inflicter.HasSupportAbilityByIndex((SupportAbility)128) && inflicter.CurrentMp < inflicter.MaximumMp) // SA Strategist
+                if (inflicter.HasSupportAbilityByIndex(TranceSeekSupportAbility.Strategist) && inflicter.CurrentMp < inflicter.MaximumMp) // SA Strategist
                 {
-                    int factor = inflicter.HasSupportAbilityByIndex((SupportAbility)1128) ? 2 : 1;
+                    int factor = inflicter.HasSupportAbilityByIndex(TranceSeekSupportAbility.Strategist_Boosted) ? 2 : 1;
                     inflicter.CurrentMp = (uint)Math.Min(inflicter.CurrentMp + factor * (inflicter.MaximumMp / 100), inflicter.MaximumMp);
                 }
-                if (inflicter.HasSupportAbilityByIndex((SupportAbility)131) && !inflicter.InTrance && inflicter.Trance < byte.MaxValue && StatusIsPositive) // SA Altruistic
+                if (inflicter.HasSupportAbilityByIndex(TranceSeekSupportAbility.Altruistic) && !inflicter.InTrance && inflicter.Trance < byte.MaxValue && StatusIsPositive) // SA Altruistic
                     IncreaseTrance(inflicter.Data, inflicter.Will / 10);
 
-                if (inflicter.HasSupportAbilityByIndex((SupportAbility)1258) && inflicter.CurrentMp < inflicter.MaximumMp) // SA Reward+
+                if (inflicter.HasSupportAbilityByIndex(TranceSeekSupportAbility.Reward_Boosted) && inflicter.CurrentMp < inflicter.MaximumMp) // SA Reward+
                     inflicter.CurrentMp = Math.Min(inflicter.CurrentMp + (inflicter.MaximumMp / 25), inflicter.MaximumMp);
             }
         }
@@ -825,11 +825,11 @@ namespace Memoria.Scripts.TranceSeek
 
         public static void PhantomHandSA(this BattleCalculator v)
         {
-            if (v.Caster.HasSupportAbilityByIndex((SupportAbility)202)) // SA Phantom hand
+            if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.PhantomHand)) // SA Phantom hand
             {
                 v.Caster.Flags |= CalcFlag.MpDamageOrHeal;
                 v.Caster.MpDamage = (int)(v.Caster.MaximumMp / UnityEngine.Random.Range(5, 20));
-                if (v.Caster.HasSupportAbilityByIndex((SupportAbility)1202) && !v.Caster.InTrance)
+                if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Phantom_Hand_Boosted) && !v.Caster.InTrance)
                     IncreaseTrance(v.Caster.Data, Comn.random16() % v.Caster.Will);
             }
         }
@@ -889,7 +889,7 @@ namespace Memoria.Scripts.TranceSeek
                 }
 
                 if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Propagation) && !v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Propagation_Boosted)
-                    && v.Command.IsManyTarget && v.Command.AbilityId >= (BattleAbilityId)1499 && v.Command.AbilityId <= (BattleAbilityId)1526)
+                    && v.Command.IsManyTarget && v.Command.AbilityId >= (BattleAbilityId)1499 && v.Command.AbilityId <= TranceSeekBattleAbility.AngelWhisper_Multi)
                     durationfactor /= 2;
 
                 v.Target.Data.stat.conti[statusId] = (Int16)((statusData.ContiCnt * durationfactor) * v.Target.Data.stat.duration_factor[statusId]);
@@ -925,7 +925,7 @@ namespace Memoria.Scripts.TranceSeek
             if (v.Context.IsAbsorb)
                 v.Target.Flags |= CalcFlag.HpDamageOrHeal;
 
-            if (v.Target.HasSupportAbilityByIndex(SupportAbility.Counter) && v.Target.HasSupportAbilityByIndex((SupportAbility)234) &&
+            if (v.Target.HasSupportAbilityByIndex(SupportAbility.Counter) && v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.Dominance) &&
                 (int)v.Target.GetPropertyByName("StatusProperty CustomStatus12 Stack") >= 2 && v.Target.Will < Comn.random16() % 100 && !v.Caster.IsPlayer) // SA Dominance
             {
                 List<BattleAbilityId> Counter_AA = new List<BattleAbilityId>{ BattleAbilityId.ThunderSlash, BattleAbilityId.StockBreak, BattleAbilityId.Climhazzard, BattleAbilityId.Shock,
@@ -979,7 +979,7 @@ namespace Memoria.Scripts.TranceSeek
                 }
 
             }
-            if (v.Caster.HasSupportAbilityByIndex((SupportAbility)110) && !v.Command.IsManyTarget && v.Command.Id != BattleCommandId.Attack && v.Target.HpDamage > 0 && 
+            if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Proliferation) && !v.Command.IsManyTarget && v.Command.Id != BattleCommandId.Attack && v.Target.HpDamage > 0 && 
                 (v.Command.ScriptId == 9 || v.Command.ScriptId == 10 || v.Command.ScriptId == 17 || v.Command.ScriptId == 18 || v.Command.ScriptId == 116 || v.Command.ScriptId == 118
                 || v.Command.AbilityId == BattleAbilityId.PumpkinHead || v.Command.AbilityId == BattleAbilityId.ThousandNeedles || v.Command.AbilityId == BattleAbilityId.GoblinPunch
                 || v.Command.AbilityId == BattleAbilityId.AutoLife)) // Prolifération
@@ -994,7 +994,7 @@ namespace Memoria.Scripts.TranceSeek
 
                     if (unit.Data != targetdefault) 
                     {
-                        if (v.Caster.HasSupportAbilityByIndex((SupportAbility)1110))
+                        if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Proliferation_Boosted))
                             basedamage = v.Target.HpDamage / 2;
                         else
                             basedamage = v.Target.HpDamage / 4;
@@ -1013,25 +1013,25 @@ namespace Memoria.Scripts.TranceSeek
                     }                   
                 }
             }
-            if (v.Caster.HasSupportAbilityByIndex((SupportAbility)119) && v.Command.Id == BattleCommandId.MagicSword) // Entente
+            if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Agreement) && v.Command.Id == BattleCommandId.MagicSword) // Entente
             {
                 foreach (BattleUnit unit in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
                 {
-                    if (btl_util.getSerialNumber(unit.Data) == CharacterSerialNumber.VIVI && (unit.CurrentMp >= v.Command.Data.aa.MP / (v.Caster.HasSupportAbilityByIndex((SupportAbility)1119) ? 2 : 4)))
+                    if (btl_util.getSerialNumber(unit.Data) == CharacterSerialNumber.VIVI && (unit.CurrentMp >= v.Command.Data.aa.MP / (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Agreement_Boosted) ? 2 : 4)))
                     {
                         if (unit.CurrentMp > v.Command.Data.aa.MP)
-                            unit.CurrentMp = (uint)(unit.CurrentMp - (v.Command.Data.aa.MP / (v.Caster.HasSupportAbilityByIndex((SupportAbility)1119) ? 2 : 4)));
+                            unit.CurrentMp = (uint)(unit.CurrentMp - (v.Command.Data.aa.MP / (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Agreement_Boosted) ? 2 : 4)));
                         else
                             unit.CurrentMp = 0;
                     }
                 }
-                v.Caster.CurrentMp = (uint)(v.Caster.CurrentMp + (v.Command.Data.aa.MP / (v.Caster.HasSupportAbilityByIndex((SupportAbility)1119) ? 2 : 4)));
+                v.Caster.CurrentMp = (uint)(v.Caster.CurrentMp + (v.Command.Data.aa.MP / (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Agreement_Boosted) ? 2 : 4)));
             }
 
-            if (v.Caster.HasSupportAbility(SupportAbility1.ReflectNull) && v.Target.IsUnderAnyStatus(BattleStatus.Reflect) && !v.Caster.HasSupportAbilityByIndex((SupportAbility)1030))
+            if (v.Caster.HasSupportAbility(SupportAbility1.ReflectNull) && v.Target.IsUnderAnyStatus(BattleStatus.Reflect) && !v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.ReflectNull_Boosted))
                 v.Target.HpDamage >>= 1;
 
-            if (v.Command.Id == (BattleCommandId)1032) // SA Witchcraft
+            if (v.Command.Id == TranceSeekBattleCommand.Witchcraft) // SA Witchcraft
             {
                 v.Target.HpDamage /= 2;
                 v.Target.MpDamage /= 2;
@@ -1047,19 +1047,19 @@ namespace Memoria.Scripts.TranceSeek
             {
                 HealHP = v.Target.HpDamage / 2;
             }
-            if (v.Caster.HasSupportAbilityByIndex((SupportAbility)1061) && (v.Command.Id == BattleCommandId.Attack || v.Command.Id == BattleCommandId.Counter) && v.Target.Data != v.Caster.Data) // Mug+
+            if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Mug_Boosted) && (v.Command.Id == BattleCommandId.Attack || v.Command.Id == BattleCommandId.Counter) && v.Target.Data != v.Caster.Data) // Mug+
             {
                 HealHP += v.Target.HpDamage / 4;
             }
-            if (v.Caster.Accessory == (RegularItem)1208 && (v.Target.Flags & CalcFlag.HpRecovery) == 0 && v.Target.Data != v.Caster.Data) // Materia Support
+            if (v.Caster.Accessory == TranceSeekRegularItem.SupportMateria && (v.Target.Flags & CalcFlag.HpRecovery) == 0 && v.Target.Data != v.Caster.Data) // Materia Support
             {
                 HealHP += v.Target.HpDamage / 10;
             }
-            if (v.Caster.HasSupportAbilityByIndex((SupportAbility)115) && (v.Target.WeakElement & v.Command.Element) != 0) // Soul Drain
+            if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.SoulDrain) && (v.Target.WeakElement & v.Command.Element) != 0) // Soul Drain
             {
-                HealHP += v.Target.HpDamage / (v.Caster.HasSupportAbilityByIndex((SupportAbility)1115) ? 2 : 4);
+                HealHP += v.Target.HpDamage / (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.SoulDrain_Boosted) ? 2 : 4);
             }
-            if (v.Caster.HasSupportAbilityByIndex((SupportAbility)258) && (v.Target.WeakElement & v.Command.Element) != 0) // Reward
+            if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Reward) && (v.Target.WeakElement & v.Command.Element) != 0) // Reward
             {
                 HealMP += (int)(v.Caster.MaximumMp / 25);
             }
@@ -1071,9 +1071,9 @@ namespace Memoria.Scripts.TranceSeek
             {
                 HealMP += v.Target.MpDamage / 80;
             }
-            if (v.Target.HasSupportAbilityByIndex((SupportAbility)118) && v.Target.IsCovering) // Flawless
+            if (v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.Flawless) && v.Target.IsCovering) // Flawless
             {
-                int TargetHealMP = (int)(v.Target.HasSupportAbilityByIndex((SupportAbility)1118) ? (v.Target.MaximumMp / 25) : (v.Target.MaximumMp / 50));
+                int TargetHealMP = (int)(v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.Flawless_Boosted) ? (v.Target.MaximumMp / 25) : (v.Target.MaximumMp / 50));
                 if (TargetHealMP > 0)
                 {
                     v.Target.CurrentMp = Math.Min(v.Target.CurrentMp + (uint)TargetHealMP, v.Target.MaximumMp);
@@ -1104,31 +1104,31 @@ namespace Memoria.Scripts.TranceSeek
                 {
                     Target_TSVar.SpecialSA.LastStand--;
                     v.Target.HpDamage = (int)v.Target.CurrentHp - 1;
-                    v.Target.CurrentMp = v.Target.HasSupportAbilityByIndex((SupportAbility)1052) ? (v.Target.CurrentMp / 2) : 0;
+                    v.Target.CurrentMp = v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.LastStand_Boosted) ? (v.Target.CurrentMp / 2) : 0;
                     btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[FDEE00]", MessageLastStand, HUDMessage.MessageStyle.DAMAGE, 10);
                 }
             }
 
-            if (v.Caster.Weapon == (RegularItem)1100 && (v.Target.Flags & CalcFlag.HpRecovery) == 0)
+            if (v.Caster.Weapon == TranceSeekRegularItem.ExcalipoorII && (v.Target.Flags & CalcFlag.HpRecovery) == 0)
             {
                 v.Target.HpDamage = 1;
             }
 
-            if (v.Target.HasSupportAbilityByIndex((SupportAbility)123) && (v.Command.AbilityCategory & 8) != 0 && v.Command.TargetCount == 1) // Assistance
+            if (v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.Assistance) && (v.Command.AbilityCategory & 8) != 0 && v.Command.TargetCount == 1) // Assistance
             {
                 int HPAssistanceDamage = 0;
                 int MPAssistanceDamage = 0;
 
                 if ((v.Target.Flags & CalcFlag.HpAlteration) != 0)
                 {
-                    HPAssistanceDamage = Math.Max((v.Target.HpDamage * (v.Target.HasSupportAbilityByIndex((SupportAbility)1123) ? 30 : 15)) / 100, 1);
-                    v.Target.HpDamage = Math.Max((v.Target.HpDamage * (v.Target.HasSupportAbilityByIndex((SupportAbility)1123) ? 70 : 85)) / 100, 1);
+                    HPAssistanceDamage = Math.Max((v.Target.HpDamage * (v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.Assistance_Boosted) ? 30 : 15)) / 100, 1);
+                    v.Target.HpDamage = Math.Max((v.Target.HpDamage * (v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.Assistance_Boosted) ? 70 : 85)) / 100, 1);
                     
                 }
                 if ((v.Target.Flags & CalcFlag.MpAlteration) != 0)
                 {
-                    MPAssistanceDamage = Math.Max((v.Target.MpDamage * (v.Target.HasSupportAbilityByIndex((SupportAbility)1123) ? 30 : 15)) / 100, 1);
-                    v.Target.MpDamage = Math.Max((v.Target.MpDamage * (v.Target.HasSupportAbilityByIndex((SupportAbility)1123) ? 70 : 85)) / 100, 1);
+                    MPAssistanceDamage = Math.Max((v.Target.MpDamage * (v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.Assistance_Boosted) ? 30 : 15)) / 100, 1);
+                    v.Target.MpDamage = Math.Max((v.Target.MpDamage * (v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.Assistance_Boosted) ? 70 : 85)) / 100, 1);
                 }
 
                 foreach (BattleUnit unit in BattleState.EnumerateUnits())
@@ -1154,13 +1154,13 @@ namespace Memoria.Scripts.TranceSeek
                 }
             }
 
-            if (v.Caster.HasSupportAbilityByIndex((SupportAbility)1131) && !v.Caster.InTrance && v.Target.CurrentHp < v.Target.MaximumHp && (v.Target.Flags & CalcFlag.HpRecovery) != 0) // SA Altruistic+
+            if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Altruistic_Boosted) && !v.Caster.InTrance && v.Target.CurrentHp < v.Target.MaximumHp && (v.Target.Flags & CalcFlag.HpRecovery) != 0) // SA Altruistic+
                 IncreaseTrance(v.Caster.Data, v.Caster.Will / 10);
 
-            if (v.Target.HasSupportAbilityByIndex((SupportAbility)1201) && (v.Command.AbilityCategory & 8) != 0 && Target_TSVar.Zidane.Critical > Comn.random16() % 100) // SA Gorilla+
+            if (v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.Gorilla_Boosted) && (v.Command.AbilityCategory & 8) != 0 && Target_TSVar.Zidane.Critical > Comn.random16() % 100) // SA Gorilla+
                 BattleState.EnqueueCounter(v.Target, BattleCommandId.Counter, BattleAbilityId.Attack, v.Caster.Id);
 
-            if (v.Target.HasSupportAbilityByIndex((SupportAbility)211) && (v.Target.Flags & CalcFlag.HpRecovery) == 0 && !v.Target.IsUnderAnyStatus(BattleStatus.Heat) && v.Target.CurrentHp < (v.Target.MaximumHp / (v.Target.HasSupportAbilityByIndex((SupportAbility)1211) ? 2 : 4)) && !v.Caster.IsPlayer) // SA Auto Gem
+            if (v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.AutoGem) && (v.Target.Flags & CalcFlag.HpRecovery) == 0 && !v.Target.IsUnderAnyStatus(BattleStatus.Heat) && v.Target.CurrentHp < (v.Target.MaximumHp / (v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.AutoGem_Boosted) ? 2 : 4)) && !v.Caster.IsPlayer) // SA Auto Gem
             {
                 List <RegularItem> GemList = new List<RegularItem>{ RegularItem.Garnet, RegularItem.Amethyst, RegularItem.Aquamarine, RegularItem.Diamond, RegularItem.Emerald, RegularItem.Moonstone,
                     RegularItem.Ruby, RegularItem.Peridot, RegularItem.Sapphire, RegularItem.Opal, RegularItem.Topaz, RegularItem.LapisLazuli, RegularItem.Ore};
@@ -1170,9 +1170,9 @@ namespace Memoria.Scripts.TranceSeek
                 btl_cmd.SetCounter(v.Target, BattleCommandId.AutoPotion, (Int32)GemSelected, v.Target.Id);
             }
 
-            if (v.Target.HasSupportAbilityByIndex((SupportAbility)225) && (v.Target.Flags & CalcFlag.HpRecovery) == 0 && v.Target.HpDamage > 0 && Comn.random16() % 100 < 10) // SA Bodyguard (10%)
+            if (v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.Bodyguard) && (v.Target.Flags & CalcFlag.HpRecovery) == 0 && v.Target.HpDamage > 0 && Comn.random16() % 100 < 10) // SA Bodyguard (10%)
             {
-                if (v.Target.HasSupportAbilityByIndex((SupportAbility)1225))
+                if (v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.Bodyguard_Boosted))
                     v.Target.HpDamage = 0;
                 else
                     v.Target.HpDamage /= 2;
@@ -1180,7 +1180,7 @@ namespace Memoria.Scripts.TranceSeek
                 btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[FF00EA]", MessageBodyguard, HUDMessage.MessageStyle.DAMAGE, 8);
             }
 
-            if (v.Caster.HasSupportAbilityByIndex((SupportAbility)1238) && (v.Target.Flags & CalcFlag.HpRecovery) == 0 && v.Target.HpDamage > 0) // SA Crisis level+
+            if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.CrisisLevel_Boosted) && (v.Target.Flags & CalcFlag.HpRecovery) == 0 && v.Target.HpDamage > 0) // SA Crisis level+
             {
                 float RatioCrisisLevel = (v.Caster.CurrentHp * 100) / v.Caster.MaximumHp;
                 v.Target.HpDamage += (short)((v.Target.HpDamage * (100 - RatioCrisisLevel)) / 200);
@@ -1193,15 +1193,15 @@ namespace Memoria.Scripts.TranceSeek
                 v.Target.RemoveStatus(BattleStatus.AutoLife);
             }
 
-            if (v.Caster.HasSupportAbilityByIndex((SupportAbility)235) && v.Command.Id == BattleCommandId.Attack && v.Caster.IsUnderAnyStatus(TranceSeekStatus.Redemption)) // SA Fencing
-                v.Target.HpDamage += v.Caster.HasSupportAbilityByIndex((SupportAbility)1235) ? v.Target.HpDamage / 4 : v.Target.HpDamage / 8;
+            if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Fencing) && v.Command.Id == BattleCommandId.Attack && v.Caster.IsUnderAnyStatus(TranceSeekStatus.Redemption)) // SA Fencing
+                v.Target.HpDamage += v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Fencing_Boosted) ? v.Target.HpDamage / 4 : v.Target.HpDamage / 8;
 
-            if ((v.Target.Flags & CalcFlag.HpRecovery) != 0 && v.Caster.HasSupportAbilityByIndex((SupportAbility)127) && v.Target.HpDamage > (v.Target.MaximumHp - v.Target.CurrentHp) && v.Target.IsPlayer) // SA Invigorating
+            if ((v.Target.Flags & CalcFlag.HpRecovery) != 0 && v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Invigorating) && v.Target.HpDamage > (v.Target.MaximumHp - v.Target.CurrentHp) && v.Target.IsPlayer) // SA Invigorating
             {
                 if (v.Target.MaximumHp == Target_TSVar.SpecialSA.NewMaximumHP)
                 {
                     uint OldMaximumHP = v.Target.MaximumHp;
-                    uint factor = (uint)(v.Caster.HasSupportAbilityByIndex((SupportAbility)1127) ? 20 : 10);
+                    uint factor = (uint)(v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Invigorating_Boosted) ? 20 : 10);
                     uint LimitMaxHP = v.Target.MaximumHp + ((v.Target.MaximumHp * factor) / 100);
 
                     v.Target.MaximumHp = (uint)Math.Min(v.Target.CurrentHp + v.Target.HpDamage, LimitMaxHP);
@@ -1243,7 +1243,7 @@ namespace Memoria.Scripts.TranceSeek
                 }
             }
 
-            if (v.Caster.HasSupportAbilityByIndex((SupportAbility)257)) // SA Mania
+            if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Mania)) // SA Mania
             {
                 if (FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1030, out Dictionary<Int32, Int32> dict))
                 {
@@ -1261,9 +1261,9 @@ namespace Memoria.Scripts.TranceSeek
             if (v.Target.IsCovering && v.Target.Data.bi.cover_unit.dms_geo_id == 220)
             {
                 BattleUnit Mog = new BattleUnit(v.Target.Data.bi.cover_unit);
-                if (Mog.HasSupportAbilityByIndex((SupportAbility)259)) // SA Mog Kiss
+                if (Mog.HasSupportAbilityByIndex(TranceSeekSupportAbility.MogKiss)) // SA Mog Kiss
                     v.Target.AlterStatus(BattleStatus.Regen);
-                if (Mog.HasSupportAbilityByIndex((SupportAbility)1259))
+                if (Mog.HasSupportAbilityByIndex(TranceSeekSupportAbility.MogKiss_Boosted))
                     v.Target.RemoveStatus(BattleStatusConst.AnyNegative &~BattleStatus.Death);
             }
         }
@@ -1311,3 +1311,7 @@ namespace Memoria.Scripts.TranceSeek
         };
     }
 }
+
+
+
+

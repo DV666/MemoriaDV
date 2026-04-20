@@ -27,7 +27,7 @@ namespace Memoria.Scripts.TranceSeek
             var Caster_TSVar = _v.CasterState();
             var Target_TSVar = _v.TargetState();
 
-            if (_v.Command.AbilityId == (BattleAbilityId)1538 || _v.Command.AbilityId == (BattleAbilityId)1539) // AA Idea + Eureka
+            if (_v.Command.AbilityId == TranceSeekBattleAbility.Idea || _v.Command.AbilityId == TranceSeekBattleAbility.Eureka) // AA Idea + Eureka
             {
                 if (Caster_TSVar.Cinna.InventionCoolDown == 0)
                 {
@@ -50,7 +50,7 @@ namespace Memoria.Scripts.TranceSeek
                 return;
             }
 
-            if ( _v.Command.AbilityId == (BattleAbilityId)1104) // Sang Maudit
+            if ( _v.Command.AbilityId == TranceSeekBattleAbility.LifeorDeath) // Sang Maudit
             {
                 if (Target_TSVar.Marcus.LifeOrDeath || (_v.Target.ResistStatus & BattleStatus.Doom) != 0)
                 {
@@ -77,7 +77,7 @@ namespace Memoria.Scripts.TranceSeek
                 return;
             }
 
-            if (_v.Command.AbilityId == (BattleAbilityId)1099) // Iron Clast
+            if (_v.Command.AbilityId == TranceSeekBattleAbility.Ironclad) // Iron Clast
             {
                 _v.Command.AbilityStatus |= TranceSeekStatus.ArmorUp;
                 if (Target_TSVar.Steiner.PlutoStackRemain > 0)
@@ -88,7 +88,7 @@ namespace Memoria.Scripts.TranceSeek
                     TranceSeekCharacterMechanic.ResetSteinerPassive(_v.Caster);
                 }
             }
-            else if (_v.Command.AbilityId == (BattleAbilityId)1007) // Rempart
+            else if (_v.Command.AbilityId == TranceSeekBattleAbility.Bulwark) // Rempart
             {
                 _v.Command.AbilityStatus |= TranceSeekStatus.Bulwark;
                 if (Target_TSVar.Steiner.PlutoStackRemain > 0)
@@ -102,7 +102,7 @@ namespace Memoria.Scripts.TranceSeek
                     TranceSeekCharacterMechanic.ResetSteinerPassive(_v.Caster);
                 }
             }
-            else if (_v.Command.AbilityId == (BattleAbilityId)1059) // Runic
+            else if (_v.Command.AbilityId == TranceSeekBattleAbility.Runic) // Runic
             {
                 _v.Command.AbilityStatus |= TranceSeekStatus.Runic;
             }
@@ -172,3 +172,4 @@ namespace Memoria.Scripts.TranceSeek
         }
     }
 }
+

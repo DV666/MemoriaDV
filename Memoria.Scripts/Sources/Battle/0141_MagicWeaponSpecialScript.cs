@@ -46,13 +46,13 @@ namespace Memoria.Scripts.TranceSeek
                             _v.Command.Element |= EffectElement.Darkness;
                         break;
                     }
-                    case (RegularItem)1028: // Atomos' Scepter
+                    case TranceSeekRegularItem.AtomosScepter: // Atomos' Scepter
                     {
                         ScriptId = 17; // Script 0017_MagicGravityDamageScript.cs
                         _v.Command.Power = _v.Command.Id == TranceSeekBattleCommand.MagicWeapon_Strong ? 75 : 25;
                         break;
                     }
-                    case (RegularItem)1029: // Ivy's Scepter
+                    case TranceSeekRegularItem.IvysScepter: // Ivy's Scepter
                     {
                         ScriptId = 118; // Script 0118_PoisonMagicAttackScript.cs
                         _v.Command.Power = _v.Command.Id == TranceSeekBattleCommand.MagicWeapon_Strong ? 67 : 19;
@@ -60,14 +60,14 @@ namespace Memoria.Scripts.TranceSeek
                         _v.Command.AbilityStatus |= _v.Command.Id == TranceSeekBattleCommand.MagicWeapon_Strong ? BattleStatus.Venom : BattleStatus.Poison;
                         break;
                     }
-                    case (RegularItem)1030: // Ankou's Scepter
+                    case TranceSeekRegularItem.AnkousScepter: // Ankou's Scepter
                     {
                         ScriptId = 14; // Script 0014_DeathScript.cs
                         _v.Command.HitRate = 30;
                         _v.Command.AbilityStatus |= BattleStatus.Death;
                         break;
                     }
-                    case (RegularItem)1031: // Stardust Scepter
+                    case TranceSeekRegularItem.StardustScepter: // Stardust Scepter
                     {
                         ScriptId = 116; // Script 0116_LowRandomMagic.cs
                         _v.Command.Power = _v.Command.Id == TranceSeekBattleCommand.MagicWeapon_Strong ? 109 : 42;
@@ -95,4 +95,5 @@ namespace Memoria.Scripts.TranceSeek
         }
     }
 }
+
 

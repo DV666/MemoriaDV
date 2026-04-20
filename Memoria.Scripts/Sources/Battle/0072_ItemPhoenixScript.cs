@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Memoria.Data;
 using static SiliconStudio.Social.ResponseData;
 
@@ -42,7 +42,7 @@ namespace Memoria.Scripts.TranceSeek
                 if (!_v.Target.CanBeRevived())
                     return;
 
-                if (_v.Target.Accessory == (RegularItem)1213) // Anneau Maudit
+                if (_v.Target.Accessory == TranceSeekRegularItem.CursedRing) // Anneau Maudit
                 {
                     if (_v.Command.ItemId == RegularItem.PhoenixPinion && (_v.Target.Data.stat.permanent & BattleStatus.Doom) != 0 && !_v.Target.IsUnderAnyStatus(BattleStatus.Death))
                     {
@@ -59,7 +59,7 @@ namespace Memoria.Scripts.TranceSeek
                 else if (_v.Target.CheckIsPlayer())
                 {
                     if (_v.Target.IsUnderStatus(BattleStatus.Death))
-                        if (_v.Target.HasSupportAbilityByIndex((SupportAbility)1004)) // Invincible+
+                        if (_v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.AutoLife_Boosted)) // Invincible+
                         {
                             _v.Target.Flags |= CalcFlag.HpAlteration | CalcFlag.HpRecovery | CalcFlag.MpAlteration | CalcFlag.MpRecovery;
                             _v.Target.HpDamage = (int)_v.Target.MaximumHp;
@@ -102,3 +102,5 @@ namespace Memoria.Scripts.TranceSeek
         }
     }
 }
+
+

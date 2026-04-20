@@ -1,4 +1,4 @@
-using Memoria.Data;
+﻿using Memoria.Data;
 using System;
 
 namespace Memoria.Scripts.TranceSeek
@@ -20,7 +20,7 @@ namespace Memoria.Scripts.TranceSeek
 
         public void Perform()
         {
-            if (_v.Target.IsPlayer && _v.Command.AbilityId == (BattleAbilityId)1533)
+            if (_v.Target.IsPlayer && _v.Command.AbilityId == TranceSeekBattleAbility.Odin_Any)
             {
                 _v.Command.AbilityCategory -= 16; // Remove Magical effect to prevent Vanish to dissapear.
                 btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.PowerUp, parameters: "+2");
@@ -46,3 +46,4 @@ namespace Memoria.Scripts.TranceSeek
         }
     }
 }
+

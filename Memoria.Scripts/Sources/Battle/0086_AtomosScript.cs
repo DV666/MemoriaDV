@@ -1,4 +1,4 @@
-using FF9;
+﻿using FF9;
 using Memoria.Data;
 using Memoria.Prime;
 using System;
@@ -22,7 +22,7 @@ namespace Memoria.Scripts.TranceSeek
 
         public void Perform()
         {
-            if (_v.Target.IsPlayer && _v.Command.AbilityId == (BattleAbilityId)1532)
+            if (_v.Target.IsPlayer && _v.Command.AbilityId == TranceSeekBattleAbility.Atomos_Any)
             {
                 _v.Command.AbilityCategory -= 16; // Remove Magical effect to prevent Vanish to dissapear.
                 _v.Target.TryRemoveStatuses(_v.Command.AbilityStatus);
@@ -62,3 +62,4 @@ namespace Memoria.Scripts.TranceSeek
         }
     }
 }
+

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Runtime.Remoting.Contexts;
 using FF9;
@@ -27,7 +27,7 @@ namespace Memoria.Scripts.TranceSeek
             BTL_DATA data = _v.Caster.Data;
             Boolean reducemagique = _v.Command.AbilityId == BattleAbilityId.FreeEnergy || _v.Command.AbilityId == BattleAbilityId.Solution9 && _v.Caster.CurrentHp % 10 == 9;
 
-            if (_v.Command.AbilityId == (BattleAbilityId)1002) // Lame effil�e
+            if (_v.Command.AbilityId == TranceSeekBattleAbility.WindyBlade) // Lame effilée
                 _v.Caster.RemoveStatus(BattleStatus.Slow);
 
             if (_v.Caster.IsPlayer)
@@ -112,7 +112,7 @@ namespace Memoria.Scripts.TranceSeek
             TranceSeekAPI.BonusElement(_v);
             if (TranceSeekAPI.CanAttackMagic(_v))
             {
-                if (_v.Caster.PlayerIndex == CharacterId.Beatrix && _v.Command.AbilityId == (BattleAbilityId)1043)
+                if (_v.Caster.PlayerIndex == CharacterId.Beatrix && _v.Command.AbilityId == TranceSeekBattleAbility.Zantetsu)
                 {
                     _v.Target.Flags |= (CalcFlag.MpAlteration | CalcFlag.MpRecovery);
                     _v.Target.MpDamage = (_v.Target.HpDamage >> 5);
@@ -129,3 +129,4 @@ namespace Memoria.Scripts.TranceSeek
         }
     }
 }
+

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Assets.Sources.Scripts.UI.Common;
 using Memoria.Data;
 
@@ -33,7 +33,7 @@ namespace Memoria.Scripts.TranceSeek
             {              
                 RegularItem itemId = (RegularItem)_v.Command.HitRate;
                 if (_v.Command.HitRate == 227)
-                    itemId = (RegularItem)1000; // Ultra Potion
+                    itemId = TranceSeekRegularItem.UltraPotion; // Ultra Potion
                 if (ff9item.FF9Item_GetCount(itemId) == 0)
                 {
                     UiState.SetBattleFollowFormatMessage(BattleMesages.DoesNotHaveAnything);
@@ -74,3 +74,4 @@ namespace Memoria.Scripts.TranceSeek
         }
     }
 }
+

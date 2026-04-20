@@ -87,7 +87,7 @@ namespace Memoria.Scripts.TranceSeek
                 TranceSeekAPI.CasterPenaltyMini(_v);
                 if (_v.Command.HitRate != 111)
                     TranceSeekAPI.PenaltyShellAttack(_v);
-                if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)102))
+                if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Archmage))
                     TranceSeekAPI.TryCriticalHit(_v);
                 if (_v.Command.HitRate == 254)
                 {
@@ -156,3 +156,4 @@ namespace Memoria.Scripts.TranceSeek
         }
     }
 }
+

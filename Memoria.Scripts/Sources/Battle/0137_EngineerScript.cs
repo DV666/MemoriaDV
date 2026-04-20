@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Memoria.Data;
 
@@ -21,7 +21,7 @@ namespace Memoria.Scripts.TranceSeek
 
         public void Perform()
         {
-            if (_v.Command.AbilityId == (BattleAbilityId)1140) // Electroshock
+            if (_v.Command.AbilityId == TranceSeekBattleAbility.Electroshock) // Electroshock
             {
                 _v.NormalMagicParams();
                 
@@ -38,7 +38,7 @@ namespace Memoria.Scripts.TranceSeek
                 }
                 _v.Target.TryRemoveStatuses(_v.Command.AbilityStatus);
             }
-            else if (_v.Command.AbilityId == (BattleAbilityId)1142) // Adjustable Wrench
+            else if (_v.Command.AbilityId == TranceSeekBattleAbility.AdjustableWrench) // Adjustable Wrench
             {
                 for (Int32 i = 0; i < 8; i++)
                 {
@@ -57,7 +57,7 @@ namespace Memoria.Scripts.TranceSeek
                                 FF9StateSystem.Battle.FF9Battle.aa_data[abilityId].MP = 0;
                 }
             }
-            else if (_v.Command.AbilityId == (BattleAbilityId)1143) // Hymn of the Tantalas
+            else if (_v.Command.AbilityId == TranceSeekBattleAbility.HymnoftheTantalas) // Hymn of the Tantalas
             {
                 if (_v.Target.InTrance || !_v.Target.HasTrance)
                 {
@@ -71,3 +71,4 @@ namespace Memoria.Scripts.TranceSeek
         }
     }
 }
+

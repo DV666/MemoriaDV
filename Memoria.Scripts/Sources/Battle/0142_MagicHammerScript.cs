@@ -40,7 +40,7 @@ namespace Memoria.Scripts.TranceSeek
                 if (_v.Target.IsUnderStatus(BattleStatus.Shell))
                     num /= 2;
 
-                if (_v.Command.IsManyTarget && !_v.Caster.HasSupportAbilityByIndex((SupportAbility)1126))
+                if (_v.Command.IsManyTarget && !_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Propagation_Boosted))
                     num /= 2;
 
                 _v.Target.MpDamage = num;
@@ -51,4 +51,5 @@ namespace Memoria.Scripts.TranceSeek
         }
     }
 }
+
 

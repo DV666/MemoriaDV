@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Memoria.Data;
 
 namespace Memoria.Scripts.TranceSeek
@@ -30,7 +30,7 @@ namespace Memoria.Scripts.TranceSeek
                     _v.Context.DamageModifierCount += 2;
                 if (_v.Target.IsZombie)
                     _v.Target.Flags |= CalcFlag.HpRecovery;
-                if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)102))
+                if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Archmage))
                     TranceSeekAPI.TryCriticalHit(_v);
                 _v.CalcHpDamage();
             }
@@ -65,3 +65,4 @@ namespace Memoria.Scripts.TranceSeek
         }
     }
 }
+

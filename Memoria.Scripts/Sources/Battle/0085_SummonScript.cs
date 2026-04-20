@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using FF9;
 using Memoria.Data;
 using static SiliconStudio.Social.ResponseData;
@@ -32,7 +32,7 @@ namespace Memoria.Scripts.TranceSeek
             {
                 case BattleAbilityId.Shiva:
                 case BattleAbilityId.DiamondDust:
-                case (BattleAbilityId)1529:
+                case TranceSeekBattleAbility.Shiva_Any:
                 {
                     _v.Context.HitRate += ((ff9item.FF9Item_GetCount(RegularItem.Opal) + 1)) / 2;
                     if (_v.Target.IsPlayer)
@@ -46,7 +46,7 @@ namespace Memoria.Scripts.TranceSeek
                 }
                 case BattleAbilityId.Ifrit:
                 case BattleAbilityId.FlamesofHell:
-                case (BattleAbilityId)1530:
+                case TranceSeekBattleAbility.Ifrit_Any:
                 {
                     _v.Context.HitRate += ((ff9item.FF9Item_GetCount(RegularItem.Topaz) + 1)) / 2;
                     if (_v.Target.IsPlayer)
@@ -60,7 +60,7 @@ namespace Memoria.Scripts.TranceSeek
                 }
                 case BattleAbilityId.Ramuh:
                 case BattleAbilityId.JudgementBolt:
-                case (BattleAbilityId)1531:
+                case TranceSeekBattleAbility.Ramuh_Any:
                 {
                     _v.Context.HitRate += ((ff9item.FF9Item_GetCount(RegularItem.Peridot) + 1)) / 2;
                     if (_v.Target.IsPlayer)
@@ -74,7 +74,7 @@ namespace Memoria.Scripts.TranceSeek
                 }
                 case BattleAbilityId.Odin:
                 case BattleAbilityId.Zantetsuken:
-                case (BattleAbilityId)1533:
+                case TranceSeekBattleAbility.Odin_Any:
                 {
                     if (_v.Target.IsPlayer)
                     {
@@ -97,7 +97,7 @@ namespace Memoria.Scripts.TranceSeek
                 }
                 case BattleAbilityId.Leviathan:
                 case BattleAbilityId.Tsunami:
-                case (BattleAbilityId)1534:
+                case TranceSeekBattleAbility.Leviathan_Any:
                 {
                     _v.Context.HitRate += ((ff9item.FF9Item_GetCount(RegularItem.Aquamarine) + 1)) / 2;
                     if (_v.Target.IsPlayer)
@@ -111,7 +111,7 @@ namespace Memoria.Scripts.TranceSeek
                 }
                 case BattleAbilityId.Bahamut:
                 case BattleAbilityId.MegaFlare:
-                case (BattleAbilityId)1535:
+                case TranceSeekBattleAbility.Bahamut_Any:
                 {
                     _v.Context.HitRate += ((ff9item.FF9Item_GetCount(RegularItem.Garnet) + 1)) / 2;
                     if (_v.Target.IsPlayer)
@@ -126,7 +126,7 @@ namespace Memoria.Scripts.TranceSeek
                 }
                 case BattleAbilityId.Ark:
                 case BattleAbilityId.EternalDarkness:
-                case (BattleAbilityId)1536:
+                case TranceSeekBattleAbility.Ark_Any:
                 {
                     _v.Context.HitRate = ((ff9item.FF9Item_GetCount(RegularItem.LapisLazuli) + 1)) / 2;
                     if (_v.Target.IsPlayer)
@@ -145,10 +145,10 @@ namespace Memoria.Scripts.TranceSeek
                 case BattleAbilityId.Carbuncle2:
                 case BattleAbilityId.Carbuncle3:
                 case BattleAbilityId.Carbuncle4:
-                case (BattleAbilityId)1578:
-                case (BattleAbilityId)1579:
-                case (BattleAbilityId)1580:
-                case (BattleAbilityId)1581:
+                case TranceSeekBattleAbility.RubyLight:
+                case TranceSeekBattleAbility.EmeraldLight:
+                case TranceSeekBattleAbility.PearlLight:
+                case TranceSeekBattleAbility.DiamondLight:
                 {
                     int BonusFormula = (400 + _v.Caster.Will * 3);
                     TranceSeekAPI.TryAlterCommandStatuses(_v);
@@ -170,8 +170,8 @@ namespace Memoria.Scripts.TranceSeek
                 }
                 case BattleAbilityId.Fenrir1:
                 case BattleAbilityId.Fenrir2:
-                case (BattleAbilityId)1576:
-                case (BattleAbilityId)1577:
+                case TranceSeekBattleAbility.TerrestrialRage:
+                case TranceSeekBattleAbility.MillennialDecay:
                 {
                     _v.Context.HitRate += ((ff9item.FF9Item_GetCount(RegularItem.Sapphire) + 1)) / 2;
                     break;
@@ -219,3 +219,4 @@ namespace Memoria.Scripts.TranceSeek
         }
     }
 }
+

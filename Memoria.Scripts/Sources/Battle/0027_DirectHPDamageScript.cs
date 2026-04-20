@@ -21,7 +21,7 @@ namespace Memoria.Scripts.TranceSeek
 
         public void Perform()
         {
-            if (_v.Command.AbilityId == BattleAbilityId.MatraMagic || _v.Command.AbilityId == (BattleAbilityId)1030 || _v.Command.HitRate == 255) // Matra Magic
+            if (_v.Command.AbilityId == BattleAbilityId.MatraMagic || _v.Command.AbilityId == TranceSeekBattleAbility.MatragaMagic || _v.Command.HitRate == 255) // Matra Magic
             {
                 _v.Context.Attack = (short)(GameRandom.Next16() % (_v.Caster.Magic + _v.Caster.Level));
                 _v.SetCommandPower();
@@ -51,3 +51,4 @@ namespace Memoria.Scripts.TranceSeek
         }
     }
 }
+

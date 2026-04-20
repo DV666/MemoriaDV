@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections.Generic;
 using Assets.Sources.Scripts.UI.Common;
 using FF9;
@@ -238,14 +238,14 @@ namespace Memoria.Scripts.TranceSeek
                         _v.Target.TryAlterStatuses(BattleStatus.Doom, false, _v.Caster);
                 }
             }
-            else if (IsAbility(TranceSeekBattleAbility.Geirskögul))
+            else if (IsAbility(TranceSeekBattleAbility.GeirskÃ¶gul))
             {
                 SetupPhysicalAttack(_v);
                 if (_v.CanAttackMagic())
                 {
                     _v.CalcHpDamage();
 
-                    if (_v.Command.AbilityId == TranceSeekBattleAbility.Geirskögul)
+                    if (_v.Command.AbilityId == TranceSeekBattleAbility.GeirskÃ¶gul)
                         _v.Target.HpDamage /= 3;
 
                     if (isDragonOrTrance)
@@ -278,7 +278,7 @@ namespace Memoria.Scripts.TranceSeek
             if (sps != null)
             {
                 int DragonStack = v.Target.IsUnderAnyStatus(TranceSeekStatus.Dragon) ? (int)v.Target.GetPropertyByName("StatusProperty CustomStatus9 Stack") : 0;
-                int StackMaximum = v.Caster.HasSupportAbilityByIndex((SupportAbility)1218) ? 3 : (v.Caster.HasSupportAbilityByIndex((SupportAbility)218) ? 2 : 1);
+                int StackMaximum = v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Nastrond_Boosted) ? 3 : (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Nastrond) ? 2 : 1);
                 if ((Comn.random16() % 100) <= ReiWrathChance[v.Caster.Data] && DragonStack < StackMaximum)
                 {
                     ReiWrathSPS[v.Caster.Data].attr = 0;
@@ -324,3 +324,4 @@ namespace Memoria.Scripts.TranceSeek
         }
     }
 }
+

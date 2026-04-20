@@ -94,10 +94,10 @@ namespace Memoria.Scripts.TranceSeek
                         v.Command.AbilityStatus |= CustomStatusAAMonster[i];
             }
 
-            if (v.Caster.HasSupportAbilityByIndex((SupportAbility)117) && !Caster_TSVar.SpecialSA.ModeEX && v.Caster.IsUnderAnyStatus(BattleStatus.Trance)) // Mode EX
+            if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.EXMode) && !Caster_TSVar.SpecialSA.ModeEX && v.Caster.IsUnderAnyStatus(BattleStatus.Trance)) // Mode EX
             {
-                Int32 HealHPSAOrItem = (int)(v.Caster.MaximumHp * (v.Caster.HasSupportAbilityByIndex((SupportAbility)1117) ? 16 : 8) / 100);
-                Int32 HealMPSAOrItem = (int)(v.Caster.MaximumMp * (v.Caster.HasSupportAbilityByIndex((SupportAbility)1117) ? 16 : 8) / 100);
+                Int32 HealHPSAOrItem = (int)(v.Caster.MaximumHp * (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.EXMode_Boosted) ? 16 : 8) / 100);
+                Int32 HealMPSAOrItem = (int)(v.Caster.MaximumMp * (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.EXMode_Boosted) ? 16 : 8) / 100);
                 Caster_TSVar.SpecialSA.ModeEX = true;
                 v.Caster.AddDelayedModifier(
                 caster => caster.CurrentAtb >= caster.MaximumAtb,
@@ -127,29 +127,29 @@ namespace Memoria.Scripts.TranceSeek
             {
                 switch (v.Command.AbilityId)
                 {
-                    case (BattleAbilityId)1076: // Combo
-                    case (BattleAbilityId)1079: // Mad Rush
-                    case (BattleAbilityId)1082: // Flame Tongue
-                    case (BattleAbilityId)1083: // Ice Brand
-                    case (BattleAbilityId)1084: // Thunder Blade
-                    case (BattleAbilityId)1085: // Liquid Steel
+                    case TranceSeekBattleAbility.Combo: // Combo
+                    case TranceSeekBattleAbility.MadRush: // Mad Rush
+                    case TranceSeekBattleAbility.Flametongue: // Flame Tongue
+                    case TranceSeekBattleAbility.IceBrand: // Ice Brand
+                    case TranceSeekBattleAbility.ThunderBlade: // Thunder Blade
+                    case TranceSeekBattleAbility.LiquidSteel: // Liquid Steel
                     {
                         btl_stat.AlterStatus(v.Caster, TranceSeekStatusId.Rage, parameters: "-1");
                         break;
                     }
-                    case (BattleAbilityId)1077: // Carnage
-                    case (BattleAbilityId)1080: // Hatred
-                    case (BattleAbilityId)1086: // Agni's Blade
-                    case (BattleAbilityId)1087: // Shiva Blade
-                    case (BattleAbilityId)1088: // Indra Blade
-                    case (BattleAbilityId)1089: // Varuna Blade
+                    case TranceSeekBattleAbility.Carnage: // Carnage
+                    case TranceSeekBattleAbility.Hatred: // Hatred
+                    case TranceSeekBattleAbility.AgnisBlade: // Agni's Blade
+                    case TranceSeekBattleAbility.ShivaBlade: // Shiva Blade
+                    case TranceSeekBattleAbility.IndraBlade: // Indra Blade
+                    case TranceSeekBattleAbility.VarunaBlade: // Varuna Blade
                     {
                         btl_stat.AlterStatus(v.Caster, TranceSeekStatusId.Rage, parameters: "-3");
                         break;
                     }
-                    case (BattleAbilityId)1078: // Ripping
-                    case (BattleAbilityId)1081: // Super Muscles
-                    case (BattleAbilityId)1090: // Prithvi Blade
+                    case TranceSeekBattleAbility.Ripping: // Ripping
+                    case TranceSeekBattleAbility.SuperMuscles: // Super Muscles
+                    case TranceSeekBattleAbility.PrithviBlade: // Prithvi Blade
                     {
                         btl_stat.AlterStatus(v.Caster, TranceSeekStatusId.Rage, parameters: "-5");
                         break;
@@ -166,14 +166,14 @@ namespace Memoria.Scripts.TranceSeek
                         if (aaData.MP > 0)
                         {
                             aaData.MP--;
-                            if (AA != (BattleAbilityId)1538 && AA != (BattleAbilityId)1539) // Genie & Eureka
+                            if (AA != TranceSeekBattleAbility.Idea && AA != TranceSeekBattleAbility.Eureka) // Genie & Eureka
                                 InventionsCD++;
                         }
                 }
 
                 Caster_TSVar.Cinna.InventionCoolDown = InventionsCD;
 
-                if (v.Command.AbilityId == (BattleAbilityId)1138 || v.Command.Id == BattleCommandId.Attack && v.Caster.HasSupportAbilityByIndex((SupportAbility)244)) // Accelerator hammer / SA Mecano
+                if (v.Command.AbilityId == TranceSeekBattleAbility.Acceleratorhammer || v.Command.Id == BattleCommandId.Attack && v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Mecano)) // Accelerator hammer / SA Mecano
                 {
                     List<AA_DATA> AAlist = new List<AA_DATA>();
 
@@ -187,7 +187,7 @@ namespace Memoria.Scripts.TranceSeek
                     {
                         AA_DATA AAChoosen = AAlist[GameRandom.Next16() % AAlist.Count];
                         AAChoosen.MP--;
-                        if (v.Caster.HasSupportAbilityByIndex((SupportAbility)1244) && AAlist.Count > 0) // SA Mecano++
+                        if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Mecano_Boosted) && AAlist.Count > 0) // SA Mecano++
                         {
                             AAlist.Remove(AAChoosen);
                             if (AAlist.Count > 0)
@@ -196,13 +196,13 @@ namespace Memoria.Scripts.TranceSeek
                     }
                 }
 
-                if (FF9StateSystem.Battle.FF9Battle.aa_data[v.Command.AbilityId].MP > 0 && v.Caster.HasSupportAbilityByIndex((SupportAbility)246))
+                if (FF9StateSystem.Battle.FF9Battle.aa_data[v.Command.AbilityId].MP > 0 && v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.EmergencPlan))
                 {
                     v.Caster.CurrentMp = 0;
                     btl2d.Btl2dReqSymbolMessage(v.Caster.Data, "[FFFF00]", MessageEmergencyPlan, HUDMessage.MessageStyle.DAMAGE, 10);
                 }
 
-                if (v.Command.Id == (BattleCommandId)1021 || v.Command.Id == (BattleCommandId)1036 || v.Command.Id == (BattleCommandId)1037)  // CMD Invention
+                if (v.Command.Id == TranceSeekBattleCommand.Engineer || v.Command.Id == TranceSeekBattleCommand.Idea || v.Command.Id == TranceSeekBattleCommand.Eureka)  // CMD Invention
                 {
                     int mpCost = 0;
                     KeyValuePair<RegularItem, BattleAbilityId> PassiveHammer = new KeyValuePair<RegularItem, BattleAbilityId>(v.Caster.Weapon, v.Command.AbilityId);
@@ -212,34 +212,34 @@ namespace Memoria.Scripts.TranceSeek
                     {
                         switch (v.Command.AbilityId)
                         {
-                            case (BattleAbilityId)1136: // Hammer throw
+                            case TranceSeekBattleAbility.Hammerthrow: // Hammer throw
                                 mpCost = 2;
                                 break;
-                            case (BattleAbilityId)1137: // Spring boots
+                            case TranceSeekBattleAbility.Springboots: // Spring boots
                                 mpCost = 3;
                                 break;
-                            case (BattleAbilityId)1138: // Accelerator hammer
+                            case TranceSeekBattleAbility.Acceleratorhammer: // Accelerator hammer
                                 mpCost = 4;
                                 break;
-                            case (BattleAbilityId)1139: // Critical aim
+                            case TranceSeekBattleAbility.Criticalaim: // Critical aim
                                 mpCost = 5;
                                 break;
-                            case (BattleAbilityId)1140: // Electroshock
+                            case TranceSeekBattleAbility.Electroshock: // Electroshock
                                 mpCost = 6;
                                 break;
-                            case (BattleAbilityId)1141: // Flurry of hammers
+                            case TranceSeekBattleAbility.Flurryofhammers: // Flurry of hammers
                                 mpCost = 7;
                                 break;
-                            case (BattleAbilityId)1142: // Adjustable Wrench
+                            case TranceSeekBattleAbility.AdjustableWrench: // Adjustable Wrench
                                 mpCost = 8;
                                 break;
-                            case (BattleAbilityId)1143: // Hymn of the Tantalas
+                            case TranceSeekBattleAbility.HymnoftheTantalas: // Hymn of the Tantalas
                                 mpCost = 9;
                                 break;
-                            case (BattleAbilityId)1538: // Idea
+                            case TranceSeekBattleAbility.Idea: // Idea
                                 mpCost = 10;
                                 break;
-                            case (BattleAbilityId)1539: // Eureka
+                            case TranceSeekBattleAbility.Eureka: // Eureka
                                 mpCost = 6;
                                 break;
                         }
@@ -260,7 +260,7 @@ namespace Memoria.Scripts.TranceSeek
                 );
             }
 
-            if (v.Caster.HasSupportAbilityByIndex((SupportAbility)203) && v.Caster.PlayerIndex == CharacterId.Zidane && Caster_TSVar.Zidane.DaggerAttack == 0
+            if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Flexible) && v.Caster.PlayerIndex == CharacterId.Zidane && Caster_TSVar.Zidane.DaggerAttack == 0
                 && v.Command.Id != BattleCommandId.Counter && v.Command.Id != BattleCommandId.RushAttack && v.Command.Data.info.effect_counter == 1) // SA Flexible
             {
                 // Permanent [code=Condition] WeaponId == 1 || WeaponId == 2 || WeaponId == 3 || WeaponId == 1153 || WeaponId == 1155 || WeaponId == 1158 || WeaponId == 1161 || WeaponId == 1164 || WeaponId == 1167 [/code] [code=BanishSAByLvl] 203 ; -1 [/code]
@@ -270,16 +270,16 @@ namespace Memoria.Scripts.TranceSeek
                         Caster_TSVar.Zidane.FlexibleLvl = 0;
 
                     Caster_TSVar.Zidane.Flexible++;
-                    int FlexibleTurn = v.Caster.HasSupportAbilityByIndex((SupportAbility)1203) ? 2 : 4;
+                    int FlexibleTurn = v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Flexible_Boosted) ? 2 : 4;
                     if (Caster_TSVar.Zidane.Flexible >= FlexibleTurn)
                     {
                         Caster_TSVar.Zidane.Flexible = 0;
                         if (btl_util.getSerialNumber(v.Caster.Data) == CharacterSerialNumber.ZIDANE_SWORD)
-                            BattleState.EnqueueCounter(v.Caster, BattleCommandId.RushAttack, (BattleAbilityId)1000, v.Caster.Id);
+                            BattleState.EnqueueCounter(v.Caster, BattleCommandId.RushAttack, TranceSeekBattleAbility.Thief, v.Caster.Id);
                         else
-                            BattleState.EnqueueCounter(v.Caster, BattleCommandId.RushAttack, (BattleAbilityId)1001, v.Caster.Id);
+                            BattleState.EnqueueCounter(v.Caster, BattleCommandId.RushAttack, TranceSeekBattleAbility.Bandit, v.Caster.Id);
 
-                        if (v.Caster.HasSupportAbilityByIndex((SupportAbility)1203))
+                        if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Flexible_Boosted))
                             Caster_TSVar.Zidane.FlexibleLvl = 2;
                         else
                             Caster_TSVar.Zidane.FlexibleLvl = 1;
@@ -310,9 +310,9 @@ namespace Memoria.Scripts.TranceSeek
                 }
             }
 
-            if (v.Command.Id == (BattleCommandId)1020) // CMD Mixing
+            if (v.Command.Id == TranceSeekBattleCommand.Alchemy2) // CMD Mixing
             {
-                int TranceDelta = v.Caster.HasSupportAbilityByIndex((SupportAbility)1251) ? 42 : v.Caster.HasSupportAbilityByIndex((SupportAbility)251) ? 64 : 128;
+                int TranceDelta = v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Artificer_Boosted) ? 42 : v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Artificer) ? 64 : 128;
                 v.Caster.Trance = (byte)Math.Max(0, v.Caster.Trance - TranceDelta);
             }
 
@@ -327,12 +327,12 @@ namespace Memoria.Scripts.TranceSeek
                 );
             }
 
-            if (v.Command.Id == (BattleCommandId)1032 && !v.Caster.HasSupportAbilityByIndex((SupportAbility)1205)) // Witchcraft (Vivi's SA)
+            if (v.Command.Id == TranceSeekBattleCommand.Witchcraft && !v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Wizard_Boosted)) // Witchcraft (Vivi's SA)
                 v.Command.HitRate /= 2;
 
-            if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Propagation) && v.Command.IsManyTarget && v.Command.AbilityId >= (BattleAbilityId)1500 && v.Command.AbilityId <= (BattleAbilityId)1526)
+            if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Propagation) && v.Command.IsManyTarget && v.Command.AbilityId >= TranceSeekBattleAbility.Regen_Multi && v.Command.AbilityId <= TranceSeekBattleAbility.AngelWhisper_Multi)
             {
-                if (v.Caster.HasSupportAbilityByIndex((SupportAbility)1126))
+                if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Propagation_Boosted))
                     v.Command.HitRate = (v.Command.HitRate * 3) / 4;
                 else
                     v.Command.HitRate /= 2;
@@ -356,7 +356,7 @@ namespace Memoria.Scripts.TranceSeek
                 );
             }
 
-            if (v.Caster.HasSupportAbilityByIndex((SupportAbility)214)) // SA Enchanted blade
+            if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.EnchantedBlade)) // SA Enchanted blade
             {
                 if (v.Command.Id == BattleCommandId.MagicSword)
                 {
@@ -371,7 +371,7 @@ namespace Memoria.Scripts.TranceSeek
                         ElementInfused = 512;
 
                     InfusedWeaponScript.InfuseWeapon(v, v.Caster.Data, ElementInfused, StatusInfused);
-                    Caster_TSVar.Steiner.SteinerEnchantedBlade = v.Caster.HasSupportAbilityByIndex((SupportAbility)1214) ? 2 : 1;
+                    Caster_TSVar.Steiner.SteinerEnchantedBlade = v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.EnchantedBlade_Boosted) ? 2 : 1;
                 }
                 else if (Caster_TSVar.Steiner.SteinerEnchantedBlade > 0)
                 {
@@ -386,17 +386,17 @@ namespace Memoria.Scripts.TranceSeek
                 }
             }
 
-            if (v.Caster.HasSupportAbilityByIndex((SupportAbility)227) && v.Command.Data.info.effect_counter == 1) // SA Enchanted blade
+            if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.PeaceOfMind) && v.Command.Data.info.effect_counter == 1) // SA Enchanted blade
             {
-                if ((v.Command.AbilityId == BattleAbilityId.Regen || v.Command.AbilityId == (BattleAbilityId)1500) && v.Caster.Weapon == RegularItem.Hamelin ||
-                    (v.Command.AbilityId == BattleAbilityId.Life || v.Command.AbilityId == (BattleAbilityId)1501) && v.Caster.Weapon == RegularItem.SirenFlute ||
+                if ((v.Command.AbilityId == BattleAbilityId.Regen || v.Command.AbilityId == TranceSeekBattleAbility.Regen_Multi) && v.Caster.Weapon == RegularItem.Hamelin ||
+                    (v.Command.AbilityId == BattleAbilityId.Life || v.Command.AbilityId == TranceSeekBattleAbility.Life_Multi) && v.Caster.Weapon == RegularItem.SirenFlute ||
                     v.Command.AbilityId == BattleAbilityId.Berserk && v.Caster.Weapon == RegularItem.LamiaFlute ||
-                    (v.Command.AbilityId == BattleAbilityId.Protect || v.Command.AbilityId == (BattleAbilityId)1504) && v.Caster.Weapon == RegularItem.GolemFlute ||
-                    (v.Command.AbilityId == BattleAbilityId.Haste || v.Command.AbilityId == (BattleAbilityId)1505) && v.Caster.Weapon == RegularItem.FairyFlute)
+                    (v.Command.AbilityId == BattleAbilityId.Protect || v.Command.AbilityId == TranceSeekBattleAbility.Protect_Multi) && v.Caster.Weapon == RegularItem.GolemFlute ||
+                    (v.Command.AbilityId == BattleAbilityId.Haste || v.Command.AbilityId == TranceSeekBattleAbility.Haste_Multi) && v.Caster.Weapon == RegularItem.FairyFlute)
                 {
                     v.Caster.Flags |= CalcFlag.HpDamageOrHeal;
                     v.Caster.HpDamage = v.Command.Data.aa.MP * 10;
-                    if (v.Caster.HasSupportAbilityByIndex((SupportAbility)1227)) // SA Enchanted blade
+                    if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.PeaceOfMind_Boosted)) // SA Enchanted blade
                     {
                         v.Caster.Flags |= CalcFlag.MpDamageOrHeal;
                         v.Caster.MpDamage = v.Command.Data.aa.MP;
@@ -413,11 +413,11 @@ namespace Memoria.Scripts.TranceSeek
                     {
                         v.Caster.AlterStatus(TranceSeekStatus.Redemption, v.Caster);
                     }
-                    else if (v.Command.Id == BattleCommandId.HolySword1 || v.Command.Id == BattleCommandId.Counter && !v.Caster.HasSupportAbilityByIndex((SupportAbility)1234) &&
+                    else if (v.Command.Id == BattleCommandId.HolySword1 || v.Command.Id == BattleCommandId.Counter && !v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Dominance_Boosted) &&
                         (v.Command.AbilityId == BattleAbilityId.ThunderSlash || v.Command.AbilityId == BattleAbilityId.StockBreak || v.Command.AbilityId == BattleAbilityId.Climhazzard || v.Command.AbilityId == BattleAbilityId.Shock
-                        | v.Command.AbilityId == (BattleAbilityId)1011 || v.Command.AbilityId == (BattleAbilityId)1012 || v.Command.AbilityId == (BattleAbilityId)1013 || v.Command.AbilityId == (BattleAbilityId)1014)) // SA Dominance+
+                        | v.Command.AbilityId == TranceSeekBattleAbility.Cleave || v.Command.AbilityId == TranceSeekBattleAbility.Braver || v.Command.AbilityId == TranceSeekBattleAbility.FourfoldFlurry || v.Command.AbilityId == TranceSeekBattleAbility.TriShock)) // SA Dominance+
                     {
-                        if (v.Caster.HasSupportAbilityByIndex((SupportAbility)233) && (v.Caster.HasSupportAbilityByIndex((SupportAbility)1233) ? 50 : 25) < Comn.random16() % 100)
+                        if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Amnesty) && (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Amnesty_Boosted) ? 50 : 25) < Comn.random16() % 100)
                         {
                             btl_stat.AlterStatus(v.Caster, TranceSeekStatusId.Redemption, v.Caster, parameters: "Remove");
                         }
@@ -451,14 +451,14 @@ namespace Memoria.Scripts.TranceSeek
                 );
             }
 
-            if (v.Caster.HasSupportAbilityByIndex((SupportAbility)240) && v.Command.Data.info.effect_counter == 1 && v.Command.Id != BattleCommandId.Counter && v.Caster.CurrentMp < v.Caster.MaximumMp) // SA Offering
+            if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Offering) && v.Command.Data.info.effect_counter == 1 && v.Command.Id != BattleCommandId.Counter && v.Caster.CurrentMp < v.Caster.MaximumMp) // SA Offering
             {
                 v.Caster.AddDelayedModifier(
                     caster => caster.CurrentAtb < (9 * caster.MaximumAtb) / 10 || caster.CurrentAtb >= caster.MaximumAtb,
                     caster =>
                     {
                         int HPDamage = (int)(caster.MaximumHp / 10);
-                        int MPRecover = (int)(caster.MaximumMp / (v.Caster.HasSupportAbilityByIndex((SupportAbility)1240) ? 10 : 20));
+                        int MPRecover = (int)(caster.MaximumMp / (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Offering_Boosted) ? 10 : 20));
                         if (HPDamage > 0)
                         {
                             caster.CurrentHp = Math.Max(caster.CurrentHp - (uint)HPDamage, 0);
@@ -472,20 +472,20 @@ namespace Memoria.Scripts.TranceSeek
                 );
             }
 
-            if (v.Caster.HasSupportAbilityByIndex((SupportAbility)248) && v.Command.Id == BattleCommandId.Item) // SA Econome
+            if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Econome) && v.Command.Id == BattleCommandId.Item) // SA Econome
             {
-                if ((v.Caster.HasSupportAbilityByIndex((SupportAbility)1248) ? 50 : 25) < Comn.random16() % 100)
+                if ((v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Econome_Boosted) ? 50 : 25) < Comn.random16() % 100)
                     ff9item.FF9Item_Add(v.Command.ItemId, 1);
             }
 
-            if (v.Target.HasSupportAbilityByIndex((SupportAbility)254)) // SA In top form!
+            if (v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.InTopForm)) // SA In top form!
             {
                 v.Caster.AddDelayedModifier(
                     caster => caster.CurrentAtb >= caster.MaximumAtb,
                     caster =>
                     {
                         int RatioHP = (int)((v.Target.CurrentHp * 100) / v.Target.MaximumHp);
-                        v.Target.PhysicalDefence = (Target_TSVar.Baku.InTopForm * ((v.Target.HasSupportAbilityByIndex((SupportAbility)1254) ? 50 : 25) + RatioHP)) / 100;
+                        v.Target.PhysicalDefence = (Target_TSVar.Baku.InTopForm * ((v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.InTopForm_Boosted) ? 50 : 25) + RatioHP)) / 100;
                     }
                 );
             }
@@ -494,7 +494,7 @@ namespace Memoria.Scripts.TranceSeek
             {
                 CharacterPresetId presetId = v.Caster.Player.PresetId;
                 v.Caster.SummonCount++;
-                if (v.Caster.HasSupportAbilityByIndex((SupportAbility)1253) || v.Caster.HasSupportAbilityByIndex((SupportAbility)253) && v.Caster.SummonCount % 2 == 0) // SA Take that!
+                if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.TakeThat_Boosted) || v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.TakeThat) && v.Caster.SummonCount % 2 == 0) // SA Take that!
                     CharacterCommands.CommandSets[presetId].Regular[0] = (BattleCommandId)(UnityEngine.Random.Range(1042, 1045));
                 else
                     CharacterCommands.CommandSets[presetId].Regular[0] = (BattleCommandId)(UnityEngine.Random.Range(1038, 1041));
@@ -547,27 +547,27 @@ namespace Memoria.Scripts.TranceSeek
 
         private static readonly BattleAbilityId[] InventionAAs =
         {
-            (BattleAbilityId)1136, (BattleAbilityId)1137, (BattleAbilityId)1138, (BattleAbilityId)1139,
-            (BattleAbilityId)1140, (BattleAbilityId)1141, (BattleAbilityId)1142, (BattleAbilityId)1143,
-            (BattleAbilityId)1538, (BattleAbilityId)1539
+            TranceSeekBattleAbility.Hammerthrow, TranceSeekBattleAbility.Springboots, TranceSeekBattleAbility.Acceleratorhammer, TranceSeekBattleAbility.Criticalaim,
+            TranceSeekBattleAbility.Electroshock, TranceSeekBattleAbility.Flurryofhammers, TranceSeekBattleAbility.AdjustableWrench, TranceSeekBattleAbility.HymnoftheTantalas,
+            TranceSeekBattleAbility.Idea, TranceSeekBattleAbility.Eureka
         };
 
         private static readonly RegularItem[] BlackListedWeaponForFlexible =
 {
-            RegularItem.Dagger, RegularItem.MageMasher, RegularItem.MythrilDagger, (RegularItem)1153,
-            (RegularItem)1155, (RegularItem)1158, (RegularItem)1161, (RegularItem)1164, (RegularItem)1167
+            RegularItem.Dagger, RegularItem.MageMasher, RegularItem.MythrilDagger, TranceSeekRegularItem.CryptDagger,
+            TranceSeekRegularItem.ViceDagger, TranceSeekRegularItem.LamiaDagger, TranceSeekRegularItem.TwinLance, TranceSeekRegularItem.OgraSurin, TranceSeekRegularItem.ImpDagger
         };
 
         public static readonly Dictionary<RegularItem, BattleAbilityId> InventionPreserved = new Dictionary<RegularItem, BattleAbilityId>
         {
-            { (RegularItem)1108, (BattleAbilityId)1136 }, // Steel Hammer
-            { (RegularItem)1109, (BattleAbilityId)1137 }, // Boing Hammer
-            { (RegularItem)1110, (BattleAbilityId)1138 }, // OverHammerClock
-            { (RegularItem)1111, (BattleAbilityId)1139 }, // Mithril Hammer
-            { (RegularItem)1112, (BattleAbilityId)1140 }, // Tazermmer
-            { (RegularItem)1113, (BattleAbilityId)1141 }, // Fiery Hammer
-            { (RegularItem)1114, (BattleAbilityId)1142 }, // GregTech Hammer
-            { (RegularItem)1115, (BattleAbilityId)1143 }, // E=MCinna²
+            { TranceSeekRegularItem.SteelHammer, TranceSeekBattleAbility.Hammerthrow }, // Steel Hammer
+            { TranceSeekRegularItem.BoingHammer, TranceSeekBattleAbility.Springboots }, // Boing Hammer
+            { TranceSeekRegularItem.Overhammerclock, TranceSeekBattleAbility.Acceleratorhammer }, // OverHammerClock
+            { TranceSeekRegularItem.MithrilHammer, TranceSeekBattleAbility.Criticalaim }, // Mithril Hammer
+            { TranceSeekRegularItem.Tazermmer, TranceSeekBattleAbility.Electroshock }, // Tazermmer
+            { TranceSeekRegularItem.FieryHammer, TranceSeekBattleAbility.Flurryofhammers }, // Fiery Hammer
+            { TranceSeekRegularItem.GregtechHammer, TranceSeekBattleAbility.AdjustableWrench }, // GregTech Hammer
+            { TranceSeekRegularItem.EMcinna2, TranceSeekBattleAbility.HymnoftheTantalas }, // E=MCinna²
         };
 
         private static readonly Dictionary<String, String> MessageEmergencyPlan = new Dictionary<String, String>
@@ -583,3 +583,7 @@ namespace Memoria.Scripts.TranceSeek
         };
     }
 }
+
+
+
+

@@ -31,13 +31,13 @@ namespace Memoria.Scripts.TranceSeek
             BattleEnemyPrototype enemyPrototype = BattleEnemyPrototype.Find(_v.Target);
             Int32 blueMagicId = enemyPrototype.BlueMagicId;
             int PowerCMD = _v.Command.Power;
-            if (_v.Caster.Head == (RegularItem)1249)
+            if (_v.Caster.Head == TranceSeekRegularItem.ChefHat)
                 PowerCMD = _v.Command.AbilityId == BattleAbilityId.Eat ? 4 : (_v.Command.AbilityId == BattleAbilityId.Cook ? 2 : PowerCMD);
-            else if (_v.Caster.Head == (RegularItem)1258)
+            else if (_v.Caster.Head == TranceSeekRegularItem.StarredChefHat)
                 PowerCMD = _v.Command.AbilityId == BattleAbilityId.Eat ? 2 : (_v.Command.AbilityId == BattleAbilityId.Cook ? 1 : PowerCMD);
 
-            Boolean saAppetite = _v.Caster.HasSupportAbilityByIndex((SupportAbility)220);
-            Boolean saGluttony = _v.Caster.HasSupportAbilityByIndex((SupportAbility)221);
+            Boolean saAppetite = _v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Appetite);
+            Boolean saGluttony = _v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Gourmandise);
 
             if (_v.Caster.InTrance || saAppetite || saGluttony)
             {
@@ -86,7 +86,7 @@ namespace Memoria.Scripts.TranceSeek
                         _v.Target.Flags |= (CalcFlag.HpAlteration | CalcFlag.MpAlteration);
                         _v.Caster.Flags |= (CalcFlag.HpDamageOrHeal | CalcFlag.MpDamageOrHeal);
                     }
-                    else if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)220))
+                    else if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Appetite))
                     {
                         _v.Target.Flags |= CalcFlag.HpAlteration;
                         _v.Caster.Flags |= CalcFlag.HpDamageOrHeal;
@@ -106,11 +106,11 @@ namespace Memoria.Scripts.TranceSeek
                     _v.Target.MpDamage = mpDamage;
                     _v.Caster.HpDamage = hpDamage;
                     _v.Caster.MpDamage = mpDamage;
-                    if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)220))
+                    if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Appetite))
                         _v.Caster.HpDamage /= 4;
-                    if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1220))
+                    if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Appetite_Boosted))
                         _v.Caster.AlterStatus(TranceSeekStatus.PowerUp, _v.Caster);
-                    if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1221))
+                    if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Gourmandise_Boosted))
                         _v.Caster.AlterStatus(TranceSeekStatus.MagicUp, _v.Caster);
                 }
 
@@ -152,7 +152,7 @@ namespace Memoria.Scripts.TranceSeek
                             BonusHealFork += 100;
                             break;
                     }
-                    if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)223)) // Voracious
+                    if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Voracious)) // Voracious
                     {
                         Int32 HPDigest = (int)(_v.Caster.MaximumHp / (_v.Command.Power / 2));
                         Int32 MPDigest = (int)(_v.Caster.MaximumMp / (_v.Command.Power / 2));
@@ -237,3 +237,5 @@ namespace Memoria.Scripts.TranceSeek
         }
     }
 }
+
+

@@ -1,4 +1,4 @@
-using Memoria.Data;
+﻿using Memoria.Data;
 using System;
 using System.Collections.Generic;
 using Assets.Sources.Scripts.UI.Common;
@@ -23,24 +23,24 @@ namespace Memoria.Scripts.TranceSeek
             var Target_TSVar = _v.TargetState();
             switch (_v.Command.AbilityId)
             {
-                case (BattleAbilityId)1153: // You there!
-                case (BattleAbilityId)1159: // Get over here!
+                case TranceSeekBattleAbility.Youthere: // You there!
+                case TranceSeekBattleAbility.Getoverhere: // Get over here!
                 {
                     _v.Target.TryAlterStatuses(TranceSeekStatus.Provok, true, _v.Caster);
                     break;
                 }
-                case (BattleAbilityId)1154: // Get moving!
+                case TranceSeekBattleAbility.Getmoving: // Get moving!
                 {
                     _v.Target.RemoveStatus(BattleStatus.Sleep | BattleStatus.Slow | BattleStatus.Stop);
                     _v.Target.CurrentAtb = (short)Math.Max(_v.Target.CurrentAtb * 2, _v.Target.MaximumAtb);
                     break;
                 }
-                case (BattleAbilityId)1155: // Peuh!
+                case TranceSeekBattleAbility.Peuh: // Peuh!
                 {
                     Target_TSVar.Baku.Peuh = true;
                     break;
                 }
-                case (BattleAbilityId)1156: // A gift for you!
+                case TranceSeekBattleAbility.Agiftforyou: // A gift for you!
                 {
                     List<BattleStatusId> TargetStatusList = new List<BattleStatusId>();
 
@@ -58,7 +58,7 @@ namespace Memoria.Scripts.TranceSeek
                     _v.Target.AlterStatus(TargetStatusChoosen);
                     break;
                 }
-                case (BattleAbilityId)1157: // It's mine! Ahah!
+                case TranceSeekBattleAbility.ItsmineAhah: // It's mine! Ahah!
                 {
                     List<BattleStatusId> TargetStatusList = new List<BattleStatusId>();
 
@@ -76,7 +76,7 @@ namespace Memoria.Scripts.TranceSeek
                     _v.Caster.AlterStatus(TargetStatusChoosen);
                     break;
                 }
-                case (BattleAbilityId)1158: // That's all?
+                case TranceSeekBattleAbility.Thatsall: // That's all?
                 {
                     if (Target_TSVar.Baku.ThatsAll)
                     {
@@ -97,7 +97,7 @@ namespace Memoria.Scripts.TranceSeek
                     );
                     break;
                 }
-                case (BattleAbilityId)1160: // Tantalus!
+                case TranceSeekBattleAbility.Tantalus: // Tantalus!
                 {
                     const BattleStatus cannotAttack = BattleStatus.Petrify | BattleStatus.Death | BattleStatus.Confuse | BattleStatus.Berserk
                                   | BattleStatus.Stop | BattleStatus.Sleep | BattleStatus.Freeze | BattleStatus.Jump;
@@ -123,7 +123,7 @@ namespace Memoria.Scripts.TranceSeek
                     }
                     break;
                 }
-                case (BattleAbilityId)1045: // Praise
+                case TranceSeekBattleAbility.Praise: // Praise
                 {
                     List<BattleStatus> PraiseStatus = new List<BattleStatus>{ TranceSeekStatus.PowerUp, TranceSeekStatus.MagicUp,
                     TranceSeekStatus.ArmorUp, TranceSeekStatus.MentalUp};
@@ -131,7 +131,7 @@ namespace Memoria.Scripts.TranceSeek
                     _v.Target.AlterStatus(PraiseStatus[Comn.random16() % PraiseStatus.Count]);
                     break;
                 }
-                case (BattleAbilityId)1164: // Cens
+                case TranceSeekBattleAbility.Cens: // Cens
                 {
                     Boolean FirstItem = false;
                     Boolean SecondItem = false;
@@ -186,7 +186,7 @@ namespace Memoria.Scripts.TranceSeek
                     UiState.SetBattleFollowFormatMessage(BattleMesages.Stole, CensText);
                     break;
                 }
-                case (BattleAbilityId)1165: // Chosen
+                case TranceSeekBattleAbility.Chosen: // Chosen
                 {
                     BattleStatus GoodStatus = (BattleStatus.AutoLife | BattleStatus.Protect | BattleStatus.Shell | BattleStatus.Regen | BattleStatus.Float | BattleStatus.AutoLife |
                     BattleStatus.Haste | BattleStatus.Vanish | BattleStatus.Reflect | TranceSeekStatus.PowerUp | TranceSeekStatus.MagicUp | TranceSeekStatus.ArmorUp | TranceSeekStatus.MentalUp);
@@ -200,8 +200,8 @@ namespace Memoria.Scripts.TranceSeek
                     );
                     break;
                 }
-                case (BattleAbilityId)1166: // Sanction
-                case (BattleAbilityId)1168: // Retribution
+                case TranceSeekBattleAbility.Sanction: // Sanction
+                case TranceSeekBattleAbility.Retribution: // Retribution
                 {
                     _v.SetWeaponPower();
                     _v.Caster.SetMagicAttack();
@@ -217,14 +217,14 @@ namespace Memoria.Scripts.TranceSeek
                     TranceSeekAPI.TryAlterMagicStatuses(_v);
                     break;
                 }
-                case (BattleAbilityId)1167: // Divine hand
+                case TranceSeekBattleAbility.Divinehand: // Divine hand
                 {
                     _v.Target.RemoveStatus(BattleStatusConst.AnyNegative);
                     _v.Target.Flags |= CalcFlag.HpDamageOrHeal;
                     _v.Target.HpDamage = (int)_v.Target.MaximumHp;
                     break;
                 }
-                case (BattleAbilityId)1169: // Sacred fire
+                case TranceSeekBattleAbility.Sacredfire: // Sacred fire
                 {
                     _v.Target.RemoveStatus(BattleStatus.Poison | BattleStatus.Venom | BattleStatus.Zombie);
                     _v.Command.AbilityStatus |= (BattleStatus.Regen | BattleStatus.AutoLife);
@@ -235,4 +235,5 @@ namespace Memoria.Scripts.TranceSeek
         }
     }
 }
+
 

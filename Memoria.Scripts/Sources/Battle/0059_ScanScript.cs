@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using FF9;
@@ -53,11 +53,11 @@ namespace Memoria.Scripts.TranceSeek
                     Memoria.Prime.Log.Message("_v.Target.PermanentStatus = " + _v.Target.PermanentStatus);
                     return;
                 }
-                if (_v.Command.AbilityId == (BattleAbilityId)1075) // Lani - Predator's Eye
+                if (_v.Command.AbilityId == TranceSeekBattleAbility.PredatorsEye) // Lani - Predator's Eye
                 {
                     _v.Target.Libra(BattleHUD.LibraInformation.Name | BattleHUD.LibraInformation.Category | BattleHUD.LibraInformation.ElementalAffinities | BattleHUD.LibraInformation.StatusAffinities);
                 }
-                else if (_v.Command.AbilityId == (BattleAbilityId)1585) // Scan X
+                else if (_v.Command.AbilityId == TranceSeekBattleAbility.Scanga) // Scan X
                 {
                     if (_v.Target.IsUnderStatus(BattleStatus.EasyKill) && !TranceSeekAPI.EliteMonster(_v.Target.Data))
                         _v.Target.Libra(BattleHUD.LibraInformation.Name | BattleHUD.LibraInformation.Level | BattleHUD.LibraInformation.Category | BattleHUD.LibraInformation.ElementalAffinities | BattleHUD.LibraInformation.ItemSteal);
@@ -82,7 +82,7 @@ namespace Memoria.Scripts.TranceSeek
                 {
                     _v.Target.Libra(BattleHUD.LibraInformation.Name | BattleHUD.LibraInformation.Level | BattleHUD.LibraInformation.Category | BattleHUD.LibraInformation.ItemSteal);
                 }
-                else if (_v.Command.AbilityId == (BattleAbilityId)1584) // Scan +
+                else if (_v.Command.AbilityId == TranceSeekBattleAbility.Scanra) // Scan +
                 {
                     _v.Target.Libra(BattleHUD.LibraInformation.All);
                 }
@@ -276,3 +276,4 @@ namespace Memoria.Scripts.TranceSeek
         }
     }
 }
+

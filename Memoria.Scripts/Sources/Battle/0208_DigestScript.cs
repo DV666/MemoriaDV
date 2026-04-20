@@ -1,4 +1,4 @@
-using Memoria.Data;
+﻿using Memoria.Data;
 using System;
 using System.Collections.Generic;
 
@@ -28,7 +28,7 @@ namespace Memoria.Scripts.TranceSeek
             _v.Target.Flags |= (CalcFlag.HpDamageOrHeal | CalcFlag.MpDamageOrHeal);
             _v.Target.HpDamage = dict[0];
             _v.Target.MpDamage = dict[1];
-            if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1223)) // SA Voracious +
+            if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Voracious_Boosted)) // SA Voracious +
             {
                 _v.Target.HpDamage = (int)Math.Min(_v.Target.MaximumHp, _v.Target.HpDamage);
                 _v.Target.MpDamage = (int)Math.Min(_v.Target.MaximumMp, _v.Target.MpDamage);
@@ -43,3 +43,4 @@ namespace Memoria.Scripts.TranceSeek
         }
     }
 }
+

@@ -47,7 +47,7 @@ namespace Memoria.Scripts.TranceSeek
                     _v.Context.Evade = 0;
                 }
             }
-            if (TranceSeekAPI.TryPhysicalHit(_v) || _v.Command.AbilityId == (BattleAbilityId)1161) // Attack from King Leo
+            if (TranceSeekAPI.TryPhysicalHit(_v) || _v.Command.AbilityId == TranceSeekBattleAbility.Attack) // Attack from King Leo
             {
                 if (_v.Command.Id == TranceSeekBattleCommand.MagicWeapon_Weak || _v.Command.Id == TranceSeekBattleCommand.MagicWeapon_Normal || _v.Command.Id == TranceSeekBattleCommand.MagicWeapon_Strong)
                 {
@@ -89,7 +89,7 @@ namespace Memoria.Scripts.TranceSeek
                             short previouscriticalbonus = _v.Caster.Data.critical_rate_deal_bonus;
                             _v.Caster.Data.critical_rate_deal_bonus += _v.Caster.Will;
                             BattleStatus WeaponStatus = _v.Caster.WeaponStatus;
-                            int HitRateWeaponStatus = (50 + _v.Caster.WeaponRate + (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1025) ? (_v.Target.Will / 2) : 0));
+                            int HitRateWeaponStatus = (50 + _v.Caster.WeaponRate + (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.AddStatus_Boosted) ? (_v.Target.Will / 2) : 0));
                             if (WeaponStatus != 0)
                             {
                                 if (((WeaponStatus & BattleStatus.Death) != 0 && TranceSeekAPI.EliteMonster(_v.Target.Data)) || (WeaponStatus & BattleStatus.Death) == 0) // Don't force Death status.
@@ -116,10 +116,10 @@ namespace Memoria.Scripts.TranceSeek
                     {
                         TranceSeekAPI.TryCriticalHit(_v);
                     }
-                    if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)229) && (_v.Target.Flags & CalcFlag.Critical) != 0) // SA Lethality
+                    if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Lethality) && (_v.Target.Flags & CalcFlag.Critical) != 0) // SA Lethality
                     {
                         _v.Command.AbilityStatus |= _v.Caster.WeaponStatus;
-                        if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1229))
+                        if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Lethality_Boosted))
                             _v.Command.AbilityStatus |= BattleStatus.Doom;
                     }
                     if (_v.Caster.HasSupportAbility(SupportAbility1.AddStatus)) // SA Add Status (to handle specific case, like Elite Monsters). Can be improved ...?
@@ -128,7 +128,7 @@ namespace Memoria.Scripts.TranceSeek
 
                         if (((WeaponStatus & BattleStatus.Death) != 0 && !_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill)) || (WeaponStatus & BattleStatus.Death) == 0) // Don't force Death status.
                         {
-                            int HitRateWeaponStatus = _v.Caster.WeaponRate + (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1025) ? (_v.Target.Will / 3) : 0);
+                            int HitRateWeaponStatus = _v.Caster.WeaponRate + (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.AddStatus_Boosted) ? (_v.Target.Will / 3) : 0);
                             if ((WeaponStatus & BattleStatus.Death) != 0 && TranceSeekAPI.EliteMonster(_v.Target.Data))
                                     HitRateWeaponStatus /= 2;
 
@@ -185,11 +185,11 @@ namespace Memoria.Scripts.TranceSeek
             
             TranceSeekAPI.CasterPenaltyMini(_v);
             TranceSeekAPI.EnemyTranceBonusAttack(_v);
-            if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)102))
+            if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Archmage))
                 TranceSeekAPI.TryCriticalHit(_v);
             _v.Caster.HpDamage = _v.Context.EnsureAttack * _v.Context.EnsurePowerDifference;
-            if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)100)) // Medecin
-                _v.Caster.HpDamage += _v.Caster.HpDamage / (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1100) ? 2 : 4);
+            if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Doctor)) // Medecin
+                _v.Caster.HpDamage += _v.Caster.HpDamage / (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Doctor_Boosted) ? 2 : 4);
 
             foreach (BattleUnit unit in BattleState.EnumerateUnits())
             {
@@ -331,13 +331,13 @@ namespace Memoria.Scripts.TranceSeek
             foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(_v.Target))
                 saFeature.TriggerOnAbility(_v, "Steal", true);
 
-            if (_v.Caster.HasSupportAbility(SupportAbility1.MasterThief) && slot == 0 || _v.Caster.HasSupportAbilityByIndex((SupportAbility)1022) && slot == 1)
+            if (_v.Caster.HasSupportAbility(SupportAbility1.MasterThief) && slot == 0 || _v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.MasterThief_Boosted) && slot == 1)
             {
                 ff9item.FF9Item_Add(_v.Context.ItemSteal, 2);
 
                 if (_v.Caster.HasSupportAbility(SupportAbility1.MasterThief) && slot == 0)
                     casterState.Zidane.ItemMugMasterThief = 1;
-                else if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1022) && slot == 1)
+                else if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.MasterThief_Boosted) && slot == 1)
                     casterState.Zidane.ItemMugMasterThief = 2;
 
                 if (_v.Caster.PlayerIndex == CharacterId.Zidane && ff9item._FF9Item_Data[FF9StateSystem.Common.FF9.player[(CharacterId)_v.Caster.Data.bi.slot_no].equip.Weapon].shape == 2)
@@ -397,7 +397,7 @@ namespace Memoria.Scripts.TranceSeek
             int bonusgil = 0;
             byte delay = btl_util.getSerialNumber(_v.Caster.Data) == CharacterSerialNumber.ZIDANE_SWORD ? (byte)8 : (byte)16;
 
-            if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1023))
+            if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.StealGil_Boosted))
                 bonusgil = (int)UnityEngine.Random.Range(btl_util.getEnemyPtr(_v.Target).bonus_gil / 12, btl_util.getEnemyPtr(_v.Target).bonus_gil / 6);
             else
                 bonusgil = (int)(GameRandom.Next16() % (btl_util.getEnemyPtr(_v.Target).bonus_gil / 8));
@@ -421,3 +421,5 @@ namespace Memoria.Scripts.TranceSeek
         }
     }
 }
+
+

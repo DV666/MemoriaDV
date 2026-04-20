@@ -21,7 +21,7 @@ namespace Memoria.Scripts.TranceSeek
 
         public void Perform()
         {
-            if (_v.Caster.PlayerIndex == CharacterId.Beatrix && (_v.Command.AbilityId == (BattleAbilityId)1012 || _v.Command.AbilityId == (BattleAbilityId)1054)) // Bravoure
+            if (_v.Caster.PlayerIndex == CharacterId.Beatrix && (_v.Command.AbilityId == TranceSeekBattleAbility.Braver || _v.Command.AbilityId == TranceSeekBattleAbility.Heroism)) // Bravoure
             {
                 var Caster_TSVar = _v.CasterState();
                 if (Caster_TSVar.Beatrix.Braver > 0)
@@ -33,7 +33,7 @@ namespace Memoria.Scripts.TranceSeek
                 btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.MagicUp, parameters: $"+{_v.Command.Power}");
                 _v.Target.AlterStatus(TranceSeekStatus.Redemption, _v.Caster);
                 _v.Target.AlterStatus(TranceSeekStatus.Redemption, _v.Caster);
-                if (_v.Target.HasSupportAbilityByIndex((SupportAbility)232)) // SA Expiation
+                if (_v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.Expiation)) // SA Expiation
                     _v.Target.AlterStatus(TranceSeekStatus.Redemption, _v.Caster);
                 if (_v.Caster.IsUnderAnyStatus(BattleStatus.Trance))
                 {
@@ -48,7 +48,7 @@ namespace Memoria.Scripts.TranceSeek
                 TranceSeekCharacterMechanic.UpdateRedemptionHUD(_v.Target);
                 return;
             }
-            else if (_v.Caster.Data.dms_geo_id == 410 && _v.Command.Power == 2 || (_v.Caster.Data.dms_geo_id == 410 && _v.Command.Power == 4 || _v.Command.AbilityId == (BattleAbilityId)1081)) // [Lani] Adrénaline + Super Muscles
+            else if (_v.Caster.Data.dms_geo_id == 410 && _v.Command.Power == 2 || (_v.Caster.Data.dms_geo_id == 410 && _v.Command.Power == 4 || _v.Command.AbilityId == TranceSeekBattleAbility.SuperMuscles)) // [Lani] Adrénaline + Super Muscles
             {
                 btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.PowerUp, parameters: $"+{_v.Command.Power}");
                 btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.ArmorUp, parameters: $"+{_v.Command.Power}");
@@ -91,3 +91,5 @@ namespace Memoria.Scripts.TranceSeek
         }
     }
 }
+
+

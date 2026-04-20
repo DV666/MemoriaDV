@@ -24,7 +24,7 @@ namespace Memoria.Scripts.TranceSeek
         {
             if (_v.Caster.PlayerIndex == CharacterId.Vivi)
             {
-                if (_v.Command.Id == (BattleCommandId)1000) // AA Mana Well
+                if (_v.Command.Id == TranceSeekBattleCommand.Manawell) // AA Mana Well
                 {
                     _v.Target.Flags |= (CalcFlag.MpAlteration | CalcFlag.MpRecovery);
                     short mpDamage = (short)(_v.Target.MaximumMp / 2U);
@@ -44,7 +44,7 @@ namespace Memoria.Scripts.TranceSeek
                     uint num;
                     uint num2;
                     uint factor = 4;
-                    if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1032)) // SA Overload+
+                    if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Overload_Boosted)) // SA Overload+
                         factor = 2;
                     else if (_v.Caster.HasSupportAbilityByIndex(SupportAbility.MagElemNull)) // SA Overload
                         factor = 3;
@@ -78,7 +78,7 @@ namespace Memoria.Scripts.TranceSeek
                     uint num;
                     uint num2;
                     uint factor = 4;
-                    if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1032)) // SA Overload+
+                    if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Overload_Boosted)) // SA Overload+
                         factor = 2;
                     else if (_v.Caster.HasSupportAbilityByIndex(SupportAbility.MagElemNull)) // SA Overload
                         factor = 3;
@@ -105,7 +105,7 @@ namespace Memoria.Scripts.TranceSeek
                         }
                     }
                 }
-                else if (_v.Command.Id == (BattleCommandId)1033 || _v.Command.Id == (BattleCommandId)1034) // SA Absorb
+                else if (_v.Command.Id == TranceSeekBattleCommand.Absorb || _v.Command.Id == TranceSeekBattleCommand.Absorb2) // SA Absorb
                 {
                     _v.Target.Flags |= CalcFlag.HpAlteration;
                     _v.Caster.Flags |= CalcFlag.MpDamageOrHeal;
@@ -136,3 +136,5 @@ namespace Memoria.Scripts.TranceSeek
         }
     }
 }
+
+

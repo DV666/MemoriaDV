@@ -1,4 +1,4 @@
-using Memoria.Data;
+﻿using Memoria.Data;
 using System;
 
 namespace Memoria.Scripts.TranceSeek
@@ -23,7 +23,7 @@ namespace Memoria.Scripts.TranceSeek
             _v.Context.Attack = 15;
             _v.Context.AttackPower = _v.Command.Item.Power;
             _v.Context.DefensePower = 0;
-            if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1027) && (_v.Target.IsPlayer && BattleState.BattleUnitCount(true) > 1 || !_v.Target.IsPlayer && BattleState.BattleUnitCount(false) > 1))
+            if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Chemist_Boosted) && (_v.Target.IsPlayer && BattleState.BattleUnitCount(true) > 1 || !_v.Target.IsPlayer && BattleState.BattleUnitCount(false) > 1))
             { // Herboriste +                    
                 foreach (BattleUnit unit in BattleState.EnumerateUnits())
                 {
@@ -94,3 +94,4 @@ namespace Memoria.Scripts.TranceSeek
         }
     }
 }
+

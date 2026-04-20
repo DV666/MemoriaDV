@@ -1,4 +1,4 @@
-using Memoria.Data;
+﻿using Memoria.Data;
 using System;
 
 namespace Memoria.Scripts.TranceSeek
@@ -88,7 +88,7 @@ namespace Memoria.Scripts.TranceSeek
                             }
                         }
                     } 
-                    else if (_v.Command.AbilityId == (BattleAbilityId)1033) // Sacrifice
+                    else if (_v.Command.AbilityId == TranceSeekBattleAbility.Sacrifice) // Sacrifice
                     {
                         _v.Target.CurrentHp = _v.Target.MaximumHp;
                         _v.Target.CurrentMp = _v.Target.MaximumMp;
@@ -101,3 +101,4 @@ namespace Memoria.Scripts.TranceSeek
         }
     }
 }
+

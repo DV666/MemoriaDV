@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Memoria.Data;
 
 namespace Memoria.Scripts.TranceSeek
@@ -20,7 +20,7 @@ namespace Memoria.Scripts.TranceSeek
 
         public void Perform()
         {
-            if (_v.Command.AbilityId == (BattleAbilityId)1564 || _v.Command.AbilityId == (BattleAbilityId)1565 || _v.Command.AbilityId == (BattleAbilityId)1566) // Gravity Sword
+            if (_v.Command.AbilityId == TranceSeekBattleAbility.MagicSword_Quarter || _v.Command.AbilityId == TranceSeekBattleAbility.MagicSword_Demi || _v.Command.AbilityId == TranceSeekBattleAbility.MagicSword_Gravija) // Gravity Sword
             {
                 SB2_PATTERN sb2Pattern = FF9StateSystem.Battle.FF9Battle.btl_scene.PatAddr[FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum];
                 for (Int32 i = 0; i < MagicGravityDamageScript.ImmuneGravity.GetLength(0); i++)
@@ -72,7 +72,7 @@ namespace Memoria.Scripts.TranceSeek
             }
             else
             {
-                if (_v.Caster.PlayerIndex == CharacterId.Steiner && (_v.Command.AbilityId == BattleAbilityId.None7 || _v.Command.AbilityId == BattleAbilityId.DoomsdaySword || _v.Command.AbilityId == (BattleAbilityId)1578)) // Comet/Meteor/Doomsday Sword
+                if (_v.Caster.PlayerIndex == CharacterId.Steiner && (_v.Command.AbilityId == BattleAbilityId.None7 || _v.Command.AbilityId == BattleAbilityId.DoomsdaySword || _v.Command.AbilityId == TranceSeekBattleAbility.RubyLight)) // Comet/Meteor/Doomsday Sword
                 {
                     _v.Context.Attack = UnityEngine.Random.Range(((_v.Caster.Strength + _v.Caster.Level) / 3), (_v.Caster.Strength + _v.Caster.Level));
                 }
@@ -88,9 +88,9 @@ namespace Memoria.Scripts.TranceSeek
                 TranceSeekAPI.BonusElement(_v);
                 if (TranceSeekAPI.CanAttackMagic(_v))
                 {
-                    if (_v.Target.HasCategory(EnemyCategory.Humanoid) && (_v.Command.AbilityId == BattleAbilityId.None5 || _v.Command.AbilityId == BattleAbilityId.BioSword || _v.Command.AbilityId == (BattleAbilityId)1563)) // Poison/Arsenic/Bio Sword
+                    if (_v.Target.HasCategory(EnemyCategory.Humanoid) && (_v.Command.AbilityId == BattleAbilityId.None5 || _v.Command.AbilityId == BattleAbilityId.BioSword || _v.Command.AbilityId == TranceSeekBattleAbility.MagicSword_Poison)) // Poison/Arsenic/Bio Sword
                         _v.Context.DamageModifierCount += 2;
-                    if (_v.Command.AbilityId == (BattleAbilityId)1568) // Drain Sword
+                    if (_v.Command.AbilityId == TranceSeekBattleAbility.MagicSword_Drain) // Drain Sword
                         _v.PrepareHpDraining();
                     _v.CalcHpDamage();
                 }
@@ -99,3 +99,4 @@ namespace Memoria.Scripts.TranceSeek
         }
     }
 }
+

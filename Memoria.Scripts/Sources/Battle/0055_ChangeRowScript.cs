@@ -1,4 +1,4 @@
-using Memoria.Data;
+﻿using Memoria.Data;
 using System;
 
 namespace Memoria.Scripts.TranceSeek
@@ -20,10 +20,11 @@ namespace Memoria.Scripts.TranceSeek
 
         public void Perform()
         {
-            if (_v.Target.HasSupportAbilityByIndex((SupportAbility)1026) && !_v.Caster.IsPlayer)
+            if (_v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.StoneSkin_Boosted) && !_v.Caster.IsPlayer)
                 return;
 
             TranceSeekAPI.ChangeRow(_v.Target);          
         }
     }
 }
+

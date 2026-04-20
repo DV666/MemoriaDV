@@ -111,10 +111,10 @@ namespace Memoria.Scripts.TranceSeek
                     _v.Context.AttackPower = 1250;
                 }
 
-                if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)100)) // Medecin
-                    _v.Target.HpDamage += _v.Caster.HpDamage / (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1100) ? 2 : 4);
+                if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Doctor)) // Medecin
+                    _v.Target.HpDamage += _v.Caster.HpDamage / (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Doctor_Boosted) ? 2 : 4);
 
-                if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1027) && (_v.Target.IsPlayer && BattleState.BattleUnitCount(true) > 1 || !_v.Target.IsPlayer && BattleState.BattleUnitCount(false) > 1))
+                if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Chemist_Boosted) && (_v.Target.IsPlayer && BattleState.BattleUnitCount(true) > 1 || !_v.Target.IsPlayer && BattleState.BattleUnitCount(false) > 1))
                 { // Herboriste +                    
                     foreach (BattleUnit unit in BattleState.EnumerateUnits())
                     {
@@ -148,8 +148,8 @@ namespace Memoria.Scripts.TranceSeek
                             }
                         }
 
-                        if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)100)) // Medecin
-                            healing += healing / (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1100) ? 2 : 4);
+                        if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Doctor)) // Medecin
+                            healing += healing / (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Doctor_Boosted) ? 2 : 4);
 
                         if (unit.IsZombie)
                         {
@@ -201,3 +201,4 @@ namespace Memoria.Scripts.TranceSeek
         }
     }
 }
+

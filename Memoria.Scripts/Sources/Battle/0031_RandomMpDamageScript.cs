@@ -1,4 +1,4 @@
-using FF9;
+﻿using FF9;
 using System;
 using Memoria.Data;
 using Memoria.Prime;
@@ -32,9 +32,9 @@ namespace Memoria.Scripts.TranceSeek
                 Int32 baseDamage = Comn.random16() % (1 + (_v.Caster.Level + _v.Caster.Magic >> 3));
                 _v.Context.AttackPower = _v.Caster.GetWeaponPower(_v.Command);
                 _v.Target.SetMagicDefense();
-                if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1222)) // SA Sharpening +
+                if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Sharpening_Boosted)) // SA Sharpening +
                     _v.Context.Attack = _v.Caster.Magic + baseDamage;
-                else if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)222)) // SA Sharpening +
+                else if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Sharpening)) // SA Sharpening +
                     _v.Context.Attack = UnityEngine.Random.Range(_v.Caster.Magic / 2, _v.Caster.Magic) + baseDamage;
                 else
                     _v.Context.Attack = Comn.random16() % _v.Caster.Magic + baseDamage;
@@ -100,3 +100,4 @@ namespace Memoria.Scripts.TranceSeek
         }
     }
 }
+

@@ -1,10 +1,10 @@
-using Memoria.Data;
+﻿using Memoria.Data;
 using System;
 
 namespace Memoria.Scripts.TranceSeek
 {
     /// <summary>
-    /// Angel’s Snack
+    /// Angelâ€™s Snack
     /// </summary>
     [BattleScript(Id)]
     public sealed class AngelSnackScript : IBattleScript
@@ -63,7 +63,7 @@ namespace Memoria.Scripts.TranceSeek
                 {
                     _v.Target.RemoveStatus(BattleStatus.Confuse);
                 }
-                if (_v.Target.IsUnderAnyStatus(BattleStatus.Berserk) & _v.Target.HasSupportAbilityByIndex((SupportAbility)107)) // Inner Peace
+                if (_v.Target.IsUnderAnyStatus(BattleStatus.Berserk) & _v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.InnerPeace)) // Inner Peace
                 {
                     _v.Target.RemoveStatus(BattleStatus.Berserk);
                 }
@@ -75,19 +75,19 @@ namespace Memoria.Scripts.TranceSeek
                 {
                     _v.Target.RemoveStatus(BattleStatus.Slow);
                 }
-                if (_v.Target.IsUnderAnyStatus(BattleStatus.Virus) & _v.Target.HasSupportAbilityByIndex((SupportAbility)111)) // Pasteurized
+                if (_v.Target.IsUnderAnyStatus(BattleStatus.Virus) & _v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.Pasteurized)) // Pasteurized
                 {
                     _v.Target.RemoveStatus(BattleStatus.Virus);
                 }
-                if (_v.Target.IsUnderAnyStatus(BattleStatus.Trouble) & _v.Target.HasSupportAbilityByIndex((SupportAbility)112)) // United
+                if (_v.Target.IsUnderAnyStatus(BattleStatus.Trouble) & _v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.United)) // United
                 {
                     _v.Target.RemoveStatus(BattleStatus.Trouble);
                 }
-                if (_v.Target.IsUnderAnyStatus(BattleStatus.Mini) & _v.Target.HasSupportAbilityByIndex((SupportAbility)113)) // Abundance
+                if (_v.Target.IsUnderAnyStatus(BattleStatus.Mini) & _v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.Abundance)) // Abundance
                 {
                     _v.Target.RemoveStatus(BattleStatus.Mini);
                 }
-                if (_v.Target.IsUnderAnyStatus(BattleStatus.Zombie) & _v.Target.HasSupportAbilityByIndex((SupportAbility)114)) // Purity
+                if (_v.Target.IsUnderAnyStatus(BattleStatus.Zombie) & _v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.Purity)) // Purity
                 {
                     _v.Target.RemoveStatus(BattleStatus.Zombie);
                 }
@@ -103,3 +103,4 @@ namespace Memoria.Scripts.TranceSeek
         }
     }
 }
+

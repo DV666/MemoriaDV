@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using FF9;
 using Memoria.Data;
 
@@ -23,7 +23,7 @@ namespace Memoria.Scripts.TranceSeek
         {
             if (_v.Caster.IsPlayer)
             {
-                if (_v.Command.AbilityId == (BattleAbilityId)1136 || _v.Command.AbilityId == (BattleAbilityId)1138) // Accelerator hammer
+                if (_v.Command.AbilityId == TranceSeekBattleAbility.Hammerthrow || _v.Command.AbilityId == TranceSeekBattleAbility.Acceleratorhammer) // Accelerator hammer
                 {
                     if (_v.Target.IsUnderAnyStatus(BattleStatus.Vanish))
                     {
@@ -45,7 +45,7 @@ namespace Memoria.Scripts.TranceSeek
                     }
                     return;
                 }
-                else if (_v.Command.ItemId == (RegularItem)1032) // Smoking Bomb
+                else if (_v.Command.ItemId == TranceSeekRegularItem.SmokingBomb) // Smoking Bomb
                 {
                     if (_v.Target.IsUnderAnyStatus(BattleStatusConst.CannotEscape))
                     {
@@ -59,7 +59,7 @@ namespace Memoria.Scripts.TranceSeek
                         BattleState.EnqueueCommand(BattleState.EscapeCommand, BattleCommandId.SysEscape, 0U, 15, true);
                     }
                 }
-                else if (_v.Command.ItemId == (RegularItem)1033) // Image
+                else if (_v.Command.ItemId == TranceSeekRegularItem.Image) // Image
                 {
                     _v.Command.AbilityCategory -= 8; // Remove physical effect.
                     _v.Command.AbilityStatus |= _v.Command.Weapon.Status;
@@ -67,7 +67,7 @@ namespace Memoria.Scripts.TranceSeek
                 }
                 else
                 {
-                    if (_v.Command.ItemId == (RegularItem)1034 || _v.Command.ItemId == (RegularItem)1035 || _v.Command.ItemId == (RegularItem)1036)
+                    if (_v.Command.ItemId == TranceSeekRegularItem.Katon || _v.Command.ItemId == TranceSeekRegularItem.Suiton || _v.Command.ItemId == TranceSeekRegularItem.Raijin)
                     {
                         _v.Context.AttackPower = _v.Command.Weapon.Power << 1;
                         _v.Context.Attack = (Int16)(_v.Caster.Magic + Comn.random16() % (1 + (_v.Caster.Level + _v.Caster.Magic >> 3)));
@@ -150,3 +150,5 @@ namespace Memoria.Scripts.TranceSeek
         }
     }
 }
+
+

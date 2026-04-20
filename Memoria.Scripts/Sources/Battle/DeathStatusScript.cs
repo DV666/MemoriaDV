@@ -77,7 +77,7 @@ namespace Memoria.DefaultScripts
                     Target_TSVar.Vivi = new ViviPassives();
                 }
             }
-            if (!target.HasSupportAbilityByIndex((SupportAbility)1232)) // SA Expiation+
+            if (!target.HasSupportAbilityByIndex(TranceSeekSupportAbility.Expiation_Boosted)) // SA Expiation+
                 btl_stat.RemoveStatus(target, TranceSeekStatusId.Redemption);
             return btl_stat.ALTER_SUCCESS;
         }
@@ -110,3 +110,4 @@ namespace Memoria.DefaultScripts
         }
     }
 }
+

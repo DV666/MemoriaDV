@@ -20,7 +20,7 @@ namespace Memoria.DefaultScripts
             if (Target.IsUnderAnyStatus(BattleStatus.EasyKill))
             {
                 BattleStatusDataEntry statusData = FF9StateSystem.Battle.FF9Battle.status_data[BattleStatusId.Poison];
-                Int32 wait = (short)(((400 + (inflicter.Will * 2) - target.Will) * statusData.ContiCnt) * (inflicter.HasSupportAbilityByIndex((SupportAbility)1124) ? (150 / 100) : inflicter.HasSupportAbilityByIndex((SupportAbility)124) ? (125 / 100) : 1));
+                Int32 wait = (short)(((400 + (inflicter.Will * 2) - target.Will) * statusData.ContiCnt) * (inflicter.HasSupportAbilityByIndex(TranceSeekSupportAbility.Persistence_Boosted) ? (150 / 100) : inflicter.HasSupportAbilityByIndex(TranceSeekSupportAbility.Persistence) ? (125 / 100) : 1));
                 Target.AddDelayedModifier(
                 target => (wait -= target.Data.cur.at_coef * BattleState.ATBTickCount) > 0,
                 target =>
@@ -71,3 +71,4 @@ namespace Memoria.DefaultScripts
         }
     }
 }
+

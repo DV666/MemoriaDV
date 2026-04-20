@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Memoria.Data;
 using Memoria.Prime;
 
@@ -22,7 +22,7 @@ namespace Memoria.Scripts.TranceSeek
         public void Perform()
         {
             TranceSeekAPI.TryRemoveItemStatuses(_v);
-            if ((_v.Command.ItemId == RegularItem.Remedy || _v.Command.ItemId == RegularItem.Annoyntment || _v.Command.ItemId == (RegularItem)1003) && _v.Target.IsUnderAnyStatus(TranceSeekStatus.Vieillissement))
+            if ((_v.Command.ItemId == RegularItem.Remedy || _v.Command.ItemId == RegularItem.Annoyntment || _v.Command.ItemId == TranceSeekRegularItem.HiRemedy) && _v.Target.IsUnderAnyStatus(TranceSeekStatus.Vieillissement))
             {
                 _v.Target.RemoveStatus(TranceSeekStatus.Vieillissement);
                 _v.Context.Flags = 0;
@@ -33,7 +33,7 @@ namespace Memoria.Scripts.TranceSeek
 
         public Single RateTarget()
         {
-            if (_v.Target.IsUnderAnyStatus(TranceSeekStatus.Vieillissement) && (_v.Command.ItemId == RegularItem.Remedy || _v.Command.ItemId == RegularItem.Annoyntment || _v.Command.ItemId == (RegularItem)1003))
+            if (_v.Target.IsUnderAnyStatus(TranceSeekStatus.Vieillissement) && (_v.Command.ItemId == RegularItem.Remedy || _v.Command.ItemId == RegularItem.Annoyntment || _v.Command.ItemId == TranceSeekRegularItem.HiRemedy))
                 return 20;
 
             BattleStatus playerStatus = _v.Target.CurrentStatus;
@@ -48,3 +48,4 @@ namespace Memoria.Scripts.TranceSeek
         }
     }
 }
+

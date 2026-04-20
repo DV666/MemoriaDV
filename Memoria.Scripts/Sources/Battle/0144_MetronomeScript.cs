@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using FF9;
@@ -35,7 +35,7 @@ namespace Memoria.Scripts.TranceSeek
 
             foreach (BattleAbilityId abilId in CharacterCommands.Commands[BattleCommandId.BlackMagic].EnumerateAbilities())
             {
-                if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1256))
+                if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Metronome_Boosted))
                 {
                     if ((FF9StateSystem.Battle.FF9Battle.aa_data[abilId].Ref.Power > 20 || FF9StateSystem.Battle.FF9Battle.aa_data[abilId].Ref.Power == 00))
                         BlackAndWhiteMagic.Add(abilId);
@@ -49,7 +49,7 @@ namespace Memoria.Scripts.TranceSeek
 
             foreach (BattleAbilityId abilId in CharacterCommands.Commands[BattleCommandId.WhiteMagicGarnet].EnumerateAbilities())
             {
-                if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1256))
+                if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Metronome_Boosted))
                 {
                     if ((FF9StateSystem.Battle.FF9Battle.aa_data[abilId].Ref.Power > 20 || FF9StateSystem.Battle.FF9Battle.aa_data[abilId].Ref.Power == 00))
                         BlackAndWhiteMagic.Add(abilId);
@@ -62,7 +62,7 @@ namespace Memoria.Scripts.TranceSeek
             }
             foreach (BattleAbilityId abilId in CharacterCommands.Commands[BattleCommandId.WhiteMagicEiko].EnumerateAbilities())
             {
-                if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1256))
+                if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Metronome_Boosted))
                 {
                     if ((FF9StateSystem.Battle.FF9Battle.aa_data[abilId].Ref.Power > 20 || FF9StateSystem.Battle.FF9Battle.aa_data[abilId].Ref.Power == 00))
                         BlackAndWhiteMagic.Add(abilId);
@@ -79,7 +79,7 @@ namespace Memoria.Scripts.TranceSeek
                     BlackAndWhiteMagic.Add(abilId);
             }
 
-            if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1256)) // SA Metronome+
+            if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Metronome_Boosted)) // SA Metronome+
             {
                 foreach (BattleAbilityId abilId in CharacterCommands.Commands[BattleCommandId.SummonGarnet].EnumerateAbilities())
                     BlackAndWhiteMagic.Add(abilId);
@@ -204,3 +204,4 @@ namespace Memoria.Scripts.TranceSeek
 
     }
 }
+

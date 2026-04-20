@@ -1,4 +1,4 @@
-using Memoria.Data;
+﻿using Memoria.Data;
 using System;
 
 namespace Memoria.Scripts.TranceSeek
@@ -31,7 +31,7 @@ namespace Memoria.Scripts.TranceSeek
             if (TranceSeekAPI.CanAttackMagic(_v))
             {
                 _v.Target.Flags = CalcFlag.HpAlteration;
-                if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)102))
+                if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Archmage))
                     TranceSeekAPI.TryCriticalHit(_v);
                 _v.CalcHpDamage();
             }
@@ -39,3 +39,4 @@ namespace Memoria.Scripts.TranceSeek
         }
     }
 }
+

@@ -37,18 +37,18 @@ namespace Memoria.Scripts.TranceSeek
             else
             {
 
-                if (_v.Caster.HasSupportAbility(SupportAbility1.HighJump) && GameRandom.Next8() % 2 == 0 || _v.Caster.HasSupportAbilityByIndex((SupportAbility)1021))
+                if (_v.Caster.HasSupportAbility(SupportAbility1.HighJump) && GameRandom.Next8() % 2 == 0 || _v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.HighJump_Boosted))
                 {
                     _v.Target.AlterStatus(TranceSeekStatus.Dragon, _v.Caster);
                 }
-                if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)217)) // SA Skydive
+                if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Skydive)) // SA Skydive
                 {
                     int num = Comn.random16() % (1 + (_v.Caster.Level + _v.Caster.Strength >> 3));
                     _v.Context.AttackPower = _v.Caster.WeaponPower;
                     _v.Context.Attack = ((short)(_v.Caster.Strength + num));
                     _v.Context.DefensePower = _v.Target.MagicDefence / 2;
                     TranceSeekAPI.PenaltyShellAttack(_v);
-                    if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1217)) // SA Skydive+
+                    if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Skydive_Boosted)) // SA Skydive+
                         _v.Caster.AlterStatus(TranceSeekStatus.MagicUp, _v.Caster);
                 }
                 else
@@ -70,12 +70,13 @@ namespace Memoria.Scripts.TranceSeek
                     _v.CalcPhysicalHpDamage();
                 }
 
-                if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)216)) // SA Sky Attack 
+                if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.SkyAttack)) // SA Sky Attack 
                 {
                     _v.Caster.Flags |= CalcFlag.HpDamageOrHeal;
-                    _v.Caster.HpDamage = _v.Target.HpDamage / (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1216) ? 4 : 8);
+                    _v.Caster.HpDamage = _v.Target.HpDamage / (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.SkyAttack_Boosted) ? 4 : 8);
                 }
             }
         }
     }
 }
+

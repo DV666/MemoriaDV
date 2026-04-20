@@ -21,7 +21,7 @@ namespace Memoria.Scripts.TranceSeek
 
         public void Perform()
         {
-            if (_v.Command.AbilityId == (BattleAbilityId)1102) // Sang Maudit
+            if (_v.Command.AbilityId == TranceSeekBattleAbility.CursedBlood) // Sang Maudit
             {
                 _v.TargetState().Marcus.CursedBlood = 1; // [TODO] Do a timer ? To make it not infinite.
             }
@@ -54,3 +54,4 @@ namespace Memoria.Scripts.TranceSeek
         }
     }
 }
+

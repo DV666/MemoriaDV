@@ -1,8 +1,9 @@
-﻿using System;
-using UnityEngine;
-using Memoria.Data;
-using Object = System.Object;
+﻿using Memoria.Data;
+using Memoria.Scripts.TranceSeek;
+using System;
 using System.Linq;
+using UnityEngine;
+using Object = System.Object;
 
 namespace Memoria.DefaultScripts
 {
@@ -20,7 +21,7 @@ namespace Memoria.DefaultScripts
             Boolean RedemptionSHPActivate = Configuration.Mod.FolderNames.Contains("TranceSeek/RedemptionIconInBattle");
             base.Apply(target, inflicter, parameters);
             OverlapSHP.SetupOverlappingSHP2(target);
-            Int32 StackMaximum = target.HasSupportAbilityByIndex((SupportAbility)232) ? 3 : 2; // SA Expiation
+            Int32 StackMaximum = target.HasSupportAbilityByIndex(TranceSeekSupportAbility.Expiation) ? 3 : 2; // SA Expiation
             ModelScale = target.ModelStatusScale;
             if (parameters.Length > 0)
             {
@@ -147,3 +148,4 @@ namespace Memoria.DefaultScripts
         }
     }
 }
+

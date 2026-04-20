@@ -25,7 +25,7 @@ namespace Memoria.Scripts.TranceSeek
 
         public void Perform()
         {
-            if (_v.Command.ItemId == RegularItem.NoItem || _v.Caster.HasSupportAbilityByIndex((SupportAbility)251)) // SA Artificer
+            if (_v.Command.ItemId == RegularItem.NoItem || _v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Artificer)) // SA Artificer
             {
                 _v.Context.Flags = BattleCalcFlags.Miss;
                 return;
@@ -35,68 +35,68 @@ namespace Memoria.Scripts.TranceSeek
             int MPHeal = 0;
             switch (_v.Command.ItemId)
             {
-                case (RegularItem)2039: // Sérum
-                case (RegularItem)2049: // Echo
-                case (RegularItem)2058: // Collyre
-                case (RegularItem)2067: // Doux
-                case (RegularItem)2076: // Calmant
-                case (RegularItem)2085: // Eau bénite
-                case (RegularItem)2094: // Anticorps
+                case TranceSeekRegularItem.Serum: // Sérum
+                case TranceSeekRegularItem.Echo: // Echo
+                case TranceSeekRegularItem.Collyrium: // Collyre
+                case TranceSeekRegularItem.Mild: // Doux
+                case TranceSeekRegularItem.Sedative: // Calmant
+                case TranceSeekRegularItem.BlessedWater: // Eau bénite
+                case TranceSeekRegularItem.Antibodies: // Anticorps
                 {
                     HPHeal = 200;
                     TranceSeekAPI.TryRemoveItemStatuses(_v);
                     break;
                 }
-                case (RegularItem)2040: // Maxi Sérum
-                case (RegularItem)2050: // Maxi Echo
-                case (RegularItem)2059: // Maxi Collyre
-                case (RegularItem)2068: // Maxi Doux
-                case (RegularItem)2077: // Maxi Calmant
-                case (RegularItem)2086: // Maxi Eau bénite
-                case (RegularItem)2095: // Maxi Anticorps
+                case TranceSeekRegularItem.HiSerum: // Maxi Sérum
+                case TranceSeekRegularItem.HiEcho: // Maxi Echo
+                case TranceSeekRegularItem.HiCollyrium: // Maxi Collyre
+                case TranceSeekRegularItem.HiMild: // Maxi Doux
+                case TranceSeekRegularItem.HiSedative: // Maxi Calmant
+                case TranceSeekRegularItem.HiBlessedWater: // Maxi Eau bénite
+                case TranceSeekRegularItem.HiAntibodies: // Maxi Anticorps
                 {
                     HPHeal = 500;
                     TranceSeekAPI.TryRemoveItemStatuses(_v);
                     break;
                 }
-                case (RegularItem)2041: // Ultra Sérum
-                case (RegularItem)2051: // Ultra Echo
-                case (RegularItem)2060: // Ultra Collyre
-                case (RegularItem)2069: // Ultra Doux
-                case (RegularItem)2078: // Ultra Calmant
-                case (RegularItem)2087: // Ultra Eau bénite
-                case (RegularItem)2096: // Ultra Anticorps
+                case TranceSeekRegularItem.UltraSerum: // Ultra Sérum
+                case TranceSeekRegularItem.UltraEcho: // Ultra Echo
+                case TranceSeekRegularItem.UltraCollyrium: // Ultra Collyre
+                case TranceSeekRegularItem.UltraMild: // Ultra Doux
+                case TranceSeekRegularItem.UltraSedative: // Ultra Calmant
+                case TranceSeekRegularItem.UltraBlessedWater: // Ultra Eau bénite
+                case TranceSeekRegularItem.UltraAntibodies: // Ultra Anticorps
                 {
                     HPHeal = 1250;
                     TranceSeekAPI.TryRemoveItemStatuses(_v);
                     break;
                 }
-                case (RegularItem)2103: // Médicament
-                case (RegularItem)2104: // Maxi Médicament
-                case (RegularItem)2105: // Ultra Médicament
-                case (RegularItem)2113: // Médicament +
-                case (RegularItem)2114: // Maxi Médicament +
-                case (RegularItem)2115: // Ultra Médicament +
+                case TranceSeekRegularItem.Medication: // Médicament
+                case TranceSeekRegularItem.HiMedication: // Maxi Médicament
+                case TranceSeekRegularItem.UltraMedication: // Ultra Médicament
+                case TranceSeekRegularItem.MedicationPlus: // Médicament +
+                case TranceSeekRegularItem.HiMedicationPlus: // Maxi Médicament +
+                case TranceSeekRegularItem.UltraMedicationPlus: // Ultra Médicament +
                 {
                     HPHeal = (int)(_v.Target.MaximumHp * _v.Command.Power) / 100;
                     TranceSeekAPI.TryRemoveItemStatuses(_v);
                     break;
                 }
-                case (RegularItem)2106: // Traitement
-                case (RegularItem)2107: // Traitement +
-                case (RegularItem)2116: // Traitement X
+                case TranceSeekRegularItem.Treatment: // Traitement
+                case TranceSeekRegularItem.TreatmentPlus: // Traitement +
+                case TranceSeekRegularItem.XTreatment: // Traitement X
                 {
                     MPHeal = (int)(_v.Target.MaximumMp * _v.Command.Power) / 100;
                     TranceSeekAPI.TryRemoveItemStatuses(_v);
                     break;
                 }
-                case (RegularItem)2042: // Sérum amélioré
-                case (RegularItem)2052: // Echo amélioré
-                case (RegularItem)2061: // Collyre amélioré
-                case (RegularItem)2070: // Doux amélioré
-                case (RegularItem)2079: // Calmant amélioré
-                case (RegularItem)2088: // Eau bénite amélioré
-                case (RegularItem)2097: // Anticorps amélioré
+                case TranceSeekRegularItem.EnhancedSerum: // Sérum amélioré
+                case TranceSeekRegularItem.EnhancedEcho: // Echo amélioré
+                case TranceSeekRegularItem.EnhancedCollyrium: // Collyre amélioré
+                case TranceSeekRegularItem.EnhancedMild: // Doux amélioré
+                case TranceSeekRegularItem.EnhancedSedative: // Calmant amélioré
+                case TranceSeekRegularItem.EnhancedBlessedWater: // Eau bénite amélioré
+                case TranceSeekRegularItem.EnhancedAntibodies: // Anticorps amélioré
                 {
                     TranceSeekAPI.TryRemoveItemStatuses(_v);
                     foreach (BattleStatusId statusID in _v.Command.Item.Status.ToStatusList())
@@ -104,13 +104,13 @@ namespace Memoria.Scripts.TranceSeek
 
                     break;
                 }
-                case (RegularItem)2043: // Puissant sérum
-                case (RegularItem)2053: // Puissant echo
-                case (RegularItem)2062: // Puissant Collyre
-                case (RegularItem)2071: // Puissant Doux
-                case (RegularItem)2080: // Puissant Calmant
-                case (RegularItem)2089: // Puissante Eau bénite
-                case (RegularItem)2098: // Puissant Anticorps
+                case TranceSeekRegularItem.PowerfulSerum: // Puissant sérum
+                case TranceSeekRegularItem.PowerfulEcho: // Puissant echo
+                case TranceSeekRegularItem.PowerfulCollyrium: // Puissant Collyre
+                case TranceSeekRegularItem.PowerfulMild: // Puissant Doux
+                case TranceSeekRegularItem.PowerfulSedative: // Puissant Calmant
+                case TranceSeekRegularItem.PowerfulBlessedWater: // Puissante Eau bénite
+                case TranceSeekRegularItem.PowerfulAntibodies: // Puissant Anticorps
                 {
                     TranceSeekAPI.TryRemoveItemStatuses(_v);
                     foreach (BattleStatusId statusID in _v.Command.Item.Status.ToStatusList())
@@ -118,12 +118,12 @@ namespace Memoria.Scripts.TranceSeek
 
                     break;
                 }
-                case (RegularItem)2108: // Remontant
-                case (RegularItem)2109: // Remontant +
-                case (RegularItem)2110: // Secondie Vie
-                case (RegularItem)2117: // Troisième Vie
+                case TranceSeekRegularItem.Tonic: // Remontant
+                case TranceSeekRegularItem.TonicPlus: // Remontant +
+                case TranceSeekRegularItem.SecondeLife: // Secondie Vie
+                case TranceSeekRegularItem.ThirdLife: // Troisième Vie
                 {
-                    if (_v.Command.ItemId == (RegularItem)2108 || _v.Command.ItemId == (RegularItem)2109 || _v.Command.ItemId == (RegularItem)2110 || _v.Command.ItemId == (RegularItem)2117)
+                    if (_v.Command.ItemId == TranceSeekRegularItem.Tonic || _v.Command.ItemId == TranceSeekRegularItem.TonicPlus || _v.Command.ItemId == TranceSeekRegularItem.SecondeLife || _v.Command.ItemId == TranceSeekRegularItem.ThirdLife)
                     {
                         if (!_v.Target.CanBeRevived() || !_v.Target.IsUnderAnyStatus(BattleStatus.Death))
                         {
@@ -143,9 +143,9 @@ namespace Memoria.Scripts.TranceSeek
                             return;
 
                         _v.Target.RemoveStatus(BattleStatus.Death);
-                        if (_v.Command.ItemId == (RegularItem)2108 || _v.Command.ItemId == (RegularItem)2110) // Remontant
+                        if (_v.Command.ItemId == TranceSeekRegularItem.Tonic || _v.Command.ItemId == TranceSeekRegularItem.SecondeLife) // Remontant
                             HPHeal = (int)(_v.Target.MaximumHp / 2);
-                        else if (_v.Command.ItemId == (RegularItem)2109 || _v.Command.ItemId == (RegularItem)2117) // Remontant +
+                        else if (_v.Command.ItemId == TranceSeekRegularItem.TonicPlus || _v.Command.ItemId == TranceSeekRegularItem.ThirdLife) // Remontant +
                             HPHeal = (int)(_v.Target.MaximumHp);
                     }
 
@@ -183,13 +183,13 @@ namespace Memoria.Scripts.TranceSeek
                     }
                     break;
                 }
-                case (RegularItem)2044: // Sérum réversible
-                case (RegularItem)2054: // Echo réversible
-                case (RegularItem)2063: // Collyre réversible
-                case (RegularItem)2072: // Doux réversible
-                case (RegularItem)2081: // Calmant réversible
-                case (RegularItem)2090: // Eau bénite réversible
-                case (RegularItem)2099: // Anticorps réversible
+                case TranceSeekRegularItem.ReversibleSerum: // Sérum réversible
+                case TranceSeekRegularItem.ReversibleEcho: // Echo réversible
+                case TranceSeekRegularItem.ReversibleCollyrium: // Collyre réversible
+                case TranceSeekRegularItem.ReversibleMild: // Doux réversible
+                case TranceSeekRegularItem.ReversibleSedative: // Calmant réversible
+                case TranceSeekRegularItem.ReversibleBlessedWater: // Eau bénite réversible
+                case TranceSeekRegularItem.ReversibleAntibodies: // Anticorps réversible
                 {
                     if (_v.Target.IsUnderAnyStatus(_v.Command.Item.Status))
                     {
@@ -198,20 +198,20 @@ namespace Memoria.Scripts.TranceSeek
                     }
                     break;
                 }
-                case (RegularItem)2146: // Remède P
-                case (RegularItem)2147: // Remède P +
-                case (RegularItem)2148: // Remède M
-                case (RegularItem)2149: // Remède M +
-                case (RegularItem)2150: // Remède C
-                case (RegularItem)2151: // Remède C +
-                case (RegularItem)2152: // Remède F
-                case (RegularItem)2153: // Remède F +
-                case (RegularItem)2154: // Remède S
-                case (RegularItem)2155: // Remède S +
-                case (RegularItem)2156: // Remède Z
-                case (RegularItem)2157: // Remède Z +
-                case (RegularItem)2158: // Remède V
-                case (RegularItem)2159: // Remède V +
+                case TranceSeekRegularItem.PRemedy: // Remède P
+                case TranceSeekRegularItem.PRemedyPlus: // Remède P +
+                case TranceSeekRegularItem.SRemedy: // Remède M
+                case TranceSeekRegularItem.SRemedyPlus: // Remède M +
+                case TranceSeekRegularItem.DRemedy: // Remède C
+                case TranceSeekRegularItem.DRemedyPlus: // Remède C +
+                case TranceSeekRegularItem.FRemedy: // Remède F
+                case TranceSeekRegularItem.FRemedyPlus: // Remède F +
+                case TranceSeekRegularItem.TRemedy: // Remède S
+                case TranceSeekRegularItem.TRemedyPlus: // Remède S +
+                case TranceSeekRegularItem.ZRemedy: // Remède Z
+                case TranceSeekRegularItem.ZRemedyPlus: // Remède Z +
+                case TranceSeekRegularItem.VRemedy: // Remède V
+                case TranceSeekRegularItem.VRemedyPlus: // Remède V +
                 {
                     TranceSeekAPI.TryRemoveItemStatuses(_v);
                     Boolean Message = false;
@@ -247,13 +247,13 @@ namespace Memoria.Scripts.TranceSeek
                     }
                     break;
                 }
-                case (RegularItem)2045: // Sérum sacré
-                case (RegularItem)2055: // Echo sacré
-                case (RegularItem)2064: // Collyre sacré
-                case (RegularItem)2073: // Doux sacré
-                case (RegularItem)2082: // Calmant sacré
-                case (RegularItem)2091: // Eau bénite sacrée
-                case (RegularItem)2100: // Anticorps sacré
+                case TranceSeekRegularItem.HolySerum: // Sérum sacré
+                case TranceSeekRegularItem.HolyEcho: // Echo sacré
+                case TranceSeekRegularItem.HolyCollyrium: // Collyre sacré
+                case TranceSeekRegularItem.HolyMild: // Doux sacré
+                case TranceSeekRegularItem.HolySedative: // Calmant sacré
+                case TranceSeekRegularItem.HolyBlessedWater: // Eau bénite sacrée
+                case TranceSeekRegularItem.HolyAntibodies: // Anticorps sacré
                 {
                     if (_v.Target.IsUnderAnyStatus(_v.Command.Item.Status))
                     {
@@ -262,49 +262,49 @@ namespace Memoria.Scripts.TranceSeek
                     }
                     break;
                 }
-                case (RegularItem)2046: // Sérum complet
-                case (RegularItem)2047: // Sérum total
-                case (RegularItem)2056: // Echo complet            
-                case (RegularItem)2057: // Echo total
-                case (RegularItem)2065: // Collyre complet
-                case (RegularItem)2066: // Collyre total
-                case (RegularItem)2074: // Doux complet
-                case (RegularItem)2075: // Doux total
-                case (RegularItem)2083: // Calmant complet
-                case (RegularItem)2084: // Calmant total
-                case (RegularItem)2092: // Eau bénite complete
-                case (RegularItem)2093: // Eau bénite totale
-                case (RegularItem)2101: // Anticorps complet
-                case (RegularItem)2102: // Anticorps total
-                case (RegularItem)2111: // Régénération
-                case (RegularItem)2112: // Régénération totale
-                case (RegularItem)2118: // Regénération puissante
-                case (RegularItem)2119: // Regénération parfaite
+                case TranceSeekRegularItem.CompleteSerum: // Sérum complet
+                case TranceSeekRegularItem.TotalSerum: // Sérum total
+                case TranceSeekRegularItem.CompleteEcho: // Echo complet            
+                case TranceSeekRegularItem.TotalEcho: // Echo total
+                case TranceSeekRegularItem.CompleteCollyrium: // Collyre complet
+                case TranceSeekRegularItem.TotaleCollyrium: // Collyre total
+                case TranceSeekRegularItem.CompleteMild: // Doux complet
+                case TranceSeekRegularItem.TotaleMild: // Doux total
+                case TranceSeekRegularItem.CompleteSedative: // Calmant complet
+                case TranceSeekRegularItem.TotaleSedative: // Calmant total
+                case TranceSeekRegularItem.CompleteBlessedWater: // Eau bénite complete
+                case TranceSeekRegularItem.TotaleBlessedWater: // Eau bénite totale
+                case TranceSeekRegularItem.CompleteAntibodies: // Anticorps complet
+                case TranceSeekRegularItem.TotaleAntibodies: // Anticorps total
+                case TranceSeekRegularItem.Rejuvenation: // Régénération
+                case TranceSeekRegularItem.TotaleRejuvenation: // Régénération totale
+                case TranceSeekRegularItem.PowerfulRejuvenation: // Regénération puissante
+                case TranceSeekRegularItem.PerfectRejuvenation: // Regénération parfaite
                 {
                     HPHeal = (int)(_v.Target.MaximumHp);
                     MPHeal = (int)(_v.Target.MaximumMp);
                     TranceSeekAPI.TryRemoveItemStatuses(_v);
                     break;
                 }
-                case (RegularItem)2120: // Boccidote
-                case (RegularItem)2121: // Lasidote
-                case (RegularItem)2122: // Défidote          
-                case (RegularItem)2123: // Antidrouil
-                case (RegularItem)2124: // Cachidote
-                case (RegularItem)2125: // Vaccidote
-                case (RegularItem)2126: // Boccik
-                case (RegularItem)2127: // Déficca
-                case (RegularItem)2128: // Bobrouil
-                case (RegularItem)2129: // Vacca
-                case (RegularItem)2130: // Lasijeur
-                case (RegularItem)2131: // Désembrik
-                case (RegularItem)2132: // Casik
-                case (RegularItem)2133: // Vaccik
-                case (RegularItem)2134: // Désemjeur
-                case (RegularItem)2135: // Cafijeur
-                case (RegularItem)2136: // Déficcin
-                case (RegularItem)2137: // Cachembrouil
-                case (RegularItem)2138: // Caccin
+                case TranceSeekRegularItem.Boccidote: // Boccidote
+                case TranceSeekRegularItem.Collyridote: // Lasidote
+                case TranceSeekRegularItem.Softidote: // Défidote          
+                case TranceSeekRegularItem.Annoyntidote: // Antidrouil
+                case TranceSeekRegularItem.Tagidote: // Cachidote
+                case TranceSeekRegularItem.Vaccidote: // Vaccidote
+                case TranceSeekRegularItem.Collyrecho: // Boccik
+                case TranceSeekRegularItem.Echoft: // Déficca
+                case TranceSeekRegularItem.Echotment: // Bobrouil
+                case TranceSeekRegularItem.Vaccecho: // Vacca
+                case TranceSeekRegularItem.SoftDrop: // Lasijeur
+                case TranceSeekRegularItem.AnnoeyeDrop: // Désembrik
+                case TranceSeekRegularItem.MagicDrop: // Casik
+                case TranceSeekRegularItem.Vacceye: // Vaccik
+                case TranceSeekRegularItem.Annoyft: // Désemjeur
+                case TranceSeekRegularItem.Tagoft: // Cafijeur
+                case TranceSeekRegularItem.Vasoft: // Déficcin
+                case TranceSeekRegularItem.Tagoyntment: // Cachembrouil
+                case TranceSeekRegularItem.Tagine: // Caccin
                 {
                     Int32 statuspresent = 0;
                     foreach (BattleStatusId statusID in _v.Command.Item.Status.ToStatusList())
@@ -321,15 +321,15 @@ namespace Memoria.Scripts.TranceSeek
                     }
                     break;
                 }
-                case (RegularItem)2139: // Mega Antidote
-                case (RegularItem)2140: // Mega Bocca
-                case (RegularItem)2141: // Mega Lasik          
-                case (RegularItem)2142: // Mega Défijeur
-                case (RegularItem)2143: // Mega Désembrouil
-                case (RegularItem)2144: // Mega Cachet
-                case (RegularItem)2145: // Mega Vaccin
-                case (RegularItem)2160: // Remède X
-                case (RegularItem)2161: // Mega Remède
+                case TranceSeekRegularItem.MegaAntidote: // Mega Antidote
+                case TranceSeekRegularItem.MegaEchoDrops: // Mega Bocca
+                case TranceSeekRegularItem.MegaEyeDrops: // Mega Lasik          
+                case TranceSeekRegularItem.MegaSoft: // Mega Défijeur
+                case TranceSeekRegularItem.MegaAnnoyntment: // Mega Désembrouil
+                case TranceSeekRegularItem.MegaMagicTag: // Mega Cachet
+                case TranceSeekRegularItem.MegaVaccine: // Mega Vaccin
+                case TranceSeekRegularItem.XRemedy: // Remède X
+                case TranceSeekRegularItem.MegaRemedy: // Mega Remède
                 {
                     TranceSeekAPI.TryRemoveItemStatuses(_v);
                     return;
@@ -366,3 +366,5 @@ namespace Memoria.Scripts.TranceSeek
         }
     }
 }
+
+

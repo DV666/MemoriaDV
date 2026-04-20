@@ -1,4 +1,4 @@
-using Memoria.Data;
+﻿using Memoria.Data;
 using System;
 
 namespace Memoria.Scripts.TranceSeek
@@ -20,7 +20,7 @@ namespace Memoria.Scripts.TranceSeek
 
         public void Perform()
         {
-            if (_v.Command.AbilityId == (BattleAbilityId)1105) // Blood Pact
+            if (_v.Command.AbilityId == TranceSeekBattleAbility.BloodPact) // Blood Pact
             {
                 _v.Caster.Flags |= CalcFlag.HpAlteration;
                 _v.Caster.HpDamage = (Int32)(_v.Caster.CurrentHp);
@@ -34,3 +34,4 @@ namespace Memoria.Scripts.TranceSeek
         }
     }
 }
+

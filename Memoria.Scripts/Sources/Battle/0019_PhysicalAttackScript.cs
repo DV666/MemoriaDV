@@ -1,4 +1,4 @@
-using FF9;
+﻿using FF9;
 using Memoria.Data;
 using Memoria.Prime;
 using System;
@@ -27,7 +27,7 @@ namespace Memoria.Scripts.TranceSeek
             else
                 _v.NormalPhysicalParams();
             
-            if ((_v.Command.AbilityId == (BattleAbilityId)1005 || _v.Command.AbilityId == (BattleAbilityId)1042) && _v.Command.IsATBCommand) // Attaque Eclair, Hikari
+            if ((_v.Command.AbilityId == TranceSeekBattleAbility.QuickAttack || _v.Command.AbilityId == TranceSeekBattleAbility.Hikari) && _v.Command.IsATBCommand) // Attaque Eclair, Hikari
             {
                 _v.Command.Element = _v.Caster.WeaponElement;
                 _v.Caster.AddDelayedModifier(
@@ -47,12 +47,12 @@ namespace Memoria.Scripts.TranceSeek
             {
                 _v.CalcHpDamage();
 
-                if (_v.Command.AbilityId == (BattleAbilityId)1009) // Pluto Charge
+                if (_v.Command.AbilityId == TranceSeekBattleAbility.PlutoCharge) // Pluto Charge
                 {
                     int factorDefense = _v.Caster.PhysicalDefence + (_v.Caster.PhysicalDefence * (_v.CasterState().StackStatus.PDefence) / 100);
                     _v.Target.HpDamage = (_v.Target.HpDamage * factorDefense) / 100;
                 }
-                else if (_v.Command.AbilityId == (BattleAbilityId)1043) // Fury of the general
+                else if (_v.Command.AbilityId == TranceSeekBattleAbility.Zantetsu) // Fury of the general
                     TranceSeekAPI.TryCriticalHit(_v);
                 else if (_v.Command.AbilityId == BattleAbilityId.DemiShock1 || _v.Command.AbilityId == BattleAbilityId.DemiShock2) // Tobigeri
                 {
@@ -79,3 +79,4 @@ namespace Memoria.Scripts.TranceSeek
         }
     }
 }
+

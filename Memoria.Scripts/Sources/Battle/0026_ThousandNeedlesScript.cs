@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Memoria.Data;
 
 namespace Memoria.Scripts.TranceSeek
@@ -20,7 +20,7 @@ namespace Memoria.Scripts.TranceSeek
 
         public void Perform()
         {
-            if (_v.Command.HitRate == 111 || _v.Caster.PlayerIndex == CharacterId.Quina && _v.Command.AbilityId == (BattleAbilityId)1029) // ?000 epines
+            if (_v.Command.HitRate == 111 || _v.Caster.PlayerIndex == CharacterId.Quina && _v.Command.AbilityId == TranceSeekBattleAbility.X000Needles) // ?000 epines
             {
                 short num = (short)(GameRandom.Next8() % (_v.Caster.Level / 10) + 1);
                 _v.Target.Flags |= CalcFlag.HpAlteration;
@@ -38,3 +38,4 @@ namespace Memoria.Scripts.TranceSeek
         }
     }
 }
+

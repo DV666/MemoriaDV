@@ -25,7 +25,7 @@ namespace Memoria.Scripts.TranceSeek
         {
             if (_v.Caster.PlayerIndex == CharacterId.Zidane)
             {
-                if (_v.Command.AbilityId == (BattleAbilityId)1004) // Echauffement
+                if (_v.Command.AbilityId == TranceSeekBattleAbility.WarmUp) // Echauffement
                 {
                     _v.Target.AlterStatus(TranceSeekStatus.PowerUp, _v.Caster);
                     _v.Target.AlterStatus(TranceSeekStatus.PerfectDodge, _v.Caster);
@@ -115,3 +115,4 @@ namespace Memoria.Scripts.TranceSeek
         }
     }
 }
+

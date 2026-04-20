@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Memoria.Data;
 
@@ -108,11 +108,11 @@ namespace Memoria.Scripts.TranceSeek
                 {
                     _v.Command.AbilityStatus |= (TranceSeekStatus.ArmorBreak);
                 }
-                else if (_v.Command.AbilityId == (BattleAbilityId)1108) // Nightmara
+                else if (_v.Command.AbilityId == TranceSeekBattleAbility.Nightmara) // Nightmara
                 {
                     _v.Command.AbilityStatus |= (BattleStatus.Confuse | BattleStatus.Slow);
                 }
-                else if (_v.Command.AbilityId == (BattleAbilityId)1109) // Nightmaga
+                else if (_v.Command.AbilityId == TranceSeekBattleAbility.Nightmaga) // Nightmaga
                 {
                     _v.Command.AbilityStatus |= (BattleStatus.Confuse | BattleStatus.Slow | BattleStatus.Trouble | BattleStatus.Mini);
                 }
@@ -214,3 +214,4 @@ namespace Memoria.Scripts.TranceSeek
         }
     }
 }
+

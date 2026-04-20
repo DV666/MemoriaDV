@@ -73,7 +73,7 @@ namespace Memoria.Scripts.TranceSeek
 
                 if (v.Target.IsUnderAnyStatus(TranceSeekStatus.Dragon) && !v.Caster.IsUnderStatus(BattleStatus.Trance) && v.Command.ScriptId == 79) // Only used with DragonSkillScript
                 {
-                    float DragonRemove = v.Caster.HasSupportAbilityByIndex((SupportAbility)1122) ? 25 : (v.Caster.HasSupportAbilityByIndex((SupportAbility)122) ? 12.5f : 0); // Eye of the dragon
+                    float DragonRemove = v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.DragonsEye_Boosted) ? 25 : (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.DragonsEye) ? 12.5f : 0); // Eye of the dragon
                     if (DragonRemove < Comn.random16() % 100)
                         btl_stat.AlterStatus(v.Target, TranceSeekStatusId.Dragon, v.Caster, parameters: "Remove");
                 }
@@ -176,13 +176,13 @@ namespace Memoria.Scripts.TranceSeek
                 if (v.Target.IsUnderAnyStatus(AmarantPassiveStatuses[i].ToBattleStatus()))
                     factor++;
 
-            int bonus = v.Caster.HasSupportAbilityByIndex((SupportAbility)1228) ? 12 : (v.Caster.HasSupportAbilityByIndex((SupportAbility)228) ? 10 : 8);
+            int bonus = v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Assassin_Boosted) ? 12 : (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Assassin) ? 10 : 8);
 
             if (factor > 0)
             {
-                if (v.Caster.HasSupportAbilityByIndex((SupportAbility)230)) // Venefic
+                if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Venefic)) // Venefic
                 {
-                    if (v.Caster.HasSupportAbilityByIndex((SupportAbility)1230))
+                    if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Venefic_Boosted))
                         v.Context.Attack += (v.Context.Attack * factor * bonus) / 100;
 
                     v.Context.HitRate += (v.Context.HitRate * factor * bonus) / 100;
@@ -333,14 +333,14 @@ namespace Memoria.Scripts.TranceSeek
                                 }
                                 if (Vivi_TSVar.Focus < (50 + BonusFocusMax))
                                 {
-                                    Vivi_TSVar.Focus += v.Caster.HasSupportAbilityByIndex((SupportAbility)207) ? 10 : 5; // SA Bobbin
+                                    Vivi_TSVar.Focus += v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Bobbin) ? 10 : 5; // SA Bobbin
                                 }
                                 int ViviFocus = Vivi_TSVar.Focus;
                                 ShowFocusMessage(v.Caster, "[BA55D3]", MessageFocusViviPlus, ViviFocus);
                             }
                             else
                             {
-                                if (v.Caster.HasSupportAbilityByIndex((SupportAbility)1207)) // SA Bobbin+
+                                if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Bobbin_Boosted)) // SA Bobbin+
                                 {
                                     Vivi_TSVar.Focus /= 2;
                                     if (Vivi_TSVar.Focus % 10U == 5)
@@ -356,7 +356,7 @@ namespace Memoria.Scripts.TranceSeek
                                 }
                             }
 
-                            if (v.Caster.Weapon == (RegularItem)1163 && !v.Target.IsPlayer)
+                            if (v.Caster.Weapon == TranceSeekRegularItem.LarcenyScepter && !v.Target.IsPlayer)
                             {
                                 if (v.Command.TargetCount > 1)
                                     WhatIsThatScript.MultipleSteal(v, false);
@@ -410,7 +410,7 @@ namespace Memoria.Scripts.TranceSeek
                                     }
                                     if (Vivi_TSVar.Focus < (50 + BonusFocusMax))
                                     {
-                                        Vivi_TSVar.Focus += Vivi.HasSupportAbilityByIndex((SupportAbility)207) ? 10 : 5; // SA Bobbin;
+                                        Vivi_TSVar.Focus += Vivi.HasSupportAbilityByIndex(TranceSeekSupportAbility.Bobbin) ? 10 : 5; // SA Bobbin;
                                     }
                                     int ViviFocus = Vivi_TSVar.Focus;
                                     ShowFocusMessage(Vivi, "[BA55D3]", MessageFocusViviPlus, ViviFocus);
@@ -419,7 +419,7 @@ namespace Memoria.Scripts.TranceSeek
                                 }
                                 else
                                 {
-                                    if (v.Caster.HasSupportAbilityByIndex((SupportAbility)1207)) // SA Bobbin+
+                                    if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Bobbin_Boosted)) // SA Bobbin+
                                     {
                                         Vivi_TSVar.Focus /= 2;
                                         if (Vivi_TSVar.Focus % 10U == 5)
@@ -459,9 +459,9 @@ namespace Memoria.Scripts.TranceSeek
 
                 if (PassiveEikoScript.StateMoug[Eiko.Data] == 0 && !Eiko.IsUnderAnyStatus(BattleStatus.Death | BattleStatus.Petrify | BattleStatus.Jump | BattleStatus.Heat) && v.Caster.Data != Eiko.Data)
                 {
-                    float ChanceMoug = (float)(Eiko.HasSupportAbilityByIndex((SupportAbility)1224) ? 12 : (Eiko.HasSupportAbilityByIndex((SupportAbility)224) ? 10 : 8));
+                    float ChanceMoug = (float)(Eiko.HasSupportAbilityByIndex(TranceSeekSupportAbility.Comehere_Boosted) ? 12 : (Eiko.HasSupportAbilityByIndex(TranceSeekSupportAbility.ComeHere) ? 10 : 8));
 
-                    if (Comn.random16() % 100 > ChanceMoug || Eiko.HasSupportAbilityByIndex((SupportAbility)226)) // Synergy
+                    if (Comn.random16() % 100 > ChanceMoug || Eiko.HasSupportAbilityByIndex(TranceSeekSupportAbility.Synergy)) // Synergy
                         return;
 
                     ushort TargetId = v.Caster.Id;
@@ -470,48 +470,48 @@ namespace Memoria.Scripts.TranceSeek
                     var Eiko_TSVar = Eiko.State();
                     List<BattleAbilityId> ClassicMougAAList = new List<BattleAbilityId>();
                     List<BattleAbilityId> SuperMougAAList = new List<BattleAbilityId>();
-                    foreach (BattleAbilityId abilId in CharacterCommands.Commands[(BattleCommandId)1049].EnumerateAbilities()) // CMD Kupo (not used for Eiko)
+                    foreach (BattleAbilityId abilId in CharacterCommands.Commands[TranceSeekBattleCommand.Kupo].EnumerateAbilities()) // CMD Kupo (not used for Eiko)
                     {
                         Boolean AddAA = false;
                         switch (abilId)
                         {
-                            case (BattleAbilityId)2000: // Mog Cure
+                            case TranceSeekBattleAbility.MogCure: // Mog Cure
                             {
                                 AddAA = Eiko.CurrentHp <= Eiko.MaximumHp / 2;
                                 break;
                             }
-                            case (BattleAbilityId)2001: // Mog Hug
+                            case TranceSeekBattleAbility.MogHug: // Mog Hug
                             {
                                 AddAA = Eiko.CurrentMp <= Eiko.MaximumMp / 2;
                                 break;
                             }
-                            case (BattleAbilityId)2002: // Mog Regen
+                            case TranceSeekBattleAbility.MogRegen: // Mog Regen
                             {
                                 AddAA = !Eiko.IsUnderAnyStatus(BattleStatus.Regen | BattleStatus.Zombie);
                                 break;
                             }
-                            case (BattleAbilityId)2004: // Mog Mirror
+                            case TranceSeekBattleAbility.MogMirror: // Mog Mirror
                             {
                                 AddAA = !Eiko.IsUnderAnyStatus(BattleStatus.Vanish);
                                 break;
                             }
-                            case (BattleAbilityId)2005: // Mog AutoLife
+                            case TranceSeekBattleAbility.MogAutoLife: // Mog AutoLife
                             {
                                 AddAA = Eiko.Level >= 35 && !Eiko.IsUnderAnyStatus(BattleStatus.AutoLife);
                                 break;
                             }
-                            case (BattleAbilityId)2006: // Mog Esuna
+                            case TranceSeekBattleAbility.MogEsuna: // Mog Esuna
                             {
                                 AddAA = Eiko.IsUnderAnyStatus(BattleStatus.Poison | BattleStatus.Venom | BattleStatus.Silence | BattleStatus.Blind | BattleStatus.Trouble | BattleStatus.Berserk | BattleStatus.Mini | TranceSeekStatus.Vieillissement);
                                 break;
                             }
-                            case (BattleAbilityId)2007: // Mog Support
+                            case TranceSeekBattleAbility.MogSupport: // Mog Support
                             {
                                 AddAA = Eiko.Level >= 30 && (Eiko_TSVar.StackStatus.Magic < 50 || Eiko_TSVar.StackStatus.MDefence < 50);
                                 break;
                             }
-                            case (BattleAbilityId)2009: // Mog Flare
-                            case (BattleAbilityId)2010: // Mog Holy
+                            case TranceSeekBattleAbility.MogFlare: // Mog Flare
+                            case TranceSeekBattleAbility.MogHoly: // Mog Holy
                             {
                                 if (FF9StateSystem.EventState.ScenarioCounter >= 9990) // The party finds Hilda
                                 {
@@ -530,7 +530,7 @@ namespace Memoria.Scripts.TranceSeek
                                 }
                                 break;
                             }
-                            case (BattleAbilityId)2011: // Moga Cure
+                            case TranceSeekBattleAbility.MogaCure: // Moga Cure
                             {
                                 if (Eiko.Level >= 40)
                                 {
@@ -550,7 +550,7 @@ namespace Memoria.Scripts.TranceSeek
                                 }
                                 break;
                             }
-                            case (BattleAbilityId)2012: // Moga Hug
+                            case TranceSeekBattleAbility.MogHug2: // Moga Hug
                             {
                                 if (Eiko.Level >= 50)
                                 {
@@ -571,7 +571,7 @@ namespace Memoria.Scripts.TranceSeek
                                 }
                                 break;
                             }
-                            case (BattleAbilityId)2013: // Moga Regen
+                            case TranceSeekBattleAbility.MogRegen2: // Moga Regen
                             {
                                 if (Eiko.Level >= 70)
                                 {
@@ -585,12 +585,12 @@ namespace Memoria.Scripts.TranceSeek
                                 }
                                 break;
                             }
-                            case (BattleAbilityId)2014: // Moga Shield
+                            case TranceSeekBattleAbility.MogShield2: // Moga Shield
                             {
                                 AddAA = Eiko.Level >= 60;
                                 break;
                             }
-                            case (BattleAbilityId)2015: // Moga Mirror
+                            case TranceSeekBattleAbility.MogMirror2: // Moga Mirror
                             {
                                 if (Eiko.Level >= 80)
                                 {
@@ -604,7 +604,7 @@ namespace Memoria.Scripts.TranceSeek
                                 }
                                 break;
                             }
-                            case (BattleAbilityId)2017: // Moga Esuna
+                            case TranceSeekBattleAbility.MogaEsuna: // Moga Esuna
                             {
                                 if (Eiko.Level >= 75)
                                 {
@@ -618,7 +618,7 @@ namespace Memoria.Scripts.TranceSeek
                                 }
                                 break;
                             }
-                            case (BattleAbilityId)2018: // Moga Support
+                            case TranceSeekBattleAbility.MogSupport2: // Moga Support
                             {
                                 if (Eiko.Level >= 85)
                                 {
@@ -691,11 +691,11 @@ namespace Memoria.Scripts.TranceSeek
                         if (candidates.Count > 0)
                         {
                             TargetId = candidates[UnityEngine.Random.Range(0, candidates.Count)];
-                            MougAAChoosen = (BattleAbilityId)2008;
+                            MougAAChoosen = TranceSeekBattleAbility.MogLife;
                         }
                     }
 
-                    if (TargetReflect && (MougAAChoosen == (BattleAbilityId)2009 || MougAAChoosen == (BattleAbilityId)2010)) // Prevent Moug use Mog Flare / Mog Holy on target under Reflect
+                    if (TargetReflect && (MougAAChoosen == TranceSeekBattleAbility.MogFlare || MougAAChoosen == TranceSeekBattleAbility.MogHoly)) // Prevent Moug use Mog Flare / Mog Holy on target under Reflect
                     {
                         List<UInt16> TargetsAvailable = new List<UInt16>(4);
                         for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
@@ -761,3 +761,7 @@ namespace Memoria.Scripts.TranceSeek
         };
     }
 }
+
+
+
+

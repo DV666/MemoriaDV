@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Runtime.Remoting.Contexts;
 using FF9;
 using Memoria.Data;
@@ -71,9 +71,9 @@ namespace Memoria.Scripts.TranceSeek
                 {
                     if (_v.Target.HasCategory(EnemyCategory.Humanoid) && (_v.Command.AbilityId == BattleAbilityId.Poison || _v.Command.AbilityId == BattleAbilityId.Bio))
                         _v.Context.DamageModifierCount += 4;
-                    if (_v.Target.IsZombie && (_v.Command.AbilityId == BattleAbilityId.Poison || _v.Command.AbilityId == BattleAbilityId.Bio || _v.Command.AbilityId == (BattleAbilityId)1036 || _v.Command.AbilityId == (BattleAbilityId)1037))
+                    if (_v.Target.IsZombie && (_v.Command.AbilityId == BattleAbilityId.Poison || _v.Command.AbilityId == BattleAbilityId.Bio || _v.Command.AbilityId == TranceSeekBattleAbility.Magicweaponhigh || _v.Command.AbilityId == TranceSeekBattleAbility.AVAILABLE9))
                         _v.Target.Flags |= CalcFlag.HpRecovery;
-                    if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)102))
+                    if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Archmage))
                         TranceSeekAPI.TryCriticalHit(_v);
                     _v.CalcHpDamage();
                     TranceSeekAPI.RaiseTrouble(_v);
@@ -122,3 +122,5 @@ namespace Memoria.Scripts.TranceSeek
         }
     }
 }
+
+

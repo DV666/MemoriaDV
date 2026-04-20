@@ -1,4 +1,4 @@
-using FF9;
+﻿using FF9;
 using Memoria.Data;
 using System;
 
@@ -24,7 +24,7 @@ namespace Memoria.Scripts.TranceSeek
             btl_sys.CheckEscape(false);
             if (_v.CanEscape())
             {
-                if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1046)) // Flee-Gil +
+                if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.FleeGil_Boosted)) // Flee-Gil +
                 {
                     btl_cmd.SetCommand(FF9StateSystem.Battle.FF9Battle.cmd_escape, BattleCommandId.SysEscape, 1, 15, 1U);
                 }
@@ -36,3 +36,4 @@ namespace Memoria.Scripts.TranceSeek
         }
     }
 }
+

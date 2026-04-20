@@ -1,6 +1,7 @@
-﻿using System;
+﻿using Memoria.Data;
+using Memoria.Scripts.TranceSeek;
+using System;
 using UnityEngine;
-using Memoria.Data;
 using Object = System.Object;
 
 namespace Memoria.DefaultScripts
@@ -21,7 +22,7 @@ namespace Memoria.DefaultScripts
             base.Apply(target, inflicter, parameters);
             Int32 StackMaximum = 1;
             if (inflicter != null)
-                StackMaximum = inflicter.HasSupportAbilityByIndex((SupportAbility)1218) ? 3 : (inflicter.HasSupportAbilityByIndex((SupportAbility)218) ? 2 : 1);
+                StackMaximum = inflicter.HasSupportAbilityByIndex(TranceSeekSupportAbility.Nastrond_Boosted) ? 3 : (inflicter.HasSupportAbilityByIndex(TranceSeekSupportAbility.Nastrond) ? 2 : 1);
             ModelScale = target.ModelStatusScale;
             if (parameters.Length > 0)
             {
@@ -91,11 +92,11 @@ namespace Memoria.DefaultScripts
             }
             if (inflicter != null)
             {
-                if (inflicter.HasSupportAbilityByIndex((SupportAbility)219)) // SA Embrace
+                if (inflicter.HasSupportAbilityByIndex(TranceSeekSupportAbility.Embrace)) // SA Embrace
                 {
                     DiffPhysicalEvade = target.PhysicalEvade / 4;
                     target.PhysicalEvade = Math.Max(0, target.PhysicalEvade - DiffPhysicalEvade);
-                    if (inflicter.HasSupportAbilityByIndex((SupportAbility)1219))
+                    if (inflicter.HasSupportAbilityByIndex(TranceSeekSupportAbility.Embrace_Boosted))
                     {
                         DiffMagicalEvade = target.MagicEvade / 4;
                         target.MagicEvade = Math.Max(0, target.MagicEvade - DiffMagicalEvade);
@@ -164,3 +165,4 @@ namespace Memoria.DefaultScripts
         }
     }
 }
+

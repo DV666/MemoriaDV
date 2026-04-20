@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using FF9;
 using Memoria.Data;
 using Memoria.Prime;
@@ -74,7 +74,7 @@ namespace Memoria.Scripts.TranceSeek
                     if (Caster_TSVar.Steiner.PlutoStackUsed > 0)
                         ChanceDeathBlow += 10 * Caster_TSVar.Steiner.PlutoStackUsed;
 
-                    if (Comn.random16() % 100 > ChanceDeathBlow && _v.Command.AbilityId != (BattleAbilityId)1551)
+                    if (Comn.random16() % 100 > ChanceDeathBlow && _v.Command.AbilityId != TranceSeekBattleAbility.PlutoStrike)
                     {
                         _v.Context.Flags |= BattleCalcFlags.Miss;
                     }
@@ -100,7 +100,7 @@ namespace Memoria.Scripts.TranceSeek
                             TranceSeekAPI.IpsenCastleMalus(_v);
                             _v.CalcPhysicalHpDamage();
                             _v.Target.HpDamage *= 2;
-                            if (_v.Command.AbilityId == (BattleAbilityId)1551)
+                            if (_v.Command.AbilityId == TranceSeekBattleAbility.PlutoStrike)
                             {
                                 _v.Caster.Flags |= CalcFlag.HpDamageOrHeal;
                                 _v.Caster.HpDamage = _v.Target.HpDamage / 2;
@@ -117,3 +117,4 @@ namespace Memoria.Scripts.TranceSeek
         }
     }
 }
+

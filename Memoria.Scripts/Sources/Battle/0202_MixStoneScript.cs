@@ -35,20 +35,20 @@ namespace Memoria.Scripts.TranceSeek
             _v.Command.Power = _v.Command.Item.Power;
             switch (_v.Command.ItemId)
             {
-                case (RegularItem)2162: // Bombe
-                case (RegularItem)2163: // Super Bombe
-                case (RegularItem)2164: // Giga Bombe
-                case (RegularItem)2167: // Méga Bombe
-                case (RegularItem)2168: // Bombe à Neutron
-                case (RegularItem)2171: // Bombe toxique
-                case (RegularItem)2172: // Bombe silence
-                case (RegularItem)2173: // Bombe aveuglante
-                case (RegularItem)2174: // Bombe pétrifiante
-                case (RegularItem)2175: // Bombe troublante
-                case (RegularItem)2176: // Bombe infectée
-                case (RegularItem)2177: // Bombe Virus
-                case (RegularItem)2178: // Bombe chaotique
-                case (RegularItem)2179: // Bombe Anima
+                case TranceSeekRegularItem.Bomb: // Bombe
+                case TranceSeekRegularItem.SuperBomb: // Super Bombe
+                case TranceSeekRegularItem.GigaBomb: // Giga Bombe
+                case TranceSeekRegularItem.MegaBomb: // Méga Bombe
+                case TranceSeekRegularItem.NeutronBomb: // Bombe à Neutron
+                case TranceSeekRegularItem.ToxicBomb: // Bombe toxique
+                case TranceSeekRegularItem.SilenceBomb: // Bombe silence
+                case TranceSeekRegularItem.FlashyBomb: // Bombe aveuglante
+                case TranceSeekRegularItem.PetrifyingBomb: // Bombe pétrifiante
+                case TranceSeekRegularItem.TroubleBomb: // Bombe troublante
+                case TranceSeekRegularItem.InfectedBomb: // Bombe infectée
+                case TranceSeekRegularItem.VirusBomb: // Bombe Virus
+                case TranceSeekRegularItem.ChaoticBomb: // Bombe chaotique
+                case TranceSeekRegularItem.AnimaBomb: // Bombe Anima
                 {
                     _v.NormalMagicParams();
                     TranceSeekAPI.CasterPenaltyMini(_v);
@@ -66,8 +66,8 @@ namespace Memoria.Scripts.TranceSeek
                     TranceSeekAPI.TryAlterMagicStatuses(_v);
                     return;
                 }
-                case (RegularItem)2169: // Ultra Bombe G
-                case (RegularItem)2170: // Mega Bombe G
+                case TranceSeekRegularItem.UltraBombG: // Ultra Bombe G
+                case TranceSeekRegularItem.MegaBombG: // Mega Bombe G
                 {
                     if (_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill))
                     {
@@ -78,20 +78,20 @@ namespace Memoria.Scripts.TranceSeek
                     _v.Target.CurrentMp = 1;
                     break;
                 }
-                case (RegularItem)2180: // Bombe toxique MK.T
-                case (RegularItem)2181: // Bombe silence MK.T
-                case (RegularItem)2182: // Bombe aveuglante MK.T
-                case (RegularItem)2183: // Bombe pétrifiante MK.T
-                case (RegularItem)2184: // Bombe troublante MK.T
-                case (RegularItem)2185: // Bombe infectée MK.T
-                case (RegularItem)2186: // Bombe Virus MK.T
-                case (RegularItem)2187: // Bombe chaotique MK.T
-                case (RegularItem)2188: // Bombe Anima MK.T
-                case (RegularItem)2279: // Roc de foudre
-                case (RegularItem)2280: // Globe de foudre
-                case (RegularItem)2281: // Cristal de foudre
-                case (RegularItem)2284: // Magikoroc de foudre
-                case (RegularItem)2285: // Megakoroc de foudre
+                case TranceSeekRegularItem.ToxicBombMKT: // Bombe toxique MK.T
+                case TranceSeekRegularItem.SilenceBombMKT: // Bombe silence MK.T
+                case TranceSeekRegularItem.FlashyBombMKT: // Bombe aveuglante MK.T
+                case TranceSeekRegularItem.PetrifyingBombMKT: // Bombe pétrifiante MK.T
+                case TranceSeekRegularItem.TroubleBombMKT: // Bombe troublante MK.T
+                case TranceSeekRegularItem.InfectedBombMKT: // Bombe infectée MK.T
+                case TranceSeekRegularItem.VirusBombMKT: // Bombe Virus MK.T
+                case TranceSeekRegularItem.ChaoticBombMKT: // Bombe chaotique MK.T
+                case TranceSeekRegularItem.AnimaBombMKT: // Bombe Anima MK.T
+                case TranceSeekRegularItem.LightningStone: // Roc de foudre
+                case TranceSeekRegularItem.LightningOrb: // Globe de foudre
+                case TranceSeekRegularItem.LightningCrystal: // Cristal de foudre
+                case TranceSeekRegularItem.LightningGem: // Magikoroc de foudre
+                case TranceSeekRegularItem.LightningMegagem: // Megakoroc de foudre
                 {
                     _v.NormalMagicParams();
                     _v.Command.Element = EffectElement.Thunder;
@@ -109,20 +109,20 @@ namespace Memoria.Scripts.TranceSeek
                         _v.Target.TryAlterStatuses(_v.Command.ItemStatus, false, _v.Caster);
                     return;
                 }
-                case (RegularItem)2189: // Bombe toxique MK.F
-                case (RegularItem)2190: // Bombe silence MK.F
-                case (RegularItem)2191: // Bombe aveuglante MK.F
-                case (RegularItem)2192: // Bombe pétrifiante MK.F
-                case (RegularItem)2193: // Bombe troublante MK.F
-                case (RegularItem)2194: // Bombe infectée MK.F
-                case (RegularItem)2195: // Bombe Virus MK.F
-                case (RegularItem)2196: // Bombe chaotique MK.F
-                case (RegularItem)2197: // Bombe Anima MK.F
-                case (RegularItem)2286: // Roc de feu
-                case (RegularItem)2287: // Globe de feu
-                case (RegularItem)2288: // Cristal de feu
-                case (RegularItem)2291: // Magikoroc de feu
-                case (RegularItem)2292: // Megakoroc de feu
+                case TranceSeekRegularItem.ToxicBombMKF: // Bombe toxique MK.F
+                case TranceSeekRegularItem.SilenceBombMKF: // Bombe silence MK.F
+                case TranceSeekRegularItem.FlashyBombMKF: // Bombe aveuglante MK.F
+                case TranceSeekRegularItem.PetrifyingBombMKF: // Bombe pétrifiante MK.F
+                case TranceSeekRegularItem.TroubleBombMKF: // Bombe troublante MK.F
+                case TranceSeekRegularItem.InfectedBombMKF: // Bombe infectée MK.F
+                case TranceSeekRegularItem.VirusBombMKF: // Bombe Virus MK.F
+                case TranceSeekRegularItem.ChaoticBombMKF: // Bombe chaotique MK.F
+                case TranceSeekRegularItem.AnimaBombMKF: // Bombe Anima MK.F
+                case TranceSeekRegularItem.FireStone: // Roc de feu
+                case TranceSeekRegularItem.FireOrb: // Globe de feu
+                case TranceSeekRegularItem.FireCrystal: // Cristal de feu
+                case TranceSeekRegularItem.FireGem: // Magikoroc de feu
+                case TranceSeekRegularItem.FireMegagem: // Megakoroc de feu
                 {
                     _v.NormalMagicParams();
                     _v.Command.Element = EffectElement.Fire;
@@ -140,20 +140,20 @@ namespace Memoria.Scripts.TranceSeek
                         _v.Target.TryAlterStatuses(_v.Command.ItemStatus, false, _v.Caster);
                     return;
                 }
-                case (RegularItem)2198: // Bombe toxique MK.I
-                case (RegularItem)2199: // Bombe silence MK.I
-                case (RegularItem)2200: // Bombe aveuglante MK.I
-                case (RegularItem)2201: // Bombe pétrifiante MK.I
-                case (RegularItem)2202: // Bombe troublante MK.I
-                case (RegularItem)2203: // Bombe infectée MK.I
-                case (RegularItem)2204: // Bombe Virus MK.I
-                case (RegularItem)2205: // Bombe chaotique MK.I
-                case (RegularItem)2206: // Bombe Anima MK.I
-                case (RegularItem)2293: // Roc de glace
-                case (RegularItem)2294: // Globe de glace
-                case (RegularItem)2295: // Cristal de glace
-                case (RegularItem)2298: // Magikoroc de glace
-                case (RegularItem)2299: // Megakoroc de glace
+                case TranceSeekRegularItem.ToxicBombMKI: // Bombe toxique MK.I
+                case TranceSeekRegularItem.SilenceBombMKI: // Bombe silence MK.I
+                case TranceSeekRegularItem.FlashyBombMKI: // Bombe aveuglante MK.I
+                case TranceSeekRegularItem.PetrifyingBombMKI: // Bombe pétrifiante MK.I
+                case TranceSeekRegularItem.TroubleBombMKI: // Bombe troublante MK.I
+                case TranceSeekRegularItem.InfectedBombMKI: // Bombe infectée MK.I
+                case TranceSeekRegularItem.VirusBombMKI: // Bombe Virus MK.I
+                case TranceSeekRegularItem.ChaoticBombMKI: // Bombe chaotique MK.I
+                case TranceSeekRegularItem.AnimaBombMKI: // Bombe Anima MK.I
+                case TranceSeekRegularItem.IceStone: // Roc de glace
+                case TranceSeekRegularItem.IceOrb: // Globe de glace
+                case TranceSeekRegularItem.IceCrystal: // Cristal de glace
+                case TranceSeekRegularItem.IceGem: // Magikoroc de glace
+                case TranceSeekRegularItem.IceMegagem: // Megakoroc de glace
                 {
                     _v.NormalMagicParams();
                     _v.Command.Element = EffectElement.Cold;
@@ -171,15 +171,15 @@ namespace Memoria.Scripts.TranceSeek
                         _v.Target.TryAlterStatuses(_v.Command.ItemStatus, false, _v.Caster);
                     return;
                 }
-                case (RegularItem)2207: // Bombe toxique MK.G
-                case (RegularItem)2208: // Bombe silence MK.G
-                case (RegularItem)2209: // Bombe aveuglante MK.G
-                case (RegularItem)2210: // Bombe pétrifiante MK.G
-                case (RegularItem)2211: // Bombe troublante MK.G
-                case (RegularItem)2212: // Bombe infectée MK.G
-                case (RegularItem)2213: // Bombe Virus MK.G
-                case (RegularItem)2214: // Bombe chaotique MK.G
-                case (RegularItem)2215: // Bombe Anima MK.G
+                case TranceSeekRegularItem.ToxicBombMKG: // Bombe toxique MK.G
+                case TranceSeekRegularItem.SilenceBombMKG: // Bombe silence MK.G
+                case TranceSeekRegularItem.FlashyBombMKG: // Bombe aveuglante MK.G
+                case TranceSeekRegularItem.PetrifyingBombMKG: // Bombe pétrifiante MK.G
+                case TranceSeekRegularItem.TroubleBombMKG: // Bombe troublante MK.G
+                case TranceSeekRegularItem.InfectedBombMKG: // Bombe infectée MK.G
+                case TranceSeekRegularItem.VirusBombMKG: // Bombe Virus MK.G
+                case TranceSeekRegularItem.ChaoticBombMKG: // Bombe chaotique MK.G
+                case TranceSeekRegularItem.AnimaBombMKG: // Bombe Anima MK.G
                 {
                     _v.NormalMagicParams();
                     TranceSeekAPI.CasterPenaltyMini(_v);
@@ -196,20 +196,20 @@ namespace Memoria.Scripts.TranceSeek
                         _v.Target.TryAlterStatuses(_v.Command.ItemStatus, false, _v.Caster);
                     return;
                 }            
-                case (RegularItem)2216: // Bombe toxique MK.E
-                case (RegularItem)2217: // Bombe silence MK.E
-                case (RegularItem)2218: // Bombe aveuglante MK.E
-                case (RegularItem)2219: // Bombe pétrifiante MK.E
-                case (RegularItem)2220: // Bombe troublante MK.E
-                case (RegularItem)2221: // Bombe infectée MK.E
-                case (RegularItem)2222: // Bombe Virus MK.E
-                case (RegularItem)2223: // Bombe chaotique MK.E
-                case (RegularItem)2224: // Bombe Anima MK.E
-                case (RegularItem)2307: // Roc d'eau
-                case (RegularItem)2308: // Globe d'eau
-                case (RegularItem)2309: // Cristal d'eau
-                case (RegularItem)2312: // Magikoroc d'eau
-                case (RegularItem)2313: // Megakoroc d'eau
+                case TranceSeekRegularItem.ToxicBombMKE: // Bombe toxique MK.E
+                case TranceSeekRegularItem.SilenceBombMKE: // Bombe silence MK.E
+                case TranceSeekRegularItem.FlashyBombMKE: // Bombe aveuglante MK.E
+                case TranceSeekRegularItem.PetrifyingBombMKE: // Bombe pétrifiante MK.E
+                case TranceSeekRegularItem.TroubleBombMKE: // Bombe troublante MK.E
+                case TranceSeekRegularItem.InfectedBombMKE: // Bombe infectée MK.E
+                case TranceSeekRegularItem.VirusBombMKE: // Bombe Virus MK.E
+                case TranceSeekRegularItem.ChaoticBombMKE: // Bombe chaotique MK.E
+                case TranceSeekRegularItem.AnimaBombMKE: // Bombe Anima MK.E
+                case TranceSeekRegularItem.WaterStone: // Roc d'eau
+                case TranceSeekRegularItem.WaterOrb: // Globe d'eau
+                case TranceSeekRegularItem.WaterCrystal: // Cristal d'eau
+                case TranceSeekRegularItem.WaterGem: // Magikoroc d'eau
+                case TranceSeekRegularItem.WaterMegagem: // Megakoroc d'eau
                 {
                     _v.NormalMagicParams();
                     _v.Command.Element = EffectElement.Aqua;
@@ -227,15 +227,15 @@ namespace Memoria.Scripts.TranceSeek
                         _v.Target.TryAlterStatuses(_v.Command.ItemStatus, false, _v.Caster);
                     return;
                 }
-                case (RegularItem)2225: // Bombe toxique MK.A
-                case (RegularItem)2226: // Bombe silence MK.A
-                case (RegularItem)2227: // Bombe aveuglante MK.A
-                case (RegularItem)2228: // Bombe pétrifiante MK.A
-                case (RegularItem)2229: // Bombe troublante MK.A
-                case (RegularItem)2230: // Bombe infectée MK.A
-                case (RegularItem)2231: // Bombe Virus MK.A
-                case (RegularItem)2232: // Bombe chaotique MK.A
-                case (RegularItem)2233: // Bombe Anima MK.A
+                case TranceSeekRegularItem.ToxicBombMKA: // Bombe toxique MK.A
+                case TranceSeekRegularItem.SilenceBombMKA: // Bombe silence MK.A
+                case TranceSeekRegularItem.FlashyBombMKA: // Bombe aveuglante MK.A
+                case TranceSeekRegularItem.PetrifyingBombMKA: // Bombe pétrifiante MK.A
+                case TranceSeekRegularItem.TroubleBombMKA: // Bombe troublante MK.A
+                case TranceSeekRegularItem.InfectedBombMKA: // Bombe infectée MK.A
+                case TranceSeekRegularItem.VirusBombMKA: // Bombe Virus MK.A
+                case TranceSeekRegularItem.ChaoticBombMKA: // Bombe chaotique MK.A
+                case TranceSeekRegularItem.AnimaBombMKA: // Bombe Anima MK.A
                 {
                     _v.NormalMagicParams();
                     TranceSeekAPI.CasterPenaltyMini(_v);
@@ -252,20 +252,20 @@ namespace Memoria.Scripts.TranceSeek
                         _v.Target.TryAlterStatuses(_v.Command.ItemStatus, false, _v.Caster);
                     return;
                 }
-                case (RegularItem)2234: // Bombe toxique MK.Q
-                case (RegularItem)2235: // Bombe silence MK.Q
-                case (RegularItem)2236: // Bombe aveuglante MK.Q
-                case (RegularItem)2237: // Bombe pétrifiante MK.Q
-                case (RegularItem)2238: // Bombe troublante MK.Q
-                case (RegularItem)2239: // Bombe infectée MK.Q
-                case (RegularItem)2240: // Bombe Virus MK.Q
-                case (RegularItem)2241: // Bombe chaotique MK.Q
-                case (RegularItem)2242: // Bombe Anima MK.Q
-                case (RegularItem)2314: // Roc de terre
-                case (RegularItem)2315: // Globe de terre
-                case (RegularItem)2316: // Cristal de terre
-                case (RegularItem)2319: // Magikoroc de terre
-                case (RegularItem)2320: // Megakoroc de terre
+                case TranceSeekRegularItem.ToxicBombMKQ: // Bombe toxique MK.Q
+                case TranceSeekRegularItem.SilenceBombMKQ: // Bombe silence MK.Q
+                case TranceSeekRegularItem.FlashyBombMKQ: // Bombe aveuglante MK.Q
+                case TranceSeekRegularItem.PetrifyingBombMKQ: // Bombe pétrifiante MK.Q
+                case TranceSeekRegularItem.TroubleBombMKQ: // Bombe troublante MK.Q
+                case TranceSeekRegularItem.InfectedBombMKQ: // Bombe infectée MK.Q
+                case TranceSeekRegularItem.VirusBombMKQ: // Bombe Virus MK.Q
+                case TranceSeekRegularItem.ChaoticBombMKQ: // Bombe chaotique MK.Q
+                case TranceSeekRegularItem.AnimaBombMKQ: // Bombe Anima MK.Q
+                case TranceSeekRegularItem.EarthStone: // Roc de terre
+                case TranceSeekRegularItem.EarthOrb: // Globe de terre
+                case TranceSeekRegularItem.EarthCrystal: // Cristal de terre
+                case TranceSeekRegularItem.EarthGem: // Magikoroc de terre
+                case TranceSeekRegularItem.EarthMegagem: // Megakoroc de terre
                 {
                     _v.NormalMagicParams();
                     _v.Command.Element = EffectElement.Earth;
@@ -283,15 +283,15 @@ namespace Memoria.Scripts.TranceSeek
                         _v.Target.TryAlterStatuses(_v.Command.ItemStatus, false, _v.Caster);
                     return;
                 }
-                case (RegularItem)2243: // Bombe toxique MK.R
-                case (RegularItem)2244: // Bombe silence MK.R
-                case (RegularItem)2245: // Bombe aveuglante MK.R
-                case (RegularItem)2246: // Bombe pétrifiante MK.R
-                case (RegularItem)2247: // Bombe troublante MK.R
-                case (RegularItem)2248: // Bombe infectée MK.R
-                case (RegularItem)2249: // Bombe Virus MK.R
-                case (RegularItem)2250: // Bombe chaotique MK.R
-                case (RegularItem)2251: // Bombe Anima MK.R
+                case TranceSeekRegularItem.ToxicBombMKR: // Bombe toxique MK.R
+                case TranceSeekRegularItem.SilenceBombMKR: // Bombe silence MK.R
+                case TranceSeekRegularItem.FlashyBombMKR: // Bombe aveuglante MK.R
+                case TranceSeekRegularItem.PetrifyingBombMKR: // Bombe pétrifiante MK.R
+                case TranceSeekRegularItem.TroubleBombMKR: // Bombe troublante MK.R
+                case TranceSeekRegularItem.InfectedBombMKR: // Bombe infectée MK.R
+                case TranceSeekRegularItem.VirusBombMKR: // Bombe Virus MK.R
+                case TranceSeekRegularItem.ChaoticBombMKR: // Bombe chaotique MK.R
+                case TranceSeekRegularItem.AnimaBombMKR: // Bombe Anima MK.R
                 {
                     _v.NormalMagicParams();
                     TranceSeekAPI.CasterPenaltyMini(_v);
@@ -308,20 +308,20 @@ namespace Memoria.Scripts.TranceSeek
                         _v.Target.TryAlterStatuses(_v.Command.ItemStatus, false, _v.Caster);
                     return;
                 }
-                case (RegularItem)2252: // Bombe toxique MK.W
-                case (RegularItem)2253: // Bombe silence MK.W
-                case (RegularItem)2254: // Bombe aveuglante MK.W
-                case (RegularItem)2255: // Bombe pétrifiante MK.W
-                case (RegularItem)2256: // Bombe troublante MK.W
-                case (RegularItem)2257: // Bombe infectée MK.W
-                case (RegularItem)2258: // Bombe Virus MK.W
-                case (RegularItem)2259: // Bombe chaotique MK.W
-                case (RegularItem)2260: // Bombe Anima MK.W
-                case (RegularItem)2321: // Roc de vent
-                case (RegularItem)2322: // Globe de vent
-                case (RegularItem)2323: // Cristal de vent
-                case (RegularItem)2326: // Magikoroc de vent
-                case (RegularItem)2327: // Megakoroc de vent
+                case TranceSeekRegularItem.ToxicBombMKW: // Bombe toxique MK.W
+                case TranceSeekRegularItem.SilenceBombMKW: // Bombe silence MK.W
+                case TranceSeekRegularItem.FlashyBombMKW: // Bombe aveuglante MK.W
+                case TranceSeekRegularItem.PetrifyingBombMKW: // Bombe pétrifiante MK.W
+                case TranceSeekRegularItem.TroubleBombMKW: // Bombe troublante MK.W
+                case TranceSeekRegularItem.InfectedBombMKW: // Bombe infectée MK.W
+                case TranceSeekRegularItem.VirusBombMKW: // Bombe Virus MK.W
+                case TranceSeekRegularItem.ChaoticBombMKW: // Bombe chaotique MK.W
+                case TranceSeekRegularItem.AnimaBombMKW: // Bombe Anima MK.W
+                case TranceSeekRegularItem.WindStone: // Roc de vent
+                case TranceSeekRegularItem.WindOrb: // Globe de vent
+                case TranceSeekRegularItem.WindCrystal: // Cristal de vent
+                case TranceSeekRegularItem.WindGem: // Magikoroc de vent
+                case TranceSeekRegularItem.WindMegagem: // Megakoroc de vent
                 {
                     _v.NormalMagicParams();
                     _v.Command.Element = EffectElement.Wind;
@@ -339,20 +339,20 @@ namespace Memoria.Scripts.TranceSeek
                         _v.Target.TryAlterStatuses(_v.Command.ItemStatus, false, _v.Caster);
                     return;
                 }
-                case (RegularItem)2261: // Bombe toxique MK.D
-                case (RegularItem)2262: // Bombe silence MK.D
-                case (RegularItem)2263: // Bombe aveuglante MK.D
-                case (RegularItem)2264: // Bombe pétrifiante MK.D
-                case (RegularItem)2265: // Bombe troublante MK.D
-                case (RegularItem)2266: // Bombe infectée MK.D
-                case (RegularItem)2267: // Bombe Virus MK.D
-                case (RegularItem)2268: // Bombe chaotique MK.D
-                case (RegularItem)2269: // Bombe Anima MK.D
-                case (RegularItem)2328: // Roc de ténèbres
-                case (RegularItem)2329: // Globe de ténèbres
-                case (RegularItem)2330: // Cristal de ténèbres
-                case (RegularItem)2333: // Magikoroc de ténèbres
-                case (RegularItem)2334: // Megakoroc de ténèbres
+                case TranceSeekRegularItem.ToxicBombMKD: // Bombe toxique MK.D
+                case TranceSeekRegularItem.SilenceBombMKD: // Bombe silence MK.D
+                case TranceSeekRegularItem.FlashyBombMKD: // Bombe aveuglante MK.D
+                case TranceSeekRegularItem.PetrifyingBombMKD: // Bombe pétrifiante MK.D
+                case TranceSeekRegularItem.TroubleBombMKD: // Bombe troublante MK.D
+                case TranceSeekRegularItem.InfectedBombMKD: // Bombe infectée MK.D
+                case TranceSeekRegularItem.VirusBombMKD: // Bombe Virus MK.D
+                case TranceSeekRegularItem.ChaoticBombMKD: // Bombe chaotique MK.D
+                case TranceSeekRegularItem.AnimaBombMKD: // Bombe Anima MK.D
+                case TranceSeekRegularItem.DarkStone: // Roc de ténèbres
+                case TranceSeekRegularItem.DarkOrb: // Globe de ténèbres
+                case TranceSeekRegularItem.DarkCrystal: // Cristal de ténèbres
+                case TranceSeekRegularItem.DarkGem: // Magikoroc de ténèbres
+                case TranceSeekRegularItem.DarkMegagem: // Megakoroc de ténèbres
                 {
                     _v.NormalMagicParams();
                     _v.Command.Element = EffectElement.Darkness;
@@ -370,20 +370,20 @@ namespace Memoria.Scripts.TranceSeek
                         _v.Target.TryAlterStatuses(_v.Command.ItemStatus, false, _v.Caster);
                     return;
                 }
-                case (RegularItem)2270: // Bombe toxique MK.L
-                case (RegularItem)2271: // Bombe silence MK.L
-                case (RegularItem)2272: // Bombe aveuglante MK.L
-                case (RegularItem)2273: // Bombe pétrifiante MK.L
-                case (RegularItem)2274: // Bombe troublante MK.L
-                case (RegularItem)2275: // Bombe infectée MK.L
-                case (RegularItem)2276: // Bombe Virus MK.L
-                case (RegularItem)2277: // Bombe chaotique MK.L
-                case (RegularItem)2278: // Bombe Anima MK.L
-                case (RegularItem)2335: // Roc de lumière
-                case (RegularItem)2336: // Globe de lumière
-                case (RegularItem)2337: // Cristal de lumière
-                case (RegularItem)2340: // Magikoroc de lumière
-                case (RegularItem)2341: // Megakoroc de lumière
+                case TranceSeekRegularItem.ToxicBombMKL: // Bombe toxique MK.L
+                case TranceSeekRegularItem.SilenceBombMKL: // Bombe silence MK.L
+                case TranceSeekRegularItem.FlashyBombMKL: // Bombe aveuglante MK.L
+                case TranceSeekRegularItem.PetrifyingBombMKL: // Bombe pétrifiante MK.L
+                case TranceSeekRegularItem.TroubleBombMKL: // Bombe troublante MK.L
+                case TranceSeekRegularItem.InfectedBombMKL: // Bombe infectée MK.L
+                case TranceSeekRegularItem.VirusBombMKL: // Bombe Virus MK.L
+                case TranceSeekRegularItem.ChaoticBombMKL: // Bombe chaotique MK.L
+                case TranceSeekRegularItem.AnimaBombMKL: // Bombe Anima MK.L
+                case TranceSeekRegularItem.HolyStone: // Roc de lumière
+                case TranceSeekRegularItem.HolyOrb: // Globe de lumière
+                case TranceSeekRegularItem.HolyCrystal: // Cristal de lumière
+                case TranceSeekRegularItem.HolyGem: // Magikoroc de lumière
+                case TranceSeekRegularItem.HolyMegagem: // Megakoroc de lumière
                 {
                     _v.NormalMagicParams();
                     _v.Command.Element = EffectElement.Holy;
@@ -401,15 +401,15 @@ namespace Memoria.Scripts.TranceSeek
                         _v.Target.TryAlterStatuses(_v.Command.ItemStatus, false, _v.Caster);
                     return;
                 }
-                case (RegularItem)2466: // Bombe toxique MK.W
-                case (RegularItem)2467: // Bombe silence MK.W
-                case (RegularItem)2468: // Bombe aveuglante MK.W
-                case (RegularItem)2469: // Bombe pétrifiante MK.W
-                case (RegularItem)2470: // Bombe troublante MK.W
-                case (RegularItem)2471: // Bombe infectée MK.W
-                case (RegularItem)2472: // Bombe Virus MK.W
-                case (RegularItem)2473: // Bombe chaotique MK.W
-                case (RegularItem)2474: // Bombe Anima MK.W
+                case TranceSeekRegularItem.ToxicBombMKW_2: // Bombe toxique MK.W
+                case TranceSeekRegularItem.SilenceBombMKW_2: // Bombe silence MK.W
+                case TranceSeekRegularItem.FlashyBombMKW_2: // Bombe aveuglante MK.W
+                case TranceSeekRegularItem.PetrifyingBombMKW_2: // Bombe pétrifiante MK.W
+                case TranceSeekRegularItem.TroubleBombMKW_2: // Bombe troublante MK.W
+                case TranceSeekRegularItem.InfectedBombMKW_2: // Bombe infectée MK.W
+                case TranceSeekRegularItem.VirusBombMKW_2: // Bombe Virus MK.W
+                case TranceSeekRegularItem.ChaoticBombMKW_2: // Bombe chaotique MK.W
+                case TranceSeekRegularItem.AnimaBombMKW_2: // Bombe Anima MK.W
                 {
                     _v.NormalMagicParams();
                     TranceSeekAPI.CasterPenaltyMini(_v);
@@ -441,8 +441,8 @@ namespace Memoria.Scripts.TranceSeek
                         
                     return;
                 }
-                case (RegularItem)2487: // Big Bang
-                case (RegularItem)2489: // Super Nova
+                case TranceSeekRegularItem.BigBang: // Big Bang
+                case TranceSeekRegularItem.SuperNova: // Super Nova
                 {
                     uint CasterMaxDamageLimit = _v.Caster.MaxDamageLimit;
                     _v.Caster.MaxDamageLimit = 99999;
@@ -465,7 +465,7 @@ namespace Memoria.Scripts.TranceSeek
                     );
                     return;
                 }
-                case (RegularItem)2488: // Bombe à Proton
+                case TranceSeekRegularItem.ProtonBomb: // Bombe à Proton
                 {
                     uint CasterMaxDamageLimit = _v.Caster.MaxDamageLimit;
                     _v.Caster.MaxDamageLimit = 99999;
@@ -514,3 +514,4 @@ namespace Memoria.Scripts.TranceSeek
         }
     }
 }
+

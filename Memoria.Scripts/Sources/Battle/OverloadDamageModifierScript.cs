@@ -91,10 +91,10 @@ namespace Memoria.Scripts.TranceSeek
                 {
                     v.Target.AlterStatus(TranceSeekStatus.Rage, v.Caster);
 
-                    if (v.Target.HasSupportAbilityByIndex((SupportAbility)236) && (v.Target.HasSupportAbilityByIndex((SupportAbility)1236) ? 50 : 25) < Comn.random16() % 100) // SA Enraged
+                    if (v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.Enraged) && (v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.Enraged_Boosted) ? 50 : 25) < Comn.random16() % 100) // SA Enraged
                         v.Target.AlterStatus(TranceSeekStatus.Rage, v.Caster);
 
-                    if (v.Target.HasSupportAbilityByIndex((SupportAbility)238)) // SA Crisis level
+                    if (v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.CrisisLevel)) // SA Crisis level
                     {
                         float RatioCrisisLevel = (v.Target.CurrentHp * 100) / v.Target.MaximumHp;
                         v.Context.TranceIncrease += (short)((v.Context.TranceIncrease * (100 - RatioCrisisLevel)) / 100);
@@ -103,7 +103,7 @@ namespace Memoria.Scripts.TranceSeek
 
                 if (v.Target.PlayerIndex == CharacterId.Amarant && Target_TSVar.Amarant.Duel && (v.Command.AbilityCategory & 8) != 0 && v.Target.IsUnderAnyStatus(BattleStatus.Defend)) // Duel Amarant
                 {
-                    if (v.Target.HasSupportAbilityByIndex((SupportAbility)231) && (v.Target.HasSupportAbilityByIndex((SupportAbility)1231) ? 50 : 25) > Comn.random16() % 100) // SA Ferocity
+                    if (v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.Ferocity) && (v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.Ferocity_Boosted) ? 50 : 25) > Comn.random16() % 100) // SA Ferocity
                         btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[FF2716]", MessageFerocity, HUDMessage.MessageStyle.DAMAGE, 10);
                     else
                         Target_TSVar.Amarant.Duel = false;
@@ -126,7 +126,7 @@ namespace Memoria.Scripts.TranceSeek
                     btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[FF0000]", MessagePeuh, HUDMessage.MessageStyle.DAMAGE, 10);
                 }
 
-                if (v.Target.IsCovering && v.Target.HasSupportAbilityByIndex((SupportAbility)213)) // SA Duelist
+                if (v.Target.IsCovering && v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.Duelist)) // SA Duelist
                     v.TargetState().Steiner.Duelist++;
             }
             else
@@ -200,3 +200,4 @@ namespace Memoria.Scripts.TranceSeek
         };
     }
 }
+

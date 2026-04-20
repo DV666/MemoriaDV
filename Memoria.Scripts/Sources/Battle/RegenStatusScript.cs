@@ -34,11 +34,11 @@ namespace Memoria.DefaultScripts
                 return false;
 
             Boolean isDmg = false;
-            if (Target.HasSupportAbilityByIndex((SupportAbility)130)) // SA Harmony
+            if (Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.Harmony)) // SA Harmony
             {
-                UInt32 healMP = Target.HasSupportAbilityByIndex((SupportAbility)1130) ? (Target.MaximumMp / 50) : (Target.MaximumMp / 100);
-                if (Target.HasSupportAbilityByIndex((SupportAbility)129)) // SA Rejuvenate
-                    healMP += Target.HasSupportAbilityByIndex((SupportAbility)1129) ? (healMP / 2) : (healMP / 4);
+                UInt32 healMP = Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.Harmony_Boosted) ? (Target.MaximumMp / 50) : (Target.MaximumMp / 100);
+                if (Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.Rejuvenate)) // SA Rejuvenate
+                    healMP += Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.Rejuvenate_Boosted) ? (healMP / 2) : (healMP / 4);
                 if (Target.IsZombie)
                 {
                     isDmg = true;
@@ -56,8 +56,8 @@ namespace Memoria.DefaultScripts
             else
             {
                 UInt32 healHP = Target.MaximumHp >> (Target.IsUnderAnyStatus(BattleStatus.EasyKill) ? 7 : 5);
-                if (Target.HasSupportAbilityByIndex((SupportAbility)129)) // SA Rejuvenate
-                    healHP += Target.HasSupportAbilityByIndex((SupportAbility)1129) ? (healHP / 2) : (healHP / 4);
+                if (Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.Rejuvenate)) // SA Rejuvenate
+                    healHP += Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.Rejuvenate_Boosted) ? (healHP / 2) : (healHP / 4);
 
                 if (Target.IsZombie)
                 {
@@ -78,3 +78,4 @@ namespace Memoria.DefaultScripts
         }
     }
 }
+

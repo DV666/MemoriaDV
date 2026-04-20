@@ -90,30 +90,30 @@ namespace Memoria.Scripts.TranceSeek
                     }
                     switch (_v.Command.AbilityId)
                     {
-                        case (BattleAbilityId)2000: // Mog Cure
-                        case (BattleAbilityId)2011: // Moga Cure
+                        case TranceSeekBattleAbility.MogCure: // Mog Cure
+                        case TranceSeekBattleAbility.MogaCure: // Moga Cure
                             _v.Target.Flags = (CalcFlag.HpAlteration);
                             if (!_v.Target.IsZombie)
                                 _v.Target.Flags |= CalcFlag.HpRecovery;
                             _v.Target.HpDamage = (int)(_v.Target.MaximumHp / _v.Command.Power);
                         break;
-                        case (BattleAbilityId)2001: // Mog Hug
-                        case (BattleAbilityId)2012: // Moga Hug
+                        case TranceSeekBattleAbility.MogHug: // Mog Hug
+                        case TranceSeekBattleAbility.MogHug2: // Moga Hug
                             _v.Target.Flags = (CalcFlag.MpAlteration);
                             if (!_v.Target.IsZombie)
                                 _v.Target.Flags |= CalcFlag.MpRecovery;
                             _v.Target.MpDamage = (int)(_v.Target.MaximumMp / _v.Command.Power);
                             break;
-                        case (BattleAbilityId)2002: // Mog Regen
-                        case (BattleAbilityId)2004: // Mog Mirror
-                        case (BattleAbilityId)2005: // Mog AutoLife
-                        case (BattleAbilityId)2013: // Moga Regen
-                        case (BattleAbilityId)2015: // Moga Mirror
-                        case (BattleAbilityId)2016: // Moga AutoLife
+                        case TranceSeekBattleAbility.MogRegen: // Mog Regen
+                        case TranceSeekBattleAbility.MogMirror: // Mog Mirror
+                        case TranceSeekBattleAbility.MogAutoLife: // Mog AutoLife
+                        case TranceSeekBattleAbility.MogRegen2: // Moga Regen
+                        case TranceSeekBattleAbility.MogMirror2: // Moga Mirror
+                        case TranceSeekBattleAbility.MogAutoLife2: // Moga AutoLife
                             TranceSeekAPI.TryAlterCommandStatuses(_v);
                             break;
-                        case (BattleAbilityId)2003: // Mog Shield
-                        case (BattleAbilityId)2014: // Moga Shield
+                        case TranceSeekBattleAbility.MogShield: // Mog Shield
+                        case TranceSeekBattleAbility.MogShield2: // Moga Shield
                             if (GameRandom.Next8() % 2 == 0)
                                 _v.Command.AbilityStatus |= BattleStatus.Protect;
                             else
@@ -121,16 +121,16 @@ namespace Memoria.Scripts.TranceSeek
 
                             TranceSeekAPI.TryAlterCommandStatuses(_v);
                             break;
-                        case (BattleAbilityId)2006: // Mog Esuna
-                        case (BattleAbilityId)2017: // Moga Esuna
+                        case TranceSeekBattleAbility.MogEsuna: // Mog Esuna
+                        case TranceSeekBattleAbility.MogaEsuna: // Moga Esuna
                             _v.Target.RemoveStatus(BattleStatus.Poison | BattleStatus.Venom | BattleStatus.Silence | BattleStatus.Blind | BattleStatus.Trouble | BattleStatus.Mini | BattleStatus.Berserk | TranceSeekStatus.Vieillissement);
                             break;
-                        case (BattleAbilityId)2007: // Mog Support
-                        case (BattleAbilityId)2018: // Moga Support
+                        case TranceSeekBattleAbility.MogSupport: // Mog Support
+                        case TranceSeekBattleAbility.MogSupport2: // Moga Support
                             _v.Command.AbilityStatus |= (TranceSeekStatus.MagicUp | TranceSeekStatus.MentalUp);
                             TranceSeekAPI.TryAlterCommandStatuses(_v);
                             break;
-                        case (BattleAbilityId)2008: // Mog Life
+                        case TranceSeekBattleAbility.MogLife: // Mog Life
                             if (!_v.Target.CanBeRevived())
                             {
                                 _v.Context.Flags |= BattleCalcFlags.Miss;
@@ -146,7 +146,7 @@ namespace Memoria.Scripts.TranceSeek
                                     else
                                     {
                                         _v.Target.Flags |= CalcFlag.HpAlteration | CalcFlag.HpRecovery;
-                                        if (_v.Target.HasSupportAbilityByIndex((SupportAbility)1004)) // Invincible+
+                                        if (_v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.AutoLife_Boosted)) // Invincible+
                                         {
                                             _v.Target.Flags |= CalcFlag.MpAlteration | CalcFlag.MpRecovery;
                                             _v.Target.HpDamage = (int)_v.Target.MaximumHp;
@@ -155,17 +155,17 @@ namespace Memoria.Scripts.TranceSeek
                                         else
                                         {
                                             _v.Target.HpDamage = (Int32)(_v.Target.MaximumHp * _v.Command.Power) / 100;
-                                            if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)100)) // Medecin
-                                                _v.Target.HpDamage += _v.Caster.HpDamage / (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1100) ? 2 : 4);
+                                            if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Doctor)) // Medecin
+                                                _v.Target.HpDamage += _v.Caster.HpDamage / (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Doctor_Boosted) ? 2 : 4);
                                         }
                                         TranceSeekAPI.TryRemoveAbilityStatuses(_v);
                                     }
                                 }
                             }
                             break;
-                        case (BattleAbilityId)2009: // Atomoug
-                        case (BattleAbilityId)2010: // Sidémoug
-                        case (BattleAbilityId)2019: // Mouga Homing
+                        case TranceSeekBattleAbility.MogFlare: // Atomoug
+                        case TranceSeekBattleAbility.MogHoly: // Sidémoug
+                        case TranceSeekBattleAbility.MougaHoming: // Mouga Homing
                             if (_v.Target.MagicDefence == 255)
                             {
                                 _v.Context.Flags |= BattleCalcFlags.Guard;
@@ -230,3 +230,5 @@ namespace Memoria.Scripts.TranceSeek
         }
     }
 }
+
+

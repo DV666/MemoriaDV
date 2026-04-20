@@ -86,7 +86,7 @@ namespace Memoria.Scripts.TranceSeek
                 dictbattle[3] = 0;
             }
 
-            if (player.saExtended.Contains((SupportAbility)1132)) // SA Anastrophe+
+            if (player.saExtended.Contains(TranceSeekSupportAbility.Anastrophe_Boosted)) // SA Anastrophe+
             {
                 if (dictbattle[3] != 2)
                 {
@@ -99,7 +99,7 @@ namespace Memoria.Scripts.TranceSeek
                     ff9play.FF9Play_Update(player);
                 }
             }
-            else if (player.saExtended.Contains((SupportAbility)132)) // SA Anastrophe
+            else if (player.saExtended.Contains(TranceSeekSupportAbility.Anastrophe)) // SA Anastrophe
             {
                 if (dictbattle[3] != 1)
                 {
@@ -244,3 +244,4 @@ namespace Memoria.Scripts.TranceSeek
         }*/
     }
 }
+

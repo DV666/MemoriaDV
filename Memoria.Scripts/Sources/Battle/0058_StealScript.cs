@@ -1,4 +1,4 @@
-using Assets.Sources.Scripts.UI.Common;
+﻿using Assets.Sources.Scripts.UI.Common;
 using FF9;
 using Memoria.Data;
 using Memoria.Prime;
@@ -93,7 +93,7 @@ namespace Memoria.Scripts.TranceSeek
                 if (serialNumber == CharacterSerialNumber.ZIDANE_SWORD)
                     delay = 8;
 
-                if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1023))
+                if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.StealGil_Boosted))
                 {
                     bonusgil = (int)UnityEngine.Random.Range(btl_util.getEnemyPtr(_v.Target).bonus_gil / 12, btl_util.getEnemyPtr(_v.Target).bonus_gil / 6);
                 }
@@ -105,7 +105,7 @@ namespace Memoria.Scripts.TranceSeek
                         {
                           { "US", $"+{bonusgil} gils!" },
                           { "UK", $"+{bonusgil} gils!" },
-                          { "JP", $"+{bonusgil} ギル!" },
+                          { "JP", $"+{bonusgil} ã‚®ãƒ«!" },
                           { "ES", $"+{bonusgil} guiles!" },
                           { "FR", $"+{bonusgil} gils !" },
                           { "GR", $"+{bonusgil} Gil!" },
@@ -135,7 +135,7 @@ namespace Memoria.Scripts.TranceSeek
             {
                 StealItem(battleEnemy, 3);
             }
-            else if (_v.TargetState().Zidane.EyeOfTheThief) // Oeil de voleur activé
+            else if (_v.TargetState().Zidane.EyeOfTheThief) // Oeil de voleur activÃ©
             {
                 EyeOfThief();
             }
@@ -165,7 +165,7 @@ namespace Memoria.Scripts.TranceSeek
             {
                 StealItem(battleEnemy, 0, ShowHUDMessage);
             }
-            else if (_v.TargetState().Zidane.EyeOfTheThief) // Oeil de voleur activé
+            else if (_v.TargetState().Zidane.EyeOfTheThief) // Oeil de voleur activÃ©
             {
                 EyeOfThief();
             }
@@ -188,9 +188,9 @@ namespace Memoria.Scripts.TranceSeek
             {
                 { "US", "Thief's Eye!" },
                 { "UK", "Thief's Eye!" },
-                { "JP", "泥棒の目!" },
-                { "ES", "Ojo del ladrón!" },
-                { "FR", "Œil du voleur !" },
+                { "JP", "æ³¥æ£’ã®ç›®!" },
+                { "ES", "Ojo del ladrÃ³n!" },
+                { "FR", "Å’il du voleur !" },
                 { "GR", "Auge des Diebes!" },
                 { "IT", "Occhio del ladro!" },
             };
@@ -259,45 +259,45 @@ namespace Memoria.Scripts.TranceSeek
                 case RegularItem.MythrilDagger:
                     BonusWeaponSteal += 20;
                     break;
-                case (RegularItem)1007: // Butterfly Sword
+                case TranceSeekRegularItem.ButterflyDagger: // Butterfly Sword
                     BonusWeaponSteal += 30;
                     break;
-                case (RegularItem)1008: // The Ogre
+                case TranceSeekRegularItem.TheOgreDagger: // The Ogre
                     BonusWeaponSteal += 35;
                     break;
                 case RegularItem.Gladius:
                     BonusWeaponSteal += 45;
                     break;
-                case (RegularItem)1009: // Exploda
+                case TranceSeekRegularItem.ExplodaDagger: // Exploda
                     BonusWeaponSteal += 40;
                     break;
-                case (RegularItem)1010: // Rune Tooth
+                case TranceSeekRegularItem.RuneToothDagger: // Rune Tooth
                     BonusWeaponSteal += 45;
                     break;
                 case RegularItem.ZorlinShape:
                     BonusWeaponSteal += 50;
                     break;
-                case (RegularItem)1011: // Angel Bless
+                case TranceSeekRegularItem.AngelBlessDagger: // Angel Bless
                     BonusWeaponSteal += 55;
                     break;
-                case (RegularItem)1012: // Sargatanas
+                case TranceSeekRegularItem.SargatanasDagger: // Sargatanas
                     BonusWeaponSteal += 60;
                     break;
-                case (RegularItem)1013: // Masamune
+                case TranceSeekRegularItem.MasamuneDagger: // Masamune
                     BonusWeaponSteal += 70;
                     break;
                 case RegularItem.Orichalcon:
                     BonusWeaponSteal += 80;
                     break;
-                case (RegularItem)1014: // The Tower
+                case TranceSeekRegularItem.TheTowerDagger: // The Tower
                     BonusWeaponSteal += 90;
                     break;
-                case (RegularItem)1015: // The Monarch
+                case TranceSeekRegularItem.UltimaWeaponDagger: // The Monarch
                     BonusWeaponSteal += 100;
                     break;
             }
 
-            if (Caster.HasSupportAbilityByIndex((SupportAbility)200) && Caster.PlayerIndex == CharacterId.Zidane) // SA Knavery
+            if (Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Knavery) && Caster.PlayerIndex == CharacterId.Zidane) // SA Knavery
                 BonusWeaponSteal += Caster.State().Zidane.Dodge;
 
             return (StealableItemRates + ((float)(StealableItemRates * BonusWeaponSteal) / 100));
@@ -337,7 +337,7 @@ namespace Memoria.Scripts.TranceSeek
             foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(_v.Target))
                 saFeature.TriggerOnAbility(_v, "Steal", true);
 
-            if (_v.Caster.HasSupportAbility(SupportAbility1.MasterThief) && slot == 0 || _v.Caster.HasSupportAbilityByIndex((SupportAbility)1022) && slot == 1)
+            if (_v.Caster.HasSupportAbility(SupportAbility1.MasterThief) && slot == 0 || _v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.MasterThief_Boosted) && slot == 1)
             {
                 ff9item.FF9Item_Add(_v.Context.ItemSteal, 2);
                 UiState.SetBattleFollowFormatMessage(BattleMesages.Stole, FF9TextTool.ItemName(_v.Context.ItemSteal) + " X 2");
@@ -395,7 +395,7 @@ namespace Memoria.Scripts.TranceSeek
             foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(v.Target))
                 saFeature.TriggerOnAbility(v, "Steal", true);
 
-            if (v.Caster.HasSupportAbility(SupportAbility1.MasterThief) && slot == 0 || v.Caster.HasSupportAbilityByIndex((SupportAbility)1022) && slot == 1)
+            if (v.Caster.HasSupportAbility(SupportAbility1.MasterThief) && slot == 0 || v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.MasterThief_Boosted) && slot == 1)
             {
                 ff9item.FF9Item_Add(v.Context.ItemSteal, 2);
                 UiState.SetBattleFollowFormatMessage(BattleMesages.Stole, FF9TextTool.ItemName(v.Context.ItemSteal) + " X 2");
@@ -409,3 +409,5 @@ namespace Memoria.Scripts.TranceSeek
         }
     }
 }
+
+

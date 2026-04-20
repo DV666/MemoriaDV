@@ -29,7 +29,7 @@ namespace Memoria.Scripts.TranceSeek
 
         public void Perform()
         {
-            if (_v.Command.Id == (BattleCommandId)1029) // Kutrol
+            if (_v.Command.Id == TranceSeekBattleCommand.Kutrol) // Kutrol
             {
                 int AbilityId = GeoMonsterWithAA.FirstOrDefault(x => x.Value == _v.Target.Data.dms_geo_id).Key;
                 AbilityId = ff9abil.GetAbilityIdFromActiveAbility((BattleAbilityId)AbilityId);
@@ -112,7 +112,7 @@ namespace Memoria.Scripts.TranceSeek
                 geoName = geoName.Substring(4);
                 Animation animation = _v.Caster.Data.gameObject.GetComponent<Animation>();
 
-                if (IDMonster == 244 || _v.Command.AbilityId == (BattleAbilityId)1259 || _v.Command.AbilityId == (BattleAbilityId)1284)
+                if (IDMonster == 244 || _v.Command.AbilityId == TranceSeekBattleAbility.Grimlock2 || _v.Command.AbilityId == TranceSeekBattleAbility.Serpion)
                 { // Cactuar, Grimlock (Blue for Stop), Serpion (Stab) (idle_alternate)
                     if (animation.GetClip("ANH_" + geoName + "_001") == null)
                         AnimationFactory.AddAnimWithAnimatioName(_v.Caster.Data.gameObject, "ANH_" + geoName + "_001");
@@ -134,15 +134,15 @@ namespace Memoria.Scripts.TranceSeek
                 if (FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1030, out Dictionary<Int32, Int32> dict)) // Increase AA utilisation, for MPCost in AbilityFeatures.txt
                     dict[(int)_v.Command.AbilityId]++;
 
-                if (_v.Command.AbilityId == (BattleAbilityId)1255) // Grenada - Fire balls
+                if (_v.Command.AbilityId == TranceSeekBattleAbility.Grenade2) // Grenada - Fire balls
                     NumberTargets[_v.Caster.Data] = 6;
-                else if (_v.Command.AbilityId == (BattleAbilityId)1263 || _v.Command.AbilityId == (BattleAbilityId)1377) // Hecteyes and Zombie - Roulette
+                else if (_v.Command.AbilityId == TranceSeekBattleAbility.Hecteyes2 || _v.Command.AbilityId == TranceSeekBattleAbility.Zombie2) // Hecteyes and Zombie - Roulette
                     NumberTargets[_v.Caster.Data] = 1;
-                else if (_v.Command.AbilityId == (BattleAbilityId)1315) // Ogre - Double Knife
+                else if (_v.Command.AbilityId == TranceSeekBattleAbility.Ogre2) // Ogre - Double Knife
                     NumberTargets[_v.Caster.Data] = 2;
 
                 // Custom Textures
-                if (_v.Command.AbilityId == (BattleAbilityId)1378 || _v.Command.AbilityId == (BattleAbilityId)1379)
+                if (_v.Command.AbilityId == TranceSeekBattleAbility.Armodullahan || _v.Command.AbilityId == TranceSeekBattleAbility.Armodullahan2)
                 {
                     //ModelFactory.ChangeModelTexture(_v.Caster.Data.gameObject, new string[] {"CustomTextures/OeilvertGuardian/342_0.png", "CustomTextures/OeilvertGuardian/342_1.png", "CustomTextures/OeilvertGuardian/342_2.png", "CustomTextures/OeilvertGuardian/342_3.png", "CustomTextures/ OeilvertGuardian/342_4.png", "CustomTextures/OeilvertGuardian/342_5.png"});
                 }
@@ -152,8 +152,8 @@ namespace Memoria.Scripts.TranceSeek
                 switch (_v.Command.AbilityId)
                 {
                     // BLOOD SWORD WEAPON - Script 6
-                    case (BattleAbilityId)1212: // Seeker Bat - Absorb even more
-                    case (BattleAbilityId)1328: // Gigan Octopus - 6 Legs
+                    case TranceSeekBattleAbility.SeekerBat: // Seeker Bat - Absorb even more
+                    case TranceSeekBattleAbility.GiganOctopus: // Gigan Octopus - 6 Legs
                     {
                         if (_v.Target.CanBeAttacked() && !_v.Target.TryKillFrozen())
                         {
@@ -200,50 +200,50 @@ namespace Memoria.Scripts.TranceSeek
                         break;
                     }
                     // ENEMY PHYSICAL ATTACK - Script 8
-                    case (BattleAbilityId)1184: // Ao
-                    case (BattleAbilityId)1186: // Plant Spider
-                    case (BattleAbilityId)1188: // Carve Spider
-                    case (BattleAbilityId)1193: // Blazer Beetle
-                    case (BattleAbilityId)1206: // Grand Dragon - Poison Claw
-                    case (BattleAbilityId)1210: // Cerberus - Incandescent Claws
-                    case (BattleAbilityId)1218: // Crawler - Claws
-                    case (BattleAbilityId)1219: // Crawler - Stomach
-                    case (BattleAbilityId)1222: // DracoZombie - Putrids claws
-                    case (BattleAbilityId)1228: // Mu - Tail
-                    case (BattleAbilityId)1230: // Catoblepas - Heave
-                    case (BattleAbilityId)1236: // Flan - Head Attack
-                    case (BattleAbilityId)1240: // Gargoyle - Charge
-                    case (BattleAbilityId)1248: // Goblin Mage - Axe
-                    case (BattleAbilityId)1250: // Goblin - Knife
-                    case (BattleAbilityId)1252: // Golem - Counter
-                    case (BattleAbilityId)1258: // Grimlock - The Drop
-                    case (BattleAbilityId)1268: // Vice - Slice
-                    case (BattleAbilityId)1274: // Behemoth - Heave
-                    case (BattleAbilityId)1280: // Clipper - Crush
-                    case (BattleAbilityId)1284: // Serpion - Stab
-                    case (BattleAbilityId)1287: // Wyerd - Strike
-                    case (BattleAbilityId)1290: // Feather Circle - Trouble Tail
-                    case (BattleAbilityId)1294: // Fang - Rush
-                    case (BattleAbilityId)1295: // Fang - Fang
-                    case (BattleAbilityId)1300: // Ladybug - Spear
-                    case (BattleAbilityId)1302: // Trick Sparrow - Beak
-                    case (BattleAbilityId)1304: // Hornet - Stinger
-                    case (BattleAbilityId)1311: // Gnoll - Gnoll Attack
-                    case (BattleAbilityId)1312: // Nymph - Vicious root
-                    case (BattleAbilityId)1314: // Ogre - Trouble Knife
-                    case (BattleAbilityId)1315: // Ogre - Double Hit
-                    case (BattleAbilityId)1318: // Abomination - Silent Slap
-                    case (BattleAbilityId)1320: // Axe Beak - Beak
-                    case (BattleAbilityId)1326: // Zaghnol - Heave
-                    case (BattleAbilityId)1329: // Gigan Octopus - Ink
-                    case (BattleAbilityId)1332: // Python - Fira
-                    case (BattleAbilityId)1340: // Sand Scorpion - Claws
-                    case (BattleAbilityId)1344: // Cave Imp - Rusty Knife
-                    case (BattleAbilityId)1347: // Skeleton - Whirl Slash
-                    case (BattleAbilityId)1356: // Hedgehog Pie - Ram
-                    case (BattleAbilityId)1362: // Ochu - Thorn Whip
-                    case (BattleAbilityId)1375: // Yeti - Blind Tail
-                    case (BattleAbilityId)1378: // TEST
+                    case TranceSeekBattleAbility.Adamantoise: // Ao
+                    case TranceSeekBattleAbility.PlantSpider: // Plant Spider
+                    case TranceSeekBattleAbility.CarveSpider: // Carve Spider
+                    case TranceSeekBattleAbility.BlazerBeetle2: // Blazer Beetle
+                    case TranceSeekBattleAbility.GrandDragon: // Grand Dragon - Poison Claw
+                    case TranceSeekBattleAbility.Cerberus: // Cerberus - Incandescent Claws
+                    case TranceSeekBattleAbility.Crawler: // Crawler - Claws
+                    case TranceSeekBattleAbility.Crawler2: // Crawler - Stomach
+                    case TranceSeekBattleAbility.Dracozombie: // DracoZombie - Putrids claws
+                    case TranceSeekBattleAbility.Mu: // Mu - Tail
+                    case TranceSeekBattleAbility.Catoblepas: // Catoblepas - Heave
+                    case TranceSeekBattleAbility.Flan: // Flan - Head Attack
+                    case TranceSeekBattleAbility.Gargoyle: // Gargoyle - Charge
+                    case TranceSeekBattleAbility.GoblinMage: // Goblin Mage - Axe
+                    case TranceSeekBattleAbility.Goblin: // Goblin - Knife
+                    case TranceSeekBattleAbility.SandGolem: // Golem - Counter
+                    case TranceSeekBattleAbility.Grimlock: // Grimlock - The Drop
+                    case TranceSeekBattleAbility.Vice: // Vice - Slice
+                    case TranceSeekBattleAbility.Behemoth: // Behemoth - Heave
+                    case TranceSeekBattleAbility.Clipper: // Clipper - Crush
+                    case TranceSeekBattleAbility.Serpion: // Serpion - Stab
+                    case TranceSeekBattleAbility.Wyerd2: // Wyerd - Strike
+                    case TranceSeekBattleAbility.FeatherCircle: // Feather Circle - Trouble Tail
+                    case TranceSeekBattleAbility.Fang: // Fang - Rush
+                    case TranceSeekBattleAbility.Fang2: // Fang - Fang
+                    case TranceSeekBattleAbility.Ladybug: // Ladybug - Spear
+                    case TranceSeekBattleAbility.TrickSparrow: // Trick Sparrow - Beak
+                    case TranceSeekBattleAbility.Hornet: // Hornet - Stinger
+                    case TranceSeekBattleAbility.Gnoll2: // Gnoll - Gnoll Attack
+                    case TranceSeekBattleAbility.Nymph: // Nymph - Vicious root
+                    case TranceSeekBattleAbility.Ogre: // Ogre - Trouble Knife
+                    case TranceSeekBattleAbility.Ogre2: // Ogre - Double Hit
+                    case TranceSeekBattleAbility.Abomination: // Abomination - Silent Slap
+                    case TranceSeekBattleAbility.AxeBeak: // Axe Beak - Beak
+                    case TranceSeekBattleAbility.Zaghnol: // Zaghnol - Heave
+                    case TranceSeekBattleAbility.GiganOctopus2: // Gigan Octopus - Ink
+                    case TranceSeekBattleAbility.Python: // Python - Fira
+                    case TranceSeekBattleAbility.SandScorpion: // Sand Scorpion - Claws
+                    case TranceSeekBattleAbility.CaveImp: // Cave Imp - Rusty Knife
+                    case TranceSeekBattleAbility.Skeleton2: // Skeleton - Whirl Slash
+                    case TranceSeekBattleAbility.HedgehogPie: // Hedgehog Pie - Ram
+                    case TranceSeekBattleAbility.Ochu: // Ochu - Thorn Whip
+                    case TranceSeekBattleAbility.Yeti2: // Yeti - Blind Tail
+                    case TranceSeekBattleAbility.Armodullahan: // TEST
                     {
                         if (!_v.Target.TryKillFrozen())
                         {
@@ -281,57 +281,57 @@ namespace Memoria.Scripts.TranceSeek
                         break;
                     }
                     // MAGIC ATTACK - Script 9
-                    case (BattleAbilityId)1172: // Agares
-                    case (BattleAbilityId)1176: // Amanite
-                    case (BattleAbilityId)1180: // Amduscias
-                    case (BattleAbilityId)1182: // Anemone
-                    case (BattleAbilityId)1187: // Plant Spider
-                    case (BattleAbilityId)1192: // Blazer Beetle
-                    case (BattleAbilityId)1194: // Axolotl
-                    case (BattleAbilityId)1197: // Bandersnatch
-                    case (BattleAbilityId)1200: // Mistodon
-                    case (BattleAbilityId)1201: // Mistodon
-                    case (BattleAbilityId)1205: // Armstrong - Tsunami
-                    case (BattleAbilityId)1207: // Grand Dragon - Dragon Breath
-                    case (BattleAbilityId)1209: // Shell Dragon - Disaster
-                    case (BattleAbilityId)1211: // Cerberus - Flame
-                    case (BattleAbilityId)1216: // Zuu - Aera
-                    case (BattleAbilityId)1220: // Ironite - Fira (Multi)
-                    case (BattleAbilityId)1224: // Dragonfly - Charge
-                    case (BattleAbilityId)1231: // Catoblepas - Thundaga (Multi)
-                    case (BattleAbilityId)1237: // Flan - Blizzard
-                    case (BattleAbilityId)1242: // Garuda - Firaga
-                    case (BattleAbilityId)1244: // Land Worm - Earthquake
-                    case (BattleAbilityId)1254: // Grenada - Molotov
-                    case (BattleAbilityId)1256: // Griffon - Aera
-                    case (BattleAbilityId)1257: // Griffon - Tempest
-                    case (BattleAbilityId)1260: // Gigan Toad - Watera
-                    case (BattleAbilityId)1265: // Abadon - High Wind
-                    case (BattleAbilityId)1286: // Wyerd - Blizzard
-                    case (BattleAbilityId)1288: // Mandragora - Blizzara
-                    case (BattleAbilityId)1292: // Torama - Thundara
-                    case (BattleAbilityId)1301: // Ladybug - Rainbow
-                    case (BattleAbilityId)1308: // Dendrobium - Pollen
-                    case (BattleAbilityId)1309: // Dendrobium - Pollen
-                    case (BattleAbilityId)1322: // Wraith (Ice) - Devil’s Candle
-                    case (BattleAbilityId)1323: // Wraith (Ice) - Frost
-                    case (BattleAbilityId)1324: // Wraith (Fire) - Devil’s Candle
-                    case (BattleAbilityId)1325: // Wraith (Fire) - Mustard Bomb
-                    case (BattleAbilityId)1327: // Zaghnol - Earthquake
-                    case (BattleAbilityId)1330: // Carrion Worm - Fira
-                    case (BattleAbilityId)1341: // Sand Scorpion - Mustard Bomb
-                    case (BattleAbilityId)1343: // Ring Leader - Virus Powder
-                    case (BattleAbilityId)1345: // Cave Imp - Sleeping Juice
-                    case (BattleAbilityId)1346: // Skeleton - Thunder
-                    case (BattleAbilityId)1352: // Bombo - Mustard Bomb
-                    case (BattleAbilityId)1363: // Ochu - Floral dance
-                    case (BattleAbilityId)1366: // Vepal (Ice) - Blizzaga
-                    case (BattleAbilityId)1367: // Vepal (Ice) - Snowstorm
-                    case (BattleAbilityId)1368: // Vepal (Fire) - Firaga
-                    case (BattleAbilityId)1369: // Vepal (Fire) - Fire Breath
-                    case (BattleAbilityId)1371: // Worm Hydra - Aero Breath
-                    case (BattleAbilityId)1372: // Malboro - Bio
-                    case (BattleAbilityId)1374: // Yeti - Blizzara
+                    case TranceSeekBattleAbility.Agares: // Agares
+                    case TranceSeekBattleAbility.Myconid: // Amanite
+                    case TranceSeekBattleAbility.Amdusias: // Amduscias
+                    case TranceSeekBattleAbility.Anemone: // Anemone
+                    case TranceSeekBattleAbility.PlantSpider2: // Plant Spider
+                    case TranceSeekBattleAbility.BlazerBeetle: // Blazer Beetle
+                    case TranceSeekBattleAbility.Axolotl: // Axolotl
+                    case TranceSeekBattleAbility.Bandersnatch2: // Bandersnatch
+                    case TranceSeekBattleAbility.Mistodon: // Mistodon
+                    case TranceSeekBattleAbility.Mistodon2: // Mistodon
+                    case TranceSeekBattleAbility.Armstrong2: // Armstrong - Tsunami
+                    case TranceSeekBattleAbility.GrandDragon2: // Grand Dragon - Dragon Breath
+                    case TranceSeekBattleAbility.ShellDragon2: // Shell Dragon - Disaster
+                    case TranceSeekBattleAbility.Cerberus2: // Cerberus - Flame
+                    case TranceSeekBattleAbility.Zuu: // Zuu - Aera
+                    case TranceSeekBattleAbility.Ironite: // Ironite - Fira (Multi)
+                    case TranceSeekBattleAbility.Dragonfly: // Dragonfly - Charge
+                    case TranceSeekBattleAbility.Catoblepas2: // Catoblepas - Thundaga (Multi)
+                    case TranceSeekBattleAbility.Flan2: // Flan - Blizzard
+                    case TranceSeekBattleAbility.Garuda: // Garuda - Firaga
+                    case TranceSeekBattleAbility.LandWorm: // Land Worm - Earthquake
+                    case TranceSeekBattleAbility.Grenade: // Grenada - Molotov
+                    case TranceSeekBattleAbility.Griffin: // Griffon - Aera
+                    case TranceSeekBattleAbility.Griffin2: // Griffon - Tempest
+                    case TranceSeekBattleAbility.GiganToad: // Gigan Toad - Watera
+                    case TranceSeekBattleAbility.Abadon2: // Abadon - High Wind
+                    case TranceSeekBattleAbility.Wyerd: // Wyerd - Blizzard
+                    case TranceSeekBattleAbility.Mandragora: // Mandragora - Blizzara
+                    case TranceSeekBattleAbility.Torama: // Torama - Thundara
+                    case TranceSeekBattleAbility.Ladybug2: // Ladybug - Rainbow
+                    case TranceSeekBattleAbility.Dendrobium: // Dendrobium - Pollen
+                    case TranceSeekBattleAbility.Dendrobium2: // Dendrobium - Pollen
+                    case TranceSeekBattleAbility.Wraith: // Wraith (Ice) - Devil’s Candle
+                    case TranceSeekBattleAbility.Wraith2: // Wraith (Ice) - Frost
+                    case TranceSeekBattleAbility.Wraith3: // Wraith (Fire) - Devil’s Candle
+                    case TranceSeekBattleAbility.Wraith4: // Wraith (Fire) - Mustard Bomb
+                    case TranceSeekBattleAbility.Zaghnol2: // Zaghnol - Earthquake
+                    case TranceSeekBattleAbility.CarrionWorm: // Carrion Worm - Fira
+                    case TranceSeekBattleAbility.SandScorpion2: // Sand Scorpion - Mustard Bomb
+                    case TranceSeekBattleAbility.RingLeader2: // Ring Leader - Virus Powder
+                    case TranceSeekBattleAbility.CaveImp2: // Cave Imp - Sleeping Juice
+                    case TranceSeekBattleAbility.Skeleton: // Skeleton - Thunder
+                    case TranceSeekBattleAbility.Bomb: // Bombo - Mustard Bomb
+                    case TranceSeekBattleAbility.Ochu2: // Ochu - Floral dance
+                    case TranceSeekBattleAbility.Vepal: // Vepal (Ice) - Blizzaga
+                    case TranceSeekBattleAbility.Vepal2: // Vepal (Ice) - Snowstorm
+                    case TranceSeekBattleAbility.Vepal3: // Vepal (Fire) - Firaga
+                    case TranceSeekBattleAbility.Vepal4: // Vepal (Fire) - Fire Breath
+                    case TranceSeekBattleAbility.WormHydra2: // Worm Hydra - Aero Breath
+                    case TranceSeekBattleAbility.Malboro: // Malboro - Bio
+                    case TranceSeekBattleAbility.Yeti: // Yeti - Blizzara
                     {
                         _v.NormalMagicParams();
                         
@@ -342,7 +342,7 @@ namespace Memoria.Scripts.TranceSeek
                         TranceSeekAPI.BonusElement(_v);
                         if (TranceSeekAPI.CanAttackMagic(_v))
                         {
-                            if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)102))
+                            if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Archmage))
                                 TranceSeekAPI.TryCriticalHit(_v);
                             _v.CalcHpDamage();
                             TranceSeekAPI.RaiseTrouble(_v);
@@ -351,11 +351,11 @@ namespace Memoria.Scripts.TranceSeek
                         break;
                     }
                     // MAGIC RECOVERY - Script 10
-                    case (BattleAbilityId)1246: // Gimme cat - Curaga
-                    case (BattleAbilityId)1277: // Core - Cura
-                    case (BattleAbilityId)1281: // Clipper - Armor
+                    case TranceSeekBattleAbility.Gimmecat: // Gimme cat - Curaga
+                    case TranceSeekBattleAbility.Core2: // Core - Cura
+                    case TranceSeekBattleAbility.Clipper2: // Clipper - Armor
                     {
-                        if (_v.Command.AbilityId == (BattleAbilityId)1281)
+                        if (_v.Command.AbilityId == TranceSeekBattleAbility.Clipper2)
                         {
                             _v.Target.Flags |= CalcFlag.HpAlteration;
                             _v.Target.HpDamage = 9999;
@@ -366,38 +366,38 @@ namespace Memoria.Scripts.TranceSeek
                         TranceSeekAPI.CasterPenaltyMini(_v);
                         TranceSeekAPI.EnemyTranceBonusAttack(_v);
                         TranceSeekAPI.PenaltyCommandDividedAttack(_v);
-                        if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)102))
+                        if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Archmage))
                             TranceSeekAPI.TryCriticalHit(_v);
                         _v.CalcHpMagicRecovery();
                         TranceSeekAPI.TryAlterMagicStatuses(_v);
                         break;
                     }
                     // BAD STATUS - Script 11
-                    case (BattleAbilityId)1175: // Ahriman
-                    case (BattleAbilityId)1183: // Anemone
-                    case (BattleAbilityId)1189: // Carve Spider
-                    case (BattleAbilityId)1195: // Axolotl
-                    case (BattleAbilityId)1196: // Bandersnatch
-                    case (BattleAbilityId)1198: // Basilisk
-                    case (BattleAbilityId)1199: // Basilisk
-                    case (BattleAbilityId)1213: // Seeker Bat - Darkness
-                    case (BattleAbilityId)1225: // Dragonfly - Buzz
-                    case (BattleAbilityId)1233: // Whale Zombie - Ultra Sound Wave
-                    case (BattleAbilityId)1243: // Garuda - Stop
-                    case (BattleAbilityId)1259: // Grimlock - Stop
-                    case (BattleAbilityId)1261: // Gigan Toad - Glowing Eyes
-                    case (BattleAbilityId)1313: // Nymph - Pollen
-                    case (BattleAbilityId)1316: // Cactuar - Confuse
-                    case (BattleAbilityId)1319: // Abomination - Sleep
-                    case (BattleAbilityId)1342: // Ring Leader - Mini
-                    case (BattleAbilityId)1351: // Stroper - Petrify
-                    case (BattleAbilityId)1360: // Tonberry - Pain
-                    case (BattleAbilityId)1373: // Malboro - Bad Breath
+                    case TranceSeekBattleAbility.Veteran2: // Ahriman
+                    case TranceSeekBattleAbility.Anemone2: // Anemone
+                    case TranceSeekBattleAbility.CarveSpider2: // Carve Spider
+                    case TranceSeekBattleAbility.Axolotl2: // Axolotl
+                    case TranceSeekBattleAbility.Bandersnatch: // Bandersnatch
+                    case TranceSeekBattleAbility.Basilisk: // Basilisk
+                    case TranceSeekBattleAbility.Basilisk2: // Basilisk
+                    case TranceSeekBattleAbility.SeekerBat2: // Seeker Bat - Darkness
+                    case TranceSeekBattleAbility.Dragonfly2: // Dragonfly - Buzz
+                    case TranceSeekBattleAbility.WhaleZombie2: // Whale Zombie - Ultra Sound Wave
+                    case TranceSeekBattleAbility.Garuda2: // Garuda - Stop
+                    case TranceSeekBattleAbility.Grimlock2: // Grimlock - Stop
+                    case TranceSeekBattleAbility.GiganToad2: // Gigan Toad - Glowing Eyes
+                    case TranceSeekBattleAbility.Nymph2: // Nymph - Pollen
+                    case TranceSeekBattleAbility.Cactuar: // Cactuar - Confuse
+                    case TranceSeekBattleAbility.Abomination2: // Abomination - Sleep
+                    case TranceSeekBattleAbility.RingLeader: // Ring Leader - Mini
+                    case TranceSeekBattleAbility.Stroper2: // Stroper - Petrify
+                    case TranceSeekBattleAbility.Tonberry: // Tonberry - Pain
+                    case TranceSeekBattleAbility.Malboro2: // Malboro - Bad Breath
                     {
                         TranceSeekAPI.MagicAccuracy(_v);
                         _v.Target.PenaltyShellHitRate();
                         _v.PenaltyCommandDividedHitRate();
-                        if (_v.Command.AbilityId == (BattleAbilityId)1175) // Ahriman - Blaster
+                        if (_v.Command.AbilityId == TranceSeekBattleAbility.Veteran2) // Ahriman - Blaster
                         {
                             if (TranceSeekAPI.CheckUnsafetyOrGuard(_v))
                             {
@@ -433,8 +433,8 @@ namespace Memoria.Scripts.TranceSeek
                         break;
                     }
                     // DEATH STATUS - Script 14
-                    case (BattleAbilityId)1299: // Mimic - Death
-                    case (BattleAbilityId)1306: // Drakan - Death
+                    case TranceSeekBattleAbility.Mimic2: // Mimic - Death
+                    case TranceSeekBattleAbility.Drakan: // Drakan - Death
                     {
                         if (TranceSeekAPI.CheckUnsafetyOrGuard(_v))
                         {
@@ -457,7 +457,7 @@ namespace Memoria.Scripts.TranceSeek
                         break;
                     }
                     // DRAIN MP - Script 15
-                    case (BattleAbilityId)1235: // Ghost - Osmose
+                    case TranceSeekBattleAbility.Ghost2: // Ghost - Osmose
                     {
                         _v.Context.IsDrain = true;
                         if (!_v.IsCasterNotTarget() || !_v.Target.CanBeAttacked())
@@ -491,9 +491,9 @@ namespace Memoria.Scripts.TranceSeek
                         break;
                     }
                     // DRAIN HP - Script 16
-                    case (BattleAbilityId)1234: // Ghost - Drain
-                    case (BattleAbilityId)1303: // Trick Sparrow - Drain
-                    case (BattleAbilityId)1307: // Drakan - Mind Blast
+                    case TranceSeekBattleAbility.Ghost: // Ghost - Drain
+                    case TranceSeekBattleAbility.TrickSparrow2: // Trick Sparrow - Drain
+                    case TranceSeekBattleAbility.Drakan2: // Drakan - Mind Blast
                     {
                         if (_v.IsCasterNotTarget() && _v.Target.CanBeAttacked())
                         {
@@ -505,7 +505,7 @@ namespace Memoria.Scripts.TranceSeek
                             TranceSeekAPI.CasterPenaltyMini(_v);
                             if (_v.Command.HitRate != 111)
                                 TranceSeekAPI.PenaltyShellAttack(_v);
-                            if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)102))
+                            if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Archmage))
                                 TranceSeekAPI.TryCriticalHit(_v);
                             if (_v.Command.HitRate == 254)
                             {
@@ -548,9 +548,9 @@ namespace Memoria.Scripts.TranceSeek
                         break;
                     }
                     // MAGIC GRAVITY - Script 17
-                    case (BattleAbilityId)1239: // Antlion - Sandstorm
-                    case (BattleAbilityId)1291: // Feather Circle - Trouble Tail
-                    case (BattleAbilityId)1370: // Worm Hydra - Venom Breath
+                    case TranceSeekBattleAbility.Antlion2: // Antlion - Sandstorm
+                    case TranceSeekBattleAbility.FeatherCircle2: // Feather Circle - Trouble Tail
+                    case TranceSeekBattleAbility.WormHydra: // Worm Hydra - Venom Breath
                     {
                         SB2_PATTERN sb2Pattern = FF9StateSystem.Battle.FF9Battle.btl_scene.PatAddr[FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum];
                         for (Int32 i = 0; i < MagicGravityDamageScript.ImmuneGravity.GetLength(0); i++)
@@ -604,9 +604,9 @@ namespace Memoria.Scripts.TranceSeek
                         break;
                     }
                     // METEORITE (RANDOM MAGIC) - Script 18
-                    case (BattleAbilityId)1255: // Grenada - Fire balls
-                    case (BattleAbilityId)1275: // Behemoth - Meteor
-                    case (BattleAbilityId)1337: // Red Dragon - Twister
+                    case TranceSeekBattleAbility.Grenade2: // Grenada - Fire balls
+                    case TranceSeekBattleAbility.Behemoth2: // Behemoth - Meteor
+                    case TranceSeekBattleAbility.RedDragon2: // Red Dragon - Twister
                     {
                         _v.Context.Attack = GameRandom.Next16() % (_v.Caster.Magic + _v.Caster.Level);
                         _v.SetCommandPower();
@@ -624,7 +624,7 @@ namespace Memoria.Scripts.TranceSeek
                         break;
                     }
                     // GOBLIN PUNCH - Script 21
-                    case (BattleAbilityId)1251: // Goblin - Goblin Punch
+                    case TranceSeekBattleAbility.Goblin2: // Goblin - Goblin Punch
                     {
                         if (_v.Target.Level == _v.Caster.Level)
                         {
@@ -637,7 +637,7 @@ namespace Memoria.Scripts.TranceSeek
                         break;
                     }
                     // LVL DIRECT HP DAMAGE - Script 22
-                    case (BattleAbilityId)1262: // Hecteyes - LV5 Death
+                    case TranceSeekBattleAbility.Hecteyes: // Hecteyes - LV5 Death
                     {
                         if (_v.IsTargetLevelMultipleOfCommandRate() && _v.Target.CanBeAttacked())
                         {
@@ -677,7 +677,7 @@ namespace Memoria.Scripts.TranceSeek
                         break;
                     }
                     // LV REDUCE DEFENCE - Script 24
-                    case (BattleAbilityId)1331: // Carrion Worm - Stomach Acid
+                    case TranceSeekBattleAbility.CarrionWorm2: // Carrion Worm - Stomach Acid
                     {
                         if (_v.Command.Power == 0)
                         {
@@ -715,40 +715,40 @@ namespace Memoria.Scripts.TranceSeek
                         break;
                     }
                     // DIRECT HP DAMAGE - Script 25
-                    case (BattleAbilityId)1263: // Hecteyes - Roulette
-                    case (BattleAbilityId)1377: // Zombie - Roulette
+                    case TranceSeekBattleAbility.Hecteyes2: // Hecteyes - Roulette
+                    case TranceSeekBattleAbility.Zombie2: // Zombie - Roulette
                     {
                         if (TranceSeekAPI.CheckUnsafetyOrGuard(_v) && _v.Target.CanBeAttacked())
                             _v.TryDirectHPDamage();
                         break;
                     }
                     // THOUNSAND NEEDLES - Script 26
-                    case (BattleAbilityId)1317: // Cactuar - 1000 Needles
+                    case TranceSeekBattleAbility.Cactuar2: // Cactuar - 1000 Needles
                     {
                         _v.Target.Flags |= CalcFlag.HpAlteration;
                         _v.Target.HpDamage = (_v.Command.Power * 100 + _v.Command.HitRate);
                         break;
                     }
                     // MINUS STRIKE - Script 29
-                    case (BattleAbilityId)1289: // Mandragora - Chestnut
+                    case TranceSeekBattleAbility.Mandragora2: // Mandragora - Chestnut
                     {
                         _v.Target.Flags |= CalcFlag.HpAlteration;
                         _v.Target.HpDamage = (Int32)(_v.Caster.MaximumHp - _v.Caster.CurrentHp);
                         break;
                     }
                     // WHITE WIND - Script 30
-                    case (BattleAbilityId)1217: // Zuu - White Wind
-                    case (BattleAbilityId)1267: // Jabberwock - Psychokinesis
-                    case (BattleAbilityId)1354: // Zemzelett - Psychokinesis
-                    case (BattleAbilityId)1355: // Zemzelett - White Wind
+                    case TranceSeekBattleAbility.Zuu2: // Zuu - White Wind
+                    case TranceSeekBattleAbility.Jabberwock2: // Jabberwock - Psychokinesis
+                    case TranceSeekBattleAbility.Zemzelett: // Zemzelett - Psychokinesis
+                    case TranceSeekBattleAbility.Zemzelett2: // Zemzelett - White Wind
                     {
                         if (_v.Command.Power == 0)
                         {
                             if (_v.Target.Data == _v.Caster.Data)
                             {
                                 int Heal = (int)_v.Caster.CurrentHp;
-                                if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)100)) // Medecin
-                                    Heal += Heal / (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1100) ? 2 : 4);
+                                if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Doctor)) // Medecin
+                                    Heal += Heal / (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Doctor_Boosted) ? 2 : 4);
 
                                 foreach (BattleUnit unit in BattleState.EnumerateUnits())
                                 {
@@ -793,7 +793,7 @@ namespace Memoria.Scripts.TranceSeek
                         break;
                     }
                     // RANDOM MP DAMAGE - Script 31
-                    case (BattleAbilityId)1283: // Magic Vice - Magic Hammer
+                    case TranceSeekBattleAbility.MagicVice2: // Magic Vice - Magic Hammer
                     {
                         _v.Target.Flags |= (CalcFlag.MpAlteration);
 
@@ -808,8 +808,8 @@ namespace Memoria.Scripts.TranceSeek
                         break;
                     }
                     // ARMOR BREAK - Script 33
-                    case (BattleAbilityId)1178: // Amazone
-                    case (BattleAbilityId)1365: // Troll - Itching powder
+                    case TranceSeekBattleAbility.Soldier: // Amazone
+                    case TranceSeekBattleAbility.Troll2: // Troll - Itching powder
                     {
                         if (!_v.Target.TryKillFrozen())
                         {
@@ -845,7 +845,7 @@ namespace Memoria.Scripts.TranceSeek
                         break;
                     }
                     // POWER BREAK - Script 34
-                    case (BattleAbilityId)1364: // Troll - Chloroform
+                    case TranceSeekBattleAbility.Troll: // Troll - Chloroform
                     {
                         if (!_v.Target.TryKillFrozen())
                         {
@@ -881,7 +881,7 @@ namespace Memoria.Scripts.TranceSeek
                         break;
                     }
                     // MENTAL BREAK - Script 35
-                    case (BattleAbilityId)1179: // Amazone
+                    case TranceSeekBattleAbility.Soldier2: // Amazone
                     {
                         if (!_v.Target.TryKillFrozen())
                         {
@@ -917,7 +917,7 @@ namespace Memoria.Scripts.TranceSeek
                         break;
                     }
                     // CHAKRA - Script 37
-                    case (BattleAbilityId)1334: // Lamia - Chakra
+                    case TranceSeekBattleAbility.Lamia: // Lamia - Chakra
                     {
                         _v.Target.Flags |= (CalcFlag.HpDamageOrHeal | CalcFlag.MpDamageOrHeal);
                         _v.Target.HpDamage = (int)(_v.Target.MaximumHp * (uint)_v.Command.Power / 100U);
@@ -976,7 +976,7 @@ namespace Memoria.Scripts.TranceSeek
                         break;
                     }
                     // MIGHT SCRIPT - Script 43
-                    case (BattleAbilityId)1335: // Lamia - Might
+                    case TranceSeekBattleAbility.Lamia2: // Lamia - Might
                     {
                         TranceSeekAPI.TryAlterMagicStatuses(_v);
                         btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.PowerUp, parameters: $"+{_v.Command.Power}");
@@ -984,7 +984,7 @@ namespace Memoria.Scripts.TranceSeek
                         break;
                     }
                     // STEAL SCRIPT - Script 58
-                    case (BattleAbilityId)1282: // Magic Vice - Mug
+                    case TranceSeekBattleAbility.MagicVice: // Magic Vice - Mug
                     {
                         BattleScriptFactory factorymug = SBattleCalculator.FindScriptFactory(58); // Script 0058_StealScript
                         BattleScriptFactory factoryattack = SBattleCalculator.FindScriptFactory(8); // Script 0008_EnemyPhysicalAttackScript
@@ -1001,7 +1001,7 @@ namespace Memoria.Scripts.TranceSeek
                         break;
                     }
                     // ITEM ETHER - Script 70
-                    case (BattleAbilityId)1247: // Gimme cat - Ether
+                    case TranceSeekBattleAbility.Gimmecat2: // Gimme cat - Ether
                     {
                         _v.Context.Attack = 15;
                         _v.Context.AttackPower = _v.Command.Item.Power;
@@ -1010,7 +1010,7 @@ namespace Memoria.Scripts.TranceSeek
                         break;
                     }
                     // PUMPKIN HEAD - Script 78
-                    case (BattleAbilityId)1357: // Hedgehog Pie - Pumpkin Head
+                    case TranceSeekBattleAbility.HedgehogPie2: // Hedgehog Pie - Pumpkin Head
                     {
                         uint num = Math.Min(((_v.Caster.MaximumHp - _v.Caster.CurrentHp) / 33), 100);
                         _v.NormalMagicParams();
@@ -1023,7 +1023,7 @@ namespace Memoria.Scripts.TranceSeek
                         if (TranceSeekAPI.CanAttackMagic(_v))
                         {
                             _v.Target.Flags = CalcFlag.HpAlteration;
-                            if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)102))
+                            if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Archmage))
                                 TranceSeekAPI.TryCriticalHit(_v);
                             _v.CalcHpDamage();
                         }
@@ -1031,14 +1031,14 @@ namespace Memoria.Scripts.TranceSeek
                         break;
                     }
                     // MELT - Script 88
-                    case (BattleAbilityId)1353: // Bomb - Blowup
+                    case TranceSeekBattleAbility.Bomb2: // Bomb - Blowup
                     {
                         _v.Target.Flags |= CalcFlag.HpAlteration;
                         _v.Target.HpDamage = (Int32)_v.Caster.CurrentHp;
                         break;
                     }
                     // CANNON - Script 91
-                    case (BattleAbilityId)1204: // Armstrong - Cannon
+                    case TranceSeekBattleAbility.Armstrong: // Armstrong - Cannon
                     {
                         _v.PhysicalAccuracy();
                         if (TranceSeekAPI.TryPhysicalHit(_v))
@@ -1061,8 +1061,8 @@ namespace Memoria.Scripts.TranceSeek
                         break;
                     }
                     // MAELSTORM - Script 93
-                    case (BattleAbilityId)1181: // Amduscias
-                    case (BattleAbilityId)1293: // Torama - Blaster
+                    case TranceSeekBattleAbility.Amdusias2: // Amduscias
+                    case TranceSeekBattleAbility.Torama2: // Torama - Blaster
                     {
                         if (TranceSeekAPI.CheckUnsafetyOrGuard(_v) && _v.Target.CanBeAttacked())
                         {
@@ -1093,16 +1093,16 @@ namespace Memoria.Scripts.TranceSeek
                         break;
                     }
                     // PRECISE PHYSICAL ATTACK - Script 100
-                    case (BattleAbilityId)1173: // Agares
-                    case (BattleAbilityId)1208: // Shell Dragon - Charge
-                    case (BattleAbilityId)1232: // Whale Zombie - Fin
-                    case (BattleAbilityId)1238: // Antlion - Counter Horn
-                    case (BattleAbilityId)1245: // Land Worm - Sandstorm
-                    case (BattleAbilityId)1253: // Golem - Sandstorm
-                    case (BattleAbilityId)1264: // Abadon - Mantis Reaper
-                    case (BattleAbilityId)1270: // Lizard Man - Cleave
-                    case (BattleAbilityId)1336: // Red Dragon - Vacuum
-                    case (BattleAbilityId)1350: // Stroper - Sweep
+                    case TranceSeekBattleAbility.Agares2: // Agares
+                    case TranceSeekBattleAbility.ShellDragon: // Shell Dragon - Charge
+                    case TranceSeekBattleAbility.WhaleZombie: // Whale Zombie - Fin
+                    case TranceSeekBattleAbility.Antlion: // Antlion - Counter Horn
+                    case TranceSeekBattleAbility.LandWorm2: // Land Worm - Sandstorm
+                    case TranceSeekBattleAbility.SandGolem2: // Golem - Sandstorm
+                    case TranceSeekBattleAbility.Abadon: // Abadon - Mantis Reaper
+                    case TranceSeekBattleAbility.LizardMan: // Lizard Man - Cleave
+                    case TranceSeekBattleAbility.RedDragon: // Red Dragon - Vacuum
+                    case TranceSeekBattleAbility.Stroper: // Stroper - Sweep
                     {
                         if (!_v.Target.TryKillFrozen())
                         {
@@ -1135,33 +1135,33 @@ namespace Memoria.Scripts.TranceSeek
                         break;
                     }
                     // MAGIC APPLY POSITIVE - Script 103
-                    case (BattleAbilityId)1185: // Ao
-                    case (BattleAbilityId)1229: // Mu - Haste
-                    case (BattleAbilityId)1241: // Gargoyle - Protect
-                    case (BattleAbilityId)1249: // Goblin Mage - Vanish
-                    case (BattleAbilityId)1266: // Jabberwock - Shell
-                    case (BattleAbilityId)1269: // Vice - Trickery
-                    case (BattleAbilityId)1271: // Lizard Man - Protect
-                    case (BattleAbilityId)1276: // Core - Regen
-                    case (BattleAbilityId)1285: // Serpion - Shell
-                    case (BattleAbilityId)1298: // Mimic - Reflect
-                    case (BattleAbilityId)1305: // Hornet - Vanish
-                    case (BattleAbilityId)1310: // Gnoll - Haste
-                    case (BattleAbilityId)1321: // Axe Beak - Flash
-                    case (BattleAbilityId)1339: // Sahagin - Shell
+                    case TranceSeekBattleAbility.Adamantoise2: // Ao
+                    case TranceSeekBattleAbility.IronMan3: // Mu - Haste
+                    case TranceSeekBattleAbility.Gargoyle2: // Gargoyle - Protect
+                    case TranceSeekBattleAbility.GoblinMage2: // Goblin Mage - Vanish
+                    case TranceSeekBattleAbility.Jabberwock: // Jabberwock - Shell
+                    case TranceSeekBattleAbility.Vice2: // Vice - Trickery
+                    case TranceSeekBattleAbility.LizardMan2: // Lizard Man - Protect
+                    case TranceSeekBattleAbility.Core: // Core - Regen
+                    case TranceSeekBattleAbility.Serpion2: // Serpion - Shell
+                    case TranceSeekBattleAbility.Mimic: // Mimic - Reflect
+                    case TranceSeekBattleAbility.Hornet2: // Hornet - Vanish
+                    case TranceSeekBattleAbility.Gnoll: // Gnoll - Haste
+                    case TranceSeekBattleAbility.AxeBeak2: // Axe Beak - Flash
+                    case TranceSeekBattleAbility.Sahagin2: // Sahagin - Shell
                     {
                         TranceSeekAPI.TryAlterCommandStatuses(_v);
                         break;
                     }
                     // MAGIC APPLY POSITIVE - Script 104
-                    case (BattleAbilityId)1361: // Tonberry - Everyone’s Grudge
+                    case TranceSeekBattleAbility.Tonberry2: // Tonberry - Everyone’s Grudge
                     {
                         _v.Target.Flags |= CalcFlag.HpAlteration;
                         _v.Target.HpDamage = 1 << Math.Min(20, GameState.Tonberies - 1);
                         break;
                     }
                     // MAGIC LANCER - Script 115
-                    case (BattleAbilityId)1338: // Sahagin - Water-gun
+                    case TranceSeekBattleAbility.Sahagin: // Sahagin - Water-gun
                     {
                         if (_v.Target.MagicDefence == 255)
                         {
@@ -1197,7 +1197,7 @@ namespace Memoria.Scripts.TranceSeek
                         break;
                     }
                     // LOW RANDOM MAGIC - Script 116
-                    case (BattleAbilityId)1174: // Ahriman
+                    case TranceSeekBattleAbility.Veteran: // Ahriman
                     {
                         _v.Context.Attack = UnityEngine.Random.Range(((_v.Caster.Magic + _v.Caster.Level) / 3), (_v.Caster.Magic + _v.Caster.Level));
                         _v.SetCommandPower();
@@ -1215,10 +1215,10 @@ namespace Memoria.Scripts.TranceSeek
                         break;
                     }
                     // POISON MAGIC - Script 118
-                    case (BattleAbilityId)1177: // Amanite
-                    case (BattleAbilityId)1223: // DracoZombie - Zombie Breath
-                    case (BattleAbilityId)1333: // Python - Poison
-                    case (BattleAbilityId)1376: // Zombie - Poison
+                    case TranceSeekBattleAbility.Myconid2: // Amanite
+                    case TranceSeekBattleAbility.Dracozombie2: // DracoZombie - Zombie Breath
+                    case TranceSeekBattleAbility.Python2: // Python - Poison
+                    case TranceSeekBattleAbility.Zombie: // Zombie - Poison
                     {
                         _v.NormalMagicParams();
                         
@@ -1233,7 +1233,7 @@ namespace Memoria.Scripts.TranceSeek
                                 _v.Context.DamageModifierCount += 4;
                             if (_v.Target.IsZombie)
                                 _v.Target.Flags |= CalcFlag.HpRecovery;
-                            if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)102))
+                            if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Archmage))
                                 TranceSeekAPI.TryCriticalHit(_v);
                             _v.CalcHpDamage();
                         }
@@ -1241,7 +1241,7 @@ namespace Memoria.Scripts.TranceSeek
                         break;
                     }
                     // TRANCE SEEK SPECIAL - Script 164
-                    case (BattleAbilityId)1221: // Ironite - Dragon Force
+                    case TranceSeekBattleAbility.Ironite2: // Ironite - Dragon Force
                     {
                         _v.Target.TryAlterSingleStatus(BattleStatusId.ChangeStat, true, _v.Caster, "PhysicalDefence", Math.Min(255, _v.Target.PhysicalDefence + 2));
                         Dictionary<String, String> localizedMessage = new Dictionary<String, String>
@@ -1512,4 +1512,7 @@ namespace Memoria.Scripts.TranceSeek
         };
     }
 }
+
+
+
 

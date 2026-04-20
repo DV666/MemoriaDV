@@ -153,17 +153,17 @@ namespace Memoria.DefaultScripts
                                 MarcusWeakLight = true;
                                 target.WeakElement |= EffectElement.Holy;
                             }
-                            if (target.HasSupportAbilityByIndex((SupportAbility)242))
+                            if (target.HasSupportAbilityByIndex(TranceSeekSupportAbility.Lucifer))
                             {
                                 foreach (BattleStatusId statusId in FF9BattleDB.StatusData.Keys)
                                 {
                                     if (target.PartialResistStatus[statusId] == 0f && (statusId.ToBattleStatus() & BattleStatusConst.AnyNegative) != 0 && statusId != BattleStatusId.Death)
                                     {
-                                        target.PartialResistStatus[statusId] = target.HasSupportAbilityByIndex((SupportAbility)1242) ? 0.75f : 0.50f;
+                                        target.PartialResistStatus[statusId] = target.HasSupportAbilityByIndex(TranceSeekSupportAbility.Lucifer_Boosted) ? 0.75f : 0.50f;
                                         StatusResistOni.Add(statusId);
                                     }
                                 }
-                                if (target.HasSupportAbilityByIndex((SupportAbility)1242))
+                                if (target.HasSupportAbilityByIndex(TranceSeekSupportAbility.Lucifer_Boosted))
                                     target.AlterStatus(BattleStatus.EasyKill);
                             }
                             WEAPON_MODEL DemonWings = new WEAPON_MODEL { geo = ModelFactory.CreateModel("GEO_NPC_DemonWings", true) };
@@ -290,13 +290,13 @@ namespace Memoria.DefaultScripts
                             MarcusWeakLight = false;
                             target.WeakElement &= ~EffectElement.Holy;
                         }
-                        if (target.HasSupportAbilityByIndex((SupportAbility)242))
+                        if (target.HasSupportAbilityByIndex(TranceSeekSupportAbility.Lucifer))
                         {
                             foreach (BattleStatusId statusId in StatusResistOni)
                             {
                                 target.PartialResistStatus[statusId] = 0f;
                             }
-                            if (target.HasSupportAbilityByIndex((SupportAbility)1242))
+                            if (target.HasSupportAbilityByIndex(TranceSeekSupportAbility.Lucifer_Boosted))
                                 target.RemoveStatus(BattleStatus.EasyKill);
                         }
                     }
@@ -422,18 +422,20 @@ namespace Memoria.DefaultScripts
             if (battleEnemy.StealableItems[3] != RegularItem.NoItem)
             {
                 if (mob.Data.dms_geo_id == 92) // Gnoll
-                    battleEnemy.StealableItems[3] = (RegularItem)1161;
+                    battleEnemy.StealableItems[3] = TranceSeekRegularItem.TwinLance;
                 else if (mob.Data.dms_geo_id == 85) // Lamia
-                    battleEnemy.StealableItems[3] = (RegularItem)1159;
+                    battleEnemy.StealableItems[3] = TranceSeekRegularItem.LamiaFan;
                 else if (mob.Data.dms_geo_id == 152) // Goblin
-                    battleEnemy.StealableItems[3] = (RegularItem)1037;
+                    battleEnemy.StealableItems[3] = TranceSeekRegularItem.Forklin;
                 else if (mob.Data.dms_geo_id == 556) // Mistodon
-                    battleEnemy.StealableItems[3] = (RegularItem)1041;
+                    battleEnemy.StealableItems[3] = TranceSeekRegularItem.Mistfork;
                 else if (mob.Data.dms_geo_id == 90) // Griffin
-                    battleEnemy.StealableItems[3] = (RegularItem)1039;
+                    battleEnemy.StealableItems[3] = TranceSeekRegularItem.Forkstral;
                 else if (mob.Data.dms_geo_id == 327) // Ogra
-                    battleEnemy.StealableItems[3] = (RegularItem)1168;
+                    battleEnemy.StealableItems[3] = TranceSeekRegularItem.OgraKnife;
             }
         }
     }
 }
+
+

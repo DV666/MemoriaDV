@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using FF9;
 using Memoria.Data;
@@ -48,7 +48,7 @@ namespace Memoria.Scripts.TranceSeek
                 _v.CalcHpDamage();
             }
             TranceSeekAPI.TryAlterMagicStatuses(_v);
-            /*if (_v.Command.AbilityId == (BattleAbilityId)1044 || _v.Command.AbilityId == (BattleAbilityId)1056 || _v.Command.HitRate == 255)
+            /*if (_v.Command.AbilityId == TranceSeekBattleAbility.Judgement || _v.Command.AbilityId == TranceSeekBattleAbility.Purification || _v.Command.HitRate == 255)
             {
                 _v.Target.Flags |= CalcFlag.MpAlteration;
                 int num = Math.Min(9999, _v.Context.PowerDifference * _v.Context.EnsureAttack);
@@ -57,3 +57,4 @@ namespace Memoria.Scripts.TranceSeek
         }
     }
 }
+

@@ -1,4 +1,4 @@
-using Memoria.Data;
+﻿using Memoria.Data;
 using System;
 using System.Collections.Generic;
 
@@ -23,7 +23,7 @@ namespace Memoria.Scripts.TranceSeek
             TranceSeekAPI.CasterPenaltyMini(_v);
             TranceSeekAPI.EnemyTranceBonusAttack(_v);
             TranceSeekAPI.PenaltyCommandDividedAttack(_v);
-            if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)102))
+            if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Archmage))
                 TranceSeekAPI.TryCriticalHit(_v);
             _v.CalcHpMagicRecovery();
             _v.Target.Flags |= (CalcFlag.MpDamageOrHeal);
@@ -35,3 +35,4 @@ namespace Memoria.Scripts.TranceSeek
         }
     }
 }
+
