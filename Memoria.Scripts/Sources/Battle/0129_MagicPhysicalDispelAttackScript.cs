@@ -509,6 +509,12 @@ namespace Memoria.Scripts.TranceSeek
         private bool _showLangDropdown = false;
         private Vector2 _langScrollPos = Vector2.zero;
 
+        private bool _showTriggerBattleMenu = false;
+        private Rect _triggerBattleWindowRect = new Rect(310, 50, 300, 200);
+        private string _battleIdStr = "0";
+        private string _battleGroupStr = "0";
+        private bool _randomBattleGroup = false;
+
         private Dictionary<string, string> _statTextCache = new Dictionary<string, string>();
 
         private int _statusMode = 0;
@@ -574,7 +580,7 @@ namespace Memoria.Scripts.TranceSeek
         };
 
         private int _elementMode = 0;
-        private readonly string[] _elementModeNames = { "<color=#FF5555>Weak Element</color>", "<color=#55FF55>Half Element</color>", "<color=#5555FF>Guard Element</color>", "<color=#55FFFF>Absorb Element</color>" };
+        private readonly string[] _elementModeNames = { "<color=#FF5555>Weak Element</color>", "<color=#55FF55>Half Element</color>", "<color=#5555FF>Guard Element</color>", "<color=#55FFFF>Absorb Element</color>", "<color=#FF55FF>Bonus Element</color>" };
         private Vector2 _elementScrollPos = Vector2.zero;
 
         private static readonly KeyValuePair<string, EffectElement>[] _elementList = new KeyValuePair<string, EffectElement>[]
@@ -623,6 +629,7 @@ namespace Memoria.Scripts.TranceSeek
             _showItemsMenu = false;
             _showLearningMenu = false;
             _showLangMenu = false;
+            _showTriggerBattleMenu = false;
             if (_showFieldMenu)
             {
                 RestoreAllFieldAnimations();
@@ -679,6 +686,12 @@ namespace Memoria.Scripts.TranceSeek
             {
                 GUI.backgroundColor = Color.black;
                 _langWindowRect = GUI.Window(1409, _langWindowRect, DrawLangMenu, "Mod : Language Debug");
+            }
+
+            if (_showMenu && _showTriggerBattleMenu && SceneDirector.IsFieldScene())
+            {
+                GUI.backgroundColor = Color.black;
+                _triggerBattleWindowRect = GUI.Window(1415, _triggerBattleWindowRect, DrawTriggerBattleMenu, "Mod : Trigger Battle");
             }
 
             if (_showMenu && _showFieldMenu && SceneDirector.IsFieldScene())
@@ -750,10 +763,19 @@ namespace Memoria.Scripts.TranceSeek
                     _showFieldMenu = t;
                     SoundLib.PlaySoundEffect(1362);
                 }
+
+                if (GUILayout.Button(_showTriggerBattleMenu ? "<color=orange><b>Fermer Trigger Battle</b></color>" : "<b>Ouvrir Trigger Battle</b>"))
+                {
+                    bool t = !_showTriggerBattleMenu;
+                    CloseAllSubMenus();
+                    _showTriggerBattleMenu = t;
+                    SoundLib.PlaySoundEffect(1362);
+                }
             }
             else
             {
                 _showFieldMenu = false;
+                _showTriggerBattleMenu = false;
             }
 
             GUILayout.Space(15);
@@ -1046,11 +1068,14 @@ namespace Memoria.Scripts.TranceSeek
 
         private void DrawUnitsTab()
         {
-            List<BattleUnit> units = BattleState.EnumerateUnits().ToList(); if (units.Count == 0) return;
+            List<BattleUnit> units = BattleState.EnumerateUnits().ToList();
+            if (units.Count == 0) return;
             if (_currentUnitIndex >= units.Count) _currentUnitIndex = 0;
+
             GUILayout.BeginHorizontal();
             if (GUILayout.Button("<", GUILayout.Width(40), GUILayout.Height(30))) { _currentUnitIndex--; if (_currentUnitIndex < 0) _currentUnitIndex = units.Count - 1; _statTextCache.Clear(); GUI.FocusControl(null); }
-            BattleUnit u = units[_currentUnitIndex]; string n = u.IsPlayer ? $"⭐ <color=#00FFFF>{FF9TextTool.CharacterDefaultName(u.PlayerIndex)}</color> ⭐" : $"👾 <color=#FF5555>{SpecialFilesTranceSeek.RemoveTags(u.Name)}</color> 👾";
+            BattleUnit u = units[_currentUnitIndex];
+            string n = u.IsPlayer ? $"⭐ <color=#00FFFF>{FF9TextTool.CharacterDefaultName(u.PlayerIndex)}</color> ⭐" : $"👾 <color=#FF5555>{SpecialFilesTranceSeek.RemoveTags(u.Name)}</color> 👾";
             GUILayout.Label($"<b>{n}</b>\nID: {u.Id}", new GUIStyle(GUI.skin.label) { richText = true, alignment = TextAnchor.MiddleCenter });
             if (GUILayout.Button(">", GUILayout.Width(40), GUILayout.Height(30))) { _currentUnitIndex++; if (_currentUnitIndex >= units.Count) _currentUnitIndex = 0; _statTextCache.Clear(); GUI.FocusControl(null); }
             GUILayout.Space(10);
@@ -1060,27 +1085,34 @@ namespace Memoria.Scripts.TranceSeek
                 GUI.FocusControl(null);
                 SoundLib.PlaySoundEffect(103);
             }
+            if (GUILayout.Button("✅ Apply", GUILayout.Width(90), GUILayout.Height(30)))
+            {
+                ApplyUnitStats(u);
+                _statTextCache.Clear();
+                GUI.FocusControl(null);
+                SoundLib.PlaySoundEffect(104);
+            }
             GUILayout.EndHorizontal();
 
             GUILayout.BeginVertical("box");
             GUILayout.BeginHorizontal();
             GUILayout.BeginVertical(GUILayout.Width(220));
-            u.CurrentHp = (uint)Mathf.Clamp(DrawStatUI($"{u.Id}_HP", "HP", (int)u.CurrentHp), 0, 99999);
-            u.MaximumHp = (uint)Mathf.Clamp(DrawStatUI($"{u.Id}_MaxHP", "Max HP", (int)u.MaximumHp), 1, 99999);
-            u.CurrentMp = (uint)Mathf.Clamp(DrawStatUI($"{u.Id}_MP", "MP", (int)u.CurrentMp), 0, 9999);
-            u.MaximumMp = (uint)Mathf.Clamp(DrawStatUI($"{u.Id}_MaxMP", "Max MP", (int)u.MaximumMp), 1, 9999);
-            u.Level = (byte)Mathf.Clamp(DrawStatUI($"{u.Id}_Lvl", "Level", u.Level), 1, 99);
-            u.Trance = (byte)Mathf.Clamp(DrawStatUI($"{u.Id}_Trance", "Trance", u.Trance), 0, 255);
+            DrawUnitStatUI($"{u.Id}_HP", "HP", (int)u.CurrentHp, 0, 99999);
+            DrawUnitStatUI($"{u.Id}_MaxHP", "Max HP", (int)u.MaximumHp, 1, 99999);
+            DrawUnitStatUI($"{u.Id}_MP", "MP", (int)u.CurrentMp, 0, 9999);
+            DrawUnitStatUI($"{u.Id}_MaxMP", "Max MP", (int)u.MaximumMp, 1, 9999);
+            DrawUnitStatUI($"{u.Id}_Lvl", "Level", u.Level, 1, 99);
+            DrawUnitStatUI($"{u.Id}_Trance", "Trance", u.Trance, 0, 255);
             GUILayout.EndVertical();
             GUILayout.BeginVertical(GUILayout.Width(220));
-            u.Strength = (byte)Mathf.Clamp(DrawStatUI($"{u.Id}_Str", "Strength", u.Strength), 0, 255);
-            u.Magic = (byte)Mathf.Clamp(DrawStatUI($"{u.Id}_Mag", "Magic", u.Magic), 0, 255);
-            u.Dexterity = (byte)Mathf.Clamp(DrawStatUI($"{u.Id}_Dex", "Dexterity", u.Dexterity), 0, 255);
-            u.Will = (byte)Mathf.Clamp(DrawStatUI($"{u.Id}_Will", "Will", u.Will), 0, 255);
-            u.PhysicalDefence = Mathf.Clamp(DrawStatUI($"{u.Id}_PDef", "Phys Def", u.PhysicalDefence), 0, 9999);
-            u.PhysicalEvade = Mathf.Clamp(DrawStatUI($"{u.Id}_PEvd", "Phys Evd", u.PhysicalEvade), 0, 9999);
-            u.MagicDefence = Mathf.Clamp(DrawStatUI($"{u.Id}_MDef", "Mag Def", u.MagicDefence), 0, 9999);
-            u.MagicEvade = Mathf.Clamp(DrawStatUI($"{u.Id}_MEvd", "Mag Evd", u.MagicEvade), 0, 9999);
+            DrawUnitStatUI($"{u.Id}_Str", "Strength", u.Strength, 0, 255);
+            DrawUnitStatUI($"{u.Id}_Mag", "Magic", u.Magic, 0, 255);
+            DrawUnitStatUI($"{u.Id}_Dex", "Dexterity", u.Dexterity, 0, 255);
+            DrawUnitStatUI($"{u.Id}_Will", "Will", u.Will, 0, 255);
+            DrawUnitStatUI($"{u.Id}_PDef", "Phys Def", u.PhysicalDefence, 0, 9999);
+            DrawUnitStatUI($"{u.Id}_PEvd", "Phys Evd", u.PhysicalEvade, 0, 9999);
+            DrawUnitStatUI($"{u.Id}_MDef", "Mag Def", u.MagicDefence, 0, 9999);
+            DrawUnitStatUI($"{u.Id}_MEvd", "Mag Evd", u.MagicEvade, 0, 9999);
             GUILayout.EndVertical();
             GUILayout.EndHorizontal();
             GUILayout.Space(5);
@@ -1095,21 +1127,29 @@ namespace Memoria.Scripts.TranceSeek
             int col = 3, c = 0; GUILayout.BeginHorizontal();
             foreach (var kv in _statusList)
             {
-                bool h = false; if (_statusMode == 0) h = (u.CurrentStatus & kv.Value) != 0; else if (_statusMode == 1) h = (u.PermanentStatus & kv.Value) != 0; else h = (u.ResistStatus & kv.Value) != 0;
+                bool h = false;
+                if (_statusMode == 0) h = (u.CurrentStatus & kv.Value) != 0;
+                else if (_statusMode == 1) h = (u.PermanentStatus & kv.Value) != 0;
+                else h = (u.ResistStatus & kv.Value) != 0;
+
                 bool t = GUILayout.Toggle(h, kv.Key, GUILayout.Width(135));
-                if (t != h) { if (_statusMode == 0) { if (t) u.AlterStatus(kv.Value, u); else u.RemoveStatus(kv.Value); } else if (_statusMode == 1) btl_stat.MakeStatusesPermanent(u, kv.Value, t); else { if (t) u.ResistStatus |= kv.Value; else u.ResistStatus &= ~kv.Value; } }
+                if (t != h)
+                {
+                    if (_statusMode == 0) { if (t) u.AlterStatus(kv.Value, u); else u.RemoveStatus(kv.Value); }
+                    else if (_statusMode == 1) btl_stat.MakeStatusesPermanent(u, kv.Value, t);
+                    else { if (t) u.ResistStatus |= kv.Value; else u.ResistStatus &= ~kv.Value; }
+                }
                 c++; if (c % col == 0) { GUILayout.EndHorizontal(); GUILayout.BeginHorizontal(); }
             }
             GUILayout.EndHorizontal(); GUILayout.EndScrollView();
             GUILayout.EndVertical();
-
             GUILayout.Space(5);
 
             GUILayout.BeginVertical("box");
             GUILayout.BeginHorizontal();
-            if (GUILayout.Button("<", GUILayout.Width(30))) { _elementMode--; if (_elementMode < 0) _elementMode = 3; }
+            if (GUILayout.Button("<", GUILayout.Width(30))) { _elementMode--; if (_elementMode < 0) _elementMode = 4; }
             GUILayout.Label(_elementModeNames[_elementMode], new GUIStyle(GUI.skin.label) { richText = true, alignment = TextAnchor.MiddleCenter });
-            if (GUILayout.Button(">", GUILayout.Width(30))) { _elementMode++; if (_elementMode > 3) _elementMode = 0; }
+            if (GUILayout.Button(">", GUILayout.Width(30))) { _elementMode++; if (_elementMode > 4) _elementMode = 0; }
             GUILayout.EndHorizontal();
             _elementScrollPos = GUILayout.BeginScrollView(_elementScrollPos, GUILayout.Height(80));
             int colElem = 4, cElem = 0; GUILayout.BeginHorizontal();
@@ -1119,7 +1159,8 @@ namespace Memoria.Scripts.TranceSeek
                 if (_elementMode == 0) hElem = (u.WeakElement & kv.Value) != 0;
                 else if (_elementMode == 1) hElem = (u.HalfElement & kv.Value) != 0;
                 else if (_elementMode == 2) hElem = (u.GuardElement & kv.Value) != 0;
-                else hElem = (u.AbsorbElement & kv.Value) != 0;
+                else if (_elementMode == 3) hElem = (u.AbsorbElement & kv.Value) != 0;
+                else hElem = (u.BonusElement & kv.Value) != 0;
 
                 bool tElem = GUILayout.Toggle(hElem, kv.Key, GUILayout.Width(100));
                 if (tElem != hElem)
@@ -1127,13 +1168,74 @@ namespace Memoria.Scripts.TranceSeek
                     if (_elementMode == 0) { if (tElem) u.WeakElement |= kv.Value; else u.WeakElement &= ~kv.Value; }
                     else if (_elementMode == 1) { if (tElem) u.HalfElement |= kv.Value; else u.HalfElement &= ~kv.Value; }
                     else if (_elementMode == 2) { if (tElem) u.GuardElement |= kv.Value; else u.GuardElement &= ~kv.Value; }
-                    else { if (tElem) u.AbsorbElement |= kv.Value; else u.AbsorbElement &= ~kv.Value; }
+                    else if (_elementMode == 3) { if (tElem) u.AbsorbElement |= kv.Value; else u.AbsorbElement &= ~kv.Value; }
+                    else { if (tElem) u.BonusElement |= kv.Value; else u.BonusElement &= ~kv.Value; }
                 }
                 cElem++; if (cElem % colElem == 0) { GUILayout.EndHorizontal(); GUILayout.BeginHorizontal(); }
             }
             GUILayout.EndHorizontal(); GUILayout.EndScrollView();
             GUILayout.EndVertical();
             GUILayout.EndVertical();
+        }
+
+        private void DrawUnitStatUI(string k, string l, int liveValue, int min, int max, int w = 75)
+        {
+            GUILayout.BeginHorizontal();
+            GUILayout.Label(l, GUILayout.Width(w));
+
+            if (!_statTextCache.ContainsKey(k))
+                _statTextCache[k] = liveValue.ToString();
+
+            bool isModified = false;
+            if (int.TryParse(_statTextCache[k], out int parsed) && parsed != liveValue)
+                isModified = true;
+
+            if (GUILayout.Button("-", GUILayout.Width(20)))
+            {
+                if (int.TryParse(_statTextCache[k], out int v)) _statTextCache[k] = Mathf.Clamp(v - 1, min, max).ToString();
+                GUI.FocusControl(null);
+            }
+
+            GUI.SetNextControlName(k);
+
+            Color defaultColor = GUI.contentColor;
+            if (isModified) GUI.contentColor = Color.yellow;
+
+            _statTextCache[k] = GUILayout.TextField(_statTextCache[k], GUILayout.Width(45));
+
+            GUI.contentColor = defaultColor;
+
+            if (GUILayout.Button("+", GUILayout.Width(20)))
+            {
+                if (int.TryParse(_statTextCache[k], out int v)) _statTextCache[k] = Mathf.Clamp(v + 1, min, max).ToString();
+                GUI.FocusControl(null);
+            }
+            GUILayout.EndHorizontal();
+        }
+
+        private void ApplyUnitStats(BattleUnit u)
+        {
+            u.CurrentHp = (uint)GetCachedStat($"{u.Id}_HP", (int)u.CurrentHp, 0, 99999);
+            u.MaximumHp = (uint)GetCachedStat($"{u.Id}_MaxHP", (int)u.MaximumHp, 1, 99999);
+            u.CurrentMp = (uint)GetCachedStat($"{u.Id}_MP", (int)u.CurrentMp, 0, 9999);
+            u.MaximumMp = (uint)GetCachedStat($"{u.Id}_MaxMP", (int)u.MaximumMp, 1, 9999);
+            u.Level = (byte)GetCachedStat($"{u.Id}_Lvl", u.Level, 1, 99);
+            u.Trance = (byte)GetCachedStat($"{u.Id}_Trance", u.Trance, 0, 255);
+            u.Strength = (byte)GetCachedStat($"{u.Id}_Str", u.Strength, 0, 255);
+            u.Magic = (byte)GetCachedStat($"{u.Id}_Mag", u.Magic, 0, 255);
+            u.Dexterity = (byte)GetCachedStat($"{u.Id}_Dex", u.Dexterity, 0, 255);
+            u.Will = (byte)GetCachedStat($"{u.Id}_Will", u.Will, 0, 255);
+            u.PhysicalDefence = GetCachedStat($"{u.Id}_PDef", u.PhysicalDefence, 0, 9999);
+            u.PhysicalEvade = GetCachedStat($"{u.Id}_PEvd", u.PhysicalEvade, 0, 9999);
+            u.MagicDefence = GetCachedStat($"{u.Id}_MDef", u.MagicDefence, 0, 9999);
+            u.MagicEvade = GetCachedStat($"{u.Id}_MEvd", u.MagicEvade, 0, 9999);
+        }
+
+        private int GetCachedStat(string key, int fallback, int min, int max)
+        {
+            if (_statTextCache.TryGetValue(key, out string valStr) && int.TryParse(valStr, out int val))
+                return Mathf.Clamp(val, min, max);
+            return fallback;
         }
 
         void DrawAbilitiesMenu(int windowID)
@@ -1639,6 +1741,64 @@ namespace Memoria.Scripts.TranceSeek
 
             GUI.DragWindow();
         }
+
+        void DrawTriggerBattleMenu(int windowID)
+        {
+            GUILayout.BeginVertical("box");
+            GUILayout.Label("<b>Lancer un combat</b>", new GUIStyle(GUI.skin.label) { richText = true, alignment = TextAnchor.MiddleCenter });
+            GUILayout.Space(10);
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Battle ID:", GUILayout.Width(100));
+            _battleIdStr = GUILayout.TextField(_battleIdStr, GUILayout.Width(100));
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Group ID:", GUILayout.Width(100));
+            _battleGroupStr = GUILayout.TextField(_battleGroupStr, GUILayout.Width(100));
+            GUILayout.EndHorizontal();
+
+            GUILayout.Space(15);
+
+            if (GUILayout.Button("Lancer le combat", GUILayout.Height(40)))
+            {
+                if (int.TryParse(_battleIdStr, out int battleId) && battleId >= 0 &&
+                    sbyte.TryParse(_battleGroupStr, out sbyte groupId) && groupId >= -1)
+                {
+                    if (!FF9BattleDB.SceneData.Any(kvp => kvp.Value == battleId))
+                    {
+                        Memoria.Prime.Log.Warning($"[DebugMenu] Impossible de lancer le combat : l'ID {battleId} n'existe pas dans SceneData !");
+                        SoundLib.PlaySoundEffect(102);
+                        return;
+                    }
+
+                    _showMenu = false;
+                    SoundLib.PlaySoundEffect(103);
+                    PersistenSingleton<EventEngine>.Instance.TriggerDebugBattle(battleId, groupId);
+                }
+                else
+                {
+                    SoundLib.PlaySoundEffect(102);
+                }
+            }
+
+            GUILayout.EndVertical();
+            GUI.DragWindow();
+        }
+
+        // For EventEngine.cs
+
+        /*public void TriggerDebugBattle(Int32 battleSceneId, SByte btlGroup = -1)
+        {
+            this.SetBattleScene(battleSceneId);
+            this._ff9.btlSubMapNo = btlGroup;
+            this._ff9.steiner_state = 0;
+            this._encountBase = 0;
+
+            FF9StateSystem.Battle.isRandomEncounter = false;
+            FF9StateSystem.Battle.isEncount = true;
+            this._encountReserved = true;
+        }*/
 
         private void RestoreAllFieldAnimations()
         {

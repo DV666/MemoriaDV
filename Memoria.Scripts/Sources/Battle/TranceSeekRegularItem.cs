@@ -113,10 +113,11 @@ namespace Memoria.Scripts.TranceSeek
         public const RegularItem TwinLance = (RegularItem)1161;
         public const RegularItem Howlfang = (RegularItem)1162;
         public const RegularItem LarcenyScepter = (RegularItem)1163;
-        public const RegularItem OgraKnife = (RegularItem)1164;
+        public const RegularItem OgraSurin = (RegularItem)1164;
         public const RegularItem HunterSpear = (RegularItem)1165;
         public const RegularItem TypeCRod = (RegularItem)1166;
         public const RegularItem ImpDagger = (RegularItem)1167;
+        public const RegularItem OgraKnife = (RegularItem)1168;
         public const RegularItem GhostScarf = (RegularItem)1200;
         public const RegularItem LamiaEarrings = (RegularItem)1201;
         public const RegularItem Limblulline = (RegularItem)1202;

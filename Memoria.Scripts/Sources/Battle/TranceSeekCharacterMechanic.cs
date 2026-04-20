@@ -352,7 +352,7 @@ namespace Memoria.Scripts.TranceSeek
                                 else
                                 {
                                     Vivi_TSVar.Focus = 0;
-                                    btl2d.Btl2dReqSymbolMessage(v.Caster, "[BA55D3]", MessageFocusViviLost, HUDMessage.MessageStyle.DAMAGE, 40);
+                                    btl2d.Btl2dReqSymbolMessage(v.Caster, "[FF0000]", MessageFocusViviLost, HUDMessage.MessageStyle.DAMAGE, 40);
                                 }
                             }
 
@@ -431,7 +431,7 @@ namespace Memoria.Scripts.TranceSeek
                                     else
                                     {
                                         Vivi_TSVar.Focus = 0;
-                                        btl2d.Btl2dReqSymbolMessage(Vivi, "[BA55D3]", MessageFocusViviLost, HUDMessage.MessageStyle.DAMAGE, 40);
+                                        btl2d.Btl2dReqSymbolMessage(Vivi, "[FF0000]", MessageFocusViviLost, HUDMessage.MessageStyle.DAMAGE, 40);
                                     }
                                 }
                                 Vivi_TSVar.PreviousSpell = v.Command.AbilityId;

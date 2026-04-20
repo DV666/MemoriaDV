@@ -82,6 +82,12 @@ namespace Memoria.Scripts.TranceSeek
                 dictbattle[5] = value;
             }
         }
+
+        // For switching model in battle (Thief! and Bandit! mechanic)
+        public GameObject OriginalModel { get; set; }
+        public GameObject AltModel { get; set; }
+        public GameObject OriginalTranceModel { get; set; }
+        public GameObject AltTranceModel { get; set; }
     }
 
     public class ViviPassives
