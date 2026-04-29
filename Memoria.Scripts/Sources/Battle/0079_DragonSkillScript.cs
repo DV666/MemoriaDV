@@ -33,7 +33,7 @@ namespace Memoria.Scripts.TranceSeek
             bool IsAbility(BattleAbilityId targetAA) => abilityId == targetAA || (!_v.Caster.IsPlayer && _v.Command.Data.aa.Vfx2 == (ushort)targetAA);
             bool isDragonOrTrance = _v.Target.IsUnderAnyStatus(TranceSeekStatus.Dragon) || _v.Caster.IsUnderStatus(BattleStatus.Trance);
 
-            if (_v.Target.IsUnderAnyStatus(TranceSeekStatus.Dragon))
+            if (_v.Target.IsUnderAnyStatus(TranceSeekStatus.Dragon)) // +25% bonus agaist Targer under Dragon using a Dragon skill
                 _v.Context.DamageModifierCount++;
 
             if (IsAbility(BattleAbilityId.Lancer))
