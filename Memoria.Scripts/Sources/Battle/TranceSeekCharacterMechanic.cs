@@ -6,6 +6,7 @@ using Memoria.Database;
 using Memoria.Prime;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using static Memoria.Scripts.TranceSeek.TranceSeekBattleDictionary;
 using static SFX;
 
@@ -68,9 +69,6 @@ namespace Memoria.Scripts.TranceSeek
         {
             if (v.Target.IsUnderAnyStatus(TranceSeekStatus.Dragon))
             {
-                if (v.Command.AbilityId == BattleAbilityId.Luna) // Luna effect handle in 0079_DragonSkillScript.cs
-                    return;
-
                 if (v.Target.IsUnderAnyStatus(TranceSeekStatus.Dragon) && !v.Caster.IsUnderStatus(BattleStatus.Trance) && v.Command.ScriptId == 79) // Only used with DragonSkillScript
                 {
                     float DragonRemove = v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.DragonsEye_Boosted) ? 25 : (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.DragonsEye) ? 12.5f : 0); // Eye of the dragon
@@ -310,7 +308,7 @@ namespace Memoria.Scripts.TranceSeek
                         if (Vivi_TSVar.NumberTargets == 0)
                         {
                             Vivi_TSVar.NumberTargets = v.Command.TargetCount;
-                            if (FF9TextTool.ActionAbilityName(Vivi_TSVar.PreviousSpell) != v.Command.AbilityName)
+                            if (Vivi_TSVar.PreviousSpell != v.Command.AbilityId)
                             {
                                 Int32 BonusFocusMax = 0;
                                 switch (v.Caster.Weapon)
@@ -331,12 +329,9 @@ namespace Memoria.Scripts.TranceSeek
                                         BonusFocusMax += 50;
                                         break;
                                 }
-                                if (Vivi_TSVar.Focus < (50 + BonusFocusMax))
-                                {
-                                    Vivi_TSVar.Focus += v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Bobbin) ? 10 : 5; // SA Bobbin
-                                }
-                                int ViviFocus = Vivi_TSVar.Focus;
-                                ShowFocusMessage(v.Caster, "[BA55D3]", MessageFocusViviPlus, ViviFocus);
+
+                                Vivi_TSVar.Focus = Math.Min(Vivi_TSVar.Focus + (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Bobbin) ? 10 : 5), 50 + BonusFocusMax);
+                                ShowFocusMessage(v.Caster, "[BA55D3]", MessageFocusViviPlus, Vivi_TSVar.Focus);
                             }
                             else
                             {
@@ -346,8 +341,7 @@ namespace Memoria.Scripts.TranceSeek
                                     if (Vivi_TSVar.Focus % 10U == 5)
                                         Vivi_TSVar.Focus += 5;
 
-                                    int ViviFocus = Vivi_TSVar.Focus;
-                                    ShowFocusMessage(v.Caster, "[BA55D3]", MessageFocusViviPlus, ViviFocus);
+                                    ShowFocusMessage(v.Caster, "[BA55D3]", MessageFocusViviPlus, Vivi_TSVar.Focus);
                                 }
                                 else
                                 {
@@ -382,12 +376,19 @@ namespace Memoria.Scripts.TranceSeek
                     if (Vivi_TSVar.NumberTargets == 0)
                     {
                         Vivi_TSVar.NumberTargets = v.Command.TargetCount;
+                        Int32 MagicSwordID = (Int32)v.Command.AbilityId;
+                        BattleAbilityId BlackMagicAbilityId = (BattleAbilityId)FF9BattleDB.MagicSwordData.Values
+                                    .Where(m => m.UnlockedAbilities.Contains(MagicSwordID))
+                                    .Select(m => m.BaseAbilities[Array.IndexOf(m.UnlockedAbilities, MagicSwordID)])
+                                    .DefaultIfEmpty(MagicSwordID)
+                                    .First();
+
                         foreach (BattleUnit Vivi in BattleState.EnumerateUnits())
                         {
                             if (Vivi.IsPlayer && Vivi.PlayerIndex == CharacterId.Vivi)
                             {
-                                Vivi_TSVar = Vivi.State().Vivi;
-                                if (FF9TextTool.ActionAbilityName(Vivi_TSVar.PreviousSpell) != v.Command.AbilityName)
+                                var ViviSelected_TSVar = Vivi.State().Vivi;
+                                if (ViviSelected_TSVar.PreviousSpell != BlackMagicAbilityId)
                                 {
                                     Int32 BonusFocusMax = 0;
                                     switch (Vivi.Weapon)
@@ -408,33 +409,30 @@ namespace Memoria.Scripts.TranceSeek
                                             BonusFocusMax += 50;
                                             break;
                                     }
-                                    if (Vivi_TSVar.Focus < (50 + BonusFocusMax))
-                                    {
-                                        Vivi_TSVar.Focus += Vivi.HasSupportAbilityByIndex(TranceSeekSupportAbility.Bobbin) ? 10 : 5; // SA Bobbin;
-                                    }
-                                    int ViviFocus = Vivi_TSVar.Focus;
-                                    ShowFocusMessage(Vivi, "[BA55D3]", MessageFocusViviPlus, ViviFocus);
-                                    v.Context.Attack += v.Context.Attack * (ViviFocus / 100);
-                                    v.Command.HitRate += v.Command.HitRate * (ViviFocus / 100);
+
+                                    ViviSelected_TSVar.Focus = Math.Min(ViviSelected_TSVar.Focus + (Vivi.HasSupportAbilityByIndex(TranceSeekSupportAbility.Bobbin) ? 10 : 5), 50 + BonusFocusMax);
+
+                                    ShowFocusMessage(Vivi, "[BA55D3]", MessageFocusViviPlus, ViviSelected_TSVar.Focus);
+                                    v.Context.Attack += v.Context.Attack * (ViviSelected_TSVar.Focus / 100);
+                                    v.Command.HitRate += v.Command.HitRate * (ViviSelected_TSVar.Focus / 100);
                                 }
                                 else
                                 {
                                     if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Bobbin_Boosted)) // SA Bobbin+
                                     {
-                                        Vivi_TSVar.Focus /= 2;
-                                        if (Vivi_TSVar.Focus % 10U == 5)
-                                            Vivi_TSVar.Focus += 5;
+                                        ViviSelected_TSVar.Focus /= 2;
+                                        if (ViviSelected_TSVar.Focus % 10U == 5)
+                                            ViviSelected_TSVar.Focus += 5;
 
-                                        int ViviFocus = Vivi_TSVar.Focus;
-                                        ShowFocusMessage(Vivi, "[BA55D3]", MessageFocusViviPlus, ViviFocus);
+                                        ShowFocusMessage(Vivi, "[BA55D3]", MessageFocusViviPlus, ViviSelected_TSVar.Focus);
                                     }
                                     else
                                     {
-                                        Vivi_TSVar.Focus = 0;
+                                        ViviSelected_TSVar.Focus = 0;
                                         btl2d.Btl2dReqSymbolMessage(Vivi, "[FF0000]", MessageFocusViviLost, HUDMessage.MessageStyle.DAMAGE, 40);
                                     }
                                 }
-                                Vivi_TSVar.PreviousSpell = v.Command.AbilityId;
+                                ViviSelected_TSVar.PreviousSpell = v.Command.AbilityId;
                             }
                         }
                     }
@@ -443,6 +441,17 @@ namespace Memoria.Scripts.TranceSeek
                         Vivi_TSVar.NumberTargets = 0;
                 }
             }
+        }
+
+        private static Int32 GetViviSpellFromSteinerMagicSword(Int32 steinerAbilityId)
+        {
+            foreach (BattleMagicSwordSet magicSet in FF9BattleDB.MagicSwordData.Values)
+            {
+                Int32 index = Array.IndexOf(magicSet.UnlockedAbilities, steinerAbilityId);
+                if (index >= 0 && index < magicSet.BaseAbilities.Length)
+                    return magicSet.BaseAbilities[index];
+            }
+            return steinerAbilityId;
         }
 
         public static void EikoMougMechanic(BattleCalculator v)

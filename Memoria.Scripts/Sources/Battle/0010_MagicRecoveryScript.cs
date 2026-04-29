@@ -29,8 +29,7 @@ namespace Memoria.Scripts.TranceSeek
             }
             else
             {
-                _v.NormalMagicParams();
-                
+                _v.NormalMagicParams();     
                 TranceSeekAPI.CasterPenaltyMini(_v);
                 TranceSeekAPI.EnemyTranceBonusAttack(_v);
                 TranceSeekAPI.PenaltyCommandDividedAttack(_v);
@@ -40,6 +39,10 @@ namespace Memoria.Scripts.TranceSeek
                 if (_v.Command.HitRate == 255)
                 {
                     _v.Target.TryRemoveStatuses(_v.Command.AbilityStatus);
+                }
+                else if (_v.Command.HitRate == 222)
+                {
+                    _v.Target.TryRemoveStatuses(BattleStatusConst.AnyNegative);
                 }
                 else if (_v.Command.HitRate == 111) // Still used ? (old Reconstruction Black Waltz 1)
                 {

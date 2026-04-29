@@ -30,7 +30,7 @@ namespace Memoria.Scripts.TranceSeek
         {
             BattleAbilityId abilityId = _v.Command.AbilityId;
 
-            bool IsAbility(BattleAbilityId targetId) => abilityId == targetId || (!_v.Caster.IsPlayer && _v.Command.Data.aa.Vfx2 == (ushort)targetId);
+            bool IsAbility(BattleAbilityId targetAA) => abilityId == targetAA || (!_v.Caster.IsPlayer && _v.Command.Data.aa.Vfx2 == (ushort)targetAA);
             bool isDragonOrTrance = _v.Target.IsUnderAnyStatus(TranceSeekStatus.Dragon) || _v.Caster.IsUnderStatus(BattleStatus.Trance);
 
             if (_v.Target.IsUnderAnyStatus(TranceSeekStatus.Dragon))
@@ -86,7 +86,14 @@ namespace Memoria.Scripts.TranceSeek
             }
             else if (IsAbility(BattleAbilityId.Luna))
             {
-                btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.Dragon, _v.Caster, parameters: "Add");
+                SetupMagicAttack(_v);
+                if (TranceSeekAPI.CanAttackMagic(_v))
+                {
+                    TranceSeekAPI.TryCriticalHit(_v);
+                    _v.CalcHpDamage();
+                }
+                if (isDragonOrTrance)
+                    _v.Target.TryAlterStatuses(BattleStatus.Heat, false, _v.Caster);
             }
             else if (IsAbility(TranceSeekBattleAbility.ReiWrath))
             {
@@ -302,9 +309,6 @@ namespace Memoria.Scripts.TranceSeek
             }
 
             TranceSeekAPI.CasterPenaltyMini(v);
-            if (v.Target.IsUnderStatus(BattleStatus.Defend))
-                v.Context.DamageModifierCount -= 2;
-
             TranceSeekAPI.PenaltyShellAttack(v);
             TranceSeekAPI.EnemyTranceBonusAttack(v);
             TranceSeekAPI.BonusElement(v);

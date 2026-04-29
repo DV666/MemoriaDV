@@ -469,7 +469,7 @@ namespace Memoria.Scripts.TranceSeek
             if (v.Target.IsUnderAnyStatus(BattleStatus.Defend) && v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.SuperGuard))
             {
                 TranceSeekCharacterMechanic.TriggerSteinerPassive(v);
-                v.Context.Attack /= v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.SuperGuard_Boosted) ? 4 : 2;
+                v.Context.Attack /= v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.SuperGuard_Boosted) ? 2 : (3 / 2);
                 SoundLib.PlaySoundEffect(356); //se050010
             }
 

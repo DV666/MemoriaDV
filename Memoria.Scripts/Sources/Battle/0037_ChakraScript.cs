@@ -104,6 +104,8 @@ namespace Memoria.Scripts.TranceSeek
 
                 if (_v.Command.AbilityId == BattleAbilityId.Chakra2)
                     _v.Target.RemoveStatus(BattleStatus.Poison | BattleStatus.Silence | BattleStatus.Blind);
+                else if (_v.Command.HitRate == 222)
+                    _v.Target.TryRemoveStatuses(BattleStatusConst.AnyNegative);
 
                 TranceSeekAPI.TryAlterCommandStatuses(_v);
             }

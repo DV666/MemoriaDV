@@ -53,7 +53,7 @@ namespace Memoria.DefaultScripts
             UInt32 damage = (UInt32)Math.Round(Target.IsUnderAnyStatus(BattleStatus.EasyKill) ? (TargetMaxHP / 256.0) : (TargetMaxHP / 32.0));
             Boolean isDmg = false;
 
-            if (!Target.IsZombie && Target_TSVar.Marcus.CursedBlood > 0 && (Target_TSVar.EffectElement.Poison & 8) == 0)
+            if (!Target.IsZombie && Target_TSVar.Marcus.CursedBlood == 0 && (Target_TSVar.EffectElement.Poison & 8) == 0)
             {
                 isDmg = true;
                 if (Target.CurrentHp > damage)
