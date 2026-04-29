@@ -158,7 +158,7 @@ namespace Global.Sound.SaXAudio
                     break;
             }
 
-            AudioEffectManager.EffectPreset? preset = AudioEffectManager.GetPreset(data.Profile, busID);
+            EffectPreset preset = AudioEffectManager.GetPreset(data.Profile, busID);
             if (preset != null && busID != 0)
             {
                 SoundLib.Log($"[AudioEffectManager] Preset:{preset.Value.Name} => Filtered '{data.Profile.ResourceID}' from bus {busID}");
@@ -178,7 +178,7 @@ namespace Global.Sound.SaXAudio
             }
 
             if (preset != null)
-                AudioEffectManager.ApplyPresetOnSound(preset.Value, soundID, data.Profile.Name);
+                AudioEffectManager.ApplyPresetOnSound(preset, soundID, data.Profile.Name);
 
             if (soundID > 0)
                 sounds[soundID] = bankID;
