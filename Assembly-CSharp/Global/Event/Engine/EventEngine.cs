@@ -1256,6 +1256,18 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
         this.FF9ChangeMap(SceneNo);
     }
 
+    public void TriggerDebugBattle(Int32 battleSceneId, SByte btlGroup = -1)
+    {
+        SetBattleScene(battleSceneId);
+        _ff9.btlSubMapNo = btlGroup;
+        _ff9.steiner_state = 0;
+        _encountBase = 0;
+
+        FF9StateSystem.Battle.isRandomEncounter = false;
+        FF9StateSystem.Battle.isEncount = true;
+        _encountReserved = true;
+    }
+
     private void FF9ChangeMap(Int32 MapNo)
     {
         FF9StateFieldSystem stateFieldSystem = FF9StateSystem.Field.FF9Field;
