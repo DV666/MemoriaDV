@@ -86,35 +86,77 @@ namespace Memoria.Data
             }
             else
             {
-                if (AppendFields.Contains(nameof(WeaponId))) WeaponId = CsvParser.Int32(raw[index++]); else WeaponId = -1;
-                if (AppendFields.Contains(nameof(ArmorId))) ArmorId = CsvParser.Int32(raw[index++]); else ArmorId = -1;
-                if (AppendFields.Contains(nameof(EffectId))) EffectId = CsvParser.Int32(raw[index++]); else EffectId = -1;
+                void TryParseField<T>(String fieldName, Func<String, T> parseFunc, Action<T> setAction, Boolean hasDefault = false, T defaultValue = default)
+                {
+                    if (AppendFields.Contains(fieldName))
+                    {
+                        String val = raw[index++];
+                        if (String.IsNullOrEmpty(val))
+                            AppendFields.Remove(fieldName);
+                        else
+                            setAction(parseFunc(val));
+                    }
+                    else if (hasDefault)
+                    {
+                        setAction(defaultValue);
+                    }
+                }
 
-                if (AppendFields.Contains(nameof(Price))) Price = CsvParser.UInt32(raw[index++]);
-                if (AppendFields.Contains(nameof(SellingPrice))) SellingPrice = CsvParser.Int32(raw[index++]);
+                TryParseField(nameof(WeaponId), CsvParser.Int32, v => WeaponId = v, true, -1);
+                TryParseField(nameof(ArmorId), CsvParser.Int32, v => ArmorId = v, true, -1);
+                TryParseField(nameof(EffectId), CsvParser.Int32, v => EffectId = v, true, -1);
 
-                if (AppendFields.Contains(nameof(GraphicsId))) GraphicsId = CsvParser.Int32(raw[index++]);
-                if (AppendFields.Contains(nameof(ColorId))) ColorId = CsvParser.Int32(raw[index++]);
-                if (AppendFields.Contains(nameof(Quality))) Quality = CsvParser.Single(raw[index++]);
-                if (AppendFields.Contains(nameof(BonusId))) BonusId = CsvParser.Int32(raw[index++]);
-                if (AppendFields.Contains(nameof(AbilityIds))) AbilityIds = CsvParser.AnyAbilityArray(raw[index++]);
+                TryParseField(nameof(Price), CsvParser.UInt32, v => Price = v);
+                TryParseField(nameof(SellingPrice), CsvParser.Int32, v => SellingPrice = v);
+
+                TryParseField(nameof(GraphicsId), CsvParser.Int32, v => GraphicsId = v);
+                TryParseField(nameof(ColorId), CsvParser.Int32, v => ColorId = v);
+                TryParseField(nameof(Quality), CsvParser.Single, v => Quality = v);
+                TryParseField(nameof(BonusId), CsvParser.Int32, v => BonusId = v);
+                TryParseField(nameof(AbilityIds), CsvParser.AnyAbilityArray, v => AbilityIds = v);
 
                 if (AppendFields.Contains(nameof(TypeMask)))
                 {
-                    Byte type = 0;
-                    for (Int32 i = 0; i < 8; i++) { type <<= 1; type |= CsvParser.Byte(raw[index++]); }
-                    TypeMask = (ItemType)type;
+                    if (String.IsNullOrEmpty(raw[index]))
+                    {
+                        AppendFields.Remove(nameof(TypeMask));
+                        index += 8;
+                    }
+                    else
+                    {
+                        Byte type = 0;
+                        for (Int32 i = 0; i < 8; i++) { type <<= 1; type |= CsvParser.Byte(raw[index++]); }
+                        TypeMask = (ItemType)type;
+                    }
                 }
 
-                if (AppendFields.Contains(nameof(Order))) Order = CsvParser.Single(raw[index++]);
-                if (AppendFields.Contains(nameof(UseCondition))) UseCondition = CsvParser.String(raw[index++]);
+                TryParseField(nameof(Order), CsvParser.Single, v => Order = v);
+                TryParseField(nameof(UseCondition), CsvParser.String, v => UseCondition = v);
 
                 if (AppendFields.Contains(nameof(CharacterMask)))
                 {
-                    UInt64 equippable = 0;
-                    for (Int32 i = 0; i < 12; i++) { equippable <<= 1; equippable |= CsvParser.Byte(raw[index++]); }
-                    for (Int32 i = 12; index < raw.Length; i++) if (CsvParser.Byte(raw[index++]) != 0) equippable |= 1ul << i;
-                    CharacterMask = (ItemCharacter)equippable;
+                    if (String.IsNullOrEmpty(raw[index]))
+                    {
+                        AppendFields.Remove(nameof(CharacterMask));
+                        index += 12;
+                        while (index < raw.Length)
+                            index++;
+                    }
+                    else
+                    {
+                        UInt64 equippable = 0;
+                        for (Int32 i = 0; i < 12; i++)
+                        {
+                            equippable <<= 1;
+                            equippable |= CsvParser.Byte(raw[index++]);
+                        }
+
+                        for (Int32 i = 12; index < raw.Length; i++)
+                            if (CsvParser.Byte(raw[index++]) != 0)
+                                equippable |= 1ul << i;
+
+                        CharacterMask = (ItemCharacter)equippable;
+                    }
                 }
             }
         }
