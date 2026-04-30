@@ -27,9 +27,6 @@ namespace Memoria.Data
 
         public void ParseEntry(String[] raw, CsvMetaData metadata)
         {
-            // Initialisation sécurisée par défaut
-            AbilityIds = new Int32[0];
-            UseCondition = String.Empty;
             AppendFields.Clear();
 
             foreach (String line in metadata.GenerateLines())
