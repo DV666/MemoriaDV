@@ -33,7 +33,7 @@ namespace Memoria.Scripts.TranceSeek
         public void Perform()
         {
             WeaponNewElement[_v.Target.Data] = _v.Command.Element;
-            InfusedWeaponScript.WeaponNewStatus[_v.Target.Data] = _v.Command.AbilityStatus;
+            WeaponNewStatus[_v.Target.Data] = _v.Command.AbilityStatus;
             _v.TargetState().Vivi.PreviousSpell = _v.Command.AbilityId; // SA Maximum infusion for Lani/Vivi
 
             int Element = (int)_v.Command.Element;
@@ -66,7 +66,7 @@ namespace Memoria.Scripts.TranceSeek
             if (NewStatus != -1)
             {
                 InfusedStatus = (BattleStatus)NewStatus;
-                InfusedWeaponScript.WeaponNewStatus[btl] = InfusedStatus;
+                WeaponNewStatus[btl] = InfusedStatus;
             }
 
             if (btl.bi.player != 0)
@@ -118,13 +118,13 @@ namespace Memoria.Scripts.TranceSeek
 
                     if (NewElement == 256) // Poison
                     {
-                        InfusedWeaponScript.WeaponNewCustomElement[btl] = 1;
+                        WeaponNewCustomElement[btl] = 1;
                         ElementText = "[800080]";
                         DescText = Regex.Replace(DescText, "=ELEMENT=", PoisonEffectElementCMDDesc[Localization.CurrentSymbol]);
                     }
                     else if (NewElement == 512) // Gravity
                     {
-                        InfusedWeaponScript.WeaponNewCustomElement[btl] = 2;
+                        WeaponNewCustomElement[btl] = 2;
                         ElementText = "[6E0C5C]";
                         DescText = Regex.Replace(DescText, "=ELEMENT=", GravityEffectElementCMDDesc[Localization.CurrentSymbol]);
                     }

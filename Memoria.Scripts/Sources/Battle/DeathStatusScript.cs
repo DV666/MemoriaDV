@@ -38,7 +38,6 @@ namespace Memoria.DefaultScripts
                         target.Data.die_seq = 1;
                 }
                 btl_sys.CheckForecastMenuOff(target);
-                Memoria.Prime.Log.Message("GameState.ModelKillCount(unit.Data.dms_geo_id): " + GameState.ModelKillCount(target.Data.dms_geo_id));
                 if (GameState.ModelKillCount(target.Data.dms_geo_id) > 0 && ((GameState.ModelKillCount(target.Data.dms_geo_id) + 1) % 10) == 0) // Need +1 because the kill count is updated after
                     TranceSeekAPI.OverTranceTrigger(target);
             }         
