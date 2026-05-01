@@ -196,12 +196,10 @@ namespace Assets.Sources.Scripts.UI.Common
                 cardHud.PhysicDefParamSprite.gameObject.SetActive(false);
                 cardHud.MagicDefParamSprite.gameObject.SetActive(false);
                 cardHud.AtkTypeParamSprite.gameObject.SetActive(false);
+                cardHud.CardImageSprite.gameObject.SetActive(false);
                 return;
             }
-            cardHud.AtkParamSprite.gameObject.SetActive(true);
-            cardHud.PhysicDefParamSprite.gameObject.SetActive(true);
-            cardHud.MagicDefParamSprite.gameObject.SetActive(true);
-            cardHud.AtkTypeParamSprite.gameObject.SetActive(true);
+
             if (Configuration.TetraMaster.TripleTriad > 0)
             {
                 TripleTriadCard baseCard = TripleTriad.TripleTriadCardStats[card.id];
@@ -240,6 +238,13 @@ namespace Assets.Sources.Scripts.UI.Common
                 cardHud.CardImageSprite.spriteName = "card_" + ((Int32)card.id).ToString("0#");
                 cardHud.CardBorderSprite.spriteName = "card_player_frame";
             }
+
+            // [DV - CardPatcher] To avoid a flicking issue with SudCard (where a "Mog" appears for one frame when switching between cards => That's why i add the CardImageSprite.gameObject)
+            cardHud.AtkParamSprite.gameObject.SetActive(true);
+            cardHud.PhysicDefParamSprite.gameObject.SetActive(true);
+            cardHud.MagicDefParamSprite.gameObject.SetActive(true);
+            cardHud.AtkTypeParamSprite.gameObject.SetActive(true);
+            cardHud.CardImageSprite.gameObject.SetActive(true);
         }
 
         public static void DisplayAPBar(PLAYER player, Int32 abilityId, Boolean isShowText, APBarHUD apBar)
@@ -351,38 +356,9 @@ namespace Assets.Sources.Scripts.UI.Common
         public static UIAtlas ChocographAtlas => PersistenSingleton<UIManager>.Instance.ChocographScene.HintMap.atlas;
         public static UIAtlas FaceAtlas => PersistenSingleton<UIManager>.Instance.StatusScene.CharacterDetailPanel.GetChild(0).GetChild(0).GetComponent<UISprite>().atlas;
         public static UIAtlas MovieGalleryAtlas => PersistenSingleton<UIManager>.Instance.TitleScene.MoviePageGrid.GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetComponent<UISprite>().atlas;
+        public static UIAtlas QuadMistCardAtlas => PersistenSingleton<UIManager>.Instance.CardScene.CardInfoPanel.GetChild(0).GetChild(0).GetChild(0).GetChild(3).GetComponent<UISprite>().atlas;
+        public static UIAtlas QuadMistImageAtlas => PersistenSingleton<UIManager>.Instance.CardScene.CardInfoPanel.GetChild(0).GetChild(0).GetChild(0).GetChild(4).GetComponent<UISprite>().atlas;
 
-        private static UIAtlas _cachedQuadMistCardAtlas;
-        private static UIAtlas _cachedQuadMistImageAtlas;
-
-        public static UIAtlas QuadMistCardAtlas
-        {
-            get
-            {
-                if (_cachedQuadMistCardAtlas != null) return _cachedQuadMistCardAtlas;
-
-                var sprite = PersistenSingleton<UIManager>.Instance.CardScene.CardInfoPanel.GetChild(0).GetChild(0).GetChild(0).GetChild(3).GetComponent<UISprite>();
-                if (sprite != null && sprite.atlas != null && sprite.atlas.name == "QuadMist Image Atlas 1")
-                    _cachedQuadMistCardAtlas = sprite.atlas;
-
-                return sprite?.atlas;
-            }
-        }
-
-        public static UIAtlas QuadMistImageAtlas
-        {
-            get
-            {
-                if (_cachedQuadMistImageAtlas != null) return _cachedQuadMistImageAtlas;
-
-                var sprite = PersistenSingleton<UIManager>.Instance.CardScene.CardInfoPanel.GetChild(0).GetChild(0).GetChild(0).GetChild(4).GetComponent<UISprite>();
-
-                if (sprite != null && sprite.atlas != null && sprite.atlas.name == "QuadMist Image Atlas 0")
-                    _cachedQuadMistImageAtlas = sprite.atlas;
-
-                return sprite?.atlas;
-            }
-        }
 
         public static GameObject IconGameObject(Int32 id)
         {

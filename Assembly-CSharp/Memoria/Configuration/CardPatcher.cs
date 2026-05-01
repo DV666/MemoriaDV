@@ -31,6 +31,9 @@ namespace Memoria
         private static List<Patch> _patches = new List<Patch>();
         private static Dictionary<string, Sprite> _cachedInGameSprites = new Dictionary<string, Sprite>();
 
+        private static UIAtlas _originalCardAtlas = null;
+        private static UIAtlas _originalBgAtlas = null;
+
         public static void Load(String[] source)
         {
             _patches.Clear();
@@ -117,7 +120,8 @@ namespace Memoria
 
             foreach (var patch in _patches)
             {
-                if (patch.TargetElement != targetElement) continue;
+                if (patch.TargetElement != targetElement)
+                    continue;
 
                 if (EvaluatePatch(patch, card))
                 {
@@ -132,9 +136,8 @@ namespace Memoria
                     }
 
                     if (!String.IsNullOrEmpty(patch.SpriteName))
-                    {
                         sprite.spriteName = patch.SpriteName;
-                    }
+
                     return true;
                 }
             }
@@ -182,9 +185,7 @@ namespace Memoria
                     targetWorldHeight = currentRenderer.sprite.bounds.size.y;
 
                     if (targetWorldWidth > 0 && targetWorldHeight > 0)
-                    {
                         hasReference = true;
-                    }
                 }
 
                 if (EvaluatePatch(patch, card))
@@ -197,9 +198,8 @@ namespace Memoria
                         if (_cachedInGameSprites.TryGetValue(cacheKey, out newSprite) && newSprite != null)
                         {
                             if (currentRenderer != null && currentRenderer.sprite != newSprite)
-                            {
                                 currentRenderer.sprite = newSprite;
-                            }
+
                             continue;
                         }
 
@@ -232,12 +232,8 @@ namespace Memoria
                             newSprite = QuadMistResourceManager.Instance.GetSprite(patch.SpriteName);
 
                         if (newSprite != null && currentRenderer != null)
-                        {
                             if (currentRenderer.sprite != newSprite)
-                            {
                                 currentRenderer.sprite = newSprite;
-                            }
-                        }
                     }
                 }
             }
@@ -273,10 +269,22 @@ namespace Memoria
 
         public static void ApplyCardPatches(QuadMistCard card, CardDetailHUD cardHud)
         {
+            if (_originalCardAtlas == null)
+                _originalCardAtlas = FF9UIDataTool.QuadMistCardAtlas;
+
+            if (_originalBgAtlas == null)
+                _originalBgAtlas = FF9UIDataTool.QuadMistImageAtlas;
+
             if (!CardPatcher.Apply(card, cardHud.CardImageSprite, "ImageSprite"))
             {
-                cardHud.CardImageSprite.atlas = FF9UIDataTool.QuadMistCardAtlas;
+                cardHud.CardImageSprite.atlas = _originalCardAtlas;
                 cardHud.CardImageSprite.spriteName = "card_" + ((Int32)card.id).ToString("0#");
+            }
+
+            if (!CardPatcher.Apply(card, cardHud.CardBorderSprite, "BorderSprite"))
+            {
+                cardHud.CardBorderSprite.atlas = _originalBgAtlas;
+                cardHud.CardBorderSprite.spriteName = "card_player_frame";
             }
 
             UISprite bgSprite = cardHud.Self.transform.GetChild(4).GetComponent<UISprite>();
@@ -285,15 +293,9 @@ namespace Memoria
             {
                 if (!CardPatcher.Apply(card, bgSprite, "BackgroundSprite"))
                 {
-                    bgSprite.atlas = FF9UIDataTool.QuadMistImageAtlas;
+                    bgSprite.atlas = _originalBgAtlas;
                     bgSprite.spriteName = "card_player_bg";
                 }
-            }
-
-            if (!CardPatcher.Apply(card, cardHud.CardBorderSprite, "BorderSprite"))
-            {
-                cardHud.CardBorderSprite.atlas = FF9UIDataTool.QuadMistImageAtlas;
-                cardHud.CardBorderSprite.spriteName = "card_player_frame";
             }
         }
 
@@ -302,7 +304,8 @@ namespace Memoria
 
         public static void ApplyStatPatches(QuadMistCard card)
         {
-            if (_patches.Count == 0 || card == null) return;
+            if (_patches.Count == 0 || card == null)
+                return;
 
             QuadMistCard tempCard = new QuadMistCard(card);
             bool isPatched = false;
