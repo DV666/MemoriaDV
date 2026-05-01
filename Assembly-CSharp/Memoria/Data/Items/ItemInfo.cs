@@ -28,11 +28,21 @@ namespace Memoria.Data
         public void ParseEntry(String[] raw, CsvMetaData metadata)
         {
             AppendFields.Clear();
+            IsAppend = false;
 
             foreach (String line in metadata.GenerateLines())
-                AppendFields.AddRange(line.Split(' '));
+            {
+                String trimmedLine = line.Trim();
 
-            IsAppend = AppendFields.Contains("AppendMode");
+                if (trimmedLine.StartsWith("AppendMode"))
+                {
+                    IsAppend = true;
+                    AppendFields.AddRange(trimmedLine.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries));
+                }
+            }
+
+            AppendFields.Remove("AppendMode");
+
             Int32 index = 0;
             Boolean hasAuxIds = metadata.HasOption("IncludeAuxiliaryIds");
 
