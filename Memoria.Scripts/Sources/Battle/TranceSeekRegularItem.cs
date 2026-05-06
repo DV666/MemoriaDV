@@ -2,6 +2,8 @@
 using Memoria.Prime;
 using System;
 using System.Collections.Generic;
+using UnityEngine;
+using static BTL_DATA;
 
 namespace Memoria.Scripts.TranceSeek
 {
@@ -181,6 +183,9 @@ namespace Memoria.Scripts.TranceSeek
         public const RegularItem Monocle = (RegularItem)1260;
         public const RegularItem RefinedMonocle = (RegularItem)1261;
         public const RegularItem SolarCrown = (RegularItem)1262;
+        public const RegularItem JemRing = (RegularItem)1263;
+        public const RegularItem Onyxarmor = (RegularItem)1264;
+        public const RegularItem MuTail = (RegularItem)1265;
         public const RegularItem HiPotion2 = (RegularItem)2000;
         public const RegularItem UltraPotion2 = (RegularItem)2001;
         public const RegularItem MegaPotion = (RegularItem)2002;
@@ -864,5 +869,118 @@ namespace Memoria.Scripts.TranceSeek
             }
             return BonusWeaponHitRate;
         }
+
+        public static void CheckCreateVisualAccessory(BattleUnit unit)
+        {
+            if (!unit.IsPlayer)
+                return;
+
+            CharacterId charId = (CharacterId)unit.Player.PresetId;
+            AccessoryKey searchKey = new AccessoryKey(unit.Accessory, charId);
+
+            if (VisualAccessoriesDict.TryGetValue(searchKey, out VisualAccessoryData config))
+            {
+                var unit_TSVar = unit.State();
+
+                WEAPON_MODEL CostumeModel = new WEAPON_MODEL { geo = ModelFactory.CreateModel(config.ModelName, true) };
+                GameObject currentAttachedTarget = unit.Data.gameObject;
+
+                GeoAttach(CostumeModel.geo, currentAttachedTarget, config.BoneIndex);
+                CostumeModel.geo.transform.localPosition = config.PositionOffset;
+                CostumeModel.geo.transform.localRotation = Quaternion.Euler(config.RotationOffset);
+                CostumeModel.geo.SetActive(true);
+
+                unit_TSVar.AdditionalModel.Add(CostumeModel);
+
+                unit.AddDelayedModifier(
+                    caster =>
+                    {
+                        if (CostumeModel == null || CostumeModel.geo == null || caster.Accessory != searchKey.Item)
+                        {
+                            if (CostumeModel?.geo != null)
+                                UnityEngine.Object.Destroy(CostumeModel.geo);
+                            return false;
+                        }
+
+                        if (currentAttachedTarget != caster.Data.gameObject)
+                        {
+                            currentAttachedTarget = caster.Data.gameObject;
+                            GeoAttach(CostumeModel.geo, currentAttachedTarget, config.BoneIndex);
+                            CostumeModel.geo.transform.localPosition = config.PositionOffset;
+                            CostumeModel.geo.transform.localRotation = Quaternion.Euler(config.RotationOffset);
+                        }
+
+                        bool areMeshesHidden = (caster.Data.meshflags & 0xFFFF) == 0xFFFF;
+                        bool shouldShow = !areMeshesHidden && caster.Data.bi.disappear == 0;
+
+                        if (CostumeModel.geo.activeSelf != shouldShow)
+                            CostumeModel.geo.SetActive(shouldShow);
+
+                        return true;
+                    },
+                    null
+                );
+            }
+        }
+
+        private static void GeoAttach(GameObject sourceObject, GameObject targetObject, Int32 bone_index)
+        {
+            if (sourceObject == null || targetObject == null)
+                return;
+            Transform attachedTransform = targetObject.transform;
+            Transform rootTransform = attachedTransform.GetChildByName("bone000").transform;
+            Transform childByName = targetObject.transform.GetChildByName("bone" + bone_index.ToString("D3"));
+            sourceObject.transform.parent = childByName;
+            sourceObject.transform.localPosition = Vector3.zero;
+            sourceObject.transform.localRotation = Quaternion.identity;
+            sourceObject.transform.localScale = Vector3.one;
+            rootTransform.localPosition = Vector3.zero;
+            rootTransform.localRotation = Quaternion.identity;
+            rootTransform.localScale = Vector3.one;
+        }
+        public struct VisualAccessoryData
+        {
+            public string ModelName;
+            public int BoneIndex;
+            public Vector3 PositionOffset;
+            public Vector3 RotationOffset;
+
+            public VisualAccessoryData(string modelName, int boneIndex, Vector3 posOffset, Vector3 rotOffset)
+            {
+                ModelName = modelName;
+                BoneIndex = boneIndex;
+                PositionOffset = posOffset;
+                RotationOffset = rotOffset;
+            }
+        }
+
+        public struct AccessoryKey : IEquatable<AccessoryKey>
+        {
+            public RegularItem Item;
+            public CharacterId Character;
+
+            public AccessoryKey(RegularItem item, CharacterId character)
+            {
+                Item = item;
+                Character = character;
+            }
+            public bool Equals(AccessoryKey other)
+            {
+                return Item == other.Item && Character == other.Character;
+            }
+        }
+
+        private static readonly Dictionary<AccessoryKey, VisualAccessoryData> VisualAccessoriesDict = new Dictionary<AccessoryKey, VisualAccessoryData>
+        {
+            {
+                new AccessoryKey(MuTail, CharacterId.Zidane),
+                new VisualAccessoryData("GEO_WEP_Tail_Mu_Suit", 15, new Vector3(0f, 0.1f, 0f), new Vector3(90f, 0f, 0f))
+            },
+
+            {
+                new AccessoryKey(MuTail, CharacterId.Garnet),
+                new VisualAccessoryData("GEO_WEP_Tail_Mu_Suit", 1, new Vector3(0f, 0.0f, 0f), new Vector3(74.80124f, 350.618f, 352.3549f))
+            }
+        };
     }
 }

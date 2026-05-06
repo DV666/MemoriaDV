@@ -453,6 +453,8 @@ namespace Memoria.Scripts.TranceSeek
                         if (FF9TextTool.DisplayBatch.commandName.TryGetValue(BattleCommandId.HolySword2, out String SeikenPlusName))
                             InfusedWeaponScript.CMDVanillaName[unit.Data][1] = SeikenPlusName;
                     }
+
+                    TranceSeekRegularItem.CheckCreateVisualAccessory(unit);
                 }
                 else // Monsters init
                 {
@@ -700,7 +702,8 @@ namespace Memoria.Scripts.TranceSeek
             { RegularItem.MythrilArmlet, 2 },
             { RegularItem.GoldHelm, 2 },
             { TranceSeekRegularItem.UmbrellaShoes, 8 },
-            { TranceSeekRegularItem.CursedCoin, 4 }
+            { TranceSeekRegularItem.CursedCoin, 4 },
+            { TranceSeekRegularItem.Onyxarmor, 2 }
         };
 
 
@@ -708,7 +711,8 @@ namespace Memoria.Scripts.TranceSeek
         {
             { RegularItem.PlatinaArmor, 2 },
             { RegularItem.DarkGear, 4 },
-            { RegularItem.BlackBelt, 8 }
+            { RegularItem.BlackBelt, 8 },
+            { TranceSeekRegularItem.Onyxarmor, 4 }
         };
 
         public static class DifficultyParameters

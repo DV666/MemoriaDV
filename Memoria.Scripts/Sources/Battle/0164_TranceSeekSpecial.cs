@@ -420,7 +420,7 @@ namespace Memoria.Scripts.TranceSeek
                 if ((_v.TargetState().EffectElement.Poison & 8) == 0)
                     _v.TargetState().EffectElement.Poison = 8;
             }
-            else if (_v.Command.Power == 66 && _v.Command.HitRate == 66 && _v.Caster.Data.dms_geo_id == 66) // Jump (Burmecian Soldier)
+            else if (_v.Command.Power == 66 && _v.Command.HitRate == 66 && (_v.Caster.Data.dms_geo_id == 66 || _v.Caster.Data.dms_geo_id == 181 || _v.Caster.Data.dms_geo_id == 2001)) // Jump (Burmecian Soldier & Fratley)
             {
                 FF9StateSystem.EventState.gEventGlobal[1305] |= (byte)_v.Caster.Id;
             }
