@@ -25,6 +25,9 @@ namespace Memoria.DefaultScripts
         public Int32 TimerEndTrance = 0;
         public Boolean TriggerTimerEndTrance = false;
 
+        public Boolean CallFixVanish = false;
+        public Int32 DurationFixVanish = 0;
+
         public static Int32 GetPhantomCount(BattleUnit btl)
         {
             return (60 - btl.Will) * 200;
@@ -49,6 +52,9 @@ namespace Memoria.DefaultScripts
         public override UInt32 Apply(BattleUnit target, BattleUnit inflicter, params Object[] parameters)
         {
             base.Apply(target, inflicter, parameters);
+            if (target.IsUnderAnyStatus(BattleStatus.Vanish))
+                CallFixVanish = true;
+
             btl_cmd.SetCommand(target.Data.cmd[4], BattleCommandId.SysTrans, 0, target.Id, 0u);
             var Target_TSVar = target.State();
             if (!Target.IsPlayer)
@@ -216,6 +222,13 @@ namespace Memoria.DefaultScripts
         {
             Target.Trance = 0;
             var Target_TSVar = Target.State();
+            if (!Target.IsUnderAnyStatus(BattleStatus.Vanish) && CallFixVanish)
+            {
+                CallFixVanish = false;
+                DurationFixVanish = 10;
+                Target.AddDelayedModifier(FixVanish, null);
+            }
+
             if (Target.IsUnderAnyStatus(BattleStatus.Jump))
             {
                 btl_stat.RemoveStatus(Target, BattleStatusId.Jump);
@@ -302,39 +315,7 @@ namespace Memoria.DefaultScripts
                     }
                 );
             }
-            else if (Target.Accessory == TranceSeekRegularItem.GhostScarf && !Target.IsUnderAnyStatus(BattleStatus.Vanish)) 
-            // [TODO] Specific bug when mixing this Accessory when getting Trance at the start of the battle, like Vivi vs Black Waltz 3 on Disc 1.
-            {
-                TimerEndTrance = 10;
-                Target.AddDelayedModifier(WaitTranceSFXEnd, ResetModel);
-            }
             return true;
-        }
-
-        private Boolean WaitTranceSFXEnd(BattleUnit unit)
-        {
-            if (unit.IsDisappear)
-                TriggerTimerEndTrance = true;
-
-            if (TriggerTimerEndTrance)
-                if (!unit.IsDisappear)
-                {
-                    if (TimerEndTrance > 0)
-                        TimerEndTrance--;
-                    else
-                        return false;
-                }
-
-            return true;
-        }
-
-        private void ResetModel(BattleUnit unit)
-        {
-            Vector3 position = unit.Data.gameObject.transform.position;
-            CharacterBattleParameter btlParam = btl_mot.BattleParameterList[unit.Player.info.serial_no];
-            unit.Data.gameObject = ModelFactory.CreateModel(btlParam.ModelId, true, true, Configuration.Graphics.ElementsSmoothTexture);
-            unit.Data.gameObject.transform.position = position;
-            btl_eqp.InitWeapon(unit.Player, unit.Data);
         }
 
         public void OnFinishCommand(CMD_DATA cmd, Int32 tranceDecrease)
@@ -353,6 +334,29 @@ namespace Memoria.DefaultScripts
                 PhantomCountdown = GetPhantomCount(Target);
             }
         }
+
+        private Boolean FixVanish(BattleUnit unit)
+        {
+            if (unit.Data.gameObject == unit.Data.originalGo)
+            {
+                Renderer[] renderers = unit.Data.gameObject.GetComponentsInChildren<Renderer>(true);
+                foreach (Renderer r in renderers)
+                    r.enabled = true;
+
+                btl_mot.ShowWeapon(unit.Data);
+                btl_mot.ShowMesh(unit.Data, UInt16.MaxValue, true);
+
+                if (DurationFixVanish > 0)
+                {
+                    DurationFixVanish--;
+                    return true;
+                }
+
+                return false;
+            }
+            return true;
+        }
+
 
         private Boolean ProcessPhantomRecast(BattleUnit garnet)
         {

@@ -294,6 +294,8 @@ namespace Memoria.Scripts.TranceSeek
         public Boolean PreventTranceSFX { get; set; }
         public int DragonChanceProc { get; set; }
 
+        public SPSEffect PolaritySPS { get; set; }
+
         public int CanCover
         {
             get

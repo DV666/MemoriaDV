@@ -55,17 +55,12 @@ namespace Memoria.Scripts.TranceSeek
 
             if (FF9StateSystem.Battle.battleMapIndex == 52 && FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum == 0 && FF9StateSystem.EventState.gEventGlobal[1305] > 0 && v.Caster.IsPlayer && v.Command.Id == BattleCommandId.Attack && v.Caster.Data != v.Target.Data)
             { // Black Waltz 3 Broken (Polarity Mechanic)
-                if (!TranceSeekSpecial.PolaritySPS.TryGetValue(v.Target.Data, out SPSEffect spsc))
-                    TranceSeekSpecial.PolaritySPS[v.Caster.Data] = null;
 
-                if (!TranceSeekSpecial.PolaritySPS.TryGetValue(v.Target.Data, out SPSEffect spst))
-                    TranceSeekSpecial.PolaritySPS[v.Target.Data] = null;
-
-                if (TranceSeekSpecial.PolaritySPS[v.Target.Data] != null && TranceSeekSpecial.PolaritySPS[v.Caster.Data] != null)
+                if (Caster_TSVar.PolaritySPS != null && Target_TSVar.PolaritySPS != null)
                 {
-                    TranceSeekSpecial.PolaritySPS[v.Target.Data].attr = 0;
-                    TranceSeekSpecial.PolaritySPS[v.Target.Data].meshRenderer.enabled = false;
-                    TranceSeekSpecial.PolaritySPS[v.Target.Data] = null;
+                    Caster_TSVar.PolaritySPS.attr = 0;
+                    Caster_TSVar.PolaritySPS.meshRenderer.enabled = false;
+                    Caster_TSVar.PolaritySPS = null;
                     v.Context.Flags |= BattleCalcFlags.Guard;
                     Caster_TSVar.Monster.NoDodge = true; // Don't miss the attack.
                     btl_stat.RemoveStatus(v.Target, BattleStatusId.Haste);

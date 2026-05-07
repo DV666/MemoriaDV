@@ -26,10 +26,9 @@ namespace Memoria.Scripts.TranceSeek
             _v = v;
         }
 
-        public static Dictionary<BTL_DATA, SPSEffect> PolaritySPS = new Dictionary<BTL_DATA, SPSEffect>();
-
         public void Perform()
         {
+
             if (_v.Caster.Data.dms_geo_id == 221 && _v.Command.AbilityStatus == BattleStatus.Trance) // Mirror - Trance Zidane
             {
                 Int32 counter = 15;
@@ -251,35 +250,32 @@ namespace Memoria.Scripts.TranceSeek
             }
             else if (_v.Command.Power == 25 && _v.Command.HitRate == 111 && _v.Caster.Data.dms_geo_id == 278) // Polarity (+) with SPS effect (Black Waltz 3)
             {
-                _v.NormalMagicParams();
+                var Caster_TSVar = _v.CasterState();
 
+                _v.NormalMagicParams();
                 TranceSeekAPI.CasterPenaltyMini(_v);
                 TranceSeekAPI.EnemyTranceBonusAttack(_v);
                 TranceSeekAPI.PenaltyShellAttack(_v);
                 TranceSeekAPI.PenaltyCommandDividedAttack(_v);
                 TranceSeekAPI.BonusElement(_v);
                 if (TranceSeekAPI.CanAttackMagic(_v))
-                {
                     _v.CalcHpDamage();
-                    TranceSeekAPI.RaiseTrouble(_v);
-                }
-                TranceSeekAPI.TryAlterCommandStatuses(_v);
 
-                if (!PolaritySPS.TryGetValue(_v.Caster.Data, out SPSEffect sps)) // Init
-                    PolaritySPS[_v.Caster.Data] = null;
-
-                sps = HonoluluBattleMain.battleSPS.AddSequenceSPS(11, -1, 1, true); // Bone 28
+                SPSEffect sps = HonoluluBattleMain.battleSPS.AddSequenceSPS(11, -1, 1, true); // Bone 28
                 if (sps == null)
                     return;
                 sps.charTran = _v.Target.Data.gameObject.transform;
                 sps.boneTran = _v.Target.Data.gameObject.transform.GetChildByName("bone028");
                 sps.posOffset = Vector3.zero;
-                PolaritySPS[_v.Caster.Data] = sps;
+                Caster_TSVar.PolaritySPS = sps;
+                TranceSeekAPI.TryAlterCommandStatuses(_v);
                 return;
                 //sps.scale = (Int32)(sps.scale * tmpSingle);
             }
             else if (_v.Command.HitRate == 133 && _v.Caster.Data.dms_geo_id == 593) // Polarity (+) with SPS effect (Black Waltz 3 broken)
             {
+                var Caster_TSVar = _v.CasterState();
+
                 _v.SetCommandAttack();
                 TranceSeekAPI.PenaltyCommandDividedAttack(_v);
                 if (_v.Target.IsUnderStatus(BattleStatus.Shell))
@@ -291,57 +287,53 @@ namespace Memoria.Scripts.TranceSeek
                 }
                 TranceSeekAPI.TryAlterMagicStatuses(_v);
 
-                if (!PolaritySPS.TryGetValue(_v.Target.Data, out SPSEffect sps)) // Init
-                    PolaritySPS[_v.Target.Data] = null;
-
-                sps = HonoluluBattleMain.battleSPS.AddSequenceSPS(11, -1, 1, true);
+                SPSEffect sps = HonoluluBattleMain.battleSPS.AddSequenceSPS(11, -1, 1, true);
                 if (sps == null)
                     return;
                 btl2d.GetIconPosition(_v.Target, btl2d.ICON_POS_HEAD, out Transform attachTransf, out Vector3 iconOff);
                 sps.charTran = _v.Target.Data.gameObject.transform;
                 sps.boneTran = attachTransf;
                 sps.posOffset = Vector3.zero;
-                PolaritySPS[_v.Target.Data] = sps;
+                Caster_TSVar.PolaritySPS = sps;
                 FF9StateSystem.EventState.gEventGlobal[1305] = (byte)_v.Target.Id;
                 return;
             }
             else if (_v.Command.Power == 25 && _v.Command.HitRate == 222 && (_v.Caster.Data.dms_geo_id == 278 || _v.Caster.Data.dms_geo_id == 593)) // Polarized staff (-) with SPS effect (Black Waltz 3)
             {
+                var Caster_TSVar = _v.CasterState();
+                var Target_TSVar = _v.TargetState();
+
                 if (TranceSeekAPI.CheckUnsafetyOrGuard(_v) && _v.Target.CanBeAttacked())
                 {
                     _v.Context.Flags |= BattleCalcFlags.DirectHP;
                     if (_v.Target.CurrentHp < 10U)
-                    {
                         _v.Target.CurrentHp = (uint)(1L + GameRandom.Next8() % _v.Target.CurrentHp);
-                    }
                     else
-                    {
                         _v.Target.CurrentHp = (uint)(1 + GameRandom.Next8() % 9);
-                    }
+
                     TranceSeekAPI.TryAlterCommandStatuses(_v);
                 }
 
-                if (!PolaritySPS.TryGetValue(_v.Target.Data, out SPSEffect sps)) // Init
-                    PolaritySPS[_v.Target.Data] = null;
-
-                sps = HonoluluBattleMain.battleSPS.AddSequenceSPS(12, -1, 1, true);
+                SPSEffect sps = HonoluluBattleMain.battleSPS.AddSequenceSPS(12, -1, 1, true);
                 if (sps == null)
                     return;
+
                 btl2d.GetIconPosition(_v.Target, btl2d.ICON_POS_HEAD, out Transform attachTransf, out Vector3 iconOff);
                 sps.charTran = _v.Target.Data.gameObject.transform;
                 sps.boneTran = attachTransf;
                 sps.posOffset = Vector3.zero;
-                PolaritySPS[_v.Target.Data] = sps;
+                Target_TSVar.PolaritySPS = sps;
                 //sps.scale = (Int32)(sps.scale * tmpSingle);
 
                 if (_v.Caster.Data.dms_geo_id == 278)
                 {
                     _v.Target.AddDelayedModifier(
-                        target => PolaritySPS[_v.Caster.Data].attr != 0,
+                        target => Caster_TSVar.PolaritySPS.attr != 0,
                         target =>
                         {
-                            PolaritySPS[_v.Target.Data].attr = 0;
-                            PolaritySPS[_v.Target.Data].meshRenderer.enabled = false;
+                            var TargetUnit_TSVar = _v.Target.State();
+                            TargetUnit_TSVar.PolaritySPS.attr = 0;
+                            TargetUnit_TSVar.PolaritySPS.meshRenderer.enabled = false;
                             btl_stat.RemoveStatus(_v.Target, BattleStatusId.Slow);
                         }
                     );
@@ -350,9 +342,11 @@ namespace Memoria.Scripts.TranceSeek
             }
             else if (_v.Command.Power == 25 && _v.Command.HitRate == 77 && _v.Caster.Data.dms_geo_id == 278) // Barrier OFF (Black Waltz 3)
             {
+                var Caster_TSVar = _v.CasterState();
+
                 TranceSeekAPI.TryRemoveAbilityStatuses(_v);
-                PolaritySPS[_v.Caster.Data].attr = 0;
-                PolaritySPS[_v.Caster.Data].meshRenderer.enabled = false;
+                Caster_TSVar.PolaritySPS.attr = 0;
+                Caster_TSVar.PolaritySPS.meshRenderer.enabled = false;
                 return;
             }
             else if (_v.Command.Power == 133 && _v.Command.HitRate == 133 && _v.Caster.Data.dms_geo_id == 427) // Beatrix 3 - Finisher
@@ -365,10 +359,12 @@ namespace Memoria.Scripts.TranceSeek
             }
             else if (_v.Caster.Data.dms_geo_id == 63) // Golden Pidove
             {
+                var Caster_TSVar = _v.CasterState();
+
                 if (_v.Target.Data == _v.Caster.Data)
                 {
-                    PolaritySPS[_v.Caster.Data].attr = 0;
-                    PolaritySPS[_v.Caster.Data].meshRenderer.enabled = false;
+                    Caster_TSVar.PolaritySPS.attr = 0;
+                    Caster_TSVar.PolaritySPS.meshRenderer.enabled = false;
                     _v.Caster.AddDelayedModifier(
                         caster => caster.CurrentAtb >= caster.MaximumAtb,
                         caster =>

@@ -293,80 +293,83 @@ namespace Memoria.Scripts.TranceSeek
                         StateDict.SpecialItem.MechanicalArmor = 10;
                         btl_stat.AlterStatus(unit, TranceSeekStatusId.MechanicalArmor, parameters: StateDict.SpecialItem.MechanicalArmor);
                     }
-                    if (unit.Accessory == TranceSeekRegularItem.IshgardScarf) // Ishgard Scarf
+                    switch (unit.Accessory)
                     {
-                        unit.AddDelayedModifier(
-                            caster => FF9StateSystem.Battle.FF9Battle.btl_phase < FF9StateBattleSystem.PHASE_MENU_ON,
-                            caster =>
-                            {
-                                List<UInt16> TargetsAvailable = new List<UInt16>(4);
-                                for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
-                                    if (next.bi.player == 0 && !btl_stat.CheckStatus(next, BattleStatus.Death | BattleStatus.Petrify) && next.bi.target != 0)
-                                        TargetsAvailable.Add(next.btl_id);
+                        case TranceSeekRegularItem.IshgardScarf:
+                            unit.AddDelayedModifier(
+                                caster => FF9StateSystem.Battle.FF9Battle.btl_phase < FF9StateBattleSystem.PHASE_MENU_ON,
+                                caster =>
+                                {
+                                    List<UInt16> TargetsAvailable = new List<UInt16>(4);
+                                    for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
+                                        if (next.bi.player == 0 && !btl_stat.CheckStatus(next, BattleStatus.Death | BattleStatus.Petrify) && next.bi.target != 0)
+                                            TargetsAvailable.Add(next.btl_id);
 
-                                if (TargetsAvailable.Count > 0)
-                                    btl_stat.AlterStatus(btl_scrp.FindBattleUnitUnlimited(TargetsAvailable[UnityEngine.Random.Range(0, TargetsAvailable.Count)]), TranceSeekStatusId.Dragon);
+                                    if (TargetsAvailable.Count > 0)
+                                        btl_stat.AlterStatus(btl_scrp.FindBattleUnitUnlimited(TargetsAvailable[UnityEngine.Random.Range(0, TargetsAvailable.Count)]), TranceSeekStatusId.Dragon);
+                                }
+                            );
+                        break;
+                        case TranceSeekRegularItem.StrangeCube:
+                            unit.MaximumHp = (uint)UnityEngine.Random.Range(unit.MaximumHp - (unit.MaximumHp / 2), unit.MaximumHp + (unit.MaximumHp / 2));
+                            StateDict.SpecialSA.NewMaximumHP = (int)unit.MaximumHp;
+                            if (unit.CurrentHp > unit.MaximumHp)
+                                unit.CurrentHp = unit.MaximumHp;
+                            unit.MaximumMp = (uint)UnityEngine.Random.Range(unit.MaximumMp - (unit.MaximumMp / 2), unit.MaximumMp + (unit.MaximumMp / 2));
+                            StateDict.SpecialSA.NewMaximumMP = (int)unit.MaximumMp;
+                            if (unit.CurrentMp > unit.MaximumMp)
+                                unit.CurrentMp = unit.MaximumMp;
+                            unit.Dexterity = (byte)UnityEngine.Random.Range(unit.Dexterity - (unit.Dexterity / 2), unit.Dexterity + (unit.Dexterity / 2));
+                            unit.Strength = (byte)UnityEngine.Random.Range(unit.Strength - (unit.Strength / 2), unit.Strength + (unit.Strength / 2));
+                            unit.Magic = (byte)UnityEngine.Random.Range(unit.Magic - (unit.Magic / 2), unit.Magic + (unit.Magic / 2));
+                            unit.Will = (byte)UnityEngine.Random.Range(unit.Will - (unit.Will / 2), unit.Will + (unit.Will / 2));
+                            unit.PhysicalDefence = (byte)UnityEngine.Random.Range(unit.PhysicalDefence - (unit.PhysicalDefence / 2), unit.PhysicalDefence + (unit.PhysicalDefence / 2));
+                            unit.MagicDefence = (byte)UnityEngine.Random.Range(unit.MagicDefence - (unit.MagicDefence / 2), unit.MagicDefence + (unit.MagicDefence / 2));
+                            unit.PhysicalEvade = (byte)UnityEngine.Random.Range(unit.PhysicalEvade - (unit.PhysicalEvade / 2), unit.PhysicalEvade + (unit.PhysicalEvade / 2));
+                            unit.MagicEvade = (byte)UnityEngine.Random.Range(unit.MagicEvade - (unit.MagicEvade / 2), unit.MagicEvade + (unit.MagicEvade / 2));
+                            unit.WeakElement = (EffectElement)(1 << Comn.random16() % 8);
+                            unit.HalfElement = (EffectElement)(1 << Comn.random16() % 8);
+                            unit.GuardElement = (EffectElement)(1 << Comn.random16() % 8);
+                            unit.AbsorbElement = (EffectElement)(1 << Comn.random16() % 8);
+
+                            btl_stat.AlterStatus(unit, StrangeCubeStatuses[Comn.random16() % StrangeCubeStatuses.Length]);
+                            break;
+                        case TranceSeekRegularItem.MagicLamp:
+                            magiclampcooldown = (60 - unit.Will) * UnityEngine.Random.Range(1, 11) * 100;
+                            unit.AddDelayedModifier(ProcessMagicLampRecast, null);
+
+                            break;
+                        case TranceSeekRegularItem.CursedCoin:
+                            if (DarkBBG.Contains(battlebg.nf_BbgNumber))
+                            {
+                                CharacterPresetId presetId = unit.Player.PresetId;
+                                unit.ChangeToMonster("GZ_R002", 0, CharacterCommands.CommandSets[presetId].Regular[2], TranceSeekBattleCommand.Monster, false, false, false, false, false);
+                                CharacterCommands.CommandSets[presetId].Regular[3] = BattleCommandId.None;
                             }
-                        );
-                    }
-                    else if (unit.Accessory == TranceSeekRegularItem.StrangeCube) // Strange Cube
-                    {
-                        unit.MaximumHp = (uint)UnityEngine.Random.Range(unit.MaximumHp - (unit.MaximumHp / 2), unit.MaximumHp + (unit.MaximumHp / 2));
-                        StateDict.SpecialSA.NewMaximumHP = (int)unit.MaximumHp;
-                        if (unit.CurrentHp > unit.MaximumHp)
-                            unit.CurrentHp = unit.MaximumHp;
-                        unit.MaximumMp = (uint)UnityEngine.Random.Range(unit.MaximumMp - (unit.MaximumMp / 2), unit.MaximumMp + (unit.MaximumMp / 2));
-                        StateDict.SpecialSA.NewMaximumMP = (int)unit.MaximumMp;
-                        if (unit.CurrentMp > unit.MaximumMp)
-                            unit.CurrentMp = unit.MaximumMp;
-                        unit.Dexterity = (byte)UnityEngine.Random.Range(unit.Dexterity - (unit.Dexterity / 2), unit.Dexterity + (unit.Dexterity / 2));
-                        unit.Strength = (byte)UnityEngine.Random.Range(unit.Strength - (unit.Strength / 2), unit.Strength + (unit.Strength / 2));
-                        unit.Magic = (byte)UnityEngine.Random.Range(unit.Magic - (unit.Magic / 2), unit.Magic + (unit.Magic / 2));
-                        unit.Will = (byte)UnityEngine.Random.Range(unit.Will - (unit.Will / 2), unit.Will + (unit.Will / 2));
-                        unit.PhysicalDefence = (byte)UnityEngine.Random.Range(unit.PhysicalDefence - (unit.PhysicalDefence / 2), unit.PhysicalDefence + (unit.PhysicalDefence / 2));
-                        unit.MagicDefence = (byte)UnityEngine.Random.Range(unit.MagicDefence - (unit.MagicDefence / 2), unit.MagicDefence + (unit.MagicDefence / 2));
-                        unit.PhysicalEvade = (byte)UnityEngine.Random.Range(unit.PhysicalEvade - (unit.PhysicalEvade / 2), unit.PhysicalEvade + (unit.PhysicalEvade / 2));
-                        unit.MagicEvade = (byte)UnityEngine.Random.Range(unit.MagicEvade - (unit.MagicEvade / 2), unit.MagicEvade + (unit.MagicEvade / 2));
-                        unit.WeakElement = (EffectElement)(1 << Comn.random16() % 8);
-                        unit.HalfElement = (EffectElement)(1 << Comn.random16() % 8);
-                        unit.GuardElement = (EffectElement)(1 << Comn.random16() % 8);
-                        unit.AbsorbElement = (EffectElement)(1 << Comn.random16() % 8);
-
-                        btl_stat.AlterStatus(unit, StrangeCubeStatuses[Comn.random16() % StrangeCubeStatuses.Length]);
-                    }
-                    else if (unit.Accessory == TranceSeekRegularItem.MagicLamp) // Magic Lamp
-                    {
-                        magiclampcooldown = (60 - unit.Will) * UnityEngine.Random.Range(1, 11) * 100;
-                        unit.AddDelayedModifier(ProcessMagicLampRecast, null);
-                    }
-                    else if (unit.Accessory == TranceSeekRegularItem.CursedCoin) // Cursed Coin
-                    {
-                        if (DarkBBG.Contains(battlebg.nf_BbgNumber))
-                        {
-                            CharacterPresetId presetId = unit.Player.PresetId;
-                            unit.ChangeToMonster("GZ_R002", 0, CharacterCommands.CommandSets[presetId].Regular[2], TranceSeekBattleCommand.Monster, false, false, false, false, false);
-                            CharacterCommands.CommandSets[presetId].Regular[3] = BattleCommandId.None;
-                        }
-                    }
-                    else if (unit.Accessory == TranceSeekRegularItem.RefinedMonocle && !RefinedMonocleTrigger) // Refined Monocle
-                    {
-                        RefinedMonocleTrigger = true;
-                        unit.AddDelayedModifier(
-                            caster => FF9StateSystem.Battle.FF9Battle.btl_phase < FF9StateBattleSystem.PHASE_MENU_ON,
-                            caster =>
+                            break;
+                        case TranceSeekRegularItem.RefinedMonocle:
+                            if (!RefinedMonocleTrigger)
                             {
-                                foreach (BattleUnit monsteratb in BattleState.EnumerateUnits())
-                                    if (!monsteratb.IsPlayer && monsteratb.IsTargetable)
+                                RefinedMonocleTrigger = true;
+                                unit.AddDelayedModifier(
+                                    caster => FF9StateSystem.Battle.FF9Battle.btl_phase < FF9StateBattleSystem.PHASE_MENU_ON,
+                                    caster =>
                                     {
-                                        ScanScript.TriggerOneTime[monsteratb.Data] = false;
-                                        ScanScript.HPBarHidden[monsteratb.Data] = false;
-                                        ScanScript.ATBGreenBarHUD[monsteratb.Data] = null;
-                                        ScanScript.ATBRedBarHUD[monsteratb.Data] = null;
-                                        monsteratb.AddDelayedModifier(ScanScript.ShowATBBar, null);
+                                        foreach (BattleUnit monsteratb in BattleState.EnumerateUnits())
+                                            if (!monsteratb.IsPlayer && monsteratb.IsTargetable)
+                                            {
+                                                ScanScript.TriggerOneTime[monsteratb.Data] = false;
+                                                ScanScript.HPBarHidden[monsteratb.Data] = false;
+                                                ScanScript.ATBGreenBarHUD[monsteratb.Data] = null;
+                                                ScanScript.ATBRedBarHUD[monsteratb.Data] = null;
+                                                monsteratb.AddDelayedModifier(ScanScript.ShowATBBar, null);
+                                            }
                                     }
+                                );
                             }
-                        );
+                            break;
                     }
+
                     if (unit.PlayerIndex == CharacterId.Eiko) // Init Moug
                     {
                         PassiveEikoScript.ModelMoug[unit.Data] = ModelFactory.CreateModel("GEO_NPC_F4_MOG", true);
@@ -518,17 +521,14 @@ namespace Memoria.Scripts.TranceSeek
 
                     if (BattleID == 838 && sb2Pattern.Monster[unit.Data.bi.slot_no].TypeNo == 1) // Golden Pidove (fake Sleep)
                     {
-                        if (!TranceSeekSpecial.PolaritySPS.TryGetValue(unit, out SPSEffect sps))
-                            TranceSeekSpecial.PolaritySPS[unit] = null;
-
-                        sps = HonoluluBattleMain.battleSPS.AddSequenceSPS(2, -1, 1, true);
+                        SPSEffect sps = HonoluluBattleMain.battleSPS.AddSequenceSPS(2, -1, 1, true);
                         if (sps == null)
                             return;
                         btl2d.GetIconPosition(unit, btl2d.ICON_POS_HEAD, out Transform attachTransf, out Vector3 iconOff);
                         sps.charTran = unit.Data.gameObject.transform;
                         sps.boneTran = attachTransf;
                         sps.posOffset = Vector3.zero;
-                        TranceSeekSpecial.PolaritySPS[unit] = sps;
+                        StateDict.PolaritySPS = sps;
                     }
 
                     SB2_PUT enemyPlacement = btl_scene.PatAddr[GroupeBattleID].Monster[unit.Data.bi.slot_no];

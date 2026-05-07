@@ -360,16 +360,6 @@ namespace Memoria.Scripts.TranceSeek
             { TranceSeekRegularItem.BrilliantDarkOrb, EffectElement.Darkness },
             { TranceSeekRegularItem.BrilliantLightOrb, EffectElement.Holy }
         };
-
-        private Boolean HitRateForZombie()
-        {
-            if (_v.Target.IsZombie)
-            {
-                TranceSeekAPI.MagicAccuracy(_v);
-                return true;
-            }
-            return false;
-        }
     }
 }
 
