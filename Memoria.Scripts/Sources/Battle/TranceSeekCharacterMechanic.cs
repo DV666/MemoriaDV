@@ -192,34 +192,31 @@ namespace Memoria.Scripts.TranceSeek
 
         public static Boolean SteinerMechanic(BattleUnit unit)
         {
-            var StateDict = TranceSeekBattleDictionary.GetState(unit.Data);
+            var StateDict = GetState(unit.Data);
 
             if (UIManager.Input.GetKey(Control.RightTrigger) && StateDict.Steiner.PlutoStackUsed > 0 && !StateDict.Steiner.TriggerOneTime && unit.Data.bi.line_no == UIManager.Battle.CurrentPlayerIndex)
             {
                 StateDict.Steiner.TriggerOneTime = true;
                 StateDict.Steiner.PlutoStackUsed--;
                 StateDict.Steiner.PlutoStackRemain++;
-                FF9TextTool.SetCommandName(BattleCommandId.SwordAct, TranceSeekBattleCommand.SwdArtCMDNameVanilla[Localization.CurrentDisplaySymbol] + " (" + StateDict.Steiner.PlutoStackUsed + "/" + (StateDict.Steiner.PlutoStackUsed + StateDict.Steiner.PlutoStackRemain) + ")");
+
+                FF9TextTool.SetCommandName(BattleCommandId.SwordAct, TranceSeekBattleCommand.SwdArtCMDNameVanilla[Localization.CurrentDisplaySymbol] + " (" + StateDict.Steiner.PlutoStackRemain + "/" + (StateDict.Steiner.PlutoStackUsed + StateDict.Steiner.PlutoStackRemain) + ")");
                 UIManager.Battle.OnLocalize();
                 SoundLib.PlaySoundEffect(1577);
-                //unit.UILabelHP = $"{SteinerPassive[unit.Data][1]} [SPRT=IconAtlas,item200_00,32,32]\n{unit.CurrentHp}";
-                if (FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1000, out Dictionary<Int32, Int32> dictbattle))
-                    dictbattle[1] = StateDict.Steiner.PlutoStackRemain;
             }
             else if (UIManager.Input.GetKey(Control.LeftTrigger) && StateDict.Steiner.PlutoStackRemain > 0 && !StateDict.Steiner.TriggerOneTime && unit.Data.bi.line_no == UIManager.Battle.CurrentPlayerIndex)
             {
                 StateDict.Steiner.TriggerOneTime = true;
                 StateDict.Steiner.PlutoStackUsed++;
                 StateDict.Steiner.PlutoStackRemain--;
-                FF9TextTool.SetCommandName(BattleCommandId.SwordAct, TranceSeekBattleCommand.SwdArtCMDNameVanilla[Localization.CurrentDisplaySymbol] + " (" + StateDict.Steiner.PlutoStackUsed + "/" + (StateDict.Steiner.PlutoStackUsed + StateDict.Steiner.PlutoStackRemain) + ")");
+
+                FF9TextTool.SetCommandName(BattleCommandId.SwordAct, TranceSeekBattleCommand.SwdArtCMDNameVanilla[Localization.CurrentDisplaySymbol] + " (" + StateDict.Steiner.PlutoStackRemain + "/" + (StateDict.Steiner.PlutoStackUsed + StateDict.Steiner.PlutoStackRemain) + ")");
                 UIManager.Battle.OnLocalize();
                 SoundLib.PlaySoundEffect(1577);
-                if (FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1000, out Dictionary<Int32, Int32> dictbattle))
-                    dictbattle[1] = StateDict.Steiner.PlutoStackRemain;
             }
 
-            if (StateDict.Steiner.PlutoStackRemain > 0)
-                unit.UILabelHP = $"{StateDict.Steiner.PlutoStackRemain} [SPRT=IconAtlas,item200_00,32,32]\n{unit.CurrentHp}";
+            if (StateDict.Steiner.PlutoStackUsed > 0)
+                unit.UILabelHP = $"{StateDict.Steiner.PlutoStackUsed} [SPRT=IconAtlas,item200_00,32,32]\n{unit.CurrentHp}";
             else
                 unit.UILabelHP = unit.CurrentHp.ToString();
 
@@ -229,22 +226,6 @@ namespace Memoria.Scripts.TranceSeek
             return true;
         }
 
-        public static void ResetSteinerPassive(BattleUnit unit)
-        {
-            FF9TextTool.SetCommandName(BattleCommandId.SwordAct, TranceSeekBattleCommand.SwdArtCMDNameVanilla[Localization.CurrentDisplaySymbol]);
-            unit.UILabelHP = unit.CurrentHp.ToString();
-
-            unit.AddDelayedModifier(
-            caster => caster.CurrentAtb >= caster.MaximumAtb,
-            caster =>
-            {
-                unit.State().Steiner.PlutoStackRemain = 0;
-                if (FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1000, out Dictionary<Int32, Int32> dictbattle))
-                    dictbattle[1] = 0;
-            }
-            );
-        }
-
         public static void TriggerSteinerPassive(this BattleCalculator v)
         {
             if (v.Target.PlayerIndex == CharacterId.Steiner && v.Target.IsPlayer != v.Caster.IsPlayer)
@@ -252,13 +233,30 @@ namespace Memoria.Scripts.TranceSeek
                 var Steiner_TSVar = v.TargetState().Steiner;
                 if ((Steiner_TSVar.PlutoStackUsed + Steiner_TSVar.PlutoStackRemain) < 5)
                 {
-                    Steiner_TSVar.PlutoStackUsed++;
+                    Steiner_TSVar.PlutoStackRemain++;
                     if (v.Target.IsCovering && (Steiner_TSVar.PlutoStackUsed + Steiner_TSVar.PlutoStackRemain) < 5)
-                        Steiner_TSVar.PlutoStackUsed++;
-                    FF9TextTool.SetCommandName(BattleCommandId.SwordAct, TranceSeekBattleCommand.SwdArtCMDNameVanilla[Localization.CurrentSymbol] + " (" + Steiner_TSVar.PlutoStackUsed + "/" + (Steiner_TSVar.PlutoStackUsed + Steiner_TSVar.PlutoStackRemain) + ")");
+                        Steiner_TSVar.PlutoStackRemain++;
+                    FF9TextTool.SetCommandName(BattleCommandId.SwordAct, TranceSeekBattleCommand.SwdArtCMDNameVanilla[Localization.CurrentSymbol] + " (" + Steiner_TSVar.PlutoStackRemain + "/" + (Steiner_TSVar.PlutoStackUsed + Steiner_TSVar.PlutoStackRemain) + ")");
                     btl2d.Btl2dReqSymbolMessage(v.Target, "[A0A0A0]", MessagePlutoStack, HUDMessage.MessageStyle.DAMAGE, 40);
                 }
             }
+        }
+
+        public static void ResetSteinerPassive(BattleUnit unit)
+        {
+            if (unit.PlayerIndex != CharacterId.Steiner)
+                return;
+
+            FF9TextTool.SetCommandName(BattleCommandId.SwordAct, TranceSeekBattleCommand.SwdArtCMDNameVanilla[Localization.CurrentDisplaySymbol]);
+            unit.UILabelHP = unit.CurrentHp.ToString();
+
+            unit.AddDelayedModifier(
+                caster => caster.CurrentAtb >= caster.MaximumAtb,
+                caster =>
+                {
+                    unit.State().Steiner.PlutoStackUsed = 0;
+                }
+            );
         }
 
         public static void UpdateRedemptionHUD(BattleUnit unit)

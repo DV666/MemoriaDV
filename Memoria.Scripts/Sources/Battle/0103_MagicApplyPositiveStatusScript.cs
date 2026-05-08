@@ -80,27 +80,29 @@ namespace Memoria.Scripts.TranceSeek
             if (_v.Command.AbilityId == TranceSeekBattleAbility.Ironclad) // Iron Clast
             {
                 _v.Command.AbilityStatus |= TranceSeekStatus.ArmorUp;
-                if (Target_TSVar.Steiner.PlutoStackRemain > 0)
+                if (Target_TSVar.Steiner.PlutoStackUsed > 0)
                 {
-                    btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.ArmorUp, parameters: $"+{Target_TSVar.Steiner.PlutoStackRemain}");
-                    if (Target_TSVar.Steiner.PlutoStackRemain == 5)
+                    btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.ArmorUp, parameters: $"+{Target_TSVar.Steiner.PlutoStackUsed}");
+                    if (Target_TSVar.Steiner.PlutoStackUsed == 5)
                         _v.Target.AlterStatus(BattleStatus.Protect);
                     TranceSeekCharacterMechanic.ResetSteinerPassive(_v.Caster);
                 }
+                return;
             }
             else if (_v.Command.AbilityId == TranceSeekBattleAbility.Bulwark) // Rempart
             {
                 _v.Command.AbilityStatus |= TranceSeekStatus.Bulwark;
-                if (Target_TSVar.Steiner.PlutoStackRemain > 0)
+                if (Target_TSVar.Steiner.PlutoStackUsed > 0)
                 {
-                    if (Target_TSVar.Steiner.PlutoStackRemain == 5)
+                    if (Target_TSVar.Steiner.PlutoStackUsed == 5)
                         btl_stat.RemoveStatus(_v.Target, TranceSeekStatusId.ArmorBreak);
 
                     btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.ArmorUp);
-                    if (Target_TSVar.Steiner.PlutoStackRemain >= 3)
+                    if (Target_TSVar.Steiner.PlutoStackUsed >= 3)
                         btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.ArmorUp);
                     TranceSeekCharacterMechanic.ResetSteinerPassive(_v.Caster);
                 }
+                return;
             }
             else if (_v.Command.AbilityId == TranceSeekBattleAbility.Runic) // Runic
             {

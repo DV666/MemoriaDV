@@ -110,8 +110,7 @@ namespace Memoria.Scripts.TranceSeek
                         }
                     }
 
-                    if (Caster_TSVar.Steiner.PlutoStackUsed > 0)
-                        TranceSeekCharacterMechanic.ResetSteinerPassive(_v.Caster);
+                    TranceSeekCharacterMechanic.ResetSteinerPassive(_v.Caster);
                 }
             }
         }

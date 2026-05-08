@@ -882,39 +882,39 @@ namespace Memoria.Scripts.TranceSeek
             {
                 var unit_TSVar = unit.State();
 
-                WEAPON_MODEL CostumeModel = new WEAPON_MODEL { geo = ModelFactory.CreateModel(config.ModelName, true) };
+                WEAPON_MODEL AccessoryModel = new WEAPON_MODEL { geo = ModelFactory.CreateModel(config.ModelName, true) };
                 GameObject currentAttachedTarget = unit.Data.gameObject;
 
-                GeoAttach(CostumeModel.geo, currentAttachedTarget, config.BoneIndex);
-                CostumeModel.geo.transform.localPosition = config.PositionOffset;
-                CostumeModel.geo.transform.localRotation = Quaternion.Euler(config.RotationOffset);
-                CostumeModel.geo.SetActive(true);
+                GeoAttach(AccessoryModel.geo, currentAttachedTarget, config.BoneIndex);
+                AccessoryModel.geo.transform.localPosition = config.PositionOffset;
+                AccessoryModel.geo.transform.localRotation = Quaternion.Euler(config.RotationOffset);
+                AccessoryModel.geo.SetActive(true);
 
-                unit_TSVar.AdditionalModel.Add(CostumeModel);
+                unit_TSVar.AdditionalModel.Add(AccessoryModel);
 
                 unit.AddDelayedModifier(
                     caster =>
                     {
-                        if (CostumeModel == null || CostumeModel.geo == null || caster.Accessory != searchKey.Item)
+                        if (AccessoryModel == null || AccessoryModel.geo == null || caster.Accessory != searchKey.Item)
                         {
-                            if (CostumeModel?.geo != null)
-                                UnityEngine.Object.Destroy(CostumeModel.geo);
+                            if (AccessoryModel?.geo != null)
+                                UnityEngine.Object.Destroy(AccessoryModel.geo);
                             return false;
                         }
 
                         if (currentAttachedTarget != caster.Data.gameObject)
                         {
                             currentAttachedTarget = caster.Data.gameObject;
-                            GeoAttach(CostumeModel.geo, currentAttachedTarget, config.BoneIndex);
-                            CostumeModel.geo.transform.localPosition = config.PositionOffset;
-                            CostumeModel.geo.transform.localRotation = Quaternion.Euler(config.RotationOffset);
+                            GeoAttach(AccessoryModel.geo, currentAttachedTarget, config.BoneIndex);
+                            AccessoryModel.geo.transform.localPosition = config.PositionOffset;
+                            AccessoryModel.geo.transform.localRotation = Quaternion.Euler(config.RotationOffset);
                         }
 
                         bool areMeshesHidden = (caster.Data.meshflags & 0xFFFF) == 0xFFFF;
                         bool shouldShow = !areMeshesHidden && caster.Data.bi.disappear == 0;
 
-                        if (CostumeModel.geo.activeSelf != shouldShow)
-                            CostumeModel.geo.SetActive(shouldShow);
+                        if (AccessoryModel.geo.activeSelf != shouldShow)
+                            AccessoryModel.geo.SetActive(shouldShow);
 
                         return true;
                     },

@@ -42,9 +42,9 @@ namespace Memoria.Scripts.TranceSeek
                 {
                     _v.NormalPhysicalParams();
                 }
-                if (_v.CasterState().Steiner.PlutoStackRemain > 0)
+                if (_v.CasterState().Steiner.PlutoStackUsed > 0)
                 {
-                    _v.Command.HitRate += 10 * _v.CasterState().Steiner.PlutoStackRemain;
+                    _v.Command.HitRate += 10 * _v.CasterState().Steiner.PlutoStackUsed;
                     TranceSeekCharacterMechanic.ResetSteinerPassive(_v.Caster);
                 }
 

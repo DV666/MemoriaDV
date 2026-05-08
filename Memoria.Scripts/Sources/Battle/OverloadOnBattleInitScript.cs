@@ -78,7 +78,7 @@ namespace Memoria.Scripts.TranceSeek
                 FF9StateSystem.EventState.gScriptDictionary.Add(1000, dictbattle);
             }
             dictbattle[0] = 0; // Bonus gils from SA or items
-            dictbattle[1] = 0; // Steiner mechanic
+            dictbattle[1] = 0; // Steiner mechanic (unused)
             dictbattle[2] = 0; // Beatrix mechanic
             dictbattle[3] = 0; // Master Alchemy
             dictbattle[4] = 0; // Duelist
