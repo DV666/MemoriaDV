@@ -29,6 +29,8 @@ namespace Memoria.Scripts.TranceSeek
             }
             else
             {
+                var Caster_TSVar = _v.CasterState();
+
                 _v.NormalMagicParams();     
                 TranceSeekAPI.CasterPenaltyMini(_v);
                 TranceSeekAPI.EnemyTranceBonusAttack(_v);
@@ -36,6 +38,10 @@ namespace Memoria.Scripts.TranceSeek
                 if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Archmage))
                     TranceSeekAPI.TryCriticalHit(_v);
                 _v.CalcHpMagicRecovery();
+
+                if (Caster_TSVar.StackStatus.Magic != 0)
+                    _v.Context.Attack += ((Caster_TSVar.StackStatus.Magic * _v.Context.Attack) / 100);
+
                 if (_v.Command.HitRate == 255)
                 {
                     _v.Target.TryRemoveStatuses(_v.Command.AbilityStatus);

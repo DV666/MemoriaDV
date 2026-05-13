@@ -85,6 +85,7 @@ namespace Memoria.Scripts.TranceSeek
 
     public class TonModWatcher : MonoBehaviour
     {
+        private bool _initgame = false;
         private bool _wasInLoadMenu = false;
         private bool _wasInTitleScreen = true;
 
@@ -100,15 +101,19 @@ namespace Memoria.Scripts.TranceSeek
                 bool isInLoadMenu = ui.SaveLoadScene.isActiveAndEnabled && ui.SaveLoadScene.Type == SaveLoadUI.SerializeType.Load;
                 bool isInTitleScreen = ui.TitleScene.isActiveAndEnabled;
 
-                if (_wasInLoadMenu && !isInLoadMenu)
+                if (!_initgame)
                 {
-                    if (IsPlayerReady()) OnSaveLoaded("Moogle");
+                    if (!SpecialFilesTranceSeek.FixSpecificFields())
+                        Memoria.Prime.Log.Warning("[Trance Seek] Falsification détectée.");
+
+                    _initgame = true;
                 }
 
+                if (_wasInLoadMenu && !isInLoadMenu)
+                    if (IsPlayerReady()) OnSaveLoaded("Moogle");
+
                 if (_wasInTitleScreen && !isInTitleScreen)
-                {
                     if (IsPlayerReady()) OnSaveLoaded("Écran Titre");
-                }
 
                 _wasInLoadMenu = isInLoadMenu;
                 _wasInTitleScreen = isInTitleScreen;
@@ -502,6 +507,7 @@ namespace Memoria.Scripts.TranceSeek
         private bool _enableTint = true;
         private Dictionary<Renderer, Color> _originalColors = new Dictionary<Renderer, Color>();
         private string _posX = "0", _posY = "0", _posZ = "0";
+        private string _rotY = "0";
         private string _customAnimIdInput = "0";
 
         private bool _showLangMenu = false;
@@ -514,6 +520,10 @@ namespace Memoria.Scripts.TranceSeek
         private string _battleIdStr = "0";
         private string _battleGroupStr = "0";
         private bool _randomBattleGroup = false;
+
+        private int _selectedMapVarKey = 0;
+        private int _selectedLocalVarKey = 0;
+        private int _currentObjIndex = 0;
 
         private Dictionary<string, string> _statTextCache = new Dictionary<string, string>();
 
@@ -1278,46 +1288,135 @@ namespace Memoria.Scripts.TranceSeek
 
         private void DrawRegularItemsTab()
         {
-            var d = ff9item._FF9Item_Data;
-            if (d == null) return;
-            var l = d.Keys.ToList();
+            var itemDatabase = ff9item._FF9Item_Data;
+            if (itemDatabase == null) return;
+            var itemList = itemDatabase.Keys.ToList();
 
             GUILayout.BeginHorizontal();
-            GUILayout.Label("ID:", GUILayout.Width(50));
-            _searchItemIdStr = GUILayout.TextField(_searchItemIdStr, GUILayout.Width(50));
+            GUILayout.Label("ID:", GUILayout.Width(30));
+            _searchItemIdStr = GUILayout.TextField(_searchItemIdStr, GUILayout.Width(45));
 
-            if (GUILayout.Button("Go"))
+            if (GUILayout.Button("Go", GUILayout.Width(40)))
             {
-                if (int.TryParse(_searchItemIdStr, out int id))
+                if (int.TryParse(_searchItemIdStr, out int parsedId))
                 {
-                    int f = l.FindIndex(k => (int)k == id);
-                    if (f != -1) { _currentItemIndex = f; _statTextCache.Clear(); GUI.FocusControl(null); }
+                    int index = itemList.FindIndex(k => (int)k == parsedId);
+                    if (index != -1)
+                    {
+                        _currentItemIndex = index;
+                        _statTextCache.Clear();
+                        GUI.FocusControl(null);
+                        SoundLib.PlaySoundEffect(103);
+                    }
+                    else
+                    {
+                        SoundLib.PlaySoundEffect(102);
+                    }
+                }
+                else
+                {
+                    SoundLib.PlaySoundEffect(102);
                 }
             }
+
             GUILayout.FlexibleSpace();
+
+            if (GUILayout.Button("Reload DB"))
+            {
+                try
+                {
+                    Type type = typeof(ff9item);
+                    System.Reflection.MethodInfo method = type.GetMethod("LoadItems", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
+                    if (method != null)
+                    {
+                        var reloadedData = method.Invoke(null, null) as Dictionary<RegularItem, FF9ITEM_DATA>;
+                        if (reloadedData != null)
+                        {
+                            ff9item._FF9Item_Data = reloadedData;
+                            _statTextCache.Clear();
+                            SoundLib.PlaySoundEffect(108);
+                            Memoria.Prime.Log.Message("[DebugMenu] Items DB reloaded successfully.");
+                        }
+                        else
+                        {
+                            SoundLib.PlaySoundEffect(102);
+                        }
+                    }
+                    else
+                    {
+                        SoundLib.PlaySoundEffect(102);
+                    }
+                }
+                catch
+                {
+                    SoundLib.PlaySoundEffect(102);
+                }
+                GUI.FocusControl(null);
+            }
+
             if (GUILayout.Button("All x99"))
             {
-                foreach (RegularItem i in d.Keys) ff9item.FF9Item_Add(i, 99);
+                foreach (RegularItem itemKey in itemDatabase.Keys)
+                {
+                    ff9item.FF9Item_Add(itemKey, 99);
+                }
                 SoundLib.PlaySoundEffect(108);
+                GUI.FocusControl(null);
             }
             GUILayout.EndHorizontal();
 
-            if (_currentItemIndex >= l.Count) _currentItemIndex = 0;
+            if (_currentItemIndex >= itemList.Count) _currentItemIndex = 0;
 
             GUILayout.BeginHorizontal();
-            if (GUILayout.Button("<", GUILayout.Width(40), GUILayout.Height(30))) { _currentItemIndex--; if (_currentItemIndex < 0) _currentItemIndex = l.Count - 1; _statTextCache.Clear(); GUI.FocusControl(null); }
+            if (GUILayout.Button("<", GUILayout.Width(40), GUILayout.Height(30)))
+            {
+                _currentItemIndex--;
+                if (_currentItemIndex < 0) _currentItemIndex = itemList.Count - 1;
+                _statTextCache.Clear();
+                GUI.FocusControl(null);
+            }
 
-            RegularItem ci = l[_currentItemIndex];
-            int iid = (int)ci;
-            GUILayout.Label($"<b>🧪 <color=#00FF00>{GetItemName(iid)}</color> 🧪</b>\nID: {iid}", new GUIStyle(GUI.skin.label) { richText = true, alignment = TextAnchor.MiddleCenter });
+            RegularItem currentItem = itemList[_currentItemIndex];
+            int itemId = (int)currentItem;
+            string itemName = "Unknown";
 
-            if (GUILayout.Button(">", GUILayout.Width(40), GUILayout.Height(30))) { _currentItemIndex++; if (_currentItemIndex >= l.Count) _currentItemIndex = 0; _statTextCache.Clear(); GUI.FocusControl(null); }
+            try
+            {
+                string rawName = FF9TextTool.ItemName(currentItem);
+                if (!string.IsNullOrEmpty(rawName))
+                {
+                    itemName = SpecialFilesTranceSeek.RemoveTags(rawName);
+                }
+            }
+            catch { }
+
+            GUILayout.Label($"<b>🧪 <color=#00FF00>{itemName}</color> 🧪</b>\nID: {itemId}", new GUIStyle(GUI.skin.label) { richText = true, alignment = TextAnchor.MiddleCenter });
+
+            if (GUILayout.Button(">", GUILayout.Width(40), GUILayout.Height(30)))
+            {
+                _currentItemIndex++;
+                if (_currentItemIndex >= itemList.Count) _currentItemIndex = 0;
+                _statTextCache.Clear();
+                GUI.FocusControl(null);
+            }
             GUILayout.EndHorizontal();
 
             GUILayout.BeginVertical("box");
             GUILayout.BeginHorizontal();
             _itemQuantityToAdd = Mathf.Clamp(DrawStatUI("Item_Qty", "Qté", _itemQuantityToAdd, 100), 1, 99);
-            if (GUILayout.Button("Donner")) { ff9item.FF9Item_Add(ci, _itemQuantityToAdd); SoundLib.PlaySoundEffect(108); }
+
+            if (GUILayout.Button("Donner"))
+            {
+                if (itemDatabase.ContainsKey(currentItem))
+                {
+                    ff9item.FF9Item_Add(currentItem, _itemQuantityToAdd);
+                    SoundLib.PlaySoundEffect(108);
+                }
+                else
+                {
+                    SoundLib.PlaySoundEffect(102);
+                }
+            }
             GUILayout.EndHorizontal();
             GUILayout.EndVertical();
         }
@@ -1379,10 +1478,27 @@ namespace Memoria.Scripts.TranceSeek
 
         void DrawEventMenu(int windowID)
         {
-            GUILayout.BeginHorizontal(); if (GUILayout.Button("gEventGlobal")) { _eventMenuTab = 0; _statTextCache.Clear(); }
-            if (GUILayout.Button("gScriptDictionary")) { _eventMenuTab = 1; _statTextCache.Clear(); }
+            GUILayout.BeginHorizontal();
+            if (GUILayout.Button(_eventMenuTab == 0 ? "<color=orange><b>gEventGlobal</b></color>" : "gEventGlobal")) { _eventMenuTab = 0; _statTextCache.Clear(); }
+            if (GUILayout.Button(_eventMenuTab == 1 ? "<color=orange><b>gScriptDictionary</b></color>" : "gScriptDictionary")) { _eventMenuTab = 1; _statTextCache.Clear(); }
+            if (GUILayout.Button(_eventMenuTab == 2 ? "<color=orange><b>Map Vars (Global)</b></color>" : "Map Vars (Global)")) { _eventMenuTab = 2; _statTextCache.Clear(); }
+            if (GUILayout.Button(_eventMenuTab == 3 ? "<color=orange><b>Local Vars (Obj)</b></color>" : "Local Vars (Obj)")) { _eventMenuTab = 3; _statTextCache.Clear(); }
             GUILayout.EndHorizontal();
-            if (_eventMenuTab == 0) { if (FF9StateSystem.EventState?.gEventGlobal == null) return; byte[] g = FF9StateSystem.EventState.gEventGlobal; GUILayout.BeginVertical("box"); _selectedGlobalKey = Mathf.Clamp(DrawStatUI("GlobalKey", "Index", _selectedGlobalKey, 100), 0, 2047); g[_selectedGlobalKey] = (byte)Mathf.Clamp(DrawStatUI($"EvGlob_{_selectedGlobalKey}", "Valeur", g[_selectedGlobalKey], 100), 0, 255); GUILayout.EndVertical(); } else DrawScriptDictionaryTab(); GUI.DragWindow();
+
+            if (_eventMenuTab == 0)
+            {
+                if (FF9StateSystem.EventState?.gEventGlobal == null) return;
+                byte[] g = FF9StateSystem.EventState.gEventGlobal;
+                GUILayout.BeginVertical("box");
+                _selectedGlobalKey = Mathf.Clamp(DrawStatUI("GlobalKey", "Index", _selectedGlobalKey, 100), 0, 2047);
+                g[_selectedGlobalKey] = (byte)Mathf.Clamp(DrawStatUI($"EvGlob_{_selectedGlobalKey}", "Valeur", g[_selectedGlobalKey], 100), 0, 255);
+                GUILayout.EndVertical();
+            }
+            else if (_eventMenuTab == 1) DrawScriptDictionaryTab();
+            else if (_eventMenuTab == 2) DrawMapVarsTab();
+            else if (_eventMenuTab == 3) DrawLocalVarsTab();
+
+            GUI.DragWindow();
         }
 
         private void DrawScriptDictionaryTab()
@@ -1481,16 +1597,125 @@ namespace Memoria.Scripts.TranceSeek
             GUI.DragWindow();
         }
 
+        private void DrawMapVarsTab()
+        {
+            var ee = PersistenSingleton<EventEngine>.Instance;
+            if (ee == null) return;
+
+            byte[] mapVars = ee.GetMapVar();
+            if (mapVars == null || mapVars.Length == 0)
+            {
+                GUILayout.Label("Aucune Map Variable (Combat Global) active.");
+                return;
+            }
+
+            GUILayout.BeginVertical("box");
+            GUILayout.Label("<b>Variables Globales du Combat (Hades Workshop 'global')</b>", new GUIStyle(GUI.skin.label) { richText = true });
+
+            GUILayout.BeginHorizontal();
+            _selectedMapVarKey = Mathf.Clamp(DrawStatUI("MapVarKey", "Index (Offset)", _selectedMapVarKey, 110), 0, mapVars.Length - 1);
+
+            if (GUILayout.Button("Refresh", GUILayout.Width(100)))
+            {
+                _statTextCache.Clear();
+                GUI.FocusControl(null);
+                SoundLib.PlaySoundEffect(103);
+            }
+            GUILayout.EndHorizontal();
+            GUILayout.Space(10);
+            GUILayout.Label($"<b>Valeur UInt8 :</b> <color=yellow>{mapVars[_selectedMapVarKey]}</color>", new GUIStyle(GUI.skin.label) { richText = true });
+            if (_selectedMapVarKey + 1 < mapVars.Length)
+            {
+                ushort u16 = (ushort)(mapVars[_selectedMapVarKey] | (mapVars[_selectedMapVarKey + 1] << 8));
+                GUILayout.Label($"<b>Valeur UInt16 :</b> <color=cyan>{u16}</color>", new GUIStyle(GUI.skin.label) { richText = true });
+            }
+
+            GUILayout.Space(10);
+            mapVars[_selectedMapVarKey] = (byte)Mathf.Clamp(DrawStatUI($"MapVarMod_{_selectedMapVarKey}", "Modifier UInt8", mapVars[_selectedMapVarKey], 110), 0, 255);
+
+            GUILayout.EndVertical();
+        }
+
+        private void DrawLocalVarsTab()
+        {
+            var ee = PersistenSingleton<EventEngine>.Instance;
+            if (ee == null) return;
+
+            List<Obj> activeObjects = new List<Obj>();
+            for (ObjList objList = ee.GetActiveObjList().next; objList != null; objList = objList.next)
+            {
+                if (objList.obj != null)
+                    activeObjects.Add(objList.obj);
+            }
+
+            if (activeObjects.Count == 0) { GUILayout.Label("Aucun Objet actif."); return; }
+            if (_currentObjIndex >= activeObjects.Count) _currentObjIndex = 0;
+
+            GUILayout.BeginHorizontal();
+            if (GUILayout.Button("<", GUILayout.Width(40), GUILayout.Height(30))) { _currentObjIndex--; if (_currentObjIndex < 0) _currentObjIndex = activeObjects.Count - 1; _statTextCache.Clear(); GUI.FocusControl(null); }
+
+            Obj currObj = activeObjects[_currentObjIndex];
+
+            string objName = (currObj.go != null && !string.IsNullOrEmpty(currObj.go.name))
+                             ? currObj.go.name
+                             : $"Sans Nom (UID: {currObj.uid})";
+
+            GUILayout.Label($"<b>Obj: <color=#FF5555>{objName}</color></b>\nUID: {currObj.uid} ({_currentObjIndex + 1}/{activeObjects.Count})", new GUIStyle(GUI.skin.label) { richText = true, alignment = TextAnchor.MiddleCenter });
+
+            if (GUILayout.Button(">", GUILayout.Width(40), GUILayout.Height(30))) { _currentObjIndex++; if (_currentObjIndex >= activeObjects.Count) _currentObjIndex = 0; _statTextCache.Clear(); GUI.FocusControl(null); }
+            GUILayout.EndHorizontal();
+
+            if (currObj.buffer == null || currObj.buffer.Length == 0)
+            {
+                GUILayout.Label("Ce monstre/objet n'a aucune variable locale (buffer vide).");
+                return;
+            }
+
+            GUILayout.BeginVertical("box");
+            GUILayout.Label("<b>Variables Locales du Monstre/Objet</b>", new GUIStyle(GUI.skin.label) { richText = true });
+
+            int bufferOffset = currObj.vofs * 4;
+            int maxHwOffset = currObj.buffer.Length - bufferOffset - 1;
+
+            GUILayout.BeginHorizontal();
+            _selectedLocalVarKey = Mathf.Clamp(DrawStatUI("LocalVarKey", "Index HW", _selectedLocalVarKey, 110), 0, maxHwOffset);
+
+            if (GUILayout.Button("🔄 Refresh", GUILayout.Width(100)))
+            {
+                _statTextCache.Clear();
+                GUI.FocusControl(null);
+                SoundLib.PlaySoundEffect(103);
+            }
+            GUILayout.EndHorizontal();
+
+            GUILayout.Space(10);
+
+            int actualIndex = _selectedLocalVarKey + bufferOffset;
+
+            GUILayout.Label($"<b>Valeur UInt8 :</b> <color=yellow>{currObj.buffer[actualIndex]}</color>", new GUIStyle(GUI.skin.label) { richText = true });
+
+            if (actualIndex + 1 < currObj.buffer.Length)
+            {
+                ushort u16 = (ushort)(currObj.buffer[actualIndex] | (currObj.buffer[actualIndex + 1] << 8));
+                GUILayout.Label($"<b>Valeur UInt16 :</b> <color=cyan>{u16}</color>", new GUIStyle(GUI.skin.label) { richText = true });
+            }
+
+            GUILayout.Space(10);
+            currObj.buffer[actualIndex] = (byte)Mathf.Clamp(DrawStatUI($"LocVarMod_{currObj.uid}_{_selectedLocalVarKey}", "Modifier UInt8", currObj.buffer[actualIndex], 110), 0, 255);
+
+            GUILayout.EndVertical();
+        }
+
         void DrawFieldMenu(int windowID)
         {
             GUILayout.BeginHorizontal();
-            if (GUILayout.Button("🔄 Rafraîchir les Acteurs", GUILayout.Width(160), GUILayout.Height(30)))
+            if (GUILayout.Button("Rafraichir les Acteurs", GUILayout.Width(160), GUILayout.Height(30)))
             {
                 _cachedActors = UnityEngine.Object.FindObjectsOfType<FieldMapActor>();
                 _currentActorIndex = 0;
                 SoundLib.PlaySoundEffect(103);
             }
-            if (GUILayout.Button("✨ Restaurer Animations", GUILayout.Width(160), GUILayout.Height(30)))
+            if (GUILayout.Button("Restaurer Animations", GUILayout.Width(160), GUILayout.Height(30)))
             {
                 RestoreAllFieldAnimations();
                 SoundLib.PlaySoundEffect(103);
@@ -1503,7 +1728,7 @@ namespace Memoria.Scripts.TranceSeek
 
             if (_cachedActors == null || _cachedActors.Length == 0)
             {
-                GUILayout.Label("Aucun acteur trouvé sur cette carte.");
+                GUILayout.Label("Aucun acteur trouve sur cette carte.");
                 GUI.DragWindow();
                 return;
             }
@@ -1519,7 +1744,7 @@ namespace Memoria.Scripts.TranceSeek
             string actorName = actor != null && actor.go != null ? actor.go.name : "Acteur Inconnu";
             int modelId = actor != null ? actor.model : -1;
 
-            GUILayout.Label($"<b>🎬 <color=#00FFFF>{actorName}</color> 🎬</b>\nModel ID: {modelId} ({_currentActorIndex + 1}/{_cachedActors.Length})", new GUIStyle(GUI.skin.label) { richText = true, alignment = TextAnchor.MiddleCenter });
+            GUILayout.Label($"<b><color=#00FFFF>{actorName}</color></b>\nModel ID: {modelId} ({_currentActorIndex + 1}/{_cachedActors.Length})", new GUIStyle(GUI.skin.label) { richText = true, alignment = TextAnchor.MiddleCenter });
 
             if (GUILayout.Button(">", GUILayout.Width(40), GUILayout.Height(30))) { _currentActorIndex++; if (_currentActorIndex >= _cachedActors.Length) _currentActorIndex = 0; GUI.FocusControl(null); }
             GUILayout.EndHorizontal();
@@ -1556,7 +1781,7 @@ namespace Memoria.Scripts.TranceSeek
                 }
 
                 GUILayout.BeginVertical("box");
-                GUILayout.Label("<b>📍 Coordonnées de l'Acteur (X, Y, Z)</b>", new GUIStyle(GUI.skin.label) { richText = true });
+                GUILayout.Label("<b>Position & Rotation de l'Acteur</b>", new GUIStyle(GUI.skin.label) { richText = true });
 
                 GUILayout.BeginHorizontal();
                 GUILayout.Label("X:", GUILayout.Width(20));
@@ -1568,30 +1793,53 @@ namespace Memoria.Scripts.TranceSeek
                 GUILayout.EndHorizontal();
 
                 GUILayout.BeginHorizontal();
-                if (GUILayout.Button("Lire Pos", GUILayout.Width(100)))
+                GUILayout.Label("Rot Y (0-255):", GUILayout.Width(85));
+                _rotY = GUILayout.TextField(_rotY, GUILayout.Width(60));
+                GUILayout.EndHorizontal();
+
+                GUILayout.BeginHorizontal();
+                if (GUILayout.Button("Lire Pos/Rot", GUILayout.Width(100)))
                 {
                     _posX = actor.go.transform.position.x.ToString("F0");
                     _posY = actor.go.transform.position.y.ToString("F0");
                     _posZ = actor.go.transform.position.z.ToString("F0");
+
+                    _rotY = (Mathf.RoundToInt(actor.rotAngle[1] / 360f * 256f) % 256).ToString();
+
                     SoundLib.PlaySoundEffect(103);
                     GUI.FocusControl(null);
                 }
 
-                if (GUILayout.Button("<color=yellow><b>Téléporter</b></color>", new GUIStyle(GUI.skin.button) { richText = true }))
+                if (GUILayout.Button("<color=yellow><b>Appliquer</b></color>", new GUIStyle(GUI.skin.button) { richText = true }))
                 {
-                    float nx, ny, nz;
-                    if (float.TryParse(_posX.Replace(',', '.'), System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out nx) &&
-                        float.TryParse(_posY.Replace(',', '.'), System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out ny) &&
-                        float.TryParse(_posZ.Replace(',', '.'), System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out nz))
+                    float posx = 0f, posy = 0f, posz = 0f, nRotY = 0f;
+
+                    bool posParsed = float.TryParse(_posX.Replace(',', '.'), System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out posx) &&
+                                     float.TryParse(_posY.Replace(',', '.'), System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out posy) &&
+                                     float.TryParse(_posZ.Replace(',', '.'), System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out posz);
+
+                    bool rotParsed = float.TryParse(_rotY.Replace(',', '.'), System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out nRotY);
+
+                    if (posParsed)
                     {
-                        actor.pos[0] = actor.lastx = nx;
-                        actor.pos[1] = actor.lasty = ny;
-                        actor.pos[2] = actor.lastz = nz;
+                        actor.pos[0] = actor.lastx = posx;
+                        actor.pos[1] = actor.lasty = posy;
+                        actor.pos[2] = actor.lastz = posz;
 
-                        actor.fieldMapActorController?.SetPosition(new Vector3(nx, ny, nz), true, true);
-
-                        SoundLib.PlaySoundEffect(104);
+                        actor.fieldMapActorController?.SetPosition(new Vector3(posx, posy, posz), true, true);
                     }
+
+                    if (rotParsed)
+                    {
+                        Int32 angle = (Int32)nRotY;
+                        Vector3 eulerAngles2 = actor.go.transform.localRotation.eulerAngles;
+                        eulerAngles2.y = (float)(angle / 256.0 * 360.0);
+                        actor.rotAngle[1] = eulerAngles2.y;
+                    }
+
+                    if (posParsed || rotParsed)
+                        SoundLib.PlaySoundEffect(104);
+
                     GUI.FocusControl(null);
                 }
 
@@ -1654,7 +1902,6 @@ namespace Memoria.Scripts.TranceSeek
                                 {
                                     if (!_originalIdles.ContainsKey(actor)) _originalIdles[actor] = actor.idle;
 
-                                    // Vérifie si elle est en RAM, sinon on la charge
                                     bool isLoaded = animComp[customAnimName] != null;
                                     if (!isLoaded) AnimationFactory.AddAnimWithAnimatioName(actor.go, customAnimName);
 
@@ -1681,7 +1928,7 @@ namespace Memoria.Scripts.TranceSeek
 
                     if (anims.Count > 0)
                     {
-                        GUILayout.Label($"<b>Base de données : {anims.Count} animations trouvées</b>", new GUIStyle(GUI.skin.label) { richText = true });
+                        GUILayout.Label($"<b>Base de donnees : {anims.Count} animations trouvees</b>", new GUIStyle(GUI.skin.label) { richText = true });
                         _fieldScrollPos = GUILayout.BeginScrollView(_fieldScrollPos, GUILayout.Height(260));
 
                         int col = 2;
@@ -1730,13 +1977,13 @@ namespace Memoria.Scripts.TranceSeek
                     }
                     else
                     {
-                        GUILayout.Label("Aucune animation trouvée.");
+                        GUILayout.Label("Aucune animation trouvee.");
                     }
                 }
             }
             else
             {
-                GUILayout.Label("L'acteur est invalide ou a été détruit.");
+                GUILayout.Label("L'acteur est invalide ou a ete detruit.");
             }
 
             GUI.DragWindow();

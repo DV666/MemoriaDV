@@ -296,6 +296,28 @@ namespace Memoria.Scripts.TranceSeek
 
         public SPSEffect PolaritySPS { get; set; }
 
+        public int CantKill
+        {
+            get
+            {
+                if (FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1002, out Dictionary<Int32, Int32> dictbattle))
+                    if (dictbattle.TryGetValue(1, out int cantKillValue))
+                        return cantKillValue;
+
+                return 0;
+            }
+            set
+            {
+                if (!FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1002, out Dictionary<Int32, Int32> dictbattle))
+                {
+                    dictbattle = new Dictionary<Int32, Int32>();
+                    FF9StateSystem.EventState.gScriptDictionary.Add(1000, dictbattle);
+                }
+
+                dictbattle[1] = value;
+            }
+        }
+
         public int CanCover
         {
             get

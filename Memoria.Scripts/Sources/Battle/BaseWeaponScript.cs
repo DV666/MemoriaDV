@@ -189,7 +189,7 @@ namespace Memoria.Scripts.TranceSeek
                 TranceSeekAPI.TryCriticalHit(_v);
             _v.Caster.HpDamage = _v.Context.EnsureAttack * _v.Context.EnsurePowerDifference;
             if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Doctor)) // Medecin
-                _v.Caster.HpDamage += _v.Caster.HpDamage / (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Doctor_Boosted) ? 2 : 4);
+                _v.Caster.HpDamage += _v.Target.HpDamage / (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Doctor_Boosted) ? 2 : 4);
 
             foreach (BattleUnit unit in BattleState.EnumerateUnits())
             {

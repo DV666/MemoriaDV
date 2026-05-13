@@ -19,12 +19,17 @@ namespace Memoria.Scripts.TranceSeek
         public void Perform()
         {
             _v.NormalMagicParams();
-            
+            var Caster_TSVar = _v.CasterState();
+
             TranceSeekAPI.CasterPenaltyMini(_v);
             TranceSeekAPI.EnemyTranceBonusAttack(_v);
             TranceSeekAPI.PenaltyCommandDividedAttack(_v);
             if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Archmage))
                 TranceSeekAPI.TryCriticalHit(_v);
+
+            if (Caster_TSVar.StackStatus.Magic != 0)
+                _v.Context.Attack += ((Caster_TSVar.StackStatus.Magic * _v.Context.Attack) / 100);
+
             _v.CalcHpMagicRecovery();
             _v.Target.Flags |= (CalcFlag.MpDamageOrHeal);
             int HpHealing = _v.Target.HpDamage;

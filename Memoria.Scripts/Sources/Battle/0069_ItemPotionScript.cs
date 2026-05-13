@@ -112,7 +112,7 @@ namespace Memoria.Scripts.TranceSeek
                 }
 
                 if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Doctor)) // Medecin
-                    _v.Target.HpDamage += _v.Caster.HpDamage / (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Doctor_Boosted) ? 2 : 4);
+                    _v.Target.HpDamage += _v.Target.HpDamage / (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Doctor_Boosted) ? 2 : 4);
 
                 if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Chemist_Boosted) && (_v.Target.IsPlayer && BattleState.BattleUnitCount(true) > 1 || !_v.Target.IsPlayer && BattleState.BattleUnitCount(false) > 1))
                 { // Herboriste +                    

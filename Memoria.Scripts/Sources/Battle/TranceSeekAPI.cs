@@ -555,9 +555,34 @@ namespace Memoria.Scripts.TranceSeek
                 v.Context.DamageModifierCount++;
         }
 
+        public static void ReviveHeal(this BattleCalculator v, int reviveheal)
+        {
+            v.Target.Flags |= CalcFlag.HpDamageOrHeal;
+            if (v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.AutoLife_Boosted)) // Invincible+
+            {
+                v.Target.Flags |= CalcFlag.MpDamageOrHeal;
+                v.Target.HpDamage = (int)v.Target.MaximumHp;
+                v.Target.MpDamage = (int)v.Target.MaximumMp;
+            }
+            else if (v.Target.Accessory == TranceSeekRegularItem.HaloGhost)
+                v.Target.HpDamage = (int)(reviveheal + v.Target.MaximumHp / 4);
+            else
+                v.Target.HpDamage = reviveheal;
+
+            if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Doctor) && v.Command.Id != BattleCommandId.Item) // Medecin, only for magic heal
+                v.Target.HpDamage += v.Target.HpDamage / (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Doctor_Boosted) ? 2 : 4);
+        }
+
         public static Boolean IsAttackElement(this BattleCalculator v, EffectElement element)
         {
-            return (v.Command.Element & element) != 0 || (InfusedWeaponScript.WeaponNewElement[v.Caster.Data] & element) != 0 || (v.Command.Weapon.Element & element) != 0;
+            EffectElement CommandElement = v.Command.Element;
+            if (v.Command.AbilityId == BattleAbilityId.Attack)
+                CommandElement |= v.Command.Weapon.Element;
+
+            if (element == EffectElement.None)
+                return CommandElement == 0 && InfusedWeaponScript.WeaponNewElement[v.Caster.Data] == 0 && v.Command.ScriptId != 17 && v.Command.ScriptId != 118 && v.Command.ScriptId != 119;
+            else
+                return (CommandElement & element) != 0 || (InfusedWeaponScript.WeaponNewElement[v.Caster.Data] & element) != 0;
         }
 
         public static Boolean CanAttackWeaponElementalCommand(this BattleCalculator v)

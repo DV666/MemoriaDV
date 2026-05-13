@@ -100,7 +100,7 @@ namespace Memoria.Scripts.TranceSeek
                             }
 
                             if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Doctor)) // Medecin
-                                _v.Target.HpDamage += _v.Caster.HpDamage / (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Doctor_Boosted) ? 2 : 4);
+                                _v.Target.HpDamage += _v.Target.HpDamage / (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Doctor_Boosted) ? 2 : 4);
 
                             _v.CalcHpMagicRecovery();
                             break;
@@ -178,19 +178,9 @@ namespace Memoria.Scripts.TranceSeek
                                 if ((_v.Target.CurrentHp = (UInt32)(GameRandom.Next8() % 10)) == 0)
                                     _v.Target.Kill();
                             }
-                            else if (_v.Target.CheckIsPlayer())
+                            else if (_v.Target.CheckIsPlayer() && _v.Target.IsUnderStatus(BattleStatus.Death))
                             {
-                                if (_v.Target.IsUnderStatus(BattleStatus.Death))
-                                    if (_v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.AutoLife_Boosted)) // Invincible+
-                                    {
-                                        _v.Target.Flags |= CalcFlag.HpAlteration | CalcFlag.HpRecovery | CalcFlag.MpAlteration | CalcFlag.MpRecovery;
-                                        _v.Target.HpDamage = (int)_v.Target.MaximumHp;
-                                        _v.Target.MpDamage = (int)_v.Target.MaximumMp;
-                                    }
-                                    else
-                                    {
-                                        _v.Target.CurrentHp = (UInt32)(1 + GameRandom.Next8() % 10);
-                                    }
+                                TranceSeekAPI.ReviveHeal(_v, (1 + GameRandom.Next8() % 10));
                                 TranceSeekAPI.TryRemoveItemStatuses(_v);
                             }
                             break;

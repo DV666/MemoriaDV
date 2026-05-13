@@ -47,20 +47,8 @@ namespace Memoria.Scripts.TranceSeek
                         if ((_v.Target.CurrentHp = (UInt32)(GameRandom.Next8() % 10)) == 0)
                             _v.Target.Kill();
                     }
-                    else if (_v.Target.CheckIsPlayer())
-                    {
-                        if (_v.Target.IsUnderStatus(BattleStatus.Death))
-                            if (_v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.AutoLife_Boosted)) // Invincible+
-                            {
-                                _v.Target.Flags |= CalcFlag.HpAlteration | CalcFlag.HpRecovery | CalcFlag.MpAlteration | CalcFlag.MpRecovery;
-                                _v.Target.HpDamage = (int)_v.Target.MaximumHp;
-                                _v.Target.MpDamage = (int)_v.Target.MaximumMp;
-                            }
-                            else
-                            {
-                                _v.Target.CurrentHp = (UInt32)(1 + GameRandom.Next8() % 10);
-                            }
-                    }
+                    else if (_v.Target.CheckIsPlayer() && _v.Target.IsUnderStatus(BattleStatus.Death))
+                        TranceSeekAPI.ReviveHeal(_v, (1 + GameRandom.Next8() % 10));
                 }
                 TranceSeekAPI.TryRemoveAbilityStatuses(_v);
             }              

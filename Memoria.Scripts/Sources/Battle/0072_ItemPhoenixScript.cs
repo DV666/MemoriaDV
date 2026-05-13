@@ -25,17 +25,11 @@ namespace Memoria.Scripts.TranceSeek
             {
                 _v.Target.Flags |= CalcFlag.HpAlteration | CalcFlag.HpRecovery;
                 if (_v.Command.ItemId == RegularItem.PhoenixDown)
-                {
                     _v.Target.HpDamage = 2500;
-                }
                 else if (_v.Command.ItemId == RegularItem.PhoenixPinion)
-                {
                     _v.Target.HpDamage = 9999;
-                }
                 else
-                {
                     _v.Context.Flags |= BattleCalcFlags.Miss;
-                }
             }
             else
             {
@@ -56,19 +50,9 @@ namespace Memoria.Scripts.TranceSeek
                     if ((_v.Target.CurrentHp = (UInt32)(GameRandom.Next8() % 10)) == 0)
                         _v.Target.Kill();
                 }
-                else if (_v.Target.CheckIsPlayer())
+                else if (_v.Target.CheckIsPlayer() && _v.Target.IsUnderStatus(BattleStatus.Death))
                 {
-                    if (_v.Target.IsUnderStatus(BattleStatus.Death))
-                        if (_v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.AutoLife_Boosted)) // Invincible+
-                        {
-                            _v.Target.Flags |= CalcFlag.HpAlteration | CalcFlag.HpRecovery | CalcFlag.MpAlteration | CalcFlag.MpRecovery;
-                            _v.Target.HpDamage = (int)_v.Target.MaximumHp;
-                            _v.Target.MpDamage = (int)_v.Target.MaximumMp;
-                        }
-                        else
-                        {
-                            _v.Target.CurrentHp = (UInt32)(1 + GameRandom.Next8() % 10);
-                        }
+                    TranceSeekAPI.ReviveHeal(_v, (1 + GameRandom.Next8() % 10));
                     TranceSeekAPI.TryRemoveItemStatuses(_v);
                 }
             }

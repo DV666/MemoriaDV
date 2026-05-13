@@ -73,34 +73,25 @@ namespace Memoria.Scripts.TranceSeek
                 return;
 
             _v.Target.Flags |= CalcFlag.HpAlteration | CalcFlag.HpRecovery;
-            if (_v.Target.HasSupportAbilityByIndex((SupportAbility)1004)) // Invincible+
+            int reviveheal = 0;
+            if (_v.Command.AbilityId == BattleAbilityId.Phoenix || _v.Command.AbilityId == BattleAbilityId.RebirthFlame)
             {
-                _v.Target.Flags |= CalcFlag.MpAlteration | CalcFlag.MpRecovery;
-                _v.Target.HpDamage = (int)_v.Target.MaximumHp;
-                _v.Target.MpDamage = (int)_v.Target.MaximumMp;
+                reviveheal = (Int32)((_v.Target.MaximumHp * (ff9item.FF9Item_GetCount(RegularItem.PhoenixPinion)) / 100));
+                reviveheal /= !_v.Caster.HasSupportAbilityByIndex(SupportAbility.Boost) ? 4 : 1;
+
+                if (_v.Command.IsShortSummon)
+                    reviveheal /= 2;
+
+                reviveheal = Math.Max(1, _v.Target.HpDamage);
             }
             else
             {
-                if (_v.Command.AbilityId == BattleAbilityId.Phoenix || _v.Command.AbilityId == BattleAbilityId.RebirthFlame)
-                {
-                    _v.Target.HpDamage = (Int32)((_v.Target.MaximumHp * (ff9item.FF9Item_GetCount(RegularItem.PhoenixPinion)) / 100));
-                    _v.Target.HpDamage /= !_v.Caster.HasSupportAbilityByIndex(SupportAbility.Boost) ? 4 : 1;
+                reviveheal = (Int32)(_v.Target.MaximumHp * (_v.Target.Will + _v.Command.Power) / 100);
+                if (_v.Command.IsManyTarget && !_v.Caster.HasSupportAbilityByIndex((SupportAbility)1126))
+                    reviveheal /= 2;
 
-                    if (_v.Command.IsShortSummon)
-                        _v.Target.HpDamage = _v.Target.HpDamage / 2;
-
-                    _v.Target.HpDamage = Math.Max(1, _v.Target.HpDamage);
-                }
-                else
-                {
-                    _v.Target.HpDamage = (Int32)(_v.Target.MaximumHp * (_v.Target.Will + _v.Command.Power) / 100);
-                    if (_v.Command.IsManyTarget && !_v.Caster.HasSupportAbilityByIndex((SupportAbility)1126))
-                        _v.Target.HpDamage /= 2;
-                }
-
-                if (_v.Caster.HasSupportAbilityByIndex((SupportAbility)100)) // Medecin
-                    _v.Target.HpDamage += _v.Caster.HpDamage / (_v.Caster.HasSupportAbilityByIndex((SupportAbility)1100) ? 2 : 4);
             }
+            TranceSeekAPI.ReviveHeal(_v, reviveheal);
             TranceSeekAPI.TryRemoveAbilityStatuses(_v);
         }
 

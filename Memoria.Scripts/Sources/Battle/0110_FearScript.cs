@@ -40,6 +40,12 @@ namespace Memoria.Scripts.TranceSeek
                     _v.CalcHpDamage();
                 }
                 TranceSeekAPI.TryAlterMagicStatuses(_v);
+
+                if ((btl_util.GetCommandAction(_v.Command).Type & 8) != 0) // Unused (4)
+                {
+                    _v.Target.Flags |= CalcFlag.MpAlteration;
+                    _v.Target.MpDamage = (_v.Target.HpDamage) >> 4;
+                }
             }
             else if (_v.Command.HitRate > 0 && _v.Command.Power == 0)
             {

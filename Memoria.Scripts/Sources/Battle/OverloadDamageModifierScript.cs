@@ -139,11 +139,12 @@ namespace Memoria.Scripts.TranceSeek
                         FF9StateSystem.EventState.gEventGlobal[1305]--;
                 }
 
-                if (v.Command.Element == 0 && (v.Target.Flags & CalcFlag.HpRecovery) == 0 && (v.Target.Data.dms_geo_id == 354 || v.Target.Data.dms_geo_id == 221 || v.Target.Data.dms_geo_id == 83)) // Stone monsters
-                {
-                    v.Context.DamageModifierCount -= 2;
-                    SoundLib.PlaySoundEffect(5003); //se770003
-                }
+                if (v.Command.ScriptId != 118 && v.Command.ScriptId != 119 && v.Command.ScriptId != 17)  // Stone monsters
+                    if (v.Target.HpDamage > 0 && TranceSeekAPI.IsAttackElement(v, EffectElement.None) && (v.Target.Flags & CalcFlag.HpRecovery) == 0 && StoneMonsters.Contains(v.Target.Data.dms_geo_id))
+                    {
+                        v.Context.DamageModifierCount -= 2;
+                        SoundLib.PlaySoundEffect(5003); //se770003
+                    }
             }
 
             TranceSeekRegularItem.SpecialItems(v);
@@ -179,7 +180,18 @@ namespace Memoria.Scripts.TranceSeek
                 v.Caster.HpDamage = (Int32)Math.Round(modifier_factor * v.Caster.HpDamage) * reflectMultiplier;
             if ((v.Caster.Flags & CalcFlag.MpAlteration) != 0)
                 v.Caster.MpDamage = (Int32)Math.Round(modifier_factor * v.Caster.MpDamage) * reflectMultiplier;
+
+            if (v.Caster.State().CantKill > 0 && (v.Target.Flags & CalcFlag.HpAlteration) != 0 && v.Target.HpDamage > v.Target.CurrentHp)
+            {
+                v.Target.Flags = 0;
+                v.Target.Data.fig.info = 0;
+                //v.Context.Flags |= BattleCalcFlags.DirectHP;
+                btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[FFFFFF]", $"{v.Target.HpDamage}", HUDMessage.MessageStyle.DAMAGE, 0);
+                v.Target.CurrentHp = (uint)((1 + GameRandom.Next8() % 9));
+            }
         }
+
+        private static readonly HashSet<Int32> StoneMonsters = new HashSet<Int32> { 354, 221, 83 };
 
         private static readonly Dictionary<String, String> MessageNope = new Dictionary<String, String>
         {

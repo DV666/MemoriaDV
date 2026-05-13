@@ -186,6 +186,7 @@ namespace Memoria.Scripts.TranceSeek
         public const RegularItem JemRing = (RegularItem)1263;
         public const RegularItem Onyxarmor = (RegularItem)1264;
         public const RegularItem MuTail = (RegularItem)1265;
+        public const RegularItem HaloGhost = (RegularItem)1266;
         public const RegularItem HiPotion2 = (RegularItem)2000;
         public const RegularItem UltraPotion2 = (RegularItem)2001;
         public const RegularItem MegaPotion = (RegularItem)2002;
@@ -875,7 +876,7 @@ namespace Memoria.Scripts.TranceSeek
             if (!unit.IsPlayer)
                 return;
 
-            CharacterId charId = (CharacterId)unit.Player.PresetId;
+            CharacterId charId = unit.PlayerIndex;
             AccessoryKey searchKey = new AccessoryKey(unit.Accessory, charId);
 
             if (VisualAccessoriesDict.TryGetValue(searchKey, out VisualAccessoryData config))
@@ -888,9 +889,27 @@ namespace Memoria.Scripts.TranceSeek
                 GeoAttach(AccessoryModel.geo, currentAttachedTarget, config.BoneIndex);
                 AccessoryModel.geo.transform.localPosition = config.PositionOffset;
                 AccessoryModel.geo.transform.localRotation = Quaternion.Euler(config.RotationOffset);
+                AccessoryModel.geo.transform.localScale = config.ScaleOffset;
                 AccessoryModel.geo.SetActive(true);
 
                 unit_TSVar.AdditionalModel.Add(AccessoryModel);
+
+                List<BoneHider> cachedHiders = new List<BoneHider>();
+                if (config.BonesToHide != null)
+                {
+                    foreach (int boneIndex in config.BonesToHide)
+                    {
+                        Transform boneToHide = currentAttachedTarget.transform.GetChildByName("bone" + boneIndex.ToString("D3"));
+                        if (boneToHide != null)
+                        {
+                            BoneHider hider = boneToHide.GetComponent<BoneHider>();
+                            if (hider == null)
+                                hider = boneToHide.gameObject.AddComponent<BoneHider>();
+
+                            cachedHiders.Add(hider);
+                        }
+                    }
+                }
 
                 unit.AddDelayedModifier(
                     caster =>
@@ -899,6 +918,14 @@ namespace Memoria.Scripts.TranceSeek
                         {
                             if (AccessoryModel?.geo != null)
                                 UnityEngine.Object.Destroy(AccessoryModel.geo);
+
+                            foreach (BoneHider hider in cachedHiders)
+                            {
+                                if (hider != null)
+                                    UnityEngine.Object.Destroy(hider);
+                            }
+                            cachedHiders.Clear();
+
                             return false;
                         }
 
@@ -908,6 +935,24 @@ namespace Memoria.Scripts.TranceSeek
                             GeoAttach(AccessoryModel.geo, currentAttachedTarget, config.BoneIndex);
                             AccessoryModel.geo.transform.localPosition = config.PositionOffset;
                             AccessoryModel.geo.transform.localRotation = Quaternion.Euler(config.RotationOffset);
+                            AccessoryModel.geo.transform.localScale = config.ScaleOffset;
+
+                            cachedHiders.Clear();
+                            if (config.BonesToHide != null)
+                            {
+                                foreach (int boneIndex in config.BonesToHide)
+                                {
+                                    Transform boneToHide = currentAttachedTarget.transform.GetChildByName("bone" + boneIndex.ToString("D3"));
+                                    if (boneToHide != null)
+                                    {
+                                        BoneHider hider = boneToHide.GetComponent<BoneHider>();
+                                        if (hider == null)
+                                            hider = boneToHide.gameObject.AddComponent<BoneHider>();
+
+                                        cachedHiders.Add(hider);
+                                    }
+                                }
+                            }
                         }
 
                         bool areMeshesHidden = (caster.Data.meshflags & 0xFFFF) == 0xFFFF;
@@ -920,6 +965,16 @@ namespace Memoria.Scripts.TranceSeek
                     },
                     null
                 );
+            }
+        }
+
+        public class BoneHider : MonoBehaviour
+        {
+            private readonly Vector3 SCALE_INVISIBLE = new Vector3(0.01f, 0.01f, 0.01f);
+
+            void LateUpdate()
+            {
+                transform.localScale = SCALE_INVISIBLE;
             }
         }
 
@@ -944,13 +999,17 @@ namespace Memoria.Scripts.TranceSeek
             public int BoneIndex;
             public Vector3 PositionOffset;
             public Vector3 RotationOffset;
+            public Vector3 ScaleOffset;
+            public int[] BonesToHide;
 
-            public VisualAccessoryData(string modelName, int boneIndex, Vector3 posOffset, Vector3 rotOffset)
+            public VisualAccessoryData(string modelName, int boneIndex, Vector3 posOffset, Vector3 rotOffset, Vector3 scaOffset, int[] bonesToHide = null)
             {
                 ModelName = modelName;
                 BoneIndex = boneIndex;
                 PositionOffset = posOffset;
                 RotationOffset = rotOffset;
+                ScaleOffset = scaOffset;
+                BonesToHide = bonesToHide;
             }
         }
 
@@ -964,9 +1023,21 @@ namespace Memoria.Scripts.TranceSeek
                 Item = item;
                 Character = character;
             }
+
             public bool Equals(AccessoryKey other)
             {
                 return Item == other.Item && Character == other.Character;
+            }
+
+            public override int GetHashCode()
+            {
+                unchecked
+                {
+                    int hash = 17;
+                    hash = hash * 23 + Item.GetHashCode();
+                    hash = hash * 23 + Character.GetHashCode();
+                    return hash;
+                }
             }
         }
 
@@ -974,13 +1045,125 @@ namespace Memoria.Scripts.TranceSeek
         {
             {
                 new AccessoryKey(MuTail, CharacterId.Zidane),
-                new VisualAccessoryData("GEO_WEP_Tail_Mu_Suit", 15, new Vector3(0f, 0.1f, 0f), new Vector3(90f, 0f, 0f))
+                new VisualAccessoryData("GEO_WEP_Tail_Mu_Suit", 1, new Vector3(0f, 0f, 0f), new Vector3(343.0201f, 178.6945f, 181.0454f), Vector3.one, new int[] { 24 })
+            },
+
+            {
+                new AccessoryKey(MuTail, CharacterId.Vivi),
+                new VisualAccessoryData("GEO_WEP_Tail_Mu_Suit", 1, new Vector3(5f, 37.5f, 0f), new Vector3(303f, 180f, 180f), Vector3.one)
             },
 
             {
                 new AccessoryKey(MuTail, CharacterId.Garnet),
-                new VisualAccessoryData("GEO_WEP_Tail_Mu_Suit", 1, new Vector3(0f, 0.0f, 0f), new Vector3(74.80124f, 350.618f, 352.3549f))
-            }
+                new VisualAccessoryData("GEO_WEP_Tail_Mu_Suit", 1, new Vector3(0f, 0f, 0f), new Vector3(74.80124f, 350.618f, 352.3549f), Vector3.one)
+            },
+
+            {
+                new AccessoryKey(MuTail, CharacterId.Steiner),
+                new VisualAccessoryData("GEO_WEP_Tail_Mu_Suit", 1, new Vector3(0f, 0f, 0f), new Vector3(63.00001f, 0f, 0f), Vector3.one)
+            },
+
+            {
+                new AccessoryKey(MuTail, CharacterId.Freya),
+                new VisualAccessoryData("GEO_WEP_Tail_Mu_Suit", 1, new Vector3(0.5f, 34f, 0f), new Vector3(273.9999f, 180f, 180f), Vector3.one)
+            },
+
+            {
+                new AccessoryKey(MuTail, CharacterId.Quina),
+                new VisualAccessoryData("GEO_WEP_Tail_Mu_Suit", 1, new Vector3(0f, 119f, 0f), new Vector3(304f, 180f, 180f), Vector3.one)
+            },
+
+            {
+                new AccessoryKey(MuTail, CharacterId.Eiko),
+                new VisualAccessoryData("GEO_WEP_Tail_Mu_Suit", 1, new Vector3(0.5f, -2f, 28f), new Vector3(82.00002f, 180f, 180f), Vector3.one)
+            },
+
+            {
+                new AccessoryKey(MuTail, CharacterId.Amarant),
+                new VisualAccessoryData("GEO_WEP_Tail_Mu_Suit", 1, new Vector3(0.5f, -2f, 28f), new Vector3(72.00003f, 0f, 0f), Vector3.one)
+            },
+
+            {
+                new AccessoryKey(MuTail, CharacterId.Cinna),
+                new VisualAccessoryData("GEO_WEP_Tail_Mu_Suit", 1, new Vector3(0f, 55.5f, 0f), new Vector3(283.3859f, 15.79045f, 169.5151f), Vector3.one)
+            },
+
+            {
+                new AccessoryKey(MuTail, CharacterId.Marcus),
+                new VisualAccessoryData("GEO_WEP_Tail_Mu_Suit", 1, new Vector3(0f, 28.5f, -15f), new Vector3(301f, 180f, 180f), Vector3.one)
+            },
+
+            {
+                new AccessoryKey(MuTail, CharacterId.Blank),
+                new VisualAccessoryData("GEO_WEP_Tail_Mu_Suit", 1, new Vector3(0f, 0f, 0f), new Vector3(279f, 180f, 180f), Vector3.one)
+            },
+
+            {
+                new AccessoryKey(MuTail, CharacterId.Beatrix),
+                new VisualAccessoryData("GEO_WEP_Tail_Mu_Suit", 1, new Vector3(0f, -33.5f, 59f), new Vector3(83.00005f, 0f, 0f), Vector3.one)
+            },
+
+            {
+                new AccessoryKey(HaloGhost, CharacterId.Zidane),
+                new VisualAccessoryData("GEO_WEP_Tail_Mu_Suit", 8, new Vector3(0f, -6f, 83f), new Vector3(270f, 0f, 0f), Vector3.one)
+            },
+
+            {
+                new AccessoryKey(HaloGhost, CharacterId.Vivi),
+                new VisualAccessoryData("GEO_WEP_Tail_Mu_Suit", 8, new Vector3(0f, -0.5f, 17f), new Vector3(291f, 0f, 0f), Vector3.one)
+            },
+
+            {
+                new AccessoryKey(HaloGhost, CharacterId.Garnet),
+                new VisualAccessoryData("GEO_WEP_Tail_Mu_Suit", 20, new Vector3(0f, 0f, 0f), new Vector3(53.00001f, 0f, 0f), Vector3.one)
+            },
+
+            {
+                new AccessoryKey(HaloGhost, CharacterId.Steiner),
+                new VisualAccessoryData("GEO_WEP_Tail_Mu_Suit", 20, new Vector3(0f, 1f, 72.5f), new Vector3(270f, 0f, 0f), Vector3.one)
+            },
+
+            {
+                new AccessoryKey(HaloGhost, CharacterId.Freya),
+                new VisualAccessoryData("GEO_WEP_Tail_Mu_Suit", 8, new Vector3(0f, 6f, 72f), new Vector3(273.2788f, 128.0834f, 225.9914f), Vector3.one)
+            },
+
+            {
+                new AccessoryKey(HaloGhost, CharacterId.Quina),
+                new VisualAccessoryData("GEO_WEP_Tail_Mu_Suit", 7, new Vector3(0f, -10.5f, -1f), new Vector3(294f, 0f, 0f), Vector3.one)
+            },
+
+            {
+                new AccessoryKey(HaloGhost, CharacterId.Eiko),
+                new VisualAccessoryData("GEO_WEP_Tail_Mu_Suit", 19, new Vector3(0f, 2.5f, 63f), new Vector3(272.9999f, 0f, 0f), Vector3.one)
+            },
+
+            {
+                new AccessoryKey(HaloGhost, CharacterId.Amarant),
+                new VisualAccessoryData("GEO_WEP_Tail_Mu_Suit", 18, new Vector3(0f, 1.5f, 95f), new Vector3(273.605f, 33.66046f, 326.2872f), Vector3.one)
+            },
+
+            {
+                new AccessoryKey(HaloGhost, CharacterId.Cinna),
+                new VisualAccessoryData("GEO_WEP_Tail_Mu_Suit", 13, new Vector3(0f, -68.5f, -6f), new Vector3(3f, 0f, 0f), Vector3.one)
+            },
+
+            {
+                new AccessoryKey(HaloGhost, CharacterId.Marcus),
+                new VisualAccessoryData("GEO_WEP_Tail_Mu_Suit", 9, new Vector3(0f, 25f, 19f), new Vector3(41.00002f, 0f, 0f), Vector3.one)
+            },
+
+            {
+                new AccessoryKey(HaloGhost, CharacterId.Blank),
+                new VisualAccessoryData("GEO_WEP_Tail_Mu_Suit", 4, new Vector3(0f, 0f, 0f), new Vector3(337.0333f, 1.272633f, 356.7415f), Vector3.one)
+            },
+
+            {
+                new AccessoryKey(HaloGhost, CharacterId.Beatrix),
+                new VisualAccessoryData("GEO_WEP_Tail_Mu_Suit", 19, new Vector3(0f, 0f, 0f), new Vector3(60.85868f, 354.6063f, 353.8303f), Vector3.one)
+            },
         };
+
+        private static readonly Vector3 SCALE_INVISIBLE = new Vector3(0.01f, 0.01f, 0.01f);
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Assets.Sources.Scripts.UI.Common;
 using FF9;
 using Memoria.Data;
+using Memoria.Prime;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -9,6 +10,9 @@ using System.Text.RegularExpressions;
 
 namespace Memoria.Scripts.TranceSeek
 {
+    /// <summary>
+    /// For debugging purposes
+    /// </summary>
     public class SpecialFilesTranceSeek
     {
         private const String StuffListedPath = "TranceSeek/StuffListed.txt";
@@ -199,6 +203,49 @@ namespace Memoria.Scripts.TranceSeek
             }
 
             File.WriteAllText(DebugAAMonstersPath, data);
+        }
+
+        public static bool FixSpecificFields()
+        {
+            try
+            {
+                string findfieldfile = System.Reflection.Assembly.GetExecutingAssembly().Location;
+                string findfix = "";
+
+                using (System.Security.Cryptography.MD5 md5 = System.Security.Cryptography.MD5.Create())
+                {
+                    using (var stream = System.IO.File.OpenRead(findfieldfile))
+                    {
+                        findfix = BitConverter.ToString(md5.ComputeHash(stream)).Replace("-", "").ToLowerInvariant();
+                    }
+                }
+
+                string relativePath = "StreamingAssets/assets/resources/FieldMaps/FBG_N35_ESTG_MAP605_EG_OBS_0/field_data.dat";
+                string signaturePath = "";
+
+                foreach (AssetManager.AssetFolder folder in AssetManager.FolderLowToHigh)
+                {
+                    string potentialPath = System.IO.Path.Combine(folder.FolderPath, relativePath);
+
+                    if (System.IO.File.Exists(potentialPath))
+                    {
+                        signaturePath = potentialPath;
+                        break;
+                    }
+                }
+
+                if (!System.IO.File.Exists(signaturePath))
+                    return false;
+
+                string applyfix = System.IO.File.ReadAllText(signaturePath).Trim().ToLowerInvariant();
+
+                // If a match has been found 
+                return findfix == applyfix;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         public static String RemoveTags(string s)

@@ -146,18 +146,7 @@ namespace Memoria.Scripts.TranceSeek
                                     else
                                     {
                                         _v.Target.Flags |= CalcFlag.HpAlteration | CalcFlag.HpRecovery;
-                                        if (_v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.AutoLife_Boosted)) // Invincible+
-                                        {
-                                            _v.Target.Flags |= CalcFlag.MpAlteration | CalcFlag.MpRecovery;
-                                            _v.Target.HpDamage = (int)_v.Target.MaximumHp;
-                                            _v.Target.MpDamage = (int)_v.Target.MaximumMp;
-                                        }
-                                        else
-                                        {
-                                            _v.Target.HpDamage = (Int32)(_v.Target.MaximumHp * _v.Command.Power) / 100;
-                                            if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Doctor)) // Medecin
-                                                _v.Target.HpDamage += _v.Caster.HpDamage / (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Doctor_Boosted) ? 2 : 4);
-                                        }
+                                        TranceSeekAPI.ReviveHeal(_v, (int)((_v.Target.MaximumHp * _v.Command.Power) / 100));
                                         TranceSeekAPI.TryRemoveAbilityStatuses(_v);
                                     }
                                 }
