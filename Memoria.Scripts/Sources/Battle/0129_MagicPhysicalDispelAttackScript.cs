@@ -509,6 +509,17 @@ namespace Memoria.Scripts.TranceSeek
         private string _posX = "0", _posY = "0", _posZ = "0";
         private string _rotY = "0";
         private string _customAnimIdInput = "0";
+        private string _lastPlayedAnimInfo = "Aucune";
+
+        private int _fieldMenuTab = 0;
+        private bool _isCameraDragMode = false;
+        private float _targetCamX = 0f;
+        private float _targetCamY = 0f;
+
+        private string _camInputX = "0";
+        private string _camInputY = "0";
+        private string _camInputDuration = "30";
+        private string _camInputType = "8";
 
         private bool _showLangMenu = false;
         private Rect _langWindowRect = new Rect(310, 50, 300, 200);
@@ -533,60 +544,60 @@ namespace Memoria.Scripts.TranceSeek
 
         private static readonly KeyValuePair<string, BattleStatus>[] _statusList = new KeyValuePair<string, BattleStatus>[]
         {
-            new KeyValuePair<string, BattleStatus>("Petrify", BattleStatus.Petrify),
-            new KeyValuePair<string, BattleStatus>("Venom", BattleStatus.Venom),
-            new KeyValuePair<string, BattleStatus>("Virus", BattleStatus.Virus),
-            new KeyValuePair<string, BattleStatus>("Silence", BattleStatus.Silence),
-            new KeyValuePair<string, BattleStatus>("Blind", BattleStatus.Blind),
-            new KeyValuePair<string, BattleStatus>("Trouble", BattleStatus.Trouble),
-            new KeyValuePair<string, BattleStatus>("Zombie", BattleStatus.Zombie),
-            new KeyValuePair<string, BattleStatus>("Death", BattleStatus.Death),
-            new KeyValuePair<string, BattleStatus>("EasyKill", BattleStatus.EasyKill),
-            new KeyValuePair<string, BattleStatus>("Confuse", BattleStatus.Confuse),
-            new KeyValuePair<string, BattleStatus>("Berserk", BattleStatus.Berserk),
-            new KeyValuePair<string, BattleStatus>("Stop", BattleStatus.Stop),
-            new KeyValuePair<string, BattleStatus>("AutoLife", BattleStatus.AutoLife),
-            new KeyValuePair<string, BattleStatus>("Trance", BattleStatus.Trance),
-            new KeyValuePair<string, BattleStatus>("Defend", BattleStatus.Defend),
-            new KeyValuePair<string, BattleStatus>("Poison", BattleStatus.Poison),
-            new KeyValuePair<string, BattleStatus>("Sleep", BattleStatus.Sleep),
-            new KeyValuePair<string, BattleStatus>("Regen", BattleStatus.Regen),
-            new KeyValuePair<string, BattleStatus>("Haste", BattleStatus.Haste),
-            new KeyValuePair<string, BattleStatus>("Slow", BattleStatus.Slow),
-            new KeyValuePair<string, BattleStatus>("Float", BattleStatus.Float),
-            new KeyValuePair<string, BattleStatus>("Shell", BattleStatus.Shell),
-            new KeyValuePair<string, BattleStatus>("Protect", BattleStatus.Protect),
-            new KeyValuePair<string, BattleStatus>("Heat", BattleStatus.Heat),
-            new KeyValuePair<string, BattleStatus>("Freeze", BattleStatus.Freeze),
-            new KeyValuePair<string, BattleStatus>("Vanish", BattleStatus.Vanish),
-            new KeyValuePair<string, BattleStatus>("Doom", BattleStatus.Doom),
-            new KeyValuePair<string, BattleStatus>("Mini", BattleStatus.Mini),
-            new KeyValuePair<string, BattleStatus>("Reflect", BattleStatus.Reflect),
-            new KeyValuePair<string, BattleStatus>("Jump", BattleStatus.Jump),
-            new KeyValuePair<string, BattleStatus>("GradualPetrify", BattleStatus.GradualPetrify),
-            new KeyValuePair<string, BattleStatus>("PowerBreak", BattleStatus.CustomStatus1),
-            new KeyValuePair<string, BattleStatus>("MagicBreak", BattleStatus.CustomStatus2),
-            new KeyValuePair<string, BattleStatus>("ArmorBreak", BattleStatus.CustomStatus3),
-            new KeyValuePair<string, BattleStatus>("MentalBreak", BattleStatus.CustomStatus4),
-            new KeyValuePair<string, BattleStatus>("PowerUp", BattleStatus.CustomStatus5),
-            new KeyValuePair<string, BattleStatus>("MagicUp", BattleStatus.CustomStatus6),
-            new KeyValuePair<string, BattleStatus>("ArmorUp", BattleStatus.CustomStatus7),
-            new KeyValuePair<string, BattleStatus>("MentalUp", BattleStatus.CustomStatus8),
-            new KeyValuePair<string, BattleStatus>("Dragon", BattleStatus.CustomStatus9),
-            new KeyValuePair<string, BattleStatus>("ZombieArmor", BattleStatus.CustomStatus10),
-            new KeyValuePair<string, BattleStatus>("MechanicalArmor", BattleStatus.CustomStatus11),
-            new KeyValuePair<string, BattleStatus>("Redemption", BattleStatus.CustomStatus12),
-            new KeyValuePair<string, BattleStatus>("Bulwark", BattleStatus.CustomStatus13),
-            new KeyValuePair<string, BattleStatus>("PerfectDodge", BattleStatus.CustomStatus14),
-            new KeyValuePair<string, BattleStatus>("PerfectCrit", BattleStatus.CustomStatus15),
-            new KeyValuePair<string, BattleStatus>("Vieillissement", BattleStatus.CustomStatus16),
-            new KeyValuePair<string, BattleStatus>("SleepEasyKill", BattleStatus.CustomStatus17),
-            new KeyValuePair<string, BattleStatus>("SilenceEasyKill", BattleStatus.CustomStatus18),
-            new KeyValuePair<string, BattleStatus>("Rage", BattleStatus.CustomStatus19),
-            new KeyValuePair<string, BattleStatus>("Runic", BattleStatus.CustomStatus20),
-            new KeyValuePair<string, BattleStatus>("Special", BattleStatus.CustomStatus21),
-            new KeyValuePair<string, BattleStatus>("Provok", BattleStatus.CustomStatus22),
-            new KeyValuePair<string, BattleStatus>("Charm", BattleStatus.CustomStatus23)
+        new KeyValuePair<string, BattleStatus>("Petrify", BattleStatus.Petrify),
+        new KeyValuePair<string, BattleStatus>("Venom", BattleStatus.Venom),
+        new KeyValuePair<string, BattleStatus>("Virus", BattleStatus.Virus),
+        new KeyValuePair<string, BattleStatus>("Silence", BattleStatus.Silence),
+        new KeyValuePair<string, BattleStatus>("Blind", BattleStatus.Blind),
+        new KeyValuePair<string, BattleStatus>("Trouble", BattleStatus.Trouble),
+        new KeyValuePair<string, BattleStatus>("Zombie", BattleStatus.Zombie),
+        new KeyValuePair<string, BattleStatus>("Death", BattleStatus.Death),
+        new KeyValuePair<string, BattleStatus>("EasyKill", BattleStatus.EasyKill),
+        new KeyValuePair<string, BattleStatus>("Confuse", BattleStatus.Confuse),
+        new KeyValuePair<string, BattleStatus>("Berserk", BattleStatus.Berserk),
+        new KeyValuePair<string, BattleStatus>("Stop", BattleStatus.Stop),
+        new KeyValuePair<string, BattleStatus>("AutoLife", BattleStatus.AutoLife),
+        new KeyValuePair<string, BattleStatus>("Trance", BattleStatus.Trance),
+        new KeyValuePair<string, BattleStatus>("Defend", BattleStatus.Defend),
+        new KeyValuePair<string, BattleStatus>("Poison", BattleStatus.Poison),
+        new KeyValuePair<string, BattleStatus>("Sleep", BattleStatus.Sleep),
+        new KeyValuePair<string, BattleStatus>("Regen", BattleStatus.Regen),
+        new KeyValuePair<string, BattleStatus>("Haste", BattleStatus.Haste),
+        new KeyValuePair<string, BattleStatus>("Slow", BattleStatus.Slow),
+        new KeyValuePair<string, BattleStatus>("Float", BattleStatus.Float),
+        new KeyValuePair<string, BattleStatus>("Shell", BattleStatus.Shell),
+        new KeyValuePair<string, BattleStatus>("Protect", BattleStatus.Protect),
+        new KeyValuePair<string, BattleStatus>("Heat", BattleStatus.Heat),
+        new KeyValuePair<string, BattleStatus>("Freeze", BattleStatus.Freeze),
+        new KeyValuePair<string, BattleStatus>("Vanish", BattleStatus.Vanish),
+        new KeyValuePair<string, BattleStatus>("Doom", BattleStatus.Doom),
+        new KeyValuePair<string, BattleStatus>("Mini", BattleStatus.Mini),
+        new KeyValuePair<string, BattleStatus>("Reflect", BattleStatus.Reflect),
+        new KeyValuePair<string, BattleStatus>("Jump", BattleStatus.Jump),
+        new KeyValuePair<string, BattleStatus>("GradualPetrify", BattleStatus.GradualPetrify),
+        new KeyValuePair<string, BattleStatus>("PowerBreak", BattleStatus.CustomStatus1),
+        new KeyValuePair<string, BattleStatus>("MagicBreak", BattleStatus.CustomStatus2),
+        new KeyValuePair<string, BattleStatus>("ArmorBreak", BattleStatus.CustomStatus3),
+        new KeyValuePair<string, BattleStatus>("MentalBreak", BattleStatus.CustomStatus4),
+        new KeyValuePair<string, BattleStatus>("PowerUp", BattleStatus.CustomStatus5),
+        new KeyValuePair<string, BattleStatus>("MagicUp", BattleStatus.CustomStatus6),
+        new KeyValuePair<string, BattleStatus>("ArmorUp", BattleStatus.CustomStatus7),
+        new KeyValuePair<string, BattleStatus>("MentalUp", BattleStatus.CustomStatus8),
+        new KeyValuePair<string, BattleStatus>("Dragon", BattleStatus.CustomStatus9),
+        new KeyValuePair<string, BattleStatus>("ZombieArmor", BattleStatus.CustomStatus10),
+        new KeyValuePair<string, BattleStatus>("MechanicalArmor", BattleStatus.CustomStatus11),
+        new KeyValuePair<string, BattleStatus>("Redemption", BattleStatus.CustomStatus12),
+        new KeyValuePair<string, BattleStatus>("Bulwark", BattleStatus.CustomStatus13),
+        new KeyValuePair<string, BattleStatus>("PerfectDodge", BattleStatus.CustomStatus14),
+        new KeyValuePair<string, BattleStatus>("PerfectCrit", BattleStatus.CustomStatus15),
+        new KeyValuePair<string, BattleStatus>("Vieillissement", BattleStatus.CustomStatus16),
+        new KeyValuePair<string, BattleStatus>("SleepEasyKill", BattleStatus.CustomStatus17),
+        new KeyValuePair<string, BattleStatus>("SilenceEasyKill", BattleStatus.CustomStatus18),
+        new KeyValuePair<string, BattleStatus>("Rage", BattleStatus.CustomStatus19),
+        new KeyValuePair<string, BattleStatus>("Runic", BattleStatus.CustomStatus20),
+        new KeyValuePair<string, BattleStatus>("Special", BattleStatus.CustomStatus21),
+        new KeyValuePair<string, BattleStatus>("Provok", BattleStatus.CustomStatus22),
+        new KeyValuePair<string, BattleStatus>("Charm", BattleStatus.CustomStatus23)
         };
 
         private int _elementMode = 0;
@@ -595,14 +606,14 @@ namespace Memoria.Scripts.TranceSeek
 
         private static readonly KeyValuePair<string, EffectElement>[] _elementList = new KeyValuePair<string, EffectElement>[]
         {
-            new KeyValuePair<string, EffectElement>("Fire", EffectElement.Fire),
-            new KeyValuePair<string, EffectElement>("Cold", EffectElement.Cold),
-            new KeyValuePair<string, EffectElement>("Thunder", EffectElement.Thunder),
-            new KeyValuePair<string, EffectElement>("Earth", EffectElement.Earth),
-            new KeyValuePair<string, EffectElement>("Aqua", EffectElement.Aqua),
-            new KeyValuePair<string, EffectElement>("Wind", EffectElement.Wind),
-            new KeyValuePair<string, EffectElement>("Holy", EffectElement.Holy),
-            new KeyValuePair<string, EffectElement>("Darkness", EffectElement.Darkness)
+        new KeyValuePair<string, EffectElement>("Fire", EffectElement.Fire),
+        new KeyValuePair<string, EffectElement>("Cold", EffectElement.Cold),
+        new KeyValuePair<string, EffectElement>("Thunder", EffectElement.Thunder),
+        new KeyValuePair<string, EffectElement>("Earth", EffectElement.Earth),
+        new KeyValuePair<string, EffectElement>("Aqua", EffectElement.Aqua),
+        new KeyValuePair<string, EffectElement>("Wind", EffectElement.Wind),
+        new KeyValuePair<string, EffectElement>("Holy", EffectElement.Holy),
+        new KeyValuePair<string, EffectElement>("Darkness", EffectElement.Darkness)
         };
 
         void Update()
@@ -628,6 +639,33 @@ namespace Memoria.Scripts.TranceSeek
                 if (!_showMenu)
                     CloseAllSubMenus();
             }
+
+            if (_isCameraDragMode)
+            {
+                var fieldmap = PersistenSingleton<EventEngine>.Instance?.fieldmap;
+                if (fieldmap != null)
+                {
+                    float speed = 5.0f;
+                    if (UnityEngine.Input.GetKey(KeyCode.LeftShift) || UnityEngine.Input.GetKey(KeyCode.RightShift))
+                        speed = 15.0f;
+
+                    if (UnityEngine.Input.GetKey(KeyCode.LeftArrow) || UnityEngine.Input.GetKey(KeyCode.A) || UnityEngine.Input.GetKey(KeyCode.Q))
+                        _targetCamX -= speed;
+
+                    if (UnityEngine.Input.GetKey(KeyCode.RightArrow) || UnityEngine.Input.GetKey(KeyCode.D))
+                        _targetCamX += speed;
+
+                    if (UnityEngine.Input.GetKey(KeyCode.UpArrow) || UnityEngine.Input.GetKey(KeyCode.W) || UnityEngine.Input.GetKey(KeyCode.Z))
+                        _targetCamY -= speed;
+
+                    if (UnityEngine.Input.GetKey(KeyCode.DownArrow) || UnityEngine.Input.GetKey(KeyCode.S))
+                        _targetCamY += speed;
+
+                    fieldmap.EBG_scene2DScroll((short)_targetCamX, (short)_targetCamY, 1, 0);
+                    fieldmap.curVRP.x = _targetCamX;
+                    fieldmap.curVRP.y = _targetCamY;
+                }
+            }
         }
 
         private void CloseAllSubMenus()
@@ -644,6 +682,11 @@ namespace Memoria.Scripts.TranceSeek
             {
                 RestoreAllFieldAnimations();
                 RestoreTint();
+                if (_isCameraDragMode)
+                {
+                    _isCameraDragMode = false;
+                    PersistenSingleton<EventEngine>.Instance?.fieldmap?.EBG_scene2DScrollRelease(30, 0);
+                }
             }
             _showFieldMenu = false;
         }
@@ -1014,11 +1057,11 @@ namespace Memoria.Scripts.TranceSeek
             GUILayout.Label("<b>Force Trigger</b>", new GUIStyle(GUI.skin.label) { richText = true });
 
             List<KeyValuePair<string, int>> targetOptions = new List<KeyValuePair<string, int>>
-            {
-                new KeyValuePair<string, int>("All Players", 15),
-                new KeyValuePair<string, int>("All Enemies", 240),
-                new KeyValuePair<string, int>("Everyone", 255)
-            };
+        {
+            new KeyValuePair<string, int>("All Players", 15),
+            new KeyValuePair<string, int>("All Enemies", 240),
+            new KeyValuePair<string, int>("Everyone", 255)
+        };
 
             var allUnits = BattleState.EnumerateUnits().ToList();
             foreach (var unit in allUnits)
@@ -1479,19 +1522,42 @@ namespace Memoria.Scripts.TranceSeek
         void DrawEventMenu(int windowID)
         {
             GUILayout.BeginHorizontal();
-            if (GUILayout.Button(_eventMenuTab == 0 ? "<color=orange><b>gEventGlobal</b></color>" : "gEventGlobal")) { _eventMenuTab = 0; _statTextCache.Clear(); }
-            if (GUILayout.Button(_eventMenuTab == 1 ? "<color=orange><b>gScriptDictionary</b></color>" : "gScriptDictionary")) { _eventMenuTab = 1; _statTextCache.Clear(); }
-            if (GUILayout.Button(_eventMenuTab == 2 ? "<color=orange><b>Map Vars (Global)</b></color>" : "Map Vars (Global)")) { _eventMenuTab = 2; _statTextCache.Clear(); }
-            if (GUILayout.Button(_eventMenuTab == 3 ? "<color=orange><b>Local Vars (Obj)</b></color>" : "Local Vars (Obj)")) { _eventMenuTab = 3; _statTextCache.Clear(); }
+            if (GUILayout.Button(_eventMenuTab == 0 ? "<color=orange><b>gEventGlobal</b></color>" : "gEventGlobal")) { _eventMenuTab = 0; _statTextCache.Clear(); GUI.FocusControl(null); }
+            if (GUILayout.Button(_eventMenuTab == 1 ? "<color=orange><b>gScriptDictionary</b></color>" : "gScriptDictionary")) { _eventMenuTab = 1; _statTextCache.Clear(); GUI.FocusControl(null); }
+            if (GUILayout.Button(_eventMenuTab == 2 ? "<color=orange><b>Map Vars (Global)</b></color>" : "Map Vars (Global)")) { _eventMenuTab = 2; _statTextCache.Clear(); GUI.FocusControl(null); }
+            if (GUILayout.Button(_eventMenuTab == 3 ? "<color=orange><b>Local Vars (Obj)</b></color>" : "Local Vars (Obj)")) { _eventMenuTab = 3; _statTextCache.Clear(); GUI.FocusControl(null); }
             GUILayout.EndHorizontal();
 
             if (_eventMenuTab == 0)
             {
                 if (FF9StateSystem.EventState?.gEventGlobal == null) return;
                 byte[] g = FF9StateSystem.EventState.gEventGlobal;
+
                 GUILayout.BeginVertical("box");
+
+                GUILayout.BeginHorizontal();
                 _selectedGlobalKey = Mathf.Clamp(DrawStatUI("GlobalKey", "Index", _selectedGlobalKey, 100), 0, 2047);
-                g[_selectedGlobalKey] = (byte)Mathf.Clamp(DrawStatUI($"EvGlob_{_selectedGlobalKey}", "Valeur", g[_selectedGlobalKey], 100), 0, 255);
+                if (GUILayout.Button("Refresh", GUILayout.Width(80))) { _statTextCache.Clear(); GUI.FocusControl(null); SoundLib.PlaySoundEffect(103); }
+                GUILayout.EndHorizontal();
+
+                int currentGlobalValue = g[_selectedGlobalKey];
+                DrawStatUI($"EvGlob_{_selectedGlobalKey}", "Valeur", currentGlobalValue, 100);
+
+                GUILayout.Space(10);
+                if (GUILayout.Button("<color=yellow><b>Appliquer</b></color>", new GUIStyle(GUI.skin.button) { richText = true }, GUILayout.Height(30)))
+                {
+                    foreach (var kvp in _statTextCache)
+                    {
+                        if (kvp.Key.StartsWith("EvGlob_") && byte.TryParse(kvp.Value, out byte val))
+                        {
+                            if (int.TryParse(kvp.Key.Substring(7), out int idx) && idx >= 0 && idx < g.Length)
+                            {
+                                g[idx] = val;
+                            }
+                        }
+                    }
+                    SoundLib.PlaySoundEffect(104);
+                }
                 GUILayout.EndVertical();
             }
             else if (_eventMenuTab == 1) DrawScriptDictionaryTab();
@@ -1503,9 +1569,232 @@ namespace Memoria.Scripts.TranceSeek
 
         private void DrawScriptDictionaryTab()
         {
-            var d = FF9StateSystem.EventState?.gScriptDictionary; if (d == null || d.Count == 0) return; GUILayout.BeginHorizontal(); foreach (int k in d.Keys) if (GUILayout.Button(k.ToString(), GUILayout.Width(50))) { _selectedOuterKey = k; _statTextCache.Clear(); }
+            var d = FF9StateSystem.EventState?.gScriptDictionary;
+            if (d == null || d.Count == 0) return;
+
+            GUILayout.BeginHorizontal();
+            foreach (int k in d.Keys)
+            {
+                if (GUILayout.Button(k.ToString(), GUILayout.Width(50)))
+                {
+                    _selectedOuterKey = k;
+                    _statTextCache.Clear();
+                    GUI.FocusControl(null);
+                }
+            }
+            GUILayout.FlexibleSpace();
+            if (GUILayout.Button("Refresh", GUILayout.Width(80))) { _statTextCache.Clear(); GUI.FocusControl(null); SoundLib.PlaySoundEffect(103); }
             GUILayout.EndHorizontal();
-            if (_selectedOuterKey != -1 && d.ContainsKey(_selectedOuterKey)) { _eventScrollPos = GUILayout.BeginScrollView(_eventScrollPos, GUILayout.Height(280)); var inner = d[_selectedOuterKey]; int col = 3, c = 0; GUILayout.BeginHorizontal(); foreach (int ik in inner.Keys.ToList()) { GUILayout.BeginVertical(GUILayout.Width(180)); inner[ik] = DrawStatUI($"Dict_{_selectedOuterKey}_{ik}", $"Key {ik}", inner[ik]); GUILayout.EndVertical(); c++; if (c % col == 0) { GUILayout.EndHorizontal(); GUILayout.BeginHorizontal(); } } GUILayout.EndHorizontal(); GUILayout.EndScrollView(); }
+
+            if (_selectedOuterKey != -1 && d.ContainsKey(_selectedOuterKey))
+            {
+                _eventScrollPos = GUILayout.BeginScrollView(_eventScrollPos, GUILayout.Height(250));
+                var inner = d[_selectedOuterKey];
+                int col = 2;
+                int c = 0;
+
+                GUILayout.BeginHorizontal();
+                foreach (int ik in inner.Keys.ToList())
+                {
+                    GUILayout.BeginVertical("box", GUILayout.Width(250));
+                    DrawStatUI($"Dict_{_selectedOuterKey}_{ik}", $"Key {ik}", inner[ik]);
+                    GUILayout.EndVertical();
+
+                    c++;
+                    if (c % col == 0)
+                    {
+                        GUILayout.EndHorizontal();
+                        GUILayout.BeginHorizontal();
+                    }
+                }
+                GUILayout.EndHorizontal();
+                GUILayout.EndScrollView();
+
+                GUILayout.Space(5);
+                if (GUILayout.Button("<color=yellow><b>Appliquer</b></color>", new GUIStyle(GUI.skin.button) { richText = true }, GUILayout.Height(30)))
+                {
+                    foreach (var kvp in _statTextCache)
+                    {
+                        if (kvp.Key.StartsWith("Dict_") && int.TryParse(kvp.Value, out int val))
+                        {
+                            string[] parts = kvp.Key.Split('_');
+                            if (parts.Length == 3 && int.TryParse(parts[1], out int outer) && int.TryParse(parts[2], out int innerK))
+                            {
+                                if (d.ContainsKey(outer) && d[outer].ContainsKey(innerK))
+                                {
+                                    d[outer][innerK] = val;
+                                }
+                            }
+                        }
+                    }
+                    SoundLib.PlaySoundEffect(104);
+                }
+            }
+        }
+
+        private void DrawMapVarsTab()
+        {
+            var ee = PersistenSingleton<EventEngine>.Instance;
+            if (ee == null) return;
+
+            byte[] mapVars = ee.GetMapVar();
+            if (mapVars == null || mapVars.Length == 0)
+            {
+                GUILayout.Label("Aucune Map Variable (Combat Global) active.");
+                return;
+            }
+
+            GUILayout.BeginVertical("box");
+            GUILayout.Label("<b>Variables Globales du Combat (Hades Workshop 'global')</b>", new GUIStyle(GUI.skin.label) { richText = true });
+
+            GUILayout.BeginHorizontal();
+            _selectedMapVarKey = Mathf.Clamp(DrawStatUI("MapVarKey", "Index (Offset)", _selectedMapVarKey, 110), 0, mapVars.Length - 1);
+
+            if (GUILayout.Button("Refresh", GUILayout.Width(80)))
+            {
+                _statTextCache.Clear();
+                GUI.FocusControl(null);
+                SoundLib.PlaySoundEffect(103);
+            }
+            GUILayout.EndHorizontal();
+            GUILayout.Space(10);
+
+            int currentValue = mapVars[_selectedMapVarKey];
+            DrawStatUI($"MapVarMod_{_selectedMapVarKey}", "Modifier UInt8", currentValue, 110);
+
+            if (_selectedMapVarKey + 1 < mapVars.Length)
+            {
+                byte b1 = (byte)GetCachedStat($"MapVarMod_{_selectedMapVarKey}", mapVars[_selectedMapVarKey], 0, 255);
+                byte b2 = (byte)GetCachedStat($"MapVarMod_{_selectedMapVarKey + 1}", mapVars[_selectedMapVarKey + 1], 0, 255);
+                ushort u16 = (ushort)(b1 | (b2 << 8));
+                GUILayout.Label($"<b>Valeur UInt16 (Lecture) :</b> <color=cyan>{u16}</color>", new GUIStyle(GUI.skin.label) { richText = true });
+            }
+
+            GUILayout.Space(10);
+
+            if (GUILayout.Button("<color=yellow><b>Appliquer</b></color>", new GUIStyle(GUI.skin.button) { richText = true }, GUILayout.Height(30)))
+            {
+                foreach (var kvp in _statTextCache)
+                {
+                    if (kvp.Key.StartsWith("MapVarMod_") && byte.TryParse(kvp.Value, out byte val))
+                    {
+                        if (int.TryParse(kvp.Key.Substring(10), out int idx) && idx >= 0 && idx < mapVars.Length)
+                        {
+                            mapVars[idx] = val;
+                        }
+                    }
+                }
+                SoundLib.PlaySoundEffect(104);
+            }
+
+            GUILayout.EndVertical();
+        }
+
+        private void DrawLocalVarsTab()
+        {
+            var ee = PersistenSingleton<EventEngine>.Instance;
+            if (ee == null) return;
+
+            List<Obj> activeObjects = new List<Obj>();
+            for (ObjList objList = ee.GetActiveObjList().next; objList != null; objList = objList.next)
+            {
+                if (objList.obj != null)
+                    activeObjects.Add(objList.obj);
+            }
+
+            if (activeObjects.Count == 0)
+            {
+                GUILayout.Label("Aucun Objet actif.");
+                return;
+            }
+
+            if (_currentObjIndex >= activeObjects.Count) _currentObjIndex = 0;
+
+            GUILayout.BeginHorizontal();
+            if (GUILayout.Button("<", GUILayout.Width(40), GUILayout.Height(30)))
+            {
+                _currentObjIndex--;
+                if (_currentObjIndex < 0) _currentObjIndex = activeObjects.Count - 1;
+                _statTextCache.Clear();
+                GUI.FocusControl(null);
+            }
+
+            Obj currObj = activeObjects[_currentObjIndex];
+
+            string objName = (currObj.go != null && !string.IsNullOrEmpty(currObj.go.name))
+                             ? currObj.go.name
+                             : $"Sans Nom (UID: {currObj.uid})";
+
+            GUILayout.Label($"<b>Obj: <color=#FF5555>{objName}</color></b>\nUID: {currObj.uid} ({_currentObjIndex + 1}/{activeObjects.Count})", new GUIStyle(GUI.skin.label) { richText = true, alignment = TextAnchor.MiddleCenter });
+
+            if (GUILayout.Button(">", GUILayout.Width(40), GUILayout.Height(30)))
+            {
+                _currentObjIndex++;
+                if (_currentObjIndex >= activeObjects.Count) _currentObjIndex = 0;
+                _statTextCache.Clear();
+                GUI.FocusControl(null);
+            }
+            GUILayout.EndHorizontal();
+
+            if (currObj.buffer == null || currObj.buffer.Length == 0)
+            {
+                GUILayout.Label("Ce monstre/objet n'a aucune variable locale (buffer vide).");
+                return;
+            }
+
+            GUILayout.BeginVertical("box");
+            GUILayout.Label("<b>Variables Locales du Monstre/Objet</b>", new GUIStyle(GUI.skin.label) { richText = true });
+
+            int bufferOffset = currObj.vofs * 4;
+            int maxHwOffset = currObj.buffer.Length - bufferOffset - 1;
+
+            GUILayout.BeginHorizontal();
+            _selectedLocalVarKey = Mathf.Clamp(DrawStatUI("LocalVarKey", "Index HW", _selectedLocalVarKey, 110), 0, maxHwOffset);
+
+            if (GUILayout.Button("Refresh", GUILayout.Width(80)))
+            {
+                _statTextCache.Clear();
+                GUI.FocusControl(null);
+                SoundLib.PlaySoundEffect(103);
+            }
+            GUILayout.EndHorizontal();
+
+            GUILayout.Space(10);
+
+            int actualIndex = _selectedLocalVarKey + bufferOffset;
+            int currentLocalValue = currObj.buffer[actualIndex];
+
+            DrawStatUI($"LocVarMod_{currObj.uid}_{_selectedLocalVarKey}", "Modifier UInt8", currentLocalValue, 110);
+
+            if (actualIndex + 1 < currObj.buffer.Length)
+            {
+                byte b1 = (byte)GetCachedStat($"LocVarMod_{currObj.uid}_{_selectedLocalVarKey}", currObj.buffer[actualIndex], 0, 255);
+                byte b2 = (byte)GetCachedStat($"LocVarMod_{currObj.uid}_{_selectedLocalVarKey + 1}", currObj.buffer[actualIndex + 1], 0, 255);
+                ushort u16 = (ushort)(b1 | (b2 << 8));
+                GUILayout.Label($"<b>Valeur UInt16 (Lecture) :</b> <color=cyan>{u16}</color>", new GUIStyle(GUI.skin.label) { richText = true });
+            }
+
+            GUILayout.Space(10);
+            if (GUILayout.Button("<color=yellow><b>Appliquer</b></color>", new GUIStyle(GUI.skin.button) { richText = true }, GUILayout.Height(30)))
+            {
+                foreach (var kvp in _statTextCache)
+                {
+                    if (kvp.Key.StartsWith($"LocVarMod_{currObj.uid}_") && byte.TryParse(kvp.Value, out byte val))
+                    {
+                        if (int.TryParse(kvp.Key.Substring($"LocVarMod_{currObj.uid}_".Length), out int offset))
+                        {
+                            int targetIndex = offset + bufferOffset;
+                            if (targetIndex >= 0 && targetIndex < currObj.buffer.Length)
+                            {
+                                currObj.buffer[targetIndex] = val;
+                            }
+                        }
+                    }
+                }
+                SoundLib.PlaySoundEffect(104);
+            }
+
+            GUILayout.EndVertical();
         }
 
         private void ReloadAbilityFeatures()
@@ -1597,116 +1886,101 @@ namespace Memoria.Scripts.TranceSeek
             GUI.DragWindow();
         }
 
-        private void DrawMapVarsTab()
-        {
-            var ee = PersistenSingleton<EventEngine>.Instance;
-            if (ee == null) return;
-
-            byte[] mapVars = ee.GetMapVar();
-            if (mapVars == null || mapVars.Length == 0)
-            {
-                GUILayout.Label("Aucune Map Variable (Combat Global) active.");
-                return;
-            }
-
-            GUILayout.BeginVertical("box");
-            GUILayout.Label("<b>Variables Globales du Combat (Hades Workshop 'global')</b>", new GUIStyle(GUI.skin.label) { richText = true });
-
-            GUILayout.BeginHorizontal();
-            _selectedMapVarKey = Mathf.Clamp(DrawStatUI("MapVarKey", "Index (Offset)", _selectedMapVarKey, 110), 0, mapVars.Length - 1);
-
-            if (GUILayout.Button("Refresh", GUILayout.Width(100)))
-            {
-                _statTextCache.Clear();
-                GUI.FocusControl(null);
-                SoundLib.PlaySoundEffect(103);
-            }
-            GUILayout.EndHorizontal();
-            GUILayout.Space(10);
-            GUILayout.Label($"<b>Valeur UInt8 :</b> <color=yellow>{mapVars[_selectedMapVarKey]}</color>", new GUIStyle(GUI.skin.label) { richText = true });
-            if (_selectedMapVarKey + 1 < mapVars.Length)
-            {
-                ushort u16 = (ushort)(mapVars[_selectedMapVarKey] | (mapVars[_selectedMapVarKey + 1] << 8));
-                GUILayout.Label($"<b>Valeur UInt16 :</b> <color=cyan>{u16}</color>", new GUIStyle(GUI.skin.label) { richText = true });
-            }
-
-            GUILayout.Space(10);
-            mapVars[_selectedMapVarKey] = (byte)Mathf.Clamp(DrawStatUI($"MapVarMod_{_selectedMapVarKey}", "Modifier UInt8", mapVars[_selectedMapVarKey], 110), 0, 255);
-
-            GUILayout.EndVertical();
-        }
-
-        private void DrawLocalVarsTab()
-        {
-            var ee = PersistenSingleton<EventEngine>.Instance;
-            if (ee == null) return;
-
-            List<Obj> activeObjects = new List<Obj>();
-            for (ObjList objList = ee.GetActiveObjList().next; objList != null; objList = objList.next)
-            {
-                if (objList.obj != null)
-                    activeObjects.Add(objList.obj);
-            }
-
-            if (activeObjects.Count == 0) { GUILayout.Label("Aucun Objet actif."); return; }
-            if (_currentObjIndex >= activeObjects.Count) _currentObjIndex = 0;
-
-            GUILayout.BeginHorizontal();
-            if (GUILayout.Button("<", GUILayout.Width(40), GUILayout.Height(30))) { _currentObjIndex--; if (_currentObjIndex < 0) _currentObjIndex = activeObjects.Count - 1; _statTextCache.Clear(); GUI.FocusControl(null); }
-
-            Obj currObj = activeObjects[_currentObjIndex];
-
-            string objName = (currObj.go != null && !string.IsNullOrEmpty(currObj.go.name))
-                             ? currObj.go.name
-                             : $"Sans Nom (UID: {currObj.uid})";
-
-            GUILayout.Label($"<b>Obj: <color=#FF5555>{objName}</color></b>\nUID: {currObj.uid} ({_currentObjIndex + 1}/{activeObjects.Count})", new GUIStyle(GUI.skin.label) { richText = true, alignment = TextAnchor.MiddleCenter });
-
-            if (GUILayout.Button(">", GUILayout.Width(40), GUILayout.Height(30))) { _currentObjIndex++; if (_currentObjIndex >= activeObjects.Count) _currentObjIndex = 0; _statTextCache.Clear(); GUI.FocusControl(null); }
-            GUILayout.EndHorizontal();
-
-            if (currObj.buffer == null || currObj.buffer.Length == 0)
-            {
-                GUILayout.Label("Ce monstre/objet n'a aucune variable locale (buffer vide).");
-                return;
-            }
-
-            GUILayout.BeginVertical("box");
-            GUILayout.Label("<b>Variables Locales du Monstre/Objet</b>", new GUIStyle(GUI.skin.label) { richText = true });
-
-            int bufferOffset = currObj.vofs * 4;
-            int maxHwOffset = currObj.buffer.Length - bufferOffset - 1;
-
-            GUILayout.BeginHorizontal();
-            _selectedLocalVarKey = Mathf.Clamp(DrawStatUI("LocalVarKey", "Index HW", _selectedLocalVarKey, 110), 0, maxHwOffset);
-
-            if (GUILayout.Button("🔄 Refresh", GUILayout.Width(100)))
-            {
-                _statTextCache.Clear();
-                GUI.FocusControl(null);
-                SoundLib.PlaySoundEffect(103);
-            }
-            GUILayout.EndHorizontal();
-
-            GUILayout.Space(10);
-
-            int actualIndex = _selectedLocalVarKey + bufferOffset;
-
-            GUILayout.Label($"<b>Valeur UInt8 :</b> <color=yellow>{currObj.buffer[actualIndex]}</color>", new GUIStyle(GUI.skin.label) { richText = true });
-
-            if (actualIndex + 1 < currObj.buffer.Length)
-            {
-                ushort u16 = (ushort)(currObj.buffer[actualIndex] | (currObj.buffer[actualIndex + 1] << 8));
-                GUILayout.Label($"<b>Valeur UInt16 :</b> <color=cyan>{u16}</color>", new GUIStyle(GUI.skin.label) { richText = true });
-            }
-
-            GUILayout.Space(10);
-            currObj.buffer[actualIndex] = (byte)Mathf.Clamp(DrawStatUI($"LocVarMod_{currObj.uid}_{_selectedLocalVarKey}", "Modifier UInt8", currObj.buffer[actualIndex], 110), 0, 255);
-
-            GUILayout.EndVertical();
-        }
-
         void DrawFieldMenu(int windowID)
+        {
+            GUILayout.BeginHorizontal();
+            if (GUILayout.Button(_fieldMenuTab == 0 ? "<color=orange><b>Acteurs & Anim</b></color>" : "Acteurs & Anim")) { _fieldMenuTab = 0; GUI.FocusControl(null); }
+            if (GUILayout.Button(_fieldMenuTab == 1 ? "<color=orange><b>Camera Field</b></color>" : "Camera Field")) { _fieldMenuTab = 1; GUI.FocusControl(null); }
+            GUILayout.EndHorizontal();
+            GUILayout.Space(10);
+
+            if (_fieldMenuTab == 0) DrawFieldActorsTab();
+            else if (_fieldMenuTab == 1) DrawCameraFieldTab();
+
+            GUI.DragWindow();
+        }
+
+        private void DrawCameraFieldTab()
+        {
+            var fieldmap = PersistenSingleton<EventEngine>.Instance?.fieldmap;
+            if (fieldmap == null)
+            {
+                GUILayout.Label("Aucune carte active.");
+                return;
+            }
+
+            GUILayout.BeginVertical("box");
+            GUILayout.Label("<b>Coordonnees Camera (VRP) Actuelles</b>", new GUIStyle(GUI.skin.label) { richText = true });
+            GUILayout.Space(5);
+            GUILayout.Label($"X : {fieldmap.curVRP.x:F2}");
+            GUILayout.Label($"Y : {fieldmap.curVRP.y:F2}");
+            GUILayout.EndVertical();
+
+            GUILayout.Space(10);
+
+            GUILayout.BeginVertical("box");
+            GUILayout.Label("<b>Fonction : MoveCamera (EBG_scene2DScroll)</b>", new GUIStyle(GUI.skin.label) { richText = true });
+            GUILayout.Space(5);
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("X:", GUILayout.Width(20));
+            _camInputX = GUILayout.TextField(_camInputX, GUILayout.Width(50));
+            GUILayout.Label("Y:", GUILayout.Width(20));
+            _camInputY = GUILayout.TextField(_camInputY, GUILayout.Width(50));
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Durée:", GUILayout.Width(45));
+            _camInputDuration = GUILayout.TextField(_camInputDuration, GUILayout.Width(40));
+            GUILayout.Label("Type:", GUILayout.Width(40));
+            _camInputType = GUILayout.TextField(_camInputType, GUILayout.Width(40));
+            GUILayout.EndHorizontal();
+
+            GUILayout.Space(5);
+            if (GUILayout.Button("<color=yellow><b>Executer MoveCamera</b></color>", new GUIStyle(GUI.skin.button) { richText = true }))
+            {
+                if (short.TryParse(_camInputX, out short x) &&
+                    short.TryParse(_camInputY, out short y) &&
+                    ushort.TryParse(_camInputDuration, out ushort duration) &&
+                    byte.TryParse(_camInputType, out byte type))
+                {
+                    _isCameraDragMode = false;
+                    fieldmap.EBG_scene2DScroll(x, y, duration, type);
+                    SoundLib.PlaySoundEffect(104);
+                }
+                GUI.FocusControl(null);
+            }
+            GUILayout.EndVertical();
+
+            GUILayout.Space(15);
+
+            string btnText = _isCameraDragMode ? "<color=red><b>Desactiver Mode Libre Camera</b></color>" : "<color=green><b>Activer Mode Libre Camera</b></color>";
+            if (GUILayout.Button(btnText, new GUIStyle(GUI.skin.button) { richText = true }, GUILayout.Height(40)))
+            {
+                _isCameraDragMode = !_isCameraDragMode;
+
+                if (_isCameraDragMode)
+                {
+                    _targetCamX = fieldmap.curVRP.x;
+                    _targetCamY = fieldmap.curVRP.y;
+                }
+                else
+                {
+                    fieldmap.EBG_scene2DScrollRelease(30, 0);
+                }
+
+                SoundLib.PlaySoundEffect(103);
+                GUI.FocusControl(null);
+            }
+
+            if (_isCameraDragMode)
+            {
+                GUILayout.Space(10);
+                GUILayout.Label("<i>Utilisez les <b>fleches du clavier</b> pour deplacer la camera.\nMaintenez <b>SHIFT</b> pour aller plus vite.</i>", new GUIStyle(GUI.skin.label) { richText = true });
+            }
+        }
+
+        private void DrawFieldActorsTab()
         {
             GUILayout.BeginHorizontal();
             if (GUILayout.Button("Rafraichir les Acteurs", GUILayout.Width(160), GUILayout.Height(30)))
@@ -1729,7 +2003,6 @@ namespace Memoria.Scripts.TranceSeek
             if (_cachedActors == null || _cachedActors.Length == 0)
             {
                 GUILayout.Label("Aucun acteur trouve sur cette carte.");
-                GUI.DragWindow();
                 return;
             }
 
@@ -1985,8 +2258,6 @@ namespace Memoria.Scripts.TranceSeek
             {
                 GUILayout.Label("L'acteur est invalide ou a ete detruit.");
             }
-
-            GUI.DragWindow();
         }
 
         void DrawTriggerBattleMenu(int windowID)
@@ -2032,20 +2303,6 @@ namespace Memoria.Scripts.TranceSeek
             GUILayout.EndVertical();
             GUI.DragWindow();
         }
-
-        // For EventEngine.cs
-
-        /*public void TriggerDebugBattle(Int32 battleSceneId, SByte btlGroup = -1)
-        {
-            this.SetBattleScene(battleSceneId);
-            this._ff9.btlSubMapNo = btlGroup;
-            this._ff9.steiner_state = 0;
-            this._encountBase = 0;
-
-            FF9StateSystem.Battle.isRandomEncounter = false;
-            FF9StateSystem.Battle.isEncount = true;
-            this._encountReserved = true;
-        }*/
 
         private void RestoreAllFieldAnimations()
         {
