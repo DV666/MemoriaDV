@@ -1,6 +1,6 @@
 // Shared sequence of SFX Ark__Short
 
-ShowMesh: Char=MatchingCondition(!IsTargeted && IsTargetable) ; Enable=False ; IsDisappear=True
+ShowMesh: Char=Everyone ; Enable=False ; IsDisappear=True
 StartThread: Condition=SFXUseCamera && AreTargetsPlayers
 	ShiftWorld: Angle=(0, 180, 0)
 EndThread
@@ -11,7 +11,7 @@ PlaySound: Sound=2932
 Wait: Time=36
 SetBackgroundIntensity: Intensity=0.46875 ; Time=24 ; HoldDuration=41
 Wait: Time=40
-ShowMesh: Char=AllTargets ; Enable=False ; IsDisappear=True
+ShowMesh: Char=MatchingCondition(IsTargeted && IsTargetable) ; Enable=False ; IsDisappear=True
 Wait: Time=1
 SetBackgroundIntensity: Intensity=0 ; Time=0 ; HoldDuration=275
 PlaySound: Sound=2502
@@ -26,8 +26,8 @@ PlaySound: Sound=2426 ; Pitch=0.76
 Wait: Time=139
 SetBackgroundIntensity: Intensity=1 ; Time=20
 Wait: Time=1
-ShowMesh: Char=AllTargets ; Enable=True ; IsDisappear=True
-ShowMesh: Char=AllTargets ; Enable=True ; Time=20
+ShowMesh: Char=MatchingCondition(IsTargeted && IsTargetable) ; Enable=True ; IsDisappear=True
+ShowMesh: Char=MatchingCondition(IsTargeted && IsTargetable) ; Enable=True ; Time=20
 Wait: Time=11
 EffectPoint: Char=AllTargets ; Type=Effect
 Wait: Time=12

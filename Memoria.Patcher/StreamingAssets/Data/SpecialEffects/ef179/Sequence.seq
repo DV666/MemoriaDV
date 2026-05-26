@@ -4,14 +4,14 @@ PlaySound: Sound=2535
 PlaySound: Sound=2536
 PlaySound: Sound=2537
 ShowMesh: Char=MatchingCondition(!IsTargeted && IsTargetable) ; Enable=False ; IsDisappear=True
-ShowMesh: Char=AllTargets ; Enable=False ; Time=16
+ShowMesh: Char=MatchingCondition(IsTargeted && IsTargetable) ; Enable=False ; Time=16
 StartThread: Condition=SFXUseCamera && AreTargetsPlayers
 	ShiftWorld: Angle=(0, 180, 0)
 EndThread
 Wait: Time=1
 SetBackgroundIntensity: Intensity=0 ; Time=20 ; HoldDuration=338
 Wait: Time=15
-ShowMesh: Char=AllTargets ; Enable=False ; IsDisappear=True
+ShowMesh: Char=MatchingCondition(IsTargeted && IsTargetable) ; Enable=False ; IsDisappear=True
 Wait: Time=109
 PlaySound: Sound=182 ; SoundType=Song ; Volume=1.3
 Wait: Time=110
@@ -20,8 +20,8 @@ PlaySound: Sound=2540
 PlaySound: Sound=2541
 PlaySound: Sound=2542
 Wait: Time=104
-ShowMesh: Char=AllTargets ; Enable=True ; IsDisappear=True
-ShowMesh: Char=AllTargets ; Enable=True
+ShowMesh: Char=MatchingCondition(IsTargeted && IsTargetable) ; Enable=True ; IsDisappear=True
+ShowMesh: Char=MatchingCondition(IsTargeted && IsTargetable) ; Enable=True
 SetBackgroundIntensity: Intensity=1 ; Time=1
 Wait: Time=3
 PlaySound: Sound=2543

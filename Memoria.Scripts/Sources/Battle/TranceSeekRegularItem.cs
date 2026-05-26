@@ -187,6 +187,7 @@ namespace Memoria.Scripts.TranceSeek
         public const RegularItem Onyxarmor = (RegularItem)1264;
         public const RegularItem MuTail = (RegularItem)1265;
         public const RegularItem HaloGhost = (RegularItem)1266;
+        public const RegularItem LadybugAntenna = (RegularItem)1267;
         public const RegularItem HiPotion2 = (RegularItem)2000;
         public const RegularItem UltraPotion2 = (RegularItem)2001;
         public const RegularItem MegaPotion = (RegularItem)2002;
@@ -1043,6 +1044,7 @@ namespace Memoria.Scripts.TranceSeek
 
         private static readonly Dictionary<AccessoryKey, VisualAccessoryData> VisualAccessoriesDict = new Dictionary<AccessoryKey, VisualAccessoryData>
         {
+            // MuTail
             {
                 new AccessoryKey(MuTail, CharacterId.Zidane),
                 new VisualAccessoryData("GEO_WEP_Tail_Mu_Suit", 1, new Vector3(0f, 0f, 0f), new Vector3(343.0201f, 178.6945f, 181.0454f), Vector3.one, new int[] { 24 })
@@ -1102,68 +1104,126 @@ namespace Memoria.Scripts.TranceSeek
                 new AccessoryKey(MuTail, CharacterId.Beatrix),
                 new VisualAccessoryData("GEO_WEP_Tail_Mu_Suit", 1, new Vector3(0f, -33.5f, 59f), new Vector3(83.00005f, 0f, 0f), Vector3.one)
             },
-
+            // HaloGhost
             {
                 new AccessoryKey(HaloGhost, CharacterId.Zidane),
-                new VisualAccessoryData("GEO_WEP_Tail_Mu_Suit", 8, new Vector3(0f, -6f, 83f), new Vector3(270f, 0f, 0f), Vector3.one)
+                new VisualAccessoryData("GEO_WEP_Halo_Ghost_Suit", 8, new Vector3(0f, -6f, 83f), new Vector3(270f, 0f, 0f), Vector3.one)
             },
 
             {
                 new AccessoryKey(HaloGhost, CharacterId.Vivi),
-                new VisualAccessoryData("GEO_WEP_Tail_Mu_Suit", 8, new Vector3(0f, -0.5f, 17f), new Vector3(291f, 0f, 0f), Vector3.one)
+                new VisualAccessoryData("GEO_WEP_Halo_Ghost_Suit", 8, new Vector3(0f, -0.5f, 17f), new Vector3(291f, 0f, 0f), Vector3.one)
             },
 
             {
                 new AccessoryKey(HaloGhost, CharacterId.Garnet),
-                new VisualAccessoryData("GEO_WEP_Tail_Mu_Suit", 20, new Vector3(0f, 0f, 0f), new Vector3(53.00001f, 0f, 0f), Vector3.one)
+                new VisualAccessoryData("GEO_WEP_Halo_Ghost_Suit", 20, new Vector3(0f, 0f, 0f), new Vector3(53.00001f, 0f, 0f), Vector3.one)
             },
 
             {
                 new AccessoryKey(HaloGhost, CharacterId.Steiner),
-                new VisualAccessoryData("GEO_WEP_Tail_Mu_Suit", 20, new Vector3(0f, 1f, 72.5f), new Vector3(270f, 0f, 0f), Vector3.one)
+                new VisualAccessoryData("GEO_WEP_Halo_Ghost_Suit", 20, new Vector3(0f, 1f, 72.5f), new Vector3(270f, 0f, 0f), Vector3.one)
             },
 
             {
                 new AccessoryKey(HaloGhost, CharacterId.Freya),
-                new VisualAccessoryData("GEO_WEP_Tail_Mu_Suit", 8, new Vector3(0f, 6f, 72f), new Vector3(273.2788f, 128.0834f, 225.9914f), Vector3.one)
+                new VisualAccessoryData("GEO_WEP_Halo_Ghost_Suit", 8, new Vector3(0f, 6f, 72f), new Vector3(273.2788f, 128.0834f, 225.9914f), Vector3.one)
             },
 
             {
                 new AccessoryKey(HaloGhost, CharacterId.Quina),
-                new VisualAccessoryData("GEO_WEP_Tail_Mu_Suit", 7, new Vector3(0f, -10.5f, -1f), new Vector3(294f, 0f, 0f), Vector3.one)
+                new VisualAccessoryData("GEO_WEP_Halo_Ghost_Suit", 7, new Vector3(0f, -10.5f, -1f), new Vector3(294f, 0f, 0f), Vector3.one)
             },
 
             {
                 new AccessoryKey(HaloGhost, CharacterId.Eiko),
-                new VisualAccessoryData("GEO_WEP_Tail_Mu_Suit", 19, new Vector3(0f, 2.5f, 63f), new Vector3(272.9999f, 0f, 0f), Vector3.one)
+                new VisualAccessoryData("GEO_WEP_Halo_Ghost_Suit", 19, new Vector3(0f, 2.5f, 63f), new Vector3(272.9999f, 0f, 0f), Vector3.one)
             },
 
             {
                 new AccessoryKey(HaloGhost, CharacterId.Amarant),
-                new VisualAccessoryData("GEO_WEP_Tail_Mu_Suit", 18, new Vector3(0f, 1.5f, 95f), new Vector3(273.605f, 33.66046f, 326.2872f), Vector3.one)
+                new VisualAccessoryData("GEO_WEP_Halo_Ghost_Suit", 18, new Vector3(0f, 1.5f, 95f), new Vector3(273.605f, 33.66046f, 326.2872f), Vector3.one)
             },
 
             {
                 new AccessoryKey(HaloGhost, CharacterId.Cinna),
-                new VisualAccessoryData("GEO_WEP_Tail_Mu_Suit", 13, new Vector3(0f, -68.5f, -6f), new Vector3(3f, 0f, 0f), Vector3.one)
+                new VisualAccessoryData("GEO_WEP_Halo_Ghost_Suit", 13, new Vector3(0f, -68.5f, -6f), new Vector3(3f, 0f, 0f), Vector3.one)
             },
 
             {
                 new AccessoryKey(HaloGhost, CharacterId.Marcus),
-                new VisualAccessoryData("GEO_WEP_Tail_Mu_Suit", 9, new Vector3(0f, 25f, 19f), new Vector3(41.00002f, 0f, 0f), Vector3.one)
+                new VisualAccessoryData("GEO_WEP_Halo_Ghost_Suit", 9, new Vector3(0f, 25f, 19f), new Vector3(41.00002f, 0f, 0f), Vector3.one)
             },
 
             {
                 new AccessoryKey(HaloGhost, CharacterId.Blank),
-                new VisualAccessoryData("GEO_WEP_Tail_Mu_Suit", 4, new Vector3(0f, 0f, 0f), new Vector3(337.0333f, 1.272633f, 356.7415f), Vector3.one)
+                new VisualAccessoryData("GEO_WEP_Halo_Ghost_Suit", 4, new Vector3(0f, 0f, 0f), new Vector3(337.0333f, 1.272633f, 356.7415f), Vector3.one)
             },
 
             {
                 new AccessoryKey(HaloGhost, CharacterId.Beatrix),
-                new VisualAccessoryData("GEO_WEP_Tail_Mu_Suit", 19, new Vector3(0f, 0f, 0f), new Vector3(60.85868f, 354.6063f, 353.8303f), Vector3.one)
+                new VisualAccessoryData("GEO_WEP_Halo_Ghost_Suit", 19, new Vector3(0f, 0f, 0f), new Vector3(60.85868f, 354.6063f, 353.8303f), Vector3.one)
+            },
+            // Ladybug Antenna
+            {
+                new AccessoryKey(LadybugAntenna, CharacterId.Zidane),
+                new VisualAccessoryData("GEO_WEP_Antenna_Ladybug_Suit", 8, new Vector3(-9.5f, 3f, 100f), new Vector3(307.2082f, 155.2831f, 197.5205f), Vector3.one)
+            },
+
+            {
+                new AccessoryKey(LadybugAntenna, CharacterId.Vivi),
+                new VisualAccessoryData("GEO_WEP_Antenna_Ladybug_Suit", 8, new Vector3(-5.5f, -15.5f, -2.5f), new Vector3(320.1827f, 4.18273f, 353.4846f), Vector3.one)
+            },
+
+            {
+                new AccessoryKey(LadybugAntenna, CharacterId.Garnet),
+                new VisualAccessoryData("GEO_WEP_Antenna_Ladybug_Suit", 20, new Vector3(0f, 2.5f, -19.5f), new Vector3(73.87874f, 353.0607f, 352.7796f), Vector3.one)
+            },
+
+            {
+                new AccessoryKey(LadybugAntenna, CharacterId.Steiner),
+                new VisualAccessoryData("GEO_WEP_Antenna_Ladybug_Suit", 20, new Vector3(0f, 0f, 72f), new Vector3(297f, 180f, 180f), Vector3.one)
+            },
+
+            {
+                new AccessoryKey(LadybugAntenna, CharacterId.Freya),
+                new VisualAccessoryData("GEO_WEP_Antenna_Ladybug_Suit", 8, new Vector3(0f, -18f, 58f), new Vector3(282f, 180f, 180f), Vector3.one)
+            },
+
+            {
+                new AccessoryKey(LadybugAntenna, CharacterId.Quina),
+                new VisualAccessoryData("GEO_WEP_Antenna_Ladybug_Suit", 7, new Vector3(0f, 26.5f, 12.5f), new Vector3(71.00002f, 180f, 180f), Vector3.one)
+            },
+
+            {
+                new AccessoryKey(LadybugAntenna, CharacterId.Eiko),
+                new VisualAccessoryData("GEO_WEP_Antenna_Ladybug_Suit", 19, new Vector3(0f, -21.5f, 82f), new Vector3(279f, 180f, 180f), Vector3.one)
+            },
+
+            {
+                new AccessoryKey(LadybugAntenna, CharacterId.Amarant),
+                new VisualAccessoryData("GEO_WEP_Antenna_Ladybug_Suit", 18, new Vector3(-1f, -97.5f, 57f), new Vector3(274.1229f, 165.9864f, 194.0486f), Vector3.one)
+            },
+
+            {
+                new AccessoryKey(LadybugAntenna, CharacterId.Cinna),
+                new VisualAccessoryData("GEO_WEP_Antenna_Ladybug_Suit", 12, new Vector3(0f, -47.5f, 105.5f), new Vector3(276.0825f, 189.4279f, 170.5197f), Vector3.one)
+            },
+
+            {
+                new AccessoryKey(LadybugAntenna, CharacterId.Marcus),
+                new VisualAccessoryData("GEO_WEP_Antenna_Ladybug_Suit", 9, new Vector3(0f, 38.5f, -13f), new Vector3(0f, 0f, 0f), Vector3.one)
+            },
+
+            {
+                new AccessoryKey(LadybugAntenna, CharacterId.Blank),
+                new VisualAccessoryData("GEO_WEP_Antenna_Ladybug_Suit", 4, new Vector3(0.5f, -41f, -28.5f), new Vector3(317f, 0f, 0f), Vector3.one)
+            },
+
+            {
+                new AccessoryKey(LadybugAntenna, CharacterId.Beatrix),
+                new VisualAccessoryData("GEO_WEP_Antenna_Ladybug_Suit", 18, new Vector3(0f, -46.5f, 48.5f), new Vector3(281f, 0f, 0f), Vector3.one)
             },
         };
-
-        private static readonly Vector3 SCALE_INVISIBLE = new Vector3(0.01f, 0.01f, 0.01f);
     }
 }

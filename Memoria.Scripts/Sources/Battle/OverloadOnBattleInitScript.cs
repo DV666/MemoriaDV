@@ -72,6 +72,12 @@ namespace Memoria.Scripts.TranceSeek
                         FF9StateSystem.Battle.FF9Battle.aa_data[abilityId].MP = 0;
             }
 
+            if (!FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1002, out Dictionary<Int32, Int32> dictspecialeffect)) // Modificators for battle
+            {
+                dictspecialeffect = new Dictionary<Int32, Int32>();
+                FF9StateSystem.EventState.gScriptDictionary.Add(1002, dictspecialeffect);
+            }
+
             if (!FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1000, out Dictionary<Int32, Int32> dictbattle)) // Modificators for battle
             {
                 dictbattle = new Dictionary<Int32, Int32>();
@@ -457,6 +463,17 @@ namespace Memoria.Scripts.TranceSeek
                             InfusedWeaponScript.CMDVanillaName[unit.Data][1] = SeikenPlusName;
                     }
 
+                    dictspecialeffect.TryGetValue(2, out int zidaneStunt);
+                    dictspecialeffect.TryGetValue(3, out int cinnaStunt);
+
+                    if ((zidaneStunt > 0 && unit.PlayerIndex == CharacterId.Zidane) ||
+                        (cinnaStunt > 0 && unit.PlayerIndex == CharacterId.Cinna))
+                    {
+                        unit.ResistStatus &= ~BattleStatus.Confuse;
+                        unit.AlterStatus(BattleStatus.Confuse, unit);
+                        unit.CurrentHp /= (uint)(TranceSeekBattleDictionary.IsHardcore ? 4 : 2);
+                    }
+
                     TranceSeekRegularItem.CheckCreateVisualAccessory(unit);
                 }
                 else // Monsters init
@@ -660,15 +677,30 @@ namespace Memoria.Scripts.TranceSeek
         public void ChangeBBG(string BBGNameID)
         {
             FF9StateBattleSystem ff9Battle = FF9StateSystem.Battle.FF9Battle;
-            ff9Battle.map.btlBGPtr.SetActive(false);
+
+            if (ff9Battle.map.btlBGPtr != null)
+                UnityEngine.Object.Destroy(ff9Battle.map.btlBGPtr);
+
+            if (ff9Battle.map.btlBGObjAnim != null)
+            {
+                foreach (GameObject oldObj in ff9Battle.map.btlBGObjAnim)
+                    if (oldObj != null)
+                        UnityEngine.Object.Destroy(oldObj);
+
+                ff9Battle.map.btlBGObjAnim = null;
+            }
+
             ff9Battle.map.btlBGPtr = ModelFactory.CreateModel("BattleMap/BattleModel/battleMap_all/" + BBGNameID + "/" + BBGNameID, Vector3.zero, Vector3.zero, true);
             GEOTEXHEADER geotexheader = new GEOTEXHEADER();
             geotexheader.ReadBGTextureAnim(BBGNameID);
             ff9Battle.map.btlBGTexAnimPtr = geotexheader;
+
             BBGINFO bbginfo = new BBGINFO();
             bbginfo.ReadBattleInfo(BBGNameID);
             ff9Battle.map.btlBGInfoPtr = bbginfo;
+            battlebg.nf_InitBattleBG(bbginfo, geotexheader);
             battle.InitBattleMap();
+
             ff9Battle.map.btlBGPtr.SetActive(true);
         }
 
@@ -691,7 +723,8 @@ namespace Memoria.Scripts.TranceSeek
         {
             { new KeyValuePair<Int32, Int32>(299, 1), "BBG_B023" }, // Lindblum boss (Steiner Quest)
             { new KeyValuePair<Int32, Int32>(838, 1), "BBG_B042" }, // Golden Pidove
-            { new KeyValuePair<Int32, Int32>(84, 1), "BBG_B024" } // Armodullahan (Cinna Quest)
+            { new KeyValuePair<Int32, Int32>(84, 1), "BBG_B024" }, // Armodullahan (Cinna Quest)
+            { new KeyValuePair<Int32, Int32>(871, 1), "BBG_B042" } // Mysterious Girl (super boss Disc 3 => Will be moved to Disc 4)
         };
 
         private static readonly HashSet<Int32> DarkBBG = new HashSet<Int32>(new[] { 4, 5, 6, 8, 9, 12, 13, 14, 15, 16, 32, 36, 37, 38, 39, 40, 41, 42, 45, 46, 67, 68, 69, 70, 71, 72,

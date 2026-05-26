@@ -407,7 +407,7 @@ namespace Memoria.Scripts.TranceSeek
             else if (_v.Command.Power == 77 && _v.Command.HitRate == 77) // Giant Drink (Mad Alchemist)
             {
                 _v.Target.RemoveStatus(BattleStatus.Mini);
-                if (FF9StateSystem.EventState.gEventGlobal[1407] > 0)
+                if (TranceSeekBattleDictionary.IsHardcore)
                     btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.PowerUp, parameters: "+2");
 
                 _v.Target.Data.geo_scale_default = 16384;

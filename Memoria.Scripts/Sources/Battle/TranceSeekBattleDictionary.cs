@@ -9,6 +9,8 @@ namespace Memoria.Scripts.TranceSeek
 {
     public static class TranceSeekBattleDictionary
     {
+        public static Boolean IsHardcore = FF9StateSystem.EventState.gEventGlobal[1407] > 0;
+
         public static Dictionary<BTL_DATA, TranceSeekFighterState> States = new Dictionary<BTL_DATA, TranceSeekFighterState>();
 
         public static TranceSeekFighterState GetState(BTL_DATA btl)

@@ -39,7 +39,7 @@ namespace Memoria.DefaultScripts
 
         public Int32 SetupVirusOpr()
         {
-            return FF9StateSystem.EventState.gEventGlobal[1407] > 0 ? 0 : 30;
+            return TranceSeekBattleDictionary.IsHardcore ? 0 : 30;
         }
         public Boolean OnOpr()
         {

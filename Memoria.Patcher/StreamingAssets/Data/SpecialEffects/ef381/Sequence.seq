@@ -1,6 +1,6 @@
 // Shared sequence of SFX Ark__Full
 
-ShowMesh: Char=MatchingCondition(!IsTargeted && IsTargetable) ; Enable=False ; IsDisappear=True
+ShowMesh: Char=Everyone ; Enable=False ; IsDisappear=True
 StartThread: Condition=SFXUseCamera && AreTargetsPlayers
 	ShiftWorld: Angle=(0, 180, 0)
 EndThread
@@ -9,10 +9,10 @@ PlaySound: Sound=2388 ; Pitch=0.76
 PlaySound: Sound=2389 ; Pitch=0.76
 PlaySound: Sound=2390 ; Pitch=0.76
 Wait: Time=17
-ShowMesh: Char=AllTargets; Enable=False ; Time=16
+ShowMesh: Char=MatchingCondition(IsTargeted && IsTargetable); Enable=False ; Time=16
 SetBackgroundIntensity: Intensity=0 ; Time=14 ; HoldDuration=862
 Wait: Time=15
-ShowMesh: Char=AllTargets ; Enable=False ; IsDisappear=True
+ShowMesh: Char=MatchingCondition(IsTargeted && IsTargetable) ; Enable=False ; IsDisappear=True
 Wait: Time=227
 PlaySound: Sound=2391 ; Pitch=0.76
 PlaySound: Sound=2392 ; Pitch=0.76
@@ -36,19 +36,19 @@ PlaySound: Sound=2404 ; Pitch=0.76
 PlaySound: Sound=2405 ; Pitch=0.76
 PlaySound: Sound=2406 ; Pitch=0.76
 Wait: Time=22
-ShowMesh: Char=AllTargets ; Enable=True ; IsDisappear=True
+ShowMesh: Char=MatchingCondition(IsTargeted && IsTargetable) ; Enable=True ; IsDisappear=True
 SetBackgroundIntensity: Intensity=1 ; Time=0
 Wait: Time=36
 SetBackgroundIntensity: Intensity=0.46875 ; Time=28 ; HoldDuration=41
 Wait: Time=41
 SetBackgroundIntensity: Intensity=0 ; Time=0 ; HoldDuration=83
-ShowMesh: Char=AllTargets ; Enable=False ; IsDisappear=True
+ShowMesh: Char=MatchingCondition(IsTargeted && IsTargetable) ; Enable=False ; IsDisappear=True
 PlaySound: Sound=2407
 PlaySound: Sound=2408
 PlaySound: Sound=2409
 PlaySound: Sound=2410
 Wait: Time=83
-ShowMesh: Char=AllTargets ; Enable=True ; IsDisappear=True
+ShowMesh: Char=MatchingCondition(IsTargeted && IsTargetable) ; Enable=True ; IsDisappear=True
 SetBackgroundIntensity: Intensity=0.7265625 ; Time=0 ; HoldDuration=34
 Wait: Time=33
 PlaySound: Sound=2411 ; Pitch=0.76
@@ -62,21 +62,21 @@ SetBackgroundIntensity: Intensity=0 ; Time=0 ; HoldDuration=478
 Wait: Time=50
 PlaySound: Sound=183 ; SoundType=Song ; Volume=1.3
 Wait: Time=17
-ShowMesh: Char=AllTargets ; Enable=False ; IsDisappear=True
+ShowMesh: Char=MatchingCondition(IsTargeted && IsTargetable) ; Enable=False ; IsDisappear=True
 Wait: Time=3
 PlaySound: Sound=2415 ; Pitch=0.76
 PlaySound: Sound=2416 ; Pitch=0.76
 PlaySound: Sound=2417 ; Pitch=0.76
 PlaySound: Sound=2418 ; Pitch=0.76
 Wait: Time=97
-ShowMesh: Char=AllTargets ; Enable=True ; IsDisappear=True
+ShowMesh: Char=MatchingCondition(IsTargeted && IsTargetable) ; Enable=True ; IsDisappear=True
 Wait: Time=1
 PlaySound: Sound=2419 ; Pitch=0.76
 PlaySound: Sound=2420 ; Pitch=0.76
 PlaySound: Sound=2421 ; Pitch=0.76
 PlaySound: Sound=2422 ; Pitch=0.76
 Wait: Time=19
-ShowMesh: Char=AllTargets ; Enable=False ; IsDisappear=True
+ShowMesh: Char=MatchingCondition(IsTargeted && IsTargetable) ; Enable=False ; IsDisappear=True
 Wait: Time=16
 PlaySound: Sound=2502
 PlaySound: Sound=2503
@@ -90,8 +90,8 @@ PlaySound: Sound=2426 ; Pitch=0.76
 Wait: Time=139
 SetBackgroundIntensity: Intensity=1 ; Time=20
 Wait: Time=1
-ShowMesh: Char=AllTargets ; Enable=True ; IsDisappear=True
-ShowMesh: Char=AllTargets ; Enable=True ; Time=20
+ShowMesh: Char=MatchingCondition(IsTargeted && IsTargetable) ; Enable=True ; IsDisappear=True
+ShowMesh: Char=MatchingCondition(IsTargeted && IsTargetable) ; Enable=True ; Time=20
 Wait: Time=11
 EffectPoint: Char=AllTargets ; Type=Effect
 Wait: Time=12

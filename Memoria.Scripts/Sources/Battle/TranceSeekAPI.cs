@@ -577,7 +577,7 @@ namespace Memoria.Scripts.TranceSeek
         {
             EffectElement CommandElement = v.Command.Element;
             if (v.Command.AbilityId == BattleAbilityId.Attack)
-                CommandElement |= v.Command.Weapon.Element;
+                CommandElement |= v.Caster.WeaponElement;
 
             if (element == EffectElement.None)
                 return CommandElement == 0 && InfusedWeaponScript.WeaponNewElement[v.Caster.Data] == 0 && v.Command.ScriptId != 17 && v.Command.ScriptId != 118 && v.Command.ScriptId != 119;

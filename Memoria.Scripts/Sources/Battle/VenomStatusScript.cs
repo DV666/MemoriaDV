@@ -42,7 +42,7 @@ namespace Memoria.DefaultScripts
             if (Target.IsUnderAnyStatus(BattleStatus.EasyKill))
                 return 600;
             else
-                return FF9StateSystem.EventState.gEventGlobal[1407] > 0 ? 100 : Math.Max(100, (600 - SpeedTick));
+                return TranceSeekBattleDictionary.IsHardcore ? 100 : Math.Max(100, (600 - SpeedTick));
         }
         public Boolean OnOpr()
         {
