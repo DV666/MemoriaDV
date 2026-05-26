@@ -93,6 +93,16 @@ namespace Memoria.DefaultScripts
                         }
                         );
                 }
+                else if (target.Data.dms_geo_id == 344) // Armodullahan
+                {
+                    target.AddDelayedModifier(
+                        target => !target.Data.enable_trance_glow,
+                        target =>
+                        {
+                            ModelFactory.ChangeModelTexture(target.Data.gameObject, new string[] { "CustomTextures/Trance/Armodullahan/344_0.png", "CustomTextures/Trance/Armodullahan/344_1.png", "CustomTextures/Trance/Armodullahan/344_2.png", "CustomTextures/Trance/Armodullahan/344_3.png", "CustomTextures/Trance/Armodullahan/344_4.png" });
+                        }
+                        );
+                }
                 else if (target.Data.dms_geo_id == 410)
                 {
                     target.AddDelayedModifier(

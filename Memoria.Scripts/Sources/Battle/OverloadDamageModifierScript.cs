@@ -142,7 +142,7 @@ namespace Memoria.Scripts.TranceSeek
                 if (v.Command.ScriptId != 118 && v.Command.ScriptId != 119 && v.Command.ScriptId != 17)  // Stone monsters
                     if (v.Target.HpDamage > 0 && TranceSeekAPI.IsAttackElement(v, EffectElement.None) && (v.Target.Flags & CalcFlag.HpRecovery) == 0 && StoneMonsters.Contains(v.Target.Data.dms_geo_id))
                     {
-                        v.Context.DamageModifierCount -= 2;
+                        v.Target.HpDamage /= 2;
                         SoundLib.PlaySoundEffect(5003); //se770003
                     }
             }
