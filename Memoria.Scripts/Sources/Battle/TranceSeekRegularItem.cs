@@ -188,6 +188,12 @@ namespace Memoria.Scripts.TranceSeek
         public const RegularItem MuTail = (RegularItem)1265;
         public const RegularItem HaloGhost = (RegularItem)1266;
         public const RegularItem LadybugAntenna = (RegularItem)1267;
+        public const RegularItem YetiMouth = (RegularItem)1268;
+        public const RegularItem NymphFlower = (RegularItem)1269;
+        public const RegularItem JabberworkCrest = (RegularItem)1270;
+        public const RegularItem Mini_FriendlyFeatherCircle = (RegularItem)1271;
+        public const RegularItem GarudaWing = (RegularItem)1272;
+        public const RegularItem YanHorns = (RegularItem)1273;
         public const RegularItem HiPotion2 = (RegularItem)2000;
         public const RegularItem UltraPotion2 = (RegularItem)2001;
         public const RegularItem MegaPotion = (RegularItem)2002;
@@ -1223,6 +1229,189 @@ namespace Memoria.Scripts.TranceSeek
             {
                 new AccessoryKey(LadybugAntenna, CharacterId.Beatrix),
                 new VisualAccessoryData("GEO_WEP_Antenna_Ladybug_Suit", 18, new Vector3(0f, -46.5f, 48.5f), new Vector3(281f, 0f, 0f), Vector3.one)
+            },
+
+            // Yeti Mouth
+            {
+                new AccessoryKey(YetiMouth, CharacterId.Zidane),
+                new VisualAccessoryData("GEO_WEP_Mouth_Yeti_Suit", 8, new Vector3(0f, -45.5f, 0f), new Vector3(290f, 0f, 0f), Vector3.one * 0.35f)
+            },
+
+            {
+                new AccessoryKey(YetiMouth, CharacterId.Vivi),
+                new VisualAccessoryData("GEO_WEP_Mouth_Yeti_Suit", 7, new Vector3(0f, -39.5f, 0f), new Vector3(298f, 0f, 0f), Vector3.one * 0.32f)
+            },
+
+            {
+                new AccessoryKey(YetiMouth, CharacterId.Garnet),
+                new VisualAccessoryData("GEO_WEP_Mouth_Yeti_Suit", 19, new Vector3(0.5f, -44f, -6.5f), new Vector3(288f, 0f, 0f), Vector3.one * 0.28f)
+            },
+
+            {
+                new AccessoryKey(YetiMouth, CharacterId.Steiner),
+                new VisualAccessoryData("GEO_WEP_Mouth_Yeti_Suit", 20, new Vector3(0f, -46f, 0f), new Vector3(287f, 0f, 0f), Vector3.one * 0.5174f)
+            },
+
+            {
+                new AccessoryKey(YetiMouth, CharacterId.Freya),
+                new VisualAccessoryData("GEO_WEP_Mouth_Yeti_Suit", 8, new Vector3(0f, -46.5f, 13f), new Vector3(276f, 0f, 0f), Vector3.one * 0.5174344f)
+            },
+
+            {
+                new AccessoryKey(YetiMouth, CharacterId.Quina),
+                new VisualAccessoryData("GEO_WEP_Mouth_Yeti_Suit", 8, new Vector3(0f, -0.5f, 34f), new Vector3(47f, 180f, 180f), Vector3.one)
+            },
+
+            {
+                new AccessoryKey(YetiMouth, CharacterId.Eiko),
+                new VisualAccessoryData("GEO_WEP_Mouth_Yeti_Suit", 19, new Vector3(0f, -40f, -3f), new Vector3(307f, 0f, 0f), Vector3.one * 0.321286f)
+            },
+
+            {
+                new AccessoryKey(YetiMouth, CharacterId.Amarant),
+                new VisualAccessoryData("GEO_WEP_Mouth_Yeti_Suit", 18, new Vector3(0f, -98.5f, 58f), new Vector3(292.0511f, 182.8635f, 174.5446f), Vector3.one)
+            },
+
+            {
+                new AccessoryKey(YetiMouth, CharacterId.Cinna),
+                new VisualAccessoryData("GEO_WEP_Mouth_Yeti_Suit", 13, new Vector3(0f, -4f, -56.5f), Vector3.zero, Vector3.one)
+            },
+
+            {
+                new AccessoryKey(YetiMouth, CharacterId.Marcus),
+                new VisualAccessoryData("GEO_WEP_Mouth_Yeti_Suit", 8, new Vector3(0f, -67f, -10f), new Vector3(290f, 0f, 0f), Vector3.one * 0.6830134f)
+            },
+
+            {
+                new AccessoryKey(YetiMouth, CharacterId.Blank),
+                new VisualAccessoryData("GEO_WEP_Mouth_Yeti_Suit", 3, new Vector3(0f, -40f, 7.5f), new Vector3(294f, 0f, 0f), Vector3.one * 0.4743148f)
+            },
+
+            {
+                new AccessoryKey(YetiMouth, CharacterId.Beatrix),
+                new VisualAccessoryData("GEO_WEP_Mouth_Yeti_Suit", 18, new Vector3(0f, -45.5f, -9.5f), new Vector3(300f, 0f, 0f), Vector3.one * 0.2920782f)
+            },
+
+            // Nymph Flower
+            {
+                new AccessoryKey(NymphFlower, CharacterId.Zidane),
+                new VisualAccessoryData("GEO_WEP_Flower_Nymph_Suit", 8, new Vector3(0f, -6f, 78f), new Vector3(270f, 0f, 0f), Vector3.one)
+            },
+
+            {
+                new AccessoryKey(NymphFlower, CharacterId.Vivi),
+                new VisualAccessoryData("GEO_WEP_Flower_Nymph_Suit", 9, Vector3.zero, Vector3.zero, Vector3.one)
+            },
+
+            {
+                new AccessoryKey(NymphFlower, CharacterId.Garnet),
+                new VisualAccessoryData("GEO_WEP_Flower_Nymph_Suit", 20, new Vector3(0f, 0f, 0f), new Vector3(68.00002f, 0f, 0f), Vector3.one)
+            },
+
+            {
+                new AccessoryKey(NymphFlower, CharacterId.Steiner),
+                new VisualAccessoryData("GEO_WEP_Flower_Nymph_Suit", 20, new Vector3(0f, 1f, 83f), new Vector3(270f, 0f, 0f), Vector3.one)
+            },
+
+            {
+                new AccessoryKey(NymphFlower, CharacterId.Freya),
+                new VisualAccessoryData("GEO_WEP_Flower_Nymph_Suit", 8, new Vector3(0f, 36f, 132.5f), new Vector3(283f, 180f, 180f), Vector3.one)
+            },
+
+            {
+                new AccessoryKey(NymphFlower, CharacterId.Quina),
+                new VisualAccessoryData("GEO_WEP_Flower_Nymph_Suit", 9, new Vector3(0f, 0f, 0f), new Vector3(279f, 180f, 180f), Vector3.one)
+            },
+
+            {
+                new AccessoryKey(NymphFlower, CharacterId.Eiko),
+                new VisualAccessoryData("GEO_WEP_Flower_Nymph_Suit", 19, new Vector3(0f, -4.5f, 65f), new Vector3(314f, 0f, 0f), Vector3.one)
+            },
+
+            {
+                new AccessoryKey(NymphFlower, CharacterId.Amarant),
+                new VisualAccessoryData("GEO_WEP_Flower_Nymph_Suit", 18, new Vector3(0f, 0f, 77.5f), new Vector3(280.0001f, 0f, 0f), Vector3.one)
+            },
+
+            {
+                new AccessoryKey(NymphFlower, CharacterId.Cinna),
+                new VisualAccessoryData("GEO_WEP_Flower_Nymph_Suit", 12, new Vector3(0f, 5.5f, 79.5f), new Vector3(274f, 180f, 180f), Vector3.one)
+            },
+
+            {
+                new AccessoryKey(NymphFlower, CharacterId.Marcus),
+                new VisualAccessoryData("GEO_WEP_Flower_Nymph_Suit", 9, new Vector3(0f, 19f, 21.5f), new Vector3(45f, 0f, 0f), Vector3.one)
+            },
+
+            {
+                new AccessoryKey(NymphFlower, CharacterId.Blank),
+                new VisualAccessoryData("GEO_WEP_Flower_Nymph_Suit", 4, new Vector3(0f, 0f, 0f), new Vector3(274f, 180f, 180f), Vector3.one)
+            },
+
+            {
+                new AccessoryKey(NymphFlower, CharacterId.Beatrix),
+                new VisualAccessoryData("GEO_WEP_Flower_Nymph_Suit", 21, new Vector3(0f, 0f, 0f), new Vector3(84.00002f, 0f, 0f), Vector3.one)
+            },
+
+            // Jabberwork Crest
+            {
+                new AccessoryKey(JabberworkCrest, CharacterId.Zidane),
+                new VisualAccessoryData("GEO_WEP_Mouth_Yeti_Suit", 8, new Vector3(0f, 19f, 56.5f), new Vector3(278f, 0f, 0f), Vector3.one * 0.3887561f)
+            },
+
+            {
+                new AccessoryKey(JabberworkCrest, CharacterId.Vivi),
+                new VisualAccessoryData("GEO_WEP_Mouth_Yeti_Suit", 8, new Vector3(9f, -6f, 55.5f), new Vector3(11f, 0f, 0f), Vector3.one * 0.4703948f)
+            },
+
+            {
+                new AccessoryKey(JabberworkCrest, CharacterId.Garnet),
+                new VisualAccessoryData("GEO_WEP_Mouth_Yeti_Suit", 20, new Vector3(0f, 1f, 17.5f), new Vector3(80.99998f, 0f, 0f), Vector3.one * 0.3855432f)
+            },
+
+            {
+                new AccessoryKey(JabberworkCrest, CharacterId.Steiner), // Here (done for Steiner)
+                new VisualAccessoryData("GEO_WEP_Mouth_Yeti_Suit", 20, new Vector3(3.5f, 22.5f, 55.5f), new Vector3(287f, 0f, 0f), Vector3.one * 0.3563597f)
+            },
+
+            {
+                new AccessoryKey(JabberworkCrest, CharacterId.Freya),
+                new VisualAccessoryData("GEO_WEP_Mouth_Yeti_Suit", 8, new Vector3(0f, -46.5f, 13f), new Vector3(276f, 0f, 0f), Vector3.one * 0.5174344f)
+            },
+
+            {
+                new AccessoryKey(JabberworkCrest, CharacterId.Quina),
+                new VisualAccessoryData("GEO_WEP_Mouth_Yeti_Suit", 8, new Vector3(0f, -0.5f, 34f), new Vector3(47f, 180f, 180f), Vector3.one)
+            },
+
+            {
+                new AccessoryKey(JabberworkCrest, CharacterId.Eiko),
+                new VisualAccessoryData("GEO_WEP_Mouth_Yeti_Suit", 19, new Vector3(0f, -40f, -3f), new Vector3(307f, 0f, 0f), Vector3.one * 0.321286f)
+            },
+
+            {
+                new AccessoryKey(JabberworkCrest, CharacterId.Amarant),
+                new VisualAccessoryData("GEO_WEP_Mouth_Yeti_Suit", 18, new Vector3(0f, -98.5f, 58f), new Vector3(292.0511f, 182.8635f, 174.5446f), Vector3.one)
+            },
+
+            {
+                new AccessoryKey(JabberworkCrest, CharacterId.Cinna),
+                new VisualAccessoryData("GEO_WEP_Mouth_Yeti_Suit", 13, new Vector3(0f, -4f, -56.5f), Vector3.zero, Vector3.one)
+            },
+
+            {
+                new AccessoryKey(JabberworkCrest, CharacterId.Marcus),
+                new VisualAccessoryData("GEO_WEP_Mouth_Yeti_Suit", 8, new Vector3(0f, -67f, -10f), new Vector3(290f, 0f, 0f), Vector3.one * 0.6830134f)
+            },
+
+            {
+                new AccessoryKey(JabberworkCrest, CharacterId.Blank),
+                new VisualAccessoryData("GEO_WEP_Mouth_Yeti_Suit", 3, new Vector3(0f, -40f, 7.5f), new Vector3(294f, 0f, 0f), Vector3.one * 0.4743148f)
+            },
+
+            {
+                new AccessoryKey(JabberworkCrest, CharacterId.Beatrix),
+                new VisualAccessoryData("GEO_WEP_Mouth_Yeti_Suit", 18, new Vector3(0f, -45.5f, -9.5f), new Vector3(300f, 0f, 0f), Vector3.one * 0.2920782f)
             },
         };
     }
