@@ -1356,62 +1356,123 @@ namespace Memoria.Scripts.TranceSeek
             // Jabberwork Crest
             {
                 new AccessoryKey(JabberworkCrest, CharacterId.Zidane),
-                new VisualAccessoryData("GEO_WEP_Mouth_Yeti_Suit", 8, new Vector3(0f, 19f, 56.5f), new Vector3(278f, 0f, 0f), Vector3.one * 0.3887561f)
+                new VisualAccessoryData("GEO_WEP_Crest_Jabberwock_Suit", 8, new Vector3(0f, 19f, 56.5f), new Vector3(278f, 0f, 0f), Vector3.one * 0.3887561f)
             },
 
             {
                 new AccessoryKey(JabberworkCrest, CharacterId.Vivi),
-                new VisualAccessoryData("GEO_WEP_Mouth_Yeti_Suit", 8, new Vector3(9f, -6f, 55.5f), new Vector3(11f, 0f, 0f), Vector3.one * 0.4703948f)
+                new VisualAccessoryData("GEO_WEP_Crest_Jabberwock_Suit", 8, new Vector3(9f, -6f, 55.5f), new Vector3(11f, 0f, 0f), Vector3.one * 0.4703948f)
             },
 
             {
                 new AccessoryKey(JabberworkCrest, CharacterId.Garnet),
-                new VisualAccessoryData("GEO_WEP_Mouth_Yeti_Suit", 20, new Vector3(0f, 1f, 17.5f), new Vector3(80.99998f, 0f, 0f), Vector3.one * 0.3855432f)
+                new VisualAccessoryData("GEO_WEP_Crest_Jabberwock_Suit", 20, new Vector3(0f, 1f, 17.5f), new Vector3(80.99998f, 0f, 0f), Vector3.one * 0.3855432f)
             },
 
             {
-                new AccessoryKey(JabberworkCrest, CharacterId.Steiner), // Here (done for Steiner)
-                new VisualAccessoryData("GEO_WEP_Mouth_Yeti_Suit", 20, new Vector3(3.5f, 22.5f, 55.5f), new Vector3(287f, 0f, 0f), Vector3.one * 0.3563597f)
+                new AccessoryKey(JabberworkCrest, CharacterId.Steiner),
+                new VisualAccessoryData("GEO_WEP_Crest_Jabberwock_Suit", 20, new Vector3(3.5f, 22.5f, 55.5f), new Vector3(287f, 0f, 0f), Vector3.one * 0.3563597f)
             },
 
             {
                 new AccessoryKey(JabberworkCrest, CharacterId.Freya),
-                new VisualAccessoryData("GEO_WEP_Mouth_Yeti_Suit", 8, new Vector3(0f, -46.5f, 13f), new Vector3(276f, 0f, 0f), Vector3.one * 0.5174344f)
+                new VisualAccessoryData("GEO_WEP_Crest_Jabberwock_Suit", 8, new Vector3(0f, 0f, 97.5f), new Vector3(11f, 180f, 180f), Vector3.one * 0.4311953f)
             },
 
             {
                 new AccessoryKey(JabberworkCrest, CharacterId.Quina),
-                new VisualAccessoryData("GEO_WEP_Mouth_Yeti_Suit", 8, new Vector3(0f, -0.5f, 34f), new Vector3(47f, 180f, 180f), Vector3.one)
+                new VisualAccessoryData("GEO_WEP_Crest_Jabberwock_Suit", 7, new Vector3(0f, -1f, -53.5f), new Vector3(50f, 180f, 180f), Vector3.one * 0.5089171f)
             },
 
             {
                 new AccessoryKey(JabberworkCrest, CharacterId.Eiko),
-                new VisualAccessoryData("GEO_WEP_Mouth_Yeti_Suit", 19, new Vector3(0f, -40f, -3f), new Vector3(307f, 0f, 0f), Vector3.one * 0.321286f)
+                new VisualAccessoryData("GEO_WEP_Crest_Jabberwock_Suit", 19, new Vector3(0f, 29f, 67f), new Vector3(277f, 0f, 0f), Vector3.one * 0.3919957f)
             },
 
             {
                 new AccessoryKey(JabberworkCrest, CharacterId.Amarant),
-                new VisualAccessoryData("GEO_WEP_Mouth_Yeti_Suit", 18, new Vector3(0f, -98.5f, 58f), new Vector3(292.0511f, 182.8635f, 174.5446f), Vector3.one)
+                new VisualAccessoryData("GEO_WEP_Crest_Jabberwock_Suit", 18, new Vector3(0f, 17.5f, 39.5f), new Vector3(284f, 0f, 0f), Vector3.one * 0.6887051f)
             },
 
             {
                 new AccessoryKey(JabberworkCrest, CharacterId.Cinna),
-                new VisualAccessoryData("GEO_WEP_Mouth_Yeti_Suit", 13, new Vector3(0f, -4f, -56.5f), Vector3.zero, Vector3.one)
+                new VisualAccessoryData("GEO_WEP_Crest_Jabberwock_Suit", 12, new Vector3(0f, 4.5f, 64f), new Vector3(288.9753f, 180f, 180f), Vector3.one * 0.4276317f)
             },
 
             {
                 new AccessoryKey(JabberworkCrest, CharacterId.Marcus),
-                new VisualAccessoryData("GEO_WEP_Mouth_Yeti_Suit", 8, new Vector3(0f, -67f, -10f), new Vector3(290f, 0f, 0f), Vector3.one * 0.6830134f)
+                new VisualAccessoryData("GEO_WEP_Crest_Jabberwock_Suit", 9, new Vector3(0f, 31f, 35.5f), new Vector3(82f, 0f, 0f), Vector3.one * 0.4240976f)
             },
 
             {
                 new AccessoryKey(JabberworkCrest, CharacterId.Blank),
-                new VisualAccessoryData("GEO_WEP_Mouth_Yeti_Suit", 3, new Vector3(0f, -40f, 7.5f), new Vector3(294f, 0f, 0f), Vector3.one * 0.4743148f)
+                new VisualAccessoryData("GEO_WEP_Crest_Jabberwock_Suit", 3, new Vector3(0f, 0f, 11.5f), Vector3.zero, Vector3.one * 0.3855432f)
             },
 
             {
                 new AccessoryKey(JabberworkCrest, CharacterId.Beatrix),
-                new VisualAccessoryData("GEO_WEP_Mouth_Yeti_Suit", 18, new Vector3(0f, -45.5f, -9.5f), new Vector3(300f, 0f, 0f), Vector3.one * 0.2920782f)
+                new VisualAccessoryData("GEO_WEP_Crest_Jabberwock_Suit", 18, new Vector3(0f, -3f, 22f), new Vector3(86.8549f, 14.02577f, 19.92445f), Vector3.one * 0.4240976f)
+            },
+
+            // Mini Gently Feather Circle
+            {
+                new AccessoryKey(Mini_FriendlyFeatherCircle, CharacterId.Zidane),
+                new VisualAccessoryData("GEO_WEP_Mini_FeatherCircle_Suit", 0, new Vector3(98.5f, 133f, 0f), new Vector3(0f, 180f, 180f), Vector3.one)
+            },
+
+            {
+                new AccessoryKey(Mini_FriendlyFeatherCircle, CharacterId.Vivi),
+                new VisualAccessoryData("GEO_WEP_Crest_Jabberwock_Suit", 0, new Vector3(3f, -129.5f, -99f), new Vector3(0f, 84f, 0f), Vector3.one)
+            },
+
+            {
+                new AccessoryKey(Mini_FriendlyFeatherCircle, CharacterId.Garnet),
+                new VisualAccessoryData("GEO_WEP_Crest_Jabberwock_Suit", 0, new Vector3(6.5f, -90f, -80f), new Vector3(0f, 97f, 0f), Vector3.one)
+            },
+
+            {
+                new AccessoryKey(Mini_FriendlyFeatherCircle, CharacterId.Steiner),
+                new VisualAccessoryData("GEO_WEP_Crest_Jabberwock_Suit", 0, new Vector3(79f, -147f, -147f), new Vector3(0f, 75f, 0f), Vector3.one)
+            },
+
+            {
+                new AccessoryKey(Mini_FriendlyFeatherCircle, CharacterId.Freya),
+                new VisualAccessoryData("GEO_WEP_Crest_Jabberwock_Suit", 0, new Vector3(-75.5f, -175f, -103.5f), new Vector3(0f, 122f, 0f), Vector3.one)
+            },
+
+            {
+                new AccessoryKey(Mini_FriendlyFeatherCircle, CharacterId.Quina),
+                new VisualAccessoryData("GEO_WEP_Crest_Jabberwock_Suit", 0, new Vector3(63f, -147.5f, -129.5f), new Vector3(0f, 90f, 0f), Vector3.one)
+            },
+
+            {
+                new AccessoryKey(Mini_FriendlyFeatherCircle, CharacterId.Eiko),
+                new VisualAccessoryData("GEO_WEP_Crest_Jabberwock_Suit", 0, new Vector3(96.5f, 46f, 0f), new Vector3(0f, 180f, 180f), Vector3.one)
+            },
+
+            {
+                new AccessoryKey(Mini_FriendlyFeatherCircle, CharacterId.Amarant),
+                new VisualAccessoryData("GEO_WEP_Crest_Jabberwock_Suit", 0, new Vector3(-7.5f, -150.5f, -147.5f), new Vector3(0f, 94f, 0f), Vector3.one)
+            },
+
+            {
+                new AccessoryKey(Mini_FriendlyFeatherCircle, CharacterId.Cinna),
+                new VisualAccessoryData("GEO_WEP_Crest_Jabberwock_Suit", 0, new Vector3(-132.5f, 2.5f, -118f), new Vector3(291.3287f, 64.06817f, 115.4517f), Vector3.one)
+            },
+
+            {
+                new AccessoryKey(Mini_FriendlyFeatherCircle, CharacterId.Marcus),
+                new VisualAccessoryData("GEO_WEP_Crest_Jabberwock_Suit", 0, new Vector3(102f, 0f, 0f), new Vector3(286f, 180f, 180f), Vector3.one)
+            },
+
+            {
+                new AccessoryKey(Mini_FriendlyFeatherCircle, CharacterId.Blank),
+                new VisualAccessoryData("GEO_WEP_Crest_Jabberwock_Suit", 4, new Vector3(104f, 0f, 0f), new Vector3(322f, 0f, 0f), Vector3.one)
+            },
+
+            {
+                new AccessoryKey(Mini_FriendlyFeatherCircle, CharacterId.Beatrix),
+                new VisualAccessoryData("GEO_WEP_Crest_Jabberwock_Suit", 18, new Vector3(90f, -13f, 0f), new Vector3(294f, 180f, 180f), Vector3.one)
             },
         };
     }
