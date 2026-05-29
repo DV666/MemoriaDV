@@ -55,6 +55,8 @@ namespace Memoria.Scripts.TranceSeek
                     TranceSeekAPI.ReviveHeal(_v, (1 + GameRandom.Next8() % 10));
                     TranceSeekAPI.TryRemoveItemStatuses(_v);
                 }
+                else if (_v.Target.IsUnderAnyStatus(BattleStatus.Doom) && _v.Command.ItemId == RegularItem.PhoenixPinion)
+                    _v.Target.RemoveStatus(BattleStatus.Doom);
             }
 
             if (_v.Caster.PlayerIndex == CharacterId.Blank && _v.Command.Id == BattleCommandId.Item)

@@ -74,12 +74,6 @@ namespace Memoria.Scripts.TranceSeek
                 }
             }
 
-            if (!v.Caster.IsPlayer && FF9StateSystem.Battle.battleMapIndex == 84 && FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum == 1) // Armodullahan V2
-            {
-                if (v.Command.RawIndex != 54 && v.Command.RawIndex != 55 && v.Command.RawIndex != 71 && v.Command.RawIndex != 72 && v.Command.RawIndex != 26 && v.Command.RawIndex != 27 && v.Command.Power > 0)
-                    v.Command.Power += 20;
-            }
-
             if (!v.Caster.IsPlayer && v.Command.Data.aa.Vfx2 > 0 && v.Command.ScriptId != 79) // Animation 2 (use a CustomStatus or specify a DragonSkill)
             {
                 ulong AACustomStatus = v.Command.Data.aa.Vfx2;

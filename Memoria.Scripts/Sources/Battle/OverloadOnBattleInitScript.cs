@@ -163,14 +163,21 @@ namespace Memoria.Scripts.TranceSeek
                         break;
                 }
 
-                if (dictdifficulty[DifficultyParameters.Bonus_PowerAA] > 0)
+                Boolean ArmodullahanV2 = FF9StateSystem.Battle.battleMapIndex == 84 && FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum == 1;
+
+                if (dictdifficulty[DifficultyParameters.Bonus_PowerAA] > 0 || ArmodullahanV2)
                 {
+
                     List<AA_DATA> attackList = FF9StateSystem.Battle.FF9Battle.enemy_attack;
                     for (int i = 0; i < attackList.Count; i++)
                     {
                         AA_DATA attack = attackList[i];
                         if ((attack.Type & 2) != 0) // Boost Power for monsters in Hardcore (using the Hide AP Figure, dummied for monsters)
+                        {
                             attack.Ref.Power = attack.Ref.Power + Math.Max(1, (Int32)Math.Round((attack.Ref.Power * dictdifficulty[DifficultyParameters.Bonus_PowerAA]) / 100.0));
+                            if (ArmodullahanV2)
+                                attack.Ref.Power += 20;
+                        }
                     }
                 }
             }
