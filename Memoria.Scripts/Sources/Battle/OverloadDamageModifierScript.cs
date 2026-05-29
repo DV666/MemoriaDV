@@ -161,9 +161,8 @@ namespace Memoria.Scripts.TranceSeek
 
             Int32 reflectMultiplier = v.Command.GetReflectMultiplierOnTarget(v.Target.Id);
             if ((v.Target.Flags & CalcFlag.HpAlteration) != 0)
-            {
                 v.Target.HpDamage = (Int32)Math.Round(modifier_factor * v.Target.HpDamage) * reflectMultiplier;
-            }
+
             if (v.Target.IsUnderAnyStatus(BattleStatus.EasyKill) && v.Target.IsUnderAnyStatus(BattleStatus.Zombie))
             {
                 if ((v.Target.Flags & CalcFlag.HpRecovery) != 0 || v.Context.IsAbsorb || v.Command.ScriptId == 10 || v.Command.ScriptId == 69

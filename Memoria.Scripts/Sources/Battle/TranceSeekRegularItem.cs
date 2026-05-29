@@ -710,6 +710,19 @@ namespace Memoria.Scripts.TranceSeek
                         v.Context.DamageModifierCount++;
                         break;
                     }
+                    case YetiMouth:
+                    {
+                        if (v.Context.IsDrain)
+                        {
+                            if ((v.Caster.Flags & CalcFlag.HpRecovery) != 0)
+                                v.Caster.HpDamage *= 2;
+                            if ((v.Caster.Flags & CalcFlag.MpRecovery) != 0)
+                                v.Caster.MpDamage *= 2;
+
+                            v.Context.IsDrain = false; // Need to disable it otherwise, Memoria will do : v.Caster.HpDamage = v.Target.HpDamage
+                        }
+                        break;
+                    }
                 }
             }
             if (v.Target.IsPlayer)
@@ -1473,6 +1486,67 @@ namespace Memoria.Scripts.TranceSeek
             {
                 new AccessoryKey(Mini_FriendlyFeatherCircle, CharacterId.Beatrix),
                 new VisualAccessoryData("GEO_WEP_Crest_Jabberwock_Suit", 18, new Vector3(90f, -13f, 0f), new Vector3(294f, 180f, 180f), Vector3.one)
+            },
+
+            // Garuda Wing
+            {
+                new AccessoryKey(GarudaWing, CharacterId.Zidane),
+                new VisualAccessoryData("GEO_WEP_GarudaWing_Suit", 0, new Vector3(98.5f, 133f, 0f), new Vector3(0f, 180f, 180f), Vector3.one)
+            },
+
+            {
+                new AccessoryKey(GarudaWing, CharacterId.Vivi),
+                new VisualAccessoryData("GEO_WEP_GarudaWing_Suit", 0, new Vector3(3f, -129.5f, -99f), new Vector3(0f, 84f, 0f), Vector3.one)
+            },
+
+            {
+                new AccessoryKey(GarudaWing, CharacterId.Garnet),
+                new VisualAccessoryData("GEO_WEP_GarudaWing_Suit", 0, new Vector3(6.5f, -90f, -80f), new Vector3(0f, 97f, 0f), Vector3.one)
+            },
+
+            {
+                new AccessoryKey(GarudaWing, CharacterId.Steiner),
+                new VisualAccessoryData("GEO_WEP_GarudaWing_Suit", 0, new Vector3(79f, -147f, -147f), new Vector3(0f, 75f, 0f), Vector3.one)
+            },
+
+            {
+                new AccessoryKey(GarudaWing, CharacterId.Freya),
+                new VisualAccessoryData("GEO_WEP_GarudaWing_Suit", 0, new Vector3(-75.5f, -175f, -103.5f), new Vector3(0f, 122f, 0f), Vector3.one)
+            },
+
+            {
+                new AccessoryKey(GarudaWing, CharacterId.Quina),
+                new VisualAccessoryData("GEO_WEP_GarudaWing_Suit", 0, new Vector3(63f, -147.5f, -129.5f), new Vector3(0f, 90f, 0f), Vector3.one)
+            },
+
+            {
+                new AccessoryKey(GarudaWing, CharacterId.Eiko),
+                new VisualAccessoryData("GEO_WEP_GarudaWing_Suit", 0, new Vector3(96.5f, 46f, 0f), new Vector3(0f, 180f, 180f), Vector3.one)
+            },
+
+            {
+                new AccessoryKey(GarudaWing, CharacterId.Amarant),
+                new VisualAccessoryData("GEO_WEP_GarudaWing_Suit", 0, new Vector3(-7.5f, -150.5f, -147.5f), new Vector3(0f, 94f, 0f), Vector3.one)
+            },
+
+            {
+                new AccessoryKey(GarudaWing, CharacterId.Cinna),
+                new VisualAccessoryData("GEO_WEP_GarudaWing_Suit", 0, new Vector3(-132.5f, 2.5f, -118f), new Vector3(291.3287f, 64.06817f, 115.4517f), Vector3.one)
+            },
+
+            {
+                new AccessoryKey(GarudaWing, CharacterId.Marcus),
+                new VisualAccessoryData("GEO_WEP_GarudaWing_Suit", 0, new Vector3(102f, 0f, 0f), new Vector3(286f, 180f, 180f), Vector3.one)
+            },
+
+            {
+                new AccessoryKey(GarudaWing, CharacterId.Blank),
+                new VisualAccessoryData("GEO_WEP_GarudaWing_Suit", 4, new Vector3(104f, 0f, 0f), new Vector3(322f, 0f, 0f), Vector3.one)
+            },
+
+            {
+                new AccessoryKey(GarudaWing, CharacterId.Beatrix),
+                new VisualAccessoryData("GEO_WEP_GarudaWing_Suit", 18, new Vector3(90f, -13f, 0f), new Vector3(294f, 180f, 180f), Vector3.one)
             },
         };
     }
