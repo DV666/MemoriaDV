@@ -480,6 +480,7 @@ namespace Memoria.Scripts.TranceSeek
         private int _battleMenuTab = 0;
         private int _currentUnitIndex = 0;
         private int _currentAttackIndex = 0;
+        private string _searchAttackIdStr = "";
         private int _selectedMonsterTypeIndex = -1;
 
         private int _forceTargetId = 15;
@@ -970,57 +971,64 @@ namespace Memoria.Scripts.TranceSeek
             var activeUnits = BattleState.EnumerateUnits().Where(u => !u.IsPlayer).ToList();
             if (activeUnits.Count == 0) { GUILayout.Label("Aucun monstre actif."); return; }
 
-            HashSet<int> monsterTypesInBattle = new HashSet<int>();
-            foreach (var u in activeUnits)
-            {
-                int slotInGroup = u.Data.bi.slot_no;
-                if (battle.btl_scene.PatAddr[battle.btl_scene.PatNum].Monster != null && slotInGroup < battle.btl_scene.PatAddr[battle.btl_scene.PatNum].MonsterCount)
-                {
-                    int typeNo = battle.btl_scene.PatAddr[battle.btl_scene.PatNum].Monster[slotInGroup].TypeNo;
-                    monsterTypesInBattle.Add(typeNo);
-                }
-            }
-
-            if (monsterTypesInBattle.Count == 0) { GUILayout.Label("Erreur liaison données."); return; }
-            List<int> sortedTypes = monsterTypesInBattle.OrderBy(t => t).ToList();
-
-            if (_selectedMonsterTypeIndex == -1 || !sortedTypes.Contains(_selectedMonsterTypeIndex))
-                _selectedMonsterTypeIndex = sortedTypes[0];
-
-            GUILayout.BeginHorizontal();
-            GUILayout.Label("Monstre:", GUILayout.Width(60));
-            foreach (int tNo in sortedTypes)
-            {
-                var sampleUnit = activeUnits.FirstOrDefault(u => battle.btl_scene.PatAddr[battle.btl_scene.PatNum].Monster[u.Data.bi.slot_no].TypeNo == tNo);
-                string mName = (sampleUnit != null && battle.enemy[sampleUnit.Data.bi.slot_no] != null)
-                               ? SpecialFilesTranceSeek.RemoveTags(battle.enemy[sampleUnit.Data.bi.slot_no].et.name) : $"Type {tNo}";
-
-                bool isS = _selectedMonsterTypeIndex == tNo;
-                if (GUILayout.Toggle(isS, mName, "Button"))
-                {
-                    if (!isS) { _selectedMonsterTypeIndex = tNo; _currentAttackIndex = 0; _statTextCache.Clear(); GUI.FocusControl(null); }
-                }
-            }
-            GUILayout.EndHorizontal();
-            GUILayout.Space(5);
-
             List<int> monsterAttacks = new List<int>();
             for (int i = 0; i < _cachedScene.header.AtkCount; i++)
             {
-                if (_cachedSeqReader.GetEnemyIndexOfSequence(i) == _selectedMonsterTypeIndex)
-                    monsterAttacks.Add(i);
+                monsterAttacks.Add(i);
             }
 
             if (monsterAttacks.Count == 0) { GUILayout.Label($"Aucune attaque trouvée."); return; }
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Aller à l'ID :", GUILayout.Width(75));
+            _searchAttackIdStr = GUILayout.TextField(_searchAttackIdStr, GUILayout.Width(50));
+
+            if (GUILayout.Button("Go", GUILayout.Width(40)))
+            {
+                if (int.TryParse(_searchAttackIdStr, out int parsedId))
+                {
+                    int index = monsterAttacks.IndexOf(parsedId);
+                    if (index != -1)
+                    {
+                        _currentAttackIndex = index;
+                        _statTextCache.Clear();
+                        GUI.FocusControl(null);
+                        SoundLib.PlaySoundEffect(103);
+                    }
+                    else
+                    {
+                        SoundLib.PlaySoundEffect(102);
+                    }
+                }
+                else
+                {
+                    SoundLib.PlaySoundEffect(102);
+                }
+            }
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+            GUILayout.Space(5);
+
             if (_currentAttackIndex >= monsterAttacks.Count) _currentAttackIndex = 0;
 
             int curSeqId = monsterAttacks[_currentAttackIndex];
             AA_DATA atk = (battle.enemy_attack != null && curSeqId < battle.enemy_attack.Count) ? battle.enemy_attack[curSeqId] : null;
             if (atk == null) return;
 
+            int curSeqEnemyType = _cachedSeqReader.GetEnemyIndexOfSequence(curSeqId);
+            string atkOwnerName = $"Type {curSeqEnemyType}";
+            var sampleUnit = activeUnits.FirstOrDefault(u => battle.btl_scene.PatAddr[battle.btl_scene.PatNum].Monster[u.Data.bi.slot_no].TypeNo == curSeqEnemyType);
+
+            if (sampleUnit != null && battle.enemy[sampleUnit.Data.bi.slot_no] != null)
+            {
+                atkOwnerName = SpecialFilesTranceSeek.RemoveTags(battle.enemy[sampleUnit.Data.bi.slot_no].et.name);
+            }
+
             GUILayout.BeginHorizontal();
             if (GUILayout.Button("<", GUILayout.Width(40), GUILayout.Height(30))) { _currentAttackIndex--; if (_currentAttackIndex < 0) _currentAttackIndex = monsterAttacks.Count - 1; _statTextCache.Clear(); GUI.FocusControl(null); }
-            GUILayout.Label($"<b>⚔️ <color=#FFAA00>{SpecialFilesTranceSeek.RemoveTags(atk.Name)}</color> ⚔️</b>\nSeq ID: {curSeqId} ({_currentAttackIndex + 1}/{monsterAttacks.Count})", new GUIStyle(GUI.skin.label) { richText = true, alignment = TextAnchor.MiddleCenter });
+
+            GUILayout.Label($"<b>⚔️ <color=#FFAA00>{SpecialFilesTranceSeek.RemoveTags(atk.Name)}</color> ⚔️</b>\n<color=#AADDFF>{atkOwnerName}</color> - Seq ID: {curSeqId} ({_currentAttackIndex + 1}/{monsterAttacks.Count})", new GUIStyle(GUI.skin.label) { richText = true, alignment = TextAnchor.MiddleCenter });
+
             if (GUILayout.Button(">", GUILayout.Width(40), GUILayout.Height(30))) { _currentAttackIndex++; if (_currentAttackIndex >= monsterAttacks.Count) _currentAttackIndex = 0; _statTextCache.Clear(); GUI.FocusControl(null); }
             GUILayout.EndHorizontal();
 
@@ -1057,11 +1065,11 @@ namespace Memoria.Scripts.TranceSeek
             GUILayout.Label("<b>Force Trigger</b>", new GUIStyle(GUI.skin.label) { richText = true });
 
             List<KeyValuePair<string, int>> targetOptions = new List<KeyValuePair<string, int>>
-        {
-            new KeyValuePair<string, int>("All Players", 15),
-            new KeyValuePair<string, int>("All Enemies", 240),
-            new KeyValuePair<string, int>("Everyone", 255)
-        };
+            {
+                new KeyValuePair<string, int>("All Players", 15),
+                new KeyValuePair<string, int>("All Enemies", 240),
+                new KeyValuePair<string, int>("Everyone", 255)
+            };
 
             var allUnits = BattleState.EnumerateUnits().ToList();
             foreach (var unit in allUnits)
@@ -1085,11 +1093,18 @@ namespace Memoria.Scripts.TranceSeek
 
             if (GUILayout.Button("<b>Lancer Séquence</b>", GUILayout.Width(120)))
             {
-                var launcher = activeUnits.FirstOrDefault(u => battle.btl_scene.PatAddr[battle.btl_scene.PatNum].Monster[u.Data.bi.slot_no].TypeNo == _selectedMonsterTypeIndex);
+                var launcher = activeUnits.FirstOrDefault(u => battle.btl_scene.PatAddr[battle.btl_scene.PatNum].Monster[u.Data.bi.slot_no].TypeNo == curSeqEnemyType);
+                if (launcher == null) launcher = activeUnits.FirstOrDefault(); // Fallback de sécurité
+
                 if (launcher != null)
                 {
                     btlseq.StartBtlSeq(launcher.Id, _forceTargetId, curSeqId);
-                    SoundLib.PlaySoundEffect(FF9StateSystem.Battle.FF9Battle.btl_scene.MonAddr[_selectedMonsterTypeIndex].StartSfx);
+
+                    int sfxToPlay = 103;
+                    if (curSeqEnemyType >= 0 && curSeqEnemyType < battle.btl_scene.MonAddr.Length)
+                        sfxToPlay = battle.btl_scene.MonAddr[curSeqEnemyType].StartSfx;
+
+                    SoundLib.PlaySoundEffect(sfxToPlay);
                 }
             }
             GUILayout.EndHorizontal();
@@ -1460,6 +1475,20 @@ namespace Memoria.Scripts.TranceSeek
                     SoundLib.PlaySoundEffect(102);
                 }
             }
+
+            if (GUILayout.Button("Retirer"))
+            {
+                if (itemDatabase.ContainsKey(currentItem))
+                {
+                    ff9item.FF9Item_Remove(currentItem, _itemQuantityToAdd);
+                    SoundLib.PlaySoundEffect(108);
+                }
+                else
+                {
+                    SoundLib.PlaySoundEffect(102);
+                }
+            }
+
             GUILayout.EndHorizontal();
             GUILayout.EndVertical();
         }
@@ -2165,6 +2194,8 @@ namespace Memoria.Scripts.TranceSeek
                     GUILayout.Label("<b>Forcer Anim ID :</b>", new GUIStyle(GUI.skin.label) { richText = true }, GUILayout.Width(110));
                     _customAnimIdInput = GUILayout.TextField(_customAnimIdInput, GUILayout.Width(60));
 
+                    GUILayout.Label($"  <i>(Anim. lue : <color=yellow>{_lastPlayedAnimInfo}</color>)</i>", new GUIStyle(GUI.skin.label) { richText = true });
+
                     if (GUILayout.Button("Jouer", GUILayout.Width(80)))
                     {
                         if (int.TryParse(_customAnimIdInput, out int customId))
@@ -2173,6 +2204,9 @@ namespace Memoria.Scripts.TranceSeek
                             {
                                 try
                                 {
+                                    // NOUVEAU : Mise à jour de la variable
+                                    _lastPlayedAnimInfo = customId.ToString();
+
                                     if (!_originalIdles.ContainsKey(actor)) _originalIdles[actor] = actor.idle;
 
                                     bool isLoaded = animComp[customAnimName] != null;
@@ -2219,6 +2253,8 @@ namespace Memoria.Scripts.TranceSeek
                             {
                                 try
                                 {
+                                    _lastPlayedAnimInfo = animId.ToString();
+
                                     if (!_originalIdles.ContainsKey(actor))
                                     {
                                         _originalIdles[actor] = actor.idle;
@@ -2234,7 +2270,7 @@ namespace Memoria.Scripts.TranceSeek
                                 }
                                 catch (Exception ex)
                                 {
-                                    Memoria.Prime.Log.Message($"[DebugMenu] Erreur lecture anim {animName} : {ex.Message}");
+                                    Memoria.Prime.Log.Message($"[DebugMenu] Error reading anim {animName} : {ex.Message}");
                                 }
                             }
 

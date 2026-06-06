@@ -57,7 +57,18 @@ namespace Memoria.Scripts.TranceSeek
                 HonoluluBattleMain.SetupAttachModel(FF9StateSystem.Battle.FF9Battle.btl_data[4], FF9StateSystem.Battle.FF9Battle.btl_data[5], 55, 25);
 
             foreach (HUDMessageChild HUDToReset in Singleton<HUDMessage>.Instance.AllMessagePool)
-            HUDToReset.FontSize = 36;
+            {
+                HUDToReset.FontSize = 36;
+                UILabel labelToReset = HUDToReset.GetComponent<UILabel>();
+                if (labelToReset != null)
+                {
+                    labelToReset.pivot = UIWidget.Pivot.Center;
+                    labelToReset.spacingY = 0;
+                    labelToReset.transform.localPosition = Vector3.zero;
+                    labelToReset.transform.localScale = Vector3.one;
+                }
+            }
+
             OverlapSHP.ClearInBattleInit();
 
             FF9StateSystem.EventState.gEventGlobal[1544] = 0; // Reset Charm Target
@@ -374,7 +385,7 @@ namespace Memoria.Scripts.TranceSeek
                                                 ScanScript.TriggerOneTime[monsteratb.Data] = false;
                                                 ScanScript.HPBarHidden[monsteratb.Data] = false;
                                                 ScanScript.ATBGreenBarHUD[monsteratb.Data] = null;
-                                                ScanScript.ATBRedBarHUD[monsteratb.Data] = null;
+                                                ScanScript.ATBFrameHUD[monsteratb.Data] = null;
                                                 monsteratb.AddDelayedModifier(ScanScript.ShowATBBar, null);
                                             }
                                     }

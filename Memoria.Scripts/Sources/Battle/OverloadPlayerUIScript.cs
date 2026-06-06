@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using static BTL_DATA;
 using static UIManager;
 
 namespace Memoria.Scripts.TranceSeek
@@ -13,6 +14,9 @@ namespace Memoria.Scripts.TranceSeek
     {
         public static PLAYER CurrentPlayer;
         private static bool _isMenuInjected = false;
+
+        private static List<PLAYER> PlayerPreventEncounter = new List<PLAYER>();
+        private static bool _disableencounter = false;
 
         public IOverloadPlayerUIScript.Result UpdatePointStatus(PLAYER player)
         {
@@ -118,6 +122,16 @@ namespace Memoria.Scripts.TranceSeek
                 dictbattle[2] = 0;
                 dictbattle[3] = 0;
             }
+
+            if (!PlayerPreventEncounter.Contains(player) && player.equip.Accessory == (RegularItem)1274)
+                PlayerPreventEncounter.Add(player);
+            else if (PlayerPreventEncounter.Contains(player) && player.equip.Accessory != (RegularItem)1274)
+                PlayerPreventEncounter.Remove(player);
+
+            if (PlayerPreventEncounter.Count > 0)
+                FF9StateSystem.Settings.IsBoosterButtonActive[4] = true;
+            else
+                FF9StateSystem.Settings.IsBoosterButtonActive[4] = false;
 
             return result;
         }

@@ -20,7 +20,7 @@ namespace Memoria.Scripts.TranceSeek
         public static Dictionary<BTL_DATA, HUDMessageChild> HPGreenBarHUD = new Dictionary<BTL_DATA, HUDMessageChild>();
         public static Dictionary<BTL_DATA, HUDMessageChild> HPRedBarHUD = new Dictionary<BTL_DATA, HUDMessageChild>();
         public static Dictionary<BTL_DATA, HUDMessageChild> ATBGreenBarHUD = new Dictionary<BTL_DATA, HUDMessageChild>();
-        public static Dictionary<BTL_DATA, HUDMessageChild> ATBRedBarHUD = new Dictionary<BTL_DATA, HUDMessageChild>();
+        public static Dictionary<BTL_DATA, HUDMessageChild> ATBFrameHUD = new Dictionary<BTL_DATA, HUDMessageChild>();
         public static Dictionary<BTL_DATA, UInt32> HPBarValue = new Dictionary<BTL_DATA, UInt32>();
         public static Dictionary<BTL_DATA, Boolean> HPBarHidden = new Dictionary<BTL_DATA, Boolean>();
         public static Dictionary<BTL_DATA, Boolean> TriggerOneTime = new Dictionary<BTL_DATA, Boolean>();
@@ -74,7 +74,7 @@ namespace Memoria.Scripts.TranceSeek
                     //HPGreenBarHUD[_v.Target.Data] = null;
                     //HPRedBarHUD[_v.Target.Data] = null;
                     //ATBGreenBarHUD[_v.Target.Data] = null;
-                    //ATBRedBarHUD[_v.Target.Data] = null;
+                    //ATBFrameHUD[_v.Target.Data] = null;
                     CasterScanga[_v.Target.Data] = _v.Caster.Data;
                     _v.Target.AddDelayedModifier(ShowScan, null);
                 }
@@ -198,11 +198,11 @@ namespace Memoria.Scripts.TranceSeek
         {
             if (mob.IsUnderAnyStatus(BattleStatusConst.BattleEndFull) || btl_para.IsNonDyingVanillaBoss(mob) && mob.CurrentHp <= 10000)
             {
-                if (ATBRedBarHUD[mob.Data] != null)
+                if (ATBFrameHUD[mob.Data] != null)
                 {
-                    btl2d.StatusMessages.Remove(ATBRedBarHUD[mob.Data]);
-                    Singleton<HUDMessage>.Instance.ReleaseObject(ATBRedBarHUD[mob.Data]);
-                    ATBRedBarHUD[mob.Data] = null;
+                    btl2d.StatusMessages.Remove(ATBFrameHUD[mob.Data]);
+                    Singleton<HUDMessage>.Instance.ReleaseObject(ATBFrameHUD[mob.Data]);
+                    ATBFrameHUD[mob.Data] = null;
                 }
 
                 if (ATBGreenBarHUD[mob.Data] != null)
@@ -226,7 +226,7 @@ namespace Memoria.Scripts.TranceSeek
             else if (mob.IsUnderAnyStatus(BattleStatus.Haste))
                 ATBSprite = "battle_bar_haste";
 
-            if (ATBGreenBarHUD[mob.Data] == null && ATBRedBarHUD[mob.Data] == null)
+            if (ATBGreenBarHUD[mob.Data] == null && ATBFrameHUD[mob.Data] == null)
             {
                 BattleStatusDataEntry statusData = FF9StateSystem.Battle.FF9Battle.status_data[BattleStatusId.Poison];
                 btl2d.GetIconPosition(mob.Data, btl2d.ICON_POS_HEAD, out Transform attachTransf, out Vector3 iconOff);
@@ -234,18 +234,23 @@ namespace Memoria.Scripts.TranceSeek
                 Vector3 ATB_BG_HUD_Offset = statusData.SHPExtraPos + iconOff + new Vector3(200, 150, 0);
                 Vector3 ATB_BAR_HUD_Offset = statusData.SHPExtraPos + iconOff + new Vector3(220, 160, 0);
 
-                // ATB BG Bar (background)
-                ATBRedBarHUD[mob.Data] = Singleton<HUDMessage>.Instance.Show(attachTransf, "[SPRT=GeneralAtlas,battle_bar_bg,150,18]", HUDMessage.MessageStyle.DEATH_SENTENCE, ATB_BG_HUD_Offset, 0);
-                ATBRedBarHUD[mob.Data].Follower.clampToScreen = false;
-                btl2d.StatusMessages.Add(ATBRedBarHUD[mob.Data]);
+                ATBFrameHUD[mob.Data] = Singleton<HUDMessage>.Instance.Show(attachTransf, "[SPRT=GeneralAtlas,battle_bar_bg,150,18]", HUDMessage.MessageStyle.DEATH_SENTENCE, ATB_BG_HUD_Offset, 0);
+                ATBFrameHUD[mob.Data].Follower.clampToScreen = false;
 
-                // Blue ATB Bar (actual)
+                UILabel bgLabel = ATBFrameHUD[mob.Data].GetComponent<UILabel>();
+                bgLabel.pivot = UIWidget.Pivot.Center;
+                bgLabel.spacingY = 0; 
+                ATBFrameHUD[mob.Data].transform.localScale = Vector3.one;
+
+                btl2d.StatusMessages.Add(ATBFrameHUD[mob.Data]);
+
                 ATBGreenBarHUD[mob.Data] = Singleton<HUDMessage>.Instance.Show(attachTransf, $"[SPRT=GeneralAtlas,{ATBSprite},145,14]", HUDMessage.MessageStyle.DEATH_SENTENCE, ATB_BAR_HUD_Offset, 0);
 
-                UILabel UILabelHPGreenBarHUD = ATBGreenBarHUD[mob.Data].GetComponent<UILabel>();
+                UILabel atbLabel = ATBGreenBarHUD[mob.Data].GetComponent<UILabel>();
                 ATBGreenBarHUD[mob.Data].Follower.clampToScreen = false;
-                UILabelHPGreenBarHUD.spacingY = -10;
-                UILabelHPGreenBarHUD.pivot = UIWidget.Pivot.Left;
+
+                atbLabel.spacingY = -10;
+                atbLabel.pivot = UIWidget.Pivot.Left;
 
                 btl2d.StatusMessages.Add(ATBGreenBarHUD[mob.Data]);
             }
@@ -259,16 +264,16 @@ namespace Memoria.Scripts.TranceSeek
             if (ATBGreenBarHUD[mob.Data] != null)
                 ATBGreenBarHUD[mob.Data].transform.localScale = new Vector3(atbPercent, 1f, 1f);
 
-            if (ATBGreenBarHUD[mob.Data] != null && ATBRedBarHUD[mob.Data] != null)
+            if (ATBGreenBarHUD[mob.Data] != null && ATBFrameHUD[mob.Data] != null)
             {
                 if (PersistenSingleton<BattleHUD>.Instance.AllMenuPanel.gameObject.activeSelf)
                 {
-                    ATBRedBarHUD[mob.Data].gameObject.SetActive(true);
+                    ATBFrameHUD[mob.Data].gameObject.SetActive(true);
                     ATBGreenBarHUD[mob.Data].gameObject.SetActive(true);
                 }
                 else
                 {
-                    ATBRedBarHUD[mob.Data].gameObject.SetActive(false);
+                    ATBFrameHUD[mob.Data].gameObject.SetActive(false);
                     ATBGreenBarHUD[mob.Data].gameObject.SetActive(false);
                 }
             }

@@ -445,6 +445,7 @@
     <Compile Include="Sources\Battle\MentalUpStatusScript.cs" />
     <Compile Include="Sources\Battle\MiniStatusScript.cs" />
     <Compile Include="Sources\Battle\OverlapSHP.cs" />
+    <Compile Include="Sources\Battle\OverloadOnFieldScript.cs" />
     <Compile Include="Sources\Battle\OverloadDamageModifierScript.cs" />
     <Compile Include="Sources\Battle\OverloadOnBattleInitScript.cs" />
     <Compile Include="Sources\Battle\OverloadOnBattleScriptEndScript.cs" />
