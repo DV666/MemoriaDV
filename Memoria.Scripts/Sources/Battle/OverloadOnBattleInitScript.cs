@@ -38,6 +38,10 @@ namespace Memoria.Scripts.TranceSeek
                     FF9StateSystem.EventState.gEventGlobal[1407] = 0;
             }*/
 
+            GameObject battleRoot = GameObject.Find("BattleMap Root");
+            if (battleRoot != null)
+                TranceSeekHack.InitWatchdog(battleRoot);
+
             OverloadOnBattleScriptStartScript.InitProtectMessages();
 
             int BattleID = FF9StateSystem.Battle.battleMapIndex;

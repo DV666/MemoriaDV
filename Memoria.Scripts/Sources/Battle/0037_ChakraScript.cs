@@ -78,8 +78,8 @@ namespace Memoria.Scripts.TranceSeek
                 {
                     _v.Target.Flags |= (CalcFlag.HpDamageOrHeal | CalcFlag.MpDamageOrHeal);
                     btl_stat.MakeStatusesPermanent(_v.Target, BattleStatus.Zombie, false);
-                    _v.Target.RemoveStatus(BattleStatus.Zombie);
                     _v.Target.RemoveStatus(BattleStatus.Death);
+                    _v.Target.RemoveStatus(BattleStatusConst.AnyNegative);
                     _v.Target.HpDamage = (int)_v.Target.MaximumHp;
                     _v.Target.MpDamage = (int)_v.Target.MaximumMp;
                 }

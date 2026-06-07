@@ -733,8 +733,8 @@ namespace Memoria.Scripts.TranceSeek
                 {
                     case TetraWrist:
                     {
-                        if (v.Target.HpDamage > 0 && (v.Target.Flags & CalcFlag.HpRecovery) == 0)
-                            if (v.Command.Element == 0 && v.Command.ScriptId != 17 && v.Command.ScriptId != 26 && v.Command.ScriptId != 118 && v.Command.ScriptId != 119) // Neutral damage
+                        if (v.Target.HpDamage > 0 && (v.Target.Flags & CalcFlag.HpRecovery) == 0 && v.Command.ScriptId != 10 && v.Command.ScriptId != 37)
+                            if (v.Command.Element == 0 && v.Command.ScriptId != 10 && v.Command.ScriptId != 17 && v.Command.ScriptId != 26  && v.Command.ScriptId != 118 && v.Command.ScriptId != 119) // Neutral damage
                                 v.Context.DamageModifierCount += 2;
                             else
                                 v.Context.DamageModifierCount -= 2;

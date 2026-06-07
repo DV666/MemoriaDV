@@ -1,4 +1,5 @@
 using Memoria.Data;
+using Memoria.Prime;
 using System;
 using System.Collections.Generic;
 
@@ -23,7 +24,7 @@ namespace Memoria.Scripts.TranceSeek
         {
             if (_v.Caster.Data.dms_geo_id == 401 && _v.Command.HitRate == 1) // Friendly Feather Circle - Mega Death
             {
-                if (SFX.currentEffectID == SpecialEffect.LV5_Death)
+                if (FF9StateSystem.EventState.gEventGlobal[1307] == 1) // SetVariable: Variable=gEventGlobal ; Index=1307 ; Value=0
                 {
                     _v.Target.RemoveStatus(BattleStatus.AutoLife);
                     if (_v.Target.IsZombie)

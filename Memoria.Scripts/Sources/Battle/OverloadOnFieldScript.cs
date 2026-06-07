@@ -17,7 +17,7 @@ namespace Memoria.Scripts.TranceSeek
     /// Mostly made for the companions to follow the main character on the field and World Map too !
     /// Very experimental.
     /// </summary>
-
+    
     public class OverloadOnFieldScript : MonoBehaviour
     {
         private struct LeaderState
@@ -31,18 +31,20 @@ namespace Memoria.Scripts.TranceSeek
 
         private struct FollowerData
         {
-            public string ModelName;
+            public int ModelId;
             public string AnimIdle;
             public string AnimWalk;
             public string AnimRun;
+            public string AnimInactive;
             public HashSet<Int32> BlackListModelId;
 
-            public FollowerData(string modelName, string animIdle, string animWalk, string animRun, HashSet<Int32> blackListModelId)
+            public FollowerData(int modelName, string animIdle, string animWalk, string animRun, string animInactive, HashSet<Int32> blackListModelId)
             {
-                ModelName = modelName;
+                ModelId = modelName;
                 AnimIdle = animIdle;
                 AnimWalk = animWalk;
                 AnimRun = animRun;
+                AnimInactive = animInactive;
                 BlackListModelId = blackListModelId;
             }
         }
@@ -55,26 +57,28 @@ namespace Memoria.Scripts.TranceSeek
             public string AnimIdle;
             public string AnimWalk;
             public string AnimRun;
+            public string AnimInactive;
             public int FramesBehind;
+            public int IdleTimer;
             public Queue<LeaderState> PositionHistory = new Queue<LeaderState>();
             public List<Material> CachedMaterials = new List<Material>();
         }
 
         private Dictionary<CharacterId, FollowerData> characterDB = new Dictionary<CharacterId, FollowerData>()
         {
-            { CharacterId.Zidane, new FollowerData("GEO_MAIN_F0_ZDN", "ANH_MAIN_F0_ZDN_IDLE", "ANH_MAIN_F0_ZDN_WALK", "ANH_MAIN_F0_ZDN_RUN", new HashSet<Int32>(){98, 532, 203, 569, 310, 285, 5414}) },
-            { CharacterId.Vivi, new FollowerData("GEO_MAIN_F0_VIV", "ANH_MAIN_F0_VIV_IDLE", "ANH_MAIN_F0_VIV_WALK", "ANH_MAIN_F0_VIV_RUN", new HashSet<Int32>(){5415, 8, 662}) },
-            { CharacterId.Garnet, new FollowerData("GEO_MAIN_F0_GRN", "ANH_MAIN_F0_GRN_IDLE", "ANH_MAIN_F0_GRN_WALK", "ANH_MAIN_F0_GRN_RUN", new HashSet<Int32>(){526, 532, 557, 202, 205, 666, 557, 671, 309, 281, 283, 287, 288, 185}) },
-            { CharacterId.Steiner, new FollowerData("GEO_MAIN_F0_STN", "ANH_MAIN_F0_STN_IDLE", "ANH_MAIN_F0_STN_WALK", "ANH_MAIN_F0_STN_RUN", new HashSet<Int32>(){286, 655, 5489, 658, 526}) },
-            { CharacterId.Freya, new FollowerData("GEO_MAIN_F0_FRJ", "ANH_MAIN_F0_FRJ_IDLE", "ANH_MAIN_F0_FRJ_WALK", "ANH_MAIN_F0_FRJ_RUN", new HashSet<Int32>(){290, 297, 192}) },
-            { CharacterId.Quina, new FollowerData("GEO_MAIN_F0_KUI", "ANH_MAIN_F0_KUI_IDLE", "ANH_MAIN_F0_KUI_WALK", "ANH_MAIN_F0_KUI_RUN", new HashSet<Int32>(){289, 273, 295}) },
-            { CharacterId.Eiko, new FollowerData("GEO_MAIN_F0_EIK", "ANH_MAIN_F0_EIK_IDLE", "ANH_MAIN_F0_EIK_WALK", "ANH_MAIN_F0_EIK_RUN", new HashSet<Int32>(){284, 291, 443, 570}) },
-            { CharacterId.Amarant, new FollowerData("GEO_MAIN_F0_SLM", "ANH_MAIN_F0_SLM_IDLE", "ANH_MAIN_F0_SLM_WALK", "ANH_MAIN_F0_SLM_RUN", new HashSet<Int32>(){572, 509, 444}) },
-            { CharacterId.Cinna, new FollowerData("GEO_MAIN_B0_013", "ANH_SSUB_F0_CNA_IDLE", "ANH_SUB_F0_CNA_WALK", "ANH_SUB_F0_CNA_RUN", new HashSet<Int32>(){39, 107, 661}) },
-            { CharacterId.Marcus, new FollowerData("GEO_MAIN_B0_014", "ANH_SUB_F0_MRC_IDLE", "ANH_SUB_F0_MRC_WALK", "ANH_SUB_F0_MRC_RUN", new HashSet<Int32>(){45, 109, 660}) },
-            { CharacterId.Blank, new FollowerData("GEO_MAIN_B0_015", "ANH_SUB_F0_BLN_IDLE", "ANH_SUB_F0_BLN_WALK", "ANH_SUB_F0_BLN_RUN", new HashSet<Int32>(){42, 608, 639, 5467, 190, 659}) },
-            { CharacterId.Beatrix, new FollowerData("GEO_MAIN_B0_017", "ANH_SUB_F0_BTX_IDLE", "ANH_SUB_F0_BTX_WALK", "ANH_SUB_F0_BTX_RUN", new HashSet<Int32>(){427, 204, 358}) },
-            { (CharacterId)12, new FollowerData("GEO_SUB_F0_SBW", "ANH_SUB_F0_SBW_IDLE", "ANH_SUB_F0_SBW_WALK", "ANH_SUB_F0_SBW_RUN", new HashSet<Int32>(){427, 204, 358}) }
+            { CharacterId.Zidane, new FollowerData(98, "ANH_MAIN_F0_ZDN_IDLE", "ANH_MAIN_F0_ZDN_WALK", "ANH_MAIN_F0_ZDN_RUN", "ANH_MAIN_F0_ZDN_BREAK1_XARM", new HashSet<Int32>(){98, 532, 203, 569, 310, 285, 5414}) },
+            { CharacterId.Vivi, new FollowerData(8, "ANH_MAIN_F0_VIV_IDLE", "ANH_MAIN_F0_VIV_WALK", "ANH_MAIN_F0_VIV_RUN", "ANH_MAIN_F0_VIV_BREAK1", new HashSet<Int32>(){5415, 8, 662}) },
+            { CharacterId.Garnet, new FollowerData(185, "ANH_MAIN_F0_GRN_IDLE", "ANH_MAIN_F0_GRN_WALK", "ANH_MAIN_F0_GRN_RUN", "ANH_MAIN_F0_GRN_BREAK_2", new HashSet<Int32>(){526, 532, 557, 202, 205, 666, 557, 671, 309, 281, 283, 287, 288, 185}) },
+            { CharacterId.Steiner, new FollowerData(5489, "ANH_MAIN_F0_STN_IDLE", "ANH_MAIN_F0_STN_WALK", "ANH_MAIN_F0_STN_RUN", "ANH_MAIN_F0_STN_BREAK_1", new HashSet<Int32>(){286, 655, 5489, 658, 526}) },
+            { CharacterId.Freya, new FollowerData(192, "ANH_MAIN_F0_FRJ_IDLE", "ANH_MAIN_F0_FRJ_WALK", "ANH_MAIN_F0_FRJ_RUN", "ANH_MAIN_F0_FRJ_DANCE_IDLE", new HashSet<Int32>(){290, 297, 192}) },
+            { CharacterId.Quina, new FollowerData(273, "ANH_MAIN_F0_KUI_IDLE", "ANH_MAIN_F0_KUI_WALK", "ANH_MAIN_F0_KUI_RUN", "ANH_MAIN_F0_KUI_BERO_1", new HashSet<Int32>(){289, 273, 295}) },
+            { CharacterId.Eiko, new FollowerData(443, "ANH_MAIN_F0_EIK_IDLE", "ANH_MAIN_F0_EIK_WALK", "ANH_MAIN_F0_EIK_RUN", "ANH_MAIN_F0_EIK_BREAK_2", new HashSet<Int32>(){284, 291, 443, 570}) },
+            { CharacterId.Amarant, new FollowerData(509, "ANH_MAIN_F0_SLM_IDLE", "ANH_MAIN_F0_SLM_WALK", "ANH_MAIN_F0_SLM_RUN", "ANH_MAIN_F0_SLM_BYE", new HashSet<Int32>(){572, 509, 444}) },
+            { CharacterId.Cinna, new FollowerData(107, "ANH_SSUB_F0_CNA_IDLE", "ANH_SUB_F0_CNA_WALK", "ANH_SUB_F0_CNA_RUN", "ANH_SUB_F0_CNA_SIGN", new HashSet<Int32>(){39, 107, 661}) },
+            { CharacterId.Marcus, new FollowerData(109, "ANH_SUB_F0_MRC_IDLE", "ANH_SUB_F0_MRC_WALK", "ANH_SUB_F0_MRC_RUN", "ANH_SUB_F0_MRC_TAN", new HashSet<Int32>(){45, 109, 660}) },
+            { CharacterId.Blank, new FollowerData(5467, "ANH_SUB_F0_BLN_IDLE", "ANH_SUB_F0_BLN_WALK", "ANH_SUB_F0_BLN_RUN", "ANH_SUB_F0_BLN_TAN", new HashSet<Int32>(){42, 608, 639, 5467, 190, 659}) },
+            { CharacterId.Beatrix, new FollowerData(204, "ANH_SUB_F0_BTX_IDLE", "ANH_SUB_F0_BTX_WALK", "ANH_SUB_F0_BTX_RUN", "ANH_SUB_F0_BTX_HAIR", new HashSet<Int32>(){427, 204, 358}) },
+            { (CharacterId)12, new FollowerData(368, "ANH_SUB_F0_SBW_IDLE", "ANH_SUB_F0_SBW_WALK", "ANH_SUB_F0_SBW_RUN", "ANH_SUB_F0_SBW_GIVE_ME", new HashSet<Int32>(){427, 204, 358}) }
         };
 
         private List<Follower> activeFollowers = new List<Follower>();
@@ -89,14 +93,14 @@ namespace Memoria.Scripts.TranceSeek
         private Boolean IsWorldMap;
         private Boolean FollowersHidden;
 
-        // BlackListAnimationId is used to hide the followers when the character uses a very specific animations, like the one when mounting a Gargant.
-        private static readonly HashSet<Int32> BlackListAnimationId = 
+        private static readonly HashSet<Int32> BlackListAnimationId =
             new HashSet<Int32>(new[] {
-                10633 // Mounting Gargant
+                10633
             });
         private static readonly HashSet<Int32> BlackListFieldId = new HashSet<Int32>(new[] { 70, 655, 1400, 1401, 1402, 1403, 1404 });
         private static readonly HashSet<Int32> ModelCantGetFollowers = new HashSet<Int32>(new[] { 317, 312, 320, 321, 308 });
 
+        private int speedFactor => HonoBehaviorSystem.Instance.IsFastForwardModeActive() ? HonoBehaviorSystem.Instance.GetFastForwardFactor() : 1;
         private Boolean BlackListCondition => (FF9StateSystem.Common.FF9.fldMapNo == 908 && GameState.ScenarioCounter < 4400);
 
         private void LateUpdate()
@@ -105,9 +109,9 @@ namespace Memoria.Scripts.TranceSeek
             UIManager.UIState currentState = uiManager.State;
 
             CheckLeader();
-            if (lastUiState == UIManager.UIState.PartySetting && currentState == UIManager.UIState.FieldHUD)
+            if (lastUiState == UIManager.UIState.PartySetting && (currentState == UIManager.UIState.FieldHUD || currentState == UIManager.UIState.WorldHUD))
                 CheckSwapFollower();
-            else if (BlackListCondition || ModelCantGetFollowers.Contains(leader_model_id) || BlackListAnimationId.Contains(actorleader.idle) || BlackListFieldId.Contains(FF9StateSystem.Common.FF9.fldMapNo)) // !PersistenSingleton<UIManager>.Instance.IsPlayerControlEnable
+            else if (BlackListCondition || ModelCantGetFollowers.Contains(leader_model_id) || BlackListAnimationId.Contains(actorleader.idle) || BlackListFieldId.Contains(FF9StateSystem.Common.FF9.fldMapNo) || (actorleader.flags & 1) == 0)
                 HideFollowers(true);
             else if (FF9StateSystem.Common.FF9.fldMapNo != -1 && SceneDirector.IsFieldScene() && !SceneDirector.Instance.IsFading)
                 ProcessFieldFollowers();
@@ -157,6 +161,7 @@ namespace Memoria.Scripts.TranceSeek
                 actorleader = ff9.GetControlChar().originalActor;
                 leader_model_id = ff9.GetControlChar().originalActor.model;
                 IsWorldMap = true;
+                EnsureLeaderWorldMapShader();
             }
             else
             {
@@ -170,6 +175,26 @@ namespace Memoria.Scripts.TranceSeek
                 leaderRenderer = leader != null ? leader.GetComponentInChildren<Renderer>() : null;
                 ClearHistoryFollowers();
                 CheckSwapFollower();
+            }
+        }
+
+        private void EnsureLeaderWorldMapShader()
+        {
+            if (!IsWorldMap || leader == null) return;
+
+            foreach (Renderer renderer in leader.GetComponentsInChildren<Renderer>())
+            {
+                if (renderer.sharedMaterial != null && renderer.sharedMaterial.shader != null && renderer.sharedMaterial.shader.name != "WorldMap/Actor")
+                {
+                    Shader wmShader = ShadersLoader.Find("WorldMap/Actor");
+                    if (wmShader != null)
+                    {
+                        foreach (Material material in renderer.materials)
+                        {
+                            material.shader = wmShader;
+                        }
+                    }
+                }
             }
         }
 
@@ -203,10 +228,18 @@ namespace Memoria.Scripts.TranceSeek
                     f.AnimIdle = characterDB[id].AnimIdle;
                     f.AnimWalk = characterDB[id].AnimWalk;
                     f.AnimRun = characterDB[id].AnimRun;
+                    f.AnimInactive = characterDB[id].AnimInactive;
+                    ResetTimerInactiveAnimation(f);
 
-                    Log.Message($"[Trance Seek] New follower created : {f.Id}, using the model {characterDB[f.Id].ModelName}...");
-                    f.Go = ModelFactory.CreateModel(characterDB[f.Id].ModelName, false, true, Configuration.Graphics.ElementsSmoothTexture);
-                    GeoTexAnim.addTexAnim(f.Go, characterDB[f.Id].ModelName);
+                    if (!FF9BattleDB.GEO.TryGetValue(characterDB[id].ModelId, out String modelName))
+                    {
+                        Log.Warning($"[Trance Seek] ERROR : can't load follower with ModelId : {characterDB[id].ModelId}...");
+                        continue;
+                    }
+
+                    Log.Message($"[Trance Seek] New follower created : {f.Id}, using the model {modelName}...");
+                    f.Go = ModelFactory.CreateModel(modelName, false, true, Configuration.Graphics.ElementsSmoothTexture);
+                    GeoTexAnim.addTexAnim(f.Go, modelName);
 
                     f.Go.transform.SetParent(leader.transform.parent, false);
                     f.Go.layer = targetLayer;
@@ -222,14 +255,14 @@ namespace Memoria.Scripts.TranceSeek
 
                         foreach (Material material in renderer.materials)
                         {
-                            if (!IsWorldMap)
+                            if (IsWorldMap)
                             {
+                                material.shader = ShadersLoader.Find("WorldMap/Actor");
+                            }
+                            else
+                            {                              
                                 material.shader = ShadersLoader.Find(Configuration.Shaders.FieldCharacterShader);
                                 material.SetColor("_Color", new Color32(128, 128, 128, 255));
-                            }
-                            else if (IsWorldMap && leaderRenderer != null && leaderRenderer.sharedMaterial != null)
-                            {
-                                material.shader = leaderRenderer.sharedMaterial.shader;
                             }
 
                             if (material.HasProperty("_Color"))
@@ -251,6 +284,7 @@ namespace Memoria.Scripts.TranceSeek
                     AnimationFactory.AddAnimWithAnimatioName(f.Go, f.AnimIdle);
                     AnimationFactory.AddAnimWithAnimatioName(f.Go, f.AnimWalk);
                     AnimationFactory.AddAnimWithAnimatioName(f.Go, f.AnimRun);
+                    AnimationFactory.AddAnimWithAnimatioName(f.Go, f.AnimInactive);
 
                     if (f.Go != null)
                     {
@@ -324,9 +358,14 @@ namespace Memoria.Scripts.TranceSeek
                 else
                     if (!f.Go.activeSelf) f.Go.SetActive(true);
 
-                if (f.PositionHistory.Count > f.FramesBehind)
+                int effectiveFramesBehind = Mathf.Max(1, f.FramesBehind / speedFactor);
+
+                if (f.PositionHistory.Count > effectiveFramesBehind)
                 {
-                    LeaderState target = f.PositionHistory.Dequeue();
+                    LeaderState target = default;
+                    while (f.PositionHistory.Count > effectiveFramesBehind)
+                        target = f.PositionHistory.Dequeue();
+
                     f.Go.transform.localPosition = target.LocalPosition;
                     f.Go.transform.localRotation = target.LocalRotation;
                     ApplyFollowerColor(f, target.LightColor);
@@ -338,7 +377,14 @@ namespace Memoria.Scripts.TranceSeek
                 }
                 else
                 {
-                    PlayAnimation(f, f.AnimIdle);
+                    f.IdleTimer -= speedFactor;
+                    if (f.IdleTimer < 0)
+                    {
+                        PlayAnimation(f, f.AnimInactive);
+                        ResetTimerInactiveAnimation(f);
+                    }
+                    else if (!f.Anim.IsPlaying(f.AnimInactive))
+                        PlayAnimation(f, f.AnimIdle);
                 }
             }
 
@@ -403,9 +449,14 @@ namespace Memoria.Scripts.TranceSeek
 
                 if (!f.Go.activeSelf) f.Go.SetActive(true);
 
-                if (f.PositionHistory.Count > f.FramesBehind)
+                int effectiveFramesBehind = Mathf.Max(1, f.FramesBehind / speedFactor);
+
+                if (f.PositionHistory.Count > effectiveFramesBehind)
                 {
-                    LeaderState target = f.PositionHistory.Dequeue();
+                    LeaderState target = default;
+                    while (f.PositionHistory.Count > effectiveFramesBehind)
+                        target = f.PositionHistory.Dequeue();
+
                     f.Go.transform.localPosition = target.LocalPosition;
                     f.Go.transform.localRotation = target.LocalRotation;
                     ApplyFollowerColor(f, target.LightColor);
@@ -413,7 +464,14 @@ namespace Memoria.Scripts.TranceSeek
                 }
                 else
                 {
-                    PlayAnimation(f, f.AnimIdle);
+                    f.IdleTimer -= speedFactor;
+                    if (f.IdleTimer < 0)
+                    {
+                        PlayAnimation(f, f.AnimInactive);
+                        ResetTimerInactiveAnimation(f);
+                    }
+                    else if (!f.Anim.IsPlaying(f.AnimInactive))
+                        PlayAnimation(f, f.AnimIdle);
                 }
             }
 
@@ -453,12 +511,20 @@ namespace Memoria.Scripts.TranceSeek
                     f.AnimIdle = characterDB[newId].AnimIdle;
                     f.AnimWalk = characterDB[newId].AnimWalk;
                     f.AnimRun = characterDB[newId].AnimRun;
+                    f.AnimInactive = characterDB[newId].AnimInactive;
+                    ResetTimerInactiveAnimation(f);
+
+                    if (!FF9BattleDB.GEO.TryGetValue(characterDB[newId].ModelId, out String modelName))
+                    {
+                        Log.Warning($"[Trance Seek] ERROR : can't load follower with ModelId : {characterDB[newId].ModelId}...");
+                        continue;
+                    }
 
                     Vector3 SavePosition = f.Go.transform.localPosition;
                     Quaternion SaveRotation = f.Go.transform.localRotation;
 
-                    f.Go = ModelFactory.CreateModel(characterDB[newId].ModelName, false, true, Configuration.Graphics.ElementsSmoothTexture);
-                    GeoTexAnim.addTexAnim(f.Go, characterDB[newId].ModelName);
+                    f.Go = ModelFactory.CreateModel(modelName, false, true, Configuration.Graphics.ElementsSmoothTexture);
+                    GeoTexAnim.addTexAnim(f.Go, modelName);
 
                     f.Go.transform.SetParent(leader.transform.parent, false);
                     f.Go.layer = targetLayer;
@@ -474,14 +540,14 @@ namespace Memoria.Scripts.TranceSeek
                         renderer.gameObject.layer = targetLayer;
                         foreach (Material material in renderer.materials)
                         {
-                            if (!IsWorldMap)
+                            if (IsWorldMap)
+                            {
+                                material.shader = ShadersLoader.Find("WorldMap/Actor");
+                            }
+                            else
                             {
                                 material.shader = ShadersLoader.Find(Configuration.Shaders.FieldCharacterShader);
                                 material.SetColor("_Color", new Color32(128, 128, 128, 255));
-                            }
-                            else if (IsWorldMap && leaderRenderer != null && leaderRenderer.sharedMaterial != null)
-                            {
-                                material.shader = leaderRenderer.sharedMaterial.shader;
                             }
 
                             if (material.HasProperty("_Color"))
@@ -503,6 +569,7 @@ namespace Memoria.Scripts.TranceSeek
                     AnimationFactory.AddAnimWithAnimatioName(f.Go, f.AnimIdle);
                     AnimationFactory.AddAnimWithAnimatioName(f.Go, f.AnimWalk);
                     AnimationFactory.AddAnimWithAnimatioName(f.Go, f.AnimRun);
+                    AnimationFactory.AddAnimWithAnimatioName(f.Go, f.AnimInactive);
                     f.Go.transform.localPosition = SavePosition;
                     f.Go.transform.localRotation = SaveRotation;
                     f.Go.SetActive(true);
@@ -560,6 +627,7 @@ namespace Memoria.Scripts.TranceSeek
                             f.Go.transform.localPosition = leader.transform.localPosition;
                         f.Go.transform.localRotation = leader.transform.localRotation;
                         f.PositionHistory.Clear();
+                        ApplyFollowerColor(f, GetLeaderColor());
                     }
                 }
             }
@@ -577,6 +645,11 @@ namespace Memoria.Scripts.TranceSeek
         {
             for (int i = 0; i < f.CachedMaterials.Count; i++)
                 f.CachedMaterials[i].SetColor("_Color", color);
+        }
+
+        private void ResetTimerInactiveAnimation(Follower f)
+        {
+            f.IdleTimer = UnityEngine.Random.Range(2000, 8000);
         }
 
         private void ClearFollowers()
@@ -604,8 +677,18 @@ namespace Memoria.Scripts.TranceSeek
         private void PlayAnimation(Follower f, string animName)
         {
             if (f.Anim != null && f.Anim.GetClip(animName) != null)
+            {
                 if (!f.Anim.IsPlaying(animName))
                     f.Anim.Play(animName);
+
+                float speedFactor = HonoBehaviorSystem.Instance.IsFastForwardModeActive()
+                    ? (float)HonoBehaviorSystem.Instance.GetFastForwardFactor()
+                    : 1f;
+
+                AnimationState state = f.Anim[animName];
+                if (state != null)
+                    state.speed = speedFactor;
+            }
         }
 
         private void HandleAnimationPause(bool isPaused)
