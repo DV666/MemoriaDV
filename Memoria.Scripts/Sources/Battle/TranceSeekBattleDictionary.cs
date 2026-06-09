@@ -295,6 +295,8 @@ namespace Memoria.Scripts.TranceSeek
         public Boolean IsBackAttack { get; set; }
         public Boolean PreventTranceSFX { get; set; }
         public int DragonChanceProc { get; set; }
+        public int MascotCooldown { get; set; }
+
 
         public SPSEffect PolaritySPS { get; set; }
 

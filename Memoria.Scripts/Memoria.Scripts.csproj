@@ -409,6 +409,7 @@
     <Compile Include="Sources\Battle\0140_SummonMonsterScript.cs" />
     <Compile Include="Sources\Battle\0142_MagicHammerScript.cs" />
     <Compile Include="Sources\Battle\0164_TranceSeekSpecial.cs" />
+    <Compile Include="Sources\Battle\0209_MascotScript.cs" />
     <Compile Include="Sources\Battle\0222_NewGamePlusScript.cs" />
     <Compile Include="Sources\Battle\0200_MixPotionScript.cs" />
     <Compile Include="Sources\Battle\0201_MixRemedyScript.cs" />
@@ -475,11 +476,15 @@
     <Compile Include="Sources\Battle\SlowStatusScript.cs" />
     <Compile Include="Sources\Battle\SpecialStatusScript.cs" />
     <Compile Include="Sources\Battle\StopStatusScript.cs" />
+    <Compile Include="Sources\Battle\TranceSeekDebug.cs" />
+    <Compile Include="Sources\Battle\TranceSeekHack.cs" />
     <Compile Include="Sources\Battle\TranceSeekBattleDictionary.cs" />
     <Compile Include="Sources\Battle\TranceSeekCharacterMechanic.cs" />
     <Compile Include="Sources\Battle\TranceSeekAPI.cs" />
     <Compile Include="Sources\Battle\TranceSeekBattleAbility.cs" />
     <Compile Include="Sources\Battle\TranceSeekBattleCommand.cs" />
+    <Compile Include="Sources\Battle\TranceSeekVisualAccessoryDB.cs" />
+    <Compile Include="Sources\Battle\TranceSeekVisualAccessory.cs" />
     <Compile Include="Sources\Battle\TranceSeekRegularItem.cs" />
     <Compile Include="Sources\Battle\TranceSeekStatus.cs" />
     <Compile Include="Sources\Battle\TranceSeekStatusId.cs" />

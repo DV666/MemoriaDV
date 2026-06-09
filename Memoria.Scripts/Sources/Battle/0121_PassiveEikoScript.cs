@@ -1,8 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using FF9;
+﻿using FF9;
 using Memoria.Data;
+using System;
+using System.Collections.Generic;
 using UnityEngine;
+using static Memoria.Scripts.TranceSeek.TranceSeekVisualAccessoryDB;
 
 namespace Memoria.Scripts.TranceSeek
 {
@@ -56,9 +57,8 @@ namespace Memoria.Scripts.TranceSeek
                         AnimationFactory.AddAnimWithAnimatioName(ModelMoug[_v.Caster.Data], "ANH_NPC_F4_MOG_INTO_EIK_PASSIVE_2");
                     if (animation != null)
                     {
+                        animation["ANH_NPC_F4_MOG_INTO_EIK_PASSIVE_1"].speed = 1f;
                         animation.Play("ANH_NPC_F4_MOG_INTO_EIK_PASSIVE_1");
-                        if (animation["ANH_NPC_F4_MOG_INTO_EIK_PASSIVE_1"] != null)
-                            animation["ANH_NPC_F4_MOG_INTO_EIK_PASSIVE_1"].speed = 1f;
                     }
                     return;
                 }

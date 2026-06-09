@@ -9,6 +9,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 using static Memoria.Configuration;
+using static Memoria.Scripts.TranceSeek.TranceSeekDebug;
 
 namespace Memoria.Scripts.TranceSeek
 {
@@ -95,24 +96,30 @@ namespace Memoria.Scripts.TranceSeek
 
         private static readonly HashSet<Int32> BlackListAnimationId =
             new HashSet<Int32>(new[] {
-                10633
+                10539, // Climbing
+                10633 // Mounting Gargant
             });
-        private static readonly HashSet<Int32> BlackListFieldId = new HashSet<Int32>(new[] { 70, 655, 1400, 1401, 1402, 1403, 1404 });
+
+        private static readonly HashSet<Int32> BlackListFieldId = 
+            new HashSet<Int32>(new[] { 70, 152, 209, 260, 261, 453, 454, 606, 655, 767, 768, 769, 811, 813,
+                814, 816, 954, 955, 1400, 1401, 1402, 1403, 1404, 1462, 1609, 1659, 1800, 2261, 2750, 2751, 2752, 2754, 2755, 2756, 2850, 2851, 2852, 2853, 2854, 2855, 2856, 2951, 2952, 2953,
+            2928, 2929, 2930, 2931, 2932, 2933, 2934, 3000, 3001, 3002, 3003, 3004, 3005, 3006, 3007, 3008, 3009, 3010, 3011, 3012}); // End of the game
         private static readonly HashSet<Int32> ModelCantGetFollowers = new HashSet<Int32>(new[] { 317, 312, 320, 321, 308 });
 
         private int speedFactor => HonoBehaviorSystem.Instance.IsFastForwardModeActive() ? HonoBehaviorSystem.Instance.GetFastForwardFactor() : 1;
-        private Boolean BlackListCondition => (FF9StateSystem.Common.FF9.fldMapNo == 908 && GameState.ScenarioCounter < 4400);
+        private Boolean BlackListCondition => ((FF9StateSystem.Common.FF9.fldMapNo == 908 && GameState.ScenarioCounter < 4400)
+            || (FF9StateSystem.Common.FF9.fldMapNo == 953 && GameState.ScenarioCounter == 4530)
+            || (FF9StateSystem.Common.FF9.fldMapNo == 1014 && (GetLeaderAnimID() == 581 || GetLeaderAnimID() == 3519)));
 
         private void LateUpdate()
         {
             UIManager uiManager = PersistenSingleton<UIManager>.Instance;
             UIManager.UIState currentState = uiManager.State;
 
+
             CheckLeader();
             if (lastUiState == UIManager.UIState.PartySetting && (currentState == UIManager.UIState.FieldHUD || currentState == UIManager.UIState.WorldHUD))
                 CheckSwapFollower();
-            else if (BlackListCondition || ModelCantGetFollowers.Contains(leader_model_id) || BlackListAnimationId.Contains(actorleader.idle) || BlackListFieldId.Contains(FF9StateSystem.Common.FF9.fldMapNo) || (actorleader.flags & 1) == 0)
-                HideFollowers(true);
             else if (FF9StateSystem.Common.FF9.fldMapNo != -1 && SceneDirector.IsFieldScene() && !SceneDirector.Instance.IsFading)
                 ProcessFieldFollowers();
             else if (FF9StateSystem.Common.FF9.wldMapNo != -1 && SceneDirector.IsWorldScene() && !SceneDirector.Instance.IsFading)
@@ -120,11 +127,16 @@ namespace Memoria.Scripts.TranceSeek
             else
                 ClearFollowers();
 
+            if (BlackListCondition || ModelCantGetFollowers.Contains(leader_model_id) || MBG.Instance.IsPlaying() > 1 ||
+            BlackListAnimationId.Contains(actorleader.anim) || BlackListFieldId.Contains(FF9StateSystem.Common.FF9.fldMapNo) || (actorleader.flags & 1) == 0)
+                HideFollowers(true);
+
             HandleAnimationPause(uiManager.IsPause);
 
             if (UnityXInput.Input.GetKeyDown(KeyCode.KeypadMultiply))
             {
                 Log.Message("[Trance Seek] leader_model_id : " + leader_model_id);
+                Log.Message("[Trance Seek] actorleader.anim : " + actorleader.anim);
                 if (IsWorldMap)
                     Log.Message($"[Trance Seek] WM Actor Position {ff9.GetControlChar().pos}");
 
@@ -237,7 +249,7 @@ namespace Memoria.Scripts.TranceSeek
                         continue;
                     }
 
-                    Log.Message($"[Trance Seek] New follower created : {f.Id}, using the model {modelName}...");
+                    //Log.Message($"[Trance Seek] New follower created : {f.Id}, using the model {modelName}...");
                     f.Go = ModelFactory.CreateModel(modelName, false, true, Configuration.Graphics.ElementsSmoothTexture);
                     GeoTexAnim.addTexAnim(f.Go, modelName);
 
@@ -588,7 +600,7 @@ namespace Memoria.Scripts.TranceSeek
                 if (objList.obj != null && objList.obj.cid == 4)
                 {
                     Actor actor = (Actor)objList.obj;
-                    if (actor.go != null && actor.go != leader)
+                    if (actor.go != null && actor.go != leader && (actor.flags & 1) != 0)
                     {
                         if (blackList.Contains(actor.model))
                         {
@@ -608,11 +620,6 @@ namespace Memoria.Scripts.TranceSeek
                 if (f.Go != null)
                     f.Go.SetActive(!hide);
 
-            if (hide)
-                Log.Message("[Trance Seek] Hiding Followers...");
-            else
-                Log.Message("[Trance Seek] Showing Followers...");
-
             FollowersHidden = hide;
 
             if (!hide)
@@ -631,6 +638,20 @@ namespace Memoria.Scripts.TranceSeek
                     }
                 }
             }
+        }
+
+        private int GetLeaderModelID()
+        {
+            if (actorleader == null) return -1;
+
+            return actorleader.model;
+        }
+
+        private int GetLeaderAnimID()
+        {
+            if (actorleader == null) return -1;
+
+            return actorleader.anim;
         }
 
         private Color GetLeaderColor()
@@ -656,7 +677,6 @@ namespace Memoria.Scripts.TranceSeek
         {
             if (activeFollowers.Count == 0) return;
 
-            Log.Message("[Trance Seek] Cleaning Followers...");
             foreach (Follower f in activeFollowers)
             {
                 if (f.Go != null)
@@ -703,24 +723,6 @@ namespace Memoria.Scripts.TranceSeek
             foreach (Follower f in activeFollowers)
                 if (f.Anim != null)
                     f.PositionHistory.Clear();
-        }
-    }
-
-    public static class OverloadOnFieldScriptInitializer
-    {
-        [ModuleInitializer]
-        public static void RunOnAssemblyLoad()
-        {
-            try
-            {
-                GameObject watcherObj = new GameObject("TranceSeek_FieldWatcher");
-                GameObject.DontDestroyOnLoad(watcherObj);
-                watcherObj.AddComponent<OverloadOnFieldScript>();
-            }
-            catch (Exception ex)
-            {
-                Log.Error($"[OverloadOnFieldScript] ERROR ON LOADING: {ex.Message}");
-            }
         }
     }
 }

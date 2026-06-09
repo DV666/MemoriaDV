@@ -365,7 +365,6 @@ namespace Memoria.Scripts.TranceSeek
                         case TranceSeekRegularItem.MagicLamp:
                             magiclampcooldown = (60 - unit.Will) * UnityEngine.Random.Range(1, 11) * 100;
                             unit.AddDelayedModifier(ProcessMagicLampRecast, null);
-
                             break;
                         case TranceSeekRegularItem.CursedCoin:
                             if (DarkBBG.Contains(battlebg.nf_BbgNumber))
@@ -395,6 +394,11 @@ namespace Memoria.Scripts.TranceSeek
                                     }
                                 );
                             }
+                            break;
+                        case TranceSeekRegularItem.Mini_FriendlyFeatherCircle:
+                            //unit.State().MascotCooldown = (60 - unit.Will) * UnityEngine.Random.Range(1, 11) * 100;
+                            unit.State().MascotCooldown = (60 - unit.Will) * UnityEngine.Random.Range(1, 11);
+                            unit.AddDelayedModifier(TranceSeekVisualAccessory.ProcessMascotRecast, null);
                             break;
                     }
 
@@ -496,7 +500,7 @@ namespace Memoria.Scripts.TranceSeek
                         unit.CurrentHp /= (uint)(TranceSeekBattleDictionary.IsHardcore ? 4 : 2);
                     }
 
-                    TranceSeekRegularItem.CheckCreateVisualAccessory(unit);
+                    TranceSeekVisualAccessory.CheckCreateVisualAccessory(unit);
                 }
                 else // Monsters init
                 {

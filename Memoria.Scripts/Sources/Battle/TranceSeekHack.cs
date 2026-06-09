@@ -1,7 +1,9 @@
 ﻿using Memoria.Prime;
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
+using static Memoria.Scripts.TranceSeek.TranceSeekDebug;
 
 namespace Memoria.Scripts.TranceSeek
 {
@@ -60,6 +62,24 @@ namespace Memoria.Scripts.TranceSeek
             {
                 battleRoot.AddComponent<TranceSeekCameraWatchdog>();
                 Log.Message("[TranceSeekHack] Watchdog immédiat configuré pour SFXRework.");
+            }
+        }
+    }
+    public static class Initializer
+    {
+        [ModuleInitializer]
+        public static void RunOnAssemblyLoad()
+        {
+            try
+            {
+                GameObject watcherObj = new GameObject("TranceSeek_Watcher");
+                GameObject.DontDestroyOnLoad(watcherObj);
+                watcherObj.AddComponent<OverloadOnFieldScript>();
+                watcherObj.AddComponent<DifficultyDebugMenu>();
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"[Trance Seek Init] ERROR ON LOADING: {ex.Message}");
             }
         }
     }
