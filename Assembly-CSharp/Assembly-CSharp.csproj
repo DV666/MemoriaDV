@@ -41,6 +41,36 @@
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Dev TS|AnyCPU'">
+    <OutputPath>bin\Dev TS\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Optimize>true</Optimize>
+    <NoStdLib>true</NoStdLib>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <LangVersion>latest</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Dev TS|Gaming.Desktop.x64'">
+    <OutputPath>bin\Gaming.Desktop.x64\Dev TS\</OutputPath>
+    <NoStdLib>true</NoStdLib>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Dev TS|Gaming.Xbox.Scarlett.x64'">
+    <OutputPath>bin\Gaming.Xbox.Scarlett.x64\Dev TS\</OutputPath>
+    <NoStdLib>true</NoStdLib>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Dev TS|Gaming.Xbox.XboxOne.x64'">
+    <OutputPath>..\Output\</OutputPath>
+    <NoStdLib>true</NoStdLib>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <LangVersion>latest</LangVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Assembly-CSharp-firstpass">
       <HintPath>..\References\Assembly-CSharp-firstpass.dll</HintPath>
@@ -264,6 +294,7 @@
     <Compile Include="Global\battle\BattleRainRenderer.cs" />
     <Compile Include="Global\EFFECT_GLOW.cs" />
     <Compile Include="Global\NormalSolver.cs" />
+    <Compile Include="Global\SavePageNamer.cs" />
     <Compile Include="Global\Sound\SaXAudio\AudioEffectManager.cs" />
     <Compile Include="Global\Sound\SaXAudio\EffectPreset.cs" />
     <Compile Include="Global\Sound\SaXAudio\SaXAudio.cs" />
@@ -402,12 +433,14 @@
     <Compile Include="Memoria\Assets\Text\Strings\TextResourceReference.cs" />
     <Compile Include="Memoria\Assets\Text\Strings\TextResjsonFormatter.cs" />
     <Compile Include="Memoria\Battle\Calculator\EatResult.cs" />
+    <Compile Include="Memoria\Battle\Scripts\MergingOverloadableMethod.cs" />
     <Compile Include="Memoria\Battle\Scripts\IOverloadableMethod.cs" />
     <Compile Include="Memoria\Battle\Scripts\IStatusScript.cs" />
     <Compile Include="Memoria\Configuration\Access\Lang.cs" />
     <Compile Include="Memoria\Configuration\Access\Worldmap.cs" />
     <Compile Include="Memoria\Configuration\Access\Interface.cs" />
     <Compile Include="Memoria\Configuration\Access\Shaders.cs" />
+    <Compile Include="Memoria\Configuration\CardPatcher.cs" />
     <Compile Include="Memoria\Configuration\IniFile.cs" />
     <Compile Include="Memoria\Configuration\Structure\LangSection.cs" />
     <Compile Include="Memoria\Configuration\Structure\WorldmapSection.cs" />
@@ -417,6 +450,8 @@
     <Compile Include="Memoria\Data\Battle\BattleCommandHelper.cs" />
     <Compile Include="Memoria\Data\Battle\BattleCommandMenu.cs" />
     <Compile Include="Memoria\Data\Battle\BattleMagicSwordSet.cs" />
+    <Compile Include="Memoria\Data\Characters\AbilitySorter.cs" />
+    <Compile Include="Memoria\Data\Items\EquipmentHelper.cs" />
     <Compile Include="Memoria\Data\Items\MixCommandType.cs" />
     <Compile Include="Memoria\Data\SpecialEffects\SHPPrototype.cs" />
     <Compile Include="Memoria\Data\SpecialEffects\SPSPrototype.cs" />

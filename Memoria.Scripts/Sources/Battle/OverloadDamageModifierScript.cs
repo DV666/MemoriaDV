@@ -59,12 +59,14 @@ namespace Memoria.Scripts.TranceSeek
 
             if (v.Caster.IsPlayer)
             {
-                if ((DifficultyDebugMenu.MegaCheat == 2))
+#if DEV_TS
+                if ((TranceSeekDebug.TranceSeekDebugMenu.MegaCheat == 2))
                 {
                     v.Target.HpDamage = 9999;
                     if (v.Target.IsPlayer)
                         v.Caster.Flags |= CalcFlag.HpAlteration;
                 }
+#endif
 
                 if (FF9StateSystem.Settings.IsDmg9999 && difficultyMode >= 3)
                 {

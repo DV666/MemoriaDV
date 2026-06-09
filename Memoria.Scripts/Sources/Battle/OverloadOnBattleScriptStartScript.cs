@@ -43,7 +43,8 @@ namespace Memoria.Scripts.TranceSeek
             if (Caster_TSVar.IsBackAttack)
                 Caster_TSVar.IsBackAttack = false;
 
-            if (DifficultyDebugMenu.MegaCheat > 0)
+#if DEV_TS
+            if (TranceSeekDebug.TranceSeekDebugMenu.MegaCheat > 0)
             {
                 foreach (BattleUnit unit in BattleState.EnumerateUnits())
                     if (unit.IsPlayer)
@@ -52,6 +53,7 @@ namespace Memoria.Scripts.TranceSeek
                         unit.PhysicalDefence = 254;
                     }
             }
+#endif
 
             if (FF9StateSystem.Battle.battleMapIndex == 52 && FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum == 0 && FF9StateSystem.EventState.gEventGlobal[1305] > 0 && v.Caster.IsPlayer && v.Command.Id == BattleCommandId.Attack && v.Caster.Data != v.Target.Data)
             { // Black Waltz 3 Broken (Polarity Mechanic)

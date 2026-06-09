@@ -12,7 +12,8 @@ namespace Memoria.Scripts.TranceSeek
 {
     public static class TranceSeekDebug
     {
-        public class DifficultyDebugMenu : MonoBehaviour
+#if DEV_TS
+        public class TranceSeekDebugMenu : MonoBehaviour
         {
             private bool _showMenu = false;
             private Rect _windowRect = new Rect(50, 50, 250, 550);
@@ -1976,5 +1977,6 @@ namespace Memoria.Scripts.TranceSeek
             private string FormatCheatText(string n, int c) { if (MegaCheat == c) return $"<color=green><b>{n}</b></color>"; return n; }
             private void SetDifficulty(int g, int i) { try { for (int x = 82; x <= 89; x++) ff9item.FF9Item_RemoveImportant(x); ff9item.FF9Item_AddImportant(i); FF9StateSystem.EventState.gEventGlobal[1403] = (byte)g; FF9StateSystem.EventState.gEventGlobal[1407] = (byte)(g >= 4 && g <= 6 ? 1 : 0); SoundLib.PlaySoundEffect(108); } catch { } }
         }
+#endif
     }
 }
