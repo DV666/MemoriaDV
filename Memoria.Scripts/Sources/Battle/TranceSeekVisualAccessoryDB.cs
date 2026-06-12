@@ -178,18 +178,18 @@ namespace Memoria.Scripts.TranceSeek
             {
                 GarudaWing, new("GEO_WEP_GarudaWing_Suit")
                 {
-                    { CharacterId.Zidane,      new(0,  new(98.5f, 133f, 0f),   new(0f, 180f, 180f)) },
-                    { CharacterId.Vivi,        new(0,  new(3f, -129.5f, -99f), new(0f, 84f, 0f)) },
-                    { CharacterId.Garnet,      new(0,  new(6.5f, -90f, -80f),  new(0f, 97f, 0f)) },
-                    { CharacterId.Steiner,     new(0,  new(79f, -147f, -147f), new(0f, 75f, 0f)) },
-                    { CharacterId.Freya,       new(0,  new(-75.5f, -175f, -103.5f), new(0f, 122f, 0f)) },
-                    { CharacterId.Quina,       new(0,  new(63f, -147.5f, -129.5f),  new(0f, 90f, 0f)) },
-                    { CharacterId.Eiko,        new(0,  new(96.5f, 46f, 0f),    new(0f, 180f, 180f)) },
-                    { CharacterId.Amarant,     new(0,  new(-7.5f, -150.5f, -147.5f), new(0f, 94f, 0f)) },
-                    { CharacterId.Cinna,       new(0,  new(-132.5f, 2.5f, -118f), new(291.3287f, 64.06817f, 115.4517f)) },
-                    { CharacterId.Marcus,      new(0,  new(102f, 0f, 0f),      new(286f, 180f, 180f)) },
-                    { CharacterId.Blank,       new(4,  new(104f, 0f, 0f),      new(322f, 0f, 0f)) },
-                    { CharacterId.Beatrix,     new(18, new(90f, -13f, 0f),     new(294f, 180f, 180f)) }
+                    { CharacterId.Zidane,      new(2,  new(0f, 0f, 0f),   new(0f, 0f, 132f),     0.5f) },
+                    { CharacterId.Vivi,        new(7,  new(0f, 0f, 0f), new(66.4161f, 273.0626f, 283.0112f),      0.5f) },
+                    { CharacterId.Garnet,      new(18,  new(0f, 0, 0f), new(336.8654f, 249.3371f, 309.1612f),      0.5f) },
+                    { CharacterId.Steiner,     new(19,  new(0f, 0f, 0f), new(327.0746f, 254.2215f, 303.27f),     0.75f) },
+                    { CharacterId.Freya,       new(7,  new(0f, 0f, 0f), new(323.7242f, 279.2981f, 296.6683f), 0.62f) },
+                    { CharacterId.Quina,       new(6,  new(51.5f, 28f, -35.5f),  new(314.2973f, 272.7824f, 274.6164f), 0.62f) },
+                    { CharacterId.Eiko,        new(17,  new(0f, -8.5f, -9f),    new(30.18423f, 271.7312f, 210.1128f), 0.5f) },
+                    { CharacterId.Amarant,     new(12,  new(0f, -34f, 43.5f), new(32.10057f, 224.0085f, 147.4532f), 0.75f) },
+                    { CharacterId.Cinna,       new(11,  new(0f, 0f, 0f), new(328.0054f, 267.6248f, 268.8208f), 0.6f) },
+                    { CharacterId.Marcus,      new(7,  new(0f, 36.5f, 0f),      new(324.7835f, 267.4861f, 288.3802f), 0.75f) },
+                    { CharacterId.Blank,       new(5,  new(0f, 0f, 0f),      new(19.36459f, 62.36271f, 214.0862f), 0.56f) },
+                    { CharacterId.Beatrix,     new(11, new(0f, 0f, 0f),     new(332.4421f, 279.8389f, 245.4601f), 0.62f) }
                 }
             }
         };

@@ -93,8 +93,8 @@ namespace Memoria.Scripts.TranceSeek
         private UIManager.UIState lastUiState;
         private Boolean IsWorldMap;
         private Boolean FollowersHidden;
-
         private static readonly HashSet<Int32> BlackListAnimationId =
+
             new HashSet<Int32>(new[] {
                 10539, // Climbing
                 10633 // Mounting Gargant

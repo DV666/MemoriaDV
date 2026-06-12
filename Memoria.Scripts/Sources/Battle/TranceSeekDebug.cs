@@ -670,7 +670,8 @@ namespace Memoria.Scripts.TranceSeek
 
                     if (launcher != null)
                     {
-                        btlseq.StartBtlSeq(launcher.Id, _forceTargetId, curSeqId);
+                        //btlseq.StartBtlSeq(launcher.Id, _forceTargetId, curSeqId);
+                        btl_cmd.SetEnemyCommand(launcher, BattleCommandId.EnemyAtk, curSeqId, (ushort)_forceTargetId);
 
                         int sfxToPlay = 103;
                         if (curSeqEnemyType >= 0 && curSeqEnemyType < battle.btl_scene.MonAddr.Length)
