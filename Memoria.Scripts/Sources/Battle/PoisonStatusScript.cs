@@ -50,7 +50,7 @@ namespace Memoria.DefaultScripts
 
             var Target_TSVar = Target.State();
             uint TargetMaxHP = Target_TSVar.Monster.HPBoss10000  ? (Target.MaximumHp - 10000) : Target.MaximumHp;
-            UInt32 damage = (UInt32)Math.Round(Target.IsUnderAnyStatus(BattleStatus.EasyKill) ? (TargetMaxHP / 256.0) : (TargetMaxHP / 32.0));
+            UInt32 damage = (UInt32)(Target.IsUnderAnyStatus(BattleStatus.EasyKill) ? (TargetMaxHP / 256.0) : (TargetMaxHP / 32.0));
             Boolean isDmg = false;
 
             if (!Target.IsZombie && Target_TSVar.Marcus.CursedBlood == 0 && (Target_TSVar.EffectElement.Poison & 8) == 0)

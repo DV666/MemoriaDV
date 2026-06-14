@@ -59,7 +59,17 @@ namespace Memoria.DefaultScripts
             var Target_TSVar = target.State();
             if (!Target.IsPlayer)
             {
-                if (!Target.IsUnderAnyStatus(BattleStatus.EasyKill))  // +50% HP/MP Max if monster get under Trance
+                Boolean IsBoss = Target.IsUnderAnyStatus(BattleStatus.EasyKill);
+                if (!FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1002, out Dictionary<Int32, Int32> dictspecialeffect))
+                {
+                    dictspecialeffect = new Dictionary<Int32, Int32>();
+                    FF9StateSystem.EventState.gScriptDictionary.Add(1002, dictspecialeffect);
+                }
+
+                if (!IsBoss || (dictspecialeffect.TryGetValue(4, out Int32 ForceTriggerTrance) && ForceTriggerTrance == 1))
+                    TriggerTranceBgm(177, Target);
+
+                if (!IsBoss)  // +50% HP/MP Max if monster get under Trance
                 {
                     Target.MaximumHp += (Target.MaximumHp / 2);
                     Target.MaximumMp += (Target.MaximumMp / 2);
@@ -79,7 +89,7 @@ namespace Memoria.DefaultScripts
             if (!target.IsPlayer)
             {
                 ChangeLootMonster(target);
-                if (target.Data.dms_geo_id == 427)
+                if (target.Data.dms_geo_id == 427) // Beatrix
                 {
                     target.AddDelayedModifier(
                         target => target.Data.bi.def_idle == 1,
@@ -103,7 +113,7 @@ namespace Memoria.DefaultScripts
                         }
                         );
                 }
-                else if (target.Data.dms_geo_id == 410)
+                else if (target.Data.dms_geo_id == 410) // Lani
                 {
                     target.AddDelayedModifier(
                         target => !target.Data.enable_trance_glow,
@@ -448,6 +458,54 @@ namespace Memoria.DefaultScripts
                 else if (mob.Data.dms_geo_id == 327) // Ogra
                     battleEnemy.StealableItems[3] = TranceSeekRegularItem.OgraKnife;
             }
+        }
+
+        private static System.Reflection.FieldInfo MusicDbField = typeof(AllSoundDispatchPlayer).GetField("musicImmediateDB", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+
+        public static void TriggerTranceBgm(Int32 tranceSongId, BattleUnit target)
+        {
+            AllSoundDispatchPlayer player = SoundLib.GetAllSoundDispatchPlayer();
+            Int32 oldSongId = player.GetCurrentMusicId();
+
+            if (oldSongId == -1 || oldSongId == tranceSongId)
+                return;
+
+            Int32 offsetMs = 0;
+            if (MusicDbField != null)
+            {
+                SoundDatabase soundDb = MusicDbField.GetValue(player) as SoundDatabase;
+                SoundProfile profile = soundDb?.Read(oldSongId);
+                if (profile != null)
+                    offsetMs = Mathf.RoundToInt(profile.StartPlayTime);
+            }
+
+            //player.FF9SOUND_SONG_VOL_INTPL(tranceSongId, 60, 0);
+
+            target.AddDelayedModifier(
+                unit =>
+                {
+                    FF9StateBattleSystem ff9Battle = FF9StateSystem.Battle.FF9Battle;
+                    CMD_DATA cur_cmd = ff9Battle.cur_cmd;
+
+                    if (cur_cmd != null)
+                    {
+                        if (player.GetCurrentMusicId() == tranceSongId && unit.IsUnderAnyStatus(BattleStatusConst.BattleEndFull))
+                        {
+                            player.FF9SOUND_SONG_PLAY(oldSongId, 0, AllSoundDispatchPlayer.MINIMUM_SONG_FADE_MS);
+                            player.FF9SOUND_SONG_SKIPPHRASE_MILLISEC(oldSongId, offsetMs);
+                            player.FF9SOUND_SONG_VOL_INTPL(oldSongId, 60, 100);
+                        }
+                        else if (cur_cmd.cmd_no == BattleCommandId.SysTrans && cur_cmd.regist == unit.Data)
+                        {
+                            player.FF9SOUND_SONG_PLAY(tranceSongId, 0, AllSoundDispatchPlayer.MINIMUM_SONG_FADE_MS);
+                            player.FF9SOUND_SONG_SKIPPHRASE_MILLISEC(tranceSongId, offsetMs);
+                            player.FF9SOUND_SONG_VOL_INTPL(tranceSongId, 60, 100);
+                        }
+                    }
+                    return true;
+                },
+                null
+            );
         }
     }
 }

@@ -84,7 +84,6 @@ namespace Memoria.Scripts.TranceSeek
 
         private List<Follower> activeFollowers = new List<Follower>();
         private Vector3 lastLeaderLocalPos;
-        private FieldInfo isRunningField;
         private GameObject leader;
         private Actor actorleader;
         private Renderer leaderRenderer;
@@ -96,7 +95,10 @@ namespace Memoria.Scripts.TranceSeek
         private static readonly HashSet<Int32> BlackListAnimationId =
 
             new HashSet<Int32>(new[] {
-                10539, // Climbing
+                10539, // Climbing (Ladder)
+                13055, // Climbing Up (Rope)
+                13059, // Climbing Jump (Rope)
+                13073, // Climbing Down (Rope)
                 10633 // Mounting Gargant
             });
 
@@ -106,10 +108,20 @@ namespace Memoria.Scripts.TranceSeek
             2928, 2929, 2930, 2931, 2932, 2933, 2934, 3000, 3001, 3002, 3003, 3004, 3005, 3006, 3007, 3008, 3009, 3010, 3011, 3012}); // End of the game
         private static readonly HashSet<Int32> ModelCantGetFollowers = new HashSet<Int32>(new[] { 317, 312, 320, 321, 308 });
 
+        // I use this instead of checking if the player is running => In some scenes like Zidane running to save Eiko : he is running but player don't control it.
+        private static readonly HashSet<Int32> ActorAnimWalking = new HashSet<Int32>(new[] {
+            203, 145, 2092, 2006, 2559, 3231, 7505, 8311, 473, 476, 464, 2982, 8347,
+            38, 419, 2091, 2005, 2558, 3230, 7506, 8312, 105, 365, 5222, 2981, 8348
+        });
+
         private int speedFactor => HonoBehaviorSystem.Instance.IsFastForwardModeActive() ? HonoBehaviorSystem.Instance.GetFastForwardFactor() : 1;
         private Boolean BlackListCondition => ((FF9StateSystem.Common.FF9.fldMapNo == 908 && GameState.ScenarioCounter < 4400)
             || (FF9StateSystem.Common.FF9.fldMapNo == 953 && GameState.ScenarioCounter == 4530)
             || (FF9StateSystem.Common.FF9.fldMapNo == 1014 && (GetLeaderAnimID() == 581 || GetLeaderAnimID() == 3519)));
+
+        // A FAIRE => Quand le groupe observe le rituel d'Eiko à Gulg.
+        // Après avoir battu Siamois
+        // Quand on libere Hilda
 
         private void LateUpdate()
         {
@@ -333,9 +345,6 @@ namespace Memoria.Scripts.TranceSeek
             if (!init || leader == null)
                 InitFollower();
 
-            if (isRunningField == null)
-                isRunningField = typeof(FieldMapActorController).GetField("isRunning", BindingFlags.NonPublic | BindingFlags.Instance);
-
             if (FollowersHidden)
                 HideFollowers(false);
 
@@ -347,12 +356,8 @@ namespace Memoria.Scripts.TranceSeek
                 state.LocalPosition = leader.transform.localPosition;
                 state.LocalRotation = leader.transform.localRotation;
                 state.IsMoving = true;
-                state.IsRunning = false;
+                state.IsRunning = ActorAnimWalking.Contains(actorleader.anim);
                 state.LightColor = GetLeaderColor();
-
-                FieldMapActorController fmac = leader.GetComponent<FieldMapActorController>();
-                if (fmac != null && isRunningField != null)
-                    state.IsRunning = (bool)isRunningField.GetValue(fmac);
 
                 foreach (Follower f in activeFollowers)
                     f.PositionHistory.Enqueue(state);
@@ -390,6 +395,7 @@ namespace Memoria.Scripts.TranceSeek
                 else
                 {
                     f.IdleTimer -= speedFactor;
+                    ApplyFollowerColor(f, GetLeaderColor());
                     if (f.IdleTimer < 0)
                     {
                         PlayAnimation(f, f.AnimInactive);
@@ -477,6 +483,7 @@ namespace Memoria.Scripts.TranceSeek
                 else
                 {
                     f.IdleTimer -= speedFactor;
+                    ApplyFollowerColor(f, GetLeaderColor());
                     if (f.IdleTimer < 0)
                     {
                         PlayAnimation(f, f.AnimInactive);
@@ -688,7 +695,6 @@ namespace Memoria.Scripts.TranceSeek
 
             leader = null;
             leaderRenderer = null;
-            isRunningField = null;
             activeFollowers.Clear();
             IsWorldMap = false;
             init = false;

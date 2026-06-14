@@ -464,15 +464,16 @@ namespace Memoria.Scripts.TranceSeek
                 if (Eiko == null)
                     return;
 
-                if (PassiveEikoScript.StateMoug[Eiko.Data] == 0 && !Eiko.IsUnderAnyStatus(BattleStatus.Death | BattleStatus.Petrify | BattleStatus.Jump | BattleStatus.Heat) && v.Caster.Data != Eiko.Data)
+                if (Eiko.State().Eiko.StateMoug == 0 && !Eiko.IsUnderAnyStatus(BattleStatus.Death | BattleStatus.Petrify | BattleStatus.Jump | BattleStatus.Heat) && v.Caster.Data != Eiko.Data)
                 {
-                    float ChanceMoug = (float)(Eiko.HasSupportAbilityByIndex(TranceSeekSupportAbility.Comehere_Boosted) ? 12 : (Eiko.HasSupportAbilityByIndex(TranceSeekSupportAbility.ComeHere) ? 10 : 8));
+                    //float ChanceMoug = (Eiko.HasSupportAbilityByIndex(TranceSeekSupportAbility.Comehere_Boosted) ? 12 : (Eiko.HasSupportAbilityByIndex(TranceSeekSupportAbility.ComeHere) ? 10 : 8));
+                    float ChanceMoug = 100;
 
-                    if (Comn.random16() % 100 > ChanceMoug || Eiko.HasSupportAbilityByIndex(TranceSeekSupportAbility.Synergy)) // Synergy
+                    if (Eiko.HasSupportAbilityByIndex(TranceSeekSupportAbility.Synergy) || Comn.random16() % 100 > ChanceMoug) // Synergy
                         return;
 
                     ushort TargetId = v.Caster.Id;
-                    PassiveEikoScript.StateMoug[Eiko.Data] = 1;
+                    Eiko.State().Eiko.StateMoug = 1;
                     Boolean TargetReflect = false;
                     var Eiko_TSVar = Eiko.State();
                     List<BattleAbilityId> ClassicMougAAList = new List<BattleAbilityId>();

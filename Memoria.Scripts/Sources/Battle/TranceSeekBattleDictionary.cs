@@ -131,10 +131,19 @@ namespace Memoria.Scripts.TranceSeek
         }
     }
 
+    public class EikoPassives
+    {
+        public int NumberTargets { get; set; }
+        public GameObject ModelMoug { get; set; }
+        public Animation AnimationMoug { get; set; }
+
+        public int StateMoug { get; set; }
+    }
+
     public class BeatrixPassives
     {
         public int StackCMD { get; set; }
-        public int MagicDummied { get; set; }
+        //public int MagicDummied { get; set; }
         public int Braver { get; set; }
         public Boolean RedemptionTrigger { get; set; }
     }
@@ -271,6 +280,7 @@ namespace Memoria.Scripts.TranceSeek
         public ViviPassives Vivi { get; set; } = new ViviPassives();
         public SteinerPassives Steiner { get; set; } = new SteinerPassives();
         public AmarantPassives Amarant { get; set; } = new AmarantPassives();
+        public EikoPassives Eiko { get; set; } = new EikoPassives();
         public BeatrixPassives Beatrix { get; set; } = new BeatrixPassives();
         public BlankPassives Blank { get; set; } = new BlankPassives();
         public CinnaPassives Cinna { get; set; } = new CinnaPassives();
@@ -295,6 +305,8 @@ namespace Memoria.Scripts.TranceSeek
         public Boolean IsBackAttack { get; set; }
         public Boolean PreventTranceSFX { get; set; }
         public int DragonChanceProc { get; set; }
+        public WEAPON_MODEL Mascot { get; set; }
+
         public int MascotCooldown { get; set; }
 
 

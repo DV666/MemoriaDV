@@ -140,6 +140,9 @@
     <Compile Include="Sources\Battle\0016_DrainHpScript.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
+    <Compile Include="Sources\Battle\0145_PoisonGravityDamageScript.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
     <Compile Include="Sources\Battle\0017_MagicGravityDamageScript.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>

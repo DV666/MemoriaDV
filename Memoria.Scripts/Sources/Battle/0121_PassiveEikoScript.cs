@@ -1,5 +1,6 @@
 ﻿using FF9;
 using Memoria.Data;
+using Memoria.Prime;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -22,71 +23,68 @@ namespace Memoria.Scripts.TranceSeek
             _v = v;
         }
 
-        public static Dictionary<BTL_DATA, Int32> NumberTargets = new Dictionary<BTL_DATA, Int32>();
-        public static Dictionary<BTL_DATA, GameObject> ModelMoug = new Dictionary<BTL_DATA, GameObject>();
-        public static Dictionary<BTL_DATA, Int32> StateMoug = new Dictionary<BTL_DATA, Int32>();
-
         public void Perform()
         {
             if (_v.Caster.PlayerIndex == CharacterId.Eiko)
             {
-                if (!NumberTargets.TryGetValue(_v.Caster.Data, out Int32 Targets))
-                    NumberTargets[_v.Caster.Data] = 0;
+                var Eiko_TSVar = _v.CasterState().Eiko;
+                string IdleAnim = "ANH_NPC_F4_MOG_IDLE";
 
-                if (StateMoug[_v.Caster.Data] == 1) // Moug appears.
+                if (Eiko_TSVar.StateMoug == 1) // Moug appears.
                 {
-                    if (ModelMoug[_v.Caster.Data] == null) // For safety (normally, init in OverloadBattleInit).
-                        ModelMoug[_v.Caster.Data] = ModelFactory.CreateModel("GEO_NPC_F4_MOG", true);
+                    if (Eiko_TSVar.ModelMoug == null) // For safety (normally, init in OverloadBattleInit).
+                        InitMogModel(_v.Caster);
 
                     if ((_v.Command.AbilityCategory & 16) != 0)
                         _v.Command.AbilityCategory -= 16; // Remove magical effect (for Vanish)
 
-                    ModelMoug[_v.Caster.Data].SetActive(true);
+                    Eiko_TSVar.ModelMoug.SetActive(true);
                     // ANH_NPC_F4_MOG_INTO_EIK_PASSIVE_1
                     // ANH_NPC_F4_MOG_INTO_EIK_PASSIVE_2
                     if (FF9StateSystem.EventState.ScenarioCounter > 9990) // Moug has a "phantom" effect after Mont Gulug.
-                        btl_util.GeoSetABR(ModelMoug[_v.Caster.Data], "GEO_POLYFLAGS_TRANS_100_PLUS_25");
-                    ModelMoug[_v.Caster.Data].transform.localPosition = _v.Caster.Data.gameObject.transform.localPosition;
-                    ModelMoug[_v.Caster.Data].transform.localRotation = _v.Caster.Data.gameObject.transform.localRotation;
-                    ModelMoug[_v.Caster.Data].transform.localScale = _v.Caster.Data.gameObject.transform.localScale;
-                    StateMoug[_v.Caster.Data] = 2;
-                    Animation animation = ModelMoug[_v.Caster.Data].GetComponent<Animation>();
-                    if (animation.GetClip("ANH_NPC_F4_MOG_INTO_EIK_PASSIVE_1") == null)
-                        AnimationFactory.AddAnimWithAnimatioName(ModelMoug[_v.Caster.Data], "ANH_NPC_F4_MOG_INTO_EIK_PASSIVE_1");
-                    if (animation.GetClip("ANH_NPC_F4_MOG_INTO_EIK_PASSIVE_2") == null)
-                        AnimationFactory.AddAnimWithAnimatioName(ModelMoug[_v.Caster.Data], "ANH_NPC_F4_MOG_INTO_EIK_PASSIVE_2");
-                    if (animation != null)
+                        btl_util.GeoSetABR(Eiko_TSVar.ModelMoug, "GEO_POLYFLAGS_TRANS_100_PLUS_25");
+                    Eiko_TSVar.ModelMoug.transform.localPosition = _v.Caster.Data.gameObject.transform.localPosition;
+                    Eiko_TSVar.ModelMoug.transform.localRotation = _v.Caster.Data.gameObject.transform.localRotation;
+                    Eiko_TSVar.ModelMoug.transform.localScale = _v.Caster.Data.gameObject.transform.localScale;
+                    Eiko_TSVar.StateMoug = 2;
+                    if (Eiko_TSVar.AnimationMoug != null)
                     {
-                        animation["ANH_NPC_F4_MOG_INTO_EIK_PASSIVE_1"].speed = 1f;
-                        animation.Play("ANH_NPC_F4_MOG_INTO_EIK_PASSIVE_1");
+                        Eiko_TSVar.AnimationMoug.Play("ANH_NPC_F4_MOG_INTO_EIK_PASSIVE_1");
+                        _v.Caster.AddDelayedModifier(
+                            caster => Eiko_TSVar.AnimationMoug != null && Eiko_TSVar.AnimationMoug.IsPlaying("ANH_NPC_F4_MOG_INTO_EIK_PASSIVE_1"),
+                            caster =>
+                            {
+                                if (Eiko_TSVar.ModelMoug != null)
+                                {
+                                    Eiko_TSVar.ModelMoug.transform.localPosition = caster.Data.gameObject.transform.localPosition + new Vector3(0f, 0f, 250f);
+                                    Eiko_TSVar.AnimationMoug.Play(IdleAnim);
+                                }
+                            }
+                        );
                     }
                     return;
                 }
-                else if (StateMoug[_v.Caster.Data] == 2 && ModelMoug[_v.Caster.Data] != null) // Moug cast.
+                else if (Eiko_TSVar.StateMoug == 2 && Eiko_TSVar.ModelMoug != null) // Moug cast.
                 {
                     if ((_v.Command.AbilityCategory & 16) != 0)
                         _v.Command.AbilityCategory -= 16; // Remove magical effect (for Vanish)
 
-                    ModelMoug[_v.Caster.Data].transform.localPosition = _v.Caster.Data.gameObject.transform.localPosition + new Vector3(0f, 0f, 250f);
-                    Animation animation = ModelMoug[_v.Caster.Data].GetComponent<Animation>();
-                    if (animation != null)
+                    if (Eiko_TSVar.AnimationMoug != null)
                     {
-                        animation.Play("ANH_NPC_F4_MOG_INTO_EIK_2");
-                        if (animation["ANH_NPC_F4_MOG_INTO_EIK_2"] != null)
-                            animation["ANH_NPC_F4_MOG_INTO_EIK_2"].speed = 1f;
+                        Eiko_TSVar.AnimationMoug.PlayQueued("ANH_NPC_F4_MOG_INTO_EIK_2", QueueMode.PlayNow);
+                        Eiko_TSVar.AnimationMoug.PlayQueued(IdleAnim, QueueMode.CompleteOthers);
                     }
-                    StateMoug[_v.Caster.Data] = 3;
-                    NumberTargets[_v.Caster.Data] = _v.Command.TargetCount;
+                    Eiko_TSVar.StateMoug = 3;
+                    Eiko_TSVar.NumberTargets = _v.Command.TargetCount;
                     return;
                 }
-                else if (StateMoug[_v.Caster.Data] == 3 && ModelMoug[_v.Caster.Data] != null) // Moug cast
+                else if (Eiko_TSVar.StateMoug == 3 && Eiko_TSVar.ModelMoug != null) // Moug cast
                 {
-                    Animation animation = ModelMoug[_v.Caster.Data].GetComponent<Animation>();
-                    if (animation != null)
+                    if (Eiko_TSVar.AnimationMoug != null)
                     {
-                        animation.Play("ANH_NPC_F4_MOG_IDLE");
-                        if (animation["ANH_NPC_F4_MOG_IDLE"] != null)
-                            animation["ANH_NPC_F4_MOG_IDLE"].speed = 1f;
+                        Eiko_TSVar.AnimationMoug.Play("ANH_NPC_F4_MOG_IDLE");
+                        if (Eiko_TSVar.AnimationMoug["ANH_NPC_F4_MOG_IDLE"] != null)
+                            Eiko_TSVar.AnimationMoug["ANH_NPC_F4_MOG_IDLE"].speed = 1f;
                     }
                     switch (_v.Command.AbilityId)
                     {
@@ -181,33 +179,34 @@ namespace Memoria.Scripts.TranceSeek
                             break;
                     }
 
-                    NumberTargets[_v.Caster.Data]--;
-                    if (NumberTargets[_v.Caster.Data] <= 0)
+                    Eiko_TSVar.NumberTargets--;
+                    if (Eiko_TSVar.NumberTargets <= 0)
                     {
                         if (!ff9abil.FF9Abil_IsMaster(_v.Caster.Player, (int)_v.Command.AbilityId))
                             ff9abil.FF9Abil_SetMaster(_v.Caster.Player, (int)_v.Command.AbilityId);
 
-                        ModelMoug[_v.Caster.Data].transform.localPosition = _v.Caster.Data.gameObject.transform.localPosition;
-                        if (animation != null)
+                        Eiko_TSVar.ModelMoug.transform.localPosition = _v.Caster.Data.gameObject.transform.localPosition;
+                        if (Eiko_TSVar.AnimationMoug != null)
                         {
-                            animation.Play("ANH_NPC_F4_MOG_INTO_EIK_PASSIVE_2");
+                            Eiko_TSVar.AnimationMoug.Play("ANH_NPC_F4_MOG_INTO_EIK_PASSIVE_2");
                             SoundLib.PlaySoundEffect(1363);
-                            if (animation["ANH_NPC_F4_MOG_INTO_EIK_PASSIVE_2"] != null)
-                                animation["ANH_NPC_F4_MOG_INTO_EIK_PASSIVE_2"].speed = 1f;
+                            if (Eiko_TSVar.AnimationMoug["ANH_NPC_F4_MOG_INTO_EIK_PASSIVE_2"] != null)
+                                Eiko_TSVar.AnimationMoug["ANH_NPC_F4_MOG_INTO_EIK_PASSIVE_2"].speed = 1f;
                         }
                         Int32 counter = 25;
                         _v.Caster.AddDelayedModifier(
                             caster => (counter -= BattleState.ATBTickCount) > 0,
                             caster =>
                             {
-                                StateMoug[caster.Data] = 0;
-                                ModelMoug[_v.Caster.Data].SetActive(false);
+                                Eiko_TSVar.StateMoug = 0;
+                                Eiko_TSVar.ModelMoug.SetActive(false);
                             }
                         );
                     }
                 }
             }
         }
+
         private Boolean HitRateForZombie()
         {
             if (_v.Target.IsZombie)
@@ -217,6 +216,27 @@ namespace Memoria.Scripts.TranceSeek
             }
             return false;
         }
+
+        public static void InitMogModel(BattleUnit unit)
+        {
+            var Eiko_TSVar = unit.State().Eiko;
+            Eiko_TSVar.ModelMoug = ModelFactory.CreateModel("GEO_NPC_F4_MOG", true);
+
+            GameObject MogGeo = Eiko_TSVar.ModelMoug;
+
+            Eiko_TSVar.AnimationMoug = MogGeo.GetComponent<Animation>();
+            AnimationFactory.AddAnimWithAnimatioName(MogGeo, "ANH_NPC_F4_MOG_INTO_EIK_PASSIVE_1");
+            AnimationFactory.AddAnimWithAnimatioName(MogGeo, "ANH_NPC_F4_MOG_INTO_EIK_PASSIVE_2");
+            AnimationFactory.AddAnimWithAnimatioName(MogGeo, "ANH_NPC_F4_MOG_INTO_EIK_2");
+            AnimationFactory.AddAnimWithAnimatioName(MogGeo, "ANH_NPC_F4_MOG_IDLE");
+
+            if (Eiko_TSVar.AnimationMoug != null && Eiko_TSVar.AnimationMoug.GetClip("ANH_NPC_F4_MOG_IDLE") != null)
+                Eiko_TSVar.AnimationMoug["ANH_NPC_F4_MOG_IDLE"].wrapMode = WrapMode.Loop;
+
+            Eiko_TSVar.ModelMoug.SetActive(false);
+            Eiko_TSVar.StateMoug = 0;
+        }
+
     }
 }
 

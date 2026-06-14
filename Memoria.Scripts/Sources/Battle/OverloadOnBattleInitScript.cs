@@ -396,17 +396,15 @@ namespace Memoria.Scripts.TranceSeek
                             }
                             break;
                         case TranceSeekRegularItem.Mini_FriendlyFeatherCircle:
-                            //unit.State().MascotCooldown = (60 - unit.Will) * UnityEngine.Random.Range(1, 11) * 100;
-                            unit.State().MascotCooldown = (60 - unit.Will) * UnityEngine.Random.Range(1, 11);
+                            unit.State().MascotCooldown = (60 - unit.Will) * UnityEngine.Random.Range(1, 11) * 100;
                             unit.AddDelayedModifier(TranceSeekVisualAccessory.ProcessMascotRecast, null);
                             break;
                     }
 
                     if (unit.PlayerIndex == CharacterId.Eiko) // Init Moug
                     {
-                        PassiveEikoScript.ModelMoug[unit.Data] = ModelFactory.CreateModel("GEO_NPC_F4_MOG", true);
-                        PassiveEikoScript.ModelMoug[unit.Data].SetActive(false);
-                        PassiveEikoScript.StateMoug[unit.Data] = 0;
+                        if (!unit.HasSupportAbilityByIndex(TranceSeekSupportAbility.Synergy))
+                            PassiveEikoScript.InitMogModel(unit);
                     }
                     else if (unit.PlayerIndex == (CharacterId)14)
                     {

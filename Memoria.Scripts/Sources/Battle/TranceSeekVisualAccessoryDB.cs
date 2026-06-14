@@ -46,6 +46,22 @@ namespace Memoria.Scripts.TranceSeek
             }
         }
 
+        public static readonly Dictionary<CharacterId, CharacterTransform> MascotBaseTransforms = new()
+        {
+            { CharacterId.Zidane,      new(0,  new(98.5f, 133f, 0f),   new(0f, 180f, 180f),     0.5f) },
+            { CharacterId.Vivi,        new(0,  new(3f, -129.5f, -99f), new(0f, 84f, 0f),        0.5f) },
+            { CharacterId.Garnet,      new(0,  new(6.5f, -90f, -80f),  new(0f, 97f, 0f),        0.5f) },
+            { CharacterId.Steiner,     new(0,  new(79f, -147f, -147f), new(0f, 75f, 0f),        0.5f) },
+            { CharacterId.Freya,       new(0,  new(-75.5f, -175f, -103.5f), new(0f, 122f, 0f),  0.5f) },
+            { CharacterId.Quina,       new(0,  new(63f, -147.5f, -129.5f),  new(0f, 90f, 0f),   0.5f) },
+            { CharacterId.Eiko,        new(0,  new(96.5f, 46f, 0f),    new(0f, 180f, 180f),     0.5f) },
+            { CharacterId.Amarant,     new(0,  new(-7.5f, -150.5f, -147.5f), new(0f, 94f, 0f),  0.5f) },
+            { CharacterId.Cinna,       new(0,  new(-132.5f, 2.5f, -118f), new(291.3287f, 64.06817f, 115.4517f), 0.5f) },
+            { CharacterId.Marcus,      new(0,  new(102f, 0f, 0f),      new(286f, 180f, 180f),   0.5f) },
+            { CharacterId.Blank,       new(4,  new(104f, 0f, 0f),      new(322f, 0f, 0f),       0.5f) },
+            { CharacterId.Beatrix,     new(18, new(90f, -13f, 0f),     new(294f, 180f, 180f),   0.5f) }
+        };
+
         public static readonly Dictionary<RegularItem, AccessoryConfig> VisualAccessoriesDict = new()
         {
             {
@@ -158,24 +174,6 @@ namespace Memoria.Scripts.TranceSeek
             },
 
             {
-                Mini_FriendlyFeatherCircle, new("GEO_MON_B3_162", "ANH_MON_B3_162_000")
-                {
-                    { CharacterId.Zidane,      new(0,  new(98.5f, 133f, 0f),   new(0f, 180f, 180f),     0.5f) },
-                    { CharacterId.Vivi,        new(0,  new(3f, -129.5f, -99f), new(0f, 84f, 0f),        0.5f) },
-                    { CharacterId.Garnet,      new(0,  new(6.5f, -90f, -80f),  new(0f, 97f, 0f),        0.5f) },
-                    { CharacterId.Steiner,     new(0,  new(79f, -147f, -147f), new(0f, 75f, 0f),        0.5f) },
-                    { CharacterId.Freya,       new(0,  new(-75.5f, -175f, -103.5f), new(0f, 122f, 0f),  0.5f) },
-                    { CharacterId.Quina,       new(0,  new(63f, -147.5f, -129.5f),  new(0f, 90f, 0f),   0.5f) },
-                    { CharacterId.Eiko,        new(0,  new(96.5f, 46f, 0f),    new(0f, 180f, 180f),     0.5f) },
-                    { CharacterId.Amarant,     new(0,  new(-7.5f, -150.5f, -147.5f), new(0f, 94f, 0f),  0.5f) },
-                    { CharacterId.Cinna,       new(0,  new(-132.5f, 2.5f, -118f), new(291.3287f, 64.06817f, 115.4517f), 0.5f) },
-                    { CharacterId.Marcus,      new(0,  new(102f, 0f, 0f),      new(286f, 180f, 180f),   0.5f) },
-                    { CharacterId.Blank,       new(4,  new(104f, 0f, 0f),      new(322f, 0f, 0f),       0.5f) },
-                    { CharacterId.Beatrix,     new(18, new(90f, -13f, 0f),     new(294f, 180f, 180f),   0.5f) }
-                }
-            },
-
-            {
                 GarudaWing, new("GEO_WEP_GarudaWing_Suit")
                 {
                     { CharacterId.Zidane,      new(2,  new(0f, 0f, 0f),   new(0f, 0f, 132f),     0.5f) },
@@ -191,7 +189,27 @@ namespace Memoria.Scripts.TranceSeek
                     { CharacterId.Blank,       new(5,  new(0f, 0f, 0f),      new(19.36459f, 62.36271f, 214.0862f), 0.56f) },
                     { CharacterId.Beatrix,     new(11, new(0f, 0f, 0f),     new(332.4421f, 279.8389f, 245.4601f), 0.62f) }
                 }
-            }
+            },
+
+            {
+                YanHorns, new("GEO_WEP_Yan_Horns_Suit")
+                {
+                    { CharacterId.Zidane,      new(8,  new(0f, 6f, 73f),   new(0f, 0f, 0f),     0.68f) },
+                    { CharacterId.Vivi,        new(10,  new(0f, 0f, 0),   new(0f, 0f, 0f),      0.68f) },
+                    { CharacterId.Garnet,      new(7,  new(0f, -3.5f, 56.5f),   new(0f, 0f, 0f),      0.68f) },
+                    { CharacterId.Steiner,     new(20,  new(0f, 0f, 70.5f), new(0f, 0f, 0f),     0.51f) },
+                    { CharacterId.Freya,       new(8,  new(0f, 0f, 15.5f), new(0f, 0f, 0f), 0.68f) },
+                    { CharacterId.Quina,       new(7,  new(0f, 0f, -65f),  new(314f, 0f, 0f), 0.75f) },
+                    { CharacterId.Eiko,        new(19,  new(0f, 0f, 49.5f),    new(0f, 0f, 0f), 0.68f) },
+                    { CharacterId.Amarant,     new(18,  new(0f, 0f, 48f), new(0f, 0f, 0f)) },
+                    { CharacterId.Cinna,       new(12,  new(0f, 0f, 44.5f),    new(0f, 0f, 0f), 0.68f) },
+                    { CharacterId.Marcus,      new(8,  new(0f, 0f, 48f),    new(0f, 0f, 0f), 0.68f) },
+                    { CharacterId.Blank,       new(4,  new(0f, 11f, -25f),    new(0f, 180f, 180f), 0.62f) },
+                    { CharacterId.Beatrix,     new(18,  new(0f, 0f, 36.5f),    new(0f, 0f, 0f), 0.82f) }
+                }
+            },
+
+            { Mini_FriendlyFeatherCircle, new("GEO_MON_B3_162") }
         };
     }
 }

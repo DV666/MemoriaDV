@@ -110,7 +110,7 @@ namespace Memoria.Scripts.TranceSeek
             if (!_v.Target.CanBeRevived())
                 return 0;
 
-            if (_v.Target.IsZombie)
+            if (_v.Target.IsZombie && !_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill))
             {
                 TranceSeekAPI.MagicAccuracy(_v);
 

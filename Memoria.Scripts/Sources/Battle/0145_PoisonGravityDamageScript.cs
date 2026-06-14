@@ -1,0 +1,95 @@
+using Memoria.Data;
+using Memoria.Prime;
+using System;
+using System.Runtime.Remoting.Contexts;
+
+namespace Memoria.Scripts.TranceSeek
+{
+    /// <summary>
+    /// Demi, Aqua Breath, Demi Shock, Worm Hole
+    /// </summary>
+    [BattleScript(Id)]
+    public sealed class PoisonGravityDamageScript : IBattleScript
+    {
+        public const Int32 Id = 0145;
+
+        private readonly BattleCalculator _v;
+
+    public PoisonGravityDamageScript(BattleCalculator v)
+        {
+            _v = v;
+        }
+
+        public void Perform()
+        {
+            SB2_PATTERN sb2Pattern = FF9StateSystem.Battle.FF9Battle.btl_scene.PatAddr[FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum];
+            for (Int32 i = 0; i < ImmuneGravity.GetLength(0); i++)
+            {
+                if (FF9StateSystem.Battle.battleMapIndex == ImmuneGravity[i, 0] && sb2Pattern.Monster[_v.Target.Data.bi.slot_no].TypeNo == ImmuneGravity[i, 1])
+                {
+                    _v.Context.Flags = BattleCalcFlags.Guard;
+                    return;
+                }
+            }
+
+            _v.SetCommandAttack();
+            TranceSeekAPI.PenaltyCommandDividedAttack(_v);
+            if (_v.Target.IsUnderStatus(BattleStatus.Shell))
+                _v.Context.DamageModifierCount -= 2;
+            if (_v.Target.HasCategory(EnemyCategory.Stone) && !_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill))
+                _v.Context.DamageModifierCount++;
+            TranceSeekAPI.BonusElement(_v);
+            var Target_TSVar = _v.TargetState();
+            if (TranceSeekAPI.CanAttackMagic(_v))
+            {
+                if (_v.Command.HitRate == 255)
+                {
+                    _v.CalcDamageCommon();
+                    if (_v.Context.Attack > 100)
+                    {
+                        _v.Context.Attack = 100;
+                    }
+                    int num = (int)(_v.Target.MaximumHp * _v.Context.Attack / 100U);
+                    if (_v.Command.IsShortSummon)
+                    {
+                        num = num * 2 / 3;
+                    }
+                    _v.Target.HpDamage = num;             
+                }
+                else
+                {
+                    _v.CalcCannonProportionDamage();
+                    if (_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill) || TranceSeekAPI.EliteMonster(_v.Target.Data))
+                    {
+                        if (Target_TSVar.Monster.HPBoss10000 && _v.Target.CurrentHp > 10000)
+                            _v.Target.HpDamage = (Int32)(_v.Target.CurrentHp - 10000) * _v.Context.Attack / 100;
+                        else
+                            _v.Target.HpDamage = (Int32)_v.Target.CurrentHp * _v.Context.Attack / 100;
+
+                        _v.Target.HpDamage = Math.Max(1, (_v.Target.HpDamage / Target_TSVar.Monster.NerfGravity));
+                        if (_v.Target.HasCategory(EnemyCategory.Stone))
+                            _v.Target.HpDamage += (_v.Target.HpDamage * 10) / 100;
+                        Target_TSVar.Monster.NerfGravity = Target_TSVar.Monster.NerfGravity * 2;
+                    }
+                }
+                if (_v.Caster.Data.dms_geo_id == 5 || _v.Caster.Data.dms_geo_id == 267) // Kuja (multiple target malus)
+                {
+                    if (_v.Context.sfxThread.targetId != 1 && _v.Context.sfxThread.targetId != 2 && _v.Context.sfxThread.targetId != 4 && _v.Context.sfxThread.targetId != 8)
+                    {
+                        _v.Context.Attack /= 2;
+                        _v.Context.HitRate /= 2;
+                    }
+                }
+                TranceSeekAPI.TryAlterMagicStatuses(_v);
+            }
+
+            if (Target_TSVar.AbsorbElement == 256)
+                _v.Target.Flags |= CalcFlag.HpRecovery;
+        }
+
+        public static Int32[,] ImmuneGravity = new Int32[,]
+        {
+            { 930, 0 } // Lovecraft
+        };
+    }
+}

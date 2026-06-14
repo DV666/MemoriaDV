@@ -665,16 +665,16 @@ namespace Memoria.Scripts.TranceSeek
                 IsWeaponGravity = TranceSeekRegularItem.WeaponAffinitiesGravity.Contains(v.Caster.Weapon);
             }
 
-            if (v.Target.IsGuardElement(Element) || ((v.Command.ScriptId == 118 || v.Command.ScriptId == 119 || IsWeaponPoison) && (Target_TSVar.EffectElement.Poison & 4) != 0) || ((v.Command.ScriptId == 17 || v.Command.ScriptId == 86 || IsWeaponGravity) && (Target_TSVar.EffectElement.Gravity & 4) != 0))
+            if (v.Target.IsGuardElement(Element) || ((v.Command.ScriptId == 118 || v.Command.ScriptId == 119 || v.Command.ScriptId == 145 || IsWeaponPoison) && (Target_TSVar.EffectElement.Poison & 4) != 0) || ((v.Command.ScriptId == 17 || v.Command.ScriptId == 86 || IsWeaponGravity) && (Target_TSVar.EffectElement.Gravity & 4) != 0))
             {
                 v.Context.Flags |= BattleCalcFlags.Guard;
                 return false;
             }
 
-            if (v.Target.IsHalfElement(Element) || ((v.Command.ScriptId == 118 || v.Command.ScriptId == 119 || IsWeaponPoison) && (Target_TSVar.EffectElement.Poison & 2) != 0) || ((v.Command.ScriptId == 17 || v.Command.ScriptId == 86 || IsWeaponGravity) && (Target_TSVar.EffectElement.Gravity & 2) != 0))
+            if (v.Target.IsHalfElement(Element) || ((v.Command.ScriptId == 118 || v.Command.ScriptId == 119 || v.Command.ScriptId == 145 || IsWeaponPoison) && (Target_TSVar.EffectElement.Poison & 2) != 0) || ((v.Command.ScriptId == 17 || v.Command.ScriptId == 86 || IsWeaponGravity) && (Target_TSVar.EffectElement.Gravity & 2) != 0))
                 v.Context.Attack /= 2;
 
-            if (v.Target.IsWeakElement(Element) || ((v.Command.ScriptId == 118 || v.Command.ScriptId == 119 || IsWeaponPoison) && (Target_TSVar.EffectElement.Poison & 1) != 0) || ((v.Command.ScriptId == 17 || v.Command.ScriptId == 86 || IsWeaponGravity) && (Target_TSVar.EffectElement.Gravity & 1) != 0))
+            if (v.Target.IsWeakElement(Element) || ((v.Command.ScriptId == 118 || v.Command.ScriptId == 119 || v.Command.ScriptId == 145 || IsWeaponPoison) && (Target_TSVar.EffectElement.Poison & 1) != 0) || ((v.Command.ScriptId == 17 || v.Command.ScriptId == 86 || IsWeaponGravity) && (Target_TSVar.EffectElement.Gravity & 1) != 0))
                 v.Context.DamageModifierCount += 2;
 
             if (v.Target.CanAbsorbElement(Element))

@@ -67,9 +67,10 @@ namespace Memoria.Scripts.TranceSeek
                 if (_v.Target.Data.dms_geo_id == 416) // Meltigemini
                 {
                     int PreviousHP = (int)_v.Target.CurrentHp;
+                    Int32 wait = 20;
                     _v.Caster.AddDelayedModifier(
-                        caster => caster.CurrentAtb >= caster.MaximumAtb,
-                        caster =>
+                    caster => (wait -= BattleState.ATBTickCount) > 0,
+                    caster =>
                         {
                             _v.TargetState().Monster.Special1 = Math.Min((int)(PreviousHP - _v.Target.CurrentHp), 9999);
                         }
