@@ -29,57 +29,52 @@ namespace Memoria.Scripts.TranceSeek
                 else if (_v.Command.Data.info.effect_counter == 3)
                     _v.Command.Element = EffectElement.Fire;
             }
-            if (_v.Target.MagicDefence == 255)
+
+            if (_v.Command.AbilityId == BattleAbilityId.Attack) // Racket
             {
-                _v.Context.Flags |= BattleCalcFlags.Guard;
-            }
-            else
-            {
-                if (_v.Command.AbilityId == BattleAbilityId.Attack) // Racket
+                _v.PhysicalAccuracy();
+                if (TranceSeekAPI.TryPhysicalHit(_v))
                 {
-                    _v.PhysicalAccuracy();
-                    if (TranceSeekAPI.TryPhysicalHit(_v))
-                    {
-                        Int32 baseDamage = Comn.random16() % (1 + (_v.Caster.Level + _v.Caster.Magic >> 3));
-                        _v.Context.AttackPower = _v.Caster.GetWeaponPower(_v.Command);
-                        _v.Target.SetMagicDefense();
-                        _v.Context.Attack = _v.Caster.Magic + baseDamage;
-                        _v.Command.Element = _v.Caster.WeaponElement;
-                        TranceSeekAPI.BonusBackstabAndPenaltyLongDistance(_v);
-                    }
-                    else
-                        return;
+                    Int32 baseDamage = Comn.random16() % (1 + (_v.Caster.Level + _v.Caster.Magic >> 3));
+                    _v.Context.AttackPower = _v.Caster.GetWeaponPower(_v.Command);
+                    _v.Target.SetMagicDefense();
+                    _v.Context.Attack = _v.Caster.Magic + baseDamage;
+                    _v.Command.Element = _v.Caster.WeaponElement;
+                    TranceSeekAPI.BonusBackstabAndPenaltyLongDistance(_v);
                 }
                 else
-                    _v.NormalMagicParams();
+                    return;
+            }
+            else
+                _v.NormalMagicParams();
 
                 
-                TranceSeekAPI.CasterPenaltyMini(_v);
-                TranceSeekAPI.EnemyTranceBonusAttack(_v);
-                TranceSeekAPI.PenaltyShellAttack(_v);
-                TranceSeekAPI.PenaltyCommandDividedAttack(_v);
-                if (_v.Caster.Data.dms_geo_id == 5 || _v.Caster.Data.dms_geo_id == 267) // Kuja (multiple target malus)
+            TranceSeekAPI.CasterPenaltyMini(_v);
+            TranceSeekAPI.EnemyTranceBonusAttack(_v);
+            TranceSeekAPI.PenaltyShellAttack(_v);
+            TranceSeekAPI.PenaltyCommandDividedAttack(_v);
+            if (_v.Caster.Data.dms_geo_id == 5 || _v.Caster.Data.dms_geo_id == 267) // Kuja (multiple target malus)
+            {
+                if (_v.Context.sfxThread.targetId != 1 && _v.Context.sfxThread.targetId != 2 && _v.Context.sfxThread.targetId != 4 && _v.Context.sfxThread.targetId != 8)
                 {
-                    if (_v.Context.sfxThread.targetId != 1 && _v.Context.sfxThread.targetId != 2 && _v.Context.sfxThread.targetId != 4 && _v.Context.sfxThread.targetId != 8)
-                    {
-                        _v.Context.DamageModifierCount -= 2;
-                        _v.Context.HitRate /= 2;
-                    }
+                    _v.Context.DamageModifierCount -= 2;
+                    _v.Context.HitRate /= 2;
                 }
-                TranceSeekAPI.BonusElement(_v);
-                if (TranceSeekAPI.CanAttackMagic(_v))
-                {
-                    if (_v.Target.HasCategory(EnemyCategory.Humanoid) && (_v.Command.AbilityId == BattleAbilityId.Poison || _v.Command.AbilityId == BattleAbilityId.Bio))
-                        _v.Context.DamageModifierCount += 4;
-                    if (_v.Target.IsZombie && (_v.Command.AbilityId == BattleAbilityId.Poison || _v.Command.AbilityId == BattleAbilityId.Bio || _v.Command.AbilityId == TranceSeekBattleAbility.Magicweaponhigh || _v.Command.AbilityId == TranceSeekBattleAbility.AVAILABLE9))
-                        _v.Target.Flags |= CalcFlag.HpRecovery;
-                    if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Archmage))
-                        TranceSeekAPI.TryCriticalHit(_v);
-                    _v.CalcHpDamage();
-                    TranceSeekAPI.RaiseTrouble(_v);
-                }
-                TranceSeekAPI.TryAlterMagicStatuses(_v);
             }
+            TranceSeekAPI.BonusElement(_v);
+            if (TranceSeekAPI.CanAttackMagic(_v))
+            {
+                if (_v.Target.HasCategory(EnemyCategory.Humanoid) && (_v.Command.AbilityId == BattleAbilityId.Poison || _v.Command.AbilityId == BattleAbilityId.Bio))
+                    _v.Context.DamageModifierCount += 4;
+                if (_v.Target.IsZombie && (_v.Command.AbilityId == BattleAbilityId.Poison || _v.Command.AbilityId == BattleAbilityId.Bio || _v.Command.AbilityId == TranceSeekBattleAbility.Magicweaponhigh || _v.Command.AbilityId == TranceSeekBattleAbility.AVAILABLE9))
+                    _v.Target.Flags |= CalcFlag.HpRecovery;
+                if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Archmage))
+                    TranceSeekAPI.TryCriticalHit(_v);
+                _v.CalcHpDamage();
+                TranceSeekAPI.RaiseTrouble(_v);
+            }
+            TranceSeekAPI.TryAlterMagicStatuses(_v);
+
             if (FF9StateSystem.Battle.battleMapIndex == 303 && (_v.Command.AbilityStatus & BattleStatus.Heat) != 0 && _v.Command.RawIndex == 11) // Buzz - Blambourine
             {
                 BattleStatusDataEntry statusData = FF9StateSystem.Battle.FF9Battle.status_data[BattleStatusId.Heat];

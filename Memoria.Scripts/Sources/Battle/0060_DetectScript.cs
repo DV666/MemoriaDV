@@ -33,7 +33,7 @@ namespace Memoria.Scripts.TranceSeek
 
                 var Target_TSVar = _v.TargetState();
 
-                if (_v.Target.PhysicalEvade == 255 || _v.TargetState().Zidane.EyeOfTheThief)
+                if (_v.TargetState().Zidane.EyeOfTheThief)
                 {
                     if (!VanishRemove)
                         _v.Context.Flags |= BattleCalcFlags.Miss;

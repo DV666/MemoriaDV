@@ -22,26 +22,17 @@ namespace Memoria.Scripts.TranceSeek
         {
             if (!_v.Target.TryKillFrozen())
             {
-                if (_v.Target.PhysicalDefence == 255)
-                {
-                    _v.Context.Flags |= BattleCalcFlags.Guard;
-                    return;
-                }
-                if (_v.Target.IsUnderAnyStatus(BattleStatus.Vanish) || _v.Target.PhysicalEvade == 255)
+                if (_v.Target.IsUnderAnyStatus(BattleStatus.Vanish))
                 {
                     _v.Context.Flags |= BattleCalcFlags.Miss;
                     return;
                 }
                 _v.PhysicalAccuracy();
                 if (_v.Caster.IsPlayer)
-                {
                     _v.WeaponPhysicalParams();
-                }
                 else
-                {
                     _v.NormalPhysicalParams();
-                }
-                
+
                 TranceSeekAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
                 TranceSeekAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
                 TranceSeekAPI.BonusBackstabAndPenaltyLongDistance(_v);
@@ -52,13 +43,10 @@ namespace Memoria.Scripts.TranceSeek
                     _v.CalcHpDamage();
                     _v.Caster.Flags |= CalcFlag.HpAlteration;
                     if (_v.Caster.IsPlayer)
-                    {
                         _v.Caster.HpDamage = (Int32)(_v.Caster.MaximumHp / 4U);
-                    }
                     else
-                    {
                         _v.Caster.HpDamage = (Int32)(_v.Caster.MaximumHp >> 3);
-                    }
+
                     TranceSeekAPI.RaiseTrouble(_v);
                 }
             }

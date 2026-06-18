@@ -23,7 +23,7 @@ namespace Memoria.Scripts.TranceSeek
             return state;
         }
 
-        public static bool ImmuneStatusPlayer = Configuration.Mod.FolderNames.Contains("TranceSeek/ImmuneStatusPlayer");
+        public static bool ImmuneStatusPlayer = Configuration.Mod.FolderNames.Contains("TranceSeek/Options/ImmuneStatusPlayer");
     }
 
     public static class TranceSeekExtensions
@@ -306,6 +306,10 @@ namespace Memoria.Scripts.TranceSeek
         public Boolean PreventTranceSFX { get; set; }
         public int DragonChanceProc { get; set; }
         public WEAPON_MODEL Mascot { get; set; }
+        public Boolean Invincible { get; set; }
+        public Boolean ImmuneSteal { get; set; }
+        public Boolean DodgeALL { get; set; }
+
 
         public int MascotCooldown { get; set; }
 

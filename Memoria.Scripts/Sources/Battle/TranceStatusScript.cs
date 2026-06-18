@@ -479,8 +479,6 @@ namespace Memoria.DefaultScripts
                     offsetMs = Mathf.RoundToInt(profile.StartPlayTime);
             }
 
-            //player.FF9SOUND_SONG_VOL_INTPL(tranceSongId, 60, 0);
-
             target.AddDelayedModifier(
                 unit =>
                 {
@@ -491,15 +489,14 @@ namespace Memoria.DefaultScripts
                     {
                         if (player.GetCurrentMusicId() == tranceSongId && unit.IsUnderAnyStatus(BattleStatusConst.BattleEndFull))
                         {
-                            player.FF9SOUND_SONG_PLAY(oldSongId, 0, AllSoundDispatchPlayer.MINIMUM_SONG_FADE_MS);
+                            player.FF9SOUND_SONG_PLAY(oldSongId, 127, AllSoundDispatchPlayer.MINIMUM_SONG_FADE_MS);
                             player.FF9SOUND_SONG_SKIPPHRASE_MILLISEC(oldSongId, offsetMs);
-                            player.FF9SOUND_SONG_VOL_INTPL(oldSongId, 60, 100);
+                            return false;
                         }
-                        else if (cur_cmd.cmd_no == BattleCommandId.SysTrans && cur_cmd.regist == unit.Data)
+                        else if (cur_cmd.cmd_no == BattleCommandId.SysTrans && cur_cmd.regist == unit.Data && player.GetCurrentMusicId() != tranceSongId)
                         {
-                            player.FF9SOUND_SONG_PLAY(tranceSongId, 0, AllSoundDispatchPlayer.MINIMUM_SONG_FADE_MS);
+                            player.FF9SOUND_SONG_PLAY(tranceSongId, 127, AllSoundDispatchPlayer.MINIMUM_SONG_FADE_MS);
                             player.FF9SOUND_SONG_SKIPPHRASE_MILLISEC(tranceSongId, offsetMs);
-                            player.FF9SOUND_SONG_VOL_INTPL(tranceSongId, 60, 100);
                         }
                     }
                     return true;

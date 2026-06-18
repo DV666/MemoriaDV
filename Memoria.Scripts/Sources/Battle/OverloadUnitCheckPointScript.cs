@@ -14,8 +14,8 @@ namespace Memoria.Scripts.TranceSeek
             if (!unit.IsPlayer)
                 return 0;
 
-            Boolean HPColored = Configuration.Mod.FolderNames.Contains("TranceSeek/ColoredHP");
-            Boolean MPColored = Configuration.Mod.FolderNames.Contains("TranceSeek/ColoredMP");
+            Boolean HPColored = Configuration.Mod.FolderNames.Contains("TranceSeek/Options/ColoredHP");
+            Boolean MPColored = Configuration.Mod.FolderNames.Contains("TranceSeek/Options/ColoredMP");
 
             Boolean isLowHP = unit.IsPlayer && unit.CurrentHp * 6 <= unit.MaximumHp;
             if (isLowHP)

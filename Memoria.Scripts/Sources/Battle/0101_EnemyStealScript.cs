@@ -21,11 +21,18 @@ namespace Memoria.Scripts.TranceSeek
 
         public void Perform()
         {
-            _v.PhysicalAccuracy();
-            if (TranceSeekAPI.TryPhysicalHit(_v))
-                RemoveItem();
+            if (_v.Target.IsUnderStatus(BattleStatus.Vanish) || _v.TargetState().ImmuneSteal)
+            {
+                _v.Context.Flags |= BattleCalcFlags.Miss;
+            }
             else
-                UiState.SetBattleFollowFormatMessage(BattleMesages.CouldNotStealAnything);
+            {
+                _v.PhysicalAccuracy();
+                if (TranceSeekAPI.TryPhysicalHit(_v))
+                    RemoveItem();
+                else
+                    UiState.SetBattleFollowFormatMessage(BattleMesages.CouldNotStealAnything);
+            }
         }
 
         private void RemoveItem()

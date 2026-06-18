@@ -81,29 +81,7 @@ namespace Memoria.Scripts.TranceSeek
             else if (_v.Command.Power == 11 && _v.Command.HitRate == 11) // Ironite (Dragon Force)
             {
                 _v.Target.TryAlterSingleStatus(BattleStatusId.ChangeStat, true, _v.Caster, "PhysicalDefence", Math.Min(255, _v.Target.PhysicalDefence + 2));
-                Dictionary<String, String> localizedMessage = new Dictionary<String, String>
-                {
-                    { "US", "Defence ↑" },
-                    { "UK", "Defence ↑" },
-                    { "JP", "ぼうぎょりょく↑" },
-                    { "ES", "DIF fisica ↑" },
-                    { "FR", "Défense ↑" },
-                    { "GR", "Defensa F ↑" },
-                    { "IT", "Abwehr ↑" },
-                };
-                btl2d.Btl2dReqSymbolMessage(_v.Target.Data, "[F9FF39]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 0);
                 _v.Target.TryAlterSingleStatus(BattleStatusId.ChangeStat, true, _v.Caster, "MagicDefence", Math.Min(255, _v.Target.MagicDefence + 2));
-                Dictionary<String, String> localizedMessage2 = new Dictionary<String, String>
-                {
-                    { "US", "Magic Def ↑" },
-                    { "UK", "Magic Def ↑" },
-                    { "JP", "まほうぼうぎょ ↑" },
-                    { "ES", "DIF magica ↑" },
-                    { "FR", "Protection ↑" },
-                    { "GR", "Defensa M ↑" },
-                    { "IT", "Z-Abwehr ↑" },
-                };
-                btl2d.Btl2dReqSymbolMessage(_v.Target.Data, "[F9FF39]", localizedMessage2, HUDMessage.MessageStyle.DAMAGE, 5);
             }
             else if (_v.Command.Power == 1 && _v.Command.HitRate == 1 && _v.Caster.Data.dms_geo_id == 326) // Frying from Jötunn
             {
@@ -149,32 +127,6 @@ namespace Memoria.Scripts.TranceSeek
                 _v.Target.HpDamage = (int)(_v.Target.MaximumHp - 10000);
                 _v.Target.MpDamage = (int)(_v.Target.MaximumMp);
                 _v.TargetState().Monster.DurationDeadlyStatus = 100;
-                return;
-            }
-            else if (_v.Command.Power == 77 && _v.Command.HitRate == 177 && _v.Caster.Data.dms_geo_id == 546) // Mad Alchemist - Dragon Power
-            {
-                Dictionary<String, String> localizedMessage2 = new Dictionary<String, String>
-                {
-                    { "US", "Strength ↑↑↑" },
-                    { "UK", "Strength ↑↑↑" },
-                    { "JP", "ちから ↑↑↑" },
-                    { "ES", "Forza ↑↑↑" },
-                    { "FR", "Force ↑↑↑" },
-                    { "GR", "Fuerza ↑↑↑" },
-                    { "IT", "Stärke ↑↑↑" },
-                };
-                btl2d.Btl2dReqSymbolMessage(_v.Target.Data, "[FF040E]", localizedMessage2, HUDMessage.MessageStyle.DAMAGE, 10);
-                Dictionary<String, String> localizedMessage = new Dictionary<String, String>
-                {
-                    { "US", "Magic ↑↑↑" },
-                    { "UK", "Magic ↑↑↑" },
-                    { "JP", "まりょく ↑↑↑" },
-                    { "ES", "POT magico ↑↑↑" },
-                    { "FR", "Magie ↑↑↑" },
-                    { "GR", "Magia ↑↑↑" },
-                    { "IT", "Zauber ↑↑↑" },
-                };
-                btl2d.Btl2dReqSymbolMessage(_v.Target.Data, "[FF040E]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 15);
                 return;
             }
             else if (_v.Caster.Data.dms_geo_id == 92 && _v.Command.Power == 10 && _v.Command.HitRate == 77) // Kelgar - Lupine Attack
@@ -395,6 +347,15 @@ namespace Memoria.Scripts.TranceSeek
                 {
                     _v.Caster.Data.mot[1] = "ANH_MON_B3_114_043";
                     _v.Caster.Data.mot[3] = "ANH_MON_B3_114_043";
+                    return;
+                }
+                else if (_v.Command.Power == 10 && _v.Command.HitRate == 10) // Gisamark - Plongée
+                {
+                    foreach (BattleStatusId statusid in (_v.Caster.Data.stat.cur).ToStatusList())
+                    {
+                        if (statusid != BattleStatusId.EasyKill)
+                            _v.Caster.RemoveStatus(statusid);
+                    }
                     return;
                 }
                 else if (_v.Command.Power == 22 && _v.Command.HitRate == 222)

@@ -22,26 +22,17 @@ namespace Memoria.Scripts.TranceSeek
         {
             if (!_v.Target.TryKillFrozen())
             {
-                if (_v.Target.PhysicalDefence == 255)
-                {
-                    _v.Context.Flags |= BattleCalcFlags.Guard;
-                    return;
-                }
-                if (_v.Target.IsUnderAnyStatus(BattleStatus.Vanish) || _v.Target.PhysicalEvade == 255)
+                if (_v.Target.IsUnderAnyStatus(BattleStatus.Vanish))
                 {
                     _v.Context.Flags |= BattleCalcFlags.Miss;
                     return;
                 }
 
                 if (_v.Caster.IsPlayer)
-                {
-                    _v.WeaponPhysicalParams();
-                    
-                }
+                    _v.WeaponPhysicalParams();                 
                 else
-                {
                     _v.NormalPhysicalParams();
-                }
+
                 if (_v.CasterState().Steiner.PlutoStackUsed > 0)
                 {
                     _v.Command.HitRate += 10 * _v.CasterState().Steiner.PlutoStackUsed;

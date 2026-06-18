@@ -36,9 +36,8 @@ namespace Memoria.Scripts.TranceSeek
                 TranceSeekAPI.PenaltyCommandDividedAttack(_v);
                 TranceSeekAPI.BonusElement(_v);
                 if (TranceSeekAPI.CanAttackMagic(_v))
-                {
                     _v.CalcHpDamage();
-                }
+
                 TranceSeekAPI.TryAlterMagicStatuses(_v);
 
                 if ((btl_util.GetCommandAction(_v.Command).Type & 8) != 0) // Unused (4)
@@ -53,9 +52,7 @@ namespace Memoria.Scripts.TranceSeek
                 _v.Target.PenaltyShellHitRate();
                 _v.PenaltyCommandDividedHitRate();
                 if (TranceSeekAPI.TryMagicHit(_v))
-                {
                     TranceSeekAPI.TryAlterCommandStatuses(_v);
-                }
             }
         }
     }

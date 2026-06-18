@@ -22,11 +22,7 @@ namespace Memoria.Scripts.TranceSeek
                 _v.Target.TryAlterStatuses(BattleStatus.Death, false, _v.Target);
                 return;
             }
-            if (_v.Target.MagicDefence == 255)
-            {
-                _v.Context.Flags |= BattleCalcFlags.Guard;
-                return;
-            }
+
             _v.NormalMagicParams();
             
             TranceSeekAPI.CasterPenaltyMini(_v);

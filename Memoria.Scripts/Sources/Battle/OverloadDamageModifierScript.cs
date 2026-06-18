@@ -162,33 +162,38 @@ namespace Memoria.Scripts.TranceSeek
                 modifier_factor = 0.01f; // Or 0 ? Hmm...
 
             Int32 reflectMultiplier = v.Command.GetReflectMultiplierOnTarget(v.Target.Id);
-            if ((v.Target.Flags & CalcFlag.HpAlteration) != 0)
-                v.Target.HpDamage = (Int32)Math.Round(modifier_factor * v.Target.HpDamage) * reflectMultiplier;
+            Boolean IsInvincible = TranceSeekAPI.CheckInvincible(v) && (((v.Target.Flags & CalcFlag.HpAlteration) != 0 && (v.Target.Flags & CalcFlag.HpRecovery) == 0) || ((v.Target.Flags & CalcFlag.MpAlteration) != 0 && (v.Target.Flags & CalcFlag.MpRecovery) == 0));
 
-            if (v.Target.IsUnderAnyStatus(BattleStatus.EasyKill) && v.Target.IsUnderAnyStatus(BattleStatus.Zombie))
+            if (!IsInvincible)
             {
-                if ((v.Target.Flags & CalcFlag.HpRecovery) != 0 || v.Context.IsAbsorb || v.Command.ScriptId == 10 || v.Command.ScriptId == 69
-                    || v.Command.ScriptId == 79 || v.Command.ScriptId == 30 || v.Command.ScriptId == 37)
+                if ((v.Target.Flags & CalcFlag.HpAlteration) != 0)
+                    v.Target.HpDamage = (Int32)Math.Round(modifier_factor * v.Target.HpDamage) * reflectMultiplier;
+
+                if (v.Target.IsUnderAnyStatus(BattleStatus.EasyKill) && v.Target.IsUnderAnyStatus(BattleStatus.Zombie))
                 {
-                    v.Target.HpDamage = 0;
-                    v.Target.RemoveStatus(BattleStatus.Zombie);
+                    if ((v.Target.Flags & CalcFlag.HpRecovery) != 0 || v.Context.IsAbsorb || v.Command.ScriptId == 10 || v.Command.ScriptId == 69
+                        || v.Command.ScriptId == 79 || v.Command.ScriptId == 30 || v.Command.ScriptId == 37)
+                    {
+                        v.Target.HpDamage = 0;
+                        v.Target.RemoveStatus(BattleStatus.Zombie);
+                    }
                 }
-            }
-            if ((v.Target.Flags & CalcFlag.MpAlteration) != 0)
-                v.Target.MpDamage = (Int32)Math.Round(modifier_factor * v.Target.MpDamage) * reflectMultiplier;
+                if ((v.Target.Flags & CalcFlag.MpAlteration) != 0)
+                    v.Target.MpDamage = (Int32)Math.Round(modifier_factor * v.Target.MpDamage) * reflectMultiplier;
 
-            if ((v.Caster.Flags & CalcFlag.HpAlteration) != 0)
-                v.Caster.HpDamage = (Int32)Math.Round(modifier_factor * v.Caster.HpDamage) * reflectMultiplier;
-            if ((v.Caster.Flags & CalcFlag.MpAlteration) != 0)
-                v.Caster.MpDamage = (Int32)Math.Round(modifier_factor * v.Caster.MpDamage) * reflectMultiplier;
+                if ((v.Caster.Flags & CalcFlag.HpAlteration) != 0)
+                    v.Caster.HpDamage = (Int32)Math.Round(modifier_factor * v.Caster.HpDamage) * reflectMultiplier;
+                if ((v.Caster.Flags & CalcFlag.MpAlteration) != 0)
+                    v.Caster.MpDamage = (Int32)Math.Round(modifier_factor * v.Caster.MpDamage) * reflectMultiplier;
 
-            if (v.Caster.State().CantKill > 0 && (v.Target.Flags & CalcFlag.HpAlteration) != 0 && v.Target.HpDamage > v.Target.CurrentHp)
-            {
-                v.Target.Flags = 0;
-                v.Target.Data.fig.info = 0;
-                //v.Context.Flags |= BattleCalcFlags.DirectHP;
-                btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[FFFFFF]", $"{v.Target.HpDamage}", HUDMessage.MessageStyle.DAMAGE, 0);
-                v.Target.CurrentHp = (uint)((1 + GameRandom.Next8() % 9));
+                if (v.Caster.State().CantKill > 0 && (v.Target.Flags & CalcFlag.HpAlteration) != 0 && v.Target.HpDamage > v.Target.CurrentHp)
+                {
+                    v.Target.Flags = 0;
+                    v.Target.Data.fig.info = 0;
+                    //v.Context.Flags |= BattleCalcFlags.DirectHP;
+                    btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[FFFFFF]", $"{v.Target.HpDamage}", HUDMessage.MessageStyle.DAMAGE, 0);
+                    v.Target.CurrentHp = (uint)((1 + GameRandom.Next8() % 9));
+                }
             }
         }
 

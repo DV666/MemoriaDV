@@ -200,13 +200,13 @@ namespace Memoria.Scripts.TranceSeek
             if ((v.Caster.HasSupportAbility(SupportAbility1.Healer) || v.Caster.IsHealingRod) && v.Target.IsPlayer) // SA Healer never miss on Player.
                 v.Context.Evade = 0;
 
-            if ((v.Context.HitRate <= Comn.random16() % 100) || v.Target.PhysicalEvade == 255 || v.Target.IsUnderAnyStatus(BattleStatus.Vanish))
+            if ((v.Context.HitRate <= Comn.random16() % 100) || v.Target.IsUnderAnyStatus(BattleStatus.Vanish))
             {
                 v.Context.Flags |= BattleCalcFlags.Miss;
                 return false;
             }
 
-            if (v.Target.PhysicalDefence == 255 || (v.Target.IsUnderAnyStatus(TranceSeekStatus.Bulwark) && !v.Caster.HasSupportAbility(SupportAbility1.Healer))) // Bulwark
+            if ((v.Target.IsUnderAnyStatus(TranceSeekStatus.Bulwark) && !v.Caster.HasSupportAbility(SupportAbility1.Healer))) // Bulwark
             {
                 v.Target.RemoveStatus(TranceSeekStatus.Bulwark);
                 v.Context.Flags |= BattleCalcFlags.Guard;
@@ -308,14 +308,10 @@ namespace Memoria.Scripts.TranceSeek
 
         public static void TargetPhysicalPenaltyAndBonusAttack(this BattleCalculator v)
         {
+            if (CheckInvincible(v)) return;
+
             var Caster_TSVar = v.CasterState();
             var Target_TSVar = v.TargetState();
-
-            if (v.Target.PhysicalDefence == 255)
-            {
-                v.Context.Flags |= BattleCalcFlags.Guard;
-                return;
-            }
 
             if (v.Target.IsUnderAnyStatus(BattleStatus.Defend))
             {
@@ -436,12 +432,7 @@ namespace Memoria.Scripts.TranceSeek
 
         public static void PenaltyShellAttack(this BattleCalculator v)
         {
-            if (v.Target.MagicDefence == 255)
-            {
-                v.Context.Attack = 0;
-                v.Context.Flags |= BattleCalcFlags.Guard;
-                return;
-            }
+            if (CheckInvincible(v)) return;
 
             var Caster_TSVar = v.CasterState();
             var Target_TSVar = v.TargetState();
@@ -726,7 +717,7 @@ namespace Memoria.Scripts.TranceSeek
 
         public static void TryAlterCommandStatuses(this BattleCalculator v, Boolean ChangeContext = true)
         {
-            if (v.Command.AbilityStatus != 0 && (v.Context.Flags & TranceSeekBattleCalcFlags.PropagationFail) == 0)
+            if (v.Command.AbilityStatus != 0 && (v.Context.Flags & TranceSeekBattleCalcFlags.PropagationFail) == 0 && !CheckInvincible(v))
             {
                 v.Target.TryAlterStatuses(v.Command.AbilityStatus, ChangeContext, v.Caster);
                 AlterStatusDurationFromSA(v, v.Command.AbilityStatus);
@@ -949,6 +940,26 @@ namespace Memoria.Scripts.TranceSeek
             }
         }
 
+        //private static readonly HashSet<Int32> ScriptIdIgnoreInvincible = new HashSet<Int32>(new[] { 10, 13, 37, 69, 72, 143 });
+
+        public static Boolean CheckInvincible(this BattleCalculator v)
+        {
+            //if (ScriptIdIgnoreInvincible.Contains(v.Command.ScriptId)) return false;
+
+            if (v.TargetState().Invincible)
+            {
+                v.Context.Attack = 0;
+                v.Context.Flags |= BattleCalcFlags.Guard;
+                return true;
+            }
+            if (v.TargetState().DodgeALL)
+            {
+                v.Context.Flags |= BattleCalcFlags.Miss;
+                return true;
+            }
+            return false;
+        }
+
         public static void SpecialEffect(this BattleCalculator v)
         {
             var Caster_TSVar = v.CasterState();
@@ -1042,7 +1053,7 @@ namespace Memoria.Scripts.TranceSeek
                 Boolean Healing = (v.Target.Flags & CalcFlag.HpRecovery) != 0;
                 foreach (BattleUnit unit in BattleState.EnumerateUnits())
                 {
-                    if ((unit.IsPlayer && !v.Target.IsPlayer || !unit.IsPlayer && v.Target.IsPlayer) || unit.MagicDefence == 255 || unit.PhysicalEvade == 255 || unit.Data == targetdefault)
+                    if ((unit.IsPlayer && !v.Target.IsPlayer || !unit.IsPlayer && v.Target.IsPlayer) || unit.State().Invincible || unit.Data == targetdefault)
                         continue;
 
                     if (unit.Data != targetdefault) 

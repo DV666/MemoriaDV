@@ -466,8 +466,7 @@ namespace Memoria.Scripts.TranceSeek
 
                 if (Eiko.State().Eiko.StateMoug == 0 && !Eiko.IsUnderAnyStatus(BattleStatus.Death | BattleStatus.Petrify | BattleStatus.Jump | BattleStatus.Heat) && v.Caster.Data != Eiko.Data)
                 {
-                    //float ChanceMoug = (Eiko.HasSupportAbilityByIndex(TranceSeekSupportAbility.Comehere_Boosted) ? 12 : (Eiko.HasSupportAbilityByIndex(TranceSeekSupportAbility.ComeHere) ? 10 : 8));
-                    float ChanceMoug = 100;
+                    float ChanceMoug = (Eiko.HasSupportAbilityByIndex(TranceSeekSupportAbility.Comehere_Boosted) ? 12 : (Eiko.HasSupportAbilityByIndex(TranceSeekSupportAbility.ComeHere) ? 10 : 8));
 
                     if (Eiko.HasSupportAbilityByIndex(TranceSeekSupportAbility.Synergy) || Comn.random16() % 100 > ChanceMoug) // Synergy
                         return;

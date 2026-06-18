@@ -25,11 +25,6 @@ namespace Memoria.Scripts.TranceSeek
             {
                 if ((_v.Target.ResistStatus & BattleStatus.Doom) != 0)
                 {
-                    if (_v.Target.MagicDefence == 255)
-                    {
-                        _v.Context.Flags |= BattleCalcFlags.Guard;
-                        return;
-                    }
                     _v.Target.Flags |= CalcFlag.HpAlteration;
                     _v.Target.HpDamage = (int)_v.Caster.CurrentHp;
                     if (_v.Target.IsUnderAnyStatus(BattleStatus.Shell))
@@ -121,37 +116,30 @@ namespace Memoria.Scripts.TranceSeek
 
                     if (_v.Command.Power >= 20) // Intimidation
                     {
-                        if (_v.Target.MagicDefence == 255)
+                        _v.NormalMagicParams();
+                        TranceSeekAPI.CasterPenaltyMini(_v);
+                        TranceSeekAPI.EnemyTranceBonusAttack(_v);
+                        TranceSeekAPI.PenaltyShellAttack(_v);
+                        TranceSeekAPI.PenaltyCommandDividedAttack(_v);
+                        TranceSeekAPI.BonusElement(_v);
+                        if (TranceSeekAPI.CanAttackMagic(_v))
                         {
-                            _v.Context.Flags |= BattleCalcFlags.Guard;
-                        }
-                        else
-                        {
-                            _v.NormalMagicParams();
-                            TranceSeekAPI.CasterPenaltyMini(_v);
-                            TranceSeekAPI.EnemyTranceBonusAttack(_v);
-                            TranceSeekAPI.PenaltyShellAttack(_v);
-                            TranceSeekAPI.PenaltyCommandDividedAttack(_v);
-                            TranceSeekAPI.BonusElement(_v);
-                            if (TranceSeekAPI.CanAttackMagic(_v))
+                            _v.Target.Flags |= (CalcFlag.HpAlteration | CalcFlag.MpAlteration);
+                            if (_v.Context.IsAbsorb)
                             {
-                                _v.Target.Flags |= (CalcFlag.HpAlteration | CalcFlag.MpAlteration);
-                                if (_v.Context.IsAbsorb)
-                                {
-                                    _v.Target.Flags |= (CalcFlag.HpRecovery | CalcFlag.MpRecovery);
-                                }
-                                _v.CalcHpDamage();
-                                int hpDamage2 = _v.Target.HpDamage;
-                                if ((_v.Target.Flags & CalcFlag.HpRecovery) != 0)
-                                {
-                                    _v.Target.FaceTheEnemy();
-                                }
-                                _v.Target.MpDamage = hpDamage2 >> 4;
+                                _v.Target.Flags |= (CalcFlag.HpRecovery | CalcFlag.MpRecovery);
                             }
-                            _v.Command.AbilityStatus |= (BattleStatus.Stop | BattleStatus.Doom);
-                            TranceSeekAPI.TryAlterCommandStatuses(_v);
-                            return;
+                            _v.CalcHpDamage();
+                            int hpDamage2 = _v.Target.HpDamage;
+                            if ((_v.Target.Flags & CalcFlag.HpRecovery) != 0)
+                            {
+                                _v.Target.FaceTheEnemy();
+                            }
+                            _v.Target.MpDamage = hpDamage2 >> 4;
                         }
+                        _v.Command.AbilityStatus |= (BattleStatus.Stop | BattleStatus.Doom);
+                        TranceSeekAPI.TryAlterCommandStatuses(_v);
+                        return;
                     }
                     if (_v.Command.Power > 0)
                     {

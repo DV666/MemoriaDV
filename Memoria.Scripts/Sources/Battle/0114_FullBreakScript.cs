@@ -22,12 +22,7 @@ namespace Memoria.Scripts.TranceSeek
         {
             if (!_v.Target.TryKillFrozen())
             {
-                if (_v.Target.PhysicalDefence == 255)
-                {
-                    _v.Context.Flags |= BattleCalcFlags.Guard;
-                    return;
-                }
-                if (_v.Target.IsUnderAnyStatus(BattleStatus.Vanish) || _v.Target.PhysicalEvade == 255)
+                if (_v.Target.IsUnderAnyStatus(BattleStatus.Vanish))
                 {
                     _v.Context.Flags |= BattleCalcFlags.Miss;
                     return;

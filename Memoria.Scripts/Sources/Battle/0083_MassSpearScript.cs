@@ -21,11 +21,7 @@ namespace Memoria.Scripts.TranceSeek
 
         public void Perform()
         {
-            if (_v.Target.PhysicalDefence == 255)
-            {
-                _v.Context.Flags |= BattleCalcFlags.Guard;
-            }
-            else if (_v.Target.IsUnderAnyStatus(BattleStatus.Vanish) || _v.Target.PhysicalEvade == 255)
+            if (_v.Target.IsUnderAnyStatus(BattleStatus.Vanish))
             {
                 _v.Context.Flags |= BattleCalcFlags.Miss;
                 return;

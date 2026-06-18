@@ -25,15 +25,6 @@ namespace Memoria.Scripts.TranceSeek
             {
                 _v.TargetState().Marcus.CursedBlood = 1; // [TODO] Do a timer ? To make it not infinite.
             }
-            else if (_v.Caster.Data.dms_geo_id == 349 && _v.Command.Power == 10 && _v.Command.HitRate == 10) // Gisamark - Plongée
-            {
-                foreach (BattleStatusId statusid in (_v.Caster.Data.stat.cur).ToStatusList())
-                {
-                    if (statusid != BattleStatusId.EasyKill)
-                        _v.Caster.RemoveStatus(statusid);
-                }              
-                return;
-            }
             else if (_v.Caster.Data.dms_geo_id == 446 && _v.Command.Power == 111 && _v.Command.HitRate == 111) // Garland - Meteor Cast
             {
                 _v.Caster.Data.mot[0] = "ANH_MON_B3_185_011";

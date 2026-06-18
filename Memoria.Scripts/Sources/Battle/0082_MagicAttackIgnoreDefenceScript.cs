@@ -17,11 +17,6 @@ namespace Memoria.Scripts.TranceSeek
 
         public void Perform()
         {
-            if (_v.Target.MagicDefence == 255)
-            {
-                _v.Context.Flags |= BattleCalcFlags.Guard;
-                return;
-            }
             _v.SetCommandPower();
             _v.Caster.SetMagicAttack();
             TranceSeekAPI.CasterPenaltyMini(_v);

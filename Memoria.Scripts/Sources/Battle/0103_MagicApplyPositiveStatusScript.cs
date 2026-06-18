@@ -132,17 +132,6 @@ namespace Memoria.Scripts.TranceSeek
                     _v.Caster.PhysicalEvade += 10;
                 else
                     _v.Caster.PhysicalEvade = 255;
-                Dictionary<String, String> localizedMessage = new Dictionary<String, String>
-                {
-                    { "US", "↑ Dodge ↑" },
-                    { "UK", "↑ Dodge ↑" },
-                    { "JP", "↑ かいひりつ ↑" },
-                    { "ES", "↑ DST fisica ↑" },
-                    { "FR", "↑ Esquive ↑" },
-                    { "GR", "↑ Evasión F ↑" },
-                    { "IT", "↑ Reflex ↑" },
-                };
-                btl2d.Btl2dReqSymbolMessage(_v.Caster.Data, "[FFC0CB]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 5);
             }
             else if (_v.Caster.Data.dms_geo_id == 150 && _v.Command.HitRate == 255) // Exoskeleton
             {

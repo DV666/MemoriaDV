@@ -1,15 +1,9 @@
 ﻿using Assets.Scripts.Common;
-using FF9;
 using Memoria.Data;
 using Memoria.Prime;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Runtime.CompilerServices;
 using UnityEngine;
-using static Memoria.Configuration;
-using static Memoria.Scripts.TranceSeek.TranceSeekDebug;
 
 namespace Memoria.Scripts.TranceSeek
 {
@@ -104,7 +98,7 @@ namespace Memoria.Scripts.TranceSeek
 
         private static readonly HashSet<Int32> BlackListFieldId = 
             new HashSet<Int32>(new[] { 70, 152, 209, 260, 261, 453, 454, 606, 655, 767, 768, 769, 811, 813,
-                814, 816, 954, 955, 1400, 1401, 1402, 1403, 1404, 1462, 1609, 1659, 1800, 2261, 2750, 2751, 2752, 2754, 2755, 2756, 2850, 2851, 2852, 2853, 2854, 2855, 2856, 2951, 2952, 2953,
+                814, 816, 954, 955, 1400, 1401, 1402, 1403, 1404, 1462, 1609, 1659, 1704, 1800, 2261, 2750, 2751, 2752, 2753, 2754, 2755, 2756, 2850, 2851, 2852, 2853, 2854, 2855, 2856, 2951, 2952, 2953,
             2928, 2929, 2930, 2931, 2932, 2933, 2934, 3000, 3001, 3002, 3003, 3004, 3005, 3006, 3007, 3008, 3009, 3010, 3011, 3012}); // End of the game
         private static readonly HashSet<Int32> ModelCantGetFollowers = new HashSet<Int32>(new[] { 317, 312, 320, 321, 308 });
 

@@ -1,4 +1,5 @@
-﻿using Memoria.Prime;
+﻿using Assets.Scripts.Common;
+using Memoria.Prime;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -7,7 +8,7 @@ using static Memoria.Scripts.TranceSeek.TranceSeekDebug;
 
 namespace Memoria.Scripts.TranceSeek
 {
-    public static class TranceSeekHack
+    public static class TranceSeekWatcher
     {
         public static void AbsoluteForceResetCamera() // To unlock camera locked on monsters, mostly after an intro.
         {
@@ -58,10 +59,14 @@ namespace Memoria.Scripts.TranceSeek
 
         public static void InitWatchdog(GameObject battleRoot)
         {
-            if (battleRoot != null && battleRoot.GetComponent<TranceSeekCameraWatchdog>() == null)
-            {
+            if (battleRoot == null) return;
+
+            if (battleRoot.GetComponent<TranceSeekCameraWatchdog>() == null)
                 battleRoot.AddComponent<TranceSeekCameraWatchdog>();
-                Log.Message("[TranceSeekHack] Watchdog immédiat configuré pour SFXRework.");
+            if (TranceSeekCheckBattleStat.GreenRedColor_SubModCheck || TranceSeekCheckBattleStat.YellowPurple_SubModCheck)
+            {
+                if (battleRoot.GetComponent<TranceSeekCheckBattleStat>() == null)
+                    battleRoot.AddComponent<TranceSeekCheckBattleStat>();
             }
         }
     }
@@ -91,6 +96,12 @@ namespace Memoria.Scripts.TranceSeek
     {
         private void Update()
         {
+            if (!SceneDirector.IsBattleScene())
+            {
+                Destroy(this);
+                return;
+            }
+
             if (!FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1007, out Dictionary<Int32, Int32> dictCameraHack))
                 return;
 
@@ -98,7 +109,7 @@ namespace Memoria.Scripts.TranceSeek
             {
                 Log.Message("[TranceSeekHack] Force reset Camera");
 
-                TranceSeekHack.AbsoluteForceResetCamera();
+                TranceSeekWatcher.AbsoluteForceResetCamera();
 
                 dictCameraHack[0] = 0;
             }

@@ -25,11 +25,7 @@ namespace Memoria.Scripts.TranceSeek
             if (!_v.Caster.IsPlayer && (_v.Caster.Data.dms_geo_id == 66 || _v.Caster.Data.dms_geo_id == 181 || _v.Caster.Data.dms_geo_id == 2001))
                 FF9StateSystem.EventState.gEventGlobal[1305] &= (byte)~_v.Caster.Id;
 
-            if (_v.Target.PhysicalDefence == 255)
-            {
-                _v.Context.Flags |= BattleCalcFlags.Guard;
-            }
-            else if (_v.Target.IsUnderAnyStatus(BattleStatus.Vanish) || _v.Target.PhysicalEvade == 255)
+            if (_v.Target.IsUnderAnyStatus(BattleStatus.Vanish))
             {
                 _v.Context.Flags |= BattleCalcFlags.Miss;
                 return;

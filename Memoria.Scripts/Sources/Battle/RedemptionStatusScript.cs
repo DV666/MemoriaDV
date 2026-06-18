@@ -18,7 +18,7 @@ namespace Memoria.DefaultScripts
 
         public override UInt32 Apply(BattleUnit target, BattleUnit inflicter, params Object[] parameters)
         {
-            Boolean RedemptionSHPActivate = Configuration.Mod.FolderNames.Contains("TranceSeek/RedemptionIconInBattle");
+            Boolean RedemptionSHPActivate = Configuration.Mod.FolderNames.Contains("TranceSeek/Options/RedemptionIconInBattle");
             base.Apply(target, inflicter, parameters);
             OverlapSHP.SetupOverlappingSHP2(target);
             Int32 StackMaximum = target.HasSupportAbilityByIndex(TranceSeekSupportAbility.Expiation) ? 3 : 2; // SA Expiation

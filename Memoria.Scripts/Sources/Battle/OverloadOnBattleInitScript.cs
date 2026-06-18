@@ -40,7 +40,7 @@ namespace Memoria.Scripts.TranceSeek
 
             GameObject battleRoot = GameObject.Find("BattleMap Root");
             if (battleRoot != null)
-                TranceSeekHack.InitWatchdog(battleRoot);
+                TranceSeekWatcher.InitWatchdog(battleRoot);
 
             OverloadOnBattleScriptStartScript.InitProtectMessages();
 
@@ -105,6 +105,11 @@ namespace Memoria.Scripts.TranceSeek
             dictbattle[4] = 0; // Duelist
             dictbattle[5] = 0; // FlexibleLevel
             dictbattle[6] = 0; // CanCover
+            dictbattle[7] = 0; // Invincible
+            dictbattle[8] = 0; // DodgeAll
+            dictbattle[9] = 0; // ImmuneSteal
+            dictbattle[10] = 0; // HideStatModif
+
 
             if (!FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1001, out Dictionary<Int32, Int32> dictdifficulty)) // Modificators from difficulties
             {
@@ -197,7 +202,7 @@ namespace Memoria.Scripts.TranceSeek
                 }
             }
 
-            if (Configuration.Mod.FolderNames.Contains("TranceSeek/StuffListed"))
+            if (Configuration.Mod.FolderNames.Contains("TranceSeek/Options/StuffListed"))
                 SpecialFilesTranceSeek.WriteStuffInFile();
 
             InitTSVariables();

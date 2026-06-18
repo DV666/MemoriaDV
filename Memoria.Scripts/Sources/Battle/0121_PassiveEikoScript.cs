@@ -153,14 +153,11 @@ namespace Memoria.Scripts.TranceSeek
                         case TranceSeekBattleAbility.MogFlare: // Atomoug
                         case TranceSeekBattleAbility.MogHoly: // Sidémoug
                         case TranceSeekBattleAbility.MougaHoming: // Mouga Homing
-                            if (_v.Target.MagicDefence == 255)
-                            {
-                                _v.Context.Flags |= BattleCalcFlags.Guard;
-                            }
-                            else
+
+                            if (!TranceSeekAPI.CheckInvincible(_v))
                             {
                                 _v.NormalMagicParams();
-                                
+
                                 TranceSeekAPI.CasterPenaltyMini(_v);
                                 TranceSeekAPI.EnemyTranceBonusAttack(_v);
                                 TranceSeekAPI.PenaltyShellAttack(_v);

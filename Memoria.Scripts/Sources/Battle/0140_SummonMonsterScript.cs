@@ -1244,29 +1244,7 @@ namespace Memoria.Scripts.TranceSeek
                     case TranceSeekBattleAbility.Ironite2: // Ironite - Dragon Force
                     {
                         _v.Target.TryAlterSingleStatus(BattleStatusId.ChangeStat, true, _v.Caster, "PhysicalDefence", Math.Min(255, _v.Target.PhysicalDefence + 2));
-                        Dictionary<String, String> localizedMessage = new Dictionary<String, String>
-                                {
-                                    { "US", "Defence ↑" },
-                                    { "UK", "Defence ↑" },
-                                    { "JP", "ぼうぎょりょく↑" },
-                                    { "ES", "DIF fisica ↑" },
-                                    { "FR", "Défense ↑" },
-                                    { "GR", "Defensa F ↑" },
-                                    { "IT", "Abwehr ↑" },
-                                };
-                        btl2d.Btl2dReqSymbolMessage(_v.Target.Data, "[F9FF39]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 0);
                         _v.Target.TryAlterSingleStatus(BattleStatusId.ChangeStat, true, _v.Caster, "MagicDefence", Math.Min(255, _v.Target.MagicDefence + 2));
-                        Dictionary<String, String> localizedMessage2 = new Dictionary<String, String>
-                                {
-                                    { "US", "Magic Def ↑" },
-                                    { "UK", "Magic Def ↑" },
-                                    { "JP", "まほうぼうぎょ ↑" },
-                                    { "ES", "DIF magica ↑" },
-                                    { "FR", "Protection ↑" },
-                                    { "GR", "Defensa M ↑" },
-                                    { "IT", "Z-Abwehr ↑" },
-                                };
-                        btl2d.Btl2dReqSymbolMessage(_v.Target.Data, "[F9FF39]", localizedMessage2, HUDMessage.MessageStyle.DAMAGE, 5);
                         break;
                     }
                 }

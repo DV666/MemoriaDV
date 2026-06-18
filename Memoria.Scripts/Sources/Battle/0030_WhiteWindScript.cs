@@ -102,27 +102,20 @@ namespace Memoria.Scripts.TranceSeek
                 }
                 else // Telekenesis
                 {
-                    if (_v.Target.MagicDefence == 255)
-                    {
-                        _v.Context.Flags |= BattleCalcFlags.Guard;
-                    }
-                    else
-                    {
-                        _v.NormalMagicParams();
+                    _v.NormalMagicParams();
                         
-                        TranceSeekAPI.CasterPenaltyMini(_v);
-                        TranceSeekAPI.PenaltyShellAttack(_v);
-                        TranceSeekAPI.PenaltyCommandDividedAttack(_v);
-                        TranceSeekAPI.BonusElement(_v);
-                        if (TranceSeekAPI.CanAttackMagic(_v))
-                        {
-                            if (_v.Target.IsLevitate) // (x 3 against Flying)
-                               _v.Context.DamageModifierCount += 8;
-                            _v.CalcHpDamage();
-                            TranceSeekAPI.RaiseTrouble(_v);
-                        }
-                        TranceSeekAPI.TryAlterMagicStatuses(_v);
+                    TranceSeekAPI.CasterPenaltyMini(_v);
+                    TranceSeekAPI.PenaltyShellAttack(_v);
+                    TranceSeekAPI.PenaltyCommandDividedAttack(_v);
+                    TranceSeekAPI.BonusElement(_v);
+                    if (TranceSeekAPI.CanAttackMagic(_v))
+                    {
+                        if (_v.Target.IsLevitate) // (x 3 against Flying)
+                            _v.Context.DamageModifierCount += 8;
+                        _v.CalcHpDamage();
+                        TranceSeekAPI.RaiseTrouble(_v);
                     }
+                    TranceSeekAPI.TryAlterMagicStatuses(_v);
                 }
             }
         }

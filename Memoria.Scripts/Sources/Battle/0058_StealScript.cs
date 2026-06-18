@@ -20,7 +20,7 @@ namespace Memoria.Scripts.TranceSeek
 
         private readonly BattleCalculator _v;
 
-        public static Boolean ForcedHeheZidane = Configuration.Mod.FolderNames.Contains("TranceSeek/HeheZidane");
+        public static Boolean ForcedHeheZidane = Configuration.Mod.FolderNames.Contains("TranceSeek/Options/HeheZidane");
 
         public StealScript(BattleCalculator v)
         {
@@ -36,7 +36,7 @@ namespace Memoria.Scripts.TranceSeek
             }
             else
             {
-                if (_v.Target.IsUnderStatus(BattleStatus.Vanish) | _v.Target.PhysicalEvade == 255)
+                if (_v.Target.IsUnderStatus(BattleStatus.Vanish) || _v.TargetState().ImmuneSteal)
                 {
                     _v.Context.Flags |= BattleCalcFlags.Miss;
                 }

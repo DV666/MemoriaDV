@@ -28,9 +28,9 @@ namespace Memoria.Scripts.TranceSeek
                 _isMenuInjected = true;
             }
 
-            Boolean HPColored = Configuration.Mod.FolderNames.Contains("TranceSeek/ColoredHP");
-            Boolean MPColored = Configuration.Mod.FolderNames.Contains("TranceSeek/ColoredMP");
-            Boolean GemColored = Configuration.Mod.FolderNames.Contains("TranceSeek/ColoredGems");
+            Boolean HPColored = Configuration.Mod.FolderNames.Contains("TranceSeek/Options/ColoredHP");
+            Boolean MPColored = Configuration.Mod.FolderNames.Contains("TranceSeek/Options/ColoredMP");
+            Boolean GemColored = Configuration.Mod.FolderNames.Contains("TranceSeek/Options/ColoredGems");
 
             CurrentPlayer = player;
 
