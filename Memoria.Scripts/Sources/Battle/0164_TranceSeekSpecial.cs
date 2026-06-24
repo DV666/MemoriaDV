@@ -28,8 +28,11 @@ namespace Memoria.Scripts.TranceSeek
 
         public void Perform()
         {
-
-            if (_v.Caster.Data.dms_geo_id == 221 && _v.Command.AbilityStatus == BattleStatus.Trance) // Mirror - Trance Zidane
+            if (_v.Command.Power == 123 && _v.Command.HitRate == 123) // Thousand Fears (unlock battle result if victory)
+            {
+                battle.btl_bonus.Event = false;
+            }
+            else if (_v.Caster.Data.dms_geo_id == 221 && _v.Command.AbilityStatus == BattleStatus.Trance) // Mirror - Trance Zidane
             {
                 Int32 counter = 15;
                 _v.Caster.AddDelayedModifier(

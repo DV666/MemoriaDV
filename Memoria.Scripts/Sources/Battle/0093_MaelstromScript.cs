@@ -45,6 +45,12 @@ namespace Memoria.Scripts.TranceSeek
             }
             else if (TranceSeekAPI.CheckUnsafetyOrGuard(_v) && _v.Target.CanBeAttacked())
             {
+                if (_v.Target.Accessory == TranceSeekRegularItem.GarudaWing)
+                {
+                    _v.Context.Flags |= BattleCalcFlags.Guard;
+                    return;
+                }
+
                 Boolean ForceMaelstrom = (_v.Command.HitRate == 255);
                 TranceSeekAPI.MagicAccuracy(_v);
                 _v.Target.PenaltyShellHitRate();

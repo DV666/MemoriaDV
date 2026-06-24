@@ -25,6 +25,10 @@ namespace Memoria.Scripts.TranceSeek
 
             private bool _showBattleMenu = false;
             private Rect _battleWindowRect = new Rect(310, 50, 520, 680);
+            private int _unitSubTab = 0;
+            private Vector2 _unitMainScrollPos = Vector2.zero;
+            private int _heroPassiveTab = 0;
+            private readonly string[] _heroPassiveNames = { "Zidane", "Vivi", "Steiner", "Eiko", "Beatrix", "Amarant", "Cinna", "Blank", "Marcus", "Baku" };
 
             private bool _showEventMenu = false;
             private Rect _eventWindowRect = new Rect(310, 50, 600, 500);
@@ -117,60 +121,60 @@ namespace Memoria.Scripts.TranceSeek
 
             private static readonly KeyValuePair<string, BattleStatus>[] _statusList = new KeyValuePair<string, BattleStatus>[]
             {
-        new KeyValuePair<string, BattleStatus>("Petrify", BattleStatus.Petrify),
-        new KeyValuePair<string, BattleStatus>("Venom", BattleStatus.Venom),
-        new KeyValuePair<string, BattleStatus>("Virus", BattleStatus.Virus),
-        new KeyValuePair<string, BattleStatus>("Silence", BattleStatus.Silence),
-        new KeyValuePair<string, BattleStatus>("Blind", BattleStatus.Blind),
-        new KeyValuePair<string, BattleStatus>("Trouble", BattleStatus.Trouble),
-        new KeyValuePair<string, BattleStatus>("Zombie", BattleStatus.Zombie),
-        new KeyValuePair<string, BattleStatus>("Death", BattleStatus.Death),
-        new KeyValuePair<string, BattleStatus>("EasyKill", BattleStatus.EasyKill),
-        new KeyValuePair<string, BattleStatus>("Confuse", BattleStatus.Confuse),
-        new KeyValuePair<string, BattleStatus>("Berserk", BattleStatus.Berserk),
-        new KeyValuePair<string, BattleStatus>("Stop", BattleStatus.Stop),
-        new KeyValuePair<string, BattleStatus>("AutoLife", BattleStatus.AutoLife),
-        new KeyValuePair<string, BattleStatus>("Trance", BattleStatus.Trance),
-        new KeyValuePair<string, BattleStatus>("Defend", BattleStatus.Defend),
-        new KeyValuePair<string, BattleStatus>("Poison", BattleStatus.Poison),
-        new KeyValuePair<string, BattleStatus>("Sleep", BattleStatus.Sleep),
-        new KeyValuePair<string, BattleStatus>("Regen", BattleStatus.Regen),
-        new KeyValuePair<string, BattleStatus>("Haste", BattleStatus.Haste),
-        new KeyValuePair<string, BattleStatus>("Slow", BattleStatus.Slow),
-        new KeyValuePair<string, BattleStatus>("Float", BattleStatus.Float),
-        new KeyValuePair<string, BattleStatus>("Shell", BattleStatus.Shell),
-        new KeyValuePair<string, BattleStatus>("Protect", BattleStatus.Protect),
-        new KeyValuePair<string, BattleStatus>("Heat", BattleStatus.Heat),
-        new KeyValuePair<string, BattleStatus>("Freeze", BattleStatus.Freeze),
-        new KeyValuePair<string, BattleStatus>("Vanish", BattleStatus.Vanish),
-        new KeyValuePair<string, BattleStatus>("Doom", BattleStatus.Doom),
-        new KeyValuePair<string, BattleStatus>("Mini", BattleStatus.Mini),
-        new KeyValuePair<string, BattleStatus>("Reflect", BattleStatus.Reflect),
-        new KeyValuePair<string, BattleStatus>("Jump", BattleStatus.Jump),
-        new KeyValuePair<string, BattleStatus>("GradualPetrify", BattleStatus.GradualPetrify),
-        new KeyValuePair<string, BattleStatus>("PowerBreak", BattleStatus.CustomStatus1),
-        new KeyValuePair<string, BattleStatus>("MagicBreak", BattleStatus.CustomStatus2),
-        new KeyValuePair<string, BattleStatus>("ArmorBreak", BattleStatus.CustomStatus3),
-        new KeyValuePair<string, BattleStatus>("MentalBreak", BattleStatus.CustomStatus4),
-        new KeyValuePair<string, BattleStatus>("PowerUp", BattleStatus.CustomStatus5),
-        new KeyValuePair<string, BattleStatus>("MagicUp", BattleStatus.CustomStatus6),
-        new KeyValuePair<string, BattleStatus>("ArmorUp", BattleStatus.CustomStatus7),
-        new KeyValuePair<string, BattleStatus>("MentalUp", BattleStatus.CustomStatus8),
-        new KeyValuePair<string, BattleStatus>("Dragon", BattleStatus.CustomStatus9),
-        new KeyValuePair<string, BattleStatus>("ZombieArmor", BattleStatus.CustomStatus10),
-        new KeyValuePair<string, BattleStatus>("MechanicalArmor", BattleStatus.CustomStatus11),
-        new KeyValuePair<string, BattleStatus>("Redemption", BattleStatus.CustomStatus12),
-        new KeyValuePair<string, BattleStatus>("Bulwark", BattleStatus.CustomStatus13),
-        new KeyValuePair<string, BattleStatus>("PerfectDodge", BattleStatus.CustomStatus14),
-        new KeyValuePair<string, BattleStatus>("PerfectCrit", BattleStatus.CustomStatus15),
-        new KeyValuePair<string, BattleStatus>("Vieillissement", BattleStatus.CustomStatus16),
-        new KeyValuePair<string, BattleStatus>("SleepEasyKill", BattleStatus.CustomStatus17),
-        new KeyValuePair<string, BattleStatus>("SilenceEasyKill", BattleStatus.CustomStatus18),
-        new KeyValuePair<string, BattleStatus>("Rage", BattleStatus.CustomStatus19),
-        new KeyValuePair<string, BattleStatus>("Runic", BattleStatus.CustomStatus20),
-        new KeyValuePair<string, BattleStatus>("Special", BattleStatus.CustomStatus21),
-        new KeyValuePair<string, BattleStatus>("Provok", BattleStatus.CustomStatus22),
-        new KeyValuePair<string, BattleStatus>("Charm", BattleStatus.CustomStatus23)
+                new KeyValuePair<string, BattleStatus>("ArmorBreak", BattleStatus.CustomStatus3),
+                new KeyValuePair<string, BattleStatus>("ArmorUp", BattleStatus.CustomStatus7),
+                new KeyValuePair<string, BattleStatus>("AutoLife", BattleStatus.AutoLife),
+                new KeyValuePair<string, BattleStatus>("Berserk", BattleStatus.Berserk),
+                new KeyValuePair<string, BattleStatus>("Blind", BattleStatus.Blind),
+                new KeyValuePair<string, BattleStatus>("Bulwark", BattleStatus.CustomStatus13),
+                new KeyValuePair<string, BattleStatus>("Charm", BattleStatus.CustomStatus23),
+                new KeyValuePair<string, BattleStatus>("Confuse", BattleStatus.Confuse),
+                new KeyValuePair<string, BattleStatus>("Death", BattleStatus.Death),
+                new KeyValuePair<string, BattleStatus>("Defend", BattleStatus.Defend),
+                new KeyValuePair<string, BattleStatus>("Doom", BattleStatus.Doom),
+                new KeyValuePair<string, BattleStatus>("Dragon", BattleStatus.CustomStatus9),
+                new KeyValuePair<string, BattleStatus>("EasyKill", BattleStatus.EasyKill),
+                new KeyValuePair<string, BattleStatus>("Float", BattleStatus.Float),
+                new KeyValuePair<string, BattleStatus>("Freeze", BattleStatus.Freeze),
+                new KeyValuePair<string, BattleStatus>("GradualPetrify", BattleStatus.GradualPetrify),
+                new KeyValuePair<string, BattleStatus>("Haste", BattleStatus.Haste),
+                new KeyValuePair<string, BattleStatus>("Heat", BattleStatus.Heat),
+                new KeyValuePair<string, BattleStatus>("Jump", BattleStatus.Jump),
+                new KeyValuePair<string, BattleStatus>("MagicBreak", BattleStatus.CustomStatus2),
+                new KeyValuePair<string, BattleStatus>("MagicUp", BattleStatus.CustomStatus6),
+                new KeyValuePair<string, BattleStatus>("MechanicalArmor", BattleStatus.CustomStatus11),
+                new KeyValuePair<string, BattleStatus>("MentalBreak", BattleStatus.CustomStatus4),
+                new KeyValuePair<string, BattleStatus>("MentalUp", BattleStatus.CustomStatus8),
+                new KeyValuePair<string, BattleStatus>("Mini", BattleStatus.Mini),
+                new KeyValuePair<string, BattleStatus>("PerfectCrit", BattleStatus.CustomStatus15),
+                new KeyValuePair<string, BattleStatus>("PerfectDodge", BattleStatus.CustomStatus14),
+                new KeyValuePair<string, BattleStatus>("Petrify", BattleStatus.Petrify),
+                new KeyValuePair<string, BattleStatus>("Poison", BattleStatus.Poison),
+                new KeyValuePair<string, BattleStatus>("PowerBreak", BattleStatus.CustomStatus1),
+                new KeyValuePair<string, BattleStatus>("PowerUp", BattleStatus.CustomStatus5),
+                new KeyValuePair<string, BattleStatus>("Protect", BattleStatus.Protect),
+                new KeyValuePair<string, BattleStatus>("Provok", BattleStatus.CustomStatus22),
+                new KeyValuePair<string, BattleStatus>("Rage", BattleStatus.CustomStatus19),
+                new KeyValuePair<string, BattleStatus>("Redemption", BattleStatus.CustomStatus12),
+                new KeyValuePair<string, BattleStatus>("Reflect", BattleStatus.Reflect),
+                new KeyValuePair<string, BattleStatus>("Regen", BattleStatus.Regen),
+                new KeyValuePair<string, BattleStatus>("Runic", BattleStatus.CustomStatus20),
+                new KeyValuePair<string, BattleStatus>("Shell", BattleStatus.Shell),
+                new KeyValuePair<string, BattleStatus>("Silence", BattleStatus.Silence),
+                new KeyValuePair<string, BattleStatus>("SilenceEasyKill", BattleStatus.CustomStatus18),
+                new KeyValuePair<string, BattleStatus>("Sleep", BattleStatus.Sleep),
+                new KeyValuePair<string, BattleStatus>("SleepEasyKill", BattleStatus.CustomStatus17),
+                new KeyValuePair<string, BattleStatus>("Slow", BattleStatus.Slow),
+                new KeyValuePair<string, BattleStatus>("Special", BattleStatus.CustomStatus21),
+                new KeyValuePair<string, BattleStatus>("Stop", BattleStatus.Stop),
+                new KeyValuePair<string, BattleStatus>("Trance", BattleStatus.Trance),
+                new KeyValuePair<string, BattleStatus>("Trouble", BattleStatus.Trouble),
+                new KeyValuePair<string, BattleStatus>("Vanish", BattleStatus.Vanish),
+                new KeyValuePair<string, BattleStatus>("Venom", BattleStatus.Venom),
+                new KeyValuePair<string, BattleStatus>("Vieillissement", BattleStatus.CustomStatus16),
+                new KeyValuePair<string, BattleStatus>("Virus", BattleStatus.Virus),
+                new KeyValuePair<string, BattleStatus>("Zombie", BattleStatus.Zombie),
+                new KeyValuePair<string, BattleStatus>("ZombieArmor", BattleStatus.CustomStatus10)
             };
 
             private int _elementMode = 0;
@@ -666,7 +670,7 @@ namespace Memoria.Scripts.TranceSeek
                 if (GUILayout.Button("<b>Lancer Séquence</b>", GUILayout.Width(120)))
                 {
                     var launcher = activeUnits.FirstOrDefault(u => battle.btl_scene.PatAddr[battle.btl_scene.PatNum].Monster[u.Data.bi.slot_no].TypeNo == curSeqEnemyType);
-                    if (launcher == null) launcher = activeUnits.FirstOrDefault(); // Fallback de sécurité
+                    if (launcher == null) launcher = activeUnits.FirstOrDefault();
 
                     if (launcher != null)
                     {
@@ -735,88 +739,348 @@ namespace Memoria.Scripts.TranceSeek
                 }
                 GUILayout.EndHorizontal();
 
-                GUILayout.BeginVertical("box");
+                GUILayout.Space(5);
                 GUILayout.BeginHorizontal();
-                GUILayout.BeginVertical(GUILayout.Width(220));
-                DrawUnitStatUI($"{u.Id}_HP", "HP", (int)u.CurrentHp, 0, 99999);
-                DrawUnitStatUI($"{u.Id}_MaxHP", "Max HP", (int)u.MaximumHp, 1, 99999);
-                DrawUnitStatUI($"{u.Id}_MP", "MP", (int)u.CurrentMp, 0, 9999);
-                DrawUnitStatUI($"{u.Id}_MaxMP", "Max MP", (int)u.MaximumMp, 1, 9999);
-                DrawUnitStatUI($"{u.Id}_Lvl", "Level", u.Level, 1, 99);
-                DrawUnitStatUI($"{u.Id}_Trance", "Trance", u.Trance, 0, 255);
-                GUILayout.EndVertical();
-                GUILayout.BeginVertical(GUILayout.Width(220));
-                DrawUnitStatUI($"{u.Id}_Str", "Strength", u.Strength, 0, 255);
-                DrawUnitStatUI($"{u.Id}_Mag", "Magic", u.Magic, 0, 255);
-                DrawUnitStatUI($"{u.Id}_Dex", "Dexterity", u.Dexterity, 0, 255);
-                DrawUnitStatUI($"{u.Id}_Will", "Will", u.Will, 0, 255);
-                DrawUnitStatUI($"{u.Id}_PDef", "Phys Def", u.PhysicalDefence, 0, 9999);
-                DrawUnitStatUI($"{u.Id}_PEvd", "Phys Evd", u.PhysicalEvade, 0, 9999);
-                DrawUnitStatUI($"{u.Id}_MDef", "Mag Def", u.MagicDefence, 0, 9999);
-                DrawUnitStatUI($"{u.Id}_MEvd", "Mag Evd", u.MagicEvade, 0, 9999);
-                GUILayout.EndVertical();
+                if (GUILayout.Button(_unitSubTab == 0 ? "<color=orange><b>📊 Stats & Status Base</b></color>" : "📊 Stats & Status Base", GUILayout.Height(25))) { _unitSubTab = 0; GUI.FocusControl(null); }
+                if (GUILayout.Button(_unitSubTab == 1 ? "<color=orange><b>🔮 Trance Seek State</b></color>" : "🔮 Trance Seek State", GUILayout.Height(25))) { _unitSubTab = 1; GUI.FocusControl(null); }
                 GUILayout.EndHorizontal();
                 GUILayout.Space(5);
 
-                GUILayout.BeginVertical("box");
-                GUILayout.BeginHorizontal();
-                if (GUILayout.Button("<", GUILayout.Width(30))) { _statusMode--; if (_statusMode < 0) _statusMode = 2; }
-                GUILayout.Label(_statusModeNames[_statusMode], new GUIStyle(GUI.skin.label) { richText = true, alignment = TextAnchor.MiddleCenter });
-                if (GUILayout.Button(">", GUILayout.Width(30))) { _statusMode++; if (_statusMode > 2) _statusMode = 0; }
-                GUILayout.EndHorizontal();
-                _statusScrollPos = GUILayout.BeginScrollView(_statusScrollPos, GUILayout.Height(150));
-                int col = 3, c = 0; GUILayout.BeginHorizontal();
-                foreach (var kv in _statusList)
+                _unitMainScrollPos = GUILayout.BeginScrollView(_unitMainScrollPos, GUILayout.Height(480));
+
+                if (_unitSubTab == 0)
                 {
-                    bool h = false;
-                    if (_statusMode == 0) h = (u.CurrentStatus & kv.Value) != 0;
-                    else if (_statusMode == 1) h = (u.PermanentStatus & kv.Value) != 0;
-                    else h = (u.ResistStatus & kv.Value) != 0;
+                    GUILayout.BeginVertical("box");
+                    GUILayout.BeginHorizontal();
+                    GUILayout.BeginVertical(GUILayout.Width(220));
+                    DrawUnitStatUI($"{u.Id}_HP", "HP", (int)u.CurrentHp, 0, 99999);
+                    DrawUnitStatUI($"{u.Id}_MaxHP", "Max HP", (int)u.MaximumHp, 1, 99999);
+                    DrawUnitStatUI($"{u.Id}_MP", "MP", (int)u.CurrentMp, 0, 9999);
+                    DrawUnitStatUI($"{u.Id}_MaxMP", "Max MP", (int)u.MaximumMp, 1, 9999);
+                    DrawUnitStatUI($"{u.Id}_Lvl", "Level", u.Level, 1, 99);
+                    DrawUnitStatUI($"{u.Id}_Trance", "Trance", u.Trance, 0, 255);
+                    GUILayout.EndVertical();
+                    GUILayout.BeginVertical(GUILayout.Width(220));
+                    DrawUnitStatUI($"{u.Id}_Str", "Strength", u.Strength, 0, 255);
+                    DrawUnitStatUI($"{u.Id}_Mag", "Magic", u.Magic, 0, 255);
+                    DrawUnitStatUI($"{u.Id}_Dex", "Dexterity", u.Dexterity, 0, 255);
+                    DrawUnitStatUI($"{u.Id}_Will", "Will", u.Will, 0, 255);
+                    DrawUnitStatUI($"{u.Id}_PDef", "Phys Def", u.PhysicalDefence, 0, 9999);
+                    DrawUnitStatUI($"{u.Id}_PEvd", "Phys Evd", u.PhysicalEvade, 0, 9999);
+                    DrawUnitStatUI($"{u.Id}_MDef", "Mag Def", u.MagicDefence, 0, 9999);
+                    DrawUnitStatUI($"{u.Id}_MEvd", "Mag Evd", u.MagicEvade, 0, 9999);
+                    GUILayout.EndVertical();
+                    GUILayout.EndHorizontal();
+                    GUILayout.EndVertical();
 
-                    bool t = GUILayout.Toggle(h, kv.Key, GUILayout.Width(135));
-                    if (t != h)
+                    GUILayout.Space(5);
+                    GUILayout.BeginVertical("box");
+                    if (u.IsPlayer)
                     {
-                        if (_statusMode == 0) { if (t) u.AlterStatus(kv.Value, u); else u.RemoveStatus(kv.Value); }
-                        else if (_statusMode == 1) btl_stat.MakeStatusesPermanent(u, kv.Value, t);
-                        else { if (t) u.ResistStatus |= kv.Value; else u.ResistStatus &= ~kv.Value; }
+                        GUILayout.Label("<b>Character Category</b>", new GUIStyle(GUI.skin.label) { richText = true });
+                        CharacterCategory currentCat = u.PlayerCategory;
+                        GUILayout.BeginHorizontal();
+                        int catCount = 0;
+                        foreach (CharacterCategory cat in Enum.GetValues(typeof(CharacterCategory)))
+                        {
+                            bool hasFlag = (currentCat & cat) != 0;
+                            bool newHasFlag = GUILayout.Toggle(hasFlag, cat.ToString(), GUILayout.Width(115));
+                            if (newHasFlag != hasFlag)
+                            {
+                                if (newHasFlag) currentCat |= cat;
+                                else currentCat &= ~cat;
+                                u.Player.Category = currentCat;
+                            }
+                            catCount++;
+                            if (catCount % 4 == 0) { GUILayout.EndHorizontal(); GUILayout.BeginHorizontal(); }
+                        }
+                        GUILayout.EndHorizontal();
                     }
-                    c++; if (c % col == 0) { GUILayout.EndHorizontal(); GUILayout.BeginHorizontal(); }
-                }
-                GUILayout.EndHorizontal(); GUILayout.EndScrollView();
-                GUILayout.EndVertical();
-                GUILayout.Space(5);
+                    else
+                    {
+                        GUILayout.Label("<b>Enemy Category</b>", new GUIStyle(GUI.skin.label) { richText = true });
+                        EnemyCategory currentCat = u.Category;
+                        GUILayout.BeginHorizontal();
+                        int catCount = 0;
+                        foreach (EnemyCategory cat in Enum.GetValues(typeof(EnemyCategory)))
+                        {
+                            bool hasFlag = (cat == EnemyCategory.Other) ? currentCat == EnemyCategory.Other : (currentCat & cat) != 0;
+                            bool newHasFlag = GUILayout.Toggle(hasFlag, cat.ToString(), GUILayout.Width(115));
+                            if (newHasFlag != hasFlag)
+                            {
+                                if (cat == EnemyCategory.Other) currentCat = EnemyCategory.Other;
+                                else { if (newHasFlag) currentCat |= cat; else currentCat &= ~cat; }
+                                u.EnemyType.category = (byte)currentCat;
+                            }
+                            catCount++;
+                            if (catCount % 4 == 0) { GUILayout.EndHorizontal(); GUILayout.BeginHorizontal(); }
+                        }
+                        GUILayout.EndHorizontal();
+                    }
+                    GUILayout.EndVertical();
 
-                GUILayout.BeginVertical("box");
-                GUILayout.BeginHorizontal();
-                if (GUILayout.Button("<", GUILayout.Width(30))) { _elementMode--; if (_elementMode < 0) _elementMode = 4; }
-                GUILayout.Label(_elementModeNames[_elementMode], new GUIStyle(GUI.skin.label) { richText = true, alignment = TextAnchor.MiddleCenter });
-                if (GUILayout.Button(">", GUILayout.Width(30))) { _elementMode++; if (_elementMode > 4) _elementMode = 0; }
-                GUILayout.EndHorizontal();
-                _elementScrollPos = GUILayout.BeginScrollView(_elementScrollPos, GUILayout.Height(80));
-                int colElem = 4, cElem = 0; GUILayout.BeginHorizontal();
-                foreach (var kv in _elementList)
+                    GUILayout.Space(5);
+                    GUILayout.BeginVertical("box");
+                    GUILayout.BeginHorizontal();
+                    if (GUILayout.Button("<", GUILayout.Width(30))) { _statusMode--; if (_statusMode < 0) _statusMode = 2; }
+                    GUILayout.Label(_statusModeNames[_statusMode], new GUIStyle(GUI.skin.label) { richText = true, alignment = TextAnchor.MiddleCenter });
+                    if (GUILayout.Button(">", GUILayout.Width(30))) { _statusMode++; if (_statusMode > 2) _statusMode = 0; }
+                    GUILayout.EndHorizontal();
+
+                    GUIStyle statusToggleStyle = new GUIStyle(GUI.skin.toggle) { richText = true };
+                    _statusScrollPos = GUILayout.BeginScrollView(_statusScrollPos, GUILayout.Height(150));
+                    int col = 3, c = 0;
+                    GUILayout.BeginHorizontal();
+                    foreach (var kv in _statusList)
+                    {
+                        bool h = false;
+                        if (_statusMode == 0) h = (u.CurrentStatus & kv.Value) != 0;
+                        else if (_statusMode == 1) h = (u.PermanentStatus & kv.Value) != 0;
+                        else h = (u.ResistStatus & kv.Value) != 0;
+
+                        string colorHex = "FFFFFF";
+                        if ((kv.Value & BattleStatusConst.AnyPositive) != 0) colorHex = "55FF55";
+                        else if ((kv.Value & BattleStatusConst.AnyNegative) != 0) colorHex = "FF6666";
+
+                        bool t = GUILayout.Toggle(h, $"<color=#{colorHex}>{kv.Key}</color>", statusToggleStyle, GUILayout.Width(150));
+                        if (t != h)
+                        {
+                            if (_statusMode == 0) { if (t) u.AlterStatus(kv.Value, u); else u.RemoveStatus(kv.Value); }
+                            else if (_statusMode == 1) btl_stat.MakeStatusesPermanent(u, kv.Value, t);
+                            else { if (t) u.ResistStatus |= kv.Value; else u.ResistStatus &= ~kv.Value; }
+                        }
+                        c++;
+                        if (c % col == 0) { GUILayout.EndHorizontal(); GUILayout.BeginHorizontal(); }
+                    }
+                    GUILayout.EndHorizontal();
+                    GUILayout.EndScrollView();
+                    GUILayout.EndVertical();
+
+                    GUILayout.Space(5);
+                    GUILayout.BeginVertical("box");
+                    GUILayout.BeginHorizontal();
+                    if (GUILayout.Button("<", GUILayout.Width(30))) { _elementMode--; if (_elementMode < 0) _elementMode = 4; }
+                    GUILayout.Label(_elementModeNames[_elementMode], new GUIStyle(GUI.skin.label) { richText = true, alignment = TextAnchor.MiddleCenter });
+                    if (GUILayout.Button(">", GUILayout.Width(30))) { _elementMode++; if (_elementMode > 4) _elementMode = 0; }
+                    GUILayout.EndHorizontal();
+                    _elementScrollPos = GUILayout.BeginScrollView(_elementScrollPos, GUILayout.Height(80));
+                    int colElem = 4, cElem = 0;
+                    GUILayout.BeginHorizontal();
+                    foreach (var kv in _elementList)
+                    {
+                        bool hElem = false;
+                        if (_elementMode == 0) hElem = (u.WeakElement & kv.Value) != 0;
+                        else if (_elementMode == 1) hElem = (u.HalfElement & kv.Value) != 0;
+                        else if (_elementMode == 2) hElem = (u.GuardElement & kv.Value) != 0;
+                        else if (_elementMode == 3) hElem = (u.AbsorbElement & kv.Value) != 0;
+                        else hElem = (u.BonusElement & kv.Value) != 0;
+
+                        bool tElem = GUILayout.Toggle(hElem, kv.Key, GUILayout.Width(100));
+                        if (tElem != hElem)
+                        {
+                            if (_elementMode == 0) { if (tElem) u.WeakElement |= kv.Value; else u.WeakElement &= ~kv.Value; }
+                            else if (_elementMode == 1) { if (tElem) u.HalfElement |= kv.Value; else u.HalfElement &= ~kv.Value; }
+                            else if (_elementMode == 2) { if (tElem) u.GuardElement |= kv.Value; else u.GuardElement &= ~kv.Value; }
+                            else if (_elementMode == 3) { if (tElem) u.AbsorbElement |= kv.Value; else u.AbsorbElement &= ~kv.Value; }
+                            else { if (tElem) u.BonusElement |= kv.Value; else u.BonusElement &= ~kv.Value; }
+                        }
+                        cElem++;
+                        if (cElem % colElem == 0) { GUILayout.EndHorizontal(); GUILayout.BeginHorizontal(); }
+                    }
+                    GUILayout.EndHorizontal();
+                    GUILayout.EndScrollView();
+                    GUILayout.EndVertical();
+                }
+                else
                 {
-                    bool hElem = false;
-                    if (_elementMode == 0) hElem = (u.WeakElement & kv.Value) != 0;
-                    else if (_elementMode == 1) hElem = (u.HalfElement & kv.Value) != 0;
-                    else if (_elementMode == 2) hElem = (u.GuardElement & kv.Value) != 0;
-                    else if (_elementMode == 3) hElem = (u.AbsorbElement & kv.Value) != 0;
-                    else hElem = (u.BonusElement & kv.Value) != 0;
+                    var state = u.State();
 
-                    bool tElem = GUILayout.Toggle(hElem, kv.Key, GUILayout.Width(100));
-                    if (tElem != hElem)
+                    GUILayout.BeginVertical("box");
+                    GUILayout.Label("<b>🛡️ Global State & Flags</b>", new GUIStyle(GUI.skin.label) { richText = true });
+                    GUILayout.BeginHorizontal();
+                    state.Invincible = GUILayout.Toggle(state.Invincible, " Invincible", GUILayout.Width(145));
+                    state.DodgeALL = GUILayout.Toggle(state.DodgeALL, " Dodge All", GUILayout.Width(145));
+                    state.ImmuneSteal = GUILayout.Toggle(state.ImmuneSteal, " Immune Steal", GUILayout.Width(145));
+                    GUILayout.EndHorizontal();
+                    GUILayout.BeginHorizontal();
+                    state.IsBackAttack = GUILayout.Toggle(state.IsBackAttack, " Back Attack", GUILayout.Width(145));
+                    state.PreventTranceSFX = GUILayout.Toggle(state.PreventTranceSFX, " No Trance SFX", GUILayout.Width(145));
+                    state.TriggerSPSResistStatus = GUILayout.Toggle(state.TriggerSPSResistStatus, " SPS Resist Stat", GUILayout.Width(145));
+                    GUILayout.EndHorizontal();
+                    GUILayout.Space(5);
+                    GUILayout.BeginHorizontal();
+                    GUILayout.BeginVertical(GUILayout.Width(220));
+                    state.SuperCheat = DrawStatUI($"TS_{u.Id}_SupCht", "Super Cheat", state.SuperCheat, 110);
+                    state.CantKill = DrawStatUI($"TS_{u.Id}_CantK", "Cant Kill (HW)", state.CantKill, 110);
+                    state.CanCover = DrawStatUI($"TS_{u.Id}_CanCov", "Can Cover (HW)", state.CanCover, 110);
+                    GUILayout.EndVertical();
+                    GUILayout.BeginVertical(GUILayout.Width(220));
+                    state.MascotCooldown = DrawStatUI($"TS_{u.Id}_MascCD", "Mascot CD", state.MascotCooldown, 110);
+                    state.DragonChanceProc = DrawStatUI($"TS_{u.Id}_DragPr", "Dragon Chance", state.DragonChanceProc, 110);
+                    GUILayout.EndVertical();
+                    GUILayout.EndHorizontal();
+                    GUILayout.EndVertical();
+                    GUILayout.Space(5);
+
+                    GUILayout.BeginVertical("box");
+                    GUILayout.Label("<b>📈 Stacks, Gen. Passives & Elements</b>", new GUIStyle(GUI.skin.label) { richText = true });
+                    GUILayout.BeginHorizontal();
+                    GUILayout.BeginVertical(GUILayout.Width(220));
+                    state.General.Critical = DrawStatUI($"TS_{u.Id}_GenCrit", "General Crit", state.General.Critical, 110);
+                    state.StackStatus.Strength = DrawStatUI($"TS_{u.Id}_StkStr", "Strength Stacks", state.StackStatus.Strength, 110);
+                    state.StackStatus.Magic = DrawStatUI($"TS_{u.Id}_StkMag", "Magic Stacks", state.StackStatus.Magic, 110);
+                    state.EffectElement.Poison = DrawStatUI($"TS_{u.Id}_ElmPois", "Elem Poison", state.EffectElement.Poison, 110);
+                    state.EffectElement.Gravity = DrawStatUI($"TS_{u.Id}_ElmGrav", "Elem Gravity", state.EffectElement.Gravity, 110);
+                    GUILayout.EndVertical();
+                    GUILayout.BeginVertical(GUILayout.Width(220));
+                    state.General.TargetCount = DrawStatUI($"TS_{u.Id}_GenTrg", "Gen Target Cnt", state.General.TargetCount, 110);
+                    state.StackStatus.PDefence = DrawStatUI($"TS_{u.Id}_StkPDef", "P.Def Stacks", state.StackStatus.PDefence, 110);
+                    state.StackStatus.MDefence = DrawStatUI($"TS_{u.Id}_StkMDef", "M.Def Stacks", state.StackStatus.MDefence, 110);
+                    state.EffectElement.WeaponPoison = DrawStatUI($"TS_{u.Id}_WeaPois", "Weapon Poison", state.EffectElement.WeaponPoison, 110);
+                    state.EffectElement.WeaponGravity = DrawStatUI($"TS_{u.Id}_WeaGrav", "Weapon Gravity", state.EffectElement.WeaponGravity, 110);
+                    GUILayout.EndVertical();
+                    GUILayout.EndHorizontal();
+                    GUILayout.EndVertical();
+                    GUILayout.Space(5);
+
+                    GUILayout.BeginVertical("box");
+                    GUILayout.Label("<b>✨ Special SA & Items Effects</b>", new GUIStyle(GUI.skin.label) { richText = true });
+                    state.SpecialSA.ModeEX = GUILayout.Toggle(state.SpecialSA.ModeEX, " Mode EX Active");
+                    GUILayout.BeginHorizontal();
+                    GUILayout.BeginVertical(GUILayout.Width(220));
+                    state.SpecialSA.SentinelDuel = DrawStatUI($"TS_{u.Id}_SSASent", "Sentinel Duel", state.SpecialSA.SentinelDuel, 110);
+                    state.SpecialSA.LastStand = DrawStatUI($"TS_{u.Id}_SSALast", "Last Stand", state.SpecialSA.LastStand, 110);
+                    state.SpecialSA.Instinct = DrawStatUI($"TS_{u.Id}_SSAInst", "Instinct", state.SpecialSA.Instinct, 110);
+                    state.SpecialSA.HealHP = DrawStatUI($"TS_{u.Id}_SSAHealH", "Heal HP", state.SpecialSA.HealHP, 110);
+                    state.SpecialSA.HealMP = DrawStatUI($"TS_{u.Id}_SSAHealM", "Heal MP", state.SpecialSA.HealMP, 110);
+                    state.SpecialSA.CriticalHit100 = DrawStatUI($"TS_{u.Id}_SSACrit", "Crit Hit 100", state.SpecialSA.CriticalHit100, 110);
+                    GUILayout.EndVertical();
+                    GUILayout.BeginVertical(GUILayout.Width(220));
+                    state.SpecialSA.OneTriggerSOS = DrawStatUI($"TS_{u.Id}_SSASOS", "OneTriggerSOS", state.SpecialSA.OneTriggerSOS, 110);
+                    state.SpecialSA.NewMaximumHP = DrawStatUI($"TS_{u.Id}_SSAMaxH", "New Max HP", state.SpecialSA.NewMaximumHP, 110);
+                    state.SpecialSA.NewMaximumMP = DrawStatUI($"TS_{u.Id}_SSAMaxM", "New Max MP", state.SpecialSA.NewMaximumMP, 110);
+                    state.SpecialSA.Propagation = DrawStatUI($"TS_{u.Id}_SSAProp", "Propagation", state.SpecialSA.Propagation, 110);
+                    GUILayout.Space(5);
+                    state.SpecialItem.EmergencySatchel = DrawStatUI($"TS_{u.Id}_SIEmerg", "Emerg. Satchel", state.SpecialItem.EmergencySatchel, 110);
+                    state.SpecialItem.MagicalSatchel = DrawStatUI($"TS_{u.Id}_SIMagic", "Magical Satchel", state.SpecialItem.MagicalSatchel, 110);
+                    state.SpecialItem.MechanicalArmor = DrawStatUI($"TS_{u.Id}_SIMecha", "Mecha Armor", state.SpecialItem.MechanicalArmor, 110);
+                    GUILayout.EndVertical();
+                    GUILayout.EndHorizontal();
+                    GUILayout.EndVertical();
+                    GUILayout.Space(5);
+
+                    GUILayout.BeginVertical("box");
+                    GUILayout.Label("<b>👹 Monster Mechanics</b>", new GUIStyle(GUI.skin.label) { richText = true });
+                    state.Monster.HPBoss10000 = GUILayout.Toggle(state.Monster.HPBoss10000, " HP Boss Threshold (10k System)");
+                    state.Monster.NoDodge = GUILayout.Toggle(state.Monster.NoDodge, " No Dodge Forced");
+                    GUILayout.BeginHorizontal();
+                    GUILayout.BeginVertical(GUILayout.Width(220));
+                    state.Monster.Special1 = DrawStatUI($"TS_{u.Id}_MstSpc1", "Special Value 1", state.Monster.Special1, 110);
+                    state.Monster.DurationDeadlyStatus = DrawStatUI($"TS_{u.Id}_MstDead", "Deadly Stat Dur.", state.Monster.DurationDeadlyStatus, 110);
+                    GUILayout.EndVertical();
+                    GUILayout.BeginVertical(GUILayout.Width(220));
+                    state.Monster.Special2 = DrawStatUI($"TS_{u.Id}_MstSpc2", "Special Value 2", state.Monster.Special2, 110);
+                    state.Monster.NerfGravity = DrawStatUI($"TS_{u.Id}_MstGrav", "Nerf Gravity", state.Monster.NerfGravity, 110);
+                    GUILayout.EndVertical();
+                    GUILayout.EndHorizontal();
+                    GUILayout.EndVertical();
+                    GUILayout.Space(5);
+
+                    GUILayout.BeginVertical("box");
+                    GUILayout.BeginHorizontal();
+                    if (GUILayout.Button("<", GUILayout.Width(30))) { _heroPassiveTab--; if (_heroPassiveTab < 0) _heroPassiveTab = _heroPassiveNames.Length - 1; }
+                    GUILayout.Label($"<b>🎭 Passifs Spécifiques : <color=orange>{_heroPassiveNames[_heroPassiveTab]}</color></b>", new GUIStyle(GUI.skin.label) { richText = true, alignment = TextAnchor.MiddleCenter });
+                    if (GUILayout.Button(">", GUILayout.Width(30))) { _heroPassiveTab++; if (_heroPassiveTab >= _heroPassiveNames.Length) _heroPassiveTab = 0; }
+                    GUILayout.EndHorizontal();
+                    GUILayout.Space(5);
+
+                    GUILayout.BeginHorizontal();
+                    GUILayout.BeginVertical(GUILayout.Width(220));
+
+                    switch (_heroPassiveTab)
                     {
-                        if (_elementMode == 0) { if (tElem) u.WeakElement |= kv.Value; else u.WeakElement &= ~kv.Value; }
-                        else if (_elementMode == 1) { if (tElem) u.HalfElement |= kv.Value; else u.HalfElement &= ~kv.Value; }
-                        else if (_elementMode == 2) { if (tElem) u.GuardElement |= kv.Value; else u.GuardElement &= ~kv.Value; }
-                        else if (_elementMode == 3) { if (tElem) u.AbsorbElement |= kv.Value; else u.AbsorbElement &= ~kv.Value; }
-                        else { if (tElem) u.BonusElement |= kv.Value; else u.BonusElement &= ~kv.Value; }
+                        case 0: // Zidane
+                            state.Zidane.EyeOfTheThief = GUILayout.Toggle(state.Zidane.EyeOfTheThief, " Eye Of The Thief");
+                            state.Zidane.Dodge = DrawStatUI($"TS_{u.Id}_ZiDdg", "Dodge Rating", state.Zidane.Dodge, 120);
+                            state.Zidane.Critical = DrawStatUI($"TS_{u.Id}_ZiCrit", "Critical Rating", state.Zidane.Critical, 120);
+                            state.Zidane.MasterThief = DrawStatUI($"TS_{u.Id}_ZiMst", "Master Thief", state.Zidane.MasterThief, 120);
+                            state.Zidane.DaggerAttack = DrawStatUI($"TS_{u.Id}_ZiDag", "Dagger Attack", state.Zidane.DaggerAttack, 120);
+                            GUILayout.EndVertical(); GUILayout.BeginVertical(GUILayout.Width(220));
+                            state.Zidane.ItemMugMasterThief = DrawStatUI($"TS_{u.Id}_ZiIMugM", "Item Mug M.Thief", state.Zidane.ItemMugMasterThief, 120);
+                            state.Zidane.MugPlus = DrawStatUI($"TS_{u.Id}_ZiMugP", "Mug Plus", state.Zidane.MugPlus, 120);
+                            state.Zidane.StealGil = DrawStatUI($"TS_{u.Id}_ZiStGil", "Steal Gil", state.Zidane.StealGil, 120);
+                            state.Zidane.Flexible = DrawStatUI($"TS_{u.Id}_ZiFlex", "Flexible", state.Zidane.Flexible, 120);
+                            state.Zidane.FlexibleLvl = DrawStatUI($"TS_{u.Id}_ZiFLvl", "Flexible Level", state.Zidane.FlexibleLvl, 120);
+                            break;
+
+                        case 1: // Vivi
+                            state.Vivi.TriggerOneTime = GUILayout.Toggle(state.Vivi.TriggerOneTime, " Trigger One Time Burst");
+                            state.Vivi.Focus = DrawStatUI($"TS_{u.Id}_ViFoc", "Focus Counter", state.Vivi.Focus, 120);
+                            state.Vivi.NumberTargets = DrawStatUI($"TS_{u.Id}_ViTrg", "Target Count Bonus", state.Vivi.NumberTargets, 120);
+                            GUILayout.EndVertical(); GUILayout.BeginVertical(GUILayout.Width(220));
+                            GUILayout.Label($"Prev. Spell: <color=yellow>{state.Vivi.PreviousSpell}</color>", new GUIStyle(GUI.skin.label) { richText = true });
+                            break;
+
+                        case 2: // Steiner
+                            state.Steiner.Sentinel = GUILayout.Toggle(state.Steiner.Sentinel, " Sentinel Stance");
+                            state.Steiner.TriggerOneTime = GUILayout.Toggle(state.Steiner.TriggerOneTime, " Trigger One Time");
+                            state.Steiner.PlutoStackUsed = DrawStatUI($"TS_{u.Id}_StPluU", "Pluto Stacks Used", state.Steiner.PlutoStackUsed, 120);
+                            GUILayout.EndVertical(); GUILayout.BeginVertical(GUILayout.Width(220));
+                            state.Steiner.PlutoStackRemain = DrawStatUI($"TS_{u.Id}_StPluR", "Pluto Stacks Left", state.Steiner.PlutoStackRemain, 120);
+                            state.Steiner.SteinerEnchantedBlade = DrawStatUI($"TS_{u.Id}_StEnch", "Enchanted Blade", state.Steiner.SteinerEnchantedBlade, 120);
+                            state.Steiner.Duelist = DrawStatUI($"TS_{u.Id}_StDuel", "Duelist Stack", state.Steiner.Duelist, 120);
+                            break;
+
+                        case 3: // Eiko
+                            state.Eiko.StateMoug = DrawStatUI($"TS_{u.Id}_EkMoug", "Moug State Index", state.Eiko.StateMoug, 120);
+                            GUILayout.EndVertical(); GUILayout.BeginVertical(GUILayout.Width(220));
+                            state.Eiko.NumberTargets = DrawStatUI($"TS_{u.Id}_EkTrg", "Targets Count", state.Eiko.NumberTargets, 120);
+                            break;
+
+                        case 4: // Beatrix
+                            state.Beatrix.RedemptionTrigger = GUILayout.Toggle(state.Beatrix.RedemptionTrigger, " Redemption Triggered");
+                            state.Beatrix.StackCMD = DrawStatUI($"TS_{u.Id}_BtStk", "CMD Stacks", state.Beatrix.StackCMD, 120);
+                            GUILayout.EndVertical(); GUILayout.BeginVertical(GUILayout.Width(220));
+                            state.Beatrix.Braver = DrawStatUI($"TS_{u.Id}_BtBrav", "Braver Counter", state.Beatrix.Braver, 120);
+                            break;
+
+                        case 5: // Amarant
+                            state.Amarant.Duel = GUILayout.Toggle(state.Amarant.Duel, " Duel Active");
+                            GUILayout.EndVertical(); GUILayout.BeginVertical(GUILayout.Width(220));
+                            break;
+
+                        case 6: // Cinna
+                            state.Cinna.InventionCoolDown = DrawStatUI($"TS_{u.Id}_CnInv", "Invention CD", state.Cinna.InventionCoolDown, 120);
+                            GUILayout.EndVertical(); GUILayout.BeginVertical(GUILayout.Width(220));
+                            state.Cinna.SpringBoots = DrawStatUI($"TS_{u.Id}_CnBoot", "Spring Boots", state.Cinna.SpringBoots, 120);
+                            break;
+
+                        case 7: // Blank
+                            state.Blank.SecretIngredient = DrawStatUI($"TS_{u.Id}_BlSec", "Secret Ingredient", state.Blank.SecretIngredient, 120);
+                            GUILayout.EndVertical(); GUILayout.BeginVertical(GUILayout.Width(220));
+                            state.Blank.MasterOfAlchemy = DrawStatUI($"TS_{u.Id}_BlAlch", "Master Alchemy", state.Blank.MasterOfAlchemy, 120);
+                            break;
+
+                        case 8: // Marcus
+                            state.Marcus.LifeOrDeath = GUILayout.Toggle(state.Marcus.LifeOrDeath, " Life Or Death");
+                            GUILayout.EndVertical(); GUILayout.BeginVertical(GUILayout.Width(220));
+                            state.Marcus.CursedBlood = DrawStatUI($"TS_{u.Id}_McCurs", "Cursed Blood", state.Marcus.CursedBlood, 120);
+                            break;
+
+                        case 9: // Baku
+                            state.Baku.Peuh = GUILayout.Toggle(state.Baku.Peuh, " Peuh!");
+                            state.Baku.ThatsAll = GUILayout.Toggle(state.Baku.ThatsAll, " That's All");
+                            GUILayout.EndVertical(); GUILayout.BeginVertical(GUILayout.Width(220));
+                            state.Baku.InTopForm = DrawStatUI($"TS_{u.Id}_BkForm", "In Top Form", state.Baku.InTopForm, 120);
+                            break;
                     }
-                    cElem++; if (cElem % colElem == 0) { GUILayout.EndHorizontal(); GUILayout.BeginHorizontal(); }
+
+                    GUILayout.EndVertical();
+                    GUILayout.EndHorizontal();
+                    GUILayout.EndVertical();
                 }
-                GUILayout.EndHorizontal(); GUILayout.EndScrollView();
-                GUILayout.EndVertical();
-                GUILayout.EndVertical();
+
+                GUILayout.EndScrollView();
             }
 
             private void DrawUnitStatUI(string k, string l, int liveValue, int min, int max, int w = 75)
@@ -1264,12 +1528,28 @@ namespace Memoria.Scripts.TranceSeek
                 int currentValue = mapVars[_selectedMapVarKey];
                 DrawStatUI($"MapVarMod_{_selectedMapVarKey}", "Modifier UInt8", currentValue, 110);
 
+                byte b1 = (byte)GetCachedStat($"MapVarMod_{_selectedMapVarKey}", mapVars[_selectedMapVarKey], 0, 255);
+
                 if (_selectedMapVarKey + 1 < mapVars.Length)
                 {
-                    byte b1 = (byte)GetCachedStat($"MapVarMod_{_selectedMapVarKey}", mapVars[_selectedMapVarKey], 0, 255);
                     byte b2 = (byte)GetCachedStat($"MapVarMod_{_selectedMapVarKey + 1}", mapVars[_selectedMapVarKey + 1], 0, 255);
                     ushort u16 = (ushort)(b1 | (b2 << 8));
                     GUILayout.Label($"<b>Valeur UInt16 (Lecture) :</b> <color=cyan>{u16}</color>", new GUIStyle(GUI.skin.label) { richText = true });
+
+                    if (_selectedMapVarKey + 2 < mapVars.Length)
+                    {
+                        byte b3 = (byte)GetCachedStat($"MapVarMod_{_selectedMapVarKey + 2}", mapVars[_selectedMapVarKey + 2], 0, 255);
+                        uint u24 = (uint)(b1 | (b2 << 8) | (b3 << 16));
+                        GUILayout.Label($"<b>Valeur UInt24 (Lecture) :</b> <color=cyan>{u24}</color>", new GUIStyle(GUI.skin.label) { richText = true });
+
+                        if (_selectedMapVarKey + 3 < mapVars.Length)
+                        {
+                            byte b4 = (byte)GetCachedStat($"MapVarMod_{_selectedMapVarKey + 3}", mapVars[_selectedMapVarKey + 3], 0, 255);
+                            uint u32 = (uint)(b1 | (b2 << 8) | (b3 << 16) | (b4 << 24));
+                            int i32 = (int)u32;
+                            GUILayout.Label($"<b>Valeur 32 bits (Lecture) :</b> <color=cyan>{u32}</color> (Signé : {i32})", new GUIStyle(GUI.skin.label) { richText = true });
+                        }
+                    }
                 }
 
                 GUILayout.Space(10);
@@ -1368,12 +1648,28 @@ namespace Memoria.Scripts.TranceSeek
 
                 DrawStatUI($"LocVarMod_{currObj.uid}_{_selectedLocalVarKey}", "Modifier UInt8", currentLocalValue, 110);
 
+                byte b1 = (byte)GetCachedStat($"LocVarMod_{currObj.uid}_{_selectedLocalVarKey}", currObj.buffer[actualIndex], 0, 255);
+
                 if (actualIndex + 1 < currObj.buffer.Length)
                 {
-                    byte b1 = (byte)GetCachedStat($"LocVarMod_{currObj.uid}_{_selectedLocalVarKey}", currObj.buffer[actualIndex], 0, 255);
                     byte b2 = (byte)GetCachedStat($"LocVarMod_{currObj.uid}_{_selectedLocalVarKey + 1}", currObj.buffer[actualIndex + 1], 0, 255);
                     ushort u16 = (ushort)(b1 | (b2 << 8));
                     GUILayout.Label($"<b>Valeur UInt16 (Lecture) :</b> <color=cyan>{u16}</color>", new GUIStyle(GUI.skin.label) { richText = true });
+
+                    if (actualIndex + 2 < currObj.buffer.Length)
+                    {
+                        byte b3 = (byte)GetCachedStat($"LocVarMod_{currObj.uid}_{_selectedLocalVarKey + 2}", currObj.buffer[actualIndex + 2], 0, 255);
+                        uint u24 = (uint)(b1 | (b2 << 8) | (b3 << 16));
+                        GUILayout.Label($"<b>Valeur UInt24 (Lecture) :</b> <color=cyan>{u24}</color>", new GUIStyle(GUI.skin.label) { richText = true });
+
+                        if (actualIndex + 3 < currObj.buffer.Length)
+                        {
+                            byte b4 = (byte)GetCachedStat($"LocVarMod_{currObj.uid}_{_selectedLocalVarKey + 3}", currObj.buffer[actualIndex + 3], 0, 255);
+                            uint u32 = (uint)(b1 | (b2 << 8) | (b3 << 16) | (b4 << 24));
+                            int i32 = (int)u32;
+                            GUILayout.Label($"<b>Valeur 32 bits (Lecture) :</b> <color=cyan>{u32}</color> (Signé : {i32})", new GUIStyle(GUI.skin.label) { richText = true });
+                        }
+                    }
                 }
 
                 GUILayout.Space(10);
@@ -1777,7 +2073,6 @@ namespace Memoria.Scripts.TranceSeek
                                 {
                                     try
                                     {
-                                        // NOUVEAU : Mise à jour de la variable
                                         _lastPlayedAnimInfo = customId.ToString();
 
                                         if (!_originalIdles.ContainsKey(actor)) _originalIdles[actor] = actor.idle;

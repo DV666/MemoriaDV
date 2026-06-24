@@ -52,10 +52,10 @@ namespace Memoria.DefaultScripts
             target.Magic = (byte)Math.Max(1, BasicMagic - (BasicMagic * 9) / 10);
             target.Dexterity = (byte)Math.Max(1, BasicDexterity - (BasicDexterity * 9) / 10);
             target.Will = (byte)Math.Max(1, BasicWill - (BasicWill * 9) / 10);
-            target.PhysicalDefence = (byte)Math.Max(1, BasicPhysicalDefence - (BasicPhysicalDefence * 9) / 10);
-            target.PhysicalEvade = (byte)Math.Max(1, BasicPhysicalEvade - (BasicPhysicalEvade * 9) / 10);
-            target.MagicDefence = (byte)Math.Max(1, BasicMagicDefence - (BasicMagicDefence * 9) / 10);
-            target.MagicEvade = (byte)Math.Max(1, BasicMagicEvade - (BasicMagicEvade * 9) / 10);
+            target.PhysicalDefence = (byte)Math.Max(0, BasicPhysicalDefence - (BasicPhysicalDefence * 9) / 10);
+            target.PhysicalEvade = (byte)Math.Max(0, BasicPhysicalEvade - (BasicPhysicalEvade * 9) / 10);
+            target.MagicDefence = (byte)Math.Max(0, BasicMagicDefence - (BasicMagicDefence * 9) / 10);
+            target.MagicEvade = (byte)Math.Max(0, BasicMagicEvade - (BasicMagicEvade * 9) / 10);
             TranceSeekAPI.SA_StatusApply(inflicter, false);
             ChangePlayerTexture(target, true);
             return btl_stat.ALTER_SUCCESS;            

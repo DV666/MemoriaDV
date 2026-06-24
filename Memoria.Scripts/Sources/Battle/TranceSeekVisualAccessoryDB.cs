@@ -174,7 +174,7 @@ namespace Memoria.Scripts.TranceSeek
             },
 
             {
-                GarudaWing, new("GEO_WEP_GarudaWing_Suit")
+                GarudaWing, new("GEO_WEP_Garuda_Wing_Suit")
                 {
                     { CharacterId.Zidane,      new(2,  new(0f, 0f, 0f),   new(0f, 0f, 132f),     0.5f) },
                     { CharacterId.Vivi,        new(7,  new(0f, 0f, 0f), new(66.4161f, 273.0626f, 283.0112f),      0.5f) },

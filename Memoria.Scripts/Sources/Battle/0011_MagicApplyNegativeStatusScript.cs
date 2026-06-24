@@ -95,6 +95,10 @@ namespace Memoria.Scripts.TranceSeek
                 {
                     _v.Command.AbilityStatus |= (TranceSeekStatus.Vieillissement);
                 }
+                else if (_v.Command.Power == 13) // Armodullahan
+                {
+                    _v.Target.TryAlterSingleStatus(BattleStatusId.ChangeStat, true, _v.Caster, "PhysicalEvade", 0);
+                }
                 else if (_v.Command.Power == 100) // Bass - Shackle Foe
                 {
                     _v.Command.AbilityStatus |= (TranceSeekStatus.PowerBreak);
@@ -169,27 +173,7 @@ namespace Memoria.Scripts.TranceSeek
                     }
                     return;
                 }
-                else if (_v.Caster.Data.dms_geo_id == 166 && TranceSeekAPI.TryMagicHit(_v)) // Thousand Fears (from Dark Beatrix)
-                {
-                    if (_v.Command.Power == 77) // Eyes of Anguish
-                    {
-                        List<BattleStatus> statuschoosen = new List<BattleStatus>{ BattleStatus.Sleep, BattleStatus.Stop, BattleStatus.Blind, BattleStatus.Silence, BattleStatus.Doom,
-                            BattleStatus.Confuse, BattleStatus.Freeze, BattleStatus.Petrify, BattleStatus.GradualPetrify };
-                        int index = GameRandom.Next16() % 10;
-                        if (index == 9)
-                        {
-                            _v.Target.Flags |= (CalcFlag.MpAlteration);
-                            if (_v.Target.IsUnderStatus(BattleStatus.Shell))
-                                _v.Target.MpDamage = (int)(Math.Min(9999, GameRandom.Next16() % (_v.Target.CurrentMp / 2U)));
-                            else
-                                _v.Target.MpDamage = (int)(Math.Min(9999, GameRandom.Next16() % _v.Target.CurrentMp));
-                        }
-                        else
-                            _v.Command.AbilityStatus |= (BattleStatus.Sleep | BattleStatus.Silence | BattleStatus.Confuse);
-                    }
-                    TranceSeekAPI.TryAlterCommandStatuses(_v);
-                    return;
-                }
+
                 if (_v.Command.HitRate == 255 || (_v.Caster.PlayerIndex == CharacterId.Amarant && _v.Caster.IsUnderStatus(BattleStatus.Trance) && _v.Command.AbilityId == BattleAbilityId.Revive2))
                 { // 3 Plaies+
                     TranceSeekAPI.TryAlterCommandStatuses(_v);

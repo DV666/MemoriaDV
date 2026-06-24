@@ -69,7 +69,7 @@ namespace Memoria.Scripts.TranceSeek
             { CharacterId.Quina, new FollowerData(273, "ANH_MAIN_F0_KUI_IDLE", "ANH_MAIN_F0_KUI_WALK", "ANH_MAIN_F0_KUI_RUN", "ANH_MAIN_F0_KUI_BERO_1", new HashSet<Int32>(){289, 273, 295}) },
             { CharacterId.Eiko, new FollowerData(443, "ANH_MAIN_F0_EIK_IDLE", "ANH_MAIN_F0_EIK_WALK", "ANH_MAIN_F0_EIK_RUN", "ANH_MAIN_F0_EIK_BREAK_2", new HashSet<Int32>(){284, 291, 443, 570}) },
             { CharacterId.Amarant, new FollowerData(509, "ANH_MAIN_F0_SLM_IDLE", "ANH_MAIN_F0_SLM_WALK", "ANH_MAIN_F0_SLM_RUN", "ANH_MAIN_F0_SLM_BYE", new HashSet<Int32>(){572, 509, 444}) },
-            { CharacterId.Cinna, new FollowerData(107, "ANH_SSUB_F0_CNA_IDLE", "ANH_SUB_F0_CNA_WALK", "ANH_SUB_F0_CNA_RUN", "ANH_SUB_F0_CNA_SIGN", new HashSet<Int32>(){39, 107, 661}) },
+            { CharacterId.Cinna, new FollowerData(107, "ANH_SUB_F0_CNA_IDLE", "ANH_SUB_F0_CNA_WALK", "ANH_SUB_F0_CNA_RUN", "ANH_SUB_F0_CNA_SIGN", new HashSet<Int32>(){39, 107, 661}) },
             { CharacterId.Marcus, new FollowerData(109, "ANH_SUB_F0_MRC_IDLE", "ANH_SUB_F0_MRC_WALK", "ANH_SUB_F0_MRC_RUN", "ANH_SUB_F0_MRC_TAN", new HashSet<Int32>(){45, 109, 660}) },
             { CharacterId.Blank, new FollowerData(5467, "ANH_SUB_F0_BLN_IDLE", "ANH_SUB_F0_BLN_WALK", "ANH_SUB_F0_BLN_RUN", "ANH_SUB_F0_BLN_TAN", new HashSet<Int32>(){42, 608, 639, 5467, 190, 659}) },
             { CharacterId.Beatrix, new FollowerData(204, "ANH_SUB_F0_BTX_IDLE", "ANH_SUB_F0_BTX_WALK", "ANH_SUB_F0_BTX_RUN", "ANH_SUB_F0_BTX_HAIR", new HashSet<Int32>(){427, 204, 358}) },
@@ -93,7 +93,8 @@ namespace Memoria.Scripts.TranceSeek
                 13055, // Climbing Up (Rope)
                 13059, // Climbing Jump (Rope)
                 13073, // Climbing Down (Rope)
-                10633 // Mounting Gargant
+                10633, // Mounting Gargant
+                159 // Dagga climbing
             });
 
         private static readonly HashSet<Int32> BlackListFieldId = 
@@ -116,12 +117,13 @@ namespace Memoria.Scripts.TranceSeek
         // A FAIRE => Quand le groupe observe le rituel d'Eiko à Gulg.
         // Après avoir battu Siamois
         // Quand on libere Hilda
+        // ATE Marcus à Treno
+        // Pas de followers à la quête de Beatrix :(
 
         private void LateUpdate()
         {
             UIManager uiManager = PersistenSingleton<UIManager>.Instance;
             UIManager.UIState currentState = uiManager.State;
-
 
             CheckLeader();
             if (lastUiState == UIManager.UIState.PartySetting && (currentState == UIManager.UIState.FieldHUD || currentState == UIManager.UIState.WorldHUD))

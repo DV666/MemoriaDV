@@ -67,14 +67,11 @@ namespace Memoria.Scripts.TranceSeek
                 }
                 return;
             }
+
             if (_v.Caster.IsPlayer)
-            {
                 _v.WeaponPhysicalParams();
-            }
             else
-            {
                 _v.NormalPhysicalParams();
-            }
             
             TranceSeekAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
             TranceSeekAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
@@ -88,22 +85,11 @@ namespace Memoria.Scripts.TranceSeek
                     if (battleEnemy.StealableItems[i] != RegularItem.NoItem)
                         ++_v.Context.DamageModifierCount;
                 }
-                if (GameRandom.Next8() < StealScript.NewStealableItemRates(battleEnemy.StealableItemRates[3], _v.Caster) && battleEnemy.StealableItems[3] != RegularItem.NoItem)
-                {
-                    _v.StealItem(battleEnemy, 3);
-                }
-                else if (GameRandom.Next8() < StealScript.NewStealableItemRates(battleEnemy.StealableItemRates[2], _v.Caster) && battleEnemy.StealableItems[2] != RegularItem.NoItem)
-                {
-                    _v.StealItem(battleEnemy, 2);
-                }
-                else if (GameRandom.Next8() < StealScript.NewStealableItemRates(battleEnemy.StealableItemRates[1], _v.Caster) && battleEnemy.StealableItems[1] != RegularItem.NoItem)
-                {
-                    _v.StealItem(battleEnemy, 1);
-                }
-                else if (GameRandom.Next8() < StealScript.NewStealableItemRates(battleEnemy.StealableItemRates[0], _v.Caster) && battleEnemy.StealableItems[0] != RegularItem.NoItem)
-                {
-                    _v.StealItem(battleEnemy, 0);
-                }
+                if (_v.Caster.IsUnderAnyStatus(BattleStatus.Trance) && _v.Caster.PlayerIndex == CharacterId.Zidane)
+                    StealScript.StealWhenTrance(_v);
+                else
+                    StealScript.ClassicSteal(_v);
+
                 _v.CalcHpDamage();
                 TranceSeekAPI.TryAlterMagicStatuses(_v);
             }

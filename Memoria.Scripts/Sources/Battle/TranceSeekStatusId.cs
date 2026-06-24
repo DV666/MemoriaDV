@@ -26,5 +26,6 @@ namespace Memoria.Scripts.TranceSeek
         public const BattleStatusId Runic = BattleStatusId.CustomStatus20;
         public const BattleStatusId Special = BattleStatusId.CustomStatus21; // Can be recycled
         public const BattleStatusId Provok = BattleStatusId.CustomStatus22;
+        public const BattleStatusId Charm = BattleStatusId.CustomStatus23;
     }
 }

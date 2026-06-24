@@ -76,9 +76,12 @@ namespace Memoria.Scripts.TranceSeek
                 FF9StateSystem.Common.FF9.player[(CharacterId)_v.Caster.Data.bi.slot_no].equip[0] = nextWeaponItem;
                 _v.Caster.Data.weapon = ff9item.GetItemWeapon(nextWeaponItem);
                 btl_eqp.InitWeapon(FF9StateSystem.Common.FF9.player[CharacterId.Zidane], _v.Caster.Data);
-
+               
                 for (Int32 i = 0; i < 34; i++)
-                    _v.Caster.Data.mot[i] = btlParam.AnimationId[i];
+                {
+                    _v.Caster.Data.mot[i] = btlParam.AnimationId[i];              
+                    AnimationFactory.AddAnimWithAnimatioName(_v.Caster.Data.gameObject, _v.Caster.Data.mot[i]); // Bug when switching alt -> normal after a Trance... ?
+                }
 
                 _v.Caster.Data.gameObject.transform.localPosition = position;
                 _v.Caster.Data.dms_geo_id = btl_init.GetModelID(btl_util.getSerialNumber(_v.Caster.Data));

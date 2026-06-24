@@ -80,6 +80,7 @@ namespace Memoria.Scripts.TranceSeek
                 GameObject watcherObj = new GameObject("TranceSeek_Watcher");
                 GameObject.DontDestroyOnLoad(watcherObj);
                 watcherObj.AddComponent<OverloadOnFieldScript>();
+                watcherObj.AddComponent<TranceSeekHackShop>();
 #if DEV_TS
                 watcherObj.AddComponent<TranceSeekDebugMenu>();
                 Log.Message("[Trance Seek Init] TranceSeekDebugMenu loaded.");
