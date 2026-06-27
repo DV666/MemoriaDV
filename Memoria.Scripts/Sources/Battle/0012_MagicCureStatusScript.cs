@@ -23,7 +23,7 @@ namespace Memoria.Scripts.TranceSeek
         {       
             if (_v.Command.AbilityId == BattleAbilityId.Esuna)
             {
-                _v.Command.AbilityStatus |= TranceSeekStatus.Vieillissement;
+                _v.Command.AbilityStatus |= TranceSeekStatus.Old;
             }
             if (_v.Command.HitRate == 255)
             {
@@ -54,7 +54,7 @@ namespace Memoria.Scripts.TranceSeek
 
         public Single RateTarget()
         {
-            if (_v.Target.IsUnderAnyStatus(TranceSeekStatus.Vieillissement) && _v.Command.AbilityId == BattleAbilityId.Esuna)
+            if (_v.Target.IsUnderAnyStatus(TranceSeekStatus.Old) && _v.Command.AbilityId == BattleAbilityId.Esuna)
                 return 20;
 
             BattleStatus playerStatus = _v.Target.CurrentStatus;

@@ -93,7 +93,7 @@ namespace Memoria.Scripts.TranceSeek
                 }
                 else if (_v.Command.Power == 10) // Garland - Regression
                 {
-                    _v.Command.AbilityStatus |= (TranceSeekStatus.Vieillissement);
+                    _v.Command.AbilityStatus |= (TranceSeekStatus.Old);
                 }
                 else if (_v.Command.Power == 13) // Armodullahan
                 {

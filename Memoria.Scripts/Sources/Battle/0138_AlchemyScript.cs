@@ -196,9 +196,9 @@ namespace Memoria.Scripts.TranceSeek
                         case TranceSeekRegularItem.HiRemedy:
                         {
                             _v.Command.AbilityStatus = ff9item.GetItemEffect(ItemChoosen).status;
-                            if ((_v.Command.ItemId == RegularItem.Remedy || _v.Command.ItemId == RegularItem.Annoyntment || _v.Command.ItemId == TranceSeekRegularItem.HiRemedy) && _v.Target.IsUnderAnyStatus(TranceSeekStatus.Vieillissement))
+                            if ((_v.Command.ItemId == RegularItem.Remedy || _v.Command.ItemId == RegularItem.Annoyntment || _v.Command.ItemId == TranceSeekRegularItem.HiRemedy) && _v.Target.IsUnderAnyStatus(TranceSeekStatus.Old))
                             {
-                                _v.Command.AbilityStatus |= TranceSeekStatus.Vieillissement;
+                                _v.Command.AbilityStatus |= TranceSeekStatus.Old;
                             }
                             TranceSeekAPI.TryRemoveAbilityStatuses(_v);
                             break;

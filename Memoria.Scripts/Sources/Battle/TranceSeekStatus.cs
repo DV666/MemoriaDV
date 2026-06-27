@@ -19,7 +19,7 @@ namespace Memoria.Scripts.TranceSeek
         public const BattleStatus Bulwark = BattleStatus.CustomStatus13;
         public const BattleStatus PerfectDodge = BattleStatus.CustomStatus14;
         public const BattleStatus PerfectCrit = BattleStatus.CustomStatus15;
-        public const BattleStatus Vieillissement = BattleStatus.CustomStatus16;
+        public const BattleStatus Old = BattleStatus.CustomStatus16;
         public const BattleStatus SleepEasyKill = BattleStatus.CustomStatus17;
         public const BattleStatus SilenceEasyKill = BattleStatus.CustomStatus18;
         public const BattleStatus Rage = BattleStatus.CustomStatus19;

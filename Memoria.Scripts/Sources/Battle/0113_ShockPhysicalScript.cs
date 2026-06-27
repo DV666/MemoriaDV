@@ -34,8 +34,6 @@ namespace Memoria.Scripts.TranceSeek
                 
                 TranceSeekAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
                 TranceSeekAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
-                if (_v.Target.IsUnderAnyStatus(BattleStatus.Protect))
-                    _v.Context.DamageModifierCount += 2; // Ignore Protect reduction.
                 TranceSeekAPI.BonusElement(_v);
                 if (TranceSeekAPI.CanAttackWeaponElementalCommand(_v))
                 {
@@ -58,8 +56,6 @@ namespace Memoria.Scripts.TranceSeek
                 
                 TranceSeekAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
                 TranceSeekAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
-                if (_v.Target.IsUnderAnyStatus(BattleStatus.Protect))
-                    _v.Context.DamageModifierCount += 2; // Ignore Protect reduction.
                 TranceSeekAPI.BonusElement(_v);
                 if (_v.CanAttackElementalCommand())
                 {

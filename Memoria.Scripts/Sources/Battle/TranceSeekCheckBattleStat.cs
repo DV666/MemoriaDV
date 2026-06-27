@@ -25,6 +25,8 @@ namespace Memoria.Scripts.TranceSeek
             public int PhysicalEvade;
             public int MagicDefence;
             public int MagicEvade;
+
+            public bool WasOldStatus;
         }
 
         private Dictionary<BTL_DATA, StatCache> _unitCache = new Dictionary<BTL_DATA, StatCache>();
@@ -80,7 +82,8 @@ namespace Memoria.Scripts.TranceSeek
                         PhysicalDefence = unit.PhysicalDefence,
                         PhysicalEvade = unit.PhysicalEvade,
                         MagicDefence = unit.MagicDefence,
-                        MagicEvade = unit.MagicEvade
+                        MagicEvade = unit.MagicEvade,
+                        WasOldStatus = unit.IsUnderAnyStatus(TranceSeekStatus.Old) // Trigger to much "popup" text.
                     };
                     continue;
                 }
@@ -107,6 +110,13 @@ namespace Memoria.Scripts.TranceSeek
 
                 bool hidePopups = hidestatmodifTargetId != 0 && (hidestatmodifTargetId & unit.Id) != 0;
                 int displayOffset = 0;
+
+                bool isOld = unit.IsUnderAnyStatus(TranceSeekStatus.Old);
+                if (isOld != cached.WasOldStatus)
+                {
+                    hidePopups = true;
+                    cached.WasOldStatus = isOld;
+                }
 
                 if (unit.Level != cached.Level)
                 {
@@ -166,6 +176,7 @@ namespace Memoria.Scripts.TranceSeek
             }
         }
 
+
         private void RequestPopup(BattleUnit unit, string dbKey, bool isUp, int delta, ref int offset, bool hidePopups)
         {
             if (hidePopups) return;
@@ -175,26 +186,21 @@ namespace Memoria.Scripts.TranceSeek
                 // ↑ or ↓ between 1 and 9
                 // ↑↑ or ↓↓ between 10 and 19
                 // ↑↑↑ or ↓↓↓ for >= 20
+                if (!baseMsg.TryGetValue(Localization.CurrentDisplaySymbol, out string msg))
+                    if (!baseMsg.TryGetValue(Localization.GetFallbackSymbol(), out msg))
+                            return;
+
                 int arrowCount = 1;
                 if (delta >= 20) arrowCount = 3;
                 else if (delta >= 10) arrowCount = 2;
 
-                Dictionary<string, string> dynamicMsg = new Dictionary<string, string>(baseMsg.Count);
-                foreach (KeyValuePair<string, string> kvp in baseMsg)
-                {
-                    string finalString = kvp.Value;
-                    if (isUp)
-                        finalString = finalString.Replace("↑", new string('↑', arrowCount));
-                    else
-                        finalString = finalString.Replace("↓", new string('↓', arrowCount));
-
-                    dynamicMsg[kvp.Key] = finalString;
-                }
+                string arrowStr = new string(isUp ? '↑' : '↓', arrowCount);
+                msg = msg.Replace(isUp ? "↑" : "↓", arrowStr);
 
                 string themeKey = GreenRedColor_SubModCheck ? (isUp ? "Green" : "Red") : (isUp ? "Yellow" : "Purple");
                 string hexColor = ColorThemes[themeKey][arrowCount - 1];
 
-                Btl2dReqHeadSymbolMessage(unit.Data, hexColor, dynamicMsg, HUDMessage.MessageStyle.DAMAGE, (byte)(offset * 5), 100);
+                Btl2dReqHeadSymbolMessage(unit.Data, hexColor, msg, HUDMessage.MessageStyle.DAMAGE, (byte)(offset * 5), 100);
                 offset++;
             }
         }

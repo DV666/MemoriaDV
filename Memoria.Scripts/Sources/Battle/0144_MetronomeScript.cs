@@ -158,7 +158,7 @@ namespace Memoria.Scripts.TranceSeek
                     if (playerunit.IsPlayer)
                     {
                         Single PlayerRatioStatus = 0;
-                        if (playerunit.IsUnderAnyStatus(TranceSeekStatus.Vieillissement) && AbilityChoosen == BattleAbilityId.Esuna)
+                        if (playerunit.IsUnderAnyStatus(TranceSeekStatus.Old) && AbilityChoosen == BattleAbilityId.Esuna)
                             PlayerRatioStatus = 20;
 
                         BattleStatus playerStatus = playerunit.CurrentStatus;

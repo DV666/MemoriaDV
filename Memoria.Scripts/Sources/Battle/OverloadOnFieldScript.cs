@@ -48,6 +48,7 @@ namespace Memoria.Scripts.TranceSeek
         {
             public CharacterId Id;
             public GameObject Go;
+
             public Animation Anim;
             public string AnimIdle;
             public string AnimWalk;
@@ -55,8 +56,13 @@ namespace Memoria.Scripts.TranceSeek
             public string AnimInactive;
             public int FramesBehind;
             public int IdleTimer;
+
             public Queue<LeaderState> PositionHistory = new Queue<LeaderState>();
             public List<Material> CachedMaterials = new List<Material>();
+
+            public GameObject ShadowObj;
+            public Transform ShadowTransform;
+            public MeshRenderer ShadowRenderer;
         }
 
         private Dictionary<CharacterId, FollowerData> characterDB = new Dictionary<CharacterId, FollowerData>()
@@ -76,16 +82,21 @@ namespace Memoria.Scripts.TranceSeek
             { (CharacterId)12, new FollowerData(368, "ANH_SUB_F0_SBW_IDLE", "ANH_SUB_F0_SBW_WALK", "ANH_SUB_F0_SBW_RUN", "ANH_SUB_F0_SBW_GIVE_ME", new HashSet<Int32>(){427, 204, 358}) }
         };
 
+        private Dictionary<CharacterId, Follower> followerPool = new Dictionary<CharacterId, Follower>();
         private List<Follower> activeFollowers = new List<Follower>();
+
+        private Boolean init;
         private Vector3 lastLeaderLocalPos;
         private GameObject leader;
         private Actor actorleader;
         private Renderer leaderRenderer;
         private int leader_model_id;
-        private Boolean init;
+        private int partynumber;
         private UIManager.UIState lastUiState;
         private Boolean IsWorldMap;
         private Boolean FollowersHidden;
+
+
         private static readonly HashSet<Int32> BlackListAnimationId =
 
             new HashSet<Int32>(new[] {
@@ -125,13 +136,11 @@ namespace Memoria.Scripts.TranceSeek
             UIManager uiManager = PersistenSingleton<UIManager>.Instance;
             UIManager.UIState currentState = uiManager.State;
 
-            CheckLeader();
+            CheckLeaderAndParty();
             if (lastUiState == UIManager.UIState.PartySetting && (currentState == UIManager.UIState.FieldHUD || currentState == UIManager.UIState.WorldHUD))
                 CheckSwapFollower();
-            else if (FF9StateSystem.Common.FF9.fldMapNo != -1 && SceneDirector.IsFieldScene() && !SceneDirector.Instance.IsFading)
-                ProcessFieldFollowers();
-            else if (FF9StateSystem.Common.FF9.wldMapNo != -1 && SceneDirector.IsWorldScene() && !SceneDirector.Instance.IsFading)
-                ProcessWorldFollowers();
+            else if ((SceneDirector.IsFieldScene() || SceneDirector.IsWorldScene()) && !SceneDirector.Instance.IsFading)
+                ProcessFollowers();
             else
                 ClearFollowers();
 
@@ -159,12 +168,13 @@ namespace Memoria.Scripts.TranceSeek
             lastUiState = currentState;
         }
 
-        private void CheckLeader()
+        private void CheckLeaderAndParty()
         {
             EventEngine engine = PersistenSingleton<EventEngine>.Instance;
             if (engine == null) return;
 
             GameObject oldLeader = leader;
+            int CurrentMemberCounter = FF9StateSystem.Common.FF9.party.MemberCount;
 
             if (SceneDirector.IsFieldScene())
             {
@@ -181,7 +191,7 @@ namespace Memoria.Scripts.TranceSeek
                 actorleader = ff9.GetControlChar().originalActor;
                 leader_model_id = ff9.GetControlChar().originalActor.model;
                 IsWorldMap = true;
-                EnsureLeaderWorldMapShader();
+                ApplyLeaderWorldMapShader();
             }
             else
             {
@@ -190,15 +200,16 @@ namespace Memoria.Scripts.TranceSeek
                 leader_model_id = -1;
             }
 
-            if (leader != oldLeader)
+            if (leader != oldLeader || CurrentMemberCounter != partynumber)
             {
                 leaderRenderer = leader != null ? leader.GetComponentInChildren<Renderer>() : null;
+                partynumber = FF9StateSystem.Common.FF9.party.MemberCount;
                 ClearHistoryFollowers();
                 CheckSwapFollower();
             }
         }
 
-        private void EnsureLeaderWorldMapShader()
+        private void ApplyLeaderWorldMapShader()
         {
             if (!IsWorldMap || leader == null) return;
 
@@ -232,79 +243,20 @@ namespace Memoria.Scripts.TranceSeek
                     {
                         if (characterDB[id].BlackListModelId.Contains(leader_model_id))
                             continue;
-
                         expectedFollowers.Add(id);
                     }
                 }
 
+                activeFollowers.Clear();
                 int targetLayer = leaderRenderer != null ? leaderRenderer.gameObject.layer : leader.layer;
-
                 int delay = 25;
+
                 foreach (CharacterId id in expectedFollowers)
                 {
-                    Follower f = new Follower();
-                    f.Id = id;
+                    Follower f = GetOrCreateFollower(id, targetLayer);
+                    if (f == null) continue;
+
                     f.FramesBehind = delay;
-                    f.AnimIdle = characterDB[id].AnimIdle;
-                    f.AnimWalk = characterDB[id].AnimWalk;
-                    f.AnimRun = characterDB[id].AnimRun;
-                    f.AnimInactive = characterDB[id].AnimInactive;
-                    ResetTimerInactiveAnimation(f);
-
-                    if (!FF9BattleDB.GEO.TryGetValue(characterDB[id].ModelId, out String modelName))
-                    {
-                        Log.Warning($"[Trance Seek] ERROR : can't load follower with ModelId : {characterDB[id].ModelId}...");
-                        continue;
-                    }
-
-                    //Log.Message($"[Trance Seek] New follower created : {f.Id}, using the model {modelName}...");
-                    f.Go = ModelFactory.CreateModel(modelName, false, true, Configuration.Graphics.ElementsSmoothTexture);
-                    GeoTexAnim.addTexAnim(f.Go, modelName);
-
-                    f.Go.transform.SetParent(leader.transform.parent, false);
-                    f.Go.layer = targetLayer;
-
-                    if (IsWorldMap)
-                        f.Go.transform.localScale = new Vector3(-0.00390625f, -0.00390625f, 0.00390625f);
-                    else
-                        f.Go.transform.localScale = new Vector3(-1f, -1f, 1f);
-
-                    foreach (Renderer renderer in f.Go.GetComponentsInChildren<Renderer>())
-                    {
-                        renderer.gameObject.layer = targetLayer;
-
-                        foreach (Material material in renderer.materials)
-                        {
-                            if (IsWorldMap)
-                            {
-                                material.shader = ShadersLoader.Find("WorldMap/Actor");
-                            }
-                            else
-                            {                              
-                                material.shader = ShadersLoader.Find(Configuration.Shaders.FieldCharacterShader);
-                                material.SetColor("_Color", new Color32(128, 128, 128, 255));
-                            }
-
-                            if (material.HasProperty("_Color"))
-                                f.CachedMaterials.Add(material);
-                        }
-                    }
-
-                    foreach (MeshFilter meshFilter in f.Go.GetComponentsInChildren<MeshFilter>())
-                        meshFilter.sharedMesh.bounds = new Bounds(Vector3.zero, Vector3.one * float.MaxValue * 0.01f);
-
-                    foreach (SkinnedMeshRenderer skinnedRenderer in f.Go.GetComponentsInChildren<SkinnedMeshRenderer>())
-                    {
-                        skinnedRenderer.localBounds = new Bounds(Vector3.zero, Vector3.one * float.MaxValue * 0.01f);
-                        if (IsWorldMap)
-                            skinnedRenderer.updateWhenOffscreen = true;
-                    }
-
-                    f.Anim = f.Go.GetComponent<Animation>();
-                    AnimationFactory.AddAnimWithAnimatioName(f.Go, f.AnimIdle);
-                    AnimationFactory.AddAnimWithAnimatioName(f.Go, f.AnimWalk);
-                    AnimationFactory.AddAnimWithAnimatioName(f.Go, f.AnimRun);
-                    AnimationFactory.AddAnimWithAnimatioName(f.Go, f.AnimInactive);
 
                     if (f.Go != null)
                     {
@@ -313,14 +265,14 @@ namespace Memoria.Scripts.TranceSeek
                         else
                             f.Go.transform.localPosition = leader.transform.localPosition;
                         f.Go.transform.localRotation = leader.transform.localRotation;
-                        ApplyFollowerColor(f, GetLeaderColor());
                         f.PositionHistory.Clear();
+                        f.Go.SetActive(true);
                     }
 
                     activeFollowers.Add(f);
                     delay += 25;
                 }
-
+                partynumber = FF9StateSystem.Common.FF9.party.MemberCount;
                 init = true;
             }
             catch (Exception ex)
@@ -329,9 +281,87 @@ namespace Memoria.Scripts.TranceSeek
             }
         }
 
-        private void ProcessFieldFollowers()
+        private Follower GetOrCreateFollower(CharacterId id, int targetLayer)
+        {
+            if (followerPool.TryGetValue(id, out Follower existingFollower))
+            {
+                if (existingFollower.Go != null)
+                {
+                    existingFollower.Go.layer = targetLayer;
+                    foreach (Renderer r in existingFollower.Go.GetComponentsInChildren<Renderer>())
+                        r.gameObject.layer = targetLayer;
+                }
+                return existingFollower;
+            }
+
+            Follower f = new Follower();
+            f.Id = id;
+            f.AnimIdle = characterDB[id].AnimIdle;
+            f.AnimWalk = characterDB[id].AnimWalk;
+            f.AnimRun = characterDB[id].AnimRun;
+            f.AnimInactive = characterDB[id].AnimInactive;
+            ResetTimerInactiveAnimation(f);
+
+            if (!FF9BattleDB.GEO.TryGetValue(characterDB[id].ModelId, out String modelName))
+            {
+                Log.Warning($"[Trance Seek] ERROR : can't load follower with ModelId : {characterDB[id].ModelId}...");
+                return null;
+            }
+
+            f.Go = ModelFactory.CreateModel(modelName, false, true, Configuration.Graphics.ElementsSmoothTexture);
+            GeoTexAnim.addTexAnim(f.Go, modelName);
+
+            f.Go.transform.SetParent(leader.transform.parent, false);
+            f.Go.layer = targetLayer;
+
+            if (IsWorldMap)
+                f.Go.transform.localScale = new Vector3(-0.00390625f, -0.00390625f, 0.00390625f);
+            else
+                f.Go.transform.localScale = new Vector3(-1f, -1f, 1f);
+
+            foreach (Renderer renderer in f.Go.GetComponentsInChildren<Renderer>())
+            {
+                renderer.gameObject.layer = targetLayer;
+                foreach (Material material in renderer.materials)
+                {
+                    if (IsWorldMap)
+                        material.shader = ShadersLoader.Find("WorldMap/Actor");
+                    else
+                    {
+                        material.shader = ShadersLoader.Find(Configuration.Shaders.FieldCharacterShader);
+                        material.SetColor("_Color", new Color32(128, 128, 128, 255));
+                    }
+                    if (material.HasProperty("_Color"))
+                        f.CachedMaterials.Add(material);
+                }
+            }
+
+            foreach (MeshFilter meshFilter in f.Go.GetComponentsInChildren<MeshFilter>())
+                meshFilter.sharedMesh.bounds = new Bounds(Vector3.zero, Vector3.one * float.MaxValue * 0.01f);
+
+            foreach (SkinnedMeshRenderer skinnedRenderer in f.Go.GetComponentsInChildren<SkinnedMeshRenderer>())
+            {
+                skinnedRenderer.localBounds = new Bounds(Vector3.zero, Vector3.one * float.MaxValue * 0.01f);
+                if (IsWorldMap)
+                    skinnedRenderer.updateWhenOffscreen = true;
+            }
+
+            f.Anim = f.Go.GetComponent<Animation>();
+            AnimationFactory.AddAnimWithAnimatioName(f.Go, f.AnimIdle);
+            AnimationFactory.AddAnimWithAnimatioName(f.Go, f.AnimWalk);
+            AnimationFactory.AddAnimWithAnimatioName(f.Go, f.AnimRun);
+            AnimationFactory.AddAnimWithAnimatioName(f.Go, f.AnimInactive);
+
+            CreateFollowerShadow(f);
+
+            followerPool[id] = f;
+            return f;
+        }
+
+        private void ProcessFollowers()
         {
             UIManager uiManager = PersistenSingleton<UIManager>.Instance;
+
             if (uiManager.IsLoading || uiManager.QuitScene.isShowQuitUI || uiManager.State == UIManager.UIState.Serialize || uiManager.IsPause)
                 return;
 
@@ -344,15 +374,45 @@ namespace Memoria.Scripts.TranceSeek
             if (FollowersHidden)
                 HideFollowers(false);
 
-            float distanceMoved = Vector3.Distance(leader.transform.localPosition, lastLeaderLocalPos);
+            Vector3 currentLeaderPos;
+            if (IsWorldMap)
+            {
+                leader_model_id = ff9.GetControlChar().originalActor.model;
+                currentLeaderPos = ff9.GetControlChar().pos;
+            }
+            else
+            {
+                currentLeaderPos = leader.transform.localPosition;
+            }
 
-            if (distanceMoved > 0.01f)
+            float sqrDistanceMoved = (currentLeaderPos - lastLeaderLocalPos).sqrMagnitude;
+
+            if (IsWorldMap && sqrDistanceMoved > 1024f)
+            {
+                Vector3 shiftDelta = currentLeaderPos - lastLeaderLocalPos;
+                foreach (Follower f in activeFollowers)
+                {
+                    if (f.Go != null)
+                        f.Go.transform.localPosition += shiftDelta;
+
+                    int stateCount = f.PositionHistory.Count;
+                    for (int i = 0; i < stateCount; i++)
+                    {
+                        LeaderState updatedState = f.PositionHistory.Dequeue();
+                        updatedState.LocalPosition += shiftDelta;
+                        f.PositionHistory.Enqueue(updatedState);
+                    }
+                }
+                lastLeaderLocalPos = currentLeaderPos;
+                sqrDistanceMoved = 0f;
+            }
+            else if (sqrDistanceMoved > 0.0001f)
             {
                 LeaderState state = new LeaderState();
-                state.LocalPosition = leader.transform.localPosition;
+                state.LocalPosition = currentLeaderPos;
                 state.LocalRotation = leader.transform.localRotation;
                 state.IsMoving = true;
-                state.IsRunning = ActorAnimWalking.Contains(actorleader.anim);
+                state.IsRunning = !IsWorldMap && ActorAnimWalking.Contains(actorleader.anim);
                 state.LightColor = GetLeaderColor();
 
                 foreach (Follower f in activeFollowers)
@@ -363,27 +423,72 @@ namespace Memoria.Scripts.TranceSeek
             {
                 if (f.Go == null) continue;
 
-                if (IsCharacterModelPresentOnField(f.Id) || !FF9StateSystem.Common.FF9.party.IsInParty(f.Id))
+                if (!IsWorldMap && (IsCharacterModelPresentOnField(f.Id) || !FF9StateSystem.Common.FF9.party.IsInParty(f.Id)))
                 {
                     if (f.Go.activeSelf) f.Go.SetActive(false);
                     continue;
                 }
                 else
+                {
                     if (!f.Go.activeSelf) f.Go.SetActive(true);
+                }
 
-                int effectiveFramesBehind = Mathf.Max(1, f.FramesBehind / speedFactor);
+                if (f.ShadowObj != null)
+                {
+                    if (IsWorldMap && leader != null)
+                    {
+                        PosObj leaderPosObj = ff9.GetControlChar_PosObj();
+                        WMShadow leaderShadow = leaderPosObj != null ? Singleton<WMWorld>.Instance.GetShadow(leaderPosObj) : null;
 
-                if (f.PositionHistory.Count > effectiveFramesBehind)
+                        if (leaderShadow != null && leaderShadow.gameObject.activeSelf)
+                        {
+                            f.ShadowRenderer.enabled = f.Go.activeSelf;
+                            f.ShadowTransform.localScale = leaderShadow.transform.localScale;
+
+                            if (leaderShadow.Material != null && f.ShadowRenderer.material != null)
+                                f.ShadowRenderer.material.SetFloat("_Amp", leaderShadow.Material.GetFloat("_Amp"));
+
+                            f.ShadowTransform.position = new Vector3(f.Go.transform.position.x, f.Go.transform.position.y + 0.1f, f.Go.transform.position.z);
+                        }
+                        else
+                        {
+                            f.ShadowRenderer.enabled = false;
+                        }
+                    }
+                    else if (!IsWorldMap && actorleader != null)
+                    {
+                        int leaderUid = actorleader.uid;
+                        if (FF9StateSystem.Field.FF9Field.loc.map.shadowArray.TryGetValue(leaderUid, out FF9Shadow leaderShadow))
+                        {
+                            f.ShadowRenderer.enabled = f.Go.activeSelf;
+                            f.ShadowTransform.localScale = new Vector3(leaderShadow.xScale, 1f, leaderShadow.zScale);
+
+                            Byte amp = (Byte)(leaderShadow.amp * 2);
+                            f.ShadowRenderer.material.SetColor("_Color", new Color32(amp, amp, amp, 255));
+
+                            Transform rootBone = f.Go.transform.FindChild("bone000");
+                            Vector3 basePos = rootBone != null ? rootBone.position : f.Go.transform.localPosition;
+                            Vector3 shadowPos = new Vector3(basePos.x, f.Go.transform.localPosition.y, basePos.z);
+                            f.ShadowTransform.localPosition = shadowPos + new Vector3(leaderShadow.xOffset, 5f, leaderShadow.zOffset);
+                        }
+                        else
+                        {
+                            f.ShadowRenderer.enabled = false;
+                        }
+                    }
+                }
+
+                if (f.PositionHistory.Count > f.FramesBehind)
                 {
                     LeaderState target = default;
-                    while (f.PositionHistory.Count > effectiveFramesBehind)
+                    while (f.PositionHistory.Count > f.FramesBehind)
                         target = f.PositionHistory.Dequeue();
 
                     f.Go.transform.localPosition = target.LocalPosition;
                     f.Go.transform.localRotation = target.LocalRotation;
                     ApplyFollowerColor(f, target.LightColor);
 
-                    if (target.IsRunning || SceneDirector.IsWorldScene())
+                    if (IsWorldMap || target.IsRunning)
                         PlayAnimation(f, f.AnimRun);
                     else
                         PlayAnimation(f, f.AnimWalk);
@@ -402,95 +507,7 @@ namespace Memoria.Scripts.TranceSeek
                 }
             }
 
-            lastLeaderLocalPos = leader.transform.localPosition;
-        }
-
-        private void ProcessWorldFollowers()
-        {
-            UIManager uiManager = PersistenSingleton<UIManager>.Instance;
-            if (uiManager.IsLoading || uiManager.QuitScene.isShowQuitUI || uiManager.State == UIManager.UIState.Serialize || uiManager.IsPause)
-                return;
-
-            if (UIManager.IsUIStateMenu(uiManager.State))
-                return;
-
-            if (!init || leader == null)
-                InitFollower();
-
-            if (FollowersHidden)
-                HideFollowers(false);
-
-            leader_model_id = ff9.GetControlChar().originalActor.model;
-            Vector3 MainCharacterPos = ff9.GetControlChar().pos;
-            float distanceMoved = Vector3.Distance(MainCharacterPos, lastLeaderLocalPos);
-
-            if (distanceMoved > 32f) // Crappy fix when followers teleporting under the floor (from WM Wrap fonction).
-            {
-                Vector3 shiftDelta = MainCharacterPos - lastLeaderLocalPos;
-                foreach (Follower f in activeFollowers)
-                {
-                    if (f.Go != null)
-                        f.Go.transform.localPosition += shiftDelta;
-
-                    LeaderState[] arrayStates = f.PositionHistory.ToArray();
-                    f.PositionHistory.Clear();
-                    foreach (LeaderState state in arrayStates)
-                    {
-                        LeaderState updatedState = state;
-                        updatedState.LocalPosition += shiftDelta;
-                        f.PositionHistory.Enqueue(updatedState);
-                    }
-                }
-                lastLeaderLocalPos = MainCharacterPos;
-                distanceMoved = 0f;
-            }
-            else if (distanceMoved > 0.01f)
-            {
-                LeaderState state = new LeaderState();
-                state.LocalPosition = MainCharacterPos;
-                state.LocalRotation = leader.transform.localRotation;
-                state.IsMoving = true;
-                state.IsRunning = false;
-                state.LightColor = GetLeaderColor();
-
-                foreach (Follower f in activeFollowers)
-                    f.PositionHistory.Enqueue(state);
-            }
-
-            foreach (Follower f in activeFollowers)
-            {
-                if (f.Go == null) continue;
-
-                if (!f.Go.activeSelf) f.Go.SetActive(true);
-
-                int effectiveFramesBehind = Mathf.Max(1, f.FramesBehind / speedFactor);
-
-                if (f.PositionHistory.Count > effectiveFramesBehind)
-                {
-                    LeaderState target = default;
-                    while (f.PositionHistory.Count > effectiveFramesBehind)
-                        target = f.PositionHistory.Dequeue();
-
-                    f.Go.transform.localPosition = target.LocalPosition;
-                    f.Go.transform.localRotation = target.LocalRotation;
-                    ApplyFollowerColor(f, target.LightColor);
-                    PlayAnimation(f, f.AnimRun);
-                }
-                else
-                {
-                    f.IdleTimer -= speedFactor;
-                    ApplyFollowerColor(f, GetLeaderColor());
-                    if (f.IdleTimer < 0)
-                    {
-                        PlayAnimation(f, f.AnimInactive);
-                        ResetTimerInactiveAnimation(f);
-                    }
-                    else if (!f.Anim.IsPlaying(f.AnimInactive))
-                        PlayAnimation(f, f.AnimIdle);
-                }
-            }
-
-            lastLeaderLocalPos = MainCharacterPos;
+            lastLeaderLocalPos = currentLeaderPos;
         }
 
         public void CheckSwapFollower()
@@ -505,90 +522,111 @@ namespace Memoria.Scripts.TranceSeek
                 {
                     if (characterDB[id].BlackListModelId.Contains(leader_model_id))
                         continue;
-
                     expectedFollowers.Add(id);
                 }
             }
 
-            int targetLayer = leaderRenderer != null ? leaderRenderer.gameObject.layer : leader.layer;
-
-            for (int i = 0; i < activeFollowers.Count; i++)
+            bool changeDetected = expectedFollowers.Count != activeFollowers.Count;
+            if (!changeDetected)
             {
-                if (activeFollowers[i].Id != expectedFollowers[i])
+                for (int i = 0; i < activeFollowers.Count; i++)
                 {
-                    Follower f = activeFollowers[i];
-                    if (f.Go == null) continue;
+                    if (activeFollowers[i].Id != expectedFollowers[i])
+                    {
+                        changeDetected = true;
+                        break;
+                    }
+                }
+            }
 
-                    CharacterId newId = expectedFollowers[i];
+            if (!changeDetected) return;
 
+            foreach (Follower f in activeFollowers)
+            {
+                if (f.Go != null)
                     f.Go.SetActive(false);
-                    f.Id = newId;
-                    f.AnimIdle = characterDB[newId].AnimIdle;
-                    f.AnimWalk = characterDB[newId].AnimWalk;
-                    f.AnimRun = characterDB[newId].AnimRun;
-                    f.AnimInactive = characterDB[newId].AnimInactive;
-                    ResetTimerInactiveAnimation(f);
+            }
 
-                    if (!FF9BattleDB.GEO.TryGetValue(characterDB[newId].ModelId, out String modelName))
-                    {
-                        Log.Warning($"[Trance Seek] ERROR : can't load follower with ModelId : {characterDB[newId].ModelId}...");
-                        continue;
-                    }
+            activeFollowers.Clear();
+            int targetLayer = leaderRenderer != null ? leaderRenderer.gameObject.layer : leader.layer;
+            int delay = 25;
 
-                    Vector3 SavePosition = f.Go.transform.localPosition;
-                    Quaternion SaveRotation = f.Go.transform.localRotation;
+            foreach (CharacterId id in expectedFollowers)
+            {
+                Follower f = GetOrCreateFollower(id, targetLayer);
+                if (f == null) continue;
 
-                    f.Go = ModelFactory.CreateModel(modelName, false, true, Configuration.Graphics.ElementsSmoothTexture);
-                    GeoTexAnim.addTexAnim(f.Go, modelName);
+                f.FramesBehind = delay;
 
-                    f.Go.transform.SetParent(leader.transform.parent, false);
-                    f.Go.layer = targetLayer;
-
+                if (f.Go != null)
+                {
                     if (IsWorldMap)
-                        f.Go.transform.localScale = new Vector3(-0.00390625f, -0.00390625f, 0.00390625f);
+                        f.Go.transform.localPosition = ff9.GetControlChar().pos;
                     else
-                        f.Go.transform.localScale = new Vector3(-1f, -1f, 1f);
+                        f.Go.transform.localPosition = leader.transform.localPosition;
 
-                    f.CachedMaterials.Clear();
-                    foreach (Renderer renderer in f.Go.GetComponentsInChildren<Renderer>())
-                    {
-                        renderer.gameObject.layer = targetLayer;
-                        foreach (Material material in renderer.materials)
-                        {
-                            if (IsWorldMap)
-                            {
-                                material.shader = ShadersLoader.Find("WorldMap/Actor");
-                            }
-                            else
-                            {
-                                material.shader = ShadersLoader.Find(Configuration.Shaders.FieldCharacterShader);
-                                material.SetColor("_Color", new Color32(128, 128, 128, 255));
-                            }
-
-                            if (material.HasProperty("_Color"))
-                                f.CachedMaterials.Add(material);
-                        }
-                    }
-
-                    foreach (MeshFilter meshFilter in f.Go.GetComponentsInChildren<MeshFilter>())
-                        meshFilter.sharedMesh.bounds = new Bounds(Vector3.zero, Vector3.one * float.MaxValue * 0.01f);
-
-                    foreach (SkinnedMeshRenderer skinnedRenderer in f.Go.GetComponentsInChildren<SkinnedMeshRenderer>())
-                    {
-                        skinnedRenderer.localBounds = new Bounds(Vector3.zero, Vector3.one * float.MaxValue * 0.01f);
-                        if (IsWorldMap)
-                            skinnedRenderer.updateWhenOffscreen = true;
-                    }
-
-                    f.Anim = f.Go.GetComponent<Animation>();
-                    AnimationFactory.AddAnimWithAnimatioName(f.Go, f.AnimIdle);
-                    AnimationFactory.AddAnimWithAnimatioName(f.Go, f.AnimWalk);
-                    AnimationFactory.AddAnimWithAnimatioName(f.Go, f.AnimRun);
-                    AnimationFactory.AddAnimWithAnimatioName(f.Go, f.AnimInactive);
-                    f.Go.transform.localPosition = SavePosition;
-                    f.Go.transform.localRotation = SaveRotation;
+                    f.Go.transform.localRotation = leader.transform.localRotation;
+                    f.PositionHistory.Clear();
                     f.Go.SetActive(true);
                 }
+
+                activeFollowers.Add(f);
+                delay += 25;
+            }
+        }
+
+        private void CreateFollowerShadow(Follower f)
+        {
+            if (IsWorldMap)
+            {
+                GameObject original = Resources.Load<GameObject>("EmbeddedAsset/WorldMap_Local/Shadow/WMShadow");
+                if (original != null)
+                {
+                    f.ShadowObj = UnityEngine.Object.Instantiate<GameObject>(original);
+                    f.ShadowObj.name = f.Go.name + "_WMShadow";
+                    if (Singleton<WMWorld>.Instance != null && Singleton<WMWorld>.Instance.WorldMapEffectRoot != null)
+                        f.ShadowObj.transform.parent = Singleton<WMWorld>.Instance.WorldMapEffectRoot;
+                    else
+                        f.ShadowObj.transform.parent = f.Go.transform.parent;
+
+                    f.ShadowTransform = f.ShadowObj.transform;
+                    f.ShadowRenderer = f.ShadowObj.GetComponent<Renderer>() as MeshRenderer;
+                }
+            }
+            else
+            {
+                List<Vector3> vertices = new List<Vector3>
+                {
+                    new Vector3(-1f, 0f, -1f), new Vector3(1f, 0f, -1f),
+                    new Vector3(1f, 0f, 1f), new Vector3(-1f, 0f, 1f)
+                };
+                Color color = new Color(1f, 1f, 1f, 0.6f);
+                List<Color> colors = new List<Color> { color, color, color, color };
+                List<Vector2> uvs = new List<Vector2>
+                {
+                    new Vector2(0f, 0f), new Vector2(1f, 0f),
+                    new Vector2(1f, 1f), new Vector2(0f, 1f)
+                };
+                List<int> triangles = new List<int> { 2, 1, 0, 3, 2, 0 };
+
+                Mesh mesh = new Mesh { vertices = vertices.ToArray(), colors = colors.ToArray(), uv = uvs.ToArray(), triangles = triangles.ToArray() };
+                f.ShadowObj = new GameObject(f.Go.name + "_FieldShadow");
+
+                if (PersistenSingleton<EventEngine>.Instance != null && PersistenSingleton<EventEngine>.Instance.fieldmap != null)
+                    f.ShadowObj.transform.parent = PersistenSingleton<EventEngine>.Instance.fieldmap.transform;
+                else
+                    f.ShadowObj.transform.parent = f.Go.transform.parent;
+
+                f.ShadowRenderer = f.ShadowObj.AddComponent<MeshRenderer>();
+                MeshFilter meshFilter = f.ShadowObj.AddComponent<MeshFilter>();
+                meshFilter.mesh = mesh;
+
+                Material material = new Material(ShadersLoader.Find("PSX/FieldMapActorShadow"));
+                material.mainTexture = AssetManager.Load<Texture2D>("CommonAsset/Common/shadow_plate", false);
+                f.ShadowRenderer.material = material;
+                f.ShadowRenderer.material.color = Color.black;
+                f.ShadowTransform = f.ShadowObj.transform;
+                meshFilter.sharedMesh.bounds = new Bounds(Vector3.zero, Vector3.one * float.MaxValue * 0.01f);
             }
         }
 
@@ -680,18 +718,26 @@ namespace Memoria.Scripts.TranceSeek
         {
             if (activeFollowers.Count == 0) return;
 
-            foreach (Follower f in activeFollowers)
+            foreach (Follower f in followerPool.Values)
             {
                 if (f.Go != null)
                 {
                     f.Go.SetActive(false);
                     Destroy(f.Go);
                 }
+                if (f.ShadowObj != null)
+                {
+                    if (f.ShadowRenderer != null && f.ShadowRenderer.material != null)
+                        Destroy(f.ShadowRenderer.material);
+
+                    f.ShadowObj.SetActive(false);
+                    Destroy(f.ShadowObj);
+                }
             }
 
             leader = null;
             leaderRenderer = null;
-            activeFollowers.Clear();
+            followerPool.Clear();
             IsWorldMap = false;
             init = false;
         }

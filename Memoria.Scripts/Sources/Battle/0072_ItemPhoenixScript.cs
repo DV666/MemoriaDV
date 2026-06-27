@@ -76,6 +76,12 @@ namespace Memoria.Scripts.TranceSeek
                 return result;
             }
 
+            if (_v.Target.IsUnderAnyStatus(BattleStatusId.Doom) && (_v.Command.ItemId == RegularItem.PhoenixPinion))
+            {
+                int DoomCounter = (int)_v.Target.GetPropertyByName("StatusProperty Doom Counter");
+                return (20 - DoomCounter);
+            }
+
             if (!_v.Target.IsPlayer)
                 return 0;
 

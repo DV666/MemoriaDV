@@ -777,7 +777,7 @@ namespace Memoria.Scripts.TranceSeek
                                 PotionChoosen = RegularItem.EyeDrops;
                             else if (v.Target.IsUnderAnyStatus(BattleStatus.Trouble) && !v.Target.IsUnderPermanentStatus(BattleStatus.Trouble))
                                 PotionChoosen = RegularItem.Annoyntment;
-                            else if (v.Target.IsUnderAnyStatus(TranceSeekStatus.Vieillissement) && !v.Target.IsUnderPermanentStatus(TranceSeekStatus.Vieillissement))
+                            else if (v.Target.IsUnderAnyStatus(TranceSeekStatus.Old) && !v.Target.IsUnderPermanentStatus(TranceSeekStatus.Old))
                                 PotionChoosen = RegularItem.Annoyntment;
 
                             if (PotionChoosen != RegularItem.NoItem)

@@ -683,7 +683,7 @@ namespace Memoria.Scripts.TranceSeek
                         {
                             if (_v.IsTargetLevelMultipleOfCommandRate() && _v.Target.CanBeAttacked())
                             {
-                                _v.Target.AlterStatus(TranceSeekStatus.Vieillissement);
+                                _v.Target.AlterStatus(TranceSeekStatus.Old);
                             }
                             else
                             {

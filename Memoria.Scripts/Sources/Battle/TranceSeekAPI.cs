@@ -322,8 +322,8 @@ namespace Memoria.Scripts.TranceSeek
 
             if (v.Target.PlayerIndex == CharacterId.Steiner && v.Target.IsUnderAnyStatus(BattleStatus.Trance)) // Steiner Trance => 25% reduce physical damage
                 --v.Context.DamageModifierCount;
-            if (v.Target.IsUnderAnyStatus(BattleStatus.Protect))
-                v.Context.DamageModifierCount -= 2;
+            if (v.Target.IsUnderAnyStatus(BattleStatus.Protect) && v.Command.ScriptId != 113) // Shock ignore Protect
+                v.Context.Attack /= 2;
             if (v.Target.IsUnderAnyStatus(BattleStatus.Mini) || v.Target.IsUnderAnyStatus(BattleStatus.Sleep) && !v.Target.IsUnderAnyStatus(BattleStatus.EasyKill) || v.Target.IsUnderAnyStatus(BattleStatus.Freeze))
                 ++v.Context.DamageModifierCount;
 
@@ -410,7 +410,7 @@ namespace Memoria.Scripts.TranceSeek
         public static void ReduceAccuracyEliteMonsters(this BattleCalculator v, Boolean MalusForced = false)
         {
             BattleStatus LethalStatus = BattleStatus.Death | BattleStatus.Petrify | BattleStatus.Mini | BattleStatus.Heat |
-                                        BattleStatus.Freeze | BattleStatus.Zombie | BattleStatus.Stop | TranceSeekStatus.Vieillissement;
+                                        BattleStatus.Freeze | BattleStatus.Zombie | BattleStatus.Stop | TranceSeekStatus.Old;
             if (EliteMonster(v.Target.Data))
             {            
                 if ((v.Command.AbilityStatus & LethalStatus) != 0 || MalusForced)
@@ -453,7 +453,7 @@ namespace Memoria.Scripts.TranceSeek
             }
 
             if (v.Target.IsUnderAnyStatus(BattleStatus.Shell))
-                v.Context.Attack >>= 1;
+                v.Context.Attack /= 2;
 
             if (v.Target.IsUnderAnyStatus(BattleStatus.Defend) && v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.SuperGuard))
             {

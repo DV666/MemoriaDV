@@ -151,17 +151,20 @@ namespace Memoria.Scripts.TranceSeek
 
             TranceSeekRegularItem.SpecialItems(v);
 
-            Single modifier_factor = 1f; // [TODO] Make something more cleaner about PowerUp status like here ?
-            if (v.Context.DamageModifierCount >= 0)
-                modifier_factor += v.Context.DamageModifierCount * 0.25f;
-            else if (v.Context.DamageModifierCount == -1)
-                modifier_factor = 0.75f;
-            else
-                modifier_factor /= -v.Context.DamageModifierCount;
-            if (modifier_factor < 0)
-                modifier_factor = 0.01f; // Or 0 ? Hmm...
+            Single modifier_factor = 1f;
+            Int32 count = v.Context.DamageModifierCount;
 
-            Int32 reflectMultiplier = v.Command.GetReflectMultiplierOnTarget(v.Target.Id);
+            if (count > 0)
+                modifier_factor += count * 0.25f;
+            else if (count == -1)
+                modifier_factor = 0.75f;
+            else if (count < -1)
+                modifier_factor = 1f / -count;
+
+            if (modifier_factor <= 0f)
+                modifier_factor = 0.01f;
+
+            Int32 reflectMultiplier = GetReflectMultiplierOnTarget(v, v.Target.Id);
             Boolean IsInvincible = TranceSeekAPI.CheckInvincible(v) && (((v.Target.Flags & CalcFlag.HpAlteration) != 0 && (v.Target.Flags & CalcFlag.HpRecovery) == 0) || ((v.Target.Flags & CalcFlag.MpAlteration) != 0 && (v.Target.Flags & CalcFlag.MpRecovery) == 0));
 
             if (!IsInvincible)
@@ -195,6 +198,17 @@ namespace Memoria.Scripts.TranceSeek
                     v.Target.CurrentHp = (uint)((1 + GameRandom.Next8() % 9));
                 }
             }
+        }
+
+        private Int32 GetReflectMultiplierOnTarget(BattleCalculator v, UInt16 targetId)
+        {
+            if (v.Command.Data.info.reflec != 1)
+                return 1;
+            Int32 reflectMultiplier = 0;
+            for (UInt16 index = 0; index < 4; ++index)
+                if ((v.Command.Data.reflec.tar_id[index] & targetId) != 0)
+                    ++reflectMultiplier;
+            return Math.Max(1, reflectMultiplier);
         }
 
         private static readonly HashSet<Int32> StoneMonsters = new HashSet<Int32> { 354, 221, 83 };

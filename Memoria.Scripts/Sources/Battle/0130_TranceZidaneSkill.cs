@@ -48,7 +48,7 @@ namespace Memoria.Scripts.TranceSeek
             {
                 BattleStatusId[] statuslist = { BattleStatusId.Poison, BattleStatusId.Venom, BattleStatusId.Blind, BattleStatusId.Silence, BattleStatusId.Trouble,
                 BattleStatusId.Sleep, BattleStatusId.Freeze, BattleStatusId.Heat, BattleStatusId.Doom, BattleStatusId.Mini, BattleStatusId.Petrify, BattleStatusId.GradualPetrify,
-                BattleStatusId.Berserk, BattleStatusId.Confuse, BattleStatusId.Stop, BattleStatusId.Zombie, BattleStatusId.Slow, TranceSeekStatusId.Vieillissement,
+                BattleStatusId.Berserk, BattleStatusId.Confuse, BattleStatusId.Stop, BattleStatusId.Zombie, BattleStatusId.Slow, TranceSeekStatusId.Old,
                 TranceSeekStatusId.ArmorBreak, TranceSeekStatusId.MagicBreak, TranceSeekStatusId.MentalBreak, TranceSeekStatusId.PowerBreak};
 
                 List<BattleStatusId> statuschoosen = new List<BattleStatusId>();
@@ -57,7 +57,7 @@ namespace Memoria.Scripts.TranceSeek
                 {
                     if ((statuslist[i].ToBattleStatus() & _v.Target.ResistStatus) == 0)
                     {
-                        if (statuslist[i] == TranceSeekStatusId.Vieillissement && _v.Target.IsUnderAnyStatus(BattleStatus.EasyKill))
+                        if (statuslist[i] == TranceSeekStatusId.Old && _v.Target.IsUnderAnyStatus(BattleStatus.EasyKill))
                             continue;
 
                         statuschoosen.Add(statuslist[i]);

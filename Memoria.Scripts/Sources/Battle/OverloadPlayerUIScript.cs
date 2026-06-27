@@ -1,5 +1,6 @@
 ﻿using Assets.Sources.Scripts.UI.Common;
 using FF9;
+using Memoria.Assets;
 using Memoria.Data;
 using System;
 using System.Collections.Generic;
@@ -31,7 +32,6 @@ namespace Memoria.Scripts.TranceSeek
             Boolean HPColored = Configuration.Mod.FolderNames.Contains("TranceSeek/Options/ColoredHP");
             Boolean MPColored = Configuration.Mod.FolderNames.Contains("TranceSeek/Options/ColoredMP");
             Boolean GemColored = Configuration.Mod.FolderNames.Contains("TranceSeek/Options/ColoredGems");
-
             CurrentPlayer = player;
 
             IOverloadPlayerUIScript.Result result = new IOverloadPlayerUIScript.Result();
@@ -58,17 +58,11 @@ namespace Memoria.Scripts.TranceSeek
                             NoSA = false;
 
                     if (NoSA)
-                    {
                         result.ColorMagicStone = FF9TextTool.Gray;
-                        return result;
-                    }
                 }
 
                 if (player.cur.capa == 0)
-                {
                     result.ColorMagicStone = FF9TextTool.White;
-                    return result;
-                }
 
                 float CurCapa = (float)player.cur.capa;
                 float MaxCapa = (float)player.max.capa;
@@ -139,9 +133,13 @@ namespace Memoria.Scripts.TranceSeek
         public class SAClearInputHandler : MonoBehaviour
         {
             private bool _isActionTriggered = false;
+            private Dialog _confirmDialog = null;
 
             private void Update()
             {
+                if (_confirmDialog != null)
+                    return;
+
                 if (ButtonGroupState.ActiveGroup != "Ability.SupportAbility")
                     return;
 
@@ -149,7 +147,7 @@ namespace Memoria.Scripts.TranceSeek
                 {
                     if (!_isActionTriggered)
                     {
-                        ClearSupportAbilities();
+                        ShowConfirmDialog();
                         _isActionTriggered = true;
                     }
                 }
@@ -157,6 +155,44 @@ namespace Memoria.Scripts.TranceSeek
                 {
                     _isActionTriggered = false;
                 }
+            }
+
+            private void ShowConfirmDialog()
+            {
+                FF9Sfx.FF9SFX_Play(103);
+                String lang = Localization.CurrentDisplaySymbol ?? "US";
+
+                if (!ConfirmClearSADialogTexts.TryGetValue(lang, out String dialogText))
+                    dialogText = ConfirmClearSADialogTexts["US"];
+
+                _confirmDialog = Singleton<DialogManager>.Instance.AttachDialog(
+                    dialogText,
+                    0,
+                    0,
+                    Dialog.TailPosition.Center,
+                    Dialog.WindowStyle.WindowStylePlain,
+                    Vector2.zero,
+                    Dialog.CaptionType.None
+                );
+
+                _confirmDialog.DefaultChoice = 1;
+                _confirmDialog.CancelChoice = 1;
+                _confirmDialog.AfterDialogHidden = OnConfirmDialogHidden;
+
+                PersistenSingleton<UIManager>.Instance.IsWarningDialogEnable = true;
+
+                ButtonGroupState.DisableAllGroup(true);
+            }
+
+            private void OnConfirmDialogHidden(Int32 choice)
+            {
+                _confirmDialog = null;
+
+                PersistenSingleton<UIManager>.Instance.IsWarningDialogEnable = false;
+                ButtonGroupState.ActiveGroup = "Ability.SupportAbility";
+
+                if (choice == 0)
+                    ClearSupportAbilities();
             }
 
             private void ClearSupportAbilities()
@@ -170,6 +206,9 @@ namespace Memoria.Scripts.TranceSeek
                 foreach (SupportAbility sa in player.saExtended)
                     if (!player.saForced.Contains(sa))
                         toRemove.Add(sa);
+
+                if (toRemove.Count == 0)
+                    return;
 
                 foreach (SupportAbility sa in toRemove)
                 {
@@ -200,6 +239,17 @@ namespace Memoria.Scripts.TranceSeek
                 }
             }
         }
+
+        private static readonly Dictionary<String, String> ConfirmClearSADialogTexts = new Dictionary<String, String>
+        {
+            { "US", "[IMME]Remove all Support Abilities ?\n\n[CHOO][MOVE=18,0]Yes.\n[MOVE=18,0]No." },
+            { "UK", "[IMME]Remove all Support Abilities ?\n\n[CHOO][MOVE=18,0]Yes.\n[MOVE=18,0]No." },
+            { "FR", "[IMME]Retirer toutes les compétences de soutien ?\n\n[CHOO][MOVE=18,0]Oui.\n[MOVE=18,0]Non." },
+            { "ES", "[IMME]¿Quitar todas las habilidades de apoyo?\n\n[CHOO][MOVE=18,0]Sí.\n[MOVE=18,0]No." },
+            { "GR", "[IMME]Alle Hilfs-Abilities ablegen?\n\n[CHOO][MOVE=18,0]Ja.\n[MOVE=18,0]Nein." },
+            { "IT", "[IMME]Rimuovere tutte le abilità di supporto?\n\n[CHOO][MOVE=18,0]Sì.\n[MOVE=18,0]No." },
+            { "JP", "[IMME]すべてのアビリティを外しますか？\n\n[CHOO][MOVE=18,0]はい。\n[MOVE=18,0]いいえ。" }
+        };
 
         // For Memoria ? In the Update fonction
 

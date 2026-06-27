@@ -121,7 +121,7 @@ namespace Memoria.Scripts.TranceSeek
                             break;
                         case TranceSeekBattleAbility.MogEsuna: // Mog Esuna
                         case TranceSeekBattleAbility.MogaEsuna: // Moga Esuna
-                            _v.Target.RemoveStatus(BattleStatus.Poison | BattleStatus.Venom | BattleStatus.Silence | BattleStatus.Blind | BattleStatus.Trouble | BattleStatus.Mini | BattleStatus.Berserk | TranceSeekStatus.Vieillissement);
+                            _v.Target.RemoveStatus(BattleStatus.Poison | BattleStatus.Venom | BattleStatus.Silence | BattleStatus.Blind | BattleStatus.Trouble | BattleStatus.Mini | BattleStatus.Berserk | TranceSeekStatus.Old);
                             break;
                         case TranceSeekBattleAbility.MogSupport: // Mog Support
                         case TranceSeekBattleAbility.MogSupport2: // Moga Support

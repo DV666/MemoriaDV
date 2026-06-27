@@ -24,7 +24,7 @@ namespace Memoria.Scripts.TranceSeek
             {
                 if (_v.IsTargetLevelMultipleOfCommandRate() && _v.Target.CanBeAttacked())
                 {
-                    _v.Command.AbilityStatus |= TranceSeekStatus.Vieillissement;
+                    _v.Command.AbilityStatus |= TranceSeekStatus.Old;
                     TranceSeekAPI.TryAlterCommandStatuses(_v);
                 }
                 else
