@@ -41,6 +41,13 @@ namespace Memoria.DefaultScripts
                         return btl_stat.ALTER_SUCCESS_NO_SET;
                     }
                 }
+                else if (Parameter == "MaxStack")
+                {
+                    if (Stack == StackMaximum)
+                        return btl_stat.ALTER_SUCCESS_NO_SET;
+                    else
+                        Stack = StackMaximum;
+                }
                 else
                 {
                     Int32.TryParse(Parameter, out Int32 PutStack);

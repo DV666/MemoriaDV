@@ -129,7 +129,6 @@ namespace Memoria.Scripts.TranceSeek
         // Après avoir battu Siamois
         // Quand on libere Hilda
         // ATE Marcus à Treno
-        // Pas de followers à la quête de Beatrix :(
 
         private void LateUpdate()
         {
@@ -658,8 +657,12 @@ namespace Memoria.Scripts.TranceSeek
             if (activeFollowers.Count == 0 || FollowersHidden == hide) return;
 
             foreach (Follower f in activeFollowers)
+            {
                 if (f.Go != null)
                     f.Go.SetActive(!hide);
+                if (f.ShadowObj != null)
+                    f.ShadowObj.SetActive(!hide);
+            }
 
             FollowersHidden = hide;
 

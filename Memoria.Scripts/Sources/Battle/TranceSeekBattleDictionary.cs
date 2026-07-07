@@ -144,7 +144,27 @@ namespace Memoria.Scripts.TranceSeek
     {
         public int StackCMD { get; set; }
         //public int MagicDummied { get; set; }
-        public int Braver { get; set; }
+        public int Braver
+        {
+            get
+            {
+                if (FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1000, out Dictionary<Int32, Int32> dictbattle))
+                    if (dictbattle.TryGetValue(2, out int braverValue))
+                        return braverValue;
+
+                return 0;
+            }
+            set
+            {
+                if (!FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1000, out Dictionary<Int32, Int32> dictbattle))
+                {
+                    dictbattle = new Dictionary<Int32, Int32>();
+                    FF9StateSystem.EventState.gScriptDictionary.Add(1000, dictbattle);
+                }
+
+                dictbattle[2] = value;
+            }
+        }
         public Boolean RedemptionTrigger { get; set; }
     }
 
@@ -309,10 +329,8 @@ namespace Memoria.Scripts.TranceSeek
         public Boolean Invincible { get; set; }
         public Boolean ImmuneSteal { get; set; }
         public Boolean DodgeALL { get; set; }
-
-
         public int MascotCooldown { get; set; }
-
+        public int SoulChance { get; set; }
 
         public SPSEffect PolaritySPS { get; set; }
 

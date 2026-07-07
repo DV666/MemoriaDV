@@ -404,6 +404,18 @@ namespace Memoria.Scripts.TranceSeek
                             unit.State().MascotCooldown = (60 - unit.Will) * UnityEngine.Random.Range(1, 11) * 100;
                             unit.AddDelayedModifier(TranceSeekVisualAccessory.ProcessMascotRecast, null);
                             break;
+                        case TranceSeekRegularItem.CharonsRing:
+                            unit.State().SoulChance = 10;
+                            break;
+                        case TranceSeekRegularItem.ErebusRing:
+                            unit.State().SoulChance = 25;
+                            break;
+                        case TranceSeekRegularItem.ThanatosRing:
+                            unit.State().SoulChance = 50;
+                            break;
+                        case TranceSeekRegularItem.AnimaRing:
+                            unit.State().SoulChance = 75;
+                            break;
                     }
 
                     if (unit.PlayerIndex == CharacterId.Eiko) // Init Moug

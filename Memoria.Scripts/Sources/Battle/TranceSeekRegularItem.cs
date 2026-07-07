@@ -195,6 +195,12 @@ namespace Memoria.Scripts.TranceSeek
         public const RegularItem Mini_FriendlyFeatherCircle = (RegularItem)1271;
         public const RegularItem GarudaWing = (RegularItem)1272;
         public const RegularItem YanHorns = (RegularItem)1273;
+        public const RegularItem MalboroIncense = (RegularItem)1274;
+        public const RegularItem CharonsRing = (RegularItem)1275;
+        public const RegularItem ErebusRing = (RegularItem)1276;
+        public const RegularItem ThanatosRing = (RegularItem)1277;
+        public const RegularItem AnimaRing = (RegularItem)1278;
+        // Chemist Stuff # (2000-2999)
         public const RegularItem HiPotion2 = (RegularItem)2000;
         public const RegularItem UltraPotion2 = (RegularItem)2001;
         public const RegularItem MegaPotion = (RegularItem)2002;
@@ -685,6 +691,9 @@ namespace Memoria.Scripts.TranceSeek
         public const RegularItem BigBang = (RegularItem)2487;
         public const RegularItem ProtonBomb = (RegularItem)2488;
         public const RegularItem SuperNova = (RegularItem)2489;
+        // Monster Loot (for Souls) # (3000-3999)
+        public const RegularItem GoblinSoul = (RegularItem)3000;
+        public const RegularItem SkeletonSoul = (RegularItem)3001;
 
         public static readonly HashSet<RegularItem> WeaponAffinitiesPoison = new HashSet<RegularItem>(new[] { RegularItem.RuneTooth, RuneToothDagger, RegularItem.ScissorFangs });
 
@@ -723,6 +732,23 @@ namespace Memoria.Scripts.TranceSeek
                             v.Context.IsDrain = false; // Need to disable it otherwise, Memoria will do : v.Caster.HpDamage = v.Target.HpDamage
                         }
                         break;
+                    }
+                }
+
+                int SoulChance = v.Caster.State().SoulChance;
+                if (!v.Target.IsPlayer && SoulChance > 0 && (GameRandom.Next16() % 100) < SoulChance && (v.Target.Flags & CalcFlag.HpRecovery) == 0 && v.Target.HpDamage > v.Target.CurrentHp)
+                {
+                    BattleEnemy battleEnemy = BattleEnemy.Find(v.Target);
+                    switch (v.Target.Data.dms_geo_id)
+                    {
+                        case 152: // Goblin
+                            battleEnemy.Data.bonus_item[0] = GoblinSoul;
+                            battleEnemy.Data.bonus_item_rate[0] = 256;
+                            break;
+                        case 162: // Skeleton
+                            battleEnemy.Data.bonus_item[0] = SkeletonSoul;
+                            battleEnemy.Data.bonus_item_rate[0] = 256;
+                            break;
                     }
                 }
             }

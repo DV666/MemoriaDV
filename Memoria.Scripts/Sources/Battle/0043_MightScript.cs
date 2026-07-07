@@ -21,7 +21,7 @@ namespace Memoria.Scripts.TranceSeek
 
         public void Perform()
         {
-            if (_v.Caster.PlayerIndex == CharacterId.Beatrix && (_v.Command.AbilityId == TranceSeekBattleAbility.Braver || _v.Command.AbilityId == TranceSeekBattleAbility.Heroism)) // Bravoure
+            if (_v.Caster.PlayerIndex == CharacterId.Beatrix && (_v.Command.AbilityId == TranceSeekBattleAbility.Braver || _v.Command.AbilityId == TranceSeekBattleAbility.Heroism))
             {
                 var Caster_TSVar = _v.CasterState();
                 if (Caster_TSVar.Beatrix.Braver > 0)
@@ -31,20 +31,13 @@ namespace Memoria.Scripts.TranceSeek
                 }
                 btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.PowerUp, parameters: $"+{_v.Command.Power}");
                 btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.MagicUp, parameters: $"+{_v.Command.Power}");
-                _v.Target.AlterStatus(TranceSeekStatus.Redemption, _v.Caster);
-                _v.Target.AlterStatus(TranceSeekStatus.Redemption, _v.Caster);
-                if (_v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.Expiation)) // SA Expiation
-                    _v.Target.AlterStatus(TranceSeekStatus.Redemption, _v.Caster);
+                btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.Redemption, parameters: "MaxStack");
                 if (_v.Caster.IsUnderAnyStatus(BattleStatus.Trance))
                 {
-                    Caster_TSVar.Beatrix.Braver = 2;
                     _v.Command.AbilityStatus |= (BattleStatus.Regen | BattleStatus.AutoLife);
                     TranceSeekAPI.TryAlterCommandStatuses(_v);
                 }
-                else
-                {
-                    Caster_TSVar.Beatrix.Braver = 1;
-                }
+                Caster_TSVar.Beatrix.Braver = 1;
                 TranceSeekCharacterMechanic.UpdateRedemptionHUD(_v.Target);
                 return;
             }

@@ -110,6 +110,18 @@ namespace Memoria.Scripts.TranceSeek
                         FF9ITEM_DATA itemData = ff9item._FF9Item_Data[synth.Result];
                         if (itemData != null)
                         {
+                            return GetSynthesisCategoryPriority(itemData.type);
+                        }
+                    }
+                    return 100;
+                })
+                .ThenBy(synth =>
+                {
+                    if (synth != null && ff9item._FF9Item_Data != null)
+                    {
+                        FF9ITEM_DATA itemData = ff9item._FF9Item_Data[synth.Result];
+                        if (itemData != null)
+                        {
                             return itemData.shape;
                         }
                     }
@@ -125,13 +137,21 @@ namespace Memoria.Scripts.TranceSeek
                 if (setShopTypeMethod != null)
                 {
                     setShopTypeMethod.Invoke(shop, new object[] { ShopUI.ShopType.Synthesis });
-                    Log.Message($"[TranceSeekShop] The synth shop n°{shop.Id} has been sorted (by shape then synthesis price).");
+                    Log.Message($"[TranceSeekShop] The synth shop n°{shop.Id} has been sorted (by category, shape then synthesis price).");
                 }
             }
             catch (Exception ex)
             {
                 Log.Warning($"[TranceSeekShop] Error when sorting the synth shop n°{shop.Id} : {ex.Message}");
             }
+        }
+
+        private int GetSynthesisCategoryPriority(ItemType type)
+        {
+            if ((type & ItemType.Weapon) != 0) return 0;
+            if ((type & (ItemType.Helmet | ItemType.Armlet | ItemType.Armor)) != 0) return 1;
+            if ((type & ItemType.Accessory) != 0) return 2;
+            return 3;
         }
 
         private static readonly List<int> PriorityEquipShapes = new List<int>
@@ -146,8 +166,9 @@ namespace Memoria.Scripts.TranceSeek
             return index != -1 ? index : int.MaxValue;
         }
 
-        private int CompareEquipItems(FF9ITEM item1, FF9ITEM item2)
+        private int CompareEquipItems(FF9ITEM item1, FF9ITEM item2, int equipPart)
         {
+            // 1. Toujours mettre "NoItem" ou les emplacements vides tout en bas
             if (item1.id == item2.id) return 0;
             if (item1.id == RegularItem.NoItem) return 1;
             if (item2.id == RegularItem.NoItem) return -1;
@@ -155,20 +176,52 @@ namespace Memoria.Scripts.TranceSeek
             FF9ITEM_DATA data1 = ff9item._FF9Item_Data[item1.id];
             FF9ITEM_DATA data2 = ff9item._FF9Item_Data[item2.id];
 
-            int prio1 = GetShapePriority(data1.shape);
-            int prio2 = GetShapePriority(data2.shape);
-            int comp = prio1.CompareTo(prio2);
-            if (comp != 0) return comp;
-
-            comp = data1.shape.CompareTo(data2.shape);
-            if (comp != 0) return comp;
-
-            if (data1.price != data2.price)
+            switch (equipPart)
             {
-                if (data1.price == 2) return 1;
-                if (data2.price == 2) return -1;
+                case 0: // --- WEAPONS ---
+                    int power1 = ff9item.GetItemWeapon(item1.id)?.Ref.Power ?? 0;
+                    int power2 = ff9item.GetItemWeapon(item2.id)?.Ref.Power ?? 0;
+                    if (power1 != power2)
+                        return power1.CompareTo(power2);
+                    break;
 
-                return data1.price.CompareTo(data2.price);
+                case 1: // --- HEAD ---
+                case 3: // --- ARMOR ---
+                    ItemDefence def1 = ff9item.GetItemArmor(item1.id);
+                    ItemDefence def2 = ff9item.GetItemArmor(item2.id);
+                    int totalDef1 = (def1?.PhysicalDefence ?? 0) + (def1?.MagicalDefence ?? 0);
+                    int totalDef2 = (def2?.PhysicalDefence ?? 0) + (def2?.MagicalDefence ?? 0);
+
+                    if (totalDef1 != totalDef2)
+                        return totalDef1.CompareTo(totalDef2);
+                    break;
+
+                case 2: // --- WRISTS ---
+                    ItemDefence eva1 = ff9item.GetItemArmor(item1.id);
+                    ItemDefence eva2 = ff9item.GetItemArmor(item2.id);
+                    int totalEva1 = (eva1?.PhysicalEvade ?? 0) + (eva1?.MagicalEvade ?? 0);
+                    int totalEva2 = (eva2?.PhysicalEvade ?? 0) + (eva2?.MagicalEvade ?? 0);
+
+                    if (totalEva1 != totalEva2)
+                        return totalEva1.CompareTo(totalEva2); 
+                    break;
+
+                case 4: // --- ACCESSORIES ---
+                    int prio1 = GetShapePriority(data1.shape);
+                    int prio2 = GetShapePriority(data2.shape);
+                    int compPrio = prio1.CompareTo(prio2);
+                    if (compPrio != 0) return compPrio;
+
+                    int compShape = data1.shape.CompareTo(data2.shape);
+                    if (compShape != 0) return compShape;
+
+                    if (data1.price != data2.price)
+                    {
+                        if (data1.price == 2) return 1;
+                        if (data2.price == 2) return -1;
+                        return data1.price.CompareTo(data2.price);
+                    }
+                    break;
             }
 
             return item1.id.CompareTo(item2.id);
@@ -195,7 +248,7 @@ namespace Memoria.Scripts.TranceSeek
                 bool needsSorting = false;
                 for (int i = 0; i < currentList.Count - 1; i++)
                 {
-                    if (CompareEquipItems(currentList[i], currentList[i + 1]) > 0)
+                    if (CompareEquipItems(currentList[i], currentList[i + 1], currentPart) > 0)
                     {
                         needsSorting = true;
                         break;
@@ -204,8 +257,7 @@ namespace Memoria.Scripts.TranceSeek
 
                 if (needsSorting)
                 {
-                    currentList.Sort(CompareEquipItems);
-
+                    currentList.Sort((item1, item2) => CompareEquipItems(item1, item2, currentPart));
                     FieldInfo scrollListField = typeof(EquipUI).GetField("equipSelectScrollList", BindingFlags.NonPublic | BindingFlags.Instance);
                     if (scrollListField != null)
                     {

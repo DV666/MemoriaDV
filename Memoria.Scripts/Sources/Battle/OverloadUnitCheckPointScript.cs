@@ -26,7 +26,7 @@ namespace Memoria.Scripts.TranceSeek
             }
             else
             {
-                if (unit.IsPlayer && unit.CurrentHp == unit.MaximumHp && HPColored)
+                if (HPColored && unit.IsPlayer && unit.CurrentHp == unit.MaximumHp)
                     unit.UIColorHP = FF9TextTool.Green;
                 else
                     unit.UIColorHP = FF9TextTool.White;
@@ -34,7 +34,7 @@ namespace Memoria.Scripts.TranceSeek
                 btl_stat.RemoveStatus(unit, BattleStatusId.LowHP);
             }
 
-            if (unit.IsPlayer && unit.CurrentMp == unit.MaximumMp && MPColored)
+            if (MPColored && unit.IsPlayer && unit.CurrentMp == unit.MaximumMp)
                 unit.UIColorMP = new Color(0.28104f, 0.43712f, 0.96821f);
             else
                 unit.UIColorMP = unit.CurrentMp <= unit.MaximumMp / 6f ? FF9TextTool.Yellow : FF9TextTool.White;

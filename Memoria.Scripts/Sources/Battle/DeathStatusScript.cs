@@ -2,6 +2,7 @@
 using Memoria.Data;
 using Memoria.Scripts.TranceSeek;
 using System;
+using System.Threading;
 using Object = System.Object;
 
 namespace Memoria.DefaultScripts
@@ -40,7 +41,7 @@ namespace Memoria.DefaultScripts
                 btl_sys.CheckForecastMenuOff(target);
                 if (GameState.ModelKillCount(target.Data.dms_geo_id) > 0 && ((GameState.ModelKillCount(target.Data.dms_geo_id) + 1) % 10) == 0) // Need +1 because the kill count is updated after
                     TranceSeekAPI.OverTranceTrigger(target);
-            }         
+            }
             if (target.IsUnderAnyStatus(BattleStatus.Trance) && btl_cmd.KillSpecificCommand(target, BattleCommandId.SysTrans))
             {
                 Target_TSVar.PreventTranceSFX = true; // Fix SFX "Trance__Out" if character die in a combo attack
@@ -69,13 +70,17 @@ namespace Memoria.DefaultScripts
                 target.PhysicalEvade = target.Player.defence.PhysicalEvade;
                 target.MagicEvade = target.Player.defence.MagicalEvade;
 
-                if (target.PlayerIndex == CharacterId.Beatrix)
+                if (target.PlayerIndex == CharacterId.Vivi)
+                    Target_TSVar.Vivi = new ViviPassives();
+                else if (target.PlayerIndex == CharacterId.Steiner)
+                {
+                    Target_TSVar.Steiner = new SteinerPassives();
+                    Target_TSVar.Steiner.Duelist = 0;
+                }
+                else if (target.PlayerIndex == CharacterId.Beatrix)
                 {
                     Target_TSVar.Beatrix = new BeatrixPassives();
-                }
-                else if (target.PlayerIndex == CharacterId.Vivi)
-                {
-                    Target_TSVar.Vivi = new ViviPassives();
+                    Target_TSVar.Beatrix.Braver = 0;
                 }
             }
             if (!target.HasSupportAbilityByIndex(TranceSeekSupportAbility.Expiation_Boosted)) // SA Expiation+

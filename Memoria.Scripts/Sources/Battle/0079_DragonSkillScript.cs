@@ -186,12 +186,8 @@ namespace Memoria.Scripts.TranceSeek
                     List<BattleStatusId> statuschoosen = new List<BattleStatusId>();
 
                     for (Int32 i = 0; i < statuslist.Length; i++)
-                    {
                         if ((statuslist[i].ToBattleStatus() & _v.Target.CurrentStatus) == 0)
-                        {
                             statuschoosen.Add(statuslist[i]);
-                        }
-                    }
 
                     if (statuschoosen.Count > 0)
                     {
