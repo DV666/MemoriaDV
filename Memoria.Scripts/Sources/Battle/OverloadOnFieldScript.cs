@@ -125,6 +125,21 @@ namespace Memoria.Scripts.TranceSeek
             || (FF9StateSystem.Common.FF9.fldMapNo == 953 && GameState.ScenarioCounter == 4530)
             || (FF9StateSystem.Common.FF9.fldMapNo == 1014 && (GetLeaderAnimID() == 581 || GetLeaderAnimID() == 3519)));
 
+        private bool ForceHidden
+        {
+            get
+            {
+                if (FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1007, out Dictionary<Int32, Int32> dict))
+                {
+                    if (dict.TryGetValue(2, out int hideFollowersValue))
+                    {
+                        return hideFollowersValue > 0;
+                    }
+                }
+                return false;
+            }
+        }
+
         // A FAIRE => Quand le groupe observe le rituel d'Eiko à Gulg.
         // Après avoir battu Siamois
         // Quand on libere Hilda
@@ -144,7 +159,7 @@ namespace Memoria.Scripts.TranceSeek
                 ClearFollowers();
 
             if (BlackListCondition || ModelCantGetFollowers.Contains(leader_model_id) || MBG.Instance.IsPlaying() > 1 ||
-            BlackListAnimationId.Contains(actorleader.anim) || BlackListFieldId.Contains(FF9StateSystem.Common.FF9.fldMapNo) || (actorleader.flags & 1) == 0)
+            BlackListAnimationId.Contains(actorleader.anim) || BlackListFieldId.Contains(FF9StateSystem.Common.FF9.fldMapNo) || (actorleader.flags & 1) == 0 || ForceHidden)
                 HideFollowers(true);
 
             HandleAnimationPause(uiManager.IsPause);

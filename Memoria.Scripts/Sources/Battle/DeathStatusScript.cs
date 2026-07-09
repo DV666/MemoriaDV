@@ -51,8 +51,6 @@ namespace Memoria.DefaultScripts
             }          
             if (target.IsPlayer)
             {
-                // SpecialSAEffect[target.Data][14] = 0; // Reset SOS trigger
-
                 // Reset stats
                 Target_TSVar.SpecialSA = new SpecialSAEffects();
                 Target_TSVar.SpecialSA.NewMaximumHP = (int)target.Player.max.hp;

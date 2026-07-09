@@ -2,6 +2,7 @@
 using Memoria.Prime;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 using static Memoria.Scripts.TranceSeek.TranceSeekDebug;
@@ -79,7 +80,9 @@ namespace Memoria.Scripts.TranceSeek
             {
                 GameObject watcherObj = new GameObject("TranceSeek_Watcher");
                 GameObject.DontDestroyOnLoad(watcherObj);
-                watcherObj.AddComponent<OverloadOnFieldScript>();
+                if (Configuration.Mod.FolderNames.Contains("TranceSeek/Options/FollowersFeature"))
+                    watcherObj.AddComponent<OverloadOnFieldScript>();
+
                 watcherObj.AddComponent<TranceSeekHackShop>();
 #if DEV_TS
                 watcherObj.AddComponent<TranceSeekDebugMenu>();

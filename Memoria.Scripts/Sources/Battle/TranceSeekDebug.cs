@@ -37,6 +37,12 @@ namespace Memoria.Scripts.TranceSeek
             private Vector2 _eventScrollPos = Vector2.zero;
             private int _selectedOuterKey = -1;
 
+            private int _selectedGlobalVarType = 0;
+            private readonly string[] _globalVarTypes = { "Bit (Boolean)", "UInt8 (Byte)", "Int8 (SByte)", "UInt16", "Int16", "UInt24", "Int24" };
+            private string _newOuterKeyStr = "";
+            private string _newInnerKeyStr = "";
+            private string _newInnerValStr = "0";
+
             private bool _showAbilitiesMenu = false;
             private Rect _abilitiesWindowRect = new Rect(310, 50, 480, 390);
 
@@ -75,7 +81,7 @@ namespace Memoria.Scripts.TranceSeek
             private string _searchItemIdStr = "";
 
             private bool _showFieldMenu = false;
-            private Rect _fieldWindowRect = new Rect(310, 50, 500, 550);
+            private Rect _fieldWindowRect = new Rect(310, 50, 500, 750);
             private Vector2 _fieldScrollPos = Vector2.zero;
             private int _currentActorIndex = 0;
             private FieldMapActor[] _cachedActors = null;
@@ -87,6 +93,8 @@ namespace Memoria.Scripts.TranceSeek
             private string _rotY = "0";
             private string _customAnimIdInput = "0";
             private string _lastPlayedAnimInfo = "Aucune";
+            private string _actorShaderInput = "PSX/FieldMapActor";
+            private string _lastReadShader = "Inconnu";
 
             private int _fieldMenuTab = 0;
             private bool _isCameraDragMode = false;
@@ -1402,28 +1410,109 @@ namespace Memoria.Scripts.TranceSeek
                     GUILayout.BeginVertical("box");
 
                     GUILayout.BeginHorizontal();
-                    _selectedGlobalKey = Mathf.Clamp(DrawStatUI("GlobalKey", "Index", _selectedGlobalKey, 100), 0, 2047);
+                    if (GUILayout.Button("<", GUILayout.Width(30))) { _selectedGlobalVarType--; if (_selectedGlobalVarType < 0) _selectedGlobalVarType = _globalVarTypes.Length - 1; _statTextCache.Clear(); GUI.FocusControl(null); }
+                    GUILayout.Label($"<b>Type : <color=cyan>{_globalVarTypes[_selectedGlobalVarType]}</color></b>", new GUIStyle(GUI.skin.label) { richText = true, alignment = TextAnchor.MiddleCenter });
+                    if (GUILayout.Button(">", GUILayout.Width(30))) { _selectedGlobalVarType++; if (_selectedGlobalVarType >= _globalVarTypes.Length) _selectedGlobalVarType = 0; _statTextCache.Clear(); GUI.FocusControl(null); }
+                    GUILayout.EndHorizontal();
+                    GUILayout.Space(5);
+
+                    bool isBit = _selectedGlobalVarType == 0;
+                    int maxKey = isBit ? (g.Length * 8) - 1 : g.Length - 1;
+
+                    GUILayout.BeginHorizontal();
+                    _selectedGlobalKey = Mathf.Clamp(DrawStatUI("GlobalKey", isBit ? "Index Bit" : "Offset Byte", _selectedGlobalKey, 100), 0, maxKey);
                     if (GUILayout.Button("Refresh", GUILayout.Width(80))) { _statTextCache.Clear(); GUI.FocusControl(null); SoundLib.PlaySoundEffect(103); }
                     GUILayout.EndHorizontal();
 
-                    int currentGlobalValue = g[_selectedGlobalKey];
-                    DrawStatUI($"EvGlob_{_selectedGlobalKey}", "Valeur", currentGlobalValue, 100);
-
                     GUILayout.Space(10);
-                    if (GUILayout.Button("<color=yellow><b>Appliquer</b></color>", new GUIStyle(GUI.skin.button) { richText = true }, GUILayout.Height(30)))
+
+                    int currentValue = 0;
+                    bool canRead = true;
+
+                    try
                     {
-                        foreach (var kvp in _statTextCache)
+                        if (isBit)
                         {
-                            if (kvp.Key.StartsWith("EvGlob_") && byte.TryParse(kvp.Value, out byte val))
+                            currentValue = (g[_selectedGlobalKey >> 3] & (1 << (_selectedGlobalKey & 7))) != 0 ? 1 : 0;
+                        }
+                        else
+                        {
+                            int ofs = _selectedGlobalKey;
+                            switch (_selectedGlobalVarType)
                             {
-                                if (int.TryParse(kvp.Key.Substring(7), out int idx) && idx >= 0 && idx < g.Length)
+                                case 1: currentValue = g[ofs]; break; // UInt8
+                                case 2: currentValue = (sbyte)g[ofs]; break; // Int8
+                                case 3: currentValue = g[ofs] | (g[ofs + 1] << 8); break; // UInt16
+                                case 4: currentValue = (short)(g[ofs] | (g[ofs + 1] << 8)); break; // Int16
+                                case 5: currentValue = g[ofs] | (g[ofs + 1] << 8) | (g[ofs + 2] << 16); break; // UInt24
+                                case 6: currentValue = g[ofs] | (g[ofs + 1] << 8) | ((sbyte)g[ofs + 2] << 16); break; // Int24
+                            }
+                        }
+                    }
+                    catch
+                    {
+                        canRead = false;
+                        GUILayout.Label("<color=red>Erreur : Index hors limites pour ce type de données.</color>", new GUIStyle(GUI.skin.label) { richText = true });
+                    }
+
+                    if (canRead)
+                    {
+                        if (isBit)
+                        {
+                            bool bVal = currentValue == 1;
+                            GUILayout.BeginHorizontal();
+                            GUILayout.Label($"VARL_GenBool_{_selectedGlobalKey} :", GUILayout.Width(150));
+                            bool newVal = GUILayout.Toggle(bVal, bVal ? " <color=green><b>TRUE (1)</b></color>" : " <color=red><b>FALSE (0)</b></color>", new GUIStyle(GUI.skin.toggle) { richText = true });
+                            GUILayout.EndHorizontal();
+
+                            if (newVal != bVal)
+                            {
+                                if (newVal) g[_selectedGlobalKey >> 3] |= (byte)(1 << (_selectedGlobalKey & 7));
+                                else g[_selectedGlobalKey >> 3] &= (byte)~(1 << (_selectedGlobalKey & 7));
+                                SoundLib.PlaySoundEffect(104);
+                            }
+                        }
+                        else
+                        {
+                            DrawStatUI($"EvGlobVal_{_selectedGlobalKey}_{_selectedGlobalVarType}", "Valeur", currentValue, 100);
+
+                            GUILayout.Space(10);
+                            if (GUILayout.Button("<color=yellow><b>Appliquer la valeur</b></color>", new GUIStyle(GUI.skin.button) { richText = true }, GUILayout.Height(30)))
+                            {
+                                if (_statTextCache.TryGetValue($"EvGlobVal_{_selectedGlobalKey}_{_selectedGlobalVarType}", out string valStr) && int.TryParse(valStr, out int writeVal))
                                 {
-                                    g[idx] = val;
+                                    int ofs = _selectedGlobalKey;
+                                    try
+                                    {
+                                        switch (_selectedGlobalVarType)
+                                        {
+                                            case 1: // UInt8
+                                            case 2: // Int8
+                                                g[ofs] = (byte)(writeVal & 0xFF);
+                                                break;
+                                            case 3: // UInt16
+                                            case 4: // Int16
+                                                g[ofs] = (byte)(writeVal & 0xFF);
+                                                g[ofs + 1] = (byte)((writeVal >> 8) & 0xFF);
+                                                break;
+                                            case 5: // UInt24
+                                            case 6: // Int24
+                                                g[ofs] = (byte)(writeVal & 0xFF);
+                                                g[ofs + 1] = (byte)((writeVal >> 8) & 0xFF);
+                                                g[ofs + 2] = (byte)((writeVal >> 16) & 0xFF);
+                                                break;
+                                        }
+                                        SoundLib.PlaySoundEffect(104);
+                                    }
+                                    catch
+                                    {
+                                        SoundLib.PlaySoundEffect(102);
+                                    }
                                 }
                             }
                         }
-                        SoundLib.PlaySoundEffect(104);
                     }
+
                     GUILayout.EndVertical();
                 }
                 else if (_eventMenuTab == 1) DrawScriptDictionaryTab();
@@ -1436,10 +1525,35 @@ namespace Memoria.Scripts.TranceSeek
             private void DrawScriptDictionaryTab()
             {
                 var d = FF9StateSystem.EventState?.gScriptDictionary;
-                if (d == null || d.Count == 0) return;
+                if (d == null) return;
+
+                GUILayout.BeginHorizontal("box");
+                GUILayout.Label("Créer Dict ID:", GUILayout.Width(100));
+                _newOuterKeyStr = GUILayout.TextField(_newOuterKeyStr, GUILayout.Width(50));
+                if (GUILayout.Button("Ajouter", GUILayout.Width(70)))
+                {
+                    if (int.TryParse(_newOuterKeyStr, out int newDictId) && !d.ContainsKey(newDictId))
+                    {
+                        d.Add(newDictId, new Dictionary<int, int>());
+                        _selectedOuterKey = newDictId;
+                        SoundLib.PlaySoundEffect(104);
+                    }
+                    else
+                    {
+                        SoundLib.PlaySoundEffect(102);
+                    }
+                    GUI.FocusControl(null);
+                }
+                GUILayout.EndHorizontal();
+
+                if (d.Count == 0)
+                {
+                    GUILayout.Label("Aucun dictionnaire actif.");
+                    return;
+                }
 
                 GUILayout.BeginHorizontal();
-                foreach (int k in d.Keys)
+                foreach (int k in d.Keys.ToList())
                 {
                     if (GUILayout.Button(k.ToString(), GUILayout.Width(50)))
                     {
@@ -1454,7 +1568,19 @@ namespace Memoria.Scripts.TranceSeek
 
                 if (_selectedOuterKey != -1 && d.ContainsKey(_selectedOuterKey))
                 {
-                    _eventScrollPos = GUILayout.BeginScrollView(_eventScrollPos, GUILayout.Height(250));
+                    GUILayout.BeginHorizontal();
+                    GUILayout.Label($"<b>Edition du Dict: <color=cyan>{_selectedOuterKey}</color></b>", new GUIStyle(GUI.skin.label) { richText = true });
+                    if (GUILayout.Button("<color=red><b>Supprimer ce Dict</b></color>", new GUIStyle(GUI.skin.button) { richText = true }, GUILayout.Width(150)))
+                    {
+                        d.Remove(_selectedOuterKey);
+                        _selectedOuterKey = -1;
+                        SoundLib.PlaySoundEffect(104);
+                        return;
+                    }
+                    GUILayout.EndHorizontal();
+                    GUILayout.Space(5);
+
+                    _eventScrollPos = GUILayout.BeginScrollView(_eventScrollPos, GUILayout.Height(200));
                     var inner = d[_selectedOuterKey];
                     int col = 2;
                     int c = 0;
@@ -1462,8 +1588,17 @@ namespace Memoria.Scripts.TranceSeek
                     GUILayout.BeginHorizontal();
                     foreach (int ik in inner.Keys.ToList())
                     {
-                        GUILayout.BeginVertical("box", GUILayout.Width(250));
-                        DrawStatUI($"Dict_{_selectedOuterKey}_{ik}", $"Key {ik}", inner[ik]);
+                        GUILayout.BeginVertical("box", GUILayout.Width(260));
+                        GUILayout.BeginHorizontal();
+                        DrawStatUI($"Dict_{_selectedOuterKey}_{ik}", $"Key {ik}", inner[ik], 90);
+
+                        if (GUILayout.Button("X", GUILayout.Width(25)))
+                        {
+                            inner.Remove(ik);
+                            _statTextCache.Remove($"Dict_{_selectedOuterKey}_{ik}");
+                            SoundLib.PlaySoundEffect(104);
+                        }
+                        GUILayout.EndHorizontal();
                         GUILayout.EndVertical();
 
                         c++;
@@ -1477,9 +1612,29 @@ namespace Memoria.Scripts.TranceSeek
                     GUILayout.EndScrollView();
 
                     GUILayout.Space(5);
-                    if (GUILayout.Button("<color=yellow><b>Appliquer</b></color>", new GUIStyle(GUI.skin.button) { richText = true }, GUILayout.Height(30)))
+
+                    GUILayout.BeginHorizontal("box");
+                    GUILayout.Label("Nouvelle Clé:", GUILayout.Width(90));
+                    _newInnerKeyStr = GUILayout.TextField(_newInnerKeyStr, GUILayout.Width(50));
+                    GUILayout.Label("Val:", GUILayout.Width(30));
+                    _newInnerValStr = GUILayout.TextField(_newInnerValStr, GUILayout.Width(50));
+                    if (GUILayout.Button("Ajouter", GUILayout.Width(70)))
                     {
-                        foreach (var kvp in _statTextCache)
+                        if (int.TryParse(_newInnerKeyStr, out int nKey) && int.TryParse(_newInnerValStr, out int nVal))
+                        {
+                            inner[nKey] = nVal;
+                            _statTextCache[$"Dict_{_selectedOuterKey}_{nKey}"] = nVal.ToString();
+                            SoundLib.PlaySoundEffect(104);
+                        }
+                        GUI.FocusControl(null);
+                    }
+                    GUILayout.EndHorizontal();
+
+                    GUILayout.Space(5);
+
+                    if (GUILayout.Button("<color=yellow><b>Appliquer (Modifications des Valeurs)</b></color>", new GUIStyle(GUI.skin.button) { richText = true }, GUILayout.Height(30)))
+                    {
+                        foreach (var kvp in _statTextCache.ToList())
                         {
                             if (kvp.Key.StartsWith("Dict_") && int.TryParse(kvp.Value, out int val))
                             {
@@ -2017,6 +2172,59 @@ namespace Memoria.Scripts.TranceSeek
                     GUILayout.EndHorizontal();
                     GUILayout.EndVertical();
                     GUILayout.Space(5);
+                    GUILayout.BeginVertical("box");
+                    GUILayout.Label("<b>Shader de l'Acteur</b>", new GUIStyle(GUI.skin.label) { richText = true });
+
+                    GUILayout.BeginHorizontal();
+                    GUILayout.Label($"Actuel : <color=cyan>{_lastReadShader}</color>", new GUIStyle(GUI.skin.label) { richText = true });
+                    GUILayout.EndHorizontal();
+
+                    GUILayout.BeginHorizontal();
+                    GUILayout.Label("Nom:", GUILayout.Width(40));
+                    _actorShaderInput = GUILayout.TextField(_actorShaderInput, GUILayout.Width(150));
+
+                    if (GUILayout.Button("Lire", GUILayout.Width(50)))
+                    {
+                        Renderer firstRenderer = actor.go.GetComponentInChildren<Renderer>();
+                        if (firstRenderer != null && firstRenderer.sharedMaterial != null && firstRenderer.sharedMaterial.shader != null)
+                        {
+                            _lastReadShader = firstRenderer.sharedMaterial.shader.name;
+                            _actorShaderInput = _lastReadShader;
+                            SoundLib.PlaySoundEffect(103);
+                        }
+                        else
+                        {
+                            _lastReadShader = "Aucun Renderer trouvé";
+                            SoundLib.PlaySoundEffect(102);
+                        }
+                        GUI.FocusControl(null);
+                    }
+
+                    if (GUILayout.Button("<color=yellow><b>Appliquer</b></color>", new GUIStyle(GUI.skin.button) { richText = true }, GUILayout.Width(80)))
+                    {
+                        Shader newShader = ShadersLoader.Find(_actorShaderInput);
+                        if (newShader != null)
+                        {
+                            foreach (Renderer r in actor.go.GetComponentsInChildren<Renderer>())
+                            {
+                                foreach (Material m in r.materials)
+                                {
+                                    m.shader = newShader;
+                                }
+                            }
+                            _lastReadShader = newShader.name;
+                            SoundLib.PlaySoundEffect(104);
+                        }
+                        else
+                        {
+                            Memoria.Prime.Log.Warning($"[DebugMenu] Impossible de trouver le shader : {_actorShaderInput}");
+                            SoundLib.PlaySoundEffect(102);
+                        }
+                        GUI.FocusControl(null);
+                    }
+                    GUILayout.EndHorizontal();
+                    GUILayout.EndVertical();
+                    GUILayout.Space(5);
 
                     Animation animComp = actor.go.GetComponentInChildren<Animation>();
                     if (animComp != null)
@@ -2104,7 +2312,7 @@ namespace Memoria.Scripts.TranceSeek
                         if (anims.Count > 0)
                         {
                             GUILayout.Label($"<b>Base de donnees : {anims.Count} animations trouvees</b>", new GUIStyle(GUI.skin.label) { richText = true });
-                            _fieldScrollPos = GUILayout.BeginScrollView(_fieldScrollPos, GUILayout.Height(260));
+                            _fieldScrollPos = GUILayout.BeginScrollView(_fieldScrollPos, GUILayout.Height(460));
 
                             int col = 2;
                             int c = 0;
