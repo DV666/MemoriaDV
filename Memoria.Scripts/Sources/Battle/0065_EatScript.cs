@@ -30,11 +30,11 @@ namespace Memoria.Scripts.TranceSeek
         {
             BattleEnemyPrototype enemyPrototype = BattleEnemyPrototype.Find(_v.Target);
             Int32 blueMagicId = enemyPrototype.BlueMagicId;
-            int PowerCMD = _v.Command.Power;
+            int PowerCMD = _v.Command.Power; // (8 for Eat and 4 for Cook)
             if (_v.Caster.Head == TranceSeekRegularItem.ChefHat)
-                PowerCMD = _v.Command.AbilityId == BattleAbilityId.Eat ? 4 : (_v.Command.AbilityId == BattleAbilityId.Cook ? 2 : PowerCMD);
+                PowerCMD = _v.Command.AbilityId == BattleAbilityId.Eat ? 6 : (_v.Command.AbilityId == BattleAbilityId.Cook ? 3 : PowerCMD);
             else if (_v.Caster.Head == TranceSeekRegularItem.StarredChefHat)
-                PowerCMD = _v.Command.AbilityId == BattleAbilityId.Eat ? 2 : (_v.Command.AbilityId == BattleAbilityId.Cook ? 1 : PowerCMD);
+                PowerCMD = _v.Command.AbilityId == BattleAbilityId.Eat ? 4 : (_v.Command.AbilityId == BattleAbilityId.Cook ? 2 : PowerCMD);
 
             Boolean saAppetite = _v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Appetite);
             Boolean saGluttony = _v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Gourmandise);
@@ -45,7 +45,7 @@ namespace Memoria.Scripts.TranceSeek
                 {
                     Int32 MixStrMag = (_v.Caster.Strength + _v.Caster.Magic) / 2;
                     Int32 baseDamage = Comn.random16() % (1 + (_v.Caster.Level + MixStrMag >> 3));
-                    _v.Context.AttackPower = _v.Caster.GetWeaponPower(_v.Command);
+                    _v.Context.AttackPower = _v.Caster.WeaponPower;
                     _v.Context.DefensePower = (_v.Target.PhysicalDefence + _v.Target.MagicDefence) / 2;
                     _v.Context.Attack = Comn.random16() % MixStrMag + baseDamage;
                     TranceSeekAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
@@ -56,7 +56,7 @@ namespace Memoria.Scripts.TranceSeek
                 else if (saAppetite || _v.Caster.InTrance) // SA Appetite
                 {
                     Int32 baseDamage = Comn.random16() % (1 + (_v.Caster.Level + _v.Caster.Strength >> 3));
-                    _v.Context.AttackPower = _v.Caster.GetWeaponPower(_v.Command);
+                    _v.Context.AttackPower = _v.Caster.WeaponPower;
                     _v.Target.SetPhysicalDefense();
                     _v.Context.Attack = Comn.random16() % _v.Caster.Strength + baseDamage;
                     TranceSeekAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
@@ -66,7 +66,7 @@ namespace Memoria.Scripts.TranceSeek
                 else if (saGluttony) // SA Gluttony
                 {
                     Int32 baseDamage = Comn.random16() % (1 + (_v.Caster.Level + _v.Caster.Magic >> 3));
-                    _v.Context.AttackPower = _v.Caster.GetWeaponPower(_v.Command);
+                    _v.Context.AttackPower = _v.Caster.WeaponPower;
                     _v.Target.SetMagicDefense();
                     _v.Context.Attack = Comn.random16() % _v.Caster.Magic + baseDamage;
                     TranceSeekAPI.PenaltyShellAttack(_v);
@@ -76,7 +76,7 @@ namespace Memoria.Scripts.TranceSeek
                 if (TranceSeekAPI.CanAttackWeaponElementalCommand(_v))
                 {
                     TranceSeekAPI.TryCriticalHit(_v);
-                    TranceSeekAPI.IpsenCastleMalus(_v);
+                    //TranceSeekAPI.IpsenCastleMalus(_v);
                     if ((_v.Context.Flags & BattleCalcFlags.Absorb) != 0)
                     {
                         _v.Target.Flags |= CalcFlag.HpDamageOrHeal;

@@ -32,7 +32,7 @@ namespace Memoria.Scripts.TranceSeek
             }
             else
             {
-                if (_v.IsCasterNotTarget() && _v.Target.CanBeAttacked() && !_v.Target.TryKillFrozen())
+                if (_v.IsCasterNotTarget() && _v.Target.CanBeAttacked() && !TranceSeekAPI.TryKillFrozen(_v))
                 {
                     _v.PhysicalAccuracy();
                     if (TranceSeekAPI.TryPhysicalHit(_v))

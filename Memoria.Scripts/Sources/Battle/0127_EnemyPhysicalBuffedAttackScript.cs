@@ -21,7 +21,7 @@ namespace Memoria.Scripts.TranceSeek
 
         public void Perform()
         {
-            if (!_v.Target.TryKillFrozen())
+            if (!TranceSeekAPI.TryKillFrozen(_v))
             {
                 _v.NormalPhysicalParams();
                 

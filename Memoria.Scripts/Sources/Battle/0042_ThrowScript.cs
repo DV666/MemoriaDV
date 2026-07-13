@@ -78,7 +78,7 @@ namespace Memoria.Scripts.TranceSeek
                     }
                     else
                     {
-                        if (!_v.Target.TryKillFrozen())
+                        if (!TranceSeekAPI.TryKillFrozen(_v))
                         {
                             if (_v.Target.IsUnderAnyStatus(BattleStatus.Vanish))
                             {
@@ -104,7 +104,7 @@ namespace Memoria.Scripts.TranceSeek
             }
             else
             {
-                if (!_v.Target.TryKillFrozen())
+                if (!TranceSeekAPI.TryKillFrozen(_v))
                 {
                     if (_v.Target.IsUnderAnyStatus(TranceSeekStatus.PerfectDodge))
                     {

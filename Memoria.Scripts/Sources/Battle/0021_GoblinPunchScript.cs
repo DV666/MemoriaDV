@@ -52,7 +52,7 @@ namespace Memoria.Scripts.TranceSeek
             }
             else
             {
-                if (!_v.Target.TryKillFrozen())
+                if (!TranceSeekAPI.TryKillFrozen(_v))
                 {
                     CalcContext context = _v.Context;
                     if (_v.Caster.IsPlayer)

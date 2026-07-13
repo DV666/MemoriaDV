@@ -32,7 +32,7 @@ namespace Memoria.Scripts.TranceSeek
                     _v.Caster.RemoveStatus(BattleStatus.Defend);
                 }
             }
-            if (!_v.Target.TryKillFrozen())
+            if (!TranceSeekAPI.TryKillFrozen(_v))
             {
                 _v.PhysicalAccuracy();
                 if (TranceSeekAPI.TryPhysicalHit(_v))

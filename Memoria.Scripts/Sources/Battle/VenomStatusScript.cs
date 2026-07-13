@@ -15,6 +15,7 @@ namespace Memoria.DefaultScripts
         {
             base.Apply(target, inflicter, parameters);
             VenomInflicter = inflicter;
+            SpeedTick = 0;
             if (target.IsUnderAnyStatus(BattleStatus.EasyKill))
             {
                 BattleStatusDataEntry statusData = FF9StateSystem.Battle.FF9Battle.status_data[BattleStatusId.Poison];

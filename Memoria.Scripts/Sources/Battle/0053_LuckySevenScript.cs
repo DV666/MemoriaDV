@@ -83,7 +83,7 @@ namespace Memoria.Scripts.TranceSeek
             }
             else // Physical attack which cancel turn
             {
-                if (!_v.Target.TryKillFrozen())
+                if (!TranceSeekAPI.TryKillFrozen(_v))
                 {
                     _v.PhysicalAccuracy();
                     if (TranceSeekAPI.TryPhysicalHit(_v))

@@ -43,7 +43,7 @@ namespace Memoria.Scripts.TranceSeek
                 return;
             }
             _v.PhysicalAccuracy();
-            if (!_v.Target.TryKillFrozen())
+            if (!TranceSeekAPI.TryKillFrozen(_v))
             {
                 if (_v.Command.HitRate == 255)
                 {

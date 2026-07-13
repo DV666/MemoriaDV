@@ -38,7 +38,7 @@ namespace Memoria.Scripts.TranceSeek
 
             if (IsAbility(BattleAbilityId.Lancer))
             {
-                if (_v.IsCasterNotTarget() && _v.Target.CanBeAttacked() && !_v.Target.TryKillFrozen())
+                if (_v.IsCasterNotTarget() && _v.Target.CanBeAttacked() && !TranceSeekAPI.TryKillFrozen(_v))
                 {
                     if (_v.Caster.IsPlayer)
                         _v.WeaponPhysicalParams();

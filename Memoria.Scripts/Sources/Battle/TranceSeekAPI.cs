@@ -99,7 +99,7 @@ namespace Memoria.Scripts.TranceSeek
 
         public static Boolean TryKillFrozen(this BattleCalculator v)
         {
-            if (!v.Target.IsUnderAnyStatus(BattleStatus.Freeze) || v.Target.IsUnderAnyStatus(BattleStatus.Petrify))
+            if (!v.Target.IsUnderAnyStatus(BattleStatus.Freeze) || v.Target.IsUnderAnyStatus(BattleStatus.Petrify) || !v.Target.IsPlayer && (v.Target.AbsorbElement & EffectElement.Cold) != 0)
                 return false;
             if (v.Target.IsUnderAnyStatus(BattleStatus.EasyKill) && !EliteMonster(v.Target.Data))
                 return false;
@@ -312,6 +312,7 @@ namespace Memoria.Scripts.TranceSeek
 
             var Caster_TSVar = v.CasterState();
             var Target_TSVar = v.TargetState();
+            TranceSeekBattleDictionary.AttackType |= 1;
 
             if (v.Target.IsUnderAnyStatus(BattleStatus.Defend))
             {
@@ -436,6 +437,7 @@ namespace Memoria.Scripts.TranceSeek
 
             var Caster_TSVar = v.CasterState();
             var Target_TSVar = v.TargetState();
+            TranceSeekBattleDictionary.AttackType |= 2;
 
             if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Mania_Boosted)) // SA Mania+ [TODO] Need a new function for that ? Like HitRateBonus()
             {
@@ -874,7 +876,7 @@ namespace Memoria.Scripts.TranceSeek
 
         public static void AlterStatusDurationFromSA(this BattleCalculator v, BattleStatus cmd_status)
         {
-            foreach (BattleStatusId statusId in (BattleStatusConst.ContiCount & v.Command.AbilityStatus).ToStatusList())
+            foreach (BattleStatusId statusId in (BattleStatusConst.ContiCount & cmd_status).ToStatusList())
             {
                 BattleStatus status = statusId.ToBattleStatus();
                 BattleStatusDataEntry statusData = FF9StateSystem.Battle.FF9Battle.status_data[statusId];

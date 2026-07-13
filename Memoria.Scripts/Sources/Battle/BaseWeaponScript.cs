@@ -30,7 +30,7 @@ namespace Memoria.Scripts.TranceSeek
                 else
                     Attack();             
             }
-            else if (!_v.Target.TryKillFrozen())
+            else if (!TranceSeekAPI.TryKillFrozen(_v))
             {
                 Attack();
                 DragonSkillScript.ReiWrathTrigger(_v);
@@ -128,7 +128,7 @@ namespace Memoria.Scripts.TranceSeek
 
                         if (((WeaponStatus & BattleStatus.Death) != 0 && !_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill)) || (WeaponStatus & BattleStatus.Death) == 0) // Don't force Death status.
                         {
-                            int HitRateWeaponStatus = _v.Caster.WeaponRate + (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.AddStatus_Boosted) ? (_v.Target.Will / 3) : 0);
+                            int HitRateWeaponStatus = _v.Caster.WeaponRate + (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.AddStatus_Boosted) ? (_v.Caster.Will / 4) : 0);
                             if ((WeaponStatus & BattleStatus.Death) != 0 && TranceSeekAPI.EliteMonster(_v.Target.Data))
                                     HitRateWeaponStatus /= 2;
 

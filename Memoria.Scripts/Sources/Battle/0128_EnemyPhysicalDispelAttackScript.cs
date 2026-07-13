@@ -18,7 +18,7 @@ namespace Memoria.Scripts.TranceSeek
 
         public void Perform()
         {
-            if (!_v.Target.TryKillFrozen())
+            if (!TranceSeekAPI.TryKillFrozen(_v))
             {
                 if (_v.Target.IsUnderAnyStatus(BattleStatus.Vanish))
                 {

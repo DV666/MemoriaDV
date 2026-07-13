@@ -888,31 +888,31 @@ namespace Memoria.Scripts.TranceSeek
             switch (Weapon)
             {
                 case RegularItem.PoisonKnuckles:
-                    BonusWeaponHitRate += 5;
+                    BonusWeaponHitRate += 2;
                     break;
                 case RegularItem.MythrilClaws:
-                    BonusWeaponHitRate += 10;
+                    BonusWeaponHitRate += 4;
                     break;
                 case RegularItem.ScissorFangs:
-                    BonusWeaponHitRate += 15;
+                    BonusWeaponHitRate += 6;
                     break;
                 case RegularItem.DragonClaws:
-                    BonusWeaponHitRate += 20;
+                    BonusWeaponHitRate += 8;
                     break;
                 case RegularItem.TigerFangs:
-                    BonusWeaponHitRate += 25;
+                    BonusWeaponHitRate += 10;
                     break;
                 case RegularItem.Avenger:
-                    BonusWeaponHitRate += 30;
+                    BonusWeaponHitRate += 12;
                     break;
                 case RegularItem.KaiserKnuckles:
-                    BonusWeaponHitRate += 35;
+                    BonusWeaponHitRate += 14;
                     break;
                 case RegularItem.DuelClaws:
-                    BonusWeaponHitRate += 40;
+                    BonusWeaponHitRate += 16;
                     break;
                 case RegularItem.RuneClaws:
-                    BonusWeaponHitRate += 50;
+                    BonusWeaponHitRate += 20;
                     break;
             }
             return BonusWeaponHitRate;

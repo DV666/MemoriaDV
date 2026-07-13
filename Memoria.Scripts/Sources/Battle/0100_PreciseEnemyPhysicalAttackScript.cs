@@ -26,7 +26,7 @@ namespace Memoria.Scripts.TranceSeek
             }
             else
             {
-                if (!_v.Target.TryKillFrozen())
+                if (!TranceSeekAPI.TryKillFrozen(_v))
                 {
                     if (_v.Command.HitRate == 111) // Ignore physical defense
                     {

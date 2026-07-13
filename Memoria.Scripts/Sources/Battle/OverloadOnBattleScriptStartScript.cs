@@ -36,6 +36,7 @@ namespace Memoria.Scripts.TranceSeek
         {
             var Caster_TSVar = v.CasterState();
             var Target_TSVar = v.TargetState();
+            TranceSeekBattleDictionary.TypeAttack = 0;
 
             if (Target_TSVar.Monster.HPBoss10000 && v.Target.CurrentHp <= 10000) // Prevent boss to die => Maybe use CustomBattleFlagsMeaning ?
                 v.Target.CurrentHp = 10000;

@@ -20,7 +20,7 @@ namespace Memoria.Scripts.TranceSeek
 
         public void Perform()
         {
-            if (_v.Target.CanBeAttacked() && !_v.Target.TryKillFrozen())
+            if (_v.Target.CanBeAttacked() && !TranceSeekAPI.TryKillFrozen(_v))
             {
                 _v.PhysicalAccuracy();
                 if (TranceSeekAPI.TryPhysicalHit(_v))

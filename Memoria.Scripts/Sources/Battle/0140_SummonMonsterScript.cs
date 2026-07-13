@@ -155,7 +155,7 @@ namespace Memoria.Scripts.TranceSeek
                     case TranceSeekBattleAbility.SeekerBat: // Seeker Bat - Absorb even more
                     case TranceSeekBattleAbility.GiganOctopus: // Gigan Octopus - 6 Legs
                     {
-                        if (_v.Target.CanBeAttacked() && !_v.Target.TryKillFrozen())
+                        if (_v.Target.CanBeAttacked() && !TranceSeekAPI.TryKillFrozen(_v))
                         {
                             _v.PhysicalAccuracy();
                             if (TranceSeekAPI.TryPhysicalHit(_v))
@@ -245,7 +245,7 @@ namespace Memoria.Scripts.TranceSeek
                     case TranceSeekBattleAbility.Yeti2: // Yeti - Blind Tail
                     case TranceSeekBattleAbility.Armodullahan: // TEST
                     {
-                        if (!_v.Target.TryKillFrozen())
+                        if (!TranceSeekAPI.TryKillFrozen(_v))
                         {
                             _v.PhysicalAccuracy();
                             if (TranceSeekAPI.TryPhysicalHit(_v))
@@ -811,7 +811,7 @@ namespace Memoria.Scripts.TranceSeek
                     case TranceSeekBattleAbility.Soldier: // Amazone
                     case TranceSeekBattleAbility.Troll2: // Troll - Itching powder
                     {
-                        if (!_v.Target.TryKillFrozen())
+                        if (!TranceSeekAPI.TryKillFrozen(_v))
                         {
                             if (_v.Target.PhysicalDefence == 255)
                             {
@@ -847,7 +847,7 @@ namespace Memoria.Scripts.TranceSeek
                     // POWER BREAK - Script 34
                     case TranceSeekBattleAbility.Troll: // Troll - Chloroform
                     {
-                        if (!_v.Target.TryKillFrozen())
+                        if (!TranceSeekAPI.TryKillFrozen(_v))
                         {
                             if (_v.Target.PhysicalDefence == 255)
                             {
@@ -883,7 +883,7 @@ namespace Memoria.Scripts.TranceSeek
                     // MENTAL BREAK - Script 35
                     case TranceSeekBattleAbility.Soldier2: // Amazone
                     {
-                        if (!_v.Target.TryKillFrozen())
+                        if (!TranceSeekAPI.TryKillFrozen(_v))
                         {
                             if (_v.Target.PhysicalDefence == 255)
                             {
@@ -939,7 +939,7 @@ namespace Memoria.Scripts.TranceSeek
                         }
                         else
                         {
-                            if (_v.IsCasterNotTarget() && _v.Target.CanBeAttacked() && !_v.Target.TryKillFrozen())
+                            if (_v.IsCasterNotTarget() && _v.Target.CanBeAttacked() && !TranceSeekAPI.TryKillFrozen(_v))
                             {
                                 _v.PhysicalAccuracy();
                                 if (TranceSeekAPI.TryPhysicalHit(_v))
@@ -1104,7 +1104,7 @@ namespace Memoria.Scripts.TranceSeek
                     case TranceSeekBattleAbility.RedDragon: // Red Dragon - Vacuum
                     case TranceSeekBattleAbility.Stroper: // Stroper - Sweep
                     {
-                        if (!_v.Target.TryKillFrozen())
+                        if (!TranceSeekAPI.TryKillFrozen(_v))
                         {
                             if (_v.Command.HitRate == 111) // Ignore physical defense
                             {
