@@ -312,7 +312,7 @@ namespace Memoria.Scripts.TranceSeek
 
             var Caster_TSVar = v.CasterState();
             var Target_TSVar = v.TargetState();
-            TranceSeekBattleDictionary.AttackType |= 1;
+            TranceSeekBattleDictionary.TypeAttack |= 1;
 
             if (v.Target.IsUnderAnyStatus(BattleStatus.Defend))
             {
@@ -437,7 +437,7 @@ namespace Memoria.Scripts.TranceSeek
 
             var Caster_TSVar = v.CasterState();
             var Target_TSVar = v.TargetState();
-            TranceSeekBattleDictionary.AttackType |= 2;
+            TranceSeekBattleDictionary.TypeAttack |= 2;
 
             if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Mania_Boosted)) // SA Mania+ [TODO] Need a new function for that ? Like HitRateBonus()
             {

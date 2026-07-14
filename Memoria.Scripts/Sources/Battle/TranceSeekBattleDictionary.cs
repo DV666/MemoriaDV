@@ -25,13 +25,13 @@ namespace Memoria.Scripts.TranceSeek
 
         public static bool ImmuneStatusPlayer = Configuration.Mod.FolderNames.Contains("TranceSeek/Options/ImmuneStatusPlayer");
 
-        public static int AttackType // 1 = Physical ; 2 = Magic
+        public static int TypeAttack // 1 = Physical ; 2 = Magic
         {
             get
             {
                 if (FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1002, out Dictionary<Int32, Int32> dictbattle))
-                    if (dictbattle.TryGetValue(5, out int attacktypevalue))
-                        return attacktypevalue;
+                    if (dictbattle.TryGetValue(5, out int typeattackvalue))
+                        return typeattackvalue;
 
                 return 0;
             }
