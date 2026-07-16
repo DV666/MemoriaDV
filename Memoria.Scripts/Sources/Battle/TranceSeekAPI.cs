@@ -454,7 +454,7 @@ namespace Memoria.Scripts.TranceSeek
                 }
             }
 
-            if (v.Target.IsUnderAnyStatus(BattleStatus.Shell))
+            if (v.Target.IsUnderAnyStatus(BattleStatus.Shell) && v.Command.ScriptId != 125)
                 v.Context.Attack /= 2;
 
             if (v.Target.IsUnderAnyStatus(BattleStatus.Defend) && v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.SuperGuard))

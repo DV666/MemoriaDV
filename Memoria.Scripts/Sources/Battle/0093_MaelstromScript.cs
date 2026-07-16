@@ -57,7 +57,7 @@ namespace Memoria.Scripts.TranceSeek
                 _v.PenaltyCommandDividedHitRate();
                 _v.Command.HitRate += _v.Caster.Level - _v.Target.Level;
                 TranceSeekAPI.ReduceAccuracyEliteMonsters(_v, true);
-                if (TranceSeekAPI.TryMagicHit(_v) || ForceMaelstrom)
+                if (ForceMaelstrom || TranceSeekAPI.TryMagicHit(_v))
                 {
                     _v.Context.Flags |= BattleCalcFlags.DirectHP;
                     if (_v.Caster.Data.dms_geo_id == 401) // Friendly Feather Circle - Heartless Angel
@@ -65,7 +65,7 @@ namespace Memoria.Scripts.TranceSeek
                         _v.Target.CurrentHp = 1;
                         return;
                     }
-                    if (_v.Target.CurrentHp < 10U)
+                    else if (_v.Target.CurrentHp < 10U)
                     {
                         _v.Target.CurrentHp = (uint)(1L + GameRandom.Next8() % _v.Target.CurrentHp);
                     }

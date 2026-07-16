@@ -26,15 +26,12 @@ namespace Memoria.Scripts.TranceSeek
             _v.Target.RemoveStatus(BattleStatus.Shell);
             _v.Target.RemoveStatus(BattleStatus.Vanish);
             _v.Target.RemoveStatus(BattleStatus.Reflect);
+
             if (_v.Caster.IsPlayer)
-            {
                 _v.SetWeaponPower();
-            }
             else
-            {
                 _v.SetCommandPower();
 
-            }
             _v.Caster.SetMagicAttack();
             _v.Target.SetMagicDefense();
             

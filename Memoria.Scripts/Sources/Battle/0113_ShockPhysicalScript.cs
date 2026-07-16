@@ -20,40 +20,21 @@ namespace Memoria.Scripts.TranceSeek
 
         public void Perform()
         {
-            if (_v.Caster.IsPlayer)
+            if (_v.Command.AbilityId == TranceSeekBattleAbility.Judgement || _v.Command.HitRate == 255)
             {
-                if (_v.Command.AbilityId == TranceSeekBattleAbility.Judgement)
-                {
-                    _v.Target.RemoveStatus(BattleStatus.Protect);
-                    _v.Target.RemoveStatus(BattleStatus.Shell);
-                    _v.Target.RemoveStatus(BattleStatus.Vanish);
-                    _v.Target.RemoveStatus(BattleStatus.Reflect);
-                }
-
-                _v.WeaponPhysicalParams();
-                
-                TranceSeekAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
-                TranceSeekAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
-                TranceSeekAPI.BonusElement(_v);
-                if (TranceSeekAPI.CanAttackWeaponElementalCommand(_v))
-                {
-                    _v.CalcHpDamage();
-                    TranceSeekAPI.TryAlterMagicStatuses(_v);
-                }
-                return;
+                _v.Target.RemoveStatus(BattleStatus.Protect);
+                _v.Target.RemoveStatus(BattleStatus.Shell);
+                _v.Target.RemoveStatus(BattleStatus.Vanish);
+                _v.Target.RemoveStatus(BattleStatus.Reflect);
             }
-            _v.PhysicalAccuracy();
-            if (!TranceSeekAPI.TryKillFrozen(_v))
-            {
-                if (_v.Command.HitRate == 255)
-                {
-                    _v.Target.RemoveStatus(BattleStatus.Protect);
-                    _v.Target.RemoveStatus(BattleStatus.Shell);
-                    _v.Target.RemoveStatus(BattleStatus.Vanish);
-                    _v.Target.RemoveStatus(BattleStatus.Reflect);
-                }
+
+            if (_v.Caster.IsPlayer)
+                _v.WeaponPhysicalParams();
+            else
                 _v.NormalPhysicalParams();
-                
+
+            if (!TranceSeekAPI.TryKillFrozen(_v))
+            {               
                 TranceSeekAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
                 TranceSeekAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
                 TranceSeekAPI.BonusElement(_v);
