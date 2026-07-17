@@ -110,21 +110,21 @@ namespace Memoria.EchoS
         public bool OnBattleInOut(BattleVoice.BattleMoment when)
         {
             HasFirstActHappened = false;
-            if (LinesQueue.Count > 1)
-            {
-                Line line = LinesQueue.Dequeue();
-                LinesQueue.Clear();
-                LinesQueue.Enqueue(line);
-                LogEchoS.Message($"Cleared all lines but '{Lines[line.Key].Path}'");
-            }
 
             if (when == BattleVoice.BattleMoment.BattleStart)
             {
+                if (LinesQueue.Count > 0)
+                {
+                    LogEchoS.Message($"Clearing {LinesQueue.Count} leftover lines from previous battle.");
+                    LinesQueue.Clear();
+                }
+                CurrentPlayingChain = -1;
+
                 for (BTL_DATA monster = FF9StateSystem.Battle.FF9Battle.btl_list.next; monster != null; monster = monster.next)
                 {
                     BattleUnit unit = new BattleUnit(monster);
-                    if (monster.bi.player == 0 )
-                        MonsterNameWithoutTag[unit.Id] = unit.Name.RemoveTags(); // To avoid calculating Regex for each call.
+                    if (monster.bi.player == 0)
+                        MonsterNameWithoutTag[unit.Id] = unit.Name.RemoveTags();
                 }
             }
 

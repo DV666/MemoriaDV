@@ -15,6 +15,7 @@ namespace Memoria.EchoS
         private GameObject _lastSelectedTarget;
         private Boolean _wasHelpShown;
         private SoundProfile _lastPlayedSound;
+        private readonly Dictionary<String, String> _audioPathCache = new Dictionary<String, String>();
 
         private void Update()
         {
@@ -333,19 +334,44 @@ namespace Memoria.EchoS
                         targetName = targetName.Substring(0, cloneSuffixIndex);
                     }
 
+                    String cacheKey = $"Static_{category}_{subCategory}_{targetName}";
+                    if (_audioPathCache.TryGetValue(cacheKey, out String cachedPath))
+                    {
+                        if (cachedPath != null)
+                        {
+                            LogEchoS.Debug($"[DialogHelpVA] [LOADED FROM CACHE] Audio playing: {cachedPath}");
+                            PlayResolvedPath(cachedPath);
+                        }
+                        return;
+                    }
+
                     LogEchoS.Debug($"[DialogHelpVA] {category} Static Menu identified: Group={groupName}, Target={targetName}");
 
                     String lang = Localization.CurrentSymbol;
                     String exactPath = $"Voices/{lang}/HelpText/{category}/{subCategory}/{targetName}";
+                    String finalPath = null;
 
-                    if (!TryPlayPath(exactPath, category, 0, targetName))
+                    if (CheckFileExists(exactPath))
+                    {
+                        finalPath = exactPath;
+                    }
+                    else
                     {
                         String fallbackPath = $"Voices/{lang}/HelpText/{category}/{subCategory}/va_{targetName.Replace(" ", "")}";
-
-                        if (!TryPlayPath(fallbackPath, category, 0, targetName))
+                        if (CheckFileExists(fallbackPath))
+                        {
+                            finalPath = fallbackPath;
+                        }
+                        else
                         {
                             LogEchoS.Debug($"[DialogHelpVA] [NOT FOUND] No audio found for {category} (tried Sounds/{exactPath} and Sounds/{fallbackPath})");
                         }
+                    }
+
+                    _audioPathCache[cacheKey] = finalPath;
+                    if (finalPath != null)
+                    {
+                        PlayResolvedPath(finalPath);
                     }
                 }
             }
@@ -360,59 +386,82 @@ namespace Memoria.EchoS
 
         private void PlayHelpVoice(String type, Int32 id, String name, CharacterId character = CharacterId.NONE, String subtype = null)
         {
+            String cacheKey = $"{type}_{id}_{name}_{character}_{subtype}";
+
+            if (_audioPathCache.TryGetValue(cacheKey, out String cachedPath))
+            {
+                if (cachedPath != null)
+                {
+                    LogEchoS.Debug($"[DialogHelpVA] [CACHE HIT] Audio playing: {cachedPath}");
+                    PlayResolvedPath(cachedPath);
+                }
+                return;
+            }
+
+            LogEchoS.Debug($"[DialogHelpVA] --- Starting audio search for {name ?? id.ToString()} ---");
+            String foundPath = ResolveAudioPath(type, id, name, character, subtype);
+
+            _audioPathCache[cacheKey] = foundPath;
+
+            if (foundPath != null)
+            {
+                PlayResolvedPath(foundPath);
+            }
+            else
+            {
+                LogEchoS.Debug($"[DialogHelpVA] [NOT FOUND] No audio found for (ID:{id}, Name:{name}). Cached as missing.");
+            }
+        }
+
+        private String ResolveAudioPath(String type, Int32 id, String name, CharacterId character, String subtype)
+        {
             String lang = Localization.CurrentSymbol;
             String basePath = $"Voices/{lang}/HelpText";
             String pathToCheck;
 
-            LogEchoS.Debug($"[DialogHelpVA] --- Starting audio search for {name ?? id.ToString()} ---");
-
             if (type == "MainMenu")
             {
                 pathToCheck = $"{basePath}/MainMenu/va_{subtype}_{id}";
-                if (TryPlayPath(pathToCheck, type, id, name)) return;
-
-                LogEchoS.Debug($"[DialogHelpVA] [NOT FOUND] File not found: Sounds/{pathToCheck}");
-                return;
+                if (CheckFileExists(pathToCheck)) return pathToCheck;
+                return null;
             }
 
             if (character != CharacterId.NONE)
             {
                 pathToCheck = $"{basePath}/{character}/{type}/va_{id}";
-                if (TryPlayPath(pathToCheck, type, id, name)) return;
+                if (CheckFileExists(pathToCheck)) return pathToCheck;
 
                 if (!String.IsNullOrEmpty(name))
                 {
                     pathToCheck = $"{basePath}/{character}/{type}/va_{name}";
-                    if (TryPlayPath(pathToCheck, type, id, name)) return;
+                    if (CheckFileExists(pathToCheck)) return pathToCheck;
                 }
             }
 
             pathToCheck = $"{basePath}/{type}/va_{id}";
-            if (TryPlayPath(pathToCheck, type, id, name)) return;
+            if (CheckFileExists(pathToCheck)) return pathToCheck;
 
             if (!String.IsNullOrEmpty(name))
             {
                 pathToCheck = $"{basePath}/{type}/va_{name}";
-                if (TryPlayPath(pathToCheck, type, id, name)) return;
+                if (CheckFileExists(pathToCheck)) return pathToCheck;
             }
 
-            LogEchoS.Debug($"[DialogHelpVA] [NOT FOUND] No audio found for (ID:{id}, Name:{name})");
+            return null;
         }
 
-        private Boolean TryPlayPath(String path, String type, Int32 id, String name)
+        private Boolean CheckFileExists(String path)
         {
             LogEchoS.Debug($"[DialogHelpVA] [TEST AUDIO] -> Sounds/{path}");
+            return AssetManager.HasAssetOnDisc($"Sounds/{path}.akb", true, true) ||
+                   AssetManager.HasAssetOnDisc($"Sounds/{path}.ogg", true, false);
+        }
 
-            if (AssetManager.HasAssetOnDisc($"Sounds/{path}.akb", true, true) ||
-                AssetManager.HasAssetOnDisc($"Sounds/{path}.ogg", true, false))
-            {
-                int customID = path.GetHashCode();
-                LogEchoS.Debug($"[DialogHelpVA] [SUCCESS] Audio found and playing: {path}");
-
-                _lastPlayedSound = VoicePlayer.CreateLoadThenPlayVoice(customID, path);
-                return true;
-            }
-            return false;
+        private void PlayResolvedPath(String path)
+        {
+            int customID = path.GetHashCode();
+            LogEchoS.Debug($"[DialogHelpVA] [SUCCESS] Audio found and playing: {path}");
+            _lastPlayedSound = VoicePlayer.CreateLoadThenPlayVoice(customID, path);
         }
 
         private void StopAudio()
