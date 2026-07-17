@@ -1,6 +1,5 @@
 using Assets.Sources.Scripts.UI.Common;
-using FF9; // Requis pour FF9ITEM
-using Global.Sound.SaXAudio;
+using FF9;
 using Memoria.Assets;
 using Memoria.Data;
 using Memoria.Database;
@@ -187,7 +186,6 @@ namespace Memoria.EchoS
                             Int32 currentEquipPart = (Int32)equipPartField.GetValue(equipUI);
                             List<List<FF9ITEM>> itemIdList = (List<List<FF9ITEM>>)listField.GetValue(equipUI);
 
-                            // On s'assure qu'on accède bien à la liste correspondant à la partie d'équipement actuelle
                             if (itemIdList != null && currentEquipPart >= 0 && currentEquipPart < itemIdList.Count)
                             {
                                 List<FF9ITEM> currentList = itemIdList[currentEquipPart];
@@ -195,7 +193,6 @@ namespace Memoria.EchoS
                                 {
                                     RegularItem itemId = currentList[dataIndex].id;
 
-                                    // Si ce n'est pas un équipement vide (NoItem)
                                     if (itemId != RegularItem.NoItem)
                                     {
                                         String type = "MenuItem";
@@ -323,7 +320,6 @@ namespace Memoria.EchoS
             // ==========================================
             else if (groupName.StartsWith("MainMenu.") || groupName.StartsWith("Card.") || groupName.StartsWith("Equip."))
             {
-                // Note : Equip.Inventory est intercepté plus haut, il n'arrivera pas ici.
                 String[] parts = groupName.Split('.');
                 if (parts.Length == 2)
                 {
