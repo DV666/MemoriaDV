@@ -1,4 +1,3 @@
-using Global.Sound.SaXAudio;
 using Memoria.Data;
 using System;
 using System.Collections;
@@ -6,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using UnityEngine;
 using static Memoria.Data.BattleVoice;
 using static Memoria.EchoS.BattleSystem;
 using Line = System.Collections.Generic.KeyValuePair<System.Int32, Memoria.Data.BattleVoice.BattleMoment>;
@@ -16,11 +16,19 @@ namespace Memoria.EchoS
     public class BattleScript : IOverloadVABattleScript
     {
         private static readonly string EchoSFileIni = "[Tsunamods] Echo-S 9/Echo-S-9.ini";
+        private static Boolean VAHelpDialogBoxEnabled = false;
 
         public void Initialize()
         {
             LoadConfiguration();
             LogEchoS.Message("Initialize");
+
+            if (VAHelpDialogBoxEnabled)
+            {
+                GameObject pollerObj = new GameObject("EchoS_DialogHelpVA");
+                UnityEngine.Object.DontDestroyOnLoad(pollerObj);
+                pollerObj.AddComponent<DialogHelpVA>();
+            }
 
             BattleVoice.OnBattleInOut += OnBattleInOut;
             BattleVoice.OnAct += OnAct;
@@ -49,6 +57,7 @@ namespace Memoria.EchoS
                 {
                     LogEchoS.Message("Echo-S-9.ini detected. Loading...");
                     string[] lines = File.ReadAllLines(EchoSFileIni);
+
                     foreach (string line in lines)
                     {
                         string cleanLine = line.Trim();
@@ -56,25 +65,36 @@ namespace Memoria.EchoS
                         if (string.IsNullOrEmpty(cleanLine) || cleanLine.StartsWith(";") || cleanLine.StartsWith("#"))
                             continue;
 
-                        if (cleanLine.StartsWith("Debug=", StringComparison.OrdinalIgnoreCase))
+                        int separatorIndex = cleanLine.IndexOf('=');
+                        if (separatorIndex < 0)
+                            continue;
+
+                        string key = cleanLine.Substring(0, separatorIndex).Trim();
+                        string value = cleanLine.Substring(separatorIndex + 1).Trim();
+
+                        if (key.Equals("Debug", StringComparison.OrdinalIgnoreCase))
                         {
-                            string value = cleanLine.Substring(6).Trim();
                             if (value == "1")
                             {
                                 LogEchoS.DebugEnable = true;
                                 LogEchoS.Message("Debug Mode ENABLED via INI file.");
                             }
                         }
-                        else if (cleanLine.StartsWith("BattleLinesPath=", StringComparison.OrdinalIgnoreCase))
+                        else if (key.Equals("BattleLinesPath", StringComparison.OrdinalIgnoreCase))
                         {
-                            string customPath = cleanLine.Substring(16).Trim();
-
-                            customPath = customPath.Trim('"').Trim('\'');
-
+                            string customPath = value.Trim('"').Trim('\'');
                             if (!string.IsNullOrEmpty(customPath))
                             {
                                 BattleScriptParser.StuffListedPath = customPath;
-                                LogEchoS.Message("Custom BattleLines path set to: {customPath}");
+                                LogEchoS.Message($"Custom BattleLines path set to: {customPath}");
+                            }
+                        }
+                        else if (key.Equals("VAHelpDialog", StringComparison.OrdinalIgnoreCase))
+                        {
+                            if (value == "1")
+                            {
+                                VAHelpDialogBoxEnabled = true;
+                                LogEchoS.Message("VA for Help Dialog activated.");
                             }
                         }
                     }
@@ -83,7 +103,7 @@ namespace Memoria.EchoS
             }
             catch (Exception ex)
             {
-                LogEchoS.Message("Warning: Failed to load config file. {ex.Message}");
+                LogEchoS.Message($"Warning: Failed to load config file. {ex.Message}");
             }
         }
 
