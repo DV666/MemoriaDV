@@ -98,7 +98,10 @@ namespace Memoria.DefaultScripts
             btl.killer_track = null;
 
             if (Target.IsPlayer)
+            {
                 Target.State().SpecialSA.OneTriggerSOS = 0; // Reset SOS trigger
+                TranceSeekCharacterMechanic.UpdateRedemptionHUD(Target); // Reset Redemption HUD
+            }
 
             if (btl_mot.checkMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_DISABLE) || btl_mot.checkMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_DOWN_DISABLE))
             {

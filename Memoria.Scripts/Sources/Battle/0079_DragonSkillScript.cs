@@ -247,12 +247,7 @@ namespace Memoria.Scripts.TranceSeek
                 if (_v.CanAttackMagic())
                 {
                     _v.CalcHpDamage();
-
-                    if (_v.Command.AbilityId == TranceSeekBattleAbility.Geirskögul)
-                        _v.Target.HpDamage /= 3;
-
-                    if (isDragonOrTrance)
-                        TranceSeekAPI.TryCriticalHit(_v, 255);
+                    _v.Target.HpDamage /= 5;
                 }
             }
             else if (IsAbility(TranceSeekBattleAbility.Hraesvelgr))

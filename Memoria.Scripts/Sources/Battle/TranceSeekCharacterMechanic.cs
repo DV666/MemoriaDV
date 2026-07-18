@@ -80,17 +80,6 @@ namespace Memoria.Scripts.TranceSeek
             }
         }
 
-        public static void CharacterBonusPassive(this BattleCalculator v, string mode = "") // [TODO] Rename + delete this from most functions (deprecaticed old Beatrix passive)
-        {
-            if (v.Caster.PlayerIndex == CharacterId.Marcus)
-            {
-                if (mode == "MagicAttack")
-                {
-                    v.Context.Attack = (Int16)(v.Caster.Strength + Comn.random16() % (1 + v.Caster.Level));
-                }
-            }
-        }
-
         public static void GarnetGemMechanic(this BattleCalculator v, GarnetGemMechanic_Type type = GarnetGemMechanic_Type.ElementalAndHeal)
         {
             if (v.Target.PlayerIndex == CharacterId.Garnet)
