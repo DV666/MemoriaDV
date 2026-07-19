@@ -187,7 +187,7 @@ namespace Memoria.EchoS
                     for (Int32 j = 0; j < PlayedLinesCount; j++)
                     {
                         // Get the position in the circular buffer
-                        Int32 p = (PlayedLinesPos - 1 - j) % PlayedLines.Length;
+                        Int32 p = (PlayedLinesPos - 1 - j + PlayedLines.Length) % PlayedLines.Length;
                         if (PlayedLines[p] == i)
                         {
                             Single f = Mathf.Min(0.5f, j / 20f);
