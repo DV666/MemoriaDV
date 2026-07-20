@@ -123,9 +123,10 @@ namespace Memoria.Scripts.TranceSeek
         private int speedFactor => HonoBehaviorSystem.Instance.IsFastForwardModeActive() ? HonoBehaviorSystem.Instance.GetFastForwardFactor() : 1;
         private Boolean BlackListCondition => ((FF9StateSystem.Common.FF9.fldMapNo == 908 && GameState.ScenarioCounter < 4400)
             || (FF9StateSystem.Common.FF9.fldMapNo == 953 && GameState.ScenarioCounter == 4530)
+            || (FF9StateSystem.Common.FF9.fldMapNo >= 2550 && FF9StateSystem.Common.FF9.fldMapNo <= 2554 && GameState.ScenarioCounter >= 10600 && GameState.ScenarioCounter <= 10700) // Shrines
             || (FF9StateSystem.Common.FF9.fldMapNo == 1014 && (GetLeaderAnimID() == 581 || GetLeaderAnimID() == 3519)));
 
-        private bool ForceHidden
+        private bool ForceHidden // Only for Trance Seek
         {
             get
             {

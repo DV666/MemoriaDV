@@ -353,17 +353,6 @@ namespace Memoria.Scripts.TranceSeek
                     InfusedWeaponScript.InfuseWeapon(v, v.Caster.Data, ElementInfused, StatusInfused);
                     Caster_TSVar.Steiner.SteinerEnchantedBlade = v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.EnchantedBlade_Boosted) ? 2 : 1;
                 }
-                else if (Caster_TSVar.Steiner.SteinerEnchantedBlade > 0)
-                {
-                    Caster_TSVar.Steiner.SteinerEnchantedBlade--;
-                    if (Caster_TSVar.Steiner.SteinerEnchantedBlade <= 0)
-                    {
-                        InfusedWeaponScript.WeaponNewElement[v.Caster.Data] = 0;
-                        InfusedWeaponScript.WeaponNewCustomElement[v.Caster.Data] = 0;
-                        InfusedWeaponScript.WeaponNewStatus[v.Caster.Data] = 0;
-                        InfusedWeaponScript.ClearInfuseWeapon(v.Caster.Data);
-                    }
-                }
             }
 
             if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.PeaceOfMind) && v.Command.Data.info.effect_counter == 1) // SA Enchanted blade

@@ -375,8 +375,9 @@ namespace Memoria.Scripts.TranceSeek
                             if (DarkBBG.Contains(battlebg.nf_BbgNumber))
                             {
                                 CharacterPresetId presetId = unit.Player.PresetId;
-                                unit.ChangeToMonster("GZ_R002", 0, CharacterCommands.CommandSets[presetId].Regular[2], TranceSeekBattleCommand.Monster, false, false, false, false, false);
-                                CharacterCommands.CommandSets[presetId].Regular[3] = BattleCommandId.None;
+                                List<BattleCommandId> BlackListCMD = new List<BattleCommandId>();
+                                BlackListCMD.Add(CharacterCommands.CommandSets[presetId].Regular[3]);
+                                unit.ChangeToMonster("GZ_R002", 0, CharacterCommands.CommandSets[presetId].Regular[2], TranceSeekBattleCommand.Monster, false, false, false, false, false, BlackListCMD);
                             }
                             break;
                         case TranceSeekRegularItem.RefinedMonocle:

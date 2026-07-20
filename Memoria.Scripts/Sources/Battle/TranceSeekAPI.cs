@@ -578,6 +578,7 @@ namespace Memoria.Scripts.TranceSeek
 
         public static Boolean CanAttackWeaponElementalCommand(this BattleCalculator v)
         {
+            var Caster_TSVar = v.CasterState();
             EffectElement WeaponElement = v.Caster.WeaponElement;
 
             if (InfusedWeaponScript.WeaponNewElement[v.Caster.Data] != 0)
@@ -589,7 +590,7 @@ namespace Memoria.Scripts.TranceSeek
             {
                 if (v.Caster.PlayerIndex == (CharacterId)12 & v.Target.IsWeakElement(WeaponElement)) // SA Maximum infusion
                 {
-                    BattleAbilityId InfusedAA = v.CasterState().Vivi.PreviousSpell;
+                    BattleAbilityId InfusedAA = Caster_TSVar.Vivi.PreviousSpell;
                     if (InfusedAA == TranceSeekBattleAbility.SFira || InfusedAA == TranceSeekBattleAbility.SBlizzara || InfusedAA == TranceSeekBattleAbility.SThundara || InfusedAA == TranceSeekBattleAbility.SWatera)
                     {
                         v.Context.DamageModifierCount++;
@@ -606,6 +607,18 @@ namespace Memoria.Scripts.TranceSeek
 
             if (((InfusedWeaponScript.WeaponNewCustomElement[v.Caster.Data] & 2) != 0) && v.Target.HasCategory(EnemyCategory.Stone)) // Gravity
                 v.Context.DamageModifierCount++;
+
+            if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.EnchantedBlade) && Caster_TSVar.Steiner.SteinerEnchantedBlade > 0) // SA Enchanted blade
+            {
+                Caster_TSVar.Steiner.SteinerEnchantedBlade--;
+                if (Caster_TSVar.Steiner.SteinerEnchantedBlade <= 0)
+                {
+                    InfusedWeaponScript.WeaponNewElement[v.Caster.Data] = 0;
+                    InfusedWeaponScript.WeaponNewCustomElement[v.Caster.Data] = 0;
+                    InfusedWeaponScript.WeaponNewStatus[v.Caster.Data] = 0;
+                    InfusedWeaponScript.ClearInfuseWeapon(v.Caster.Data);
+                }
+            }
 
             return true;
         }

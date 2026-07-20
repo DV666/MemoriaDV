@@ -151,6 +151,8 @@ namespace Memoria.Scripts.TranceSeek
 
             TranceSeekRegularItem.SpecialItems(v);
 
+            // Log.Message("v.Context.DamageModifierCount = " + v.Context.DamageModifierCount);
+
             Single modifier_factor = 1f;
             Int32 count = v.Context.DamageModifierCount;
 

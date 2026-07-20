@@ -25,13 +25,7 @@ namespace Memoria.Scripts.TranceSeek
                 _v.Target.Flags |= CalcFlag.MpDamageOrHeal;
                 _v.Target.MpDamage = (int)(_v.Caster.CurrentMp / 10);
             }
-            else if (_v.Command.AbilityId == TranceSeekBattleAbility.AVAILABLE3) // Vent Blanc
-            {
-                _v.Target.Flags |= CalcFlag.HpDamageOrHeal;
-                _v.Target.HpDamage = (Int32)(_v.Caster.MaximumHp / 3);
-                _v.Target.RemoveStatus(BattleStatus.Poison | BattleStatus.Silence | BattleStatus.Blind);
-            }
-            else if (_v.Command.AbilityId == TranceSeekBattleAbility.AVAILABLE4 || _v.Command.Power == 99 && _v.Command.HitRate == 99) // Arnica
+            else if (_v.Command.AbilityId == TranceSeekBattleAbility.Recover || _v.Command.Power == 99 && _v.Command.HitRate == 99) // Arnica
             {
                 _v.Target.Flags |= CalcFlag.HpAlteration;
                 if (!_v.Target.IsZombie)
@@ -65,6 +59,9 @@ namespace Memoria.Scripts.TranceSeek
                                 _v.Caster.Flags = CalcFlag.HpAlteration;
                                 if (!unit.IsUnderAnyStatus(BattleStatus.Zombie))
                                     _v.Caster.Flags = CalcFlag.HpDamageOrHeal;
+
+                                if (_v.Command.AbilityId == TranceSeekBattleAbility.Mistral) // Vent Blanc
+                                    _v.Target.RemoveStatus(BattleStatus.Poison | BattleStatus.Silence | BattleStatus.Blind);
 
                                 _v.Caster.Change(unit);
                                 SBattleCalculator.CalcResult(_v);

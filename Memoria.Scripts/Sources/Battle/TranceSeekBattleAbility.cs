@@ -22,11 +22,11 @@ namespace Memoria.Scripts.TranceSeek
         public const BattleAbilityId TriShock = (BattleAbilityId)1014;
         public const BattleAbilityId Sentinel = (BattleAbilityId)1015;
         public const BattleAbilityId Dual = (BattleAbilityId)1016;
-        public const BattleAbilityId AVAILABLE = (BattleAbilityId)1017;
-        public const BattleAbilityId AVAILABLE2 = (BattleAbilityId)1018;
-        public const BattleAbilityId AVAILABLE3 = (BattleAbilityId)1019;
-        public const BattleAbilityId AVAILABLE4 = (BattleAbilityId)1020;
-        public const BattleAbilityId AVAILABLE5 = (BattleAbilityId)1021;
+        public const BattleAbilityId GoblinPunch = (BattleAbilityId)1017;
+        public const BattleAbilityId MindBlast = (BattleAbilityId)1018;
+        public const BattleAbilityId Mistral = (BattleAbilityId)1019;
+        public const BattleAbilityId Recover = (BattleAbilityId)1020;
+        public const BattleAbilityId Mist = (BattleAbilityId)1021;
         public const BattleAbilityId AVAILABLE6 = (BattleAbilityId)1022;
         public const BattleAbilityId AVAILABLE7 = (BattleAbilityId)1023;
         public const BattleAbilityId AVAILABLE8 = (BattleAbilityId)1024;
