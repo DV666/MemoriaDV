@@ -21,17 +21,6 @@ namespace Memoria
                     return res;
                 }
             }
-
-            private static Boolean? _tranceSeek = null;
-            public static Boolean TranceSeek
-            {
-                get
-                {
-                    if (!_tranceSeek.HasValue)
-                        _tranceSeek = FolderNames.Contains("TranceSeek");
-                    return _tranceSeek.Value;
-                }
-            }
         }
     }
 }

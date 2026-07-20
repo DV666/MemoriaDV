@@ -6,8 +6,6 @@ using UnityEngine;
 
 public class QuadMistResourceManager : MonoBehaviour
 {
-    public static Boolean UseArrowGoldenFrame => Configuration.Mod.TranceSeek && Configuration.TetraMaster.TripleTriad <= 1;
-
     private void Start()
     {
         InitAtlasPath();

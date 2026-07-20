@@ -27,6 +27,8 @@ namespace Memoria
         public const String MemoriaDictionaryPatcherPath = "DictionaryPatch.txt";
         public const String MemoriaBattlePatcherPath = "BattlePatch.txt";
         public const String MemoriaTextPatcherPath = "TextPatch.txt";
+        public const String MemoriaCardPatcherPath = "CardPatch.txt";
+        public static String CurrentModReading = "";
 
         public static Char[] SpaceSeparators = [' ', '\t'];
 
@@ -42,12 +44,15 @@ namespace Memoria
                 {
                     if (String.IsNullOrEmpty(folder.FolderPath))
                         continue;
+                    CurrentModReading = folder.FolderPath;
                     if (folder.TryFindAssetInModOnDisc(DataPatchers.MemoriaDictionaryPatcherPath, out String dictionaryPath))
                         DataPatchers.PatchDictionaries(File.ReadAllLines(dictionaryPath));
                     if (folder.TryFindAssetInModOnDisc(DataPatchers.MemoriaBattlePatcherPath, out String battlePath))
                         DataPatchers.PatchBattles(File.ReadAllLines(battlePath));
                     if (folder.TryFindAssetInModOnDisc(DataPatchers.MemoriaTextPatcherPath, out String textPath))
                         TextPatcher.PatchTexts(File.ReadAllLines(textPath));
+                    if (folder.TryFindAssetInModOnDisc(DataPatchers.MemoriaCardPatcherPath, out String cardPath))
+                        CardPatcher.Load(File.ReadAllLines(cardPath));
                 }
                 _isInitialized = true;
                 Log.Message($"[DataPatchers] Initialized");
@@ -552,16 +557,142 @@ namespace Memoria
                         FF9BattleDB.Animation[ID[idindex]] = entry[entry.Length - 1];
                     }
                 }
+                else if (String.Equals(entry[0], "3DModelParameter"))
+                {
+                    // eg.: 3DModelParameter MODELID HEIGHT RADIUS BONENECK TARGET_BONE
+
+                    if (!Int32.TryParse(entry[1], out Int32 ModelId))
+                        continue;
+                    if (!Int32.TryParse(entry[2], out Int32 height))
+                        continue;
+                    if (!Int32.TryParse(entry[3], out Int32 radius))
+                        continue;
+                    if (!Int32.TryParse(entry[4], out Int32 boneneck))
+                        continue;
+                    if (!Int32.TryParse(entry[5], out Int32 tar_bone))
+                        tar_bone = 0;
+
+                    FF9BattleDBHeightAndRadius.Data[ModelId] = [height, radius, boneneck, tar_bone];
+                }
+                else if (String.Equals(entry[0], "InvertShader"))
+                {
+                    // eg.: InvertShader Add 9001 9002
+                    // eg.: InvertShader Remove 98
+                    // eg.: InvertShader Set 9000
+
+                    Boolean add = String.Equals(entry[1], "Add");
+                    Boolean remove = String.Equals(entry[1], "Remove");
+                    Boolean set = String.Equals(entry[1], "Set");
+
+                    if (set)
+                        ModelFactory.ModelsWithShaderFix.Clear();
+
+                    for (Int32 i = 2; i < entry.Length; i++)
+                    {
+                        if (Int32.TryParse(entry[i], out Int32 modelId))
+                        {
+                            if (remove)
+                                ModelFactory.ModelsWithShaderFix.Remove(modelId);
+                            else
+                                ModelFactory.ModelsWithShaderFix.Add(modelId);
+                        }
+                    }
+                }
+                else if (String.Equals(entry[0], "ModifyPlayerParty"))
+                {
+                    // eg.: ModifyPlayerParty Add 40
+                    // eg.: ModifyPlayerParty Remove 30
+                    // eg.: ModifyPlayerParty Set 1 2 3 4
+
+                    Boolean add = String.Equals(entry[1], "Add");
+                    Boolean remove = String.Equals(entry[1], "Remove");
+                    Boolean set = String.Equals(entry[1], "Set");
+
+                    if (set)
+                        PartySettingUI.ForcedParty.Clear();
+
+                    for (Int32 i = 2; i < entry.Length; i++)
+                    {
+                        if (Int32.TryParse(entry[i], out Int32 charId))
+                        {
+                            if (set)
+                                PartySettingUI.ForcedParty.Add((CharacterId)charId);
+                            else if (add)
+                                PartySettingUI.AddCharacterForParty.Add((CharacterId)charId);
+                            else if (remove)
+                                PartySettingUI.AddCharacterForParty.Remove((CharacterId)charId);
+                        }
+                    }
+                }
                 else if (String.Equals(entry[0], "SwapFieldModelTexture"))
                 {
                     // eg.: SwapFieldModelTexture 2250 GEO_MON_B3_093 CustomTextures/OeilvertGuardian/342_0.png CustomTextures/OeilvertGuardian/342_1.png CustomTextures/OeilvertGuardian/342_2.png CustomTextures/OeilvertGuardian/342_3.png CustomTextures/OeilvertGuardian/342_4.png CustomTextures/OeilvertGuardian/342_5.png
-                    List<string> TexturesList = new List<string>();
+                    //      SwapFieldModelTexture 257 GEO_NPC_F0_BMG 13 CustomTextures/BlackMageNo222/5468_0.png CustomTextures/BlackMageNo222/5468_1.png
+                    if (entry.Length < 3)
+                        continue;
+
                     if (!Int32.TryParse(entry[1], out Int32 fieldID))
                         continue;
-                    for (Int32 i = 3; i < entry.Length; i++)
+
+                    Int32 textureStartIndex = 3;
+                    Int32? actorId = null;
+
+                    if (entry.Length > 3 && Int32.TryParse(entry[3], out Int32 parsedOptionalArg))
+                    {
+                        actorId = parsedOptionalArg;
+                        textureStartIndex = 4;
+                    }
+
+                    List<string> TexturesList = new List<string>();
+                    for (Int32 i = textureStartIndex; i < entry.Length; i++)
                         TexturesList.Add(entry[i]);
+
+                    String modelKey = actorId.HasValue ? $"{entry[2]}#{actorId.Value}" : entry[2];
+
                     String[] TexturesCustomModel = TexturesList.ToArray();
-                    ModelFactory.CustomModelField.Add(new KeyValuePair<Int32, String>(fieldID, entry[2]), TexturesCustomModel);
+                    ModelFactory.CustomModelField[new KeyValuePair<Int32, String>(fieldID, modelKey)] = TexturesCustomModel;
+                }
+                else if (String.Equals(entry[0], "CustomAtlas"))
+                {
+                    // eg.: CustomAtlas "IconTranceSeek" "EmbeddedAsset/UI/CustomAtlas/Icon TranceSeek"
+                    var matches = System.Text.RegularExpressions.Regex.Matches(s, @"[\""].+?[\""]|[^ ]+");
+                    {
+                        String atlasName = matches[1].Value.Trim('"');
+                        String atlasPath = matches[2].Value.Trim('"');
+
+                        if (!GraphicResources.CustomAtlasList.ContainsKey(atlasName))
+                        {
+                            GraphicResources.CustomAtlasList.Add(atlasName, atlasPath);
+
+                            String texturePath = atlasPath.EndsWith(".png", StringComparison.OrdinalIgnoreCase) ? atlasPath : atlasPath + ".png";
+                            Texture2D atlasTexture = AssetManager.Load<Texture2D>(texturePath, false);
+
+                            if (atlasTexture != null)
+                            {
+                                GameObject atlasGO = new GameObject(atlasName);
+                                UnityEngine.Object.DontDestroyOnLoad(atlasGO);
+                                UIAtlas newAtlas = atlasGO.AddComponent<UIAtlas>();
+                                newAtlas.spriteMaterial = new Material(Shader.Find("Unlit/Transparent Colored"));
+                                newAtlas.spriteMaterial.mainTexture = atlasTexture;
+
+                                String baseAtlasPath = atlasPath.EndsWith(".png", StringComparison.OrdinalIgnoreCase) ? atlasPath.Substring(0, atlasPath.Length - 4) : atlasPath;
+                                String tpsheetPath = DataPatchers.CurrentModReading + AssetManagerUtil.GetResourcesAssetsPath(true) + "/" + baseAtlasPath + ".tpsheet";
+
+                                if (File.Exists(tpsheetPath))
+                                {
+                                    newAtlas.LoadCustomAtlasData(atlasTexture, tpsheetPath);
+                                    FF9UIDataTool.customAtlas[atlasName] = newAtlas;
+                                    Log.Message($"[DataPatchers] Custom Atlas successfully loaded: {atlasName}");
+                                }
+                                else
+                                    Log.Warning($"[DataPatchers] Custom Atlas texture provided without .tpsheet. Can't find {tpsheetPath}");
+                            }
+                            else
+                            {
+                                Log.Warning($"[DataPatchers] Fail to load {atlasName} from {texturePath}");
+                            }
+                        }
+                    }
                 }
             }
             if (shouldUpdateBattleStatus)

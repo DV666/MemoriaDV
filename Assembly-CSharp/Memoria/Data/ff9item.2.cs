@@ -78,7 +78,12 @@ public class ff9item
                     }
                 }
                 foreach (ItemInfo info in infos)
-                    result[info.Id] = info.ToItemData();
+                {
+                    if (info.IsAppend && result.ContainsKey(info.Id))
+                        info.ApplyTo(result[info.Id]);
+                    else
+                        result[info.Id] = info.ToItemData();
+                }
             }
             if (result.Count == 0)
                 throw new FileNotFoundException($"Cannot load items because a file does not exist: [{DataResources.Items.Directory + DataResources.Items.ItemsFile}].", DataResources.Items.Directory + DataResources.Items.ItemsFile);

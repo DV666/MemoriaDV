@@ -234,6 +234,10 @@ public class QuadMistGame : MonoBehaviour
 
     private void PreGame()
     {
+        if (CardPatcher.IsUsed)
+            foreach (QuadMistCard quadMistCard in FF9StateSystem.MiniGame.SavedData.MiniGameCard)
+                CardPatcher.ApplyStatPatches(quadMistCard);
+
         inputResult.Clear();
         switch (PreGameState)
         {
@@ -675,6 +679,13 @@ public class QuadMistGame : MonoBehaviour
                 QuadMistGetCardDialog.Hide();
                 break;
             case POSTGAME_STATE.PRE_REMATCH:
+                if (CardPatcher.IsUsed)
+                {
+                    CardPatcher.RestoreOriginalStats(playerHand.GetQuadMistCards());
+                    CardPatcher.RestoreOriginalStats(QuadMistUI.allCardList);
+                    CardPatcher.RestoreOriginalStats(reservedCardList);
+                    CardPatcher.RestoreOriginalStats(FF9StateSystem.MiniGame.SavedData.MiniGameCard);
+                }
                 if (matchResult.type == MatchResult.Type.DRAW)
                     SaveReservedCardToDatabase();
                 else
@@ -731,6 +742,15 @@ public class QuadMistGame : MonoBehaviour
     {
         interfaceDialog = null;
         PostState = POSTGAME_STATE.REMATCH_CONFIRM;
+
+        if (CardPatcher.IsUsed)
+        {
+            CardPatcher.RestoreOriginalStats(playerHand.GetQuadMistCards());
+            CardPatcher.RestoreOriginalStats(QuadMistUI.allCardList);
+            CardPatcher.RestoreOriginalStats(reservedCardList);
+            CardPatcher.RestoreOriginalStats(FF9StateSystem.MiniGame.SavedData.MiniGameCard);
+        }
+
         if (matchResult.type == MatchResult.Type.DRAW)
             SaveReservedCardToDatabase();
         else

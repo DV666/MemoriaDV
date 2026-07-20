@@ -51,6 +51,8 @@ namespace Memoria.Assets
             { "TutorialUI Atlas",           "EmbeddedAsset/UI/Atlas/TutorialUI Atlas" },
         };
 
+        public static readonly Dictionary<String, String> CustomAtlasList = new Dictionary<String, String>();
+
         public static class Embedded
         {
             public static String GetAtlasPath(String atlasName)

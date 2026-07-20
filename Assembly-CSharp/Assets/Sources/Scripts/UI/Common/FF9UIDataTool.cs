@@ -164,6 +164,7 @@ namespace Assets.Sources.Scripts.UI.Common
                     statusSprite.alpha = 1f;
                 }
             }
+            ff9play.FF9Play_UpdateSerialNumber(player); // [DV] To refresh if swapped with SA.
         }
 
         public static void DisplayCharacterAvatar(PLAYER player, Vector3 frontPos, Vector3 backPos, UISprite avatarSprite, Boolean rowUpdate)
@@ -188,19 +189,17 @@ namespace Assets.Sources.Scripts.UI.Common
         {
             for (Int32 i = 0; i < 8; i++)
                 cardHud.CardArrowList[i].SetActive((Configuration.TetraMaster.TripleTriad <= 1) ? ((card.arrow & (1 << i)) != 0 && !subCard) : false); // HIDE ARROW
-            cardHud.CardImageSprite.spriteName = "card_" + ((Int32)card.id).ToString("0#");
+
             if (subCard)
             {
                 cardHud.AtkParamSprite.gameObject.SetActive(false);
                 cardHud.PhysicDefParamSprite.gameObject.SetActive(false);
                 cardHud.MagicDefParamSprite.gameObject.SetActive(false);
                 cardHud.AtkTypeParamSprite.gameObject.SetActive(false);
+                cardHud.CardImageSprite.gameObject.SetActive(false);
                 return;
             }
-            cardHud.AtkParamSprite.gameObject.SetActive(true);
-            cardHud.PhysicDefParamSprite.gameObject.SetActive(true);
-            cardHud.MagicDefParamSprite.gameObject.SetActive(true);
-            cardHud.AtkTypeParamSprite.gameObject.SetActive(true);
+
             if (Configuration.TetraMaster.TripleTriad > 0)
             {
                 TripleTriadCard baseCard = TripleTriad.TripleTriadCardStats[card.id];
@@ -230,10 +229,22 @@ namespace Assets.Sources.Scripts.UI.Common
                         break;
                 }
             }
-            if (card.arrow == Byte.MaxValue && QuadMistResourceManager.UseArrowGoldenFrame)
-                cardHud.CardBorderSprite.spriteName = "goldenbluecardframe";
+            if (CardPatcher.IsUsed)
+            {
+                CardPatcher.ApplyCardPatches(card, cardHud);
+            }
             else
+            {
+                cardHud.CardImageSprite.spriteName = "card_" + ((Int32)card.id).ToString("0#");
                 cardHud.CardBorderSprite.spriteName = "card_player_frame";
+            }
+
+            // [DV - CardPatcher] To avoid a flicking issue with SudCard (where a "Mog" appears for one frame when switching between cards => That's why i add the CardImageSprite.gameObject)
+            cardHud.AtkParamSprite.gameObject.SetActive(true);
+            cardHud.PhysicDefParamSprite.gameObject.SetActive(true);
+            cardHud.MagicDefParamSprite.gameObject.SetActive(true);
+            cardHud.AtkTypeParamSprite.gameObject.SetActive(true);
+            cardHud.CardImageSprite.gameObject.SetActive(true);
         }
 
         public static void DisplayAPBar(PLAYER player, Int32 abilityId, Boolean isShowText, APBarHUD apBar)
@@ -345,8 +356,9 @@ namespace Assets.Sources.Scripts.UI.Common
         public static UIAtlas ChocographAtlas => PersistenSingleton<UIManager>.Instance.ChocographScene.HintMap.atlas;
         public static UIAtlas FaceAtlas => PersistenSingleton<UIManager>.Instance.StatusScene.CharacterDetailPanel.GetChild(0).GetChild(0).GetComponent<UISprite>().atlas;
         public static UIAtlas MovieGalleryAtlas => PersistenSingleton<UIManager>.Instance.TitleScene.MoviePageGrid.GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetComponent<UISprite>().atlas;
-        public static UIAtlas QuadMistImageAtlas => PersistenSingleton<UIManager>.Instance.CardScene.CardInfoPanel.GetChild(0).GetChild(0).GetChild(0).GetChild(2).GetComponent<UISprite>().atlas;
         public static UIAtlas QuadMistCardAtlas => PersistenSingleton<UIManager>.Instance.CardScene.CardInfoPanel.GetChild(0).GetChild(0).GetChild(0).GetChild(3).GetComponent<UISprite>().atlas;
+        public static UIAtlas QuadMistImageAtlas => PersistenSingleton<UIManager>.Instance.CardScene.CardInfoPanel.GetChild(0).GetChild(0).GetChild(0).GetChild(4).GetComponent<UISprite>().atlas;
+
 
         public static GameObject IconGameObject(Int32 id)
         {
@@ -356,7 +368,18 @@ namespace Assets.Sources.Scripts.UI.Common
             else if (FF9UIDataTool.TutorialIconSpriteName.ContainsKey(id))
                 result = FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.TutorialAtlas, FF9UIDataTool.TutorialIconSpriteName[id]);
             else if (FF9UIDataTool.IconSpriteName.ContainsKey(id))
-                result = FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.IconAtlas, FF9UIDataTool.IconSpriteName[id]);
+            {
+                String spriteName = FF9UIDataTool.IconSpriteName[id];
+                UIAtlas targetAtlas = FF9UIDataTool.IconAtlas;
+                foreach (UIAtlas custom in FF9UIDataTool.customAtlas.Values)
+                    if (custom.GetSprite(spriteName) != null)
+                    {
+                        targetAtlas = custom;
+                        break;
+                    }
+
+                result = FF9UIDataTool.DrawButton(BitmapIconType.Sprite, targetAtlas, spriteName);
+            }
             return result;
         }
 
@@ -365,7 +388,14 @@ namespace Assets.Sources.Scripts.UI.Common
             if (id == FF9UIDataTool.NewIconId)
                 return new Vector2(115f, 64f);
             if (FF9UIDataTool.IconSpriteName.ContainsKey(id))
-                return FF9UIDataTool.GetSpriteSize("IconAtlas", FF9UIDataTool.IconSpriteName[id]);
+            {
+                String spriteName = FF9UIDataTool.IconSpriteName[id];
+                foreach (KeyValuePair<String, UIAtlas> entry in FF9UIDataTool.customAtlas)
+                    if (entry.Value.GetSprite(spriteName) != null)
+                        return FF9UIDataTool.GetSpriteSize(entry.Key, spriteName);
+
+                return FF9UIDataTool.GetSpriteSize("IconAtlas", spriteName);
+            }
             return Vector2.zero;
         }
 
@@ -477,6 +507,11 @@ namespace Assets.Sources.Scripts.UI.Common
 
         public static GameObject SpriteGameObject(String atlasName, String spriteName)
         {
+            if (FF9UIDataTool.customAtlas.TryGetValue(atlasName, out UIAtlas custom))
+            {
+                return FF9UIDataTool.DrawButton(BitmapIconType.Sprite, custom, spriteName);
+            }
+
             switch (atlasName)
             {
                 default:
@@ -498,21 +533,28 @@ namespace Assets.Sources.Scripts.UI.Common
         public static Vector2 GetSpriteSize(String atlasName, String spriteName)
         {
             UISpriteData spriteData;
-            switch (atlasName)
+            if (GraphicResources.CustomAtlasList.ContainsKey(atlasName))
             {
-                default:
-                case "IconAtlas": spriteData = FF9UIDataTool.IconAtlas.GetSprite(spriteName); break;
-                case "WindowAtlas": spriteData = FF9UIDataTool.WindowAtlas.GetSprite(spriteName); break;
-                case "GrayAtlas": spriteData = FF9UIDataTool.GrayAtlas.GetSprite(spriteName); break;
-                case "BlueAtlas": spriteData = FF9UIDataTool.BlueAtlas.GetSprite(spriteName); break;
-                case "GeneralAtlas": spriteData = FF9UIDataTool.GeneralAtlas.GetSprite(spriteName); break;
-                case "ScreenButtonAtlas": spriteData = FF9UIDataTool.ScreenButtonAtlas.GetSprite(spriteName); break;
-                case "TutorialAtlas": spriteData = FF9UIDataTool.TutorialAtlas.GetSprite(spriteName); break;
-                case "ChocographAtlas": spriteData = FF9UIDataTool.ChocographAtlas.GetSprite(spriteName); break;
-                case "FaceAtlas": spriteData = FF9UIDataTool.FaceAtlas.GetSprite(spriteName); break;
-                case "MovieGalleryAtlas": spriteData = FF9UIDataTool.MovieGalleryAtlas.GetSprite(spriteName); break;
-                case "QuadMistImageAtlas": spriteData = FF9UIDataTool.QuadMistImageAtlas.GetSprite(spriteName); break;
-                case "QuadMistCardAtlas": spriteData = FF9UIDataTool.QuadMistCardAtlas.GetSprite(spriteName); break;
+                spriteData = FF9UIDataTool.customAtlas[atlasName].GetSprite(spriteName);
+            }
+            else
+            {
+                switch (atlasName)
+                {
+                    default:
+                    case "IconAtlas": spriteData = FF9UIDataTool.IconAtlas.GetSprite(spriteName); break;
+                    case "WindowAtlas": spriteData = FF9UIDataTool.WindowAtlas.GetSprite(spriteName); break;
+                    case "GrayAtlas": spriteData = FF9UIDataTool.GrayAtlas.GetSprite(spriteName); break;
+                    case "BlueAtlas": spriteData = FF9UIDataTool.BlueAtlas.GetSprite(spriteName); break;
+                    case "GeneralAtlas": spriteData = FF9UIDataTool.GeneralAtlas.GetSprite(spriteName); break;
+                    case "ScreenButtonAtlas": spriteData = FF9UIDataTool.ScreenButtonAtlas.GetSprite(spriteName); break;
+                    case "TutorialAtlas": spriteData = FF9UIDataTool.TutorialAtlas.GetSprite(spriteName); break;
+                    case "ChocographAtlas": spriteData = FF9UIDataTool.ChocographAtlas.GetSprite(spriteName); break;
+                    case "FaceAtlas": spriteData = FF9UIDataTool.FaceAtlas.GetSprite(spriteName); break;
+                    case "MovieGalleryAtlas": spriteData = FF9UIDataTool.MovieGalleryAtlas.GetSprite(spriteName); break;
+                    case "QuadMistImageAtlas": spriteData = FF9UIDataTool.QuadMistImageAtlas.GetSprite(spriteName); break;
+                    case "QuadMistCardAtlas": spriteData = FF9UIDataTool.QuadMistCardAtlas.GetSprite(spriteName); break;
+                }
             }
             if (spriteData == null)
                 return Vector2.zero;
@@ -846,6 +888,8 @@ namespace Assets.Sources.Scripts.UI.Common
         private static UIAtlas blueAtlas;
         private static UIAtlas screenButtonAtlas;
         private static UIAtlas tutorialAtlas;
+
+        public static readonly Dictionary<String, UIAtlas> customAtlas = new Dictionary<String, UIAtlas>();
 
         private static GameObject controllerSpritePrefab = null;
         private static GameObject controllerKeyboardPrefab = null;
@@ -1423,5 +1467,27 @@ namespace Assets.Sources.Scripts.UI.Common
             { "keyboard_button_backspace#German",   "keyboard_button_backspace_fr_gr_it" },
             { "keyboard_button_backspace#Italian",  "keyboard_button_backspace_fr_gr_it" }
         };
+
+        private static bool _hierarchyLogged = false;
+
+        public static void LogHierarchy(GameObject obj, string indent = "") // For debug
+        {
+            if (obj == null) return;
+
+            string extraInfo = "";
+            UISprite sprite = obj.GetComponent<UISprite>();
+            if (sprite != null)
+            {
+                string atlasName = sprite.atlas != null ? sprite.atlas.name : "NULL";
+                extraInfo = $" [SPRITE: {sprite.spriteName} | ATLAS: {atlasName}]";
+            }
+
+            Memoria.Prime.Log.Message($"{indent}> {obj.name}{extraInfo}");
+
+            foreach (Transform child in obj.transform)
+            {
+                LogHierarchy(child.gameObject, indent + "  ");
+            }
+        }
     }
 }

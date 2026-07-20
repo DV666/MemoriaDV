@@ -36,7 +36,7 @@ public static class AssetManager
     {
         Version assemblyVersion = Assembly.GetExecutingAssembly().GetName().Version;
         DateTime assemblyDate = new DateTime(2000, 1, 1).AddDays(assemblyVersion.Build).AddSeconds(assemblyVersion.Revision * 2);
-        Log.Message($"[Initialization] Memoria version: {assemblyDate.ToString("yyyy-MM-dd")}");
+        Log.Message($"[Initialization] Memoria version: {assemblyDate.ToString("yyyy-MM-dd")} - PRE RELEASE VERSION BY DV !");
         Log.Message($"[Initialization] OS version: {Environment.OSVersion}");
         String modsNames = "";
         foreach (String name in Configuration.Mod.FolderNames)

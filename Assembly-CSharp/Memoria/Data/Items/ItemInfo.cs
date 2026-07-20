@@ -1,5 +1,6 @@
 ﻿using Memoria.Prime.CSV;
 using System;
+using System.Collections.Generic;
 
 namespace Memoria.Data
 {
@@ -21,53 +22,186 @@ namespace Memoria.Data
         public Int32 ArmorId;
         public Int32 EffectId;
 
+        public Boolean IsAppend;
+        public List<String> AppendFields = new List<String>();
+
         public void ParseEntry(String[] raw, CsvMetaData metadata)
         {
+            AppendFields.Clear();
+            IsAppend = false;
+
+            foreach (String line in metadata.GenerateLines())
+            {
+                String trimmedLine = line.Trim();
+
+                if (trimmedLine.StartsWith("AppendMode"))
+                {
+                    IsAppend = true;
+                    AppendFields.AddRange(trimmedLine.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries));
+                }
+            }
+
+            AppendFields.Remove("AppendMode");
+
             Int32 index = 0;
-            Boolean hasAuxIds = metadata.HasOption($"IncludeAuxiliaryIds");
+            Boolean hasAuxIds = metadata.HasOption("IncludeAuxiliaryIds");
 
             Id = metadata.HasOption($"Include{nameof(Id)}") ? (RegularItem)CsvParser.Int32(raw[index++]) : (RegularItem)(-1);
-            WeaponId = hasAuxIds || metadata.HasOption($"Include{nameof(WeaponId)}") ? CsvParser.Int32(raw[index++]) : -1;
-            ArmorId = hasAuxIds || metadata.HasOption($"Include{nameof(ArmorId)}") ? CsvParser.Int32(raw[index++]) : -1;
-            EffectId = hasAuxIds || metadata.HasOption($"Include{nameof(EffectId)}") ? CsvParser.Int32(raw[index++]) : -1;
 
-            Price = CsvParser.UInt32(raw[index++]);
-            if (metadata.HasOption($"Include{nameof(SellingPrice)}"))
-                SellingPrice = CsvParser.Int32(raw[index++]);
-            else
-                SellingPrice = (Int32)(Price / 2);
-            GraphicsId = CsvParser.Int32(raw[index++]);
-            ColorId = CsvParser.Int32(raw[index++]);
-            Quality = CsvParser.Single(raw[index++]);
-            BonusId = CsvParser.Int32(raw[index++]);
-            AbilityIds = CsvParser.AnyAbilityArray(raw[index++]);
-
-            Byte type = 0;
-            for (Int32 i = 0; i < 8; i++)
+            if (!IsAppend)
             {
-                type <<= 1;
-                type |= CsvParser.Byte(raw[index++]);
+                WeaponId = hasAuxIds || metadata.HasOption($"Include{nameof(WeaponId)}") ? CsvParser.Int32(raw[index++]) : -1;
+                ArmorId = hasAuxIds || metadata.HasOption($"Include{nameof(ArmorId)}") ? CsvParser.Int32(raw[index++]) : -1;
+                EffectId = hasAuxIds || metadata.HasOption($"Include{nameof(EffectId)}") ? CsvParser.Int32(raw[index++]) : -1;
+
+                Price = CsvParser.UInt32(raw[index++]);
+
+                if (metadata.HasOption($"Include{nameof(SellingPrice)}"))
+                    SellingPrice = CsvParser.Int32(raw[index++]);
+                else
+                    SellingPrice = (Int32)(Price / 2);
+
+                GraphicsId = CsvParser.Int32(raw[index++]);
+                ColorId = CsvParser.Int32(raw[index++]);
+                Quality = CsvParser.Single(raw[index++]);
+                BonusId = CsvParser.Int32(raw[index++]);
+                AbilityIds = CsvParser.AnyAbilityArray(raw[index++]);
+
+                Byte type = 0;
+                for (Int32 i = 0; i < 8; i++)
+                {
+                    type <<= 1;
+                    type |= CsvParser.Byte(raw[index++]);
+                }
+                TypeMask = (ItemType)type;
+
+                Order = CsvParser.Single(raw[index++]);
+
+                if (metadata.HasOption($"Include{nameof(UseCondition)}"))
+                    UseCondition = CsvParser.String(raw[index++]);
+                else
+                    UseCondition = String.Empty;
+
+                UInt64 equippable = 0;
+                for (Int32 i = 0; i < 12; i++)
+                {
+                    equippable <<= 1;
+                    equippable |= CsvParser.Byte(raw[index++]);
+                }
+                for (Int32 i = 12; index < raw.Length; i++)
+                    if (CsvParser.Byte(raw[index++]) != 0)
+                        equippable |= 1ul << i;
+
+                CharacterMask = (ItemCharacter)equippable;
             }
-            TypeMask = (ItemType)type;
-
-            Order = CsvParser.Single(raw[index++]);
-
-            if (metadata.HasOption($"Include{nameof(UseCondition)}"))
-                UseCondition = CsvParser.String(raw[index++]);
             else
-                UseCondition = String.Empty;
-
-            UInt64 equippable = 0;
-            for (Int32 i = 0; i < 12; i++)
             {
-                equippable <<= 1;
-                equippable |= CsvParser.Byte(raw[index++]);
-            }
-            for (Int32 i = 12; index < raw.Length; i++)
-                if (CsvParser.Byte(raw[index++]) != 0)
-                    equippable |= 1ul << i;
+                void TryParseField<T>(String fieldName, Func<String, T> parseFunc, Action<T> setAction, Boolean hasDefault = false, T defaultValue = default)
+                {
+                    if (AppendFields.Contains(fieldName))
+                    {
+                        String val = raw[index++];
+                        if (String.IsNullOrEmpty(val))
+                            AppendFields.Remove(fieldName);
+                        else
+                            setAction(parseFunc(val));
+                    }
+                    else if (hasDefault)
+                    {
+                        setAction(defaultValue);
+                    }
+                }
 
-            CharacterMask = (ItemCharacter)equippable;
+                TryParseField(nameof(WeaponId), CsvParser.Int32, v => WeaponId = v, true, -1);
+                TryParseField(nameof(ArmorId), CsvParser.Int32, v => ArmorId = v, true, -1);
+                TryParseField(nameof(EffectId), CsvParser.Int32, v => EffectId = v, true, -1);
+
+                TryParseField(nameof(Price), CsvParser.UInt32, v => Price = v);
+                TryParseField(nameof(SellingPrice), CsvParser.Int32, v => SellingPrice = v);
+
+                TryParseField(nameof(GraphicsId), CsvParser.Int32, v => GraphicsId = v);
+                TryParseField(nameof(ColorId), CsvParser.Int32, v => ColorId = v);
+                TryParseField(nameof(Quality), CsvParser.Single, v => Quality = v);
+                TryParseField(nameof(BonusId), CsvParser.Int32, v => BonusId = v);
+                TryParseField(nameof(AbilityIds), CsvParser.AnyAbilityArray, v => AbilityIds = v);
+
+                if (AppendFields.Contains(nameof(TypeMask)))
+                {
+                    if (String.IsNullOrEmpty(raw[index]))
+                    {
+                        AppendFields.Remove(nameof(TypeMask));
+                        index += 8;
+                    }
+                    else
+                    {
+                        Byte type = 0;
+                        for (Int32 i = 0; i < 8; i++) { type <<= 1; type |= CsvParser.Byte(raw[index++]); }
+                        TypeMask = (ItemType)type;
+                    }
+                }
+
+                TryParseField(nameof(Order), CsvParser.Single, v => Order = v);
+                TryParseField(nameof(UseCondition), CsvParser.String, v => UseCondition = v);
+
+                if (AppendFields.Contains(nameof(CharacterMask)))
+                {
+                    if (String.IsNullOrEmpty(raw[index]))
+                    {
+                        AppendFields.Remove(nameof(CharacterMask));
+                        index += 12;
+                        while (index < raw.Length)
+                            index++;
+                    }
+                    else
+                    {
+                        UInt64 equippable = 0;
+                        for (Int32 i = 0; i < 12; i++)
+                        {
+                            equippable <<= 1;
+                            equippable |= CsvParser.Byte(raw[index++]);
+                        }
+
+                        for (Int32 i = 12; index < raw.Length; i++)
+                            if (CsvParser.Byte(raw[index++]) != 0)
+                                equippable |= 1ul << i;
+
+                        CharacterMask = (ItemCharacter)equippable;
+                    }
+                }
+            }
+        }
+
+        public void ApplyTo(FF9ITEM_DATA item)
+        {
+            if (AppendFields.Contains(nameof(Price)))
+                item.price = Price;
+            if (AppendFields.Contains(nameof(SellingPrice)))
+                item.selling_price = SellingPrice;
+            if (AppendFields.Contains(nameof(GraphicsId)))
+                item.shape = (UInt16)GraphicsId;
+            if (AppendFields.Contains(nameof(ColorId)))
+                item.color = (Byte)ColorId;
+            if (AppendFields.Contains(nameof(Quality)))
+                item.eq_lv = (Byte)Quality;
+            if (AppendFields.Contains(nameof(BonusId)))
+                item.bonus = (Byte)BonusId;
+            if (AppendFields.Contains(nameof(AbilityIds)))
+                item.ability = AbilityIds;
+            if (AppendFields.Contains(nameof(TypeMask)))
+                item.type = TypeMask;
+            if (AppendFields.Contains(nameof(Order)))
+                item.sort = (UInt16)Order;
+            if (AppendFields.Contains(nameof(UseCondition)))
+                item.use_condition = UseCondition;
+            if (AppendFields.Contains(nameof(CharacterMask)))
+                item.equip = (UInt64)CharacterMask;
+
+            if (AppendFields.Contains(nameof(WeaponId)) && WeaponId != -1)
+                item.weapon_id = WeaponId;
+            if (AppendFields.Contains(nameof(ArmorId)) && ArmorId != -1)
+                item.armor_id = ArmorId;
+            if (AppendFields.Contains(nameof(EffectId)) && EffectId != -1)
+                item.effect_id = EffectId;
         }
 
         public void WriteEntry(CsvWriter writer, CsvMetaData metadata)

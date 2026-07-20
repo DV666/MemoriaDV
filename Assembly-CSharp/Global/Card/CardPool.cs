@@ -36,6 +36,10 @@ public class CardPool : MonoBehaviour
         if (UnityEngine.Random.Range(0, 127) == 0)
             newCard.type = QuadMistCard.Type.FLEXIABLE;
         newCard.arrow = CardPool.RandomCardArrow();
+
+        if (CardPatcher.IsUsed)
+            CardPatcher.ApplyStatPatches(newCard);
+
         return newCard;
     }
 
