@@ -120,11 +120,23 @@ namespace Memoria.Scripts.TranceSeek
                         }
                     }
 
-                    GeoAttach(AccessoryModel.geo, currentAttachedTarget, transformConfig.BoneIndex);
-                    AccessoryModel.geo.transform.localPosition = transformConfig.PositionOffset;
-                    AccessoryModel.geo.transform.localRotation = Quaternion.Euler(transformConfig.RotationOffset);
-                    AccessoryModel.geo.transform.localScale = transformConfig.ScaleOffset;
+                    Transform targetBone = currentAttachedTarget.transform.GetChildByName("bone" + transformConfig.BoneIndex.ToString("D3"));
+                    AccessoryModel.geo.transform.parent = null;
+                    MascotFollower follower = AccessoryModel.geo.AddComponent<MascotFollower>();
+                    follower.TargetBone = targetBone;
+                    follower.LocalPosition = transformConfig.PositionOffset;
+                    follower.LocalRotation = transformConfig.RotationOffset;
+                    follower.LocalScale = transformConfig.ScaleOffset;
+
                     AccessoryModel.geo.SetActive(true);
+
+                    Transform rootTransform = currentAttachedTarget.transform.GetChildByName("bone000");
+                    if (rootTransform != null)
+                    {
+                        rootTransform.localPosition = Vector3.zero;
+                        rootTransform.localRotation = Quaternion.identity;
+                        rootTransform.localScale = Vector3.one;
+                    }
 
                     unit_TSVar.AdditionalModel.Add(AccessoryModel);
 
@@ -178,10 +190,10 @@ namespace Memoria.Scripts.TranceSeek
                             if (currentAttachedTarget != caster.Data.gameObject)
                             {
                                 currentAttachedTarget = caster.Data.gameObject;
-                                GeoAttach(AccessoryModel.geo, currentAttachedTarget, transformConfig.BoneIndex);
-                                AccessoryModel.geo.transform.localPosition = transformConfig.PositionOffset;
-                                AccessoryModel.geo.transform.localRotation = Quaternion.Euler(transformConfig.RotationOffset);
-                                AccessoryModel.geo.transform.localScale = transformConfig.ScaleOffset;
+                                Transform newBone = currentAttachedTarget.transform.GetChildByName("bone" + transformConfig.BoneIndex.ToString("D3"));
+                                MascotFollower follower = AccessoryModel.geo.GetComponent<MascotFollower>();
+                                if (follower != null)
+                                    follower.TargetBone = newBone;
 
                                 cachedHiders.Clear();
                                 if (transformConfig.BonesToHide != null)
@@ -205,12 +217,56 @@ namespace Memoria.Scripts.TranceSeek
                             bool shouldShow = !areMeshesHidden && caster.Data.bi.disappear == 0;
 
                             if (AccessoryModel.geo.activeSelf != shouldShow)
+                            {
                                 AccessoryModel.geo.SetActive(shouldShow);
+
+                                if (shouldShow && accessoryShape == 60)
+                                {
+                                    Animation anim = AccessoryModel.geo.GetComponent<Animation>();
+                                    if (anim != null && !string.IsNullOrEmpty(animIdle))
+                                    {
+                                        anim.enabled = true;
+                                        anim.Play(animIdle);
+                                    }
+                                }
+                            }
 
                             return true;
                         },
                         null
                     );
+                }
+            }
+        }
+
+        public class MascotFollower : MonoBehaviour
+        {
+            public Transform TargetBone;
+            public Vector3 LocalPosition;
+            public Vector3 LocalRotation;
+            public Vector3 LocalScale = Vector3.one;
+
+            private Animation _anim;
+
+            void Start()
+            {
+                _anim = GetComponent<Animation>();
+            }
+
+            void LateUpdate()
+            {
+                if (TargetBone == null)
+                    return;
+
+                transform.position = TargetBone.TransformPoint(LocalPosition);
+                transform.rotation = TargetBone.rotation * Quaternion.Euler(LocalRotation);
+                transform.localScale = Vector3.Scale(TargetBone.lossyScale, LocalScale);
+
+                if (_anim != null)
+                {
+                    bool isPaused = PersistenSingleton<UIManager>.Instance.IsPause;
+                    if (_anim.enabled == isPaused)
+                        _anim.enabled = !isPaused;
                 }
             }
         }

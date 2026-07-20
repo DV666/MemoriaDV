@@ -29,14 +29,6 @@ namespace Memoria.Scripts.TranceSeek
         public void OnBattleInit()
         {
             // Zidane = 0, Vivi = 1, Eiko = 2, Kuja = 3, Necron = 4, Beatrix = 5, Ozma = 6, Garland = 7
-            /*if (false)
-            {
-                FF9StateSystem.EventState.gEventGlobal[1403] = 0; // Debug difficulty mode
-                if (FF9StateSystem.EventState.gEventGlobal[1403] >= 4 && FF9StateSystem.EventState.gEventGlobal[1403] <= 6) // Activate Hardcore IA
-                    FF9StateSystem.EventState.gEventGlobal[1407] = 1;
-                else
-                    FF9StateSystem.EventState.gEventGlobal[1407] = 0;
-            }*/
 
             GameObject battleRoot = GameObject.Find("BattleMap Root");
             if (battleRoot != null)
@@ -523,6 +515,7 @@ namespace Memoria.Scripts.TranceSeek
                     if (btl_scene.Info.StartType == battle_start_type_tags.BTL_START_FIRST_ATTACK)
                         StateDict.IsBackAttack = true;
 
+                    FixMonsterIconOffset(unit);
                     BattleEnemy battleEnemy = BattleEnemy.Find(unit);
 
                     if (GameState.ModelKillCount(unit.Data.dms_geo_id) > 0 && (GameState.ModelKillCount(unit.Data.dms_geo_id) % 10) == 0)
@@ -755,6 +748,39 @@ namespace Memoria.Scripts.TranceSeek
                     mat.SetInt("_ZWrite", depthvalue);
             }
         }
+        public void FixMonsterIconOffset(BattleUnit btl)
+        {
+            ENEMY_TYPE et = FF9StateSystem.Battle.FF9Battle.enemy[btl.Data.bi.slot_no].et;
+
+            if (MonsterIconOffsets.TryGetValue(btl.Data.dms_geo_id, out IconOffsetPatch patch))
+            {
+                Array.Copy(patch.Y, et.icon_y, 6);
+                Array.Copy(patch.Z, et.icon_z, 6);
+            }
+        }
+
+        private class IconOffsetPatch
+        {
+            public SByte[] Y;
+            public SByte[] Z;
+
+            public IconOffsetPatch(SByte[] y, SByte[] z)
+            {
+                Y = y;
+                Z = z;
+            }
+        }
+
+        private static readonly Dictionary<Int32, IconOffsetPatch> MonsterIconOffsets = new Dictionary<Int32, IconOffsetPatch>
+        {
+            {
+                530, // Fire Guardian (Disc 3)...
+                new IconOffsetPatch( //... using Beatrix parameters
+                    new SByte[] { -10, 0, -6, -1, -6, -18 }, 
+                    new SByte[] { -1, -2, -9, -8, -5, 0 }
+                )
+            }
+        };
 
         public static Dictionary<KeyValuePair<Int32, Int32>, Int32> ChangeDepthBBGfromBattleID = new Dictionary<KeyValuePair<Int32, Int32>, Int32>
         {
