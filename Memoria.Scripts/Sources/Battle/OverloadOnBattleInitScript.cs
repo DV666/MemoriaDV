@@ -7,6 +7,7 @@ using Memoria.Database;
 using Memoria.DefaultScripts;
 using Memoria.Prime;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -515,6 +516,54 @@ namespace Memoria.Scripts.TranceSeek
                     if (btl_scene.Info.StartType == battle_start_type_tags.BTL_START_FIRST_ATTACK)
                         StateDict.IsBackAttack = true;
 
+                    if (unit.Id == 16)
+                    {
+                        if (CustomBBGDict.TryGetValue(BattleExID, out string[] textures))
+                        {
+                            int delay = 20;
+                            Log.Message($"[Trance Seek] Préparation des textures BBG pour le combat {BattleExID.Key}_{BattleExID.Value}");
+
+                            unit.AddDelayedModifier(
+                                u =>
+                                {
+                                    if (delay > 0)
+                                    {
+                                        delay--;
+                                        return false;
+                                    }
+                                    return true;
+                                },
+                                u =>
+                                {
+                                    GameObject bbgGo = FF9StateSystem.Battle.FF9Battle.map.btlBGPtr;
+
+                                    if (bbgGo != null)
+                                    {
+                                        Renderer[] renderers = bbgGo.GetComponentsInChildren<Renderer>(true);
+                                        for (int i = 0; i < renderers.Length && i < textures.Length; i++)
+                                        {
+                                            Texture2D customTex = AssetManager.Load<Texture2D>(textures[i], false);
+
+                                            if (customTex != null && renderers[i].material != null)
+                                            {
+                                                renderers[i].material.mainTexture = customTex;
+                                            }
+                                            else if (customTex == null)
+                                            {
+                                                Log.Warning($"[Trance Seek] Impossible de charger la texture : {textures[i]}");
+                                            }
+                                        }
+                                        Log.Message($"[Trance Seek] Textures BBG appliquées avec succès pour le combat {BattleExID.Key}_{BattleExID.Value}");
+                                    }
+                                    else
+                                    {
+                                        Log.Warning($"[Trance Seek] Impossible d'appliquer les textures BBG : bbgGo est null pour le combat {BattleExID.Key}_{BattleExID.Value}");
+                                    }
+                                }
+                            );
+                        }
+                    }
+
                     FixMonsterIconOffset(unit);
                     BattleEnemy battleEnemy = BattleEnemy.Find(unit);
 
@@ -748,6 +797,7 @@ namespace Memoria.Scripts.TranceSeek
                     mat.SetInt("_ZWrite", depthvalue);
             }
         }
+
         public void FixMonsterIconOffset(BattleUnit btl)
         {
             ENEMY_TYPE et = FF9StateSystem.Battle.FF9Battle.enemy[btl.Data.bi.slot_no].et;
@@ -793,6 +843,24 @@ namespace Memoria.Scripts.TranceSeek
             { new KeyValuePair<Int32, Int32>(838, 1), "BBG_B042" }, // Golden Pidove
             { new KeyValuePair<Int32, Int32>(84, 1), "BBG_B024" }, // Armodullahan (Cinna Quest)
             { new KeyValuePair<Int32, Int32>(871, 1), "BBG_B042" } // Mysterious Girl (super boss Disc 3 => Will be moved to Disc 4)
+        };
+
+        private static readonly Dictionary<KeyValuePair<Int32, Int32>, string[]> CustomBBGDict = new Dictionary<KeyValuePair<Int32, Int32>, string[]>
+        {
+            {
+                new KeyValuePair<Int32, Int32>(2, 1), // Clé : MapID 2, Pattern 1
+                new string[]
+                {
+                    "CustomTextures/BBG/FireGuardianBBG/image0.png",
+                    "CustomTextures/BBG/FireGuardianBBG/image1.png",
+                    "CustomTextures/BBG/FireGuardianBBG/image2.png",
+                    "CustomTextures/BBG/FireGuardianBBG/image3.png",
+                    "CustomTextures/BBG/FireGuardianBBG/image4.png",
+                    "CustomTextures/BBG/FireGuardianBBG/image5.png",
+                    "CustomTextures/BBG/FireGuardianBBG/image6.png",
+                    "CustomTextures/BBG/FireGuardianBBG/image7.png"
+                }
+            }
         };
 
         private static readonly HashSet<Int32> DarkBBG = new HashSet<Int32>(new[] { 4, 5, 6, 8, 9, 12, 13, 14, 15, 16, 32, 36, 37, 38, 39, 40, 41, 42, 45, 46, 67, 68, 69, 70, 71, 72,
