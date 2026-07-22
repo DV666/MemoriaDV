@@ -762,12 +762,25 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
 
     public static void UpdateAttachModel()
     {
-        foreach (KeyValuePair<BTL_DATA, BTL_DATA> kvp in attachModel)
+        for (Int32 i = attachModel.Count - 1; i >= 0; i--)
         {
+            KeyValuePair<BTL_DATA, BTL_DATA> kvp = attachModel[i];
             BTL_DATA carryingBtl = kvp.Key;
             BTL_DATA attachedBtl = kvp.Value;
+            if (carryingBtl == null || attachedBtl == null || carryingBtl.gameObject == null || attachedBtl.gameObject == null)
+            {
+                attachModel.RemoveAt(i);
+                continue;
+            }
             Transform attachedTransform = attachedBtl.gameObject.transform;
-            Transform rootTransform = attachedTransform.GetChildByName("bone000").transform;
+            Transform rootNode = attachedTransform.GetChildByName("bone000");
+            if (rootNode == null)
+            {
+                attachModel.RemoveAt(i);
+                attachedBtl.attachOffset = 0;
+                continue;
+            }
+            Transform rootTransform = rootNode.transform;
             attachedTransform.localPosition = Vector3.zero;
             attachedTransform.localRotation = Quaternion.identity;
             attachedTransform.localScale = Vector3.one;

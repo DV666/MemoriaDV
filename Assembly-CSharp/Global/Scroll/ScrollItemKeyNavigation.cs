@@ -96,7 +96,14 @@ internal class ScrollItemKeyNavigation : MonoBehaviour
             Int32 rowIndex = this.listItem.ItemDataIndex / this.listPopulator.Column;
             Int32 lastRowIndex = (this.listPopulator.ItemCount - 1) / this.listPopulator.Column;
             if (rowIndex < lastRowIndex && this.listItem.ItemDataIndex + this.listPopulator.Column >= this.listPopulator.ItemCount)
-                navig.onDown = this.listPopulator.ItemsPool[this.listPopulator.DataTracker[this.listPopulator.ItemCount - 1]].gameObject;
+            {
+                if (this.listPopulator.DataTracker.TryGetValue(this.listPopulator.ItemCount - 1, out Int32 lastItemPoolIndex) &&
+                    lastItemPoolIndex >= 0 &&
+                    lastItemPoolIndex < this.listPopulator.ItemsPool.Count)
+                    navig.onDown = this.listPopulator.ItemsPool[lastItemPoolIndex].gameObject;
+                else
+                    navig.onDown = null;
+            }
             else if (navig.onDown != null)
                 navig.onDown = null;
         }
