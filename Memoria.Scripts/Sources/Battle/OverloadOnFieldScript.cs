@@ -96,6 +96,13 @@ namespace Memoria.Scripts.TranceSeek
         private Boolean IsWorldMap;
         private Boolean FollowersHidden;
 
+        // For ATE system
+        private bool isATEPending = false;
+        private bool isPlayingATE = false;
+        private bool wasATEMenuOpen = false;
+        private int lastATEChoiceCount = 0;
+        private int lastATESelectedChoice = -1;
+        private int lastFieldMapNo = -1;
 
         private static readonly HashSet<Int32> BlackListAnimationId =
 
@@ -121,10 +128,37 @@ namespace Memoria.Scripts.TranceSeek
         });
 
         private int speedFactor => HonoBehaviorSystem.Instance.IsFastForwardModeActive() ? HonoBehaviorSystem.Instance.GetFastForwardFactor() : 1;
-        private Boolean BlackListCondition => ((FF9StateSystem.Common.FF9.fldMapNo == 908 && GameState.ScenarioCounter < 4400)
-            || (FF9StateSystem.Common.FF9.fldMapNo == 953 && GameState.ScenarioCounter == 4530)
-            || (FF9StateSystem.Common.FF9.fldMapNo >= 2550 && FF9StateSystem.Common.FF9.fldMapNo <= 2554 && GameState.ScenarioCounter >= 10600 && GameState.ScenarioCounter <= 10700) // Shrines
-            || (FF9StateSystem.Common.FF9.fldMapNo == 1014 && (GetLeaderAnimID() == 581 || GetLeaderAnimID() == 3519)));
+        private bool BlackListCondition
+        {
+            get
+            {
+                int scenario = GameState.ScenarioCounter;
+
+                switch (FF9StateSystem.Common.FF9.fldMapNo)
+                {
+                    case 908:
+                        return scenario < 4400;
+
+                    case 953:
+                        return scenario == 4530;
+
+                    case 1014:
+                        int animId = GetLeaderAnimID();
+                        return animId == 581 || animId == 3519;
+
+                    // Shrines
+                    case 2550:
+                    case 2551:
+                    case 2552:
+                    case 2553:
+                    case 2554:
+                        return scenario >= 10600 && scenario <= 10700;
+
+                    default:
+                        return false;
+                }
+            }
+        }
 
         private bool ForceHidden // Only for Trance Seek
         {
@@ -146,12 +180,65 @@ namespace Memoria.Scripts.TranceSeek
         // Quand on libere Hilda
         // ATE Marcus à Treno
 
+        private void CheckATEState()
+        {
+            int currentMap = FF9StateSystem.Common.FF9.fldMapNo;
+
+            if (lastFieldMapNo != -1 && currentMap != lastFieldMapNo)
+            {
+                if (isATEPending)
+                {
+                    Log.Message("[OverloadOnFieldScript] Playing an ATE !");
+                    isPlayingATE = true;
+                    isATEPending = false;
+                }
+                else if (isPlayingATE)
+                {
+                    isPlayingATE = false;
+                }
+            }
+            lastFieldMapNo = currentMap;
+
+            Dialog activeATEDialog = FindActiveATEDialog();
+
+            if (activeATEDialog != null)
+            {
+                wasATEMenuOpen = true;
+                lastATEChoiceCount = activeATEDialog.ChoiceNumber;
+                lastATESelectedChoice = DialogManager.SelectChoice;
+            }
+            else if (wasATEMenuOpen)
+            {
+                bool isCancelOption = (lastATEChoiceCount > 0) && (lastATESelectedChoice == lastATEChoiceCount - 1);
+
+                if (!isCancelOption && lastATESelectedChoice >= 0)
+                    isATEPending = true;
+
+                wasATEMenuOpen = false;
+            }
+        }
+
+        private Dialog FindActiveATEDialog()
+        {
+            Dialog[] dialogs = UnityEngine.Object.FindObjectsOfType<Dialog>();
+            for (int i = 0; i < dialogs.Length; i++)
+            {
+                Dialog d = dialogs[i];
+                if (d != null && d.gameObject.activeSelf && d.CapType == Dialog.CaptionType.ActiveTimeEvent)
+                {
+                    return d;
+                }
+            }
+            return null;
+        }
+
         private void LateUpdate()
         {
             UIManager uiManager = PersistenSingleton<UIManager>.Instance;
             UIManager.UIState currentState = uiManager.State;
 
             CheckLeaderAndParty();
+            CheckATEState();
             if (lastUiState == UIManager.UIState.PartySetting && (currentState == UIManager.UIState.FieldHUD || currentState == UIManager.UIState.WorldHUD))
                 CheckSwapFollower();
             else if ((SceneDirector.IsFieldScene() || SceneDirector.IsWorldScene()) && !SceneDirector.Instance.IsFading)
@@ -159,9 +246,11 @@ namespace Memoria.Scripts.TranceSeek
             else
                 ClearFollowers();
 
-            if (BlackListCondition || ModelCantGetFollowers.Contains(leader_model_id) || MBG.Instance.IsPlaying() > 1 ||
-            BlackListAnimationId.Contains(actorleader.anim) || BlackListFieldId.Contains(FF9StateSystem.Common.FF9.fldMapNo) || (actorleader.flags & 1) == 0 || ForceHidden)
+            if ((actorleader.flags & 1) == 0 || ForceHidden || ModelCantGetFollowers.Contains(leader_model_id) || BlackListFieldId.Contains(FF9StateSystem.Common.FF9.fldMapNo)
+                || BlackListAnimationId.Contains(actorleader.anim) || MBG.Instance.IsPlaying() > 1 || BlackListCondition || isPlayingATE)
+            {
                 HideFollowers(true);
+            }
 
             HandleAnimationPause(uiManager.IsPause);
 

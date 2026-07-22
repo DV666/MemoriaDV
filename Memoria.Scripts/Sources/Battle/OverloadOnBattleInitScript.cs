@@ -50,6 +50,9 @@ namespace Memoria.Scripts.TranceSeek
             if (ChangeDepthBBGfromBattleID.TryGetValue(BattleExID, out int customDepth)) // Fix depth for specific battles, to avoid some weird graphical bugs.
                 ChangeDepthBBG(customDepth);
 
+            if (CustomBBGDict.TryGetValue(BattleExID, out string[] textures))
+                LoadCustomBBGTextures(textures);
+
             if (BattleExID.Equals(new KeyValuePair<Int32, Int32>(93, 3))) // Prison Cage + Little Girl
                 HonoluluBattleMain.SetupAttachModel(FF9StateSystem.Battle.FF9Battle.btl_data[4], FF9StateSystem.Battle.FF9Battle.btl_data[5], 55, 25);
 
@@ -516,54 +519,6 @@ namespace Memoria.Scripts.TranceSeek
                     if (btl_scene.Info.StartType == battle_start_type_tags.BTL_START_FIRST_ATTACK)
                         StateDict.IsBackAttack = true;
 
-                    if (unit.Id == 16)
-                    {
-                        if (CustomBBGDict.TryGetValue(BattleExID, out string[] textures))
-                        {
-                            int delay = 20;
-                            Log.Message($"[Trance Seek] Préparation des textures BBG pour le combat {BattleExID.Key}_{BattleExID.Value}");
-
-                            unit.AddDelayedModifier(
-                                u =>
-                                {
-                                    if (delay > 0)
-                                    {
-                                        delay--;
-                                        return false;
-                                    }
-                                    return true;
-                                },
-                                u =>
-                                {
-                                    GameObject bbgGo = FF9StateSystem.Battle.FF9Battle.map.btlBGPtr;
-
-                                    if (bbgGo != null)
-                                    {
-                                        Renderer[] renderers = bbgGo.GetComponentsInChildren<Renderer>(true);
-                                        for (int i = 0; i < renderers.Length && i < textures.Length; i++)
-                                        {
-                                            Texture2D customTex = AssetManager.Load<Texture2D>(textures[i], false);
-
-                                            if (customTex != null && renderers[i].material != null)
-                                            {
-                                                renderers[i].material.mainTexture = customTex;
-                                            }
-                                            else if (customTex == null)
-                                            {
-                                                Log.Warning($"[Trance Seek] Impossible de charger la texture : {textures[i]}");
-                                            }
-                                        }
-                                        Log.Message($"[Trance Seek] Textures BBG appliquées avec succès pour le combat {BattleExID.Key}_{BattleExID.Value}");
-                                    }
-                                    else
-                                    {
-                                        Log.Warning($"[Trance Seek] Impossible d'appliquer les textures BBG : bbgGo est null pour le combat {BattleExID.Key}_{BattleExID.Value}");
-                                    }
-                                }
-                            );
-                        }
-                    }
-
                     FixMonsterIconOffset(unit);
                     BattleEnemy battleEnemy = BattleEnemy.Find(unit);
 
@@ -809,6 +764,91 @@ namespace Memoria.Scripts.TranceSeek
             }
         }
 
+        public static void LoadCustomBBGTextures(string[] newtextures)
+        {
+            GameObject bbgGo = FF9StateSystem.Battle.FF9Battle.map.btlBGPtr;
+            Boolean MoguriActivated = Configuration.Mod.FolderNames.Contains("MoguriMain");
+
+            if (bbgGo != null)
+            {
+                Renderer[] renderers = bbgGo.GetComponentsInChildren<Renderer>(true);
+
+                Texture2D[] loadedTextures = new Texture2D[newtextures.Length];
+
+                for (int i = 0; i < newtextures.Length; i++)
+                {
+                    string texturePath = newtextures[i];
+
+                    if (MoguriActivated)
+                    {
+                        int lastSlashIndex = texturePath.LastIndexOf('/');
+                        if (lastSlashIndex != -1)
+                            texturePath = texturePath.Insert(lastSlashIndex + 1, "MoguriVersion/");
+                    }
+
+                    loadedTextures[i] = AssetManager.Load<Texture2D>(texturePath, false);
+
+                    if (loadedTextures[i] == null && MoguriActivated)
+                        loadedTextures[i] = AssetManager.Load<Texture2D>(newtextures[i], false);
+                }
+
+                foreach (Renderer rend in renderers)
+                {
+                    foreach (Material mat in rend.materials)
+                    {
+                        if (mat != null && mat.mainTexture != null)
+                        {
+                            System.Text.RegularExpressions.Match match = System.Text.RegularExpressions.Regex.Match(mat.mainTexture.name, @"(\d+)(?!.*\d)");
+
+                            if (match.Success)
+                            {
+                                int texIndex = int.Parse(match.Value);
+
+                                if (texIndex >= 0 && texIndex < loadedTextures.Length && loadedTextures[texIndex] != null)
+                                {
+                                    mat.mainTexture = loadedTextures[texIndex];
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        public static void DebugLogBBGTextures(GameObject bbgGo)
+        {
+            if (bbgGo == null)
+            {
+                Log.Warning("[Trance Seek Debug] Cannot read textures: BBG object is null.");
+                return;
+            }
+
+            Log.Message($"[Trance Seek Debug] --- Start of BBG textures analysis for {bbgGo.name} ---");
+
+            Renderer[] renderers = bbgGo.GetComponentsInChildren<Renderer>(true);
+
+            for (int i = 0; i < renderers.Length; i++)
+            {
+                Renderer rend = renderers[i];
+
+                if (rend.materials == null || rend.materials.Length == 0)
+                {
+                    Log.Message($"[Trance Seek Debug] Index {i} | Renderer ({rend.gameObject.name}) : No material.");
+                    continue;
+                }
+
+                for (int m = 0; m < rend.materials.Length; m++)
+                {
+                    Material mat = rend.materials[m];
+                    string texName = (mat != null && mat.mainTexture != null) ? mat.mainTexture.name : "NO TEXTURE";
+
+                    Log.Message($"[Trance Seek Debug] Index {i} | Renderer ({rend.gameObject.name}) | Material {m} | Original texture: {texName}");
+                }
+            }
+
+            Log.Message($"[Trance Seek Debug] --- End of analysis ---");
+        }
+
         private class IconOffsetPatch
         {
             public SByte[] Y;
@@ -842,13 +882,13 @@ namespace Memoria.Scripts.TranceSeek
             { new KeyValuePair<Int32, Int32>(299, 1), "BBG_B023" }, // Lindblum boss (Steiner Quest)
             { new KeyValuePair<Int32, Int32>(838, 1), "BBG_B042" }, // Golden Pidove
             { new KeyValuePair<Int32, Int32>(84, 1), "BBG_B024" }, // Armodullahan (Cinna Quest)
-            { new KeyValuePair<Int32, Int32>(871, 1), "BBG_B042" } // Mysterious Girl (super boss Disc 3 => Will be moved to Disc 4)
+            { new KeyValuePair<Int32, Int32>(871, 1), "BBG_B042" } // Mysterious Girl (super boss Disc 3 => Will be moved to Disc 4 later)
         };
 
         private static readonly Dictionary<KeyValuePair<Int32, Int32>, string[]> CustomBBGDict = new Dictionary<KeyValuePair<Int32, Int32>, string[]>
         {
             {
-                new KeyValuePair<Int32, Int32>(2, 1), // Clé : MapID 2, Pattern 1
+                new KeyValuePair<Int32, Int32>(2, 1), // Fire Guardian (Disc 3)
                 new string[]
                 {
                     "CustomTextures/BBG/FireGuardianBBG/image0.png",
@@ -859,6 +899,36 @@ namespace Memoria.Scripts.TranceSeek
                     "CustomTextures/BBG/FireGuardianBBG/image5.png",
                     "CustomTextures/BBG/FireGuardianBBG/image6.png",
                     "CustomTextures/BBG/FireGuardianBBG/image7.png"
+                }
+            },
+
+            {
+                new KeyValuePair<Int32, Int32>(2, 2), // Wind Guardian (Disc 3)
+                new string[]
+                {
+                    "CustomTextures/BBG/WindGuardianBBG/image0.png",
+                    "CustomTextures/BBG/WindGuardianBBG/image1.png",
+                    "CustomTextures/BBG/WindGuardianBBG/image2.png",
+                    "CustomTextures/BBG/WindGuardianBBG/image3.png",
+                    "CustomTextures/BBG/WindGuardianBBG/image4.png",
+                    "CustomTextures/BBG/WindGuardianBBG/image5.png",
+                    "CustomTextures/BBG/WindGuardianBBG/image6.png",
+                    "CustomTextures/BBG/WindGuardianBBG/image7.png"
+                }
+            },
+
+            {
+                new KeyValuePair<Int32, Int32>(2, 3), // Water Guardian (Disc 3)
+                new string[]
+                {
+                    "CustomTextures/BBG/WaterGuardianBBG/image0.png",
+                    "CustomTextures/BBG/WaterGuardianBBG/image1.png",
+                    "CustomTextures/BBG/WaterGuardianBBG/image2.png",
+                    "CustomTextures/BBG/WaterGuardianBBG/image3.png",
+                    "CustomTextures/BBG/WaterGuardianBBG/image4.png",
+                    "CustomTextures/BBG/WaterGuardianBBG/image5.png",
+                    "CustomTextures/BBG/WaterGuardianBBG/image6.png",
+                    "CustomTextures/BBG/WaterGuardianBBG/image7.png"
                 }
             }
         };
