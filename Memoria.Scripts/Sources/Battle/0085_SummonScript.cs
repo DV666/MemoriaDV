@@ -187,7 +187,7 @@ namespace Memoria.Scripts.TranceSeek
             }
             else if (TranceSeekAPI.CanAttackMagic(_v))
             {
-                int factor = _v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Boost_Boosted) ? 1 : (_v.Caster.HasSupportAbilityByIndex(SupportAbility.Boost) ? 2 : 6);
+                int factor = _v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Boost_Boosted) ? 1 : (_v.Caster.HasSupportAbilityByIndex(SupportAbility.Boost) ? 2 : 4);
                 _v.Context.AttackPower += _v.Caster.Level / factor;
                 if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Archmage))
                     TranceSeekAPI.TryCriticalHit(_v);
