@@ -27,6 +27,8 @@ namespace Memoria.Scripts.TranceSeek
             TranceSeekAPI.PenaltyShellAttack(_v);
             TranceSeekAPI.PenaltyCommandDividedAttack(_v);
             TranceSeekAPI.BonusElement(_v);
+            if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Archmage))
+                TranceSeekAPI.TryCriticalHit(_v);
             if (TranceSeekAPI.CanAttackMagic(_v))
             {
                 _v.CalcHpDamage();

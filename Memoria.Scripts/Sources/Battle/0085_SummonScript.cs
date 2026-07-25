@@ -189,6 +189,8 @@ namespace Memoria.Scripts.TranceSeek
             {
                 int factor = _v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Boost_Boosted) ? 1 : (_v.Caster.HasSupportAbilityByIndex(SupportAbility.Boost) ? 2 : 6);
                 _v.Context.AttackPower += _v.Caster.Level / factor;
+                if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Archmage))
+                    TranceSeekAPI.TryCriticalHit(_v);
 
                 _v.CalcHpDamage();
 
