@@ -77,11 +77,9 @@ namespace Memoria.Scripts.TranceSeek
                         {
                             TranceSeekAPI.IpsenCastleMalus(_v);
                             _v.CalcPhysicalHpDamage();
-                            Log.Message("_v.Target.HpDamage: " + _v.Target.HpDamage);
                             _v.Target.HpDamage *= 2;
                             _v.Target.MpDamage *= 2;
                             _v.Target.Flags |= CalcFlag.Critical;
-                            Log.Message("[After Crit] _v.Target.HpDamage: " + _v.Target.HpDamage);
                             TranceSeekAPI.InfusedWeaponStatus(_v);
                             TranceSeekAPI.TryAlterCommandStatuses(_v, false);
                             TranceSeekAPI.RaiseTrouble(_v);
