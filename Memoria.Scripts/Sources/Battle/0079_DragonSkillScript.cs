@@ -207,7 +207,7 @@ namespace Memoria.Scripts.TranceSeek
             else if (IsAbility(BattleAbilityId.CherryBlossom))
             {
                 SetupPhysicalAttack(_v);
-                if (_v.CanAttackMagic())
+                if (TranceSeekAPI.CanAttackMagic(_v))
                 {
                     _v.CalcHpDamage();
 
@@ -233,7 +233,7 @@ namespace Memoria.Scripts.TranceSeek
             else if (IsAbility(BattleAbilityId.DragonCrest))
             {
                 SetupPhysicalAttack(_v);
-                if (_v.CanAttackMagic())
+                if (TranceSeekAPI.CanAttackMagic(_v))
                 {
                     _v.CalcHpDamage();
 
@@ -244,7 +244,7 @@ namespace Memoria.Scripts.TranceSeek
             else if (IsAbility(TranceSeekBattleAbility.Geirskögul))
             {
                 SetupPhysicalAttack(_v);
-                if (_v.CanAttackMagic())
+                if (TranceSeekAPI.CanAttackMagic(_v))
                 {
                     _v.CalcHpDamage();
                     _v.Target.HpDamage /= 5;

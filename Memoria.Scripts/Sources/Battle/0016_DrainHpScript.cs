@@ -26,7 +26,7 @@ namespace Memoria.Scripts.TranceSeek
             _v.Context.IsDrain = true;
             if (_v.Caster.Data.dms_geo_id == 105 && _v.Command.HitRate == 222) // Soul Dance - Zombance
             {
-                if (_v.Caster.SummonCount == 1)
+                if (FF9StateSystem.EventState.gEventGlobal[1307] == 2)
                 {
                     if (!_v.IsCasterNotTarget() || !_v.Target.CanBeAttacked())
                         return;
@@ -58,24 +58,27 @@ namespace Memoria.Scripts.TranceSeek
 
                     _v.Target.MpDamage = damage;
                     _v.Caster.MpDamage = damage;
-                    if (GameRandom.Next16() % 2 == 0)
-                    {
-                        _v.Caster.SummonCount = 0;
-                    }
-                    else
-                    {
-                        _v.Caster.SummonCount = 1;
-                    }
-                    return;
-                }
-                if (GameRandom.Next16() % 2 == 0)
-                {
-                    _v.Caster.SummonCount = 0;
                 }
                 else
                 {
-                    _v.Caster.SummonCount = 1;
+                    uint currentHp = _v.Target.CurrentHp;
+                    _v.NormalMagicParams();
+                    TranceSeekAPI.EnemyTranceBonusAttack(_v);
+                    TranceSeekAPI.BonusElement(_v);
+                    TranceSeekAPI.CasterPenaltyMini(_v);
+                    TranceSeekAPI.PenaltyShellAttack(_v);
+                    if (TranceSeekAPI.CanAttackMagic(_v))
+                    {
+                        TranceSeekAPI.PrepareHpDraining(_v);
+                        _v.CalcHpDamage();
+                        if (_v.Target.HpDamage > currentHp)
+                            _v.Caster.HpDamage = (int)currentHp;
+                        else
+                            _v.Caster.HpDamage = _v.Target.HpDamage;
+                        TranceSeekAPI.TryAlterMagicStatuses(_v);
+                    }
                 }
+                return;
             }
             else if (_v.IsCasterNotTarget() && _v.Target.CanBeAttacked())
             {

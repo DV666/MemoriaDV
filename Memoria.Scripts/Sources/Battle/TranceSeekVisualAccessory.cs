@@ -42,7 +42,7 @@ namespace Memoria.Scripts.TranceSeek
             if (CasterTSVAR.MascotCooldown <= 0)
             {
                 btl_cmd.SetCommand(caster.Data.cmd[3], BattleCommandId.SysPhantom, 2100, 254, 8u);
-                CasterTSVAR.MascotCooldown = (60 - caster.Will) * UnityEngine.Random.Range(1, 11) * 100;
+                CasterTSVAR.MascotCooldown = (60 - caster.Will) * UnityEngine.Random.Range(150, 250);
             }
             else
             {

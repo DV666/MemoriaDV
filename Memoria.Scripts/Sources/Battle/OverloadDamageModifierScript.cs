@@ -166,6 +166,9 @@ namespace Memoria.Scripts.TranceSeek
             if (modifier_factor <= 0f)
                 modifier_factor = 0.01f;
 
+            Log.Message("[Overload Damage] _v.Target.HpDamage: " + v.Target.HpDamage);
+            Log.Message("[v.Context.DamageModifierCount] v.Context.DamageModifierCount: " + v.Context.DamageModifierCount);
+
             Int32 reflectMultiplier = GetReflectMultiplierOnTarget(v, v.Target.Id);
             Boolean IsInvincible = TranceSeekAPI.CheckInvincible(v) && (((v.Target.Flags & CalcFlag.HpAlteration) != 0 && (v.Target.Flags & CalcFlag.HpRecovery) == 0) || ((v.Target.Flags & CalcFlag.MpAlteration) != 0 && (v.Target.Flags & CalcFlag.MpRecovery) == 0));
 

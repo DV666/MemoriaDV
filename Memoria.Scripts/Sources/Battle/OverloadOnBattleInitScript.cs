@@ -398,7 +398,7 @@ namespace Memoria.Scripts.TranceSeek
                             }
                             break;
                         case TranceSeekRegularItem.Mini_FriendlyFeatherCircle:
-                            unit.State().MascotCooldown = (60 - unit.Will) * UnityEngine.Random.Range(1, 11) * 100;
+                            unit.State().MascotCooldown = (60 - unit.Will) * UnityEngine.Random.Range(150, 250);
                             unit.AddDelayedModifier(TranceSeekVisualAccessory.ProcessMascotRecast, null);
                             break;
                         case TranceSeekRegularItem.CharonsRing:

@@ -1,7 +1,8 @@
-﻿using System;
-using FF9;
+﻿using FF9;
 using Memoria.Data;
 using Memoria.Prime;
+using System;
+using System.Collections.Generic;
 
 namespace Memoria.Scripts.TranceSeek
 {
@@ -54,62 +55,40 @@ namespace Memoria.Scripts.TranceSeek
             {
                 if (!TranceSeekAPI.TryKillFrozen(_v))
                 {
-                    CalcContext context = _v.Context;
-                    if (_v.Caster.IsPlayer)
-                    {
-                        TranceSeekAPI.WeaponPhysicalParams(CalcAttackBonus.Simple, _v);
-                        TranceSeekAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
-                        _v.Target.GambleDefence();
-                        TranceSeekAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
-                    }
-                    else
-                    {
-                        _v.NormalPhysicalParams();
-                        TranceSeekAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
-                        TranceSeekAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
-                    }
-
                     var Caster_TSVar = _v.CasterState();
                     int ChanceDeathBlow = 33;
                     if (Caster_TSVar.Steiner.PlutoStackUsed > 0)
                         ChanceDeathBlow += 10 * Caster_TSVar.Steiner.PlutoStackUsed;
 
-                    if (Comn.random16() % 100 > ChanceDeathBlow && _v.Command.AbilityId != TranceSeekBattleAbility.PlutoStrike)
+                    if (Comn.random16() % 100 > ChanceDeathBlow && _v.Command.AbilityId != TranceSeekBattleAbility.PlutoStrike && false)
                     {
                         _v.Context.Flags |= BattleCalcFlags.Miss;
                     }
                     else
                     {
+                        TranceSeekAPI.WeaponPhysicalParams(CalcAttackBonus.Simple, _v);
+                        TranceSeekAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
+                        TranceSeekAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
                         if (_v.Caster.IsUnderStatus(BattleStatus.Trance) && _v.Caster.PlayerIndex == CharacterId.Steiner)
-                        {
-                            context.Attack += context.Attack / 4;
-                        }
-                        context.Attack += context.Attack;
-                        _v.Target.Flags |= CalcFlag.Critical;
+                            _v.Context.DamageModifierCount++;
                         TranceSeekAPI.BonusBackstabAndPenaltyLongDistance(_v);
-                        if (_v.Caster.IsPlayer)
-                        {
-                            TranceSeekAPI.BonusWeaponElement(_v);
-                        }
-                        else
-                        {
-                            TranceSeekAPI.BonusElement(_v);
-                        }
+                        TranceSeekAPI.BonusWeaponElement(_v);
                         if (TranceSeekAPI.CanAttackWeaponElementalCommand(_v))
                         {
                             TranceSeekAPI.IpsenCastleMalus(_v);
                             _v.CalcPhysicalHpDamage();
+                            Log.Message("_v.Target.HpDamage: " + _v.Target.HpDamage);
                             _v.Target.HpDamage *= 2;
-                            if (_v.Command.AbilityId == TranceSeekBattleAbility.PlutoStrike)
-                            {
-                                _v.Caster.Flags |= CalcFlag.HpDamageOrHeal;
-                                _v.Caster.HpDamage = _v.Target.HpDamage / 2;
-                            }
+                            _v.Target.MpDamage *= 2;
+                            _v.Target.Flags |= CalcFlag.Critical;
+                            Log.Message("[After Crit] _v.Target.HpDamage: " + _v.Target.HpDamage);
+                            TranceSeekAPI.InfusedWeaponStatus(_v);
+                            TranceSeekAPI.TryAlterCommandStatuses(_v, false);
                             TranceSeekAPI.RaiseTrouble(_v);
-                            _v.CasterState().Steiner.Duelist = 0;
                         }
                     }
 
+                    _v.CasterState().Steiner.Duelist = 0;
                     TranceSeekCharacterMechanic.ResetSteinerPassive(_v.Caster);
                 }
             }
