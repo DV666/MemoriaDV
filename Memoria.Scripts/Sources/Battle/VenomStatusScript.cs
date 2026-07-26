@@ -50,7 +50,7 @@ namespace Memoria.DefaultScripts
             if (Target.IsUnderAnyStatus(BattleStatus.Petrify))
                 return false;
             uint TargetMaxHP = Target.State().Monster.HPBoss10000 ? (Target.MaximumHp - 10000) : Target.MaximumHp;
-            UInt32 HPdamage = (UInt32)Math.Round(Target.IsUnderAnyStatus(BattleStatus.EasyKill) ? (TargetMaxHP / 128.0) : (TargetMaxHP / 16.0));
+            UInt32 HPdamage = (UInt32)Math.Round(Target.IsUnderAnyStatus(BattleStatus.EasyKill) ? (TargetMaxHP / 192.0) : (TargetMaxHP / 16.0));
             UInt32 MPdamage = 0;
             if (!Target.IsUnderAnyStatus(BattleStatus.EasyKill))
             {

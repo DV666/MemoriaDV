@@ -279,6 +279,10 @@ namespace Memoria.Scripts.TranceSeek
                     {
                         StateDict.SpecialSA.LastStand = unit.HasSupportAbilityByIndex(TranceSeekSupportAbility.LastStand_Boosted) ? 2 : 1;
                     }
+                    if (unit.HasSupportAbilityByIndex(TranceSeekSupportAbility.LuckyStar)) // Lucky Star
+                    {
+                        unit.CriticalRateBonus += (short)(unit.HasSupportAbilityByIndex(TranceSeekSupportAbility.LuckyStar_Boosted) ? 20 : 10);
+                    }
                     if (unit.HasSupportAbilityByIndex(TranceSeekSupportAbility.ImAllSet_Boosted)) // SA I'm all set
                     {
                         unit.AlterStatus(TranceSeekStatus.ArmorUp, unit);

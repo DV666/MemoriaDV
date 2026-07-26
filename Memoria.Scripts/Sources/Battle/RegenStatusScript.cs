@@ -55,7 +55,8 @@ namespace Memoria.DefaultScripts
             }
             else
             {
-                UInt32 healHP = Target.MaximumHp >> (Target.IsUnderAnyStatus(BattleStatus.EasyKill) ? 7 : 5);
+                uint TargetMaxHP = Target.State().Monster.HPBoss10000 ? (Target.MaximumHp - 10000) : Target.MaximumHp;
+                UInt32 healHP = (UInt32)Math.Round(Target.IsUnderAnyStatus(BattleStatus.EasyKill) ? (TargetMaxHP / 256.0) : (TargetMaxHP / 32.0));
                 if (Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.Rejuvenate)) // SA Rejuvenate
                     healHP += Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.Rejuvenate_Boosted) ? (healHP / 2) : (healHP / 4);
 
