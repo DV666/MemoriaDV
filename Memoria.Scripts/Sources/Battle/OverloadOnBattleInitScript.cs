@@ -1,5 +1,4 @@
-﻿using Assets.Scripts.Common;
-using Assets.Sources.Scripts.UI.Common;
+﻿using Assets.Sources.Scripts.UI.Common;
 using FF9;
 using Memoria.Assets;
 using Memoria.Data;
@@ -7,13 +6,9 @@ using Memoria.Database;
 using Memoria.DefaultScripts;
 using Memoria.Prime;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Threading;
 using UnityEngine;
-using static BTL_DATA;
 using static Memoria.Scripts.TranceSeek.TranceSeekAPI;
 
 namespace Memoria.Scripts.TranceSeek
@@ -31,9 +26,7 @@ namespace Memoria.Scripts.TranceSeek
         {
             // Zidane = 0, Vivi = 1, Eiko = 2, Kuja = 3, Necron = 4, Beatrix = 5, Ozma = 6, Garland = 7
 
-            GameObject battleRoot = GameObject.Find("BattleMap Root");
-            if (battleRoot != null)
-                TranceSeekWatcher.InitWatchdog(battleRoot);
+            TranceSeekWatcher.InitWatchdog(FF9StateSystem.Battle.FF9Battle.map.btlBGPtr);
 
             OverloadOnBattleScriptStartScript.InitProtectMessages();
 
@@ -225,6 +218,8 @@ namespace Memoria.Scripts.TranceSeek
 
                 if (unit.IsPlayer)
                 {
+                    Boolean IsVisualAccessory = false;
+
                     if (btl_scene.Info.StartType == battle_start_type_tags.BTL_START_BACK_ATTACK)
                         StateDict.IsBackAttack = true;
 
@@ -401,9 +396,20 @@ namespace Memoria.Scripts.TranceSeek
                                 );
                             }
                             break;
+                        case TranceSeekRegularItem.MuTail:
+                        case TranceSeekRegularItem.HaloGhost:
+                        case TranceSeekRegularItem.LadybugAntenna:
+                        case TranceSeekRegularItem.YetiMouth:
+                        case TranceSeekRegularItem.NymphFlower:
+                        case TranceSeekRegularItem.JabberworkCrest:
+                        case TranceSeekRegularItem.GarudaWing:
+                        case TranceSeekRegularItem.YanHorns:
+                            IsVisualAccessory = true;
+                            break;
                         case TranceSeekRegularItem.Mini_FriendlyFeatherCircle:
                             unit.State().MascotCooldown = (60 - unit.Will) * UnityEngine.Random.Range(150, 250);
                             unit.AddDelayedModifier(TranceSeekVisualAccessory.ProcessMascotRecast, null);
+                            IsVisualAccessory = true;
                             break;
                         case TranceSeekRegularItem.CharonsRing:
                             unit.State().SoulChance = 10;
@@ -516,7 +522,8 @@ namespace Memoria.Scripts.TranceSeek
                         unit.CurrentHp /= (uint)(TranceSeekBattleDictionary.IsHardcore ? 4 : 2);
                     }
 
-                    TranceSeekVisualAccessory.CheckCreateVisualAccessory(unit);
+                    if (IsVisualAccessory)
+                        TranceSeekVisualAccessory.CheckCreateVisualAccessory(unit);
                 }
                 else // Monsters init
                 {

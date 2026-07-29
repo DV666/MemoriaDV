@@ -290,14 +290,14 @@ namespace Memoria.Scripts.TranceSeek
             BattleEnemy battleEnemy = BattleEnemy.Find(v.Target);
             var slot = new List<int>();
             for (Int32 i = 1; i < 4; i++)
-            {
                 if (battleEnemy.StealableItems[i] != RegularItem.NoItem)
-                {
                     slot.Add(i);
-                }
+
+            if (slot.Count > 0)
+            {
+                int slotchoosen = UnityEngine.Random.Range(0, slot.Count);
+                battleEnemy.Data.steal_item_rate[slot[slotchoosen]] += 8;
             }
-            int slotchoosen = UnityEngine.Random.Range(0, slot.Count);
-            battleEnemy.Data.steal_item_rate[slot[slotchoosen]] += 8;
         }
 
         public static void StealItem(BattleCalculator v, BattleEnemy enemy, Int32 slot, Boolean ShowHUDMessage = true)

@@ -85,10 +85,13 @@ namespace Memoria.Scripts.TranceSeek
                     if (battleEnemy.StealableItems[i] != RegularItem.NoItem)
                         ++_v.Context.DamageModifierCount;
                 }
-                if (_v.Caster.IsUnderAnyStatus(BattleStatus.Trance) && _v.Caster.PlayerIndex == CharacterId.Zidane)
-                    StealScript.StealWhenTrance(_v);
-                else
-                    StealScript.ClassicSteal(_v);
+                if (battleEnemy.StealableItems.Length > 0)
+                {
+                    if (_v.Caster.IsUnderAnyStatus(BattleStatus.Trance) && _v.Caster.PlayerIndex == CharacterId.Zidane)
+                        StealScript.StealWhenTrance(_v);
+                    else
+                        StealScript.ClassicSteal(_v);
+                }
 
                 _v.CalcHpDamage();
                 TranceSeekAPI.TryAlterMagicStatuses(_v);
