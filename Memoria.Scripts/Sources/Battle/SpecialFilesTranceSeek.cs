@@ -21,7 +21,7 @@ namespace Memoria.Scripts.TranceSeek
 
         public static int DebugFilesCooldown = 100;
 
-        public static Boolean DebugBattle = true;
+        public static Boolean DebugBattle = false;
         public static void WriteStuffInFile()
         {
             if (!File.Exists(StuffListedPath))
