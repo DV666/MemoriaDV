@@ -10,6 +10,7 @@ namespace Memoria.DefaultScripts
     {
         public BattleUnit VenomInflicter = null;
         public Int32 SpeedTick = 0;
+        public Boolean InflicterNymphAccessory = false;
 
         public override UInt32 Apply(BattleUnit target, BattleUnit inflicter, params Object[] parameters)
         {
@@ -28,6 +29,8 @@ namespace Memoria.DefaultScripts
                 }
                 );
             }
+            if (inflicter.Accessory == TranceSeekRegularItem.NymphFlower)
+                InflicterNymphAccessory = true;
             TranceSeekAPI.SA_StatusApply(inflicter, false);
             return btl_stat.ALTER_SUCCESS;
         }
@@ -68,6 +71,17 @@ namespace Memoria.DefaultScripts
                 Target.CurrentHp -= HPdamage;
             else
                 Target.Kill(VenomInflicter);
+
+            if (InflicterNymphAccessory)
+            {
+                uint healHP = HPdamage >> 2;
+                uint healMP = MPdamage >> 2;
+                Inflicter.CurrentHp = Math.Min(Inflicter.CurrentHp + healHP, Inflicter.MaximumHp);
+                if (healMP > 0)
+                    Inflicter.CurrentMp = Math.Min(Inflicter.CurrentMp + healMP, Inflicter.MaximumMp);
+                btl2d.Btl2dStatReq(Inflicter, -(Int32)healHP, -(Int32)healMP);
+            }
+
             btl2d.Btl2dStatReq(Target, (Int32)HPdamage, (Int32)MPdamage);
             SpeedTick += 100;
             BattleVoice.TriggerOnStatusChange(Target, BattleVoice.BattleMoment.Used, BattleStatusId.Venom);

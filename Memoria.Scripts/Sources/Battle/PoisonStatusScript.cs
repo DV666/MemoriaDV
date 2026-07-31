@@ -10,6 +10,7 @@ namespace Memoria.DefaultScripts
     public class PoisonStatusScript : StatusScriptBase, IOprStatusScript
     {
         public BattleUnit PoisonInflicter = null;
+        public Boolean InflicterNymphAccessory = false;
 
         public override UInt32 Apply(BattleUnit target, BattleUnit inflicter, params Object[] parameters)
         {
@@ -29,6 +30,8 @@ namespace Memoria.DefaultScripts
                 }
                 );
             }
+            if (inflicter.Accessory == TranceSeekRegularItem.NymphFlower)
+                InflicterNymphAccessory = true;
             TranceSeekAPI.SA_StatusApply(inflicter, false);
             return btl_stat.ALTER_SUCCESS;
         }
@@ -50,7 +53,7 @@ namespace Memoria.DefaultScripts
 
             var Target_TSVar = Target.State();
             uint TargetMaxHP = Target_TSVar.Monster.HPBoss10000  ? (Target.MaximumHp - 10000) : Target.MaximumHp;
-            UInt32 damage = (UInt32)(Target.IsUnderAnyStatus(BattleStatus.EasyKill) ? (TargetMaxHP / 256.0) : (TargetMaxHP / 32.0));
+            UInt32 damage = (UInt32)Math.Round(Target.IsUnderAnyStatus(BattleStatus.EasyKill) ? (TargetMaxHP / 256.0) : (TargetMaxHP / 32.0));
             Boolean isDmg = false;
 
             if (!Target.IsZombie && Target_TSVar.Marcus.CursedBlood == 0 && (Target_TSVar.EffectElement.Poison & 8) == 0)
@@ -60,6 +63,13 @@ namespace Memoria.DefaultScripts
                     Target.CurrentHp -= damage;
                 else
                     Target.Kill(PoisonInflicter);
+
+                if (InflicterNymphAccessory)
+                {
+                    uint healHP = damage >> 2;
+                    Inflicter.CurrentHp = Math.Min(Inflicter.CurrentHp + healHP, Inflicter.MaximumHp);
+                    btl2d.Btl2dStatReq(Inflicter, -(Int32)healHP, 0);
+                }
             }
             else
             {
