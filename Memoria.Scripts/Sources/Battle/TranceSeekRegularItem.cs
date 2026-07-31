@@ -200,6 +200,7 @@ namespace Memoria.Scripts.TranceSeek
         public const RegularItem ErebusRing = (RegularItem)1276;
         public const RegularItem ThanatosRing = (RegularItem)1277;
         public const RegularItem AnimaRing = (RegularItem)1278;
+        public const RegularItem LunarCrown = (RegularItem)1279;
         // Chemist Stuff # (2000-2999)
         public const RegularItem HiPotion2 = (RegularItem)2000;
         public const RegularItem UltraPotion2 = (RegularItem)2001;

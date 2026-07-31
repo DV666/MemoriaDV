@@ -351,6 +351,7 @@ namespace Memoria.Scripts.TranceSeek
         public Boolean Invincible { get; set; }
         public Boolean ImmuneSteal { get; set; }
         public Boolean DodgeALL { get; set; }
+        public Boolean FreezeAltEffect { get; set; } // For ice monsters or LunarCrown
         public int MascotCooldown { get; set; }
         public int SoulChance { get; set; }
 

@@ -99,10 +99,15 @@ namespace Memoria.Scripts.TranceSeek
 
         public static Boolean TryKillFrozen(this BattleCalculator v)
         {
-            if (!v.Target.IsUnderAnyStatus(BattleStatus.Freeze) || v.Target.IsUnderAnyStatus(BattleStatus.Petrify) || !v.Target.IsPlayer && (v.Target.AbsorbElement & EffectElement.Cold) != 0)
+            if (!v.Target.IsUnderAnyStatus(BattleStatus.Freeze) || v.Target.IsUnderAnyStatus(BattleStatus.Petrify))
                 return false;
             if (v.Target.IsUnderAnyStatus(BattleStatus.EasyKill) && !EliteMonster(v.Target.Data))
                 return false;
+            if (!v.Target.IsPlayer && (v.Target.AbsorbElement & EffectElement.Cold) != 0 || v.Target.Accessory == TranceSeekRegularItem.LunarCrown)
+            {
+                v.TargetState().FreezeAltEffect = true;
+                return false;
+            }
 
             BattleVoice.TriggerOnStatusChange(v.Target.Data, BattleVoice.BattleMoment.Used, BattleStatusId.Freeze);
             btl_cmd.KillSpecificCommand(v.Target.Data, BattleCommandId.SysStone);
@@ -335,6 +340,12 @@ namespace Memoria.Scripts.TranceSeek
 
             if (v.Target.Weapon == TranceSeekRegularItem.SeaSpear && v.Target.IsUnderAnyStatus(BattleStatus.Defend)) // Sea Spear
                 v.Context.Attack = 1;
+
+            if (Target_TSVar.FreezeAltEffect)
+            {
+                v.Context.DecreaseAttackDrastically();
+                Target_TSVar.FreezeAltEffect = false; // Reset
+            }
 
             if (v.Context.Attack < 1)
                 v.Context.Attack = 1;
