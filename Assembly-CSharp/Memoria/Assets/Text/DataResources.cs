@@ -191,7 +191,7 @@ namespace Memoria.Assets
             public static readonly String PureDirectory = PureDataDirectory + "Models/";
             public static readonly String Directory = AssetManagerUtil.GetStreamingAssetsPath() + "/" + PureDirectory;
 
-            public const String GeoTexAnimEntriesFile = "GeoTexAnimEntries.csv";
+            public const String GeoTexAnimEntriesFile = "GeoTexAnim.csv";
 
             public static String ModDirectory(String modFolder)
             {
