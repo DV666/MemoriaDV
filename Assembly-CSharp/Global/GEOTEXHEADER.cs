@@ -1,3 +1,4 @@
+using FF9;
 using Memoria;
 using Memoria.Prime;
 using System;
@@ -11,6 +12,50 @@ public class GEOTEXHEADER
 {
     public void ReadTextureAnim(String path)
     {
+        String modelName = Path.GetFileNameWithoutExtension(path);
+        if (GeoTexAnimEntries.GeoTexAnimDict.TryGetValue(modelName, out List<GeoTexAnimData> entries) && entries.Count > 0) // Check GeoTexAnimEntries.csv
+        {
+            this.count = (UInt16)entries.Count;
+            this.pad = 0;
+            this.geotex = new GEOTEXANIMHEADER[this.count];
+
+            for (Int32 i = 0; i < this.count; i++)
+            {
+                GeoTexAnimData entry = entries[i];
+                GEOTEXANIMHEADER header = new GEOTEXANIMHEADER();
+
+                header.flags = entry.Flags;
+                header.numframes = entry.NumFrames;
+                header.rate = entry.Rate;
+                header.randmin = entry.RandMin;
+                header.randrange = entry.RandRange;
+                header.frame = 0;
+                header.count = 1;
+                header.texID = 0;
+                header.lastframe = 1;
+
+                Single scaleX = entry.BaseTexW > 0 ? entry.BaseTexW / 128f : 1f;
+                Single scaleY = entry.BaseTexH > 0 ? entry.BaseTexH / 128f : 1f;
+
+                header.target = new Rect(entry.Target.x / scaleX, entry.Target.y / scaleY, entry.Target.width / scaleX, entry.Target.height / scaleY);
+                header.targetuv = header.target;
+
+                header.coords = new Vector2[entry.NumFrames];
+                header.rectuvs = new Rect[entry.NumFrames];
+
+                for (Int32 j = 0; j < entry.NumFrames; j++)
+                {
+                    header.coords[j] = new Vector2(entry.Coords[j].x / scaleX, entry.Coords[j].y / scaleY);
+                    header.rectuvs[j] = new Rect(header.coords[j].x, header.coords[j].y, header.target.width, header.target.height);
+                }
+
+                this.geotex[i] = header;
+            }
+
+            Log.Message("Loaded GeoTexAnim.csv for: " + modelName);
+            return;
+        }
+
         Byte[] binAsset = AssetManager.LoadBytes(path, true);
         if (binAsset == null)
         {

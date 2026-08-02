@@ -263,6 +263,8 @@
     <Compile Include="Global\battle\BattlePlayerCharacter.cs" />
     <Compile Include="Global\battle\BattleRainRenderer.cs" />
     <Compile Include="Global\EFFECT_GLOW.cs" />
+    <Compile Include="Global\Geo\GeoTexAnimEntries.cs" />
+    <Compile Include="Global\Geo\GeoTexAnimData.cs" />
     <Compile Include="Global\NormalSolver.cs" />
     <Compile Include="Global\Sound\SaXAudio\AudioEffectManager.cs" />
     <Compile Include="Global\Sound\SaXAudio\EffectPreset.cs" />

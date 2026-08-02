@@ -185,5 +185,20 @@ namespace Memoria.Assets
                 return modFolder + "/" + AssetManagerUtil.GetStreamingAssetsPath() + "/" + PureDirectory;
             }
         }
+
+        public static class Models
+        {
+            public static readonly String PureDirectory = PureDataDirectory + "Models/";
+            public static readonly String Directory = AssetManagerUtil.GetStreamingAssetsPath() + "/" + PureDirectory;
+
+            public const String GeoTexAnimEntriesFile = "GeoTexAnimEntries.csv";
+
+            public static String ModDirectory(String modFolder)
+            {
+                if (String.IsNullOrEmpty(modFolder))
+                    return Directory;
+                return modFolder + "/" + AssetManagerUtil.GetStreamingAssetsPath() + "/" + PureDirectory;
+            }
+        }
     }
 }
