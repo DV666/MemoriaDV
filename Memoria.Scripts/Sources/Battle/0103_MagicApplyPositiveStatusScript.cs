@@ -77,7 +77,7 @@ namespace Memoria.Scripts.TranceSeek
                 return;
             }
 
-            if (_v.Command.AbilityId == TranceSeekBattleAbility.Ironclad) // Iron Clast
+            if (_v.Command.AbilityId == TranceSeekBattleAbility.Ironclad) // Iron Clad
             {
                 _v.Command.AbilityStatus |= TranceSeekStatus.ArmorUp;
                 if (Target_TSVar.Steiner.PlutoStackUsed > 0)
@@ -87,6 +87,8 @@ namespace Memoria.Scripts.TranceSeek
                         _v.Target.AlterStatus(BattleStatus.Protect);
                     TranceSeekCharacterMechanic.ResetSteinerPassive(_v.Caster);
                 }
+                else
+                    _v.Target.AlterStatus(_v.Command.AbilityStatus);
                 return;
             }
             else if (_v.Command.AbilityId == TranceSeekBattleAbility.Bulwark) // Rempart
@@ -102,6 +104,8 @@ namespace Memoria.Scripts.TranceSeek
                         btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.ArmorUp);
                     TranceSeekCharacterMechanic.ResetSteinerPassive(_v.Caster);
                 }
+                else
+                    _v.Target.AlterStatus(_v.Command.AbilityStatus);
                 return;
             }
             else if (_v.Command.AbilityId == TranceSeekBattleAbility.Runic) // Runic

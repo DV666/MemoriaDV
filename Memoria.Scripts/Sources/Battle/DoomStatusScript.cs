@@ -37,25 +37,6 @@ namespace Memoria.DefaultScripts
         {
             btl2d.StatusMessages.Remove(Message);
             Singleton<HUDMessage>.Instance.ReleaseObject(Message);
-            if (Target.IsUnderAnyStatus(BattleStatus.EasyKill) && !TranceSeekAPI.EliteMonster(Target.Data))
-            {
-                List<BattleStatus> statuschoosen = new List<BattleStatus>{ BattleStatus.Poison, BattleStatus.Venom, BattleStatus.Blind, BattleStatus.Silence, BattleStatus.Trouble,
-                BattleStatus.Sleep, BattleStatus.Freeze, BattleStatus.Heat, BattleStatus.Mini, BattleStatus.Petrify, BattleStatus.GradualPetrify,
-                BattleStatus.Berserk, BattleStatus.Confuse, BattleStatus.Stop, BattleStatus.Zombie, BattleStatus.Slow };
-
-                for (Int32 i = 0; i < (statuschoosen.Count - 1); i++)
-                {
-                    if ((statuschoosen[i] & Target.Data.stat.invalid) != 0)
-                    {
-                        statuschoosen.Remove(statuschoosen[i]);
-                    }
-                }
-
-                for (Int32 i = 0; i < 2; i++)
-                {
-                    Target.AlterStatus(statuschoosen[GameRandom.Next16() % statuschoosen.Count], DoomInflicter);
-                }
-            }
             return true;
         }
 
@@ -90,7 +71,26 @@ namespace Memoria.DefaultScripts
                     }
                     );
                 }
-                if (btl_stat.AlterStatus(Target, BattleStatusId.Death, DoomInflicter) == btl_stat.ALTER_SUCCESS)
+                if (Target.IsUnderAnyStatus(BattleStatus.EasyKill) && !TranceSeekAPI.EliteMonster(Target.Data))
+                {
+                    List<BattleStatus> statuschoosen = new List<BattleStatus>{ BattleStatus.Poison, BattleStatus.Venom, BattleStatus.Blind, BattleStatus.Silence, BattleStatus.Trouble,
+                BattleStatus.Sleep, BattleStatus.Freeze, BattleStatus.Heat, BattleStatus.Mini, BattleStatus.Petrify, BattleStatus.GradualPetrify,
+                BattleStatus.Berserk, BattleStatus.Confuse, BattleStatus.Stop, BattleStatus.Zombie, BattleStatus.Slow };
+
+                    for (Int32 i = 0; i < (statuschoosen.Count - 1); i++)
+                    {
+                        if ((statuschoosen[i] & Target.Data.stat.invalid) != 0)
+                        {
+                            statuschoosen.Remove(statuschoosen[i]);
+                        }
+                    }
+
+                    for (Int32 i = 0; i < 2; i++)
+                    {
+                        Target.AlterStatus(statuschoosen[GameRandom.Next16() % statuschoosen.Count], DoomInflicter);
+                    }
+                }
+                else if (btl_stat.AlterStatus(Target, BattleStatusId.Death, DoomInflicter) == btl_stat.ALTER_SUCCESS)
                     BattleVoice.TriggerOnStatusChange(Target, BattleVoice.BattleMoment.Used, BattleStatusId.Doom);
                 btl2d.Btl2dReq(Target);
                 return true;
