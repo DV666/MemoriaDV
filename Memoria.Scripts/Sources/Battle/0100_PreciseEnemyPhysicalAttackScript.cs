@@ -26,6 +26,10 @@ namespace Memoria.Scripts.TranceSeek
             }
             else
             {
+                if (_v.Caster.Data.dms_geo_id == 1212) // Asura's Wrath
+                {
+                    _v.Caster.Strength = (byte)Math.Min(_v.Caster.Strength + 2, 255);
+                }
                 if (!TranceSeekAPI.TryKillFrozen(_v))
                 {
                     if (_v.Command.HitRate == 111) // Ignore physical defense

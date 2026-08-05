@@ -27,6 +27,7 @@ namespace Memoria.Scripts.TranceSeek
             public int MagicEvade;
 
             public bool WasOldStatus;
+            public bool WasHidden;
         }
 
         private Dictionary<BTL_DATA, StatCache> _unitCache = new Dictionary<BTL_DATA, StatCache>();
@@ -53,9 +54,9 @@ namespace Memoria.Scripts.TranceSeek
 
             int invincibleTargetId = 0;
             int dodgeALLTargetId = 0;
-
             int immunestealTargetId = 0;
             int hidestatmodifTargetId = 0;
+
             if (FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1000, out Dictionary<int, int> dictbattle))
             {
                 dictbattle.TryGetValue(7, out invincibleTargetId);
@@ -83,33 +84,28 @@ namespace Memoria.Scripts.TranceSeek
                         PhysicalEvade = unit.PhysicalEvade,
                         MagicDefence = unit.MagicDefence,
                         MagicEvade = unit.MagicEvade,
-                        WasOldStatus = unit.IsUnderAnyStatus(TranceSeekStatus.Old) // Trigger to much "popup" text.
+                        WasOldStatus = unit.IsUnderAnyStatus(TranceSeekStatus.Old), // Trigger to much "popup" text.
+                        WasHidden = hidestatmodifTargetId != 0 && (hidestatmodifTargetId & unit.Id) != 0
                     };
                     continue;
                 }
 
-                if (invincibleTargetId != 0 && (invincibleTargetId & unit.Id) != 0)
-                    unit.State().Invincible = true;
-                else
-                    unit.State().Invincible = false;
-
+                unit.State().Invincible = (invincibleTargetId != 0 && (invincibleTargetId & unit.Id) != 0);
+                unit.State().ImmuneSteal = (immunestealTargetId != 0 && (immunestealTargetId & unit.Id) != 0);
+                unit.State().DodgeALL = (dodgeALLTargetId != 0 && (dodgeALLTargetId & unit.Id) != 0);
 #if DEV_TS
                 if (unit.IsPlayer)
                     unit.State().Invincible = TranceSeekDebug.TranceSeekDebugMenu.MegaCheat > 0;
 #endif
-
-                if (immunestealTargetId != 0 && (immunestealTargetId & unit.Id) != 0)
-                    unit.State().ImmuneSteal = true;
-                else
-                    unit.State().ImmuneSteal = false;
-
-                if (dodgeALLTargetId != 0 && (dodgeALLTargetId & unit.Id) != 0)
-                    unit.State().DodgeALL = true;
-                else
-                    unit.State().DodgeALL = false;
-
-                bool hidePopups = hidestatmodifTargetId != 0 && (hidestatmodifTargetId & unit.Id) != 0;
+                bool isCurrentlyHidden = hidestatmodifTargetId != 0 && (hidestatmodifTargetId & unit.Id) != 0;
+                bool hidePopups = isCurrentlyHidden;
                 int displayOffset = 0;
+
+                if (cached.WasHidden != isCurrentlyHidden)
+                {
+                    ForceCachedValue(unit, cached);
+                    cached.WasHidden = isCurrentlyHidden;
+                }
 
                 bool isOld = unit.IsUnderAnyStatus(TranceSeekStatus.Old);
                 if (isOld != cached.WasOldStatus)
@@ -176,6 +172,20 @@ namespace Memoria.Scripts.TranceSeek
             }
         }
 
+        private void ForceCachedValue (BattleUnit unit, StatCache cached)
+        {
+            cached.Level = unit.Level;
+            cached.Strength = unit.Strength;
+            cached.Magic = unit.Magic;
+            cached.Dexterity = unit.Dexterity;
+            cached.Will = unit.Will;
+            cached.CriticalRateBonus = unit.CriticalRateBonus;
+            cached.CriticalRateResistance = unit.CriticalRateResistance;
+            cached.PhysicalDefence = unit.PhysicalDefence;
+            cached.PhysicalEvade = unit.PhysicalEvade;
+            cached.MagicDefence = unit.MagicDefence;
+            cached.MagicEvade = unit.MagicEvade;
+        }
 
         private void RequestPopup(BattleUnit unit, string dbKey, bool isUp, int delta, ref int offset, bool hidePopups)
         {

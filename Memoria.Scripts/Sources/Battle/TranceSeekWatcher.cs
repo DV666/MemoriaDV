@@ -60,7 +60,11 @@ namespace Memoria.Scripts.TranceSeek
 
         public static void InitWatchdog(GameObject battleRoot)
         {
-            if (battleRoot == null) return;
+            if (battleRoot == null)
+            {
+                Log.Message("[Trance Seek Watchdog] Fail to load.");
+                return;
+            }
 
             if (battleRoot.GetComponent<TranceSeekCameraWatchdog>() == null)
                 battleRoot.AddComponent<TranceSeekCameraWatchdog>();

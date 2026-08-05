@@ -26,12 +26,19 @@ namespace Memoria.Scripts.TranceSeek
         {
             // Zidane = 0, Vivi = 1, Eiko = 2, Kuja = 3, Necron = 4, Beatrix = 5, Ozma = 6, Garland = 7
 
-            TranceSeekWatcher.InitWatchdog(FF9StateSystem.Battle.FF9Battle.map.btlBGPtr);
+            GameObject battleRoot = GameObject.Find("BattleMap Root");
+            if (battleRoot != null)
+                TranceSeekWatcher.InitWatchdog(battleRoot);
 
             OverloadOnBattleScriptStartScript.InitProtectMessages();
 
             int BattleID = FF9StateSystem.Battle.battleMapIndex;
             int GroupeBattleID = FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum;
+
+            if (BattleID == 871 && GroupeBattleID == 1)
+                MGSummonScript.InitPreload();
+            else
+                MGSummonScript.ClearPreload();
 
             BTL_SCENE btl_scene = FF9StateSystem.Battle.FF9Battle.btl_scene;
             SB2_PATTERN sb2Pattern = FF9StateSystem.Battle.FF9Battle.btl_scene.PatAddr[GroupeBattleID];
@@ -764,7 +771,7 @@ namespace Memoria.Scripts.TranceSeek
             }
         }
 
-        public void FixMonsterIconOffset(BattleUnit btl)
+        public static void FixMonsterIconOffset(BattleUnit btl)
         {
             ENEMY_TYPE et = FF9StateSystem.Battle.FF9Battle.enemy[btl.Data.bi.slot_no].et;
 
@@ -874,13 +881,15 @@ namespace Memoria.Scripts.TranceSeek
 
         private static readonly Dictionary<Int32, IconOffsetPatch> MonsterIconOffsets = new Dictionary<Int32, IconOffsetPatch>
         {
-            {
-                530, // Fire Guardian (Disc 3)...
-                new IconOffsetPatch( //... using Beatrix parameters
-                    new SByte[] { -10, 0, -6, -1, -6, -18 }, 
-                    new SByte[] { -1, -2, -9, -8, -5, 0 }
-                )
-            }
+            { 530, new IconOffsetPatch(new SByte[] { -10, 0, -6, -1, -6, -18 }, new SByte[] { -1, -2, -9, -8, -5, 0 })}, // Fire Guardian (Disc 3) ; using Beatrix parameters
+            { 1206, new IconOffsetPatch(new SByte[] { -20, 0, -10, -1, -6, -18 }, new SByte[] { -1, -2, -10, -8, -20, 0 })}, // Mysterious Girl (Disc 3)
+            { 1208, new IconOffsetPatch(new SByte[] { -4, 0, 0, -1, -6, -8 }, new SByte[] { 10, -2, -10, -8, -5, 0 })}, // Shiva FF4 (MG)
+            { 1209, new IconOffsetPatch(new SByte[] { -18, 0, 0, -1, -6, -8 }, new SByte[] { -10, -2, -10, -8, -5, 0 })}, // Ifrit FF4 (MG)
+            { 1210, new IconOffsetPatch(new SByte[] { -16, 0, 0, -1, -6, -8 }, new SByte[] { 0, -2, -10, -8, -5, 0 })}, // Ramuh FF4 (MG)
+            { 1211, new IconOffsetPatch(new SByte[] { -16, 0, -16, -1, -20, -8 }, new SByte[] { 0, -2, -10, -8, -5, 0 })}, // Leviathan FF4 (MG)
+            { 1212, new IconOffsetPatch(new SByte[] { -20, 0, -10, -1, -6, -18 }, new SByte[] { -1, -2, -10, -8, -5, 0 })}, // Asura FF4 (MG)
+            { 1213, new IconOffsetPatch(new SByte[] { -20, 0, -10, -1, -6, -18 }, new SByte[] { -1, -2, -10, -8, -5, 0 })} // Bahamut FF4 (MG)
+
         };
 
         public static Dictionary<KeyValuePair<Int32, Int32>, Int32> ChangeDepthBBGfromBattleID = new Dictionary<KeyValuePair<Int32, Int32>, Int32>

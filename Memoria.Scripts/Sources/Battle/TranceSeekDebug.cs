@@ -69,6 +69,21 @@ namespace Memoria.Scripts.TranceSeek
             private bool _showForceTargetDropdown = false;
             private Vector2 _forceTargetScrollPos = Vector2.zero;
 
+            private int _forceCasterId = -1;
+            private bool _showForceCasterDropdown = false;
+            private Vector2 _forceCasterScrollPos = Vector2.zero;
+            private bool _useCounterScript = false;
+
+            private BattleUnit _lastEncounterFirstUnit = null;
+            private readonly string[] _slotTooltips = {
+                "Venom, Poison, Sleep, Haste, Slow", // Slot 0
+                "Heat, Freeze, Reflect",             // Slot 1
+                "Silence",                           // Slot 2
+                "Blind",                             // Slot 3
+                "Trouble, Berserk",                  // Slot 4
+                "Doom, Gradual Petrify"              // Slot 5
+            };
+
             private btlseq.btlseqinstance _cachedSeqReader;
             private BTL_SCENE _cachedScene;
             private string _cachedBtlName;
@@ -126,6 +141,12 @@ namespace Memoria.Scripts.TranceSeek
             private int _statusMode = 0;
             private readonly string[] _statusModeNames = { "<color=#55FF55>Current Status</color>", "<color=#FFFF55>Permanent Status</color>", "<color=#FF5555>Resist Status</color>" };
             private Vector2 _statusScrollPos = Vector2.zero;
+
+            private Dictionary<int, List<Transform>> _unitBonesVisuals = new Dictionary<int, List<Transform>>();
+            private int _boneColorIndex = 0;
+            private readonly Color[] _boneColors = { Color.yellow, Color.white, Color.red, Color.cyan };
+            private readonly string[] _boneColorNames = { "<color=yellow>Jaune</color>", "<color=white>Blanc</color>", "<color=red>Rouge</color>", "<color=#00FFFF>Bleu</color>" };
+            private float _boneTextSize = 24f;
 
             private static readonly KeyValuePair<string, BattleStatus>[] _statusList = new KeyValuePair<string, BattleStatus>[]
             {
@@ -263,6 +284,9 @@ namespace Memoria.Scripts.TranceSeek
                 _showLearningMenu = false;
                 _showLangMenu = false;
                 _showTriggerBattleMenu = false;
+
+                _unitBonesVisuals.Clear();
+
                 if (_showFieldMenu)
                 {
                     RestoreAllFieldAnimations();
@@ -358,6 +382,11 @@ namespace Memoria.Scripts.TranceSeek
                             }
                         }
                     }
+                }
+
+                if (_showBattleMenu && SceneDirector.IsBattleScene() && _unitBonesVisuals.Count > 0)
+                {
+                    DrawBoneLabels();
                 }
             }
 
@@ -533,6 +562,28 @@ namespace Memoria.Scripts.TranceSeek
                 GUILayout.Space(10);
                 if (_battleMenuTab == 0) DrawUnitsTab();
                 else if (_battleMenuTab == 1) DrawEnemyAttacksTab();
+
+                if (Event.current.type == EventType.Repaint && !string.IsNullOrEmpty(GUI.tooltip))
+                {
+                    Vector2 mousePos = Event.current.mousePosition;
+                    GUIStyle tooltipStyle = new GUIStyle(GUI.skin.box)
+                    {
+                        richText = true,
+                        alignment = TextAnchor.MiddleCenter
+                    };
+                    tooltipStyle.normal.textColor = Color.yellow;
+
+                    GUIContent tooltipContent = new GUIContent(GUI.tooltip);
+                    Vector2 size = tooltipStyle.CalcSize(tooltipContent);
+
+                    float tipX = mousePos.x + 15;
+                    float tipY = mousePos.y + 15;
+                    if (tipX + size.x + 10 > _battleWindowRect.width) tipX = mousePos.x - size.x - 20;
+                    if (tipY + size.y + 10 > _battleWindowRect.height) tipY = mousePos.y - size.y - 20;
+
+                    GUI.Box(new Rect(tipX, tipY, size.x + 10, size.y + 10), tooltipContent, tooltipStyle);
+                }
+
                 GUI.DragWindow();
             }
 
@@ -579,15 +630,9 @@ namespace Memoria.Scripts.TranceSeek
                             GUI.FocusControl(null);
                             SoundLib.PlaySoundEffect(103);
                         }
-                        else
-                        {
-                            SoundLib.PlaySoundEffect(102);
-                        }
+                        else { SoundLib.PlaySoundEffect(102); }
                     }
-                    else
-                    {
-                        SoundLib.PlaySoundEffect(102);
-                    }
+                    else { SoundLib.PlaySoundEffect(102); }
                 }
                 GUILayout.FlexibleSpace();
                 GUILayout.EndHorizontal();
@@ -648,12 +693,29 @@ namespace Memoria.Scripts.TranceSeek
                 GUILayout.BeginVertical("box");
                 GUILayout.Label("<b>Force Trigger</b>", new GUIStyle(GUI.skin.label) { richText = true });
 
+                var selectedCaster = activeUnits.FirstOrDefault(u => u.Id == _forceCasterId);
+                if (selectedCaster == null)
+                {
+                    selectedCaster = activeUnits.FirstOrDefault(u => battle.btl_scene.PatAddr[battle.btl_scene.PatNum].Monster[u.Data.bi.slot_no].TypeNo == curSeqEnemyType) ?? activeUnits.FirstOrDefault();
+                    if (selectedCaster != null) _forceCasterId = selectedCaster.Id;
+                }
+
+                string currentCasterName = selectedCaster != null ? SpecialFilesTranceSeek.RemoveTags(selectedCaster.Name) : "Aucun";
+
+                GUILayout.BeginHorizontal();
+                if (GUILayout.Button($"Caster: <b>{currentCasterName}</b>", new GUIStyle(GUI.skin.button) { richText = true }, GUILayout.Width(180)))
+                {
+                    _showForceCasterDropdown = !_showForceCasterDropdown;
+                    _showForceTargetDropdown = false;
+                    SoundLib.PlaySoundEffect(103);
+                }
+
                 List<KeyValuePair<string, int>> targetOptions = new List<KeyValuePair<string, int>>
-            {
-                new KeyValuePair<string, int>("All Players", 15),
-                new KeyValuePair<string, int>("All Enemies", 240),
-                new KeyValuePair<string, int>("Everyone", 255)
-            };
+                {
+                    new KeyValuePair<string, int>("All Players", 15),
+                    new KeyValuePair<string, int>("All Enemies", 240),
+                    new KeyValuePair<string, int>("Everyone", 255)
+                };
 
                 var allUnits = BattleState.EnumerateUnits().ToList();
                 foreach (var unit in allUnits)
@@ -667,32 +729,36 @@ namespace Memoria.Scripts.TranceSeek
                 if (currentSelection.Key != null) currentTargetName = currentSelection.Key;
                 else _forceTargetId = 15;
 
-                GUILayout.BeginHorizontal();
-
                 if (GUILayout.Button($"Target: <b>{currentTargetName}</b>", new GUIStyle(GUI.skin.button) { richText = true }, GUILayout.Width(180)))
                 {
                     _showForceTargetDropdown = !_showForceTargetDropdown;
+                    _showForceCasterDropdown = false;
                     SoundLib.PlaySoundEffect(103);
                 }
 
-                if (GUILayout.Button("<b>Lancer Séquence</b>", GUILayout.Width(120)))
-                {
-                    var launcher = activeUnits.FirstOrDefault(u => battle.btl_scene.PatAddr[battle.btl_scene.PatNum].Monster[u.Data.bi.slot_no].TypeNo == curSeqEnemyType);
-                    if (launcher == null) launcher = activeUnits.FirstOrDefault();
-
-                    if (launcher != null)
-                    {
-                        //btlseq.StartBtlSeq(launcher.Id, _forceTargetId, curSeqId);
-                        btl_cmd.SetEnemyCommand(launcher, BattleCommandId.EnemyAtk, curSeqId, (ushort)_forceTargetId);
-
-                        int sfxToPlay = 103;
-                        if (curSeqEnemyType >= 0 && curSeqEnemyType < battle.btl_scene.MonAddr.Length)
-                            sfxToPlay = battle.btl_scene.MonAddr[curSeqEnemyType].StartSfx;
-
-                        SoundLib.PlaySoundEffect(sfxToPlay);
-                    }
-                }
                 GUILayout.EndHorizontal();
+
+                if (_showForceCasterDropdown)
+                {
+                    GUILayout.BeginVertical("box");
+                    _forceCasterScrollPos = GUILayout.BeginScrollView(_forceCasterScrollPos, GUILayout.Height(100));
+
+                    foreach (var mUnit in activeUnits)
+                    {
+                        bool isSelected = (_forceCasterId == mUnit.Id);
+                        string mName = SpecialFilesTranceSeek.RemoveTags(mUnit.Name);
+                        string optionText = isSelected ? $"<color=orange>{mName} (ID:{mUnit.Id})</color>" : $"{mName} (ID:{mUnit.Id})";
+
+                        if (GUILayout.Button(optionText, new GUIStyle(GUI.skin.button) { richText = true, alignment = TextAnchor.MiddleLeft }))
+                        {
+                            _forceCasterId = mUnit.Id;
+                            _showForceCasterDropdown = false;
+                            SoundLib.PlaySoundEffect(103);
+                        }
+                    }
+                    GUILayout.EndScrollView();
+                    GUILayout.EndVertical();
+                }
 
                 if (_showForceTargetDropdown)
                 {
@@ -715,6 +781,33 @@ namespace Memoria.Scripts.TranceSeek
                     GUILayout.EndVertical();
                 }
 
+                GUILayout.BeginHorizontal();
+                _useCounterScript = GUILayout.Toggle(_useCounterScript, " <b>Forcer (CounterScript)</b>", new GUIStyle(GUI.skin.toggle) { richText = true }, GUILayout.Width(180));
+
+                if (GUILayout.Button("<b>Lancer Séquence</b>", GUILayout.Width(140)))
+                {
+                    var launcher = activeUnits.FirstOrDefault(u => u.Id == _forceCasterId) ?? activeUnits.FirstOrDefault();
+
+                    if (launcher != null)
+                    {
+                        ushort tar_id = (ushort)_forceTargetId;
+                        int val = curSeqId;
+
+                        if (_useCounterScript)
+                            btl_cmd.SetEnemyCommand(launcher, BattleCommandId.ScriptCounter1, val, tar_id);
+                        else
+                            btl_cmd.SetEnemyCommand(launcher, BattleCommandId.EnemyAtk, val, tar_id);
+
+                        int sfxToPlay = 103;
+                        if (curSeqEnemyType >= 0 && curSeqEnemyType < battle.btl_scene.MonAddr.Length)
+                            sfxToPlay = battle.btl_scene.MonAddr[curSeqEnemyType].StartSfx;
+
+                        if (sfxToPlay != ushort.MaxValue)
+                            SoundLib.PlaySoundEffect(sfxToPlay);
+                    }
+                }
+                GUILayout.EndHorizontal();
+
                 GUILayout.EndVertical();
                 GUILayout.EndVertical();
             }
@@ -728,17 +821,17 @@ namespace Memoria.Scripts.TranceSeek
                 GUILayout.BeginHorizontal();
                 if (GUILayout.Button("<", GUILayout.Width(40), GUILayout.Height(30))) { _currentUnitIndex--; if (_currentUnitIndex < 0) _currentUnitIndex = units.Count - 1; _statTextCache.Clear(); GUI.FocusControl(null); }
                 BattleUnit u = units[_currentUnitIndex];
-                string n = u.IsPlayer ? $"⭐ <color=#00FFFF>{FF9TextTool.CharacterDefaultName(u.PlayerIndex)}</color> ⭐" : $"👾 <color=#FF5555>{SpecialFilesTranceSeek.RemoveTags(u.Name)}</color> 👾";
+                string n = u.IsPlayer ? $"<color=#00FFFF>{FF9TextTool.CharacterDefaultName(u.PlayerIndex)}</color> ⭐" : $"<color=#FF5555>{SpecialFilesTranceSeek.RemoveTags(u.Name)}</color>";
                 GUILayout.Label($"<b>{n}</b>\nID: {u.Id}", new GUIStyle(GUI.skin.label) { richText = true, alignment = TextAnchor.MiddleCenter });
                 if (GUILayout.Button(">", GUILayout.Width(40), GUILayout.Height(30))) { _currentUnitIndex++; if (_currentUnitIndex >= units.Count) _currentUnitIndex = 0; _statTextCache.Clear(); GUI.FocusControl(null); }
                 GUILayout.Space(10);
-                if (GUILayout.Button("🔄 Refresh", GUILayout.Width(80), GUILayout.Height(30)))
+                if (GUILayout.Button("Refresh", GUILayout.Width(80), GUILayout.Height(30)))
                 {
                     _statTextCache.Clear();
                     GUI.FocusControl(null);
                     SoundLib.PlaySoundEffect(103);
                 }
-                if (GUILayout.Button("✅ Apply", GUILayout.Width(90), GUILayout.Height(30)))
+                if (GUILayout.Button("Apply", GUILayout.Width(90), GUILayout.Height(30)))
                 {
                     ApplyUnitStats(u);
                     _statTextCache.Clear();
@@ -749,8 +842,8 @@ namespace Memoria.Scripts.TranceSeek
 
                 GUILayout.Space(5);
                 GUILayout.BeginHorizontal();
-                if (GUILayout.Button(_unitSubTab == 0 ? "<color=orange><b>📊 Stats & Status Base</b></color>" : "📊 Stats & Status Base", GUILayout.Height(25))) { _unitSubTab = 0; GUI.FocusControl(null); }
-                if (GUILayout.Button(_unitSubTab == 1 ? "<color=orange><b>🔮 Trance Seek State</b></color>" : "🔮 Trance Seek State", GUILayout.Height(25))) { _unitSubTab = 1; GUI.FocusControl(null); }
+                if (GUILayout.Button(_unitSubTab == 0 ? "<color=orange><b>Stats & Status Base</b></color>" : "Stats & Status Base", GUILayout.Height(25))) { _unitSubTab = 0; GUI.FocusControl(null); }
+                if (GUILayout.Button(_unitSubTab == 1 ? "<color=orange><b>Trance Seek State</b></color>" : "Trance Seek State", GUILayout.Height(25))) { _unitSubTab = 1; GUI.FocusControl(null); }
                 GUILayout.EndHorizontal();
                 GUILayout.Space(5);
 
@@ -760,6 +853,7 @@ namespace Memoria.Scripts.TranceSeek
                 {
                     GUILayout.BeginVertical("box");
                     GUILayout.BeginHorizontal();
+
                     GUILayout.BeginVertical(GUILayout.Width(220));
                     DrawUnitStatUI($"{u.Id}_HP", "HP", (int)u.CurrentHp, 0, 99999);
                     DrawUnitStatUI($"{u.Id}_MaxHP", "Max HP", (int)u.MaximumHp, 1, 99999);
@@ -768,6 +862,7 @@ namespace Memoria.Scripts.TranceSeek
                     DrawUnitStatUI($"{u.Id}_Lvl", "Level", u.Level, 1, 99);
                     DrawUnitStatUI($"{u.Id}_Trance", "Trance", u.Trance, 0, 255);
                     GUILayout.EndVertical();
+
                     GUILayout.BeginVertical(GUILayout.Width(220));
                     DrawUnitStatUI($"{u.Id}_Str", "Strength", u.Strength, 0, 255);
                     DrawUnitStatUI($"{u.Id}_Mag", "Magic", u.Magic, 0, 255);
@@ -778,6 +873,7 @@ namespace Memoria.Scripts.TranceSeek
                     DrawUnitStatUI($"{u.Id}_MDef", "Mag Def", u.MagicDefence, 0, 9999);
                     DrawUnitStatUI($"{u.Id}_MEvd", "Mag Evd", u.MagicEvade, 0, 9999);
                     GUILayout.EndVertical();
+
                     GUILayout.EndHorizontal();
                     GUILayout.EndVertical();
 
@@ -871,6 +967,7 @@ namespace Memoria.Scripts.TranceSeek
                     GUILayout.Label(_elementModeNames[_elementMode], new GUIStyle(GUI.skin.label) { richText = true, alignment = TextAnchor.MiddleCenter });
                     if (GUILayout.Button(">", GUILayout.Width(30))) { _elementMode++; if (_elementMode > 4) _elementMode = 0; }
                     GUILayout.EndHorizontal();
+
                     _elementScrollPos = GUILayout.BeginScrollView(_elementScrollPos, GUILayout.Height(80));
                     int colElem = 4, cElem = 0;
                     GUILayout.BeginHorizontal();
@@ -897,6 +994,65 @@ namespace Memoria.Scripts.TranceSeek
                     }
                     GUILayout.EndHorizontal();
                     GUILayout.EndScrollView();
+                    GUILayout.EndVertical();
+
+                    if (!u.IsPlayer && u.EnemyType != null)
+                    {
+                        ENEMY_TYPE et = u.EnemyType;
+                        GUILayout.Space(5);
+                        GUILayout.BeginVertical("box");
+                        GUILayout.Label("<b>Enemy Icon Offsets & Bones (ENEMY_TYPE)</b>", new GUIStyle(GUI.skin.label) { richText = true });
+
+                        for (int i = 0; i < 6; i++)
+                        {
+                            GUILayout.BeginHorizontal();
+
+                            GUILayout.Label(new GUIContent($"<b>Slot {i}:</b>", _slotTooltips[i]), new GUIStyle(GUI.skin.label) { richText = true }, GUILayout.Width(50));
+
+                            et.icon_bone[i] = (byte)Mathf.Clamp(DrawStatUI($"{u.Id}_ET_Bone_{i}", "Bone", et.icon_bone[i], 40), 0, 255);
+                            et.icon_y[i] = (sbyte)Mathf.Clamp(DrawStatUI($"{u.Id}_ET_Y_{i}", "Y", et.icon_y[i], 20), -128, 127);
+                            et.icon_z[i] = (sbyte)Mathf.Clamp(DrawStatUI($"{u.Id}_ET_Z_{i}", "Z", et.icon_z[i], 20), -128, 127);
+
+                            GUILayout.EndHorizontal();
+                        }
+                        GUILayout.EndVertical();
+                    }
+
+                    GUILayout.Space(5);
+                    GUILayout.BeginVertical("box");
+                    GUILayout.BeginHorizontal();
+                    GUILayout.Label("<b>BTL_DATA Offsets & Target</b>", new GUIStyle(GUI.skin.label) { richText = true });
+
+                    bool bonesVisible = _unitBonesVisuals.ContainsKey(u.Id);
+                    if (GUILayout.Button(bonesVisible ? "<color=orange>🦴 Cacher Bones</color>" : "Afficher Bones", new GUIStyle(GUI.skin.button) { richText = true }, GUILayout.Width(130)))
+                    {
+                        ToggleBones(u);
+                        SoundLib.PlaySoundEffect(103);
+                    }
+
+                    if (GUILayout.Button($"C: {_boneColorNames[_boneColorIndex]}", new GUIStyle(GUI.skin.button) { richText = true }, GUILayout.Width(80)))
+                    {
+                        _boneColorIndex++;
+                        if (_boneColorIndex >= _boneColors.Length) _boneColorIndex = 0;
+                        SoundLib.PlaySoundEffect(103);
+                    }
+
+                    GUILayout.Label(" Txt:", GUILayout.Width(35));
+                    _boneTextSize = GUILayout.HorizontalSlider(_boneTextSize, 10f, 80f, GUILayout.Width(70));
+                    GUILayout.Label($"{(int)_boneTextSize}", GUILayout.Width(25));
+
+                    GUILayout.EndHorizontal();
+
+                    GUILayout.BeginHorizontal();
+                    u.Data.tar_bone = (byte)Mathf.Clamp(DrawStatUI($"{u.Id}_tar_bone", "Tar Bone", u.Data.tar_bone, 60), 0, 255);
+                    u.Data.shadow_x = (byte)Mathf.Clamp(DrawStatUI($"{u.Id}_shd_x", "Shadow X", u.Data.shadow_x, 60), 0, 255);
+                    u.Data.shadow_z = (byte)Mathf.Clamp(DrawStatUI($"{u.Id}_shd_z", "Shadow Z", u.Data.shadow_z, 60), 0, 255);
+                    GUILayout.EndHorizontal();
+
+                    GUILayout.BeginHorizontal();
+                    u.Data.shadow_bone[0] = (byte)Mathf.Clamp(DrawStatUI($"{u.Id}_shd_bone0", "Shd Bone 0", u.Data.shadow_bone[0], 70), 0, 255);
+                    u.Data.shadow_bone[1] = (byte)Mathf.Clamp(DrawStatUI($"{u.Id}_shd_bone1", "Shd Bone 1", u.Data.shadow_bone[1], 70), 0, 255);
+                    GUILayout.EndHorizontal();
                     GUILayout.EndVertical();
                 }
                 else
@@ -2450,6 +2606,89 @@ namespace Memoria.Scripts.TranceSeek
                 }
                 _originalColors.Clear();
                 _lastTintedFma = null;
+            }
+
+            private void ToggleBones(BattleUnit u)
+            {
+                if (_unitBonesVisuals.ContainsKey(u.Id))
+                {
+                    // Plus besoin de Destroy(), on retire juste de la liste
+                    _unitBonesVisuals.Remove(u.Id);
+                }
+                else
+                {
+                    List<Transform> boneTransforms = new List<Transform>();
+                    if (u.Data != null && u.Data.gameObject != null)
+                    {
+                        Transform[] allTransforms = u.Data.gameObject.GetComponentsInChildren<Transform>(true);
+
+                        foreach (Transform t in allTransforms)
+                        {
+                            // On stocke directement la référence au bone du modèle original
+                            if (t.name.StartsWith("bone"))
+                            {
+                                boneTransforms.Add(t);
+                            }
+                        }
+                    }
+                    _unitBonesVisuals[u.Id] = boneTransforms;
+                }
+            }
+
+            private void DrawBoneLabels()
+            {
+                Camera cam = Camera.main;
+                if (cam == null)
+                {
+                    GameObject camObj = GameObject.Find("Battle Camera");
+                    if (camObj != null) cam = camObj.GetComponent<Camera>();
+                }
+                if (cam == null) return;
+
+                int oldDepth = GUI.depth;
+                GUI.depth = -100; // Force l'affichage par-dessus tout
+
+                GUIStyle style = new GUIStyle(GUI.skin.label)
+                {
+                    fontSize = (int)_boneTextSize,
+                    fontStyle = FontStyle.Bold,
+                    alignment = TextAnchor.MiddleCenter
+                };
+
+                Color currentColor = _boneColors[_boneColorIndex];
+
+                foreach (var kvp in _unitBonesVisuals)
+                {
+                    // On itère maintenant sur les Transform originaux
+                    foreach (Transform t in kvp.Value)
+                    {
+                        if (t == null) continue;
+
+                        Vector3 screenPos = cam.WorldToScreenPoint(t.position);
+                        if (screenPos.z > 0)
+                        {
+                            // Extrait le numéro (ex: "bone015" devient "15")
+                            string boneExtracted = t.name.Replace("bone", "");
+                            if (int.TryParse(boneExtracted, out int boneNum))
+                                boneExtracted = boneNum.ToString();
+
+                            float width = _boneTextSize * 3f;
+                            float height = _boneTextSize * 1.5f;
+                            Rect rect = new Rect(screenPos.x - width / 2f, Screen.height - screenPos.y - height / 2f, width, height);
+
+                            style.normal.textColor = Color.black;
+                            GUI.Label(new Rect(rect.x + 2, rect.y + 2, rect.width, rect.height), boneExtracted, style);
+                            GUI.Label(new Rect(rect.x - 2, rect.y - 2, rect.width, rect.height), boneExtracted, style);
+                            GUI.Label(new Rect(rect.x + 2, rect.y - 2, rect.width, rect.height), boneExtracted, style);
+                            GUI.Label(new Rect(rect.x - 2, rect.y + 2, rect.width, rect.height), boneExtracted, style);
+
+                            style.normal.textColor = currentColor;
+                            GUI.Label(rect, boneExtracted, style);
+                        }
+                    }
+                }
+
+                GUI.depth = oldDepth;
             }
 
             private int DrawStatUI(string k, string l, int v, int w = 75) { GUILayout.BeginHorizontal(); GUILayout.Label(l, GUILayout.Width(w)); if (GUILayout.Button("-", GUILayout.Width(20))) { v--; _statTextCache[k] = v.ToString(); GUI.FocusControl(null); } if (!_statTextCache.ContainsKey(k)) _statTextCache[k] = v.ToString(); GUI.SetNextControlName(k); _statTextCache[k] = GUILayout.TextField(_statTextCache[k], GUILayout.Width(45)); if (GUILayout.Button("+", GUILayout.Width(20))) { v++; _statTextCache[k] = v.ToString(); GUI.FocusControl(null); } GUILayout.EndHorizontal(); if (int.TryParse(_statTextCache[k], out int p)) return p; return v; }

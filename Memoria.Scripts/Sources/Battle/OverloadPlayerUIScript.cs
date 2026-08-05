@@ -95,10 +95,10 @@ namespace Memoria.Scripts.TranceSeek
                     dictbattle[1] = 0;
                     dictbattle[2] = 0;
                     dictbattle[3] = 2;
-                    ff9play.FF9Play_Update(player);
+                    FF9Play_UpdateFromOverload(player);
                     dictbattle[1] = (int)(player.max.hp);
                     dictbattle[2] = (int)(player.max.mp);
-                    ff9play.FF9Play_Update(player);
+                    FF9Play_UpdateFromOverload(player);
                 }
             }
             else if (player.saExtended.Contains(TranceSeekSupportAbility.Anastrophe)) // SA Anastrophe
@@ -108,10 +108,10 @@ namespace Memoria.Scripts.TranceSeek
                     dictbattle[1] = 0;
                     dictbattle[2] = 0;
                     dictbattle[3] = 1;
-                    ff9play.FF9Play_Update(player);
+                    FF9Play_UpdateFromOverload(player);
                     dictbattle[1] = (int)(player.max.hp / 2);
                     dictbattle[2] = (int)(player.max.mp / 2);
-                    ff9play.FF9Play_Update(player);
+                    FF9Play_UpdateFromOverload(player);
                 }
             }
             else
@@ -223,7 +223,7 @@ namespace Memoria.Scripts.TranceSeek
                 if (hasChanged)
                 {
                     FF9Sfx.FF9SFX_Play(107);
-                    ff9play.FF9Play_Update(player);
+                    FF9Play_UpdateFromOverload(player); 
 
                     AbilityUI abilityScene = PersistenSingleton<UIManager>.Instance.AbilityScene;
                     if (abilityScene != null && abilityScene.isActiveAndEnabled)
@@ -385,6 +385,88 @@ namespace Memoria.Scripts.TranceSeek
                         nameLabel.rawText = targetName;
                 }
             }
+        }
+
+        private static void FF9Play_UpdateFromOverload(PLAYER play, Boolean IsPreview = false)
+        {
+            uint PlayGemsPreview = 0;
+            if (IsPreview)
+                PlayGemsPreview = play.cur.capa;
+
+            play.max.hp = play.basis.max_hp;
+            play.max.mp = play.basis.max_mp;
+            play.max.capa = play.basis.max_capa;
+            play.cur.capa = play.basis.capa;
+            play.elem.dex = play.basis.dex;
+            play.elem.str = play.basis.str;
+            play.elem.mgc = play.basis.mgc;
+            play.elem.wpr = play.basis.wpr;
+            play.defence.PhysicalDefence = 0;
+            play.defence.PhysicalEvade = 0;
+            play.defence.MagicalDefence = 0;
+            play.defence.MagicalEvade = 0;
+            for (Int32 i = 0; i < 5; ++i)
+            {
+                RegularItem itemId = play.equip[i];
+                if (itemId != RegularItem.NoItem)
+                {
+                    if (ff9item.HasItemArmor(itemId))
+                    {
+                        ItemDefence defParams = ff9item.GetItemArmor(itemId);
+                        play.defence.PhysicalDefence += defParams.PhysicalDefence;
+                        play.defence.PhysicalEvade += defParams.PhysicalEvade;
+                        play.defence.MagicalDefence += defParams.MagicalDefence;
+                        play.defence.MagicalEvade += defParams.MagicalEvade;
+                    }
+                    ItemStats equipPrivilege = ff9equip.ItemStatsData[ff9item._FF9Item_Data[itemId].bonus];
+                    play.elem.dex += equipPrivilege.dex;
+                    play.elem.str += equipPrivilege.str;
+                    play.elem.mgc += equipPrivilege.mgc;
+                    play.elem.wpr += equipPrivilege.wpr;
+                }
+            }
+            if (play.elem.dex > ff9play.FF9PLAY_STAT_MAX[0])
+                play.elem.dex = ff9play.FF9PLAY_STAT_MAX[0];
+            if (play.elem.str > ff9play.FF9PLAY_STAT_MAX[1])
+                play.elem.str = ff9play.FF9PLAY_STAT_MAX[1];
+            if (play.elem.mgc > ff9play.FF9PLAY_STAT_MAX[2])
+                play.elem.mgc = ff9play.FF9PLAY_STAT_MAX[2];
+            if (play.elem.wpr > ff9play.FF9PLAY_STAT_MAX[3])
+                play.elem.wpr = ff9play.FF9PLAY_STAT_MAX[3];
+            if (play.defence.PhysicalDefence > ff9play.FF9PLAY_DEFPARAM_VAL_MAX)
+                play.defence.PhysicalDefence = ff9play.FF9PLAY_DEFPARAM_VAL_MAX;
+            if (play.defence.PhysicalEvade > ff9play.FF9PLAY_DEFPARAM_VAL_MAX)
+                play.defence.PhysicalEvade = ff9play.FF9PLAY_DEFPARAM_VAL_MAX;
+            if (play.defence.MagicalDefence > ff9play.FF9PLAY_DEFPARAM_VAL_MAX)
+                play.defence.MagicalDefence = ff9play.FF9PLAY_DEFPARAM_VAL_MAX;
+            if (play.defence.MagicalEvade > ff9play.FF9PLAY_DEFPARAM_VAL_MAX)
+                play.defence.MagicalEvade = ff9play.FF9PLAY_DEFPARAM_VAL_MAX;
+            play.mpCostFactor = 100;
+            play.maxHpLimit = ff9play.FF9PLAY_HP_MAX;
+            play.maxMpLimit = ff9play.FF9PLAY_MP_MAX;
+            play.maxDamageLimit = ff9play.FF9PLAY_DAMAGE_MAX;
+            play.maxMpDamageLimit = ff9play.FF9PLAY_MPDAMAGE_MAX;
+
+            ff9play.FF9Play_SAFeature_Update(play, IsPreview);
+
+            foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(play))
+                saFeature.TriggerOnEnable(play);
+
+            EquipmentHelper.TriggerOnEnable(play);
+
+            if (IsPreview)
+                play.cur.capa = PlayGemsPreview;
+            else
+                ff9abil.CalculateGemsPlayer(play);
+
+            if (play.max.hp > play.maxHpLimit)
+                play.max.hp = play.maxHpLimit;
+            if (play.max.mp > play.maxMpLimit)
+                play.max.mp = play.maxMpLimit;
+            if (play.cur.hp > play.max.hp)
+                play.cur.hp = play.max.hp;
+            if (play.cur.mp > play.max.mp)
+                play.cur.mp = play.max.mp;
         }
 
         private static readonly Dictionary<String, String> ConfirmClearSADialogTexts = new Dictionary<String, String>

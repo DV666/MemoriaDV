@@ -19,24 +19,28 @@ namespace Memoria.Scripts.TranceSeek
         {
             public String ModelName;
             public String BTLName;
+            public byte TargetBone;
+            public Byte[] IconBones;
             public Int32[] AnimIds;
 
-            public SummonData(String modelName, String btlName, Int32[] animIds)
+            public SummonData(String modelName, String btlName, byte tarBone, Byte[] iconBones, Int32[] animIds)
             {
                 ModelName = modelName;
                 BTLName = btlName;
+                TargetBone = tarBone;
+                IconBones = iconBones;
                 AnimIds = animIds;
             }
         }
 
         private static readonly Dictionary<Int32, SummonData> Summons = new Dictionary<Int32, SummonData>
         {
-            { 1, new SummonData("GEO_MON_F9_ShivaMG", "Shiva", new Int32[] { 30013, 30013, 30013, 30013, 30014, 30014 }) },
-            { 2, new SummonData("GEO_MON_F9_IfritMG", "Ifrit", new Int32[] { 30016, 30016, 30016, 30016, 30017, 30017 }) },
-            { 3, new SummonData("GEO_MON_F9_RamuhMG", "Ramuh", new Int32[] { 30019, 30019, 30019, 30019, 30020, 30020 }) },
-            { 4, new SummonData("GEO_MON_F9_LeviathanMG", "Leviathan", new Int32[] { 30022, 30022, 30022, 30022, 30023, 30023 }) },
-            { 5, new SummonData("GEO_MON_F9_AsuraMG", "Asura", new Int32[] { 30025, 30025, 30025, 30025, 30028, 30028 }) },
-            { 6, new SummonData("GEO_MON_F9_BahamutMG", "Bahamat", new Int32[] { 30038, 30038, 30038, 30038, 30039, 30039 }) }
+            { 1, new SummonData("GEO_MON_F9_ShivaMG", "Shiva", 2, new Byte[] { 5, 5, 5, 5, 5, 5 }, new Int32[] { 30013, 30013, 30013, 30013, 30014, 30014 }) },
+            { 2, new SummonData("GEO_MON_F9_IfritMG", "Ifrit", 1, new Byte[] { 15, 15, 15, 15, 15, 15 }, new Int32[] { 30016, 30016, 30016, 30016, 30017, 30017 }) },
+            { 3, new SummonData("GEO_MON_F9_RamuhMG", "Ramuh", 35, new Byte[] { 6, 6, 6, 6, 6, 6 }, new Int32[] { 30019, 30019, 30019, 30019, 30020, 30020 }) },
+            { 4, new SummonData("GEO_MON_F9_LeviathanMG", "Leviathan", 24, new Byte[] { 24, 24, 25, 24, 24, 24 }, new Int32[] { 30022, 30022, 30022, 30022, 30023, 30023 }) },
+            { 5, new SummonData("GEO_MON_F9_AsuraMG", "Asura", 2, new Byte[] { 5, 5, 5, 5, 5, 5 }, new Int32[] { 30025, 30025, 30025, 30025, 30028, 30028 }) },
+            { 6, new SummonData("GEO_MON_F9_BahamutMG", "Bahamut", 2, new Byte[] { 5, 5, 5, 5, 5, 5 }, new Int32[] { 30038, 30041, 30038, 30041, 30039, 30039 }) }
         };
 
         private readonly BattleCalculator _v;
@@ -46,13 +50,60 @@ namespace Memoria.Scripts.TranceSeek
             _v = v;
         }
 
+        /*05.08.2026 09:45:45 |M| ####### KEYPAD 5 PRESSED ! #######
+        05.08.2026 09:45:45 |M| [MODEL] => GEO_MON_F9_RamuhMG.offset = (0.000000000, 0.000000000, 0.000000000, 0.000000000, 2.889338000, 0.000000000)
+        05.08.2026 09:45:45 |M| [WEAPON] => GEO_WEP_RamuhRod.offset = 0.052098650, 0.052098650, 0.052098650;-0.500000000, -0.500000000, 0.000000000;0.000000000, 0.000000000, 0.000000000
+        05.08.2026 09:45:45 |M|        └> => GEO_WEP_RamuhRod.pos = (-0.500000000, -0.500000000, 0.000000000)
+        05.08.2026 09:45:45 |M|        └> => GEO_WEP_RamuhRod.rot(Quaternion) = (0.000000000, 0.000000000, 0.000000000, 1.000000000)
+        05.08.2026 09:45:45 |M|        └> => GEO_WEP_RamuhRod.rot(Euler) = (0.000000000, 0.000000000, 0.000000000)
+        05.08.2026 09:45:45 |M|        └> => GEO_WEP_RamuhRod.scale = (0.052098650, 0.052098650, 0.052098650)
+        05.08.2026 09:46:02 |M| [GameLoopManager] RaiseQuitEvent*/
+
         public void Perform()
         {
-            if (_v.Command.Power == 255 && _v.Command.HitRate == 255)
+            if (_v.Command.Power == 255 && _v.Command.HitRate == 255) // Unsomming # NEED A FIX ON MEMORIA ? Need to fix btl_stat.GeoAddColor2DrawPacket (about the < 0 at the beginning)
             {
-                btl_util.SetEnemyFadeToPacket(_v.Target, 32);
+                if (_v.Target.Data.gameObject != null)
+                {
+                    Int32 fadeFrames = 12;
+
+                    _v.Target.AddDelayedModifier(
+                        btl =>
+                        {
+                            fadeFrames--;
+
+                            Single progress = 1f - ((Single)fadeFrames / 12f);
+                            Int16 rgbDrop = (Int16)(-128f * progress);
+
+                            CustomGeoAddColor2DrawPacket(btl.Data.gameObject, rgbDrop, rgbDrop, rgbDrop);
+
+                            if (fadeFrames < 15)
+                                btl_util.GeoSetABR(btl.Data.gameObject, "GEO_POLYFLAGS_TRANS_100_PLUS_25", btl.Data);
+
+                            return fadeFrames > 0;
+                        },
+                        btl =>
+                        {
+                            return;
+                        }
+                    );
+                }
                 return;
-            }   
+            }
+            else if (_v.Command.Power == 99 && _v.Command.HitRate == 99)
+            {
+                _v.Target.MaximumHp = 99999;
+                _v.Target.CurrentHp = 99999;
+                _v.Target.Flags |= CalcFlag.HpAlteration;
+                _v.Caster.MaxDamageLimit = 99999;
+                _v.Target.HpDamage = 99999;
+            }
+            else if(_v.Caster.Data.dms_geo_id == 1213 && _v.Command.Power == 6)
+            {
+                _v.Caster.Data.mot[2] = "ANH_MON_F9_BahamutMG_MEGAFLARECAST2";
+                return;
+            }
+
             if (_v.Command.Data.info.effect_counter == 1)
             {
                 BattleUnit btl = btl_scrp.FindBattleUnit(32);
@@ -61,7 +112,7 @@ namespace Memoria.Scripts.TranceSeek
             else
             {
                 _v.Target.Data.SetDisappear(false, 3);
-                btl_mot.ShowMesh(_v.Target.Data, _v.Target.Data.mesh_banish, true);
+                btl_mot.ShowMesh(_v.Target.Data, _v.Target.Data.mesh_banish, false);
                 _v.Target.Data.bi.shadow = 1;
                 if (_v.Target.Data.getShadow() != null)
                     _v.Target.Data.getShadow().SetActive(true);
@@ -75,11 +126,34 @@ namespace Memoria.Scripts.TranceSeek
                 Int32 Key = FF9StateSystem.EventState.gEventGlobal[1305];
                 if (Summons.TryGetValue(Key, out SummonData summon))
                 {
-                    GameObject newModel = ModelFactory.CreateModel(summon.ModelName, true);
+                    GameObject newModel;
+                    bool isPreloaded = false;
+
+                    if (_v.Target.Data.weaponModels.Count > 0 && _v.Target.Data.weaponModels[0].geo != null)
+                    {
+                        UnityEngine.Object.Destroy(_v.Target.Data.weaponModels[0].geo);
+                        _v.Target.Data.weaponModels[0].geo = null;
+                    }
+
+                    if (PreloadedModels.TryGetValue(Key, out GameObject template) && template != null)
+                    {
+                        newModel = UnityEngine.Object.Instantiate(template);
+                        isPreloaded = true;
+                    }
+                    else
+                        newModel = ModelFactory.CreateModel(summon.ModelName, true);
+
                     newModel.transform.localPosition = currentPos;
                     newModel.transform.localRotation = currentRot;
                     _v.Target.Data.gameObject = newModel;
                     _v.Target.Data.animation = newModel.GetComponent<Animation>();
+
+                    _v.Target.Data.meshCount = 1;
+                    _v.Target.Data.meshIsRendering = new Boolean[1] { true };
+                    _v.Target.Data.meshflags = 0;
+                    _v.Target.Data.weaponMeshCount = 0;
+
+                    //ForceFF9Shader(newModel);
 
                     String[] newMot = new String[Mathf.Max(6, _v.Target.Data.mot.Length)];
                     for (Int16 i = 0; i < 6; i++)
@@ -90,29 +164,169 @@ namespace Memoria.Scripts.TranceSeek
                     }
                     _v.Target.Data.mot = newMot;
 
-                    for (Int16 j = 0; j < 6; j++)
-                    {
-                        String currentAnim = _v.Target.Data.mot[j];
-                        if (!String.IsNullOrEmpty(currentAnim))
-                            AnimationFactory.AddAnimWithAnimatioName(_v.Target.Data.gameObject, currentAnim);
-                    }
+                    if (!isPreloaded)
+                        for (Int16 j = 0; j < 6; j++)
+                        {
+                            String currentAnim = _v.Target.Data.mot[j];
+                            if (!String.IsNullOrEmpty(currentAnim))
+                                AnimationFactory.AddAnimWithAnimatioName(_v.Target.Data.gameObject, currentAnim);
+                        }
 
                     _v.Target.Data.bi.stop_anim = 0;
                     String animToPlay = _v.Target.Data.mot[_v.Target.Data.bi.def_idle];
                     btl_mot.setMotion(_v.Target.Data, (Byte)_v.Target.Data.bi.def_idle);
                     _v.Target.Data.evt.animFrame = 0;
+                    _v.Target.Data.tar_bone = summon.TargetBone;
+                    _v.Target.Data.dms_geo_id = (short)FF9BattleDB.GEO.GetKey(summon.ModelName);
+                    OverloadOnBattleInitScript.FixMonsterIconOffset(_v.Target);
 
                     ENEMY_TYPE et = FF9StateSystem.Battle.FF9Battle.enemy[_v.Target.Data.bi.slot_no].et;
                     et.name = summon.BTLName;
+                    et.icon_bone = summon.IconBones;
+                    SFX.InitBattleParty();
 
                     geo.geoScaleUpdate(_v.Target.Data, true);
                     _v.Target.Data.gameObject.SetActive(true);
-                    UIManager.Battle.RefreshNameTarget();
+
+                    // On cible spécifiquement Ramuh (Key == 3 dans ton dictionnaire Summons)
+                    if (Key == 3)
+                    {
+                        String weaponName = "GEO_WEP_RamuhRod";
+                        GameObject weaponGeo = ModelFactory.CreateModel("BattleMap/BattleModel/battle_weapon/" + weaponName + "/" + weaponName, true);
+
+                        if (weaponGeo != null)
+                        {
+                            if (_v.Target.Data.weaponModels.Count == 0)
+                                _v.Target.Data.weaponModels.Add(new BTL_DATA.WEAPON_MODEL());
+
+                            BTL_DATA.WEAPON_MODEL weaponModel = _v.Target.Data.weaponModels[0];
+                            weaponModel.geo = weaponGeo;
+                            weaponModel.bone = 27;
+                            weaponModel.scale = new Vector3(0.052098650f, 0.052098650f, 0.052098650f);
+                            weaponModel.offset_pos = new Vector3(-0.5f, -0.5f, 0f);
+                            weaponModel.builtin_mode = false;
+
+                            geo.geoAttach(weaponGeo, newModel, weaponModel.bone);
+
+                            weaponGeo.transform.localScale = weaponModel.scale;
+                            weaponGeo.transform.localPosition = weaponModel.offset_pos;
+
+                            MeshRenderer[] weaponRenderers = weaponGeo.GetComponentsInChildren<MeshRenderer>(true);
+                            _v.Target.Data.weaponMeshCount = weaponRenderers.Length;
+                            _v.Target.Data.weaponRenderer = new Renderer[weaponRenderers.Length];
+
+                            for (Int32 i = 0; i < weaponRenderers.Length; i++)
+                            {
+                                _v.Target.Data.weaponRenderer[i] = weaponRenderers[i];
+                            }
+                        }
+                    }
                 }
                 else
                 {
                     _v.Context.Flags |= BattleCalcFlags.Miss;
                     return;
+                }
+            }
+        }
+
+        public static Dictionary<Int32, GameObject> PreloadedModels = new Dictionary<Int32, GameObject>();
+
+        public static void InitPreload()
+        {
+            ClearPreload();
+            foreach (var kvp in Summons)
+            {
+                GameObject template = ModelFactory.CreateModel(kvp.Value.ModelName, true);
+                if (template != null)
+                {
+                    for (int i = 0; i < 6; i++)
+                    {
+                        String animName = FF9BattleDB.Animation[kvp.Value.AnimIds[i]];
+                        if (!String.IsNullOrEmpty(animName))
+                        {
+                            AnimationFactory.AddAnimWithAnimatioName(template, animName);
+                        }
+                    }
+
+                    template.SetActive(false);
+                    PreloadedModels[kvp.Key] = template;
+                }
+            }
+        }
+
+        public static void ClearPreload()
+        {
+            foreach (var model in PreloadedModels.Values)
+            {
+                if (model != null)
+                    UnityEngine.Object.Destroy(model);
+            }
+            PreloadedModels.Clear();
+        }
+
+        public static void ForceFF9Shader(GameObject model)
+        {
+            Shader transparentShader = Shader.Find("Legacy Shaders/Transparent/VertexLit");
+            if (transparentShader == null) return;
+
+            Renderer[] renderers = model.GetComponentsInChildren<Renderer>(true);
+            foreach (Renderer rend in renderers)
+            {
+                foreach (Material mat in rend.materials)
+                {
+                    mat.shader = transparentShader;
+                    if (mat.HasProperty("_Color"))
+                    {
+                        mat.SetColor("_Color", new Color(1f, 1f, 1f, 1f));
+                    }
+                }
+            }
+        }
+
+        private static void CustomGeoAddColor2DrawPacket(GameObject go, Int16 r, Int16 g, Int16 b)
+        {
+            BBGINFO bbgInfoPtr = battlebg.nf_GetBbgInfoPtr();
+
+            Int32 finalR = bbgInfoPtr.chr_r + r;
+            Int32 finalG = bbgInfoPtr.chr_g + g;
+            Int32 finalB = bbgInfoPtr.chr_b + b;
+
+            r = (Int16)Mathf.Clamp(finalR, 0, 255);
+            g = (Int16)Mathf.Clamp(finalG, 0, 255);
+            b = (Int16)Mathf.Clamp(finalB, 0, 255);
+
+            foreach (SkinnedMeshRenderer renderer in go.GetComponentsInChildren<SkinnedMeshRenderer>())
+            {
+                if (r == 0 && g == 0 && b == 0)
+                {
+                    renderer.tag = "RGBZero";
+                    renderer.enabled = false;
+                }
+                else
+                {
+                    if (!renderer.enabled && renderer.CompareTag("RGBZero"))
+                    {
+                        renderer.enabled = true;
+                        renderer.tag = String.Empty;
+                    }
+                    renderer.material.SetColor("_Color", new Color32((Byte)r, (Byte)g, (Byte)b, Byte.MaxValue));
+                }
+            }
+
+            foreach (MeshRenderer renderer in go.GetComponentsInChildren<MeshRenderer>())
+            {
+                if (r == 0 && g == 0 && b == 0)
+                {
+                    renderer.enabled = false;
+                }
+                else
+                {
+                    renderer.enabled = true;
+                    foreach (Material material in renderer.materials)
+                    {
+                        material.SetColor("_Color", new Color32((Byte)r, (Byte)g, (Byte)b, Byte.MaxValue));
+                    }
                 }
             }
         }
