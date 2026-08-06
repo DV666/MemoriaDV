@@ -121,6 +121,8 @@ namespace Memoria.Scripts.TranceSeek
         public const RegularItem TypeCRod = (RegularItem)1166;
         public const RegularItem ImpDagger = (RegularItem)1167;
         public const RegularItem OgraKnife = (RegularItem)1168;
+        public const RegularItem DrakanScepter = (RegularItem)1187;
+        public const RegularItem DrakanScepterEvolved = (RegularItem)1188;
         public const RegularItem GhostScarf = (RegularItem)1200;
         public const RegularItem LamiaEarrings = (RegularItem)1201;
         public const RegularItem Limblulline = (RegularItem)1202;
@@ -695,6 +697,19 @@ namespace Memoria.Scripts.TranceSeek
         // Monster Loot (for Souls) # (3000-3999)
         public const RegularItem GoblinSoul = (RegularItem)3000;
         public const RegularItem SkeletonSoul = (RegularItem)3001;
+        public const RegularItem CaveImpSoul = (RegularItem)3002;
+        public const RegularItem ViceSoul = (RegularItem)3003;
+        public const RegularItem LadybugSoul = (RegularItem)3004;
+        public const RegularItem LamiaSoul = (RegularItem)3005;
+        public const RegularItem LizardManSoul = (RegularItem)3006;
+        public const RegularItem MagicViceSoul = (RegularItem)3007;
+        public const RegularItem SahaginSoul = (RegularItem)3008;
+        public const RegularItem GoblinMageSoul = (RegularItem)3009;
+        public const RegularItem GnollSoul = (RegularItem)3010;
+        public const RegularItem OgreSoul = (RegularItem)3011;
+        public const RegularItem TonberrySoul = (RegularItem)3012;
+        public const RegularItem TrollSoul = (RegularItem)3013;
+        public const RegularItem DrakanSoul = (RegularItem)3014;
 
         public static readonly HashSet<RegularItem> WeaponAffinitiesPoison = new HashSet<RegularItem>(new[] { RegularItem.RuneTooth, RuneToothDagger, RegularItem.ScissorFangs });
 
@@ -737,7 +752,7 @@ namespace Memoria.Scripts.TranceSeek
                 }
 
                 int SoulChance = v.Caster.State().SoulChance;
-                if (!v.Target.IsPlayer && SoulChance > 0 && (GameRandom.Next16() % 100) < SoulChance && (v.Target.Flags & CalcFlag.HpRecovery) == 0 && v.Target.HpDamage > v.Target.CurrentHp)
+                if (!v.Target.IsPlayer && SoulChance > 0 && (v.Target.Flags & CalcFlag.HpRecovery) == 0 && v.Target.HpDamage > v.Target.CurrentHp && (GameRandom.Next16() % 100) < SoulChance)
                 {
                     BattleEnemy battleEnemy = BattleEnemy.Find(v.Target);
                     switch (v.Target.Data.dms_geo_id)
@@ -748,6 +763,58 @@ namespace Memoria.Scripts.TranceSeek
                             break;
                         case 162: // Skeleton
                             battleEnemy.Data.bonus_item[0] = SkeletonSoul;
+                            battleEnemy.Data.bonus_item_rate[0] = 256;
+                            break;
+                        case 546: // Cave Imp
+                            battleEnemy.Data.bonus_item[0] = CaveImpSoul;
+                            battleEnemy.Data.bonus_item_rate[0] = 256;
+                            break;
+                        case 135: // Vice
+                            battleEnemy.Data.bonus_item[0] = ViceSoul;
+                            battleEnemy.Data.bonus_item_rate[0] = 256;
+                            break;
+                        case 136: // Ladybug
+                            battleEnemy.Data.bonus_item[0] = LadybugSoul;
+                            battleEnemy.Data.bonus_item_rate[0] = 256;
+                            break;
+                        case 85: // Lamia
+                            battleEnemy.Data.bonus_item[0] = LamiaSoul;
+                            battleEnemy.Data.bonus_item_rate[0] = 256;
+                            break;
+                        case 5459: // Lizard Man
+                            battleEnemy.Data.bonus_item[0] = LizardManSoul;
+                            battleEnemy.Data.bonus_item_rate[0] = 256;
+                            break;
+                        case 265: // Magic Vice
+                            battleEnemy.Data.bonus_item[0] = MagicViceSoul;
+                            battleEnemy.Data.bonus_item_rate[0] = 256;
+                            break;
+                        case 138: // Sahagin
+                            battleEnemy.Data.bonus_item[0] = SahaginSoul;
+                            battleEnemy.Data.bonus_item_rate[0] = 256;
+                            break;
+                        case 46: // Goblin Mage
+                            battleEnemy.Data.bonus_item[0] = GoblinMageSoul;
+                            battleEnemy.Data.bonus_item_rate[0] = 256;
+                            break;
+                        case 90: // Gnoll
+                            battleEnemy.Data.bonus_item[0] = GnollSoul;
+                            battleEnemy.Data.bonus_item_rate[0] = 256;
+                            break;
+                        case 327: // Ogre
+                            battleEnemy.Data.bonus_item[0] = OgreSoul;
+                            battleEnemy.Data.bonus_item_rate[0] = 256;
+                            break;
+                        case 184: // Tonberry
+                            battleEnemy.Data.bonus_item[0] = TonberrySoul;
+                            battleEnemy.Data.bonus_item_rate[0] = 256;
+                            break;
+                        case 326: // Troll
+                            battleEnemy.Data.bonus_item[0] = TrollSoul;
+                            battleEnemy.Data.bonus_item_rate[0] = 256;
+                            break;
+                        case 148: // Drakan
+                            battleEnemy.Data.bonus_item[0] = DrakanSoul;
                             battleEnemy.Data.bonus_item_rate[0] = 256;
                             break;
                     }
@@ -817,6 +884,23 @@ namespace Memoria.Scripts.TranceSeek
                         break;
                     }
                 }
+            }
+        }
+
+        public static void SpecialItemsAtEnd(this BattleCalculator v)
+        {
+            if (v.Caster.Accessory == JabberworkCrest)
+            {
+                var Caster_Item_TSVar = v.CasterState().SpecialItem;
+                if (Caster_Item_TSVar.JabberworkCrestCooldwon == 0)
+                {
+                    List<BattleStatusId> statuschoosen = new List<BattleStatusId> { TranceSeekStatusId.PowerUp, TranceSeekStatusId.MagicUp, TranceSeekStatusId.ArmorUp, TranceSeekStatusId.MentalUp };
+                    BattleStatusId statusselected = statuschoosen[GameRandom.Next16() % statuschoosen.Count];
+                    btl_stat.AlterStatus(v.Caster, statusselected, v.Caster);
+                    Caster_Item_TSVar.JabberworkCrestCooldwon = 3;
+                }
+                else
+                    Caster_Item_TSVar.JabberworkCrestCooldwon--;
             }
         }
 

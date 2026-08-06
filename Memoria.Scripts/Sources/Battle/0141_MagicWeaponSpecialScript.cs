@@ -25,6 +25,9 @@ namespace Memoria.Scripts.TranceSeek
             }
 
             Boolean CantReflect = (_v.Caster.Weapon == TranceSeekRegularItem.StardustScepter && _v.Command.Id == TranceSeekBattleCommand.MagicWeapon_Strong);
+            Boolean IsAttackNormal = (_v.Command.Id == TranceSeekBattleCommand.MagicWeapon_Normal);
+            Boolean IsAttackStrong = (_v.Command.Id == TranceSeekBattleCommand.MagicWeapon_Strong);
+
             if (_v.Target.IsUnderAnyStatus(BattleStatus.Reflect) && _v.Command.Data.info.effect_counter == 1 && !CantReflect)
                 SFXChannel.PlayReflectEffect(_v.Target.Id, 5);
 
@@ -40,37 +43,49 @@ namespace Memoria.Scripts.TranceSeek
                     case RegularItem.LightningStaff:
                     {
                         ScriptId = 9; // Script 0009_MagicAttackScript.cs
-                        _v.Command.Power = _v.Command.Id == TranceSeekBattleCommand.MagicWeapon_Normal ? 29 : 14;
+                        _v.Command.Power = IsAttackNormal ? 29 : 14;
                         _v.Command.Element |= _v.Caster.WeaponElement;
                         if (_v.Caster.Weapon == RegularItem.StardustRod)
                             _v.Command.Element |= EffectElement.Darkness;
                         break;
                     }
-                    case TranceSeekRegularItem.AtomosScepter: // Atomos' Scepter
+                    case TranceSeekRegularItem.AtomosScepter:
                     {
                         ScriptId = 17; // Script 0017_MagicGravityDamageScript.cs
-                        _v.Command.Power = _v.Command.Id == TranceSeekBattleCommand.MagicWeapon_Strong ? 75 : 25;
+                        _v.Command.Power = IsAttackStrong ? 75 : 25;
                         break;
                     }
-                    case TranceSeekRegularItem.IvysScepter: // Ivy's Scepter
+                    case TranceSeekRegularItem.IvysScepter:
                     {
                         ScriptId = 118; // Script 0118_PoisonMagicAttackScript.cs
-                        _v.Command.Power = _v.Command.Id == TranceSeekBattleCommand.MagicWeapon_Strong ? 67 : 19;
-                        _v.Command.HitRate = _v.Command.Id == TranceSeekBattleCommand.MagicWeapon_Strong ? 25 : 40;
-                        _v.Command.AbilityStatus |= _v.Command.Id == TranceSeekBattleCommand.MagicWeapon_Strong ? BattleStatus.Venom : BattleStatus.Poison;
+                        _v.Command.Power = IsAttackStrong ? 67 : 19;
+                        _v.Command.HitRate = IsAttackStrong ? 25 : 40;
+                        _v.Command.AbilityStatus |= IsAttackStrong ? BattleStatus.Venom : BattleStatus.Poison;
                         break;
                     }
-                    case TranceSeekRegularItem.AnkousScepter: // Ankou's Scepter
+                    case TranceSeekRegularItem.AnkousScepter:
                     {
                         ScriptId = 14; // Script 0014_DeathScript.cs
                         _v.Command.HitRate = 30;
                         _v.Command.AbilityStatus |= BattleStatus.Death;
                         break;
                     }
-                    case TranceSeekRegularItem.StardustScepter: // Stardust Scepter
+                    case TranceSeekRegularItem.StardustScepter:
                     {
                         ScriptId = 116; // Script 0116_LowRandomMagic.cs
-                        _v.Command.Power = _v.Command.Id == TranceSeekBattleCommand.MagicWeapon_Strong ? 109 : 42;
+                        _v.Command.Power = IsAttackStrong ? 109 : 42;
+                        break;
+                    }
+                    case TranceSeekRegularItem.DrakanScepter:
+                    case TranceSeekRegularItem.DrakanScepterEvolved: 
+                    {
+                        ScriptId = 16; // Script 0016_DrainHpScript.cs
+                        _v.Command.Power = IsAttackStrong ? 71 : 31;
+                        if (IsAttackStrong)
+                        {
+                            _v.Command.AbilityStatus |= BattleStatus.Confuse;
+                            _v.Command.HitRate = 253;
+                        }
                         break;
                     }
                 }

@@ -8,7 +8,7 @@ using UnityEngine;
 namespace Memoria.Scripts.TranceSeek
 {
     /// <summary>
-    /// Regen, Shell, Protect, Haste, Reflect, Float, Carbuncle, Mighty Guard, Vanish, Auto-Life, Reis’s Wind, Luna, Aura, Defend
+    /// Special summon script for Mysterious Girl.
     /// </summary>
     [BattleScript(Id)]
     public sealed class MGSummonScript : IBattleScript
@@ -50,18 +50,9 @@ namespace Memoria.Scripts.TranceSeek
             _v = v;
         }
 
-        /*05.08.2026 09:45:45 |M| ####### KEYPAD 5 PRESSED ! #######
-        05.08.2026 09:45:45 |M| [MODEL] => GEO_MON_F9_RamuhMG.offset = (0.000000000, 0.000000000, 0.000000000, 0.000000000, 2.889338000, 0.000000000)
-        05.08.2026 09:45:45 |M| [WEAPON] => GEO_WEP_RamuhRod.offset = 0.052098650, 0.052098650, 0.052098650;-0.500000000, -0.500000000, 0.000000000;0.000000000, 0.000000000, 0.000000000
-        05.08.2026 09:45:45 |M|        └> => GEO_WEP_RamuhRod.pos = (-0.500000000, -0.500000000, 0.000000000)
-        05.08.2026 09:45:45 |M|        └> => GEO_WEP_RamuhRod.rot(Quaternion) = (0.000000000, 0.000000000, 0.000000000, 1.000000000)
-        05.08.2026 09:45:45 |M|        └> => GEO_WEP_RamuhRod.rot(Euler) = (0.000000000, 0.000000000, 0.000000000)
-        05.08.2026 09:45:45 |M|        └> => GEO_WEP_RamuhRod.scale = (0.052098650, 0.052098650, 0.052098650)
-        05.08.2026 09:46:02 |M| [GameLoopManager] RaiseQuitEvent*/
-
         public void Perform()
         {
-            if (_v.Command.Power == 255 && _v.Command.HitRate == 255) // Unsomming # NEED A FIX ON MEMORIA ? Need to fix btl_stat.GeoAddColor2DrawPacket (about the < 0 at the beginning)
+            if (_v.Command.Power == 255 && _v.Command.HitRate == 255) // Unsummoning # NEED A FIX ON MEMORIA ? Need to fix btl_stat.GeoAddColor2DrawPacket (about the < 0 at the beginning)
             {
                 if (_v.Target.Data.gameObject != null)
                 {
@@ -153,8 +144,6 @@ namespace Memoria.Scripts.TranceSeek
                     _v.Target.Data.meshflags = 0;
                     _v.Target.Data.weaponMeshCount = 0;
 
-                    //ForceFF9Shader(newModel);
-
                     String[] newMot = new String[Mathf.Max(6, _v.Target.Data.mot.Length)];
                     for (Int16 i = 0; i < 6; i++)
                     {
@@ -188,7 +177,6 @@ namespace Memoria.Scripts.TranceSeek
                     geo.geoScaleUpdate(_v.Target.Data, true);
                     _v.Target.Data.gameObject.SetActive(true);
 
-                    // On cible spécifiquement Ramuh (Key == 3 dans ton dictionnaire Summons)
                     if (Key == 3)
                     {
                         String weaponName = "GEO_WEP_RamuhRod";
@@ -203,7 +191,7 @@ namespace Memoria.Scripts.TranceSeek
                             weaponModel.geo = weaponGeo;
                             weaponModel.bone = 27;
                             weaponModel.scale = new Vector3(0.052098650f, 0.052098650f, 0.052098650f);
-                            weaponModel.offset_pos = new Vector3(-0.5f, -0.5f, 0f);
+                            weaponModel.offset_pos = new Vector3(-2.0f, -0.5f, 0f);
                             weaponModel.builtin_mode = false;
 
                             geo.geoAttach(weaponGeo, newModel, weaponModel.bone);
@@ -263,25 +251,6 @@ namespace Memoria.Scripts.TranceSeek
                     UnityEngine.Object.Destroy(model);
             }
             PreloadedModels.Clear();
-        }
-
-        public static void ForceFF9Shader(GameObject model)
-        {
-            Shader transparentShader = Shader.Find("Legacy Shaders/Transparent/VertexLit");
-            if (transparentShader == null) return;
-
-            Renderer[] renderers = model.GetComponentsInChildren<Renderer>(true);
-            foreach (Renderer rend in renderers)
-            {
-                foreach (Material mat in rend.materials)
-                {
-                    mat.shader = transparentShader;
-                    if (mat.HasProperty("_Color"))
-                    {
-                        mat.SetColor("_Color", new Color(1f, 1f, 1f, 1f));
-                    }
-                }
-            }
         }
 
         private static void CustomGeoAddColor2DrawPacket(GameObject go, Int16 r, Int16 g, Int16 b)

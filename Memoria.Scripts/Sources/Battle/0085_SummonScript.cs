@@ -80,11 +80,11 @@ namespace Memoria.Scripts.TranceSeek
                     {
                         if ((_v.Command.AbilityCategory & 16) != 0)
                             _v.Command.AbilityCategory -= 16; // Remove Magical effect to prevent Vanish to disappear.
-                        btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.PowerUp, parameters: $"+{BonusTurbo + 1}");
+                        btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.PowerUp, parameters: $"+{BonusTurbo}");
                     }
                     else if (!_v.Caster.HasSupportAbilityByIndex(SupportAbility.OdinSword))
                     {
-                        _v.Context.HitRate += (Int16)(ff9item.FF9Item_GetCount(RegularItem.Ore) >> 1);
+                        _v.Context.HitRate += ((ff9item.FF9Item_GetCount(RegularItem.LapisLazuli) + 1)) / 2;
                         if (TranceSeekAPI.CheckUnsafetyOrGuard(_v))
                         {
                             TranceSeekAPI.MagicAccuracy(_v);                     
@@ -128,7 +128,7 @@ namespace Memoria.Scripts.TranceSeek
                 case BattleAbilityId.EternalDarkness:
                 case TranceSeekBattleAbility.Ark_Any:
                 {
-                    _v.Context.HitRate = ((ff9item.FF9Item_GetCount(RegularItem.LapisLazuli) + 1)) / 2;
+                    _v.Context.HitRate = ((ff9item.FF9Item_GetCount(RegularItem.Moonstone) + 1)) / 2;
                     if (_v.Target.IsPlayer)
                     {
                         if ((_v.Command.AbilityCategory & 16) != 0)
@@ -193,8 +193,6 @@ namespace Memoria.Scripts.TranceSeek
                     TranceSeekAPI.TryCriticalHit(_v);
 
                 _v.CalcHpDamage();
-
-                // TODO - Create a new function for that ? Make it for MagicScript like for example ?                
                 _v.Target.PenaltyShellHitRate();
                 if (_v.Command.IsShortSummon)
                     _v.Context.HitRate = _v.Context.HitRate * 2 / 3;

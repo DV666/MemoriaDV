@@ -66,7 +66,7 @@ namespace Memoria.Scripts.TranceSeek
             var Caster_TSVar = v.CasterState();
 
             if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Archmage_Boosted)) // Archimage+ (10% crit en bonus)
-                Caster_TSVar.General.Critical = 40;
+                BonusCrit += 10;
             Int32 quarterWill = (v.Caster.Data.elem.wpr + Caster_TSVar.General.Critical) >> 2;
             if (quarterWill != 0 && (((Comn.random16() % quarterWill) + v.Caster.Data.critical_rate_deal_bonus + v.Target.Data.critical_rate_receive_resistance + TranceSeekRegularItem.BonusCriticalFromWeapon(v.Caster.Weapon) + BonusCrit) > Comn.random16() % 100) || v.Caster.IsUnderAnyStatus(TranceSeekStatus.PerfectCrit) || Caster_TSVar.SpecialSA.CriticalHit100 > 0)
             {

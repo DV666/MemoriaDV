@@ -668,6 +668,7 @@ namespace Memoria.Scripts.TranceSeek
                 state.SpecialSA.NewMaximumMP = (int)unit.MaximumMp;
                 state.SpecialItem.EmergencySatchel = 3;
                 state.SpecialItem.MagicalSatchel = 3;
+                state.SpecialItem.JabberworkCrestCooldwon = 3;
                 state.Blank.SoakedBlade = RegularItem.NoItem;
 
                 InfusedWeaponScript.WeaponNewElement[unit.Data] = EffectElement.None;

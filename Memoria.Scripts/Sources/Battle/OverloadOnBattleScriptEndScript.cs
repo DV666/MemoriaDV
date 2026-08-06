@@ -1,4 +1,5 @@
-﻿using Assets.Sources.Scripts.UI.Common;
+﻿
+using Assets.Sources.Scripts.UI.Common;
 using FF9;
 using Memoria.Data;
 using Memoria.Database;
@@ -16,6 +17,7 @@ namespace Memoria.Scripts.TranceSeek
         {
             SOS_SA(v);
             TranceSeekCharacterMechanic.DragonMechanic(v);
+            TranceSeekRegularItem.SpecialItemsAtEnd(v);
 
             //if (Configuration.Battle.Speed == 2)
             //{

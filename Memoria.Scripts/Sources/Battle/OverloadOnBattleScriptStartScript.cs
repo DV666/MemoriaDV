@@ -2,12 +2,9 @@
 using Memoria.Assets;
 using Memoria.Data;
 using Memoria.Database;
-using Memoria.Prime;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using static Memoria.Scripts.TranceSeek.TranceSeekAPI;
-using static Memoria.Scripts.TranceSeek.TranceSeekBattleDictionary;
 
 namespace Memoria.Scripts.TranceSeek
 {

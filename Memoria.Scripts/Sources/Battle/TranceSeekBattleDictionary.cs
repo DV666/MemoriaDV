@@ -287,6 +287,7 @@ namespace Memoria.Scripts.TranceSeek
         public int EmergencySatchel { get; set; }
         public int MagicalSatchel { get; set; }
         public int MechanicalArmor { get; set; }
+        public uint JabberworkCrestCooldwon { get; set; }
     }
 
     public class NewEffectElements
