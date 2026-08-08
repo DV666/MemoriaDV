@@ -209,20 +209,6 @@ namespace Memoria.Scripts.TranceSeek
             {
                 var StateDict = TranceSeekBattleDictionary.GetState(unit.Data);
 
-                if ((BattleID == 849 || GroupeBattleID == 2) && !unit.IsPlayer) // TO DELETE - After Memoria Update :) (fix cover)
-                {
-                    if (unit.Data.dms_geo_id == 592)
-                    {
-                        Log.Message("[FIX DV] Fix cover visual for the battle");
-                        unit.AddDelayedModifier(FixCoverVisualForBrother, null);
-                    }
-                    else if (unit.Data.dms_geo_id == 591)
-                    {
-                        Sister = unit;
-                        SisterPosition = unit.Data.pos;
-                    }
-                }
-
                 if (unit.IsPlayer)
                 {
                     Boolean IsVisualAccessory = false;
@@ -272,7 +258,7 @@ namespace Memoria.Scripts.TranceSeek
                     if (ItemAffinitiesGravity.TryGetValue(unit.Accessory, out int gravityAccessory) && StateDict.EffectElement.Gravity < gravityAccessory)
                         StateDict.EffectElement.Gravity = gravityAccessory;
 
-                        
+
                     if (unit.HasSupportAbilityByIndex(TranceSeekSupportAbility.Alert_Boosted)) // Alert+
                     {
                         btl_stat.AlterStatus(unit, TranceSeekStatusId.PerfectDodge, parameters: "+2");
@@ -344,7 +330,7 @@ namespace Memoria.Scripts.TranceSeek
                                         btl_stat.AlterStatus(btl_scrp.FindBattleUnitUnlimited(TargetsAvailable[UnityEngine.Random.Range(0, TargetsAvailable.Count)]), TranceSeekStatusId.Dragon);
                                 }
                             );
-                        break;
+                            break;
                         case TranceSeekRegularItem.StrangeCube:
                             unit.MaximumHp = (uint)UnityEngine.Random.Range(unit.MaximumHp - (unit.MaximumHp / 2), unit.MaximumHp + (unit.MaximumHp / 2));
                             StateDict.SpecialSA.NewMaximumHP = (int)unit.MaximumHp;
@@ -538,6 +524,22 @@ namespace Memoria.Scripts.TranceSeek
                         StateDict.IsBackAttack = true;
 
                     FixMonsterIconOffset(unit);
+                    InitModelAnimations(unit);
+
+                    if ((BattleID == 849 && GroupeBattleID == 2)) // TO DELETE - After Memoria Update :) (fix cover)
+                    {
+                        if (unit.Data.dms_geo_id == 592)
+                        {
+                            Log.Message("[FIX DV] Fix cover visual for the battle");
+                            unit.AddDelayedModifier(FixCoverVisualForBrother, null);
+                        }
+                        else if (unit.Data.dms_geo_id == 591)
+                        {
+                            Sister = unit;
+                            SisterPosition = unit.Data.pos;
+                        }
+                    }
+
                     BattleEnemy battleEnemy = BattleEnemy.Find(unit);
 
                     if (GameState.ModelKillCount(unit.Data.dms_geo_id) > 0 && (GameState.ModelKillCount(unit.Data.dms_geo_id) % 10) == 0)
@@ -834,38 +836,15 @@ namespace Memoria.Scripts.TranceSeek
             }
         }
 
-        public static void DebugLogBBGTextures(GameObject bbgGo)
+        public static void InitModelAnimations(BTL_DATA btl)
         {
-            if (bbgGo == null)
-            {
-                Log.Warning("[Trance Seek Debug] Cannot read textures: BBG object is null.");
+            if (btl == null || btl.gameObject == null)
                 return;
-            }
 
-            Log.Message($"[Trance Seek Debug] --- Start of BBG textures analysis for {bbgGo.name} ---");
-
-            Renderer[] renderers = bbgGo.GetComponentsInChildren<Renderer>(true);
-
-            for (int i = 0; i < renderers.Length; i++)
-            {
-                Renderer rend = renderers[i];
-
-                if (rend.materials == null || rend.materials.Length == 0)
-                {
-                    Log.Message($"[Trance Seek Debug] Index {i} | Renderer ({rend.gameObject.name}) : No material.");
-                    continue;
-                }
-
-                for (int m = 0; m < rend.materials.Length; m++)
-                {
-                    Material mat = rend.materials[m];
-                    string texName = (mat != null && mat.mainTexture != null) ? mat.mainTexture.name : "NO TEXTURE";
-
-                    Log.Message($"[Trance Seek Debug] Index {i} | Renderer ({rend.gameObject.name}) | Material {m} | Original texture: {texName}");
-                }
-            }
-
-            Log.Message($"[Trance Seek Debug] --- End of analysis ---");
+            if (CustomModelAnimations.TryGetValue(btl.dms_geo_id, out String[] customAnims))
+                for (Int32 i = 0; i < customAnims.Length; i++)
+                    if (!String.IsNullOrEmpty(customAnims[i]))
+                        AnimationFactory.AddAnimWithAnimatioName(btl.gameObject, customAnims[i]);
         }
 
         private class IconOffsetPatch
@@ -975,6 +954,11 @@ namespace Memoria.Scripts.TranceSeek
             { TranceSeekRegularItem.Onyxarmor, 4 }
         };
 
+        public static readonly Dictionary<Int32, String[]> CustomModelAnimations = new Dictionary<Int32, String[]>
+        {
+            { 1206, new String[] { "ANH_MON_F9_MysteriousGirlBattle_P", "ANH_MON_F9_MysteriousGirlBattle_IDLE", "ANH_MON_F9_MysteriousGirlBattle_CAST_OG", "ANH_MON_F9_MysteriousGirlBattle_HIT", "ANH_MON_F9_MysteriousGirlBattle_CAST1", "ANH_MON_F9_MysteriousGirlBattle_CAST2", "ANH_MON_F9_MysteriousGirlBattle_CAST3" } }
+        };
+
         public static class DifficultyParameters
         {
             public const int Bonus_MaxHP = 0;
@@ -994,7 +978,7 @@ namespace Memoria.Scripts.TranceSeek
         }
 
         private static readonly BattleStatusId[] StrangeCubeStatuses =
-{
+        {
             BattleStatusId.Poison, BattleStatusId.Venom, BattleStatusId.Blind, BattleStatusId.Silence, BattleStatusId.Trouble,
             BattleStatusId.Sleep, BattleStatusId.Freeze, BattleStatusId.Heat, BattleStatusId.Doom, BattleStatusId.Mini, BattleStatusId.Petrify, BattleStatusId.GradualPetrify,
             BattleStatusId.Berserk, BattleStatusId.Confuse, BattleStatusId.Stop, BattleStatusId.Zombie, BattleStatusId.Slow, TranceSeekStatusId.Old,
@@ -1013,7 +997,3 @@ namespace Memoria.Scripts.TranceSeek
         };
     }
 }
-
-
-
-

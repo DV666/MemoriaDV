@@ -1399,30 +1399,6 @@ namespace Memoria.Scripts.TranceSeek
             { "US", "Auto-Life!" }, { "UK", "Auto-Life!" }, { "JP", "リレイズ!" },
             { "ES", "¡AutoLázaro!" }, { "FR", "Auréole !" }, { "GR", "Reinkarnat!" }, { "IT", "Risveglio!" }
         };
-
-        /*private static void ForceReloadAnimations()
-        {
-            if (currentModel == null || animList == null || animList.Count == 0)
-                return;
-
-            Animation anim = currentModel.GetComponent<Animation>();
-            if (anim != null)
-                UnityEngine.Object.DestroyImmediate(anim);
-
-            if (AnimationClipReader.LoadedClips != null)
-                AnimationClipReader.LoadedClips.Clear();
-
-            anim = currentModel.AddComponent<Animation>();
-
-            foreach (KeyValuePair<Int32, String> animId in animList)
-            {
-                String animName = animId.Value;
-                AnimationFactory.AddAnimWithAnimatioName(currentModel, animName);
-            }
-
-            ChangeAnimation(currentAnimIndex);
-            FF9Sfx.FF9SFX_Play(106);
-        }*/
     }
 }
 
