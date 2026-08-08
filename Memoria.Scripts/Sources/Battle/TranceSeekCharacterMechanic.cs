@@ -226,7 +226,7 @@ namespace Memoria.Scripts.TranceSeek
                     if (v.Target.IsCovering && (Steiner_TSVar.PlutoStackUsed + Steiner_TSVar.PlutoStackRemain) < 5)
                         Steiner_TSVar.PlutoStackRemain++;
                     FF9TextTool.SetCommandName(BattleCommandId.SwordAct, TranceSeekBattleCommand.SwdArtCMDNameVanilla[Localization.CurrentSymbol] + " (" + Steiner_TSVar.PlutoStackRemain + "/" + (Steiner_TSVar.PlutoStackUsed + Steiner_TSVar.PlutoStackRemain) + ")");
-                    btl2d.Btl2dReqSymbolMessage(v.Target, "[A0A0A0]", MessagePlutoStack, HUDMessage.MessageStyle.DAMAGE, 40);
+                    btl2d.Btl2dReqSymbolMessage(v.Target, "[A0A0A0]", TranceSeekMessages.MessagePlutoStack, HUDMessage.MessageStyle.DAMAGE, 40);
                 }
             }
         }
@@ -258,7 +258,7 @@ namespace Memoria.Scripts.TranceSeek
                 BeatrixPassive.StackCMD = RedemptionStack;
                 FF9TextTool.SetCommandName(BattleCommandId.HolySword1, TranceSeekBattleCommand.SeikenCMDNameVanilla[Localization.CurrentDisplaySymbol] + " (" + RedemptionStack + " [SPRT=IconAtlas,item200_01,40,40] )");
                 FF9TextTool.SetCommandName(BattleCommandId.HolySword2, TranceSeekBattleCommand.SeikenPlusCMDNameVanilla[Localization.CurrentDisplaySymbol] + " (" + RedemptionStack + " [SPRT=IconAtlas,item200_01,40,40] )");
-                btl2d.Btl2dReqSymbolMessage(unit.Data, "[FFFFFF]", MessageRedemptionStack, HUDMessage.MessageStyle.DAMAGE, 30);
+                btl2d.Btl2dReqSymbolMessage(unit.Data, "[FFFFFF]", TranceSeekMessages.MessageRedemptionStack, HUDMessage.MessageStyle.DAMAGE, 30);
             }
             else if (RedemptionStack == 0)
             {
@@ -318,7 +318,7 @@ namespace Memoria.Scripts.TranceSeek
                                 }
 
                                 Vivi_TSVar.Focus = Math.Min(Vivi_TSVar.Focus + (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Bobbin) ? 10 : 5), 50 + BonusFocusMax);
-                                ShowFocusMessage(v.Caster, "[BA55D3]", MessageFocusViviPlus, Vivi_TSVar.Focus);
+                                ShowFocusMessage(v.Caster, "[BA55D3]", TranceSeekMessages.MessageFocusViviPlus, Vivi_TSVar.Focus);
                             }
                             else
                             {
@@ -328,12 +328,12 @@ namespace Memoria.Scripts.TranceSeek
                                     if (Vivi_TSVar.Focus % 10U == 5)
                                         Vivi_TSVar.Focus += 5;
 
-                                    ShowFocusMessage(v.Caster, "[BA55D3]", MessageFocusViviPlus, Vivi_TSVar.Focus);
+                                    ShowFocusMessage(v.Caster, "[BA55D3]", TranceSeekMessages.MessageFocusViviPlus, Vivi_TSVar.Focus);
                                 }
                                 else
                                 {
                                     Vivi_TSVar.Focus = 0;
-                                    btl2d.Btl2dReqSymbolMessage(v.Caster, "[FF0000]", MessageFocusViviLost, HUDMessage.MessageStyle.DAMAGE, 40);
+                                    btl2d.Btl2dReqSymbolMessage(v.Caster, "[FF0000]", TranceSeekMessages.MessageFocusViviLost, HUDMessage.MessageStyle.DAMAGE, 40);
                                 }
                             }
 
@@ -399,7 +399,7 @@ namespace Memoria.Scripts.TranceSeek
 
                                     ViviSelected_TSVar.Focus = Math.Min(ViviSelected_TSVar.Focus + (Vivi.HasSupportAbilityByIndex(TranceSeekSupportAbility.Bobbin) ? 10 : 5), 50 + BonusFocusMax);
 
-                                    ShowFocusMessage(Vivi, "[BA55D3]", MessageFocusViviPlus, ViviSelected_TSVar.Focus);
+                                    ShowFocusMessage(Vivi, "[BA55D3]", TranceSeekMessages.MessageFocusViviPlus, ViviSelected_TSVar.Focus);
                                     v.Context.Attack += v.Context.Attack * (ViviSelected_TSVar.Focus / 100);
                                     v.Command.HitRate += v.Command.HitRate * (ViviSelected_TSVar.Focus / 100);
                                 }
@@ -411,12 +411,12 @@ namespace Memoria.Scripts.TranceSeek
                                         if (ViviSelected_TSVar.Focus % 10U == 5)
                                             ViviSelected_TSVar.Focus += 5;
 
-                                        ShowFocusMessage(Vivi, "[BA55D3]", MessageFocusViviPlus, ViviSelected_TSVar.Focus);
+                                        ShowFocusMessage(Vivi, "[BA55D3]", TranceSeekMessages.MessageFocusViviPlus, ViviSelected_TSVar.Focus);
                                     }
                                     else
                                     {
                                         ViviSelected_TSVar.Focus = 0;
-                                        btl2d.Btl2dReqSymbolMessage(Vivi, "[FF0000]", MessageFocusViviLost, HUDMessage.MessageStyle.DAMAGE, 40);
+                                        btl2d.Btl2dReqSymbolMessage(Vivi, "[FF0000]", TranceSeekMessages.MessageFocusViviLost, HUDMessage.MessageStyle.DAMAGE, 40);
                                     }
                                 }
                                 ViviSelected_TSVar.PreviousSpell = v.Command.AbilityId;
@@ -723,30 +723,6 @@ namespace Memoria.Scripts.TranceSeek
             if (StealScript.ForcedHeheZidane || ClassicSteal)
                 SoundLib.PlaySoundEffect(4500 + (Comn.random8() % 6));
         }
-
-        private static readonly Dictionary<String, String> MessageFocusViviPlus = new Dictionary<String, String>
-        {
-            { "US", "Focus +{0}%!" }, { "UK", "Focus +{0}%!" }, { "JP", "フォーカス +{0}%!" },
-            { "ES", "¡Focus +{0}%!" }, { "FR", "Focus +{0}% !" }, { "GR", "Focus +{0}%!" }, { "IT", "Focus +{0}%!" }
-        };
-
-        private static readonly Dictionary<String, String> MessageFocusViviLost = new Dictionary<String, String>
-        {
-            { "US", "- Focus!" }, { "UK", "- Focus!" }, { "JP", "- フォーカス!" },
-            { "ES", "¡- Focus!" }, { "FR", "- Focus !" }, { "GR", "- Focus!" }, { "IT", "- Focus!" }
-        };
-
-        private static readonly Dictionary<String, String> MessagePlutoStack = new Dictionary<String, String>
-        {
-            { "US", "[SPRT=IconAtlas,item200_00] Pluto!" }, { "UK", "[SPRT=IconAtlas,item200_00] Pluto!" }, { "JP", "[SPRT=IconAtlas,item200_00] プルート！" },
-            { "ES", "[SPRT=IconAtlas,item200_00] ¡Pluto!" }, { "FR", "[SPRT=IconAtlas,item200_00] Brutos !" }, { "GR", "[SPRT=IconAtlas,item200_00] Pluto!" }, { "IT", "[SPRT=IconAtlas,item200_00] Plutò!" }
-        };
-
-        private static readonly Dictionary<String, String> MessageRedemptionStack = new Dictionary<String, String>
-        {
-            { "US", "[SPRT=IconAtlas,item200_01] Redemption!" }, { "UK", "[SPRT=IconAtlas,item200_01] Redemption!" }, { "JP", "[SPRT=IconAtlas,item200_01] 贖罪！" },
-            { "ES", "[SPRT=IconAtlas,item200_01] ¡Redención!" }, { "FR", "[SPRT=IconAtlas,item200_01] Rédemption !" }, { "GR", "[SPRT=IconAtlas,item200_01] Erlösung!" }, { "IT", "[SPRT=IconAtlas,item200_01] Redenzione!" }
-        };
 
         private static readonly BattleStatusId[] AmarantPassiveStatuses =
         {

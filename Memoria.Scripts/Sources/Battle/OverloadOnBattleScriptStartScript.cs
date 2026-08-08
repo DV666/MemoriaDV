@@ -176,7 +176,7 @@ namespace Memoria.Scripts.TranceSeek
                 if (FF9StateSystem.Battle.FF9Battle.aa_data[v.Command.AbilityId].MP > 0 && v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.EmergencPlan))
                 {
                     v.Caster.CurrentMp = 0;
-                    btl2d.Btl2dReqSymbolMessage(v.Caster.Data, "[FFFF00]", MessageEmergencyPlan, HUDMessage.MessageStyle.DAMAGE, 10);
+                    btl2d.Btl2dReqSymbolMessage(v.Caster.Data, "[FFFF00]", TranceSeekMessages.MessageEmergencyPlan, HUDMessage.MessageStyle.DAMAGE, 10);
                 }
 
                 if (v.Command.Id == TranceSeekBattleCommand.Engineer || v.Command.Id == TranceSeekBattleCommand.Idea || v.Command.Id == TranceSeekBattleCommand.Eureka)  // CMD Invention
@@ -184,7 +184,7 @@ namespace Memoria.Scripts.TranceSeek
                     int mpCost = 0;
                     KeyValuePair<RegularItem, BattleAbilityId> PassiveHammer = new KeyValuePair<RegularItem, BattleAbilityId>(v.Caster.Weapon, v.Command.AbilityId);
                     if ((GameRandom.Next8() % 100) < 25 && InventionPreserved.TryGetValue(v.Caster.Weapon, out BattleAbilityId preservedAA) && preservedAA == v.Command.AbilityId)
-                        btl2d.Btl2dReqSymbolMessage(v.Caster.Data, "[FFC000]", MessagePreserved, HUDMessage.MessageStyle.DAMAGE, 10);
+                        btl2d.Btl2dReqSymbolMessage(v.Caster.Data, "[FFC000]", TranceSeekMessages.MessagePreserved, HUDMessage.MessageStyle.DAMAGE, 10);
                     else
                     {
                         switch (v.Command.AbilityId)
@@ -278,10 +278,8 @@ namespace Memoria.Scripts.TranceSeek
                         {
                             Target_TSVar.ProtectStatus[status]--;
                             string message = $"-{status}";
-                            if (ProtectMessages.TryGetValue(status, out var localizedStatusProtect))
-                            {
+                            if (TranceSeekMessages.ProtectMessages.TryGetValue(status, out var localizedStatusProtect))
                                 btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[38FF1F]", localizedStatusProtect, HUDMessage.MessageStyle.DAMAGE, 5);
-                            }
                         }
                     }
                 }
@@ -497,21 +495,6 @@ namespace Memoria.Scripts.TranceSeek
             return false;
         }
 
-        private static readonly Dictionary<BattleStatus, Dictionary<string, string>> ProtectMessages = new Dictionary<BattleStatus, Dictionary<string, string>>();
-
-        public static void InitProtectMessages()
-        {
-            foreach (BattleStatus status in Enum.GetValues(typeof(BattleStatus))) // Don't work with customstatus... maybe later, with a Memoria update ? (or made it here)
-            {
-                string message = $"-{status}";
-                ProtectMessages[status] = new Dictionary<string, string>
-                {
-                    { "US", message }, { "UK", message }, { "JP", message },
-                    { "ES", message }, { "FR", message }, { "GR", message }, { "IT", message }
-                };
-            }
-        }
-
         private static readonly BattleAbilityId[] InventionAAs =
         {
             TranceSeekBattleAbility.Hammerthrow, TranceSeekBattleAbility.Springboots, TranceSeekBattleAbility.Acceleratorhammer, TranceSeekBattleAbility.Criticalaim,
@@ -535,18 +518,6 @@ namespace Memoria.Scripts.TranceSeek
             { TranceSeekRegularItem.FieryHammer, TranceSeekBattleAbility.Flurryofhammers }, // Fiery Hammer
             { TranceSeekRegularItem.GregtechHammer, TranceSeekBattleAbility.AdjustableWrench }, // GregTech Hammer
             { TranceSeekRegularItem.EMcinna2, TranceSeekBattleAbility.HymnoftheTantalas }, // E=MCinna²
-        };
-
-        private static readonly Dictionary<String, String> MessageEmergencyPlan = new Dictionary<String, String>
-        {
-            { "US", "Emergency Plan!" }, { "UK", "Emergency Plan!" }, { "JP", "緊急時対策!" },
-            { "ES", "¡Plan de emergencia!" }, { "FR", "Plan d'urgence !" }, { "GR", "Notfallplan!" }, { "IT", "Piano di emergenza!" }
-        };
-
-        private static readonly Dictionary<String, String> MessagePreserved = new Dictionary<String, String>
-        {
-            { "US", "Preserved!" }, { "UK", "Preserved!" }, { "JP", "プリザーブド！" },
-            { "ES", "¡Conservado!" }, { "FR", "Conservée !" }, { "GR", "Erhalten!" }, { "IT", "Conservata!" }
         };
     }
 }

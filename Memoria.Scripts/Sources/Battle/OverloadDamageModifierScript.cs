@@ -71,7 +71,7 @@ namespace Memoria.Scripts.TranceSeek
                 if (FF9StateSystem.Settings.IsDmg9999 && difficultyMode >= 3)
                 {
                     v.Target.Flags = CalcFlag.HpRecovery;
-                    btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[FF19EE]", MessageNope, HUDMessage.MessageStyle.DAMAGE, 0);
+                    btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[FF19EE]", TranceSeekMessages.MessageNope, HUDMessage.MessageStyle.DAMAGE, 0);
                     SoundLib.PlaySoundEffect(4004); //se511115
                 }
 
@@ -106,7 +106,7 @@ namespace Memoria.Scripts.TranceSeek
                 if (v.Target.PlayerIndex == CharacterId.Amarant && Target_TSVar.Amarant.Duel && (v.Command.AbilityCategory & 8) != 0 && v.Target.IsUnderAnyStatus(BattleStatus.Defend)) // Duel Amarant
                 {
                     if (v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.Ferocity) && (v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.Ferocity_Boosted) ? 50 : 25) > Comn.random16() % 100) // SA Ferocity
-                        btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[FF2716]", MessageFerocity, HUDMessage.MessageStyle.DAMAGE, 10);
+                        btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[FF2716]", TranceSeekMessages.MessageFerocity, HUDMessage.MessageStyle.DAMAGE, 10);
                     else
                         Target_TSVar.Amarant.Duel = false;
                 }
@@ -125,7 +125,7 @@ namespace Memoria.Scripts.TranceSeek
                     Target_TSVar.Baku.Peuh = false;
                     v.Context.Flags |= BattleCalcFlags.Guard;
                     v.Target.HpDamage = 0;
-                    btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[FF0000]", MessagePeuh, HUDMessage.MessageStyle.DAMAGE, 10);
+                    btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[FF0000]", TranceSeekMessages.MessagePeuh, HUDMessage.MessageStyle.DAMAGE, 10);
                 }
 
                 if (v.Target.IsCovering && v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.Duelist)) // SA Duelist
@@ -214,24 +214,6 @@ namespace Memoria.Scripts.TranceSeek
         }
 
         private static readonly HashSet<Int32> StoneMonsters = new HashSet<Int32> { 354, 221, 83 };
-
-        private static readonly Dictionary<String, String> MessageNope = new Dictionary<String, String>
-        {
-            { "US", "It's a NO!" }, { "UK", "It's a NO!" }, { "JP", "ダメだ！" },
-            { "ES", "¡Es un NO!" }, { "FR", "C'est non !" }, { "DE", "Das ist ein NEIN!" }, { "IT", "È un NO!" }
-        };
-
-        private static readonly Dictionary<String, String> MessageFerocity = new Dictionary<String, String>
-        {
-            { "US", "Ferocity!" }, { "UK", "Ferocity!" }, { "JP", "凶暴！" },
-            { "ES", "¡Ferocidad!" }, { "FR", "Férocité !" }, { "DE", "Ferozität!" }, { "IT", "Ferocia!" }
-        };
-
-        private static readonly Dictionary<String, String> MessagePeuh = new Dictionary<String, String>
-        {
-            { "US", "--Hmph!" }, { "UK", "--Hmph!" }, { "JP", "--ふん！" },
-            { "ES", "--¡Bah!" }, { "FR", "--Peuh !" }, { "DE", "--Pah!" }, { "IT", "--Pah!" }
-        };
     }
 }
 

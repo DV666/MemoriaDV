@@ -515,6 +515,7 @@
     <Compile Include="Sources\Battle\TranceSeekDebug.cs" />
     <Compile Include="Sources\Battle\TranceSeekCheckBattleStat.cs" />
     <Compile Include="Sources\Battle\TranceSeekHackShop.cs" />
+    <Compile Include="Sources\Battle\TranceSeekMessages.cs" />
     <Compile Include="Sources\Battle\TranceSeekWatcher.cs" />
     <Compile Include="Sources\Battle\TranceSeekBattleDictionary.cs" />
     <Compile Include="Sources\Battle\TranceSeekCharacterMechanic.cs" />

@@ -30,7 +30,7 @@ namespace Memoria.Scripts.TranceSeek
             if (battleRoot != null)
                 TranceSeekWatcher.InitWatchdog(battleRoot);
 
-            OverloadOnBattleScriptStartScript.InitProtectMessages();
+            TranceSeekMessages.InitProtectMessages();
 
             int BattleID = FF9StateSystem.Battle.battleMapIndex;
             int GroupeBattleID = FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum;

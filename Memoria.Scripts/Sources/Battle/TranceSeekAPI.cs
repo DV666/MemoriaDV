@@ -84,7 +84,7 @@ namespace Memoria.Scripts.TranceSeek
             else if (v.Caster.PlayerIndex == CharacterId.Zidane && btl_util.getSerialNumber(v.Caster.Data) == CharacterSerialNumber.ZIDANE_SWORD && v.Command.AbilityId == BattleAbilityId.Attack)
             {
                 Caster_TSVar.Zidane.Critical += 5;
-                btl2d.Btl2dReqSymbolMessage(v.Caster.Data, "[FFFF00]", MessageZidaneCritical, HUDMessage.MessageStyle.DAMAGE, 15);
+                btl2d.Btl2dReqSymbolMessage(v.Caster.Data, "[FFFF00]", TranceSeekMessages.MessageZidaneCritical, HUDMessage.MessageStyle.DAMAGE, 15);
             }
         }
         public static void IpsenCastleMalus(this BattleCalculator v)
@@ -137,7 +137,7 @@ namespace Memoria.Scripts.TranceSeek
                             Target_TSVar.SpecialSA.Instinct = 0;
 
                         v.Context.HitRate = 0;
-                        btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[FDEE00]", MessageInstinct, HUDMessage.MessageStyle.DAMAGE, 10);
+                        btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[FDEE00]", TranceSeekMessages.MessageInstinct, HUDMessage.MessageStyle.DAMAGE, 10);
                     }
                 }
             }
@@ -222,7 +222,7 @@ namespace Memoria.Scripts.TranceSeek
                 if (v.Target.PlayerIndex == CharacterId.Zidane && v.Target.Data != v.Caster.Data && btl_util.getSerialNumber(v.Target.Data) == CharacterSerialNumber.ZIDANE_DAGGER && !v.Target.IsUnderAnyStatus(BattleStatusConst.BattleEndFull) && !v.Caster.HasSupportAbility(SupportAbility1.Healer))
                 {
                     Target_TSVar.Zidane.Dodge += 5;
-                    btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[FFFF00]", MessageZidaneDodge, HUDMessage.MessageStyle.DAMAGE, 20);
+                    btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[FFFF00]", TranceSeekMessages.MessageZidaneDodge, HUDMessage.MessageStyle.DAMAGE, 20);
                 }
                 return true;
             }
@@ -858,7 +858,7 @@ namespace Memoria.Scripts.TranceSeek
                 if (v.Target.HpDamage == 0 && v.Target.MpDamage == 0 && (v.Command.AbilityStatus - (v.Target.ResistStatus & v.Command.AbilityStatus)) == 0)
                 {
                     v.Context.Flags = 0;
-                    btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[FF00FF]", MessageImmune, HUDMessage.MessageStyle.DAMAGE, 10);
+                    btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[FF00FF]", TranceSeekMessages.MessageImmune, HUDMessage.MessageStyle.DAMAGE, 10);
                 }
             }
         }
@@ -1195,7 +1195,7 @@ namespace Memoria.Scripts.TranceSeek
                     Target_TSVar.SpecialSA.LastStand--;
                     v.Target.HpDamage = (int)v.Target.CurrentHp - 1;
                     v.Target.CurrentMp = v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.LastStand_Boosted) ? (v.Target.CurrentMp / 2) : 0;
-                    btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[FDEE00]", MessageLastStand, HUDMessage.MessageStyle.DAMAGE, 10);
+                    btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[FDEE00]", TranceSeekMessages.MessageLastStand, HUDMessage.MessageStyle.DAMAGE, 10);
                 }
             }
 
@@ -1267,7 +1267,7 @@ namespace Memoria.Scripts.TranceSeek
                 else
                     v.Target.HpDamage /= 2;
 
-                btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[FF00EA]", MessageBodyguard, HUDMessage.MessageStyle.DAMAGE, 8);
+                btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[FF00EA]", TranceSeekMessages.MessageBodyguard, HUDMessage.MessageStyle.DAMAGE, 8);
             }
 
             if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.CrisisLevel_Boosted) && (v.Target.Flags & CalcFlag.HpRecovery) == 0 && v.Target.HpDamage > 0) // SA Crisis level+
@@ -1279,7 +1279,7 @@ namespace Memoria.Scripts.TranceSeek
             if (v.Target.IsUnderAnyStatus(BattleStatus.AutoLife) && (v.Target.Flags & CalcFlag.HpRecovery) == 0 && !v.Target.IsPlayer && v.Target.HpDamage >= v.Target.CurrentHp)
             {
                 v.Target.HpDamage = (int)(v.Target.CurrentHp - 1);
-                btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[FF99FD]", MessageAutoLife, HUDMessage.MessageStyle.DAMAGE, 20);
+                btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[FF99FD]", TranceSeekMessages.MessageAutoLife, HUDMessage.MessageStyle.DAMAGE, 20);
                 v.Target.RemoveStatus(BattleStatus.AutoLife);
             }
 
@@ -1357,48 +1357,6 @@ namespace Memoria.Scripts.TranceSeek
                     v.Target.RemoveStatus(BattleStatusConst.AnyNegative &~BattleStatus.Death);
             }
         }
-
-        private static readonly Dictionary<String, String> MessageZidaneCritical = new Dictionary<String, String>
-        {
-            { "US", "↑ Critical ↑" }, { "UK", "↑ Critical ↑" }, { "JP", "↑ Critical ↑" },
-            { "ES", "↑ Letal ↑" }, { "FR", "↑ Critique ↑" }, { "GR", "↑ KRITISCH ↑" }, { "IT", "↑ Letale ↑" }
-        };
-
-        private static readonly Dictionary<String, String> MessageInstinct = new Dictionary<String, String>
-        {
-            { "US", "Instinct!" }, { "UK", "Instinct!" }, { "JP", "直感！" },
-            { "ES", "¡Instinto!" }, { "FR", "Instinct !" }, { "GR", "Instinkt!" }, { "IT", "Istinto!" }
-        };
-
-        private static readonly Dictionary<String, String> MessageZidaneDodge = new Dictionary<String, String>
-        {
-            { "US", "↑ Dodge ↑" }, { "UK", "↑ Dodge ↑" }, { "JP", "↑ かいひりつ ↑" },
-            { "ES", "↑ DST fisica ↑" }, { "FR", "↑ Esquive ↑" }, { "GR", "↑ Evasión F ↑" }, { "IT", "↑ Reflex ↑" }
-        };
-
-        private static readonly Dictionary<String, String> MessageImmune = new Dictionary<String, String>
-        {
-            { "US", "Immune!" }, { "UK", "Immune!" }, { "JP", "免疫！" },
-            { "ES", "¡Inmune!" }, { "FR", "Immunisé !" }, { "GR", "Immun!" }, { "IT", "Immunità!" }
-        };
-
-        private static readonly Dictionary<String, String> MessageLastStand = new Dictionary<String, String>
-        {
-            { "US", "Last Stand!" }, { "UK", "Last Stand!" }, { "JP", "背水の陣！" },
-            { "ES", "¡Resistencia final!" }, { "FR", "Échappée belle !" }, { "GR", "Letzter Widerstand!" }, { "IT", "Ultima resistenza!" }
-        };
-
-        private static readonly Dictionary<String, String> MessageBodyguard = new Dictionary<String, String>
-        {
-            { "US", "Bodyguard!" }, { "UK", "Bodyguard!" }, { "JP", "用心棒！" },
-            { "ES", "¡Guardaespaldas!" }, { "FR", "Garde du corps !" }, { "GR", "Leibwächter!" }, { "IT", "Guardia del corpo!" }
-        };
-
-        private static readonly Dictionary<String, String> MessageAutoLife = new Dictionary<String, String>
-        {
-            { "US", "Auto-Life!" }, { "UK", "Auto-Life!" }, { "JP", "リレイズ!" },
-            { "ES", "¡AutoLázaro!" }, { "FR", "Auréole !" }, { "GR", "Reinkarnat!" }, { "IT", "Risveglio!" }
-        };
     }
 }
 
