@@ -17,7 +17,7 @@ StatusInit [code=Condition] AccessoryId == RegularItem_MadainRing [/code] Resist
 StatusInit [code=Condition] AccessoryId == RegularItem_RosettaRing [/code] ResistStatus Heat
 StatusInit [code=Condition] AccessoryId == RegularItem_ReflectRing [/code] AutoStatus Reflect
 StatusInit [code=Condition] AccessoryId == RegularItem_CoralRing [/code] ResistStatus Slow
-StatusInit [code=Condition] AccessoryId == RegularItem_PromistRing [/code] ResistStatus Virus
+StatusInit [code=Condition] AccessoryId == RegularItem_PromistRing [/code] ResistStatus Virus ResistStatus Poison ResistStatus CustomStatus16
 StatusInit [code=Condition] AccessoryId == RegularItem_RebirthRing [/code] ResistStatus Doom
 StatusInit [code=Condition] AccessoryId == RegularItem_GoldChoker [/code] ResistStatus Sleep
 StatusInit [code=Condition] AccessoryId == RegularItem_FairyEarrings [/code] ResistStatus Berserk
@@ -37,6 +37,9 @@ StatusInit [code=Condition] AccessoryId == 1217 [/code] ResistStatus Mini
 StatusInit [code=Condition] AccessoryId == 1242 [/code] AutoStatus Shell
 StatusInit [code=Condition] AccessoryId == 1255 [/code] InitialStatus Protect
 StatusInit [code=Condition] AccessoryId == 1263 [/code] ResistStatus Petrify ResistStatus GradualPetrify
+StatusInit [code=Condition] AccessoryId == 1265 [/code] InitialStatus Haste ResistStatus Slow
+StatusInit [code=Condition] AccessoryId == 1269 [/code] ResistStatus Virus
+StatusInit [code=Condition] AccessoryId == 1272 [/code] InitialStatus Float ResistStatus Slow
 
 ############ SA Features from Items ############
 Permanent [code=Condition] WeaponShape != 4 [/code] [code=BanishSA] 2013 [/code]
@@ -59,6 +62,7 @@ Permanent [code=Condition] AccessoryId == 219 [/code] [code=ActivateFreeSA] 50 ;
 Permanent [code=Condition] AccessoryId == 1205 [/code] [code=ActivateFreeSA] 53 ; 112 [/code]
 Permanent [code=Condition] AccessoryId == 1247 [/code] [code=ActivateFreeSA] 23 ; 61 ; 62 [/code]
 Permanent [code=Condition] AccessoryId == 1259 [/code] [code=ActivateFreeSA] 23 ; 46 [/code]
+Permanent [code=Condition] AccessoryId == 1267 [/code] [code=ActivateFreeSA] 1 ; 105 [/code]
 
 Permanent [code=Condition] AccessoryId == 1250 [/code] [code=MaxGems] MaxGems + (MaxGems / 10) [/code]
 
@@ -84,7 +88,7 @@ BattleStart
 
 #### Sentinel Steiner ####
 Command
-[code=Condition] CharacterIndex == CharacterId_Steiner && !IsTargeted && IsAllyOfTarget && CommandId == BattleCommandId_EnemyAtk && (AbilityCategory & 8) != 0 && IsSingleTarget && !CheckAnyStatus(CurrentStatus, BattleStatus_Heat) && CheckAnyStatus(CurrentStatus, BattleStatus_Defend) && PropertyByName('StatusProperty Defend Gardien') == 1 && GetMemoriaDictionary(1000, 6) == 1 [/code]
+[code=Condition] CharacterIndex == CharacterId_Steiner && !IsTargeted && IsAllyOfTarget && CommandId == BattleCommandId_EnemyAtk && (AbilityCategory & 8) != 0 && IsSingleTarget && !CheckAnyStatus(CurrentStatus, BattleStatus_Heat) && CheckAnyStatus(CurrentStatus, BattleStatus_Defend) && PropertyByName('StatusProperty Defend Gardien') == 1 && (GetMemoriaDictionary(1000, 6) & Id) != 0 [/code]
 [code=TryCover] !CheckAnyStatus(TargetCurrentStatus, BattleStatus_Death | BattleStatus_Petrify) [/code]
 
 #### Duel Amarant ####
@@ -136,10 +140,14 @@ Permanent
 [code=Condition] WristId == 98  [/code]
 [code=Speed] Speed + (Speed / 10) [/code]
 
+Permanent 
+[code=Condition] ArmorId == 171 && CharacterIndex != CharacterId_Quina [/code]
+[code=Evade] Evade / 2 [/code]
+
 ############# Difficulty #################
 
 BattleResult
-[code=Condition] GetEventGlobalByte(1403) == 6 && ((ScenarioCounter <= 2400 && Level >= 5) || (ScenarioCounter <= 2540 && Level >= 7) || (ScenarioCounter <= 2990 && Level >= 9) || (ScenarioCounter <= 3740 && Level >= 12) || (ScenarioCounter <= 3900 && Level >= 15) || (ScenarioCounter >= 3900 && ScenarioCounter < 4600 && Level >= 13) || (ScenarioCounter <= 4730 && Level >= 17) || (ScenarioCounter <= 4990 && Level >= 19) || (ScenarioCounter <= 5120 && Level >= 21) || (ScenarioCounter <= 5900 && Level >= 23) || (ScenarioCounter <= 5990 && Level >= 25) || (ScenarioCounter <= 6310 && Level >= 27) || (ScenarioCounter <= 6740 && Level >= 29) || (ScenarioCounter <= 6820 && Level >= 30) || (ScenarioCounter <= 6990 && Level >= 32) || (ScenarioCounter <= 9510 && Level >= 34) || (ScenarioCounter <= 9890 && Level >= 37) || (ScenarioCounter <= 9990 && Level >= 41) || (ScenarioCounter <= 10700 && Level >= 45) || (ScenarioCounter <= 10830 && Level >= 50) || (ScenarioCounter <= 11100 && Level >= 55)) [/code]
+[code=Condition] GetEventGlobalByte(1403) == 6 && ((ScenarioCounter <= 2400 && Level >= 5) || (ScenarioCounter <= 2540 && Level >= 7) || (ScenarioCounter <= 2990 && Level >= 9) || (ScenarioCounter <= 3740 && Level >= 12) || (ScenarioCounter <= 3900 && Level >= 15) || (ScenarioCounter >= 3900 && ScenarioCounter < 4600 && Level >= 13) || (ScenarioCounter <= 4730 && Level >= 17) || (ScenarioCounter <= 4990 && Level >= 19) || (ScenarioCounter <= 5120 && Level >= 21) || (ScenarioCounter <= 5900 && Level >= 23) || (ScenarioCounter <= 5990 && Level >= 25) || (ScenarioCounter <= 6310 && Level >= 27) || (ScenarioCounter <= 6740 && Level >= 29) || (ScenarioCounter <= 6820 && Level >= 30) || (ScenarioCounter <= 6990 && Level >= 32) || (ScenarioCounter <= 9510 && Level >= 34) || (ScenarioCounter <= 9890 && Level >= 37) || (ScenarioCounter <= 9990 && Level >= 41) || (ScenarioCounter < 10700 && Level >= 45) || (ScenarioCounter <= 10830 && Level >= 50) || (ScenarioCounter <= 11100 && Level >= 55)) [/code]
 [code=BonusExp] 0 [/code]
 
 ############# Enemy #################
@@ -147,20 +155,13 @@ BattleResult
 StatusInit [code=Condition] CheckAnyStatus(CurrentStatus, BattleStatus_EasyKill) [/code] [code=DurationFactorCustomStatus17] 0.20 [/code]
 StatusInit [code=Condition] CheckAnyStatus(CurrentStatus, BattleStatus_EasyKill) [/code] [code=DurationFactorFreeze] 0.20 [/code]
 StatusInit [code=Condition] CheckAnyStatus(CurrentStatus, BattleStatus_EasyKill) [/code] [code=DurationFactorSlow] 0.20 [/code]
+StatusInit [code=Condition] CheckAnyStatus(CurrentStatus, BattleStatus_EasyKill) [/code] [code=DurationFactorStop] 0.30 [/code]
 
 #### Taunt Mechanic ####
 Command EvenImmobilized
 [code=Condition] IsTheCaster && IsSingleTarget && !IsSelfTarget && PropertyByName('StatusProperty CustomStatus22 ForcedTargetId') > 0 [/code]
 [code=CommandTargetId] CasterPropertyByName('StatusProperty CustomStatus22 ForcedTargetId') [/code]
-
-Command
-[code=Condition] (GetModelKillCount(ModelId) % 10) == 9 && !CheckAnyStatus(CurrentStatus, BattleStatus_Trance) && BattleFilter(255, 0, -1, BattleStatus_Trance) == BattleFilter(255, 0, -1, 0) && !CheckAnyStatus(CurrentStatus, BattleStatus_EasyKill) [/code]
-[code=ResistStatus] RemoveStatuses(ResistStatus, BattleStatus_Trance) [/code]
-[code=PermanentStatus] CombineStatuses(PermanentStatus, BattleStatus_Trance) [/code]
-[code=BonusExp] 2 * BonusExp [/code]
-[code=BonusGil] BonusGil + (BonusGil / 2) [/code]
-[code=BattleBonusAP] BattleBonusAP * 2 [/code]
-_____________________________________________________________________________________________________
+___________________________________________________________________________________________________
 
 >AA 82 Maelstorm (now Maelstorm, to disable Roulette effect from Memoria)
 
@@ -168,7 +169,7 @@ ________________________________________________________________________________
 
 >AA 126 Intimidation (single) (now Intimidation, to disable Spare Change effect from Memoria)
 
->AA 134 Intimidation+(multi) (now Intimidation+, to disable Spare Change effect from Memoria)
+>AA 134 Intimidation+ (multi) (now Intimidation+, to disable Spare Change effect from Memoria)
 
 >AA 129 Curse (single)
 [code=Element] 1 << GetRandom(0, 8) [/code]
@@ -180,7 +181,7 @@ ________________________________________________________________________________
 
 #### Basic commands ###
 >CMD 1 Attack
-[code=Patch] GetMemoriaDictionary(2000 + CharacterIndex, 0) > 0 ? (2000 + CharacterIndex) : (CharacterIndex == CharacterId_Marcus && CheckAnyStatus(CurrentStatus, BattleStatus_Trance) ? 1028 : ((WeaponId == 59 || WeaponId == 71 || WeaponId == 72 || WeaponId == 73 || WeaponId == 1028 || WeaponId == 1029 || WeaponId == 1030 || WeaponId == 1031 ) ? (GetRandom(0, 3) != 0 ? ((WeaponId == 59 || WeaponId == 71 || WeaponId == 72 || WeaponId == 73) ? 1050 : 1051) : ((WeaponId == 59 || WeaponId == 71 || WeaponId == 72 || WeaponId == 73) ? 1051 : 1052)) : -1)) [/code]
+[code=Patch] GetMemoriaDictionary(2000 + CharacterIndex, 0) > 0 ? (2000 + CharacterIndex) : (CharacterIndex == CharacterId_Marcus && CheckAnyStatus(CurrentStatus, BattleStatus_Trance) ? 1028 : ((WeaponId == 59 || WeaponId == 71 || WeaponId == 72 || WeaponId == 73 || WeaponId == 1028 || WeaponId == 1029 || WeaponId == 1030 || WeaponId == 1031 || WeaponId == 1187 || WeaponId == 1188) ? (GetRandom(0, 3) != 0 ? ((WeaponId == 59 || WeaponId == 71 || WeaponId == 72 || WeaponId == 73) ? 1050 : 1051) : ((WeaponId == 59 || WeaponId == 71 || WeaponId == 72 || WeaponId == 73) ? 1051 : 1052)) : -1)) [/code]
 
 >CMD 2 Steal
 [code=Patch] (((CharacterIndex == CharacterId_Blank && ScenarioCounter >= 11100 && Trance > 128) || GetMemoriaDictionary(1000, 3) != 0)) ? 1020 : (HasSA(1247) ? 1037 : (HasSA(247) ? 1036 : 2)) [/code]
@@ -192,8 +193,8 @@ ________________________________________________________________________________
 >AA 1000 Disable Steal !
 [code=Disable] CasterWeaponId == 1161 [/code]
 
->AA 1001 Disable Bandit ! for early daggers
-[code=Disable] CasterWeaponId == RegularItem_Dagger || CasterWeaponId == RegularItem_MageMasher || CasterWeaponId == RegularItem_MythrilDagger || CasterWeaponId == 1153 || CasterWeaponId == 1155 || CasterWeaponId == 1158 || CasterWeaponId == 1164 || CasterWeaponId == 1167 [/code]
+>AA 1001 Disable Bandit ! for early/monster daggers 
+[code=Disable] CasterWeaponId == RegularItem_Dagger || CasterWeaponId == RegularItem_MageMasher || CasterWeaponId == RegularItem_MythrilDagger || CasterWeaponId == 1153 || CasterWeaponId == 1155 || CasterWeaponId == 1158 || CasterWeaponId == 1164 || CasterWeaponId == 1167 || CasterWeaponId == 1141 [/code]
 
 #### Sentinel Steiner + Dual Amarant ####
 >CMD 4
@@ -202,7 +203,7 @@ ________________________________________________________________________________
 #### SA CMD for Steiner ####
 
 >AA 142 Deathblow
-[code=Patch] HasSA(1213) && GetMemoriaDictionary(1000, 3) >= 2 ? 1551 : (HasSA(213) && GetMemoriaDictionary(1000, 3) > 0 ? 1550 : -1) [/code]
+[code=Patch] HasSA(1213) && GetMemoriaDictionary(1000, 4) >= 2 ? 1551 : (HasSA(213) && GetMemoriaDictionary(1000, 4) > 0 ? 1550 : -1) [/code]
 
 #### SA CMD for Vivi ####
 >CMD 13
@@ -327,6 +328,7 @@ ________________________________________________________________________________
 
 >AA 1012
 [code=MPCost] ((4 - CasterPropertyByName('StatusProperty CustomStatus12 Stack')) * MPCost) / 4 [/code]
+[code=Disable] GetMemoriaDictionary(1000, 2) > 0 [/code]
 
 >AA 1013
 [code=MPCost] ((4 - CasterPropertyByName('StatusProperty CustomStatus12 Stack')) * MPCost) / 4 [/code]
@@ -348,6 +350,7 @@ ________________________________________________________________________________
 
 >AA 1054
 [code=MPCost] ((4 - CasterPropertyByName('StatusProperty CustomStatus12 Stack')) * MPCost) / 4 [/code]
+[code=Disable] GetMemoriaDictionary(1000, 2) > 0 [/code]
 
 >AA 1055
 [code=MPCost] ((4 - CasterPropertyByName('StatusProperty CustomStatus12 Stack')) * MPCost) / 4 [/code]
@@ -1486,7 +1489,7 @@ ________________________________________________________________________________
 >SA 1 Pas Léger (effect is coded in TranceSeekAPI)
 
 >SA 2 Initiative
-StatusInit InitialATB 75
+StatusInit [code=Condition] !IsBattlePreemptive [/code] InitialATB 75
 
 >SA 3 Résilience
 
@@ -1526,9 +1529,7 @@ Ability WhenHitRateSetup EvenImmobilized
 [code=Condition] AbilityId == BattleAbilityId_Attack [/code]
 [code=Evade] (Evade * 6) / 10 [/code]
 
->SA 10 Lucky Star
-Ability WhenBattleScriptStart EvenImmobilized
-[code=CasterCriticalRateBonus] 10 [/code]
+>SA 10 Lucky Star (effect is coded in OverloadOnBattleInitScript.cs)
 
 >SA 11 Long Reach
 Ability WhenCalcDamage EvenImmobilized
@@ -1542,42 +1543,42 @@ Ability WhenCalcDamage EvenImmobilized
 
 >SA 13 Bird Killer
 Ability WhenCalcDamage EvenImmobilized
-[code=Condition] (AbilityId == BattleAbilityId_Attack || ScriptId == 48 || ScriptId == 65 || ScriptId == 83) && (TargetCategory & EnemyCategory_Flight) != 0 && CasterIsPlayer != TargetIsPlayer [/code]
+[code=Condition] (AbilityId == BattleAbilityId_Attack || (ScriptId == 21 && CasterCharacterIndex == CharacterId_Steiner) || ScriptId == 48 || ScriptId == 65 || ScriptId == 83) && (TargetCategory & EnemyCategory_Flight) != 0 && CasterIsPlayer != TargetIsPlayer [/code]
 [code=DamageModifierCount] DamageModifierCount + 1 [/code]
 
 >SA 14 Bug Killer
 Ability WhenCalcDamage EvenImmobilized
-[code=Condition] (AbilityId == BattleAbilityId_Attack || ScriptId == 48 || ScriptId == 65 || ScriptId == 83) && (TargetCategory & EnemyCategory_Soul) != 0 && CasterIsPlayer != TargetIsPlayer [/code]
+[code=Condition] (AbilityId == BattleAbilityId_Attack || (ScriptId == 21 && CasterCharacterIndex == CharacterId_Steiner) || ScriptId == 48 || ScriptId == 65 || ScriptId == 83) && (TargetCategory & EnemyCategory_Soul) != 0 && CasterIsPlayer != TargetIsPlayer [/code]
 [code=DamageModifierCount] DamageModifierCount + 1 [/code]
 
 >SA 15 Giant Killer
 Ability WhenCalcDamage EvenImmobilized
-[code=Condition] (AbilityId == BattleAbilityId_Attack || ScriptId == 48 || ScriptId == 65 || ScriptId == 83) && (TargetCategory & EnemyCategory_Stone) != 0 && CasterIsPlayer != TargetIsPlayer [/code]
+[code=Condition] (AbilityId == BattleAbilityId_Attack || (ScriptId == 21 && CasterCharacterIndex == CharacterId_Steiner) || ScriptId == 48 || ScriptId == 65 || ScriptId == 83) && (TargetCategory & EnemyCategory_Stone) != 0 && CasterIsPlayer != TargetIsPlayer [/code]
 [code=DamageModifierCount] DamageModifierCount + 1 [/code]
 
 >SA 16 Undead Killer
 Ability WhenCalcDamage EvenImmobilized
-[code=Condition] (AbilityId == BattleAbilityId_Attack || ScriptId == 48 || ScriptId == 65 || ScriptId == 83) && (TargetCategory & EnemyCategory_Undead) != 0 && CasterIsPlayer != TargetIsPlayer [/code]
+[code=Condition] (AbilityId == BattleAbilityId_Attack || (ScriptId == 21 && CasterCharacterIndex == CharacterId_Steiner) || ScriptId == 48 || ScriptId == 65 || ScriptId == 83) && (TargetCategory & EnemyCategory_Undead) != 0 && CasterIsPlayer != TargetIsPlayer [/code]
 [code=DamageModifierCount] DamageModifierCount + 1 [/code]
 
 >SA 17 Dragon Killer
 Ability WhenCalcDamage EvenImmobilized
-[code=Condition] (AbilityId == BattleAbilityId_Attack || ScriptId == 48 || ScriptId == 65 || ScriptId == 83) && (TargetCategory & EnemyCategory_Dragon) != 0 && CasterIsPlayer != TargetIsPlayer [/code]
+[code=Condition] (AbilityId == BattleAbilityId_Attack || (ScriptId == 21 && CasterCharacterIndex == CharacterId_Steiner) || ScriptId == 48 || ScriptId == 65 || ScriptId == 83) && (TargetCategory & EnemyCategory_Dragon) != 0 && CasterIsPlayer != TargetIsPlayer [/code]
 [code=DamageModifierCount] DamageModifierCount + 1 [/code]
 
 >SA 18 Devil Killer
 Ability WhenCalcDamage EvenImmobilized
-[code=Condition] (AbilityId == BattleAbilityId_Attack || ScriptId == 48 || ScriptId == 65 || ScriptId == 83) && (TargetCategory & EnemyCategory_Devil) != 0 && CasterIsPlayer != TargetIsPlayer [/code]
+[code=Condition] (AbilityId == BattleAbilityId_Attack || (ScriptId == 21 && CasterCharacterIndex == CharacterId_Steiner) || ScriptId == 48 || ScriptId == 65 || ScriptId == 83) && (TargetCategory & EnemyCategory_Devil) != 0 && CasterIsPlayer != TargetIsPlayer [/code]
 [code=DamageModifierCount] DamageModifierCount + 1 [/code]
 
 >SA 19 Beast Killer
 Ability WhenCalcDamage EvenImmobilized
-[code=Condition] (AbilityId == BattleAbilityId_Attack || ScriptId == 48 || ScriptId == 65 || ScriptId == 83) && (TargetCategory & EnemyCategory_Beast) != 0 && CasterIsPlayer != TargetIsPlayer [/code]
+[code=Condition] (AbilityId == BattleAbilityId_Attack || (ScriptId == 21 && CasterCharacterIndex == CharacterId_Steiner) || ScriptId == 48 || ScriptId == 65 || ScriptId == 83) && (TargetCategory & EnemyCategory_Beast) != 0 && CasterIsPlayer != TargetIsPlayer [/code]
 [code=DamageModifierCount] DamageModifierCount + 1 [/code]
 
 >SA 20 Man Eater
 Ability WhenCalcDamage EvenImmobilized
-[code=Condition] AbilityId == BattleAbilityId_Attack && (TargetCategory & EnemyCategory_Humanoid) != 0 && CasterIsPlayer != TargetIsPlayer [/code]
+[code=Condition] (AbilityId == BattleAbilityId_Attack || (ScriptId == 21 && CasterCharacterIndex == CharacterId_Steiner) || ScriptId == 48 || ScriptId == 65 || ScriptId == 83) && (TargetCategory & EnemyCategory_Humanoid) != 0 && CasterIsPlayer != TargetIsPlayer [/code]
 [code=DamageModifierCount] DamageModifierCount + 1 [/code]
 
 >SA 21 High Jump (effect is coded in TranceSeekAPI)
@@ -1743,7 +1744,7 @@ StatusInit [code=PartialResistConfuse] 0.5 [/code]
 >SA 59 Boost (effect is coded in 0085_SummonScript.cs)
 Command EvenImmobilized
 [code=Condition] IsTheCaster && (ScriptId == 85 || ScriptId == 86 || ScriptId == 87) [/code]
-[code=IsShortSummon] GetRandom(0, 100) < 75 [/code]
+[code=IsShortSummon] GetRandom(0, 100) >= 75 [/code]
 
 >SA 60 Odin’s Sword (effect is coded in 0087_OdinScript.cs)
 
@@ -1760,7 +1761,7 @@ Ability WhenCalcDamage EvenImmobilized
 [code=Condition] (ScriptId == 10 || ScriptId == 37 || ScriptId == 69) [/code]
 [code=DamageModifierCount] DamageModifierCount + 1 [/code]
 
->SA 101 Witchcraft
+>SA 101 Maleficent
 Ability WhenHitRateSetup EvenImmobilized
 [code=HitRate] HitRate + 25 [/code]
 
@@ -1883,7 +1884,7 @@ StatusInit [code=PartialResistCustomStatus4] 0.5 [/code]
 >SA 209 Divine punishment
 Ability WhenHitRateSetup EvenImmobilized
 [code=Condition] (ScriptId == 85 || ScriptId == 86 || ScriptId == 87) [/code]
-[code=Evade] Evade / 2 [/code]
+[code=HitRate] HitRate + 25 [/code]
 
 Ability WhenBattleScriptEnd EvenImmobilized
 [code=Condition] (ScriptId == 85 || ScriptId == 86 || ScriptId == 87) && !TargetIsPlayer [/code]
@@ -2017,7 +2018,7 @@ ________________________________________________________________________________
 >SA 1001 Pas Léger+ (effect is coded in TranceSeekAPI.cs)
 
 >SA 1002 Initiative+
-StatusInit InitialATB 95
+StatusInit [code=Condition] !IsBattlePreemptive [/code] InitialATB 95
 StatusInit InitialStatus Haste
 DisableSA 2
 
@@ -2076,9 +2077,7 @@ Ability WhenHitRateSetup EvenImmobilized
 [code=Evade] Evade / 5 [/code]
 DisableSA 9
 
->SA 1010 Lucky Star
-Ability WhenBattleScriptStart EvenImmobilized
-[code=CasterCriticalRateBonus] 20 [/code]
+>SA 1010 Lucky Star (effect is coded in OverloadOnBattleInitScript.cs)
 
 >SA 1011 Long Reach+
 Ability WhenBattleScriptStart EvenImmobilized
@@ -2093,42 +2092,42 @@ DisableSA 12
 
 >SA 1013 Bird Killer+
 Ability WhenCalcDamage EvenImmobilized
-[code=Condition] (AbilityId == BattleAbilityId_Attack || ScriptId == 48 || ScriptId == 65 || ScriptId == 83) && (TargetCategory & 128) != 0 && CasterIsPlayer != TargetIsPlayer [/code]
+[code=Condition] (AbilityId == BattleAbilityId_Attack || (ScriptId == 21 && CasterCharacterIndex == CharacterId_Steiner) || ScriptId == 48 || ScriptId == 65 || ScriptId == 83) && (TargetCategory & 128) != 0 && CasterIsPlayer != TargetIsPlayer [/code]
 [code=DamageModifierCount] DamageModifierCount + 1 [/code]
 
 >SA 1014 Bug Killer+
 Ability WhenCalcDamage EvenImmobilized
-[code=Condition] (AbilityId == BattleAbilityId_Attack || ScriptId == 48 || ScriptId == 65 || ScriptId == 83) && (TargetCategory & 64) != 0 && CasterIsPlayer != TargetIsPlayer [/code]
+[code=Condition] (AbilityId == BattleAbilityId_Attack || (ScriptId == 21 && CasterCharacterIndex == CharacterId_Steiner) || ScriptId == 48 || ScriptId == 65 || ScriptId == 83) && (TargetCategory & 64) != 0 && CasterIsPlayer != TargetIsPlayer [/code]
 [code=DamageModifierCount] DamageModifierCount + 1 [/code]
 
 >SA 1015 Giant Killer+
 Ability WhenCalcDamage EvenImmobilized
-[code=Condition] (AbilityId == BattleAbilityId_Attack || ScriptId == 48 || ScriptId == 65 || ScriptId == 83) && (TargetCategory & 32) != 0 && CasterIsPlayer != TargetIsPlayer [/code]
+[code=Condition] (AbilityId == BattleAbilityId_Attack || (ScriptId == 21 && CasterCharacterIndex == CharacterId_Steiner) || ScriptId == 48 || ScriptId == 65 || ScriptId == 83) && (TargetCategory & 32) != 0 && CasterIsPlayer != TargetIsPlayer [/code]
 [code=DamageModifierCount] DamageModifierCount + 1 [/code]
 
 >SA 1016 Undead Killer+
 Ability WhenCalcDamage EvenImmobilized
-[code=Condition] (AbilityId == BattleAbilityId_Attack || ScriptId == 48 || ScriptId == 65 || ScriptId == 83) && (TargetCategory & 16) != 0 && CasterIsPlayer != TargetIsPlayer [/code]
+[code=Condition] (AbilityId == BattleAbilityId_Attack || (ScriptId == 21 && CasterCharacterIndex == CharacterId_Steiner) || ScriptId == 48 || ScriptId == 65 || ScriptId == 83) && (TargetCategory & 16) != 0 && CasterIsPlayer != TargetIsPlayer [/code]
 [code=DamageModifierCount] DamageModifierCount + 1 [/code]
 
 >SA 1017 Dragon Killer+
 Ability WhenCalcDamage EvenImmobilized
-[code=Condition] (AbilityId == BattleAbilityId_Attack || ScriptId == 48 || ScriptId == 65 || ScriptId == 83) && (TargetCategory & 8) != 0 && CasterIsPlayer != TargetIsPlayer [/code]
+[code=Condition] (AbilityId == BattleAbilityId_Attack || (ScriptId == 21 && CasterCharacterIndex == CharacterId_Steiner) || ScriptId == 48 || ScriptId == 65 || ScriptId == 83) && (TargetCategory & 8) != 0 && CasterIsPlayer != TargetIsPlayer [/code]
 [code=DamageModifierCount] DamageModifierCount + 1 [/code]
 
 >SA 1018 Devil Killer+
 Ability WhenCalcDamage EvenImmobilized
-[code=Condition] (AbilityId == BattleAbilityId_Attack || ScriptId == 48 || ScriptId == 65 || ScriptId == 83) && (TargetCategory & 4) != 0 && CasterIsPlayer != TargetIsPlayer [/code]
+[code=Condition] (AbilityId == BattleAbilityId_Attack || (ScriptId == 21 && CasterCharacterIndex == CharacterId_Steiner) || ScriptId == 48 || ScriptId == 65 || ScriptId == 83) && (TargetCategory & 4) != 0 && CasterIsPlayer != TargetIsPlayer [/code]
 [code=DamageModifierCount] DamageModifierCount + 1 [/code]
 
 >SA 1019 Beast Killer+
 Ability WhenCalcDamage EvenImmobilized
-[code=Condition] (AbilityId == BattleAbilityId_Attack || ScriptId == 48 || ScriptId == 65 || ScriptId == 83) && (TargetCategory & 2) != 0 && CasterIsPlayer != TargetIsPlayer [/code]
+[code=Condition] (AbilityId == BattleAbilityId_Attack || (ScriptId == 21 && CasterCharacterIndex == CharacterId_Steiner) || ScriptId == 48 || ScriptId == 65 || ScriptId == 83) && (TargetCategory & 2) != 0 && CasterIsPlayer != TargetIsPlayer [/code]
 [code=DamageModifierCount] DamageModifierCount + 1 [/code]
 
 >SA 1020 Man Eater+
 Ability WhenCalcDamage EvenImmobilized
-[code=Condition] (AbilityId == BattleAbilityId_Attack || ScriptId == 48 || ScriptId == 65 || ScriptId == 83) && (TargetCategory & 1) != 0 && CasterIsPlayer != TargetIsPlayer [/code]
+[code=Condition] (AbilityId == BattleAbilityId_Attack || (ScriptId == 21 && CasterCharacterIndex == CharacterId_Steiner) || ScriptId == 48 || ScriptId == 65 || ScriptId == 83) && (TargetCategory & 1) != 0 && CasterIsPlayer != TargetIsPlayer [/code]
 [code=DamageModifierCount] DamageModifierCount + 1 [/code]
 
 >SA 1021 High Jump+ (effect is coded in TranceSeekAPI)
@@ -2339,7 +2338,7 @@ Ability WhenCalcDamage EvenImmobilized
 [code=Condition] (ScriptId == 10 || ScriptId == 37 || ScriptId == 69) [/code]
 [code=DamageModifierCount] DamageModifierCount + 1 [/code]
 
->SA 1101 Witchcraft+
+>SA 1101 Maleficent+
 Ability WhenHitRateSetup EvenImmobilized
 [code=HitRate] HitRate + 25 [/code]
 [code=Evade] Evade / 2 [/code]
@@ -2455,8 +2454,7 @@ StatusInit ResistStatus CustomStatus1 ResistStatus CustomStatus2 ResistStatus Cu
 >SA 1209 Divine punishment+
 Ability WhenHitRateSetup EvenImmobilized
 [code=Condition] (ScriptId == 85 || ScriptId == 86 || ScriptId == 87) [/code]
-[code=HitRate] 255 [/code]
-[code=Evade] 0 [/code]
+[code=HitRate] HitRate + 50 [/code]
 
 >SA 1210 Gemologist+ (effect is coded here => Garnet Passive (Gems))
 
@@ -2580,40 +2578,40 @@ ________________________________________________________________________________
 
 >SA 2013 Bird Killer++
 Ability WhenCalcDamage EvenImmobilized
-[code=Condition] (AbilityId == BattleAbilityId_Attack || ScriptId == 48 || ScriptId == 65 || ScriptId == 83) && (TargetCategory & 128) != 0 && CasterIsPlayer != TargetIsPlayer && CasterWeaponShape == 4 [/code]
+[code=Condition] (AbilityId == BattleAbilityId_Attack || (ScriptId == 21 && CasterCharacterIndex == CharacterId_Steiner) || ScriptId == 48 || ScriptId == 65 || ScriptId == 83) && (TargetCategory & 128) != 0 && CasterIsPlayer != TargetIsPlayer && CasterWeaponShape == 4 [/code]
 [code=DamageModifierCount] DamageModifierCount + 1 [/code]
 
 >SA 2014 Bug Killer++
 Ability WhenCalcDamage EvenImmobilized
-[code=Condition] (AbilityId == BattleAbilityId_Attack || ScriptId == 48 || ScriptId == 65 || ScriptId == 83) && (TargetCategory & 64) != 0 && CasterIsPlayer != TargetIsPlayer && CasterWeaponShape == 4 [/code]
+[code=Condition] (AbilityId == BattleAbilityId_Attack || (ScriptId == 21 && CasterCharacterIndex == CharacterId_Steiner) || ScriptId == 48 || ScriptId == 65 || ScriptId == 83) && (TargetCategory & 64) != 0 && CasterIsPlayer != TargetIsPlayer && CasterWeaponShape == 4 [/code]
 [code=DamageModifierCount] DamageModifierCount + 1 [/code]
 
 >SA 2015 Giant Killer++
 Ability WhenCalcDamage EvenImmobilized
-[code=Condition] (AbilityId == BattleAbilityId_Attack || ScriptId == 48 || ScriptId == 65 || ScriptId == 83) && (TargetCategory & 32) != 0 && CasterIsPlayer != TargetIsPlayer && CasterWeaponShape == 4 [/code]
+[code=Condition] (AbilityId == BattleAbilityId_Attack || (ScriptId == 21 && CasterCharacterIndex == CharacterId_Steiner) || ScriptId == 48 || ScriptId == 65 || ScriptId == 83) && (TargetCategory & 32) != 0 && CasterIsPlayer != TargetIsPlayer && CasterWeaponShape == 4 [/code]
 [code=DamageModifierCount] DamageModifierCount + 1 [/code]
 
 >SA 2016 Undead Killer++
 Ability WhenCalcDamage EvenImmobilized
-[code=Condition] (AbilityId == BattleAbilityId_Attack || ScriptId == 48 || ScriptId == 65 || ScriptId == 83) && (TargetCategory & 16) != 0 && CasterIsPlayer != TargetIsPlayer && CasterWeaponShape == 4 [/code]
+[code=Condition] (AbilityId == BattleAbilityId_Attack || (ScriptId == 21 && CasterCharacterIndex == CharacterId_Steiner) || ScriptId == 48 || ScriptId == 65 || ScriptId == 83) && (TargetCategory & 16) != 0 && CasterIsPlayer != TargetIsPlayer && CasterWeaponShape == 4 [/code]
 [code=DamageModifierCount] DamageModifierCount + 1 [/code]
 
 >SA 2017 Dragon Killer++
 Ability WhenCalcDamage EvenImmobilized
-[code=Condition] (AbilityId == BattleAbilityId_Attack || ScriptId == 48 || ScriptId == 65 || ScriptId == 83) && (TargetCategory & 8) != 0 && CasterIsPlayer != TargetIsPlayer && CasterWeaponShape == 4 [/code]
+[code=Condition] (AbilityId == BattleAbilityId_Attack || (ScriptId == 21 && CasterCharacterIndex == CharacterId_Steiner) || ScriptId == 48 || ScriptId == 65 || ScriptId == 83) && (TargetCategory & 8) != 0 && CasterIsPlayer != TargetIsPlayer && CasterWeaponShape == 4 [/code]
 [code=DamageModifierCount] DamageModifierCount + 1 [/code]
 
 >SA 2018 Devil Killer++
 Ability WhenCalcDamage EvenImmobilized
-[code=Condition] (AbilityId == BattleAbilityId_Attack || ScriptId == 48 || ScriptId == 65 || ScriptId == 83) && (TargetCategory & 4) != 0 && CasterIsPlayer != TargetIsPlayer && CasterWeaponShape == 4 [/code]
+[code=Condition] (AbilityId == BattleAbilityId_Attack || (ScriptId == 21 && CasterCharacterIndex == CharacterId_Steiner) || ScriptId == 48 || ScriptId == 65 || ScriptId == 83) && (TargetCategory & 4) != 0 && CasterIsPlayer != TargetIsPlayer && CasterWeaponShape == 4 [/code]
 [code=DamageModifierCount] DamageModifierCount + 1 [/code]
 
 >SA 2019 Beast Killer++
 Ability WhenCalcDamage EvenImmobilized
-[code=Condition] (AbilityId == BattleAbilityId_Attack || ScriptId == 48 || ScriptId == 65 || ScriptId == 83) && (TargetCategory & 2) != 0 && CasterIsPlayer != TargetIsPlayer && CasterWeaponShape == 4 [/code]
+[code=Condition] (AbilityId == BattleAbilityId_Attack || (ScriptId == 21 && CasterCharacterIndex == CharacterId_Steiner) || ScriptId == 48 || ScriptId == 65 || ScriptId == 83) && (TargetCategory & 2) != 0 && CasterIsPlayer != TargetIsPlayer && CasterWeaponShape == 4 [/code]
 [code=DamageModifierCount] DamageModifierCount + 1 [/code]
 
 >SA 2020 Man Eater++
 Ability WhenCalcDamage EvenImmobilized
-[code=Condition] (AbilityId == BattleAbilityId_Attack || ScriptId == 48 || ScriptId == 65 || ScriptId == 83) && (TargetCategory & 1) != 0 && CasterIsPlayer != TargetIsPlayer && CasterWeaponShape == 4 [/code]
+[code=Condition] (AbilityId == BattleAbilityId_Attack || (ScriptId == 21 && CasterCharacterIndex == CharacterId_Steiner) || ScriptId == 48 || ScriptId == 65 || ScriptId == 83) && (TargetCategory & 1) != 0 && CasterIsPlayer != TargetIsPlayer && CasterWeaponShape == 4 [/code]
 [code=DamageModifierCount] DamageModifierCount + 1 [/code]

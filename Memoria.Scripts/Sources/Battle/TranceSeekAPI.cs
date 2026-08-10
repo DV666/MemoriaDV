@@ -815,9 +815,9 @@ namespace Memoria.Scripts.TranceSeek
         {
             btl_para.SwitchPlayerRow(unit.Data);
             if (unit.Row == 1)
-                unit.State().CanCover = 1;
+                CanCover |= unit.Id;
             else
-                unit.State().CanCover = 0;
+                CanCover &= unit.Id;
         }
 
         public static void SA_StatusApply(BattleUnit inflicter, Boolean StatusIsPositive)
@@ -849,7 +849,7 @@ namespace Memoria.Scripts.TranceSeek
                 v.TargetState().TriggerSPSResistStatus = false;
                 if (sps == null)
                     return;
-                btl2d.GetIconPosition(v.Target, btl2d.ICON_POS_ROOT, out Transform attachTransf, out Vector3 iconOff);
+                btl2d.GetIconPosition(v.Target, btl2d.ICON_POS_TARGET, out Transform attachTransf, out Vector3 iconOff);
                 sps.charTran = v.Target.Data.gameObject.transform;
                 sps.boneTran = attachTransf;
                 sps.posOffset = Vector3.zero;
@@ -929,7 +929,7 @@ namespace Memoria.Scripts.TranceSeek
                 }
 
                 if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Propagation) && !v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Propagation_Boosted)
-                    && v.Command.IsManyTarget && v.Command.AbilityId >= (BattleAbilityId)1499 && v.Command.AbilityId <= TranceSeekBattleAbility.AngelWhisper_Multi)
+                    && v.Command.IsManyTarget && TranceSeekBattleAbility.SpellUsingPropagation(v.Command.AbilityId))
                     durationfactor /= 2;
 
                 v.Target.Data.stat.conti[statusId] = (Int16)((statusData.ContiCnt * durationfactor) * v.Target.Data.stat.duration_factor[statusId]);

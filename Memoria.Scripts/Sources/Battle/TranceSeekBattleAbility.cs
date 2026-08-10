@@ -1,4 +1,5 @@
 ﻿using Memoria.Data;
+using System;
 
 namespace Memoria.Scripts.TranceSeek
 {
@@ -385,6 +386,7 @@ namespace Memoria.Scripts.TranceSeek
         public const BattleAbilityId Zombie2 = (BattleAbilityId)1377;
         public const BattleAbilityId Armodullahan = (BattleAbilityId)1378;
         public const BattleAbilityId Armodullahan2 = (BattleAbilityId)1379;
+        public const BattleAbilityId Stona_Multi = (BattleAbilityId)1499;
         public const BattleAbilityId Regen_Multi = (BattleAbilityId)1500;
         public const BattleAbilityId Life_Multi = (BattleAbilityId)1501;
         public const BattleAbilityId Panacea_Multi = (BattleAbilityId)1502;
@@ -495,5 +497,11 @@ namespace Memoria.Scripts.TranceSeek
         public const BattleAbilityId MogaEsuna = (BattleAbilityId)2017;
         public const BattleAbilityId MogSupport2 = (BattleAbilityId)2018;
         public const BattleAbilityId MougaHoming = (BattleAbilityId)2019;
+
+
+        public static Boolean SpellUsingPropagation (BattleAbilityId id)
+        {
+            return id >= Stona_Multi && id <= AngelWhisper_Multi;
+        }
     }
 }

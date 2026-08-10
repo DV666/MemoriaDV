@@ -1076,7 +1076,7 @@ namespace Memoria.Scripts.TranceSeek
                     GUILayout.BeginVertical(GUILayout.Width(220));
                     state.SuperCheat = DrawStatUI($"TS_{u.Id}_SupCht", "Super Cheat", state.SuperCheat, 110);
                     state.CantKill = DrawStatUI($"TS_{u.Id}_CantK", "Cant Kill (HW)", state.CantKill, 110);
-                    state.CanCover = DrawStatUI($"TS_{u.Id}_CanCov", "Can Cover (HW)", state.CanCover, 110);
+                    TranceSeekBattleDictionary.CanCover = DrawStatUI($"TS_{u.Id}_CanCov", "Can Cover (HW)", TranceSeekBattleDictionary.CanCover, 110);
                     GUILayout.EndVertical();
                     GUILayout.BeginVertical(GUILayout.Width(220));
                     state.MascotCooldown = DrawStatUI($"TS_{u.Id}_MascCD", "Mascot CD", state.MascotCooldown, 110);
@@ -1140,7 +1140,7 @@ namespace Memoria.Scripts.TranceSeek
                     GUILayout.BeginHorizontal();
                     GUILayout.BeginVertical(GUILayout.Width(220));
                     state.Monster.Special1 = DrawStatUI($"TS_{u.Id}_MstSpc1", "Special Value 1", state.Monster.Special1, 110);
-                    state.Monster.DurationDeadlyStatus = DrawStatUI($"TS_{u.Id}_MstDead", "Deadly Stat Dur.", state.Monster.DurationDeadlyStatus, 110);
+                    state.Monster.DurationDeadlyStatus = (uint)DrawStatUI($"TS_{u.Id}_MstDead", "Deadly Stat Dur.", (int)state.Monster.DurationDeadlyStatus, 110);
                     GUILayout.EndVertical();
                     GUILayout.BeginVertical(GUILayout.Width(220));
                     state.Monster.Special2 = DrawStatUI($"TS_{u.Id}_MstSpc2", "Special Value 2", state.Monster.Special2, 110);

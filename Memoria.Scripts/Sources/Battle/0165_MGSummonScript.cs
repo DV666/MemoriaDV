@@ -38,8 +38,8 @@ namespace Memoria.Scripts.TranceSeek
             { 1, new SummonData("GEO_MON_F9_ShivaMG", "Shiva", 2, new Byte[] { 5, 5, 5, 5, 5, 5 }, new Int32[] { 30013, 30013, 30013, 30013, 30014, 30014 }) },
             { 2, new SummonData("GEO_MON_F9_IfritMG", "Ifrit", 1, new Byte[] { 15, 15, 15, 15, 15, 15 }, new Int32[] { 30016, 30016, 30016, 30016, 30017, 30017 }) },
             { 3, new SummonData("GEO_MON_F9_RamuhMG", "Ramuh", 35, new Byte[] { 6, 6, 6, 6, 6, 6 }, new Int32[] { 30019, 30019, 30019, 30019, 30020, 30020 }) },
-            { 4, new SummonData("GEO_MON_F9_LeviathanMG", "Leviathan", 24, new Byte[] { 24, 24, 25, 24, 24, 24 }, new Int32[] { 30022, 30022, 30022, 30022, 30023, 30023 }) },
-            { 5, new SummonData("GEO_MON_F9_AsuraMG", "Asura", 2, new Byte[] { 5, 5, 5, 5, 5, 5 }, new Int32[] { 30025, 30025, 30025, 30025, 30028, 30028 }) },
+            { 4, new SummonData("GEO_MON_F9_AsuraMG", "Asura", 2, new Byte[] { 5, 5, 5, 5, 5, 5 }, new Int32[] { 30025, 30025, 30025, 30025, 30028, 30028 }) },
+            { 5, new SummonData("GEO_MON_F9_LeviathanMG", "Leviathan", 24, new Byte[] { 24, 24, 25, 24, 24, 24 }, new Int32[] { 30022, 30022, 30022, 30022, 30023, 30023 }) },
             { 6, new SummonData("GEO_MON_F9_BahamutMG", "Bahamut", 2, new Byte[] { 5, 5, 5, 5, 5, 5 }, new Int32[] { 30038, 30041, 30038, 30041, 30039, 30039 }) }
         };
 
@@ -83,11 +83,48 @@ namespace Memoria.Scripts.TranceSeek
             }
             else if (_v.Command.Power == 99 && _v.Command.HitRate == 99)
             {
-                _v.Target.MaximumHp = 99999;
-                _v.Target.CurrentHp = 99999;
-                _v.Target.Flags |= CalcFlag.HpAlteration;
-                _v.Caster.MaxDamageLimit = 99999;
-                _v.Target.HpDamage = 99999;
+                if (_v.Command.Data.info.effect_counter == 1)
+                {
+                    _v.Target.TryAlterStatuses(BattleStatus.Reflect, false, _v.Target);
+                }
+                else if (_v.Command.Data.info.effect_counter == 2)
+                {
+                    _v.Target.MaximumHp = 100000;
+                    _v.Target.CurrentHp = 100000;
+                    _v.Target.Flags |= CalcFlag.HpAlteration;
+                    _v.Caster.MaxDamageLimit = 99999;
+                    _v.Target.HpDamage = 99999;
+                }
+                else
+                {
+                    if (_v.Target.Data.gameObject != null)
+                    {
+                        Int32 fadeFrames = 20;
+                        _v.Target.RemoveStatus(BattleStatusConst.AnyPositive);
+
+                        _v.Target.AddDelayedModifier(
+                            btl =>
+                            {
+                                fadeFrames--;
+
+                                Single progress = 1f - ((Single)fadeFrames / 20f);
+                                Int16 rgbDrop = (Int16)(-128f * progress);
+
+                                CustomGeoAddColor2DrawPacket(btl.Data.gameObject, rgbDrop, rgbDrop, rgbDrop);
+                                Log.Message("Fading...");
+                                if (fadeFrames < 15)
+                                    btl_util.GeoSetABR(btl.Data.gameObject, "GEO_POLYFLAGS_TRANS_100_PLUS_25", btl.Data);
+
+                                return fadeFrames > 0;
+                            },
+                            btl =>
+                            {
+                                return;
+                            }
+                        );
+                    }
+                }
+                return;
             }
             else if(_v.Caster.Data.dms_geo_id == 1213 && _v.Command.Power == 6)
             {
@@ -161,6 +198,7 @@ namespace Memoria.Scripts.TranceSeek
                                 AnimationFactory.AddAnimWithAnimatioName(_v.Target.Data.gameObject, currentAnim);
                         }
 
+                    OverloadOnBattleInitScript.InitModelAnimations(_v.Target);
                     _v.Target.Data.bi.stop_anim = 0;
                     String animToPlay = _v.Target.Data.mot[_v.Target.Data.bi.def_idle];
                     btl_mot.setMotion(_v.Target.Data, (Byte)_v.Target.Data.bi.def_idle);

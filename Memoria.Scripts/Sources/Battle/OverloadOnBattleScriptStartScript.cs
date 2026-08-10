@@ -2,6 +2,7 @@
 using Memoria.Assets;
 using Memoria.Data;
 using Memoria.Database;
+using Memoria.Prime;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -305,30 +306,26 @@ namespace Memoria.Scripts.TranceSeek
             if (v.Command.Id == TranceSeekBattleCommand.Witchcraft && !v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Wizard_Boosted)) // Witchcraft (Vivi's SA)
                 v.Command.HitRate /= 2;
 
-            if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Propagation) && v.Command.IsManyTarget && v.Command.AbilityId >= TranceSeekBattleAbility.Regen_Multi && v.Command.AbilityId <= TranceSeekBattleAbility.AngelWhisper_Multi)
+            if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Propagation) && v.Command.IsManyTarget && TranceSeekBattleAbility.SpellUsingPropagation(v.Command.AbilityId))
             {
-                if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Propagation_Boosted))
-                    v.Command.HitRate = (v.Command.HitRate * 3) / 4;
-                else
+                if (!v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Propagation_Boosted))
                     v.Command.HitRate /= 2;
+
+                Log.Message("Caster_TSVar.SpecialSA.Propagation = " + Caster_TSVar.SpecialSA.Propagation);
 
                 if (Caster_TSVar.SpecialSA.Propagation > 0)
                 {
                     int CostMP = FF9StateSystem.Battle.FF9Battle.aa_data[v.Command.AbilityId].MP;
+                    BattleAbilityHelper.GetPatchedMPCost(ref CostMP, v.Command.AbilityId, v.Caster, v.Command.Id, v.Command.Data.info.cmdMenu, FF9StateSystem.Battle.FF9Battle.aa_data[v.Command.AbilityId]);
+
+                    CostMP = (CostMP * v.Caster.Player.mpCostFactor) / 100;
+
                     if (v.Caster.CurrentMp < CostMP)
                         v.Context.Flags |= (TranceSeekBattleCalcFlags.PropagationFail | BattleCalcFlags.Miss);
                     else
                         v.Caster.CurrentMp -= (uint)CostMP;
                 }
                 Caster_TSVar.SpecialSA.Propagation++;
-
-                v.Caster.AddDelayedModifier(
-                    caster => caster.CurrentAtb >= caster.MaximumAtb,
-                    caster =>
-                    {
-                        Caster_TSVar.SpecialSA.Propagation = 0;
-                    }
-                );
             }
 
             if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.EnchantedBlade)) // SA Enchanted blade
@@ -466,29 +463,14 @@ namespace Memoria.Scripts.TranceSeek
 
             // [TODO] To remove when this function will be fixed (in my PR https://github.com/Albeoris/Memoria/pull/1255 or before)
 
-            Int32 Castercounter = 5;
-
-            v.Caster.AddDelayedModifier(
-                caster => (Castercounter -= 1) > 0,
+            if (v.Command.Data.info.effect_counter == 1)
+            {
+                v.Caster.AddDelayedModifier(
+                caster => btl_util.IsBtlBusy(caster.Data, btl_util.BusyMode.CASTER),
                 caster =>
                 {
-                    OverloadOnBattleScriptEndScript.OnBattleScriptEnd(v); 
+                    OverloadOnBattleScriptEndScript.OnBattleScriptEnd(v);
                 }
-            );
-
-            if (Configuration.Battle.Speed == 2)
-            {
-                TranceSeekCharacterMechanic.EikoMougMechanic(v);
-            }
-            else // [TODO] Can be improved ?
-            {
-                Int32 counter = 15;
-                v.Caster.AddDelayedModifier(
-                    caster => (counter -= BattleState.ATBTickCount) > 0,
-                    caster =>
-                    {
-                        TranceSeekCharacterMechanic.EikoMougMechanic(v);
-                    }
                 );
             }
 

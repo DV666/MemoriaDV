@@ -201,12 +201,11 @@ namespace Memoria.Scripts.TranceSeek
             if (Configuration.Mod.FolderNames.Contains("TranceSeek/Options/StuffListed"))
                 SpecialFilesTranceSeek.WriteStuffInFile();
 
-            InitTSVariables();
-
             Boolean RefinedMonocleTrigger = false;
 
             foreach (BattleUnit unit in BattleState.EnumerateUnits())
             {
+                InitTSVariables(unit);
                 var StateDict = TranceSeekBattleDictionary.GetState(unit.Data);
 
                 if (unit.IsPlayer)
@@ -480,11 +479,6 @@ namespace Memoria.Scripts.TranceSeek
                         btl_stat.AlterStatus(unit, TranceSeekStatusId.ArmorUp, parameters: "+2");
                     }
 
-                    if (unit.Row == 1)
-                        unit.State().CanCover = 1;
-                    else
-                        unit.State().CanCover = 0;
-
                     if (unit.PlayerIndex == CharacterId.Steiner)
                     {
                         FF9TextTool.SetCommandName(BattleCommandId.SwordAct, TranceSeekBattleCommand.SwdArtCMDNameVanilla[Localization.CurrentDisplaySymbol]);
@@ -652,35 +646,41 @@ namespace Memoria.Scripts.TranceSeek
             }
         }
 
-        public static void InitTSVariables()
+        public static void InitTSVariables(BattleUnit unit)
         {
-            foreach (BattleUnit unit in BattleState.EnumerateUnits())
+            var state = TranceSeekBattleDictionary.GetState(unit.Data);
+
+            state.Zidane.FirstItemMug = RegularItem.NoItem;
+            state.Zidane.SecondItemMug = RegularItem.NoItem;
+            state.Vivi.PreviousSpell = BattleAbilityId.Void;
+            state.ProtectStatus = new Dictionary<BattleStatus, int> { { (BattleStatus)0, 0 } };
+            state.AbsorbElement = -1;
+            state.Monster.DurationDeadlyStatus = 100;
+            state.Monster.NerfGravity = 2;
+            state.SpecialSA.Instinct = 2;
+            state.SpecialSA.NewMaximumHP = (int)unit.MaximumHp;
+            state.SpecialSA.NewMaximumMP = (int)unit.MaximumMp;
+            state.SpecialItem.EmergencySatchel = 3;
+            state.SpecialItem.MagicalSatchel = 3;
+            state.SpecialItem.JabberworkCrestCooldown = 3;
+            state.Blank.SoakedBlade = RegularItem.NoItem;
+
+            InfusedWeaponScript.WeaponNewElement[unit.Data] = EffectElement.None;
+            InfusedWeaponScript.WeaponNewCustomElement[unit.Data] = 0;
+            InfusedWeaponScript.WeaponNewStatus[unit.Data] = 0;
+            InfusedWeaponScript.CMDVanillaName[unit.Data] = new string[] { null, null };
+
+            if (unit.IsPlayer)
             {
-                var state = TranceSeekBattleDictionary.GetState(unit.Data);
-
-                state.Zidane.FirstItemMug = RegularItem.NoItem;
-                state.Zidane.SecondItemMug = RegularItem.NoItem;
-                state.Vivi.PreviousSpell = BattleAbilityId.Void;
-                state.ProtectStatus = new Dictionary<BattleStatus, int> { { (BattleStatus)0, 0 } };
-                state.AbsorbElement = -1;
-                state.Monster.DurationDeadlyStatus = 100;
-                state.Monster.NerfGravity = 2;
-                state.SpecialSA.Instinct = 2;
-                state.SpecialSA.NewMaximumHP = (int)unit.MaximumHp;
-                state.SpecialSA.NewMaximumMP = (int)unit.MaximumMp;
-                state.SpecialItem.EmergencySatchel = 3;
-                state.SpecialItem.MagicalSatchel = 3;
-                state.SpecialItem.JabberworkCrestCooldwon = 3;
-                state.Blank.SoakedBlade = RegularItem.NoItem;
-
-                InfusedWeaponScript.WeaponNewElement[unit.Data] = EffectElement.None;
-                InfusedWeaponScript.WeaponNewCustomElement[unit.Data] = 0;
-                InfusedWeaponScript.WeaponNewStatus[unit.Data] = 0;
-                InfusedWeaponScript.CMDVanillaName[unit.Data] = new string[] { null, null };
+                if (unit.Row == 1)
+                    TranceSeekBattleDictionary.CanCover |= unit.Id;
+                else
+                    TranceSeekBattleDictionary.CanCover &= ~unit.Id;
 
                 if (unit.PlayerIndex == CharacterId.Zidane)
                     SwitchWeaponScript.InitZidaneModel(unit);
             }
+
         }
 
         private Boolean FixCoverVisualForBrother(BattleUnit brother) // TO DELETE AFTER MEMORIA UPDATE
@@ -836,7 +836,7 @@ namespace Memoria.Scripts.TranceSeek
             }
         }
 
-        public static void InitModelAnimations(BTL_DATA btl)
+        public static void InitModelAnimations(BTL_DATA btl) // [MEMORIA] To be delete on next update
         {
             if (btl == null || btl.gameObject == null)
                 return;
@@ -956,7 +956,13 @@ namespace Memoria.Scripts.TranceSeek
 
         public static readonly Dictionary<Int32, String[]> CustomModelAnimations = new Dictionary<Int32, String[]>
         {
-            { 1206, new String[] { "ANH_MON_F9_MysteriousGirlBattle_P", "ANH_MON_F9_MysteriousGirlBattle_IDLE", "ANH_MON_F9_MysteriousGirlBattle_CAST_OG", "ANH_MON_F9_MysteriousGirlBattle_HIT", "ANH_MON_F9_MysteriousGirlBattle_CAST1", "ANH_MON_F9_MysteriousGirlBattle_CAST2", "ANH_MON_F9_MysteriousGirlBattle_CAST3" } }
+            { 1206, new String[] { "ANH_MON_F9_MysteriousGirlBattle_P", "ANH_MON_F9_MysteriousGirlBattle_IDLE", "ANH_MON_F9_MysteriousGirlBattle_CAST_OG", "ANH_MON_F9_MysteriousGirlBattle_HIT", "ANH_MON_F9_MysteriousGirlBattle_CAST1", "ANH_MON_F9_MysteriousGirlBattle_CAST2", "ANH_MON_F9_MysteriousGirlBattle_CAST3" } },
+            { 1212, new String[] { "ANH_MON_F9_AsuraMG_P", "ANH_MON_F9_AsuraMG_IDLE1", "ANH_MON_F9_AsuraMG_IDLE2", "ANH_MON_F9_AsuraMG_IDLE3",
+                "ANH_MON_F9_AsuraMG_ATTACK1", "ANH_MON_F9_AsuraMG_ATTACK2", "ANH_MON_F9_AsuraMG_ATTACK3",
+                "ANH_MON_F9_AsuraMG_SWITCHHEAD_LEFT1", "ANH_MON_F9_AsuraMG_SWITCHHEAD_LEFT2", "ANH_MON_F9_AsuraMG_SWITCHHEAD_LEFT3",
+                "ANH_MON_F9_AsuraMG_SWITCHHEAD_RIGHT1", "ANH_MON_F9_AsuraMG_SWITCHHEAD_RIGHT2", "ANH_MON_F9_AsuraMG_SWITCHHEAD_RIGHT3"} },
+            { 1213, new String[] { "ANH_MON_F9_BahamutMG_P", "ANH_MON_F9_BahamutMG_IDLE", "ANH_MON_F9_BahamutMG_ATTACK", "ANH_MON_F9_BahamutMG_MEGAFLARECAST1", "ANH_MON_F9_BahamutMG_MEGAFLARECAST2", "ANH_MON_F9_BahamutMG_MEGAFLARECAST3" } }
+
         };
 
         public static class DifficultyParameters

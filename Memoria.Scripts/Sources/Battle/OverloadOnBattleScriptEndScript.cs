@@ -1,13 +1,5 @@
-﻿
-using Assets.Sources.Scripts.UI.Common;
-using FF9;
-using Memoria.Data;
-using Memoria.Database;
+﻿using Memoria.Data;
 using Memoria.Prime;
-using System;
-using System.Collections.Generic;
-using static Memoria.Scripts.TranceSeek.TranceSeekAPI;
-using static Memoria.Scripts.TranceSeek.TranceSeekBattleDictionary;
 
 namespace Memoria.Scripts.TranceSeek
 {
@@ -15,13 +7,19 @@ namespace Memoria.Scripts.TranceSeek
     {
         public static void OnBattleScriptEnd(BattleCalculator v)
         {
+            var Caster_TSVar = v.CasterState();
+            var Target_TSVar = v.TargetState();
+
             SOS_SA(v);
             TranceSeekCharacterMechanic.DragonMechanic(v);
             TranceSeekRegularItem.SpecialItemsAtEnd(v);
+            TranceSeekCharacterMechanic.EikoMougMechanic(v);
+
+            Caster_TSVar.SpecialSA.Propagation = 0;
 
             //if (Configuration.Battle.Speed == 2)
             //{
-            //EikoMougMechanic(v);
+            //  EikoMougMechanic(v);
             //}
             //else // [TODO] Can be improved ?
             //{

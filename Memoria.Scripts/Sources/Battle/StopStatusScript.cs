@@ -1,6 +1,10 @@
-﻿using System;
+﻿using FF9;
 using Memoria.Data;
+using Memoria.Prime;
 using Memoria.Scripts.TranceSeek;
+using NCalc;
+using System;
+using static SiliconStudio.Social.ResponseData;
 using Object = System.Object;
 
 namespace Memoria.DefaultScripts
@@ -8,30 +12,20 @@ namespace Memoria.DefaultScripts
     [StatusScript(BattleStatusId.Stop)]
     public class StopStatusScript : StatusScriptBase
     {
+        public Int32 Duration;
+
         public override UInt32 Apply(BattleUnit target, BattleUnit inflicter, params Object[] parameters)
         {
             base.Apply(target, inflicter, parameters);
             target.UISpriteATB = BattleHUD.ATEGray;
-            if (Target.IsUnderAnyStatus(BattleStatus.EasyKill))
-            {
-                var Target_TSVar = target.State();
-                if (Target_TSVar.Monster.DurationDeadlyStatus > 0)
-                {
-                    BattleStatusDataEntry statusData = FF9StateSystem.Battle.FF9Battle.status_data[BattleStatusId.Poison];
-                    Int32 wait = (short)(((200 + (inflicter.Will * 2) - target.Will) * statusData.ContiCnt) * (inflicter.HasSupportAbilityByIndex(TranceSeekSupportAbility.Persistence_Boosted) ? (150 / 100) : inflicter.HasSupportAbilityByIndex(TranceSeekSupportAbility.Persistence) ? (125 / 100) : 1)); ;
-                    wait = (wait * Target_TSVar.Monster.DurationDeadlyStatus) / 100;
-                    Target.AddDelayedModifier(
-                    target => (wait -= target.Data.cur.at_coef * BattleState.ATBTickCount) > 0,
-                    target =>
-                    {
-                        target.RemoveStatus(BattleStatus.Stop);
-                    }
-                    );
-                    Target_TSVar.Monster.DurationDeadlyStatus -= 20;
-                }
-                else
-                    return btl_stat.ALTER_RESIST;
-            }
+
+            if (inflicter == null)
+                inflicter = target;
+
+            // Since Stop is freezing the ATB, we need to use this functions to "calculate" a kind of counti value.
+            Duration = CalculationDuration(target, inflicter);
+            target.AddDelayedModifier(CountiCountForStop, null);
+
             TranceSeekAPI.SA_StatusApply(inflicter, false);
             return btl_stat.ALTER_SUCCESS;
         }
@@ -40,6 +34,37 @@ namespace Memoria.DefaultScripts
         {
             Target.UISpriteATB = BattleHUD.ATENormal;
             return true;
+        }
+
+        private int CalculationDuration(BattleUnit target, BattleUnit inflicter)
+        {
+            STAT_INFO stat = target.Data.stat;
+            BattleStatusDataEntry statusData = FF9StateSystem.Battle.FF9Battle.status_data[BattleStatusId.Stop];
+            Int16 defaultFactor = (Int16)(200 + inflicter.Will * 2 - target.Will);
+            int CountiStop = (Int16)(statusData.ContiCnt * defaultFactor);
+
+            if (target.IsUnderAnyStatus(BattleStatus.EasyKill))
+            {
+                var Target_TSVar = target.State();
+                target.Data.stat.duration_factor[BattleStatusId.Stop] = (target.Data.stat.duration_factor[BattleStatusId.Stop] * (Target_TSVar.Monster.DurationDeadlyStatus) / 100);
+                Target_TSVar.Monster.DurationDeadlyStatus -= 20;
+            }
+
+            return (Int16)(stat.duration_factor[BattleStatusId.Stop] * CountiStop);
+        }
+
+        private Boolean CountiCountForStop(BattleUnit target)
+        {
+            if (Duration > 0)
+            {
+                Duration -= btl_para.GetATBCoef() * BattleState.ATBTickCount;
+                return true;
+            }
+            else
+            {
+                target.RemoveStatus(BattleStatus.Stop);
+                return false;
+            }
         }
     }
 }

@@ -46,6 +46,28 @@ namespace Memoria.Scripts.TranceSeek
                 dictbattle[5] = value;
             }
         }
+
+        public static int CanCover
+        {
+            get
+            {
+                if (FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1000, out Dictionary<Int32, Int32> dictbattle))
+                    if (dictbattle.TryGetValue(6, out int canCoverValue))
+                        return canCoverValue;
+
+                return 0;
+            }
+            set
+            {
+                if (!FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1000, out Dictionary<Int32, Int32> dictbattle))
+                {
+                    dictbattle = new Dictionary<Int32, Int32>();
+                    FF9StateSystem.EventState.gScriptDictionary.Add(1000, dictbattle);
+                }
+
+                dictbattle[6] = value;
+            }
+        }
     }
 
     public static class TranceSeekExtensions
@@ -254,7 +276,7 @@ namespace Memoria.Scripts.TranceSeek
         public int Special1 { get; set; }
         public int Special2 { get; set; }
         public Boolean HPBoss10000 { get; set; }
-        public int DurationDeadlyStatus { get; set; }
+        public uint DurationDeadlyStatus { get; set; }
         public int NerfGravity { get; set; }
         public Boolean NoDodge { get; set; }
     }
@@ -287,7 +309,7 @@ namespace Memoria.Scripts.TranceSeek
         public int EmergencySatchel { get; set; }
         public int MagicalSatchel { get; set; }
         public int MechanicalArmor { get; set; }
-        public uint JabberworkCrestCooldwon { get; set; }
+        public uint JabberworkCrestCooldown { get; set; }
     }
 
     public class NewEffectElements
@@ -379,29 +401,6 @@ namespace Memoria.Scripts.TranceSeek
                 dictbattle[1] = value;
             }
         }
-
-        public int CanCover
-        {
-            get
-            {
-                if (FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1000, out Dictionary<Int32, Int32> dictbattle))
-                    if (dictbattle.TryGetValue(6, out int canCoverValue))
-                        return canCoverValue;
-
-                return 0;
-            }
-            set
-            {
-                if (!FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1000, out Dictionary<Int32, Int32> dictbattle))
-                {
-                    dictbattle = new Dictionary<Int32, Int32>();
-                    FF9StateSystem.EventState.gScriptDictionary.Add(1000, dictbattle);
-                }
-
-                dictbattle[6] = value;
-            }
-        }
-
         public int SuperCheat { get; set; }
     }
         /*

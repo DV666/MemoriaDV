@@ -724,7 +724,7 @@ namespace Memoria.Scripts.TranceSeek
                     v.Target.HpDamage /= 2;
                 else if (CasterWeaponShape == 42 && v.Target.HpDamage > 0 && (v.Command.ScriptId == 48 || v.Command.ScriptId == 83)) // Heavy Spear (on Jump)
                     v.Target.HpDamage += ((v.Target.HpDamage * BonusDamageFromWeapon(v.Caster.Weapon)) / 100);
-                else if (CasterWeaponShape == 56 && v.Target.HpDamage > 0 && v.Command.Id != BattleCommandId.Item && v.Command.Id != BattleCommandId.AutoPotion) // Axe
+                else if ((CasterWeaponShape == 56 || CasterWeaponShape == 88) && v.Target.HpDamage > 0 && v.Command.Id != BattleCommandId.Item && v.Command.Id != BattleCommandId.AutoPotion) // Axe
                     v.Target.HpDamage = UnityEngine.Random.Range(v.Target.HpDamage / 10, v.Target.HpDamage);
                 else if (v.Caster.Weapon == GoblinSword && v.Caster.Level == v.Target.Level && v.Command.AbilityId == BattleAbilityId.Attack)
                     v.Target.HpDamage = v.Target.HpDamage * 3;
@@ -892,15 +892,15 @@ namespace Memoria.Scripts.TranceSeek
             if (v.Caster.Accessory == JabberworkCrest)
             {
                 var Caster_Item_TSVar = v.CasterState().SpecialItem;
-                if (Caster_Item_TSVar.JabberworkCrestCooldwon == 0)
+                if (Caster_Item_TSVar.JabberworkCrestCooldown == 0)
                 {
                     List<BattleStatusId> statuschoosen = new List<BattleStatusId> { TranceSeekStatusId.PowerUp, TranceSeekStatusId.MagicUp, TranceSeekStatusId.ArmorUp, TranceSeekStatusId.MentalUp };
                     BattleStatusId statusselected = statuschoosen[GameRandom.Next16() % statuschoosen.Count];
                     btl_stat.AlterStatus(v.Caster, statusselected, v.Caster);
-                    Caster_Item_TSVar.JabberworkCrestCooldwon = 3;
+                    Caster_Item_TSVar.JabberworkCrestCooldown = 3;
                 }
                 else
-                    Caster_Item_TSVar.JabberworkCrestCooldwon--;
+                    Caster_Item_TSVar.JabberworkCrestCooldown--;
             }
         }
 

@@ -28,7 +28,9 @@ namespace Memoria.DefaultScripts
             else
             {
                 if (target.PlayerIndex == CharacterId.Steiner)
+                {
                     Gardien = 1;
+                }
                 if (target.PlayerIndex == CharacterId.Amarant)
                 {
                     Duel = 1;
