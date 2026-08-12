@@ -867,8 +867,8 @@ namespace Memoria.Scripts.TranceSeek
             { 1209, new IconOffsetPatch(new SByte[] { -18, 0, 0, -1, -6, -8 }, new SByte[] { -10, -2, -10, -8, -5, 0 })}, // Ifrit FF4 (MG)
             { 1210, new IconOffsetPatch(new SByte[] { -16, 0, 0, -1, -6, -8 }, new SByte[] { 0, -2, -10, -8, -5, 0 })}, // Ramuh FF4 (MG)
             { 1211, new IconOffsetPatch(new SByte[] { -16, 0, -16, -1, -20, -8 }, new SByte[] { 0, -2, -10, -8, -5, 0 })}, // Leviathan FF4 (MG)
-            { 1212, new IconOffsetPatch(new SByte[] { -20, 0, -10, -1, -6, -18 }, new SByte[] { -1, -2, -10, -8, -5, 0 })}, // Asura FF4 (MG)
-            { 1213, new IconOffsetPatch(new SByte[] { -20, 0, -10, -1, -6, -18 }, new SByte[] { -1, -2, -10, -8, -5, 0 })} // Bahamut FF4 (MG)
+            { 1212, new IconOffsetPatch(new SByte[] { -10, 0, -10, 4, -6, -18 }, new SByte[] { -5, -10, -10, -8, -10, 0 })}, // Asura FF4 (MG)
+            { 1213, new IconOffsetPatch(new SByte[] { -10, 0, -2, 4, -6, -15 }, new SByte[] { -1, -14, -10, -8, -10, 0 })} // Bahamut FF4 (MG)
 
         };
 
@@ -951,7 +951,8 @@ namespace Memoria.Scripts.TranceSeek
             { RegularItem.PlatinaArmor, 2 },
             { RegularItem.DarkGear, 4 },
             { RegularItem.BlackBelt, 8 },
-            { TranceSeekRegularItem.Onyxarmor, 4 }
+            { TranceSeekRegularItem.Onyxarmor, 4 },
+            { TranceSeekRegularItem.LunarRobe, 8 }
         };
 
         public static readonly Dictionary<Int32, String[]> CustomModelAnimations = new Dictionary<Int32, String[]>

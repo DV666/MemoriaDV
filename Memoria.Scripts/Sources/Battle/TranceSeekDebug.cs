@@ -1244,6 +1244,88 @@ namespace Memoria.Scripts.TranceSeek
                     GUILayout.EndVertical();
                 }
 
+                GUILayout.Space(5);
+                GUILayout.BeginVertical("box");
+                GUILayout.Label("<b>Transform (Position, Rotation & Scale)</b>", new GUIStyle(GUI.skin.label) { richText = true });
+
+                GUILayout.Label("<b>Position (X, Y, Z) :</b>", new GUIStyle(GUI.skin.label) { richText = true });
+                GUILayout.BeginHorizontal();
+                float newPx = DrawFloatStatUI($"{u.Id}_PosX", "X", u.Data.pos.x, 20, 50);
+                float newPy = DrawFloatStatUI($"{u.Id}_PosY", "Y", u.Data.pos.y, 20, 50);
+                float newPz = DrawFloatStatUI($"{u.Id}_PosZ", "Z", u.Data.pos.z, 20, 50);
+                GUILayout.EndHorizontal();
+
+                if (newPx != u.Data.pos.x || newPy != u.Data.pos.y || newPz != u.Data.pos.z)
+                {
+                    Vector3 newPos = new Vector3(newPx, newPy, newPz);
+
+                    u.Data.pos = newPos;
+                    u.Data.base_pos = newPos;
+                    u.Data.evt.posBattle = newPos;
+                    u.Data.evt.pos[0] = newPx;
+                    u.Data.evt.pos[1] = newPy;
+                    u.Data.evt.pos[2] = newPz;
+
+                    if (u.Data.gameObject != null)
+                        u.Data.gameObject.transform.localPosition = newPos;
+                }
+
+                Vector3 currentEuler = u.Data.rot.eulerAngles;
+                GUILayout.Label("<b>Rotation Euler (X, Y, Z) :</b>", new GUIStyle(GUI.skin.label) { richText = true });
+                GUILayout.BeginHorizontal();
+                float newRx = DrawFloatStatUI($"{u.Id}_RotX", "X", currentEuler.x, 20, 50);
+                float newRy = DrawFloatStatUI($"{u.Id}_RotY", "Y", currentEuler.y, 20, 50);
+                float newRz = DrawFloatStatUI($"{u.Id}_RotZ", "Z", currentEuler.z, 20, 50);
+                GUILayout.EndHorizontal();
+
+                if (Mathf.Abs(newRx - currentEuler.x) > 0.01f || Mathf.Abs(newRy - currentEuler.y) > 0.01f || Mathf.Abs(newRz - currentEuler.z) > 0.01f)
+                {
+                    Quaternion newRot = Quaternion.Euler(newRx, newRy, newRz);
+                    u.Data.rot = newRot;
+                    u.Data.evt.rotBattle = newRot;
+
+                    if (u.Data.gameObject != null)
+                        u.Data.gameObject.transform.localRotation = newRot;
+                }
+
+                GUILayout.Label("<b>Scale (GeoScale - Def: 4096) :</b>", new GUIStyle(GUI.skin.label) { richText = true });
+                GUILayout.BeginHorizontal();
+                int newSx = DrawStatUI($"{u.Id}_ScaleX", "X", u.Data.geo_scale_x, 20);
+                int newSy = DrawStatUI($"{u.Id}_ScaleY", "Y", u.Data.geo_scale_y, 20);
+                int newSz = DrawStatUI($"{u.Id}_ScaleZ", "Z", u.Data.geo_scale_z, 20);
+                GUILayout.EndHorizontal();
+
+                if (newSx != u.Data.geo_scale_x || newSy != u.Data.geo_scale_y || newSz != u.Data.geo_scale_z)
+                {
+                    geo.geoScaleSetXYZ(u.Data, newSx, newSy, newSz, false);
+                }
+
+                if (GUILayout.Button("Reset Origine", GUILayout.Height(25)))
+                {
+                    Vector3 orig = u.Data.original_pos;
+                    u.Data.pos = orig;
+                    u.Data.base_pos = orig;
+                    u.Data.evt.posBattle = orig;
+                    u.Data.evt.pos[0] = orig.x;
+                    u.Data.evt.pos[1] = orig.y;
+                    u.Data.evt.pos[2] = orig.z;
+
+                    if (u.Data.gameObject != null)
+                    {
+                        u.Data.gameObject.transform.localPosition = orig;
+                        u.Data.gameObject.transform.localRotation = Quaternion.identity;
+                    }
+
+                    u.Data.rot.eulerAngles = new Vector3(0f, 0f, 180f);
+                    u.Data.evt.rotBattle.eulerAngles = new Vector3(0f, 0f, 180f);
+
+                    u.ScaleModel(u.Data.geo_scale_default > 0 ? u.Data.geo_scale_default : 4096);
+                    _statTextCache.Clear();
+                    GUI.FocusControl(null);
+                    SoundLib.PlaySoundEffect(103);
+                }
+
+                GUILayout.EndVertical();
                 GUILayout.EndScrollView();
             }
 
@@ -2570,6 +2652,38 @@ namespace Memoria.Scripts.TranceSeek
 
                 GUILayout.EndVertical();
                 GUI.DragWindow();
+            }
+
+            private float DrawFloatStatUI(string k, string l, float v, int labelWidth = 20, int fieldWidth = 50)
+            {
+                GUILayout.BeginHorizontal();
+                GUILayout.Label(l, GUILayout.Width(labelWidth));
+
+                if (GUILayout.Button("-", GUILayout.Width(20)))
+                {
+                    v -= 10f;
+                    _statTextCache[k] = v.ToString("F0");
+                    GUI.FocusControl(null);
+                }
+
+                if (!_statTextCache.ContainsKey(k))
+                    _statTextCache[k] = v.ToString("F0");
+
+                GUI.SetNextControlName(k);
+                _statTextCache[k] = GUILayout.TextField(_statTextCache[k], GUILayout.Width(fieldWidth));
+
+                if (GUILayout.Button("+", GUILayout.Width(20)))
+                {
+                    v += 10f;
+                    _statTextCache[k] = v.ToString("F0");
+                    GUI.FocusControl(null);
+                }
+                GUILayout.EndHorizontal();
+
+                if (float.TryParse(_statTextCache[k].Replace(',', '.'), System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out float parsed))
+                    return parsed;
+
+                return v;
             }
 
             private void RestoreAllFieldAnimations()

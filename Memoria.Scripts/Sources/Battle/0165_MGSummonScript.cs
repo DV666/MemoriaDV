@@ -38,9 +38,9 @@ namespace Memoria.Scripts.TranceSeek
             { 1, new SummonData("GEO_MON_F9_ShivaMG", "Shiva", 2, new Byte[] { 5, 5, 5, 5, 5, 5 }, new Int32[] { 30013, 30013, 30013, 30013, 30014, 30014 }) },
             { 2, new SummonData("GEO_MON_F9_IfritMG", "Ifrit", 1, new Byte[] { 15, 15, 15, 15, 15, 15 }, new Int32[] { 30016, 30016, 30016, 30016, 30017, 30017 }) },
             { 3, new SummonData("GEO_MON_F9_RamuhMG", "Ramuh", 35, new Byte[] { 6, 6, 6, 6, 6, 6 }, new Int32[] { 30019, 30019, 30019, 30019, 30020, 30020 }) },
-            { 4, new SummonData("GEO_MON_F9_AsuraMG", "Asura", 2, new Byte[] { 5, 5, 5, 5, 5, 5 }, new Int32[] { 30025, 30025, 30025, 30025, 30028, 30028 }) },
-            { 5, new SummonData("GEO_MON_F9_LeviathanMG", "Leviathan", 24, new Byte[] { 24, 24, 25, 24, 24, 24 }, new Int32[] { 30022, 30022, 30022, 30022, 30023, 30023 }) },
-            { 6, new SummonData("GEO_MON_F9_BahamutMG", "Bahamut", 2, new Byte[] { 5, 5, 5, 5, 5, 5 }, new Int32[] { 30038, 30041, 30038, 30041, 30039, 30039 }) }
+            { 4, new SummonData("GEO_MON_F9_AsuraMG", "Asura", 3, new Byte[] { 1, 8, 1, 1, 1, 1 }, new Int32[] { 30025, 30025, 30025, 30025, 30028, 30028 }) },
+            { 5, new SummonData("GEO_MON_F9_LeviathanMG", "Leviathan", 18, new Byte[] { 24, 24, 25, 24, 24, 24 }, new Int32[] { 30022, 30022, 30022, 30022, 30023, 30023 }) },
+            { 6, new SummonData("GEO_MON_F9_BahamutMG", "Bahamut", 2, new Byte[] { 20, 15, 20, 21, 20, 21 }, new Int32[] { 30038, 30041, 30038, 30041, 30039, 30039 }) }
         };
 
         private readonly BattleCalculator _v;
@@ -99,21 +99,18 @@ namespace Memoria.Scripts.TranceSeek
                 {
                     if (_v.Target.Data.gameObject != null)
                     {
-                        Int32 fadeFrames = 20;
-                        _v.Target.RemoveStatus(BattleStatusConst.AnyPositive);
+                        Int32 totalFrames = 15;
+                        Int32 fadeFrames = totalFrames;
 
+                        _v.Target.RemoveStatus(BattleStatusConst.AnyPositive);
                         _v.Target.AddDelayedModifier(
                             btl =>
                             {
                                 fadeFrames--;
 
-                                Single progress = 1f - ((Single)fadeFrames / 20f);
+                                Single progress = 1f - ((Single)fadeFrames / (Single)totalFrames);
                                 Int16 rgbDrop = (Int16)(-128f * progress);
-
                                 CustomGeoAddColor2DrawPacket(btl.Data.gameObject, rgbDrop, rgbDrop, rgbDrop);
-                                Log.Message("Fading...");
-                                if (fadeFrames < 15)
-                                    btl_util.GeoSetABR(btl.Data.gameObject, "GEO_POLYFLAGS_TRANS_100_PLUS_25", btl.Data);
 
                                 return fadeFrames > 0;
                             },
@@ -171,6 +168,9 @@ namespace Memoria.Scripts.TranceSeek
                     else
                         newModel = ModelFactory.CreateModel(summon.ModelName, true);
 
+                    if (battlebg.BattleRoot != null)
+                        newModel.transform.SetParent(battlebg.BattleRoot.transform, false);
+
                     newModel.transform.localPosition = currentPos;
                     newModel.transform.localRotation = currentRot;
                     _v.Target.Data.gameObject = newModel;
@@ -215,7 +215,7 @@ namespace Memoria.Scripts.TranceSeek
                     geo.geoScaleUpdate(_v.Target.Data, true);
                     _v.Target.Data.gameObject.SetActive(true);
 
-                    if (Key == 3)
+                    if (Key == 3) // Ramuh weapon
                     {
                         String weaponName = "GEO_WEP_RamuhRod";
                         GameObject weaponGeo = ModelFactory.CreateModel("BattleMap/BattleModel/battle_weapon/" + weaponName + "/" + weaponName, true);
@@ -247,6 +247,21 @@ namespace Memoria.Scripts.TranceSeek
                             }
                         }
                     }
+                    else if (Key == 6) // Better position for Bahamut
+                    {
+                        Vector3 newPos = new Vector3(-100f, 0, 900f);
+
+                        _v.Target.Data.pos = newPos;
+                        _v.Target.Data.base_pos = newPos;
+                        _v.Target.Data.evt.posBattle = newPos;
+                        _v.Target.Data.evt.pos[0] = newPos.x;
+                        _v.Target.Data.evt.pos[1] = newPos.y;
+                        _v.Target.Data.evt.pos[2] = newPos.z;
+
+                        if (_v.Target.Data.gameObject != null)
+                            _v.Target.Data.gameObject.transform.localPosition = newPos;
+                    }
+
                 }
                 else
                 {
