@@ -6,8 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using static BTL_DATA;
-using static UIManager;
 
 namespace Memoria.Scripts.TranceSeek
 {
@@ -15,9 +13,6 @@ namespace Memoria.Scripts.TranceSeek
     {
         public static PLAYER CurrentPlayer;
         private static bool _isMenuInjected = false;
-
-        private static List<PLAYER> PlayerPreventEncounter = new List<PLAYER>();
-        private static bool _disableencounter = false;
 
         private Boolean HPColored = Configuration.Mod.FolderNames.Contains("TranceSeek/Options/ColoredHP");
         private Boolean MPColored = Configuration.Mod.FolderNames.Contains("TranceSeek/Options/ColoredMP");
@@ -130,16 +125,6 @@ namespace Memoria.Scripts.TranceSeek
 
             if (!BoostedSAIndicatorDisabled)
                 CheckFadeNextBoostedSA(player);
-
-            if (!PlayerPreventEncounter.Contains(player) && player.equip.Accessory == TranceSeekRegularItem.MalboroIncense)
-                PlayerPreventEncounter.Add(player);
-            else if (PlayerPreventEncounter.Contains(player) && player.equip.Accessory != TranceSeekRegularItem.MalboroIncense)
-                PlayerPreventEncounter.Remove(player);
-
-            if (PlayerPreventEncounter.Count > 0)
-                FF9StateSystem.Settings.IsBoosterButtonActive[4] = true;
-            else
-                FF9StateSystem.Settings.IsBoosterButtonActive[4] = false;
 
             return result;
         }

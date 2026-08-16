@@ -54,28 +54,32 @@ namespace Memoria.Scripts.TranceSeek
         }
     }
 
-    /*public static class ModInitializer
+    public static class EnemyPhysicalRowScript
     {
         [ModuleInitializer]
         public static void RunOnAssemblyLoad()
         {
             try
             {
-                GameObject watcherObj = new GameObject("SaveLoadWatcher");
+                GameObject watcherObj = new GameObject("OreScript");
                 GameObject.DontDestroyOnLoad(watcherObj);
-                watcherObj.AddComponent<TonModWatcher>();
+                watcherObj.AddComponent<OreScript>();
             }
             catch (Exception)
             {
             }
         }
-    }*/
+    }
 
-    public class TonModWatcher : MonoBehaviour
+    public class OreScript : MonoBehaviour
     {
         private bool _initgame = false;
         private bool _wasInLoadMenu = false;
         private bool _wasInTitleScreen = true;
+        private bool _wasInFirstMap = false;
+        private bool _pendingHardcoreCheck = false;
+
+        private const long EXPECTED_HARDCORE_HASH = -7871705723445345604;
 
         void Update()
         {
@@ -86,9 +90,6 @@ namespace Memoria.Scripts.TranceSeek
                 if (ui == null || ui.SaveLoadScene == null || ui.TitleScene == null)
                     return;
 
-                bool isInLoadMenu = ui.SaveLoadScene.isActiveAndEnabled && ui.SaveLoadScene.Type == SaveLoadUI.SerializeType.Load;
-                bool isInTitleScreen = ui.TitleScene.isActiveAndEnabled;
-
                 if (!_initgame)
                 {
                     if (!SpecialFilesTranceSeek.FixSpecificFields())
@@ -97,17 +98,32 @@ namespace Memoria.Scripts.TranceSeek
                     _initgame = true;
                 }
 
+                bool isInLoadMenu = ui.SaveLoadScene.isActiveAndEnabled && ui.SaveLoadScene.Type == SaveLoadUI.SerializeType.Load;
+                bool isInTitleScreen = ui.TitleScene.isActiveAndEnabled;
+                bool isInFirstMap = (FF9StateSystem.Common != null && FF9StateSystem.Common.FF9 != null && FF9StateSystem.Common.FF9.fldMapNo == 50);
+
                 if (_wasInLoadMenu && !isInLoadMenu)
-                    if (IsPlayerReady()) OnSaveLoaded("Moogle");
+                    _pendingHardcoreCheck = true;
 
                 if (_wasInTitleScreen && !isInTitleScreen)
-                    if (IsPlayerReady()) OnSaveLoaded("Écran Titre");
+                    _pendingHardcoreCheck = true;
+
+                if (isInFirstMap && !_wasInFirstMap)
+                    _pendingHardcoreCheck = true;
+
+                if (_pendingHardcoreCheck && IsPlayerReady())
+                {
+                    _pendingHardcoreCheck = false;
+                    OnSaveLoaded();
+                }
 
                 _wasInLoadMenu = isInLoadMenu;
                 _wasInTitleScreen = isInTitleScreen;
+                _wasInFirstMap = isInFirstMap;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Memoria.Prime.Log.Error($"[Trance Seek] Erreur Update BambiWatcher : {ex.Message}");
             }
         }
 
@@ -118,313 +134,340 @@ namespace Memoria.Scripts.TranceSeek
                    FF9StateSystem.Common.FF9.party != null;
         }
 
-        private void OnSaveLoaded(string source)
+        private void OnSaveLoaded()
         {
-            //EncryptAllDataFiles();
-            //VerifyAndRestoreActionsCSV();
-            if (FF9StateSystem.EventState.gEventGlobal[1403] >= 4 && FF9StateSystem.EventState.gEventGlobal[1403] <= 6 && false)
+            if (FF9StateSystem.EventState.gEventGlobal[1407] == 0)
+                return;
+
+            RestoreHardcoreAbilityFeatures();
+            EnforceHardcoreIni();
+
+            long currentHash = ComputeData();
+
+#if DEV_TS
+            Memoria.Prime.Log.Message($"[Trance Seek] Hash actuel des données : {currentHash}");
+#endif
+
+            if (currentHash != EXPECTED_HARDCORE_HASH)
             {
-                ForceCheatValue("SpeedTimer", true);
-                ForceCheatValue("BattleAssistance", false);
-                ForceCheatValue("Attack9999", false);
-                ForceCheatValue("NoRandomEncounter", false);
-                ForceCheatValue("MasterSkill", false);
-                ForceCheatValue("LvMax", false);
-                ForceCheatValue("GilMax", false);
-
-                try
-                {
-                    var assembly = System.Reflection.Assembly.GetExecutingAssembly();
-
-                    string resourceName = assembly.GetManifestResourceNames().FirstOrDefault(str => str.EndsWith("AbilityFeaturesTSBackup.enc"));
-
-                    if (resourceName != null)
-                    {
-                        byte[] key = System.Text.Encoding.UTF8.GetBytes("TranceSeekSecretKey1234567890123");
-                        byte[] iv = System.Text.Encoding.UTF8.GetBytes("TranceSeekIV5678");
-
-                        string decryptedText = "";
-
-                        using (System.IO.Stream internalStream = assembly.GetManifestResourceStream(resourceName))
-                        using (System.Security.Cryptography.Aes aes = System.Security.Cryptography.Aes.Create())
-                        {
-                            aes.Key = key;
-                            aes.IV = iv;
-
-                            using (System.Security.Cryptography.ICryptoTransform decryptor = aes.CreateDecryptor())
-                            using (System.Security.Cryptography.CryptoStream cs = new System.Security.Cryptography.CryptoStream(internalStream, decryptor, System.Security.Cryptography.CryptoStreamMode.Read))
-
-                            using (System.IO.StreamReader reader = new System.IO.StreamReader(cs, System.Text.Encoding.UTF8))
-                            {
-                                decryptedText = reader.ReadToEnd();
-                            }
-                        }
-
-                        Dictionary<Memoria.Data.SupportAbility, Memoria.Data.SupportingAbilityFeature> result = new Dictionary<Memoria.Data.SupportAbility, Memoria.Data.SupportingAbilityFeature>();
-
-                        ff9abil.LoadAbilityFeatureFile(ref result, decryptedText, "Encrypted_AbilityFeaturesTSBackup");
-
-                        ff9abil._FF9Abil_SaFeature = result;
-
-                    }
-                }
-                catch (Exception)
-                {
-                }
-
-                try
-                {
-                    Type scriptsLoaderType = typeof(Memoria.Scripts.ScriptsLoader);
-
-                    FieldInfo sResultField = scriptsLoaderType.GetField("s_result", BindingFlags.NonPublic | BindingFlags.Static);
-
-                    if (sResultField != null)
-                    {
-                        IEnumerable resultsList = sResultField.GetValue(null) as IEnumerable;
-
-                        if (resultsList != null)
-                        {
-                            foreach (object res in resultsList)
-                            {
-                                FieldInfo dllPathField = res.GetType().GetField("DLLPath", BindingFlags.Public | BindingFlags.Instance);
-                                string dllPath = dllPathField?.GetValue(res) as string;
-
-                                if (!string.IsNullOrEmpty(dllPath) &&
-                                    !dllPath.Contains("TranceSeek") &&
-                                    !dllPath.EndsWith("Memoria.Scripts.dll"))
-                                {
-                                    FieldInfo overloadsField = res.GetType().GetField("OverloadableMethodScripts", BindingFlags.Public | BindingFlags.Instance);
-
-                                    if (overloadsField != null)
-                                    {
-                                        object overloadsDict = overloadsField.GetValue(res);
-                                        MethodInfo clearMethod = overloadsDict.GetType().GetMethod("Clear");
-                                        clearMethod?.Invoke(overloadsDict, null);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                catch (Exception)
-                {
-                }
+#if DEV_TS
+                Memoria.Prime.Log.Warning("[Trance Seek] Falsification des fichiers CSV (Items, Armes ou PA) détectée !");
+#endif
+                Panpan();
             }
         }
 
-        private void ForceCheatValue(string cheatName, bool newValue)
+#if DEV_TS
+        // powershell -NoProfile -Command "$key = [System.Text.Encoding]::UTF8.GetBytes('BambiPanpanQueue2Billard'); $iv = [System.Text.Encoding]::UTF8.GetBytes('Poichilulz666_OG'); $aes = [System.Security.Cryptography.Aes]::Create(); $aes.Key = $key; $aes.IV = $iv; $inBytes = [System.IO.File]::ReadAllBytes('D:\SteamLibrary\steamapps\common\FINAL FANTASY IX\TranceSeek\StreamingAssets\Data\Characters\Abilities\AbilityFeatures.txt'); $encryptor = $aes.CreateEncryptor(); $outBytes = $encryptor.TransformFinalBlock($inBytes, 0, $inBytes.Length); [System.IO.File]::WriteAllBytes('$(ProjectDir)AbilityFeaturesTSBackup.enc', $outBytes)"
+#endif
+
+        byte[] key = new byte[] { 66, 97, 109, 98, 105, 80, 97, 110, 112, 97, 110, 81, 117, 101, 117, 101, 50, 66, 105, 108, 108, 97, 114, 100 };
+
+        byte[] iv = new byte[] { 80, 111, 105, 99, 104, 105, 108, 117, 108, 122, 54, 54, 54, 95, 73, 86 };
+
+        private void RestoreHardcoreAbilityFeatures()
         {
             try
             {
-                Type configType = typeof(Configuration);
-                object instance = null;
+                var assembly = System.Reflection.Assembly.GetExecutingAssembly();
+                string resourceName = assembly.GetManifestResourceNames().FirstOrDefault(str => str.EndsWith("AbilityFeaturesTSBackup.enc"));
 
-                var instanceProp = configType.GetProperty("Instance", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
-                if (instanceProp != null) instance = instanceProp.GetValue(null, null);
+                if (resourceName != null)
+                {
+                    string decryptedText = "";
+
+                    using (System.IO.Stream internalStream = assembly.GetManifestResourceStream(resourceName))
+                    using (System.Security.Cryptography.Aes aes = System.Security.Cryptography.Aes.Create())
+                    {
+                        aes.Key = key;
+                        aes.IV = iv;
+
+                        using (System.Security.Cryptography.ICryptoTransform decryptor = aes.CreateDecryptor())
+                        using (System.Security.Cryptography.CryptoStream cs = new System.Security.Cryptography.CryptoStream(internalStream, decryptor, System.Security.Cryptography.CryptoStreamMode.Read))
+                        using (System.IO.StreamReader reader = new System.IO.StreamReader(cs, System.Text.Encoding.UTF8))
+                        {
+                            decryptedText = reader.ReadToEnd();
+                        }
+                    }
+
+                    Dictionary<SupportAbility, SupportingAbilityFeature> result = new Dictionary<SupportAbility, SupportingAbilityFeature>();
+                    ff9abil.LoadAbilityFeatureFile(ref result, decryptedText, "Encrypted_AbilityFeaturesTSBackup");
+                    ff9abil._FF9Abil_SaFeature = result;
+#if DEV_TS
+                    Memoria.Prime.Log.Message("[Trance Seek] AbilityFeatures restaurés depuis le fichier chiffré.");
+#endif
+                }
+#if DEV_TS
                 else
                 {
-                    var instanceField = configType.GetField("Instance", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
-                    if (instanceField != null) instance = instanceField.GetValue(null);
+
+                    Memoria.Prime.Log.Message("[Trance Seek] AbilityFeaturesTSBackup.enc non trouvé...");
+                }
+#endif
+            }
+            catch (Exception ex)
+            {
+                Memoria.Prime.Log.Warning($"[Trance Seek] Impossible de restaurer les AbilityFeatures : {ex.Message}");
+            }
+        }
+
+        private long ComputeData()
+        {
+            long hash = 17;
+
+            unchecked
+            {
+                if (ff9item._FF9Item_Data != null)
+                {
+                    foreach (var item in ff9item._FF9Item_Data.Values)
+                    {
+                        hash = (hash * 397) ^ item.price;
+                        hash = (hash * 397) ^ item.selling_price;
+                        hash = (hash * 397) ^ (long)item.type;
+                        hash = (hash * 397) ^ (long)item.equip;
+                        hash = (hash * 397) ^ item.bonus;
+                        hash = (hash * 397) ^ item.weapon_id;
+                        hash = (hash * 397) ^ item.armor_id;
+                        hash = (hash * 397) ^ item.effect_id;
+
+                        if (item.ability != null)
+                        {
+                            foreach (int abil in item.ability)
+                                hash = (hash * 397) ^ abil;
+                        }
+                    }
                 }
 
-                if (instance == null) return;
-
-                var cheatsField = configType.GetField("_cheats", BindingFlags.NonPublic | BindingFlags.Instance);
-                if (cheatsField == null) return;
-
-                object cheatsSection = cheatsField.GetValue(instance);
-                if (cheatsSection == null) return;
-
-                var specificCheatField = cheatsSection.GetType().GetField(cheatName, BindingFlags.Public | BindingFlags.Instance);
-                if (specificCheatField != null)
+                if (ff9item._FF9Item_Info != null)
                 {
-                    object iniValueObj = specificCheatField.GetValue(cheatsSection);
-                    if (iniValueObj != null)
+                    foreach (var effect in ff9item._FF9Item_Info.Values)
                     {
-                        var valueField = iniValueObj.GetType().GetField("Value", BindingFlags.Public | BindingFlags.Instance);
+                        hash = (hash * 397) ^ (long)effect.info.Target;
+                        hash = (hash * 397) ^ effect.Ref.ScriptId;
+                        hash = (hash * 397) ^ effect.Ref.Power;
+                        hash = (hash * 397) ^ effect.Ref.Elements;
+                        hash = (hash * 397) ^ effect.Ref.Rate;
+                        hash = (hash * 397) ^ (long)effect.status;
+                    }
+                }
+
+                if (ff9weap.WeaponData != null)
+                {
+                    foreach (var weap in ff9weap.WeaponData.Values)
+                    {
+                        hash = (hash * 397) ^ weap.Ref.ScriptId;
+                        hash = (hash * 397) ^ weap.Ref.Power;
+                        hash = (hash * 397) ^ weap.Ref.Elements;
+                        hash = (hash * 397) ^ weap.Ref.Rate;
+                        hash = (hash * 397) ^ (long)weap.Category;
+                        hash = (hash * 397) ^ (long)weap.StatusIndex;
+                    }
+                }
+
+                if (ff9armor.ArmorData != null)
+                {
+                    foreach (var armor in ff9armor.ArmorData.Values)
+                    {
+                        hash = (hash * 397) ^ armor.PhysicalDefence;
+                        hash = (hash * 397) ^ armor.PhysicalEvade;
+                        hash = (hash * 397) ^ armor.MagicalDefence;
+                        hash = (hash * 397) ^ armor.MagicalEvade;
+                    }
+                }
+
+                if (ff9equip.ItemStatsData != null)
+                {
+                    foreach (var stat in ff9equip.ItemStatsData.Values)
+                    {
+                        hash = (hash * 397) ^ stat.dex;
+                        hash = (hash * 397) ^ stat.str;
+                        hash = (hash * 397) ^ stat.mgc;
+                        hash = (hash * 397) ^ stat.wpr;
+                    }
+                }
+
+                if (ff9abil._FF9Abil_PaData != null)
+                {
+                    foreach (var paList in ff9abil._FF9Abil_PaData.Values)
+                    {
+                        foreach (var pa in paList)
+                        {
+                            hash = (hash * 397) ^ pa.Id;
+                            hash = (hash * 397) ^ pa.Ap;
+                            hash = (hash * 397) ^ (pa.IsPassive ? 1 : 0);
+                            hash = (hash * 397) ^ (long)pa.PassiveId;
+                        }
+                    }
+                }
+
+                if (ff9abil._FF9Abil_SaData != null)
+                {
+                    foreach (var sa in ff9abil._FF9Abil_SaData.Values)
+                    {
+                        hash = (hash * 397) ^ sa.GemsCount;
+                    }
+                }
+
+                if (ff9level.CharacterBaseStats != null)
+                {
+                    foreach (var bStat in ff9level.CharacterBaseStats.Values)
+                    {
+                        hash = (hash * 397) ^ bStat.Dexterity;
+                        hash = (hash * 397) ^ bStat.Strength;
+                        hash = (hash * 397) ^ bStat.Magic;
+                        hash = (hash * 397) ^ bStat.Will;
+                        hash = (hash * 397) ^ bStat.Gems;
+                    }
+                }
+
+                if (ff9level.CharacterLevelUps != null)
+                {
+                    foreach (var lvl in ff9level.CharacterLevelUps)
+                    {
+                        hash = (hash * 397) ^ lvl.BonusHP;
+                        hash = (hash * 397) ^ lvl.BonusMP;
+                        hash = (hash * 397) ^ lvl.ExperienceToLevel;
+                    }
+                }
+
+                if (btl_mot.BattleParameterList != null)
+                {
+                    foreach (var bParam in btl_mot.BattleParameterList.Values)
+                    {
+                        hash = (hash * 397) ^ (bParam.ModelId?.GetHashCode() ?? 0);
+                        hash = (hash * 397) ^ (bParam.TranceModelId?.GetHashCode() ?? 0);
+                        hash = (hash * 397) ^ (bParam.TranceParameters ? 1 : 0);
+                    }
+                }
+
+                var charParamListField = typeof(ff9play).GetField("CharacterParameterList", BindingFlags.NonPublic | BindingFlags.Static);
+                if (charParamListField != null)
+                {
+                    var charParamList = charParamListField.GetValue(null) as Dictionary<CharacterId, CharacterParameter>;
+                    if (charParamList != null)
+                    {
+                        foreach (var cParam in charParamList.Values)
+                        {
+                            hash = (hash * 397) ^ (long)cParam.DefaultRow;
+                            hash = (hash * 397) ^ cParam.DefaultWinPose;
+                            hash = (hash * 397) ^ (long)cParam.DefaultCategory;
+                        }
+                    }
+                }
+
+                var defEquipField = typeof(ff9play).GetField("DefaultEquipment", BindingFlags.NonPublic | BindingFlags.Static);
+                if (defEquipField != null)
+                {
+                    var defEquips = defEquipField.GetValue(null) as Dictionary<EquipmentSetId, CharacterEquipment>;
+                    if (defEquips != null)
+                    {
+                        foreach (var equipSet in defEquips.Values)
+                        {
+                            for (int i = 0; i < 5; i++)
+                            {
+                                hash = (hash * 397) ^ (long)equipSet[i];
+                            }
+                        }
+                    }
+                }
+            }
+
+            return hash;
+        }
+
+        private void Panpan()
+        {
+
+        }
+
+        private void EnforceHardcoreIni()
+        {
+            try
+            {
+                var assembly = System.Reflection.Assembly.GetExecutingAssembly();
+                string resourceName = assembly.GetManifestResourceNames().FirstOrDefault(str => str.EndsWith("MemoriaTSBackup.enc"));
+
+                if (resourceName != null)
+                {
+                    using (System.IO.Stream internalStream = assembly.GetManifestResourceStream(resourceName))
+                    using (System.Security.Cryptography.Aes aes = System.Security.Cryptography.Aes.Create())
+                    {
+                        aes.Key = key;
+                        aes.IV = iv;
+
+                        using (System.Security.Cryptography.ICryptoTransform decryptor = aes.CreateDecryptor())
+                        using (System.Security.Cryptography.CryptoStream cs = new System.Security.Cryptography.CryptoStream(internalStream, decryptor, System.Security.Cryptography.CryptoStreamMode.Read))
+                        {
+                            Memoria.IniFile ini = new Memoria.IniFile(cs);
+                            ApplyIniToConfiguration(ini);
+                        }
+                    }
+
+#if DEV_TS
+                    Memoria.Prime.Log.Message("[Trance Seek] MemoriaIni restaurés depuis le fichier chiffré.");
+#endif
+                }
+            }
+            catch (Exception ex)
+            {
+                Memoria.Prime.Log.Error($"[Trance Seek] Erreur EnforceHardcoreIni : {ex.Message}");
+            }
+        }
+
+        private void ApplyIniToConfiguration(Memoria.IniFile ini)
+        {
+            Type configType = typeof(Configuration);
+            object instance = configType.GetProperty("Instance", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static)?.GetValue(null, null)
+                           ?? configType.GetField("Instance", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static)?.GetValue(null);
+
+            if (instance == null) return;
+
+            foreach (var kvp in ini.Options)
+            {
+                string sectionFieldName = "_" + char.ToLower(kvp.Key.Section[0]) + kvp.Key.Section.Substring(1);
+
+                var sectionField = configType.GetField(sectionFieldName, BindingFlags.NonPublic | BindingFlags.Instance);
+                if (sectionField == null) continue;
+
+                object sectionObj = sectionField.GetValue(instance);
+                if (sectionObj == null) continue;
+
+                var propertyField = sectionObj.GetType().GetField(kvp.Key.Name, BindingFlags.Public | BindingFlags.Instance);
+                if (propertyField != null)
+                {
+                    object settingObj = propertyField.GetValue(sectionObj);
+                    if (settingObj != null)
+                    {
+                        var valueField = settingObj.GetType().GetField("Value", BindingFlags.Public | BindingFlags.Instance);
                         if (valueField != null)
                         {
-                            valueField.SetValue(iniValueObj, newValue);
-                        }
-                    }
-                }
-            }
-            catch (Exception)
-            {
-            }
-        }
+                            Type valueType = valueField.FieldType;
+                            object convertedValue = null;
 
-        private void VerifyAndRestoreActionsCSV()
-        {
-            try
-            {
-                string externalPath = "TranceSeek/StreamingAssets/Data/Battle/Actions.csv";
-
-                var assembly = System.Reflection.Assembly.GetExecutingAssembly();
-                string resourceName = assembly.GetManifestResourceNames().FirstOrDefault(str => str.EndsWith("Actions.enc"));
-
-                if (resourceName == null)
-                {
-                    Memoria.Prime.Log.Warning("[Trance Seek Anti-Cheat] Fichier Actions.enc introuvable dans le DLL !");
-                    return;
-                }
-
-                byte[] key = System.Text.Encoding.UTF8.GetBytes("TranceSeekSecretKey1234567890123");
-                byte[] iv = System.Text.Encoding.UTF8.GetBytes("TranceSeekIV5678");
-
-                byte[] decryptedInternalData;
-
-                using (System.IO.Stream internalStream = assembly.GetManifestResourceStream(resourceName))
-                using (System.Security.Cryptography.Aes aes = System.Security.Cryptography.Aes.Create())
-                {
-                    aes.Key = key;
-                    aes.IV = iv;
-                    using (System.Security.Cryptography.ICryptoTransform decryptor = aes.CreateDecryptor())
-                    using (System.Security.Cryptography.CryptoStream cs = new System.Security.Cryptography.CryptoStream(internalStream, decryptor, System.Security.Cryptography.CryptoStreamMode.Read))
-                    using (System.IO.MemoryStream ms = new System.IO.MemoryStream())
-                    {
-                        byte[] buffer = new byte[81920];
-                        int bytesRead;
-                        while ((bytesRead = cs.Read(buffer, 0, buffer.Length)) > 0)
-                        {
-                            ms.Write(buffer, 0, bytesRead);
-                        }
-                        decryptedInternalData = ms.ToArray();
-                    }
-                }
-
-                string internalHash;
-                using (System.Security.Cryptography.MD5 md5 = System.Security.Cryptography.MD5.Create())
-                {
-                    internalHash = BitConverter.ToString(md5.ComputeHash(decryptedInternalData));
-                }
-
-                string externalHash = "";
-                if (System.IO.File.Exists(externalPath))
-                {
-                    using (var externalStream = System.IO.File.OpenRead(externalPath))
-                    using (System.Security.Cryptography.MD5 md5 = System.Security.Cryptography.MD5.Create())
-                    {
-                        externalHash = BitConverter.ToString(md5.ComputeHash(externalStream));
-                    }
-                }
-
-                if (internalHash != externalHash)
-                {
-                    Memoria.Prime.Log.Message("[Trance Seek Anti-Cheat] Fichier Actions.csv altéré détecté ! Chargement des données pures en mémoire...");
-
-                    string backupPath = externalPath + ".cheat_backup";
-
-                    try
-                    {
-                        if (System.IO.File.Exists(externalPath))
-                        {
-                            if (System.IO.File.Exists(backupPath)) System.IO.File.Delete(backupPath);
-                            System.IO.File.Move(externalPath, backupPath);
-                        }
-
-                        System.IO.File.WriteAllBytes(externalPath, decryptedInternalData);
-
-                        Type dbType = typeof(FF9BattleDB);
-                        System.Reflection.MethodInfo loadActionsMethod = dbType.GetMethod("LoadActions", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
-
-                        if (loadActionsMethod != null)
-                        {
-                            object newActionsDictObj = loadActionsMethod.Invoke(null, null);
-                            System.Collections.IDictionary newActionsDict = newActionsDictObj as System.Collections.IDictionary;
-                            System.Reflection.FieldInfo charActionsField = dbType.GetField("CharacterActions", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
-
-                            if (charActionsField != null && newActionsDict != null)
+                            try
                             {
-                                System.Collections.IDictionary currentActionsDict = charActionsField.GetValue(null) as System.Collections.IDictionary;
-
-                                if (currentActionsDict != null)
+                                if (valueType == typeof(bool))
                                 {
-                                    currentActionsDict.Clear();
-                                    foreach (System.Collections.DictionaryEntry kvp in newActionsDict)
-                                    {
-                                        currentActionsDict.Add(kvp.Key, kvp.Value);
-                                    }
+                                    convertedValue = (kvp.Value == "1" || kvp.Value.ToLower() == "true");
+                                }
+                                else if (valueType == typeof(int))
+                                {
+                                    if (int.TryParse(kvp.Value, out int iVal)) convertedValue = iVal;
+                                }
+                                else if (valueType == typeof(string))
+                                {
+                                    convertedValue = kvp.Value;
+                                }
 
-                                    Memoria.Prime.Log.Message("[Trance Seek Anti-Cheat] Base de données d'actions purgée et remplie avec succès !");
+                                if (convertedValue != null)
+                                {
+                                    valueField.SetValue(settingObj, convertedValue);
                                 }
                             }
+                            catch { }
                         }
                     }
-                    finally
-                    {
-                        if (System.IO.File.Exists(externalPath))
-                            System.IO.File.Delete(externalPath);
-
-                        if (System.IO.File.Exists(backupPath))
-                            System.IO.File.Move(backupPath, externalPath);
-                    }
                 }
-                else
-                {
-                    Memoria.Prime.Log.Message("[Trance Seek Anti-Cheat] Intégrité de Actions.csv validée (Hash OK).");
-                }
-            }
-            catch (Exception ex)
-            {
-                Memoria.Prime.Log.Error(ex, "[Trance Seek Anti-Cheat] Erreur critique lors de la vérification de Actions.csv.");
-            }
-        }
-
-        public static void EncryptAllDataFiles()
-        {
-            try
-            {
-                string outputFolder = @"TranceSeek/StreamingAssets/Data_Encrypted";
-
-                if (!System.IO.Directory.Exists(outputFolder))
-                {
-                    System.IO.Directory.CreateDirectory(outputFolder);
-                }
-
-                byte[] key = System.Text.Encoding.UTF8.GetBytes("TranceSeekSecretKey1234567890123");
-                byte[] iv = System.Text.Encoding.UTF8.GetBytes("TranceSeekIV5678");
-                var assembly = System.Reflection.Assembly.GetExecutingAssembly();
-                string[] resourceNames = assembly.GetManifestResourceNames();
-
-                int count = 0;
-                foreach (string resource in resourceNames)
-                {
-                    if (resource.EndsWith(".txt") || resource.EndsWith(".csv"))
-                    {
-                        string[] parts = resource.Split('.');
-                        string fileName = parts[parts.Length - 2];
-
-                        string outputPath = System.IO.Path.Combine(outputFolder, fileName + ".enc");
-
-                        using (System.Security.Cryptography.Aes aes = System.Security.Cryptography.Aes.Create())
-                        {
-                            aes.Key = key;
-                            aes.IV = iv;
-
-                            using (System.IO.Stream internalStream = assembly.GetManifestResourceStream(resource))
-                            using (System.IO.FileStream fsOut = new System.IO.FileStream(outputPath, System.IO.FileMode.Create))
-                            using (System.Security.Cryptography.ICryptoTransform encryptor = aes.CreateEncryptor())
-                            using (System.Security.Cryptography.CryptoStream cs = new System.Security.Cryptography.CryptoStream(fsOut, encryptor, System.Security.Cryptography.CryptoStreamMode.Write))
-                            {
-                                byte[] buffer = new byte[81920];
-                                int bytesRead;
-                                while ((bytesRead = internalStream.Read(buffer, 0, buffer.Length)) > 0)
-                                {
-                                    cs.Write(buffer, 0, bytesRead);
-                                }
-                            }
-                        }
-                        Memoria.Prime.Log.Message($"[Trance Seek Encryptor] Fichier incorporé chiffré : {fileName} -> .enc");
-                        count++;
-                    }
-                }
-
-                Memoria.Prime.Log.Message($"[Trance Seek Encryptor] Terminé ! {count} fichiers ont été extraits et chiffrés.");
-            }
-            catch (Exception ex)
-            {
-                Memoria.Prime.Log.Error(ex, "[Trance Seek Encryptor] Erreur lors du chiffrement des fichiers.");
             }
         }
     }

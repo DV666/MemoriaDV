@@ -84,8 +84,7 @@ namespace Memoria.Scripts.TranceSeek
             {
                 GameObject watcherObj = new GameObject("TranceSeek_Watcher");
                 GameObject.DontDestroyOnLoad(watcherObj);
-                if (Configuration.Mod.FolderNames.Contains("TranceSeek/Options/FollowersFeature"))
-                    watcherObj.AddComponent<OverloadOnFieldScript>();
+                watcherObj.AddComponent<OverloadOnFieldScript>();
 
                 if (Configuration.Mod.FolderNames.Contains("TranceSeek/Options/AutoSorterShop"))
                     watcherObj.AddComponent<TranceSeekHackShop>();

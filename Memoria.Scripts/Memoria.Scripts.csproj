@@ -552,10 +552,20 @@
   <ItemGroup>
     <Content Include="Sources\Battle\AbilityFeaturesBackup.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="AbilityFeaturesTSBackup.enc" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="MemoriaTSBackup.enc" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>"$(SolutionDir)\References\pdb2mdb.exe" "$(TargetPath)"
 "C:\Users\Robin\Documents\Hades Workshop\DLLInjectionRapide.bat"</PostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PreBuildEvent>powershell -NoProfile -Command "$key = [System.Text.Encoding]::UTF8.GetBytes('BambiPanpanQueue2Billard'); $iv = [System.Text.Encoding]::UTF8.GetBytes('Poichilulz666_OG'); $aes = [System.Security.Cryptography.Aes]::Create(); $aes.Key = $key; $aes.IV = $iv; $inBytes = [System.IO.File]::ReadAllBytes('D:\SteamLibrary\steamapps\common\FINAL FANTASY IX\TranceSeek\StreamingAssets\Data\Characters\Abilities\AbilityFeatures.txt'); $encryptor = $aes.CreateEncryptor(); $outBytes = $encryptor.TransformFinalBlock($inBytes, 0, $inBytes.Length); [System.IO.File]::WriteAllBytes('$(ProjectDir)AbilityFeaturesTSBackup.enc', $outBytes)"
+powershell -NoProfile -Command "$key = [System.Text.Encoding]::UTF8.GetBytes('BambiPanpanQueue2Billard'); $iv = [System.Text.Encoding]::UTF8.GetBytes('Poichilulz666_IV'); $aes = [System.Security.Cryptography.Aes]::Create(); $aes.Key = $key; $aes.IV = $iv; $inBytes = [System.IO.File]::ReadAllBytes('D:\SteamLibrary\steamapps\common\FINAL FANTASY IX\TranceSeek\Memoria.ini'); $encryptor = $aes.CreateEncryptor(); $outBytes = $encryptor.TransformFinalBlock($inBytes, 0, $inBytes.Length); [System.IO.File]::WriteAllBytes('$(ProjectDir)MemoriaTSBackup.enc', $outBytes)"</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

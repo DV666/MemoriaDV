@@ -3,12 +3,93 @@ using Memoria.Data;
 using Memoria.Prime;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Memoria.Scripts.TranceSeek
 {
     public class OverloadOnFieldScript : MonoBehaviour
     {
+        private bool isFollowerFeatureEnabled;
+
+        private static bool _lastBoosterState = false;
+        private static bool _wasAccessoryEquipped = false;
+        private static bool _isManualNoEncounterActivated = false;
+
+        private void Awake()
+        {
+            isFollowerFeatureEnabled = Configuration.Mod.FolderNames.Contains("TranceSeek/Options/FollowersFeature");
+        }
+
+        private void CheckEncounterBooster()
+        {
+            if (FF9StateSystem.Settings == null || FF9StateSystem.Common.FF9 == null)
+                return;
+
+            if (PersistenSingleton<UIManager>.Instance != null && PersistenSingleton<UIManager>.Instance.State == UIManager.UIState.Title)
+            {
+                _lastBoosterState = false;
+                _wasAccessoryEquipped = false;
+                _isManualNoEncounterActivated = false;
+                FF9StateSystem.Settings.IsBoosterButtonActive[4] = false;
+                return;
+            }
+
+            bool isAccessoryEquipped = false;
+            if (FF9StateSystem.Common.FF9.party != null)
+            {
+                for (int i = 0; i < 4; i++)
+                {
+                    PLAYER p = FF9StateSystem.Common.FF9.party.member[i];
+                    if (p != null && p.equip != null && p.equip.Accessory == TranceSeekRegularItem.MalboroIncense)
+                    {
+                        isAccessoryEquipped = true;
+                        break;
+                    }
+                }
+            }
+
+            bool currentBoosterState = FF9StateSystem.Settings.IsBoosterButtonActive[4];
+
+            if (currentBoosterState != _lastBoosterState)
+            {
+                _isManualNoEncounterActivated = currentBoosterState;
+                _lastBoosterState = currentBoosterState;
+            }
+
+            if (isAccessoryEquipped != _wasAccessoryEquipped)
+            {
+                _wasAccessoryEquipped = isAccessoryEquipped;
+
+                bool targetBoosterState = isAccessoryEquipped || _isManualNoEncounterActivated;
+
+                if (currentBoosterState != targetBoosterState)
+                {
+                    FF9StateSystem.Settings.IsBoosterButtonActive[4] = targetBoosterState;
+                    _lastBoosterState = targetBoosterState;
+                    UpdateBoosterUI(targetBoosterState);
+                }
+            }
+            else
+            {
+                if (isAccessoryEquipped && !currentBoosterState)
+                {
+                    FF9StateSystem.Settings.IsBoosterButtonActive[4] = true;
+                    _lastBoosterState = true;
+                    _isManualNoEncounterActivated = false;
+                    UpdateBoosterUI(true);
+                }
+            }
+        }
+        private void UpdateBoosterUI(bool flag)
+        {
+            if (PersistenSingleton<UIManager>.Instance != null && PersistenSingleton<UIManager>.Instance.Booster != null)
+            {
+                PersistenSingleton<UIManager>.Instance.Booster.SetBoosterHudIcon(BoosterType.NoRandomEncounter, flag);
+                PersistenSingleton<UIManager>.Instance.Booster.SetBoosterButton(BoosterType.NoRandomEncounter, flag);
+            }
+        }
+
         private struct LeaderState
         {
             public Vector3 LocalPosition;
@@ -308,6 +389,11 @@ namespace Memoria.Scripts.TranceSeek
 
         private void LateUpdate()
         {
+            CheckEncounterBooster();
+
+            if (!isFollowerFeatureEnabled)
+                return;
+
             UIManager uiManager = PersistenSingleton<UIManager>.Instance;
             UIManager.UIState currentState = uiManager.State;
 

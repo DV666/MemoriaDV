@@ -1,5 +1,6 @@
 >SA Global+
 Permanent [code=Condition] CharacterIndex == CharacterId_Garnet [/code] [code=PlayerPermanentStatus] IsGarnetDepressed ? BattleStatus_Silence : 0 [/code]
+Permanent [code=Condition] HeadId == 1218 [/code] [code=PlayerPermanentStatus] BattleStatus_Zombie [/code]
 StatusInit [code=Condition] CharacterIndex == CharacterId_Garnet && IsGarnetDepressed [/code] AutoStatus Silence
 StatusInit [code=Condition] HeadId == 1218 [/code] AutoStatus Zombie
 StatusInit [code=Condition] AccessoryId == RegularItem_MagicianShoes || AccessoryId == 1261 [/code] ResistStatus Confuse
@@ -17,7 +18,7 @@ StatusInit [code=Condition] AccessoryId == RegularItem_MadainRing [/code] Resist
 StatusInit [code=Condition] AccessoryId == RegularItem_RosettaRing [/code] ResistStatus Heat
 StatusInit [code=Condition] AccessoryId == RegularItem_ReflectRing [/code] AutoStatus Reflect
 StatusInit [code=Condition] AccessoryId == RegularItem_CoralRing [/code] ResistStatus Slow
-StatusInit [code=Condition] AccessoryId == RegularItem_PromistRing [/code] ResistStatus Virus ResistStatus Poison ResistStatus CustomStatus16
+StatusInit [code=Condition] AccessoryId == RegularItem_PromistRing [/code] ResistStatus Virus ResistStatus Venom ResistStatus CustomStatus16
 StatusInit [code=Condition] AccessoryId == RegularItem_RebirthRing [/code] ResistStatus Doom
 StatusInit [code=Condition] AccessoryId == RegularItem_GoldChoker [/code] ResistStatus Sleep
 StatusInit [code=Condition] AccessoryId == RegularItem_FairyEarrings [/code] ResistStatus Berserk
@@ -65,6 +66,7 @@ Permanent [code=Condition] AccessoryId == 1259 [/code] [code=ActivateFreeSA] 23 
 Permanent [code=Condition] AccessoryId == 1267 [/code] [code=ActivateFreeSA] 1 ; 105 [/code]
 
 Permanent [code=Condition] AccessoryId == 1250 [/code] [code=MaxGems] MaxGems + (MaxGems / 10) [/code]
+Permanent [code=Condition] ArmorId == 1280 [/code] [code=MaxGems] MaxGems + 4 [/code]
 
 Permanent [code=Condition] (WeaponId == 1 || WeaponId == 2 || WeaponId == 3 || WeaponId == 1153 || WeaponId == 1155 || WeaponId == 1158 || WeaponId == 1161 || WeaponId == 1164 || WeaponId == 1167) [/code] [code=BanishSAByLvl] 203 ; -1 [/code]
 Permanent [code=Condition] HasSA(133) && (HasLearntSupport(134) || HasSA(134) || AccessoryId == 1200 || WeaponId == 1160) [/code] [code=BanishSAByLvl] 134 ; -1 [/code]
@@ -88,7 +90,7 @@ BattleStart
 
 #### Sentinel Steiner ####
 Command
-[code=Condition] CharacterIndex == CharacterId_Steiner && !IsTargeted && IsAllyOfTarget && CommandId == BattleCommandId_EnemyAtk && (AbilityCategory & 8) != 0 && IsSingleTarget && !CheckAnyStatus(CurrentStatus, BattleStatus_Heat) && CheckAnyStatus(CurrentStatus, BattleStatus_Defend) && PropertyByName('StatusProperty Defend Gardien') == 1 && (GetMemoriaDictionary(1000, 6) & Id) != 0 [/code]
+[code=Condition] CharacterIndex == CharacterId_Steiner && !IsTargeted && IsAllyOfTarget && CommandId == BattleCommandId_EnemyAtk && (AbilityCategory & 8) != 0 && IsSingleTarget && !CheckAnyStatus(CurrentStatus, BattleStatus_Heat) && CheckAnyStatus(CurrentStatus, BattleStatus_Defend) && PropertyByName('StatusProperty Defend Gardien') == 1 && (GetMemoriaDictionary(1000, 6) & UnitId) != 0 [/code]
 [code=TryCover] !CheckAnyStatus(TargetCurrentStatus, BattleStatus_Death | BattleStatus_Petrify) [/code]
 
 #### Duel Amarant ####
@@ -181,7 +183,7 @@ ________________________________________________________________________________
 
 #### Basic commands ###
 >CMD 1 Attack
-[code=Patch] GetMemoriaDictionary(2000 + CharacterIndex, 0) > 0 ? (2000 + CharacterIndex) : (CharacterIndex == CharacterId_Marcus && CheckAnyStatus(CurrentStatus, BattleStatus_Trance) ? 1028 : ((WeaponId == 59 || WeaponId == 71 || WeaponId == 72 || WeaponId == 73 || WeaponId == 1028 || WeaponId == 1029 || WeaponId == 1030 || WeaponId == 1031 || WeaponId == 1187 || WeaponId == 1188) ? (GetRandom(0, 3) != 0 ? ((WeaponId == 59 || WeaponId == 71 || WeaponId == 72 || WeaponId == 73) ? 1050 : 1051) : ((WeaponId == 59 || WeaponId == 71 || WeaponId == 72 || WeaponId == 73) ? 1051 : 1052)) : -1)) [/code]
+[code=Patch] GetMemoriaDictionary(2000 + CharacterIndex, 0) > 0 ? (2000 + CharacterIndex) : (CharacterIndex == CharacterId_Marcus && CheckAnyStatus(CurrentStatus, BattleStatus_Trance) ? 1028 : ((WeaponId == 59 || WeaponId == 71 || WeaponId == 72 || WeaponId == 73) ? (GetRandom(0, 3) != 0 ? 1050 : 1051) : ((WeaponId == 1028 || WeaponId == 1029 || WeaponId == 1030 || WeaponId == 1031 || WeaponId == 1187 || WeaponId == 1188) ? (GetRandom(0, 3) != 0 ? 1051 : 1052) : -1))) [/code]
 
 >CMD 2 Steal
 [code=Patch] (((CharacterIndex == CharacterId_Blank && ScenarioCounter >= 11100 && Trance > 128) || GetMemoriaDictionary(1000, 3) != 0)) ? 1020 : (HasSA(1247) ? 1037 : (HasSA(247) ? 1036 : 2)) [/code]
@@ -228,86 +230,86 @@ ________________________________________________________________________________
 
 >AA 49
 [code=Patch] HasSA(208) ? 1529 : -1 [/code]
-[code=MPCost] CasterHasSA(1059) ? (MPCost * 2) : (CasterHasSA(59) ? (MPCost * 1.5) : MPCost) [/code]
+[code=MPCost] CasterHasSA(1059) ? (MPCost * 1.5) : (CasterHasSA(59) ? (MPCost * 1.5) : MPCost) [/code]
 
 >AA 51
 [code=Patch] HasSA(208) ? 1530 : -1 [/code]
-[code=MPCost] CasterHasSA(1059) ? (MPCost * 2) : (CasterHasSA(59) ? (MPCost * 1.5) : MPCost) [/code]
+[code=MPCost] CasterHasSA(1059) ? (MPCost * 1.5) : (CasterHasSA(59) ? (MPCost * 1.25) : MPCost) [/code]
 
 >AA 53
 [code=Patch] HasSA(208) ? 1531 : -1 [/code]
-[code=MPCost] CasterHasSA(1059) ? (MPCost * 2) : (CasterHasSA(59) ? (MPCost * 1.5) : MPCost) [/code]
+[code=MPCost] CasterHasSA(1059) ? (MPCost * 1.5) : (CasterHasSA(59) ? (MPCost * 1.25) : MPCost) [/code]
 
 >AA 55
 [code=Patch] HasSA(208) ? 1532 : -1 [/code]
-[code=MPCost] CasterHasSA(1059) ? (MPCost * 2) : (CasterHasSA(59) ? (MPCost * 1.5) : MPCost) [/code]
+[code=MPCost] CasterHasSA(1059) ? (MPCost * 1.5) : (CasterHasSA(59) ? (MPCost * 1.25) : MPCost) [/code]
 
 >AA 58
 [code=Patch] HasSA(208) ? 1533 : -1 [/code]
-[code=MPCost] CasterHasSA(1059) ? (MPCost * 2) : (CasterHasSA(59) ? (MPCost * 1.5) : MPCost) [/code]
+[code=MPCost] CasterHasSA(1059) ? (MPCost * 1.5) : (CasterHasSA(59) ? (MPCost * 1.25) : MPCost) [/code]
 
 >AA 60
 [code=Patch] HasSA(208) ? 1534 : -1 [/code]
-[code=MPCost] CasterHasSA(1059) ? (MPCost * 2) : (CasterHasSA(59) ? (MPCost * 1.5) : MPCost) [/code]
+[code=MPCost] CasterHasSA(1059) ? (MPCost * 1.5) : (CasterHasSA(59) ? (MPCost * 1.25) : MPCost) [/code]
 
 >AA 62
 [code=Patch] HasSA(208) ? 1535 : -1 [/code]
-[code=MPCost] CasterHasSA(1059) ? (MPCost * 2) : (CasterHasSA(59) ? (MPCost * 1.5) : MPCost) [/code]
+[code=MPCost] CasterHasSA(1059) ? (MPCost * 1.5) : (CasterHasSA(59) ? (MPCost * 1.25) : MPCost) [/code]
 
 >AA 64
 [code=Patch] HasSA(208) ? 1536 : -1 [/code]
-[code=MPCost] CasterHasSA(1059) ? (MPCost * 2) : (CasterHasSA(59) ? (MPCost * 1.5) : MPCost) [/code]
+[code=MPCost] CasterHasSA(1059) ? (MPCost * 1.5) : (CasterHasSA(59) ? (MPCost * 1.25) : MPCost) [/code]
 
 #### Summons (Dagga / Eiko) ####
 >AA 66
 [code=Patch] AccessoryId == 1214 ? 67 : -1 [/code]
-[code=MPCost] CasterHasSA(1059) ? (MPCost * 2) : (CasterHasSA(59) ? (MPCost * 1.5) : MPCost) [/code]
+[code=MPCost] CasterHasSA(1059) ? (MPCost * 1.5) : (CasterHasSA(59) ? (MPCost * 1.25) : MPCost) [/code]
 
 >AA 67
-[code=MPCost] CasterHasSA(1059) ? (MPCost * 2) : (CasterHasSA(59) ? (MPCost * 1.5) : MPCost) [/code]
+[code=MPCost] CasterHasSA(1059) ? (MPCost * 1.5) : (CasterHasSA(59) ? (MPCost * 1.25) : MPCost) [/code]
 
 >AA 68
 [code=Patch] AccessoryId == 1200 ? 71 : (AccessoryId == 1204 ? 70 : (AccessoryId == 198 ? 69 : -1)) [/code]
-[code=MPCost] CasterHasSA(1059) ? (MPCost * 2) : (CasterHasSA(59) ? (MPCost * 1.5) : MPCost) [/code]
+[code=MPCost] CasterHasSA(1059) ? (MPCost * 1.5) : (CasterHasSA(59) ? (MPCost * 1.25) : MPCost) [/code]
 
 >AA 69
-[code=MPCost] CasterHasSA(1059) ? (MPCost * 2) : (CasterHasSA(59) ? (MPCost * 1.5) : MPCost) [/code]
+[code=MPCost] CasterHasSA(1059) ? (MPCost * 1.5) : (CasterHasSA(59) ? (MPCost * 1.25) : MPCost) [/code]
 
 >AA 70
-[code=MPCost] CasterHasSA(1059) ? (MPCost * 2) : (CasterHasSA(59) ? (MPCost * 1.5) : MPCost) [/code]
+[code=MPCost] CasterHasSA(1059) ? (MPCost * 1.5) : (CasterHasSA(59) ? (MPCost * 1.25) : MPCost) [/code]
 
 >AA 71
-[code=MPCost] CasterHasSA(1059) ? (MPCost * 2) : (CasterHasSA(59) ? (MPCost * 1.5) : MPCost) [/code]
+[code=MPCost] CasterHasSA(1059) ? (MPCost * 1.5) : (CasterHasSA(59) ? (MPCost * 1.25) : MPCost) [/code]
 
 >AA 72
-[code=MPCost] CasterHasSA(1059) ? (MPCost * 2) : (CasterHasSA(59) ? (MPCost * 1.5) : MPCost) [/code]
+[code=MPCost] CasterHasSA(1059) ? (MPCost * 1.5) : (CasterHasSA(59) ? (MPCost * 1.25) : MPCost) [/code]
 
 >AA 74
-[code=MPCost] CasterHasSA(1059) ? (MPCost * 2) : (CasterHasSA(59) ? (MPCost * 1.5) : MPCost) [/code]
+[code=MPCost] CasterHasSA(1059) ? (MPCost * 1.5) : (CasterHasSA(59) ? (MPCost * 1.25) : MPCost) [/code]
 
 >AA 1529
-[code=MPCost] CasterHasSA(1059) ? (MPCost * 2) : (CasterHasSA(59) ? (MPCost * 1.5) : MPCost) [/code]
+[code=MPCost] CasterHasSA(1059) ? (MPCost * 1.5) : (CasterHasSA(59) ? (MPCost * 1.25) : MPCost) [/code]
 
 >AA 1530
-[code=MPCost] CasterHasSA(1059) ? (MPCost * 2) : (CasterHasSA(59) ? (MPCost * 1.5) : MPCost) [/code]
+[code=MPCost] CasterHasSA(1059) ? (MPCost * 1.5) : (CasterHasSA(59) ? (MPCost * 1.25) : MPCost) [/code]
 
 >AA 1531
-[code=MPCost] CasterHasSA(1059) ? (MPCost * 2) : (CasterHasSA(59) ? (MPCost * 1.5) : MPCost) [/code]
+[code=MPCost] CasterHasSA(1059) ? (MPCost * 1.5) : (CasterHasSA(59) ? (MPCost * 1.25) : MPCost) [/code]
 
 >AA 1532
-[code=MPCost] CasterHasSA(1059) ? (MPCost * 2) : (CasterHasSA(59) ? (MPCost * 1.5) : MPCost) [/code]
+[code=MPCost] CasterHasSA(1059) ? (MPCost * 1.5) : (CasterHasSA(59) ? (MPCost * 1.25) : MPCost) [/code]
 
 >AA 1533
-[code=MPCost] CasterHasSA(1059) ? (MPCost * 2) : (CasterHasSA(59) ? (MPCost * 1.5) : MPCost) [/code]
+[code=MPCost] CasterHasSA(1059) ? (MPCost * 1.5) : (CasterHasSA(59) ? (MPCost * 1.25) : MPCost) [/code]
 
 >AA 1534
-[code=MPCost] CasterHasSA(1059) ? (MPCost * 2) : (CasterHasSA(59) ? (MPCost * 1.5) : MPCost) [/code]
+[code=MPCost] CasterHasSA(1059) ? (MPCost * 1.5) : (CasterHasSA(59) ? (MPCost * 1.25) : MPCost) [/code]
 
 >AA 1535
-[code=MPCost] CasterHasSA(1059) ? (MPCost * 2) : (CasterHasSA(59) ? (MPCost * 1.5) : MPCost) [/code]
+[code=MPCost] CasterHasSA(1059) ? (MPCost * 1.5) : (CasterHasSA(59) ? (MPCost * 1.25) : MPCost) [/code]
 
 >AA 1536
-[code=MPCost] CasterHasSA(1059) ? (MPCost * 2) : (CasterHasSA(59) ? (MPCost * 1.5) : MPCost) [/code]
+[code=MPCost] CasterHasSA(1059) ? (MPCost * 1.5) : (CasterHasSA(59) ? (MPCost * 1.25) : MPCost) [/code]
 
 #### Beatrix (redemption) ####
 
@@ -1658,12 +1660,12 @@ DisableSA 1036 36 1054 54 1056 56
 
 >SA 37 Cover
 Command
-[code=Condition] !IsTargeted && IsAllyOfTarget && CommandId == BattleCommandId_EnemyAtk && (AbilityCategory & 8) != 0 && IsSingleTarget && !CheckAnyStatus(CurrentStatus, BattleStatus_Heat) && GetMemoriaDictionary(1000, 6) == 1 [/code]
+[code=Condition] !IsTargeted && IsAllyOfTarget && CommandId == BattleCommandId_EnemyAtk && (AbilityCategory & 8) != 0 && IsSingleTarget && !CheckAnyStatus(CurrentStatus, BattleStatus_Heat) && (GetMemoriaDictionary(1000, 6) & UnitId) != 0 [/code]
 [code=TryCover] !CheckAnyStatus(TargetCurrentStatus, BattleStatus_Death, BattleStatus_Petrify) && CheckAnyStatus(TargetCurrentStatus, BattleStatus_LowHP) [/code]
 
 >SA 38 Protect Girls
 Command
-[code=Condition] !IsTargeted && IsAllyOfTarget && CommandId == BattleCommandId_EnemyAtk && (AbilityCategory & 8) != 0 && IsSingleTarget && !CheckAnyStatus(CurrentStatus, BattleStatus_Heat) && GetMemoriaDictionary(1000, 6) == 1 [/code]
+[code=Condition] !IsTargeted && IsAllyOfTarget && CommandId == BattleCommandId_EnemyAtk && (AbilityCategory & 8) != 0 && IsSingleTarget && !CheckAnyStatus(CurrentStatus, BattleStatus_Heat) && (GetMemoriaDictionary(1000, 6) & UnitId) != 0 [/code]
 [code=TryCover] !CheckAnyStatus(TargetCurrentStatus, BattleStatus_Death, BattleStatus_Petrify) && (TargetPlayerCategory & CharacterCategory_Female) != 0 && TargetHP < TargetMaxHP / 2 [/code]
 
 >SA 39 Super Guard (coded in TranceSeekAPI.cs)
@@ -2197,12 +2199,12 @@ DisableSA 1036 36 1054 54 1056 56
 
 >SA 1037 Cover+
 Command
-[code=Condition] !IsTargeted && IsAllyOfTarget && CommandId == BattleCommandId_EnemyAtk && (AbilityCategory & 8) != 0 && IsSingleTarget && !CheckAnyStatus(CurrentStatus, BattleStatus_Heat) && GetMemoriaDictionary(1000, 6) == 1 [/code]
+[code=Condition] !IsTargeted && IsAllyOfTarget && CommandId == BattleCommandId_EnemyAtk && (AbilityCategory & 8) != 0 && IsSingleTarget && !CheckAnyStatus(CurrentStatus, BattleStatus_Heat) && (GetMemoriaDictionary(1000, 6) & UnitId) != 0 [/code]
 [code=TryCover] !CheckAnyStatus(TargetCurrentStatus, BattleStatus_Death, BattleStatus_Petrify) && TargetHP < TargetMaxHP / 2 [/code]
 
 >SA 1038 Protect Girls+
 Command
-[code=Condition] !IsTargeted && IsAllyOfTarget && CommandId == BattleCommandId_EnemyAtk && (AbilityCategory & 8) != 0 && IsSingleTarget && !CheckAnyStatus(CurrentStatus, BattleStatus_Heat) && GetMemoriaDictionary(1000, 6) == 1 [/code]
+[code=Condition] !IsTargeted && IsAllyOfTarget && CommandId == BattleCommandId_EnemyAtk && (AbilityCategory & 8) != 0 && IsSingleTarget && !CheckAnyStatus(CurrentStatus, BattleStatus_Heat) && (GetMemoriaDictionary(1000, 6) & UnitId) != 0 [/code]
 [code=TryCover] !CheckAnyStatus(TargetCurrentStatus, BattleStatus_Death, BattleStatus_Petrify) && (TargetPlayerCategory & CharacterCategory_Female) != 0 [/code]
 
 >SA 1039 Super Guard+ (coded in TranceSeekAPI.cs)

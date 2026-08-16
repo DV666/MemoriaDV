@@ -196,10 +196,11 @@ namespace Memoria.Scripts.TranceSeek
 
         public static Boolean ShowATBBar(BattleUnit mob)
         {
-            if (mob.IsUnderAnyStatus(BattleStatusConst.BattleEndFull) || btl_para.IsNonDyingVanillaBoss(mob) && mob.CurrentHp <= 10000)
+            if (mob.IsUnderAnyStatus(BattleStatusConst.BattleEndFull) || btl_para.IsNonDyingVanillaBoss(mob) && mob.CurrentHp <= 10000 || mob.CurrentHp == 0)
             {
                 if (ATBFrameHUD[mob.Data] != null)
                 {
+                    ATBFrameHUD[mob.Data].FontSize = 36;
                     btl2d.StatusMessages.Remove(ATBFrameHUD[mob.Data]);
                     Singleton<HUDMessage>.Instance.ReleaseObject(ATBFrameHUD[mob.Data]);
                     ATBFrameHUD[mob.Data] = null;
@@ -207,6 +208,7 @@ namespace Memoria.Scripts.TranceSeek
 
                 if (ATBGreenBarHUD[mob.Data] != null)
                 {
+                    ATBGreenBarHUD[mob.Data].FontSize = 36;
                     btl2d.StatusMessages.Remove(ATBGreenBarHUD[mob.Data]);
                     Singleton<HUDMessage>.Instance.ReleaseObject(ATBGreenBarHUD[mob.Data]);
                     ATBGreenBarHUD[mob.Data] = null;
@@ -257,16 +259,14 @@ namespace Memoria.Scripts.TranceSeek
 
             string currentText = $"[SPRT=GeneralAtlas,{ATBSprite},145,14]";
             if (ATBGreenBarHUD[mob.Data].Label != currentText)
-            {
                 ATBGreenBarHUD[mob.Data].Label = currentText;
-            }
 
             if (ATBGreenBarHUD[mob.Data] != null)
                 ATBGreenBarHUD[mob.Data].transform.localScale = new Vector3(atbPercent, 1f, 1f);
 
             if (ATBGreenBarHUD[mob.Data] != null && ATBFrameHUD[mob.Data] != null)
             {
-                if (PersistenSingleton<BattleHUD>.Instance.AllMenuPanel.gameObject.activeSelf)
+                if (PersistenSingleton<BattleHUD>.Instance.AllMenuPanel.gameObject.activeSelf && btl2d.ShouldShowSPS && mob.Data.bi.disappear == 0)
                 {
                     ATBFrameHUD[mob.Data].gameObject.SetActive(true);
                     ATBGreenBarHUD[mob.Data].gameObject.SetActive(true);
