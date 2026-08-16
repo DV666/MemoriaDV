@@ -311,8 +311,6 @@ namespace Memoria.Scripts.TranceSeek
                 if (!v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Propagation_Boosted))
                     v.Command.HitRate /= 2;
 
-                Log.Message("Caster_TSVar.SpecialSA.Propagation = " + Caster_TSVar.SpecialSA.Propagation);
-
                 if (Caster_TSVar.SpecialSA.Propagation > 0)
                 {
                     int CostMP = FF9StateSystem.Battle.FF9Battle.aa_data[v.Command.AbilityId].MP;
@@ -465,6 +463,7 @@ namespace Memoria.Scripts.TranceSeek
 
             if (v.Command.Data.info.effect_counter == 1)
             {
+                TranceSeekCharacterMechanic.EikoMougMechanic(v);
                 v.Caster.AddDelayedModifier(
                 caster => btl_util.IsBtlBusy(caster.Data, btl_util.BusyMode.CASTER),
                 caster =>

@@ -24,9 +24,10 @@ namespace Memoria.Scripts.TranceSeek
         {
             if (_v.Target.IsPlayer && _v.Command.AbilityId == TranceSeekBattleAbility.Atomos_Any)
             {
+                int BonusTurbo = _v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Boost_Boosted) ? 3 : (_v.Caster.HasSupportAbilityByIndex(SupportAbility.Boost) ? 2 : 1);
                 _v.Command.AbilityCategory -= 16; // Remove Magical effect to prevent Vanish to dissapear.
                 _v.Target.TryRemoveStatuses(_v.Command.AbilityStatus);
-                _v.Target.AlterStatus(TranceSeekStatus.PerfectDodge);
+                btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.PerfectDodge, parameters: $"+{BonusTurbo}");
                 if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.DivineGuidance) && _v.Target.IsPlayer)
                 {
                     if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.DivineGuidance_Boosted))

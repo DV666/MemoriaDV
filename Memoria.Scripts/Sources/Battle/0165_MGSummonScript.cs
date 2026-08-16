@@ -3,6 +3,7 @@ using Memoria.Data;
 using Memoria.Prime;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using UnityEngine;
 
 namespace Memoria.Scripts.TranceSeek
@@ -81,14 +82,19 @@ namespace Memoria.Scripts.TranceSeek
                 }
                 return;
             }
-            else if (_v.Command.Power == 99 && _v.Command.HitRate == 99)
+            else if (_v.Command.Power == 99 && _v.Command.HitRate == 99) // Victory script
             {
                 if (_v.Command.Data.info.effect_counter == 1)
                 {
-                    _v.Target.TryAlterStatuses(BattleStatus.Reflect, false, _v.Target);
+                    _v.Caster.RemoveStatus(BattleStatusConst.AnyPositive);
                 }
                 else if (_v.Command.Data.info.effect_counter == 2)
                 {
+                    _v.Target.TryAlterStatuses(BattleStatus.Reflect, false, _v.Target);
+                }
+                else if (_v.Command.Data.info.effect_counter == 3)
+                {
+                    _v.Target.RemoveStatus(BattleStatusConst.AnyNegative);
                     _v.Target.MaximumHp = 100000;
                     _v.Target.CurrentHp = 100000;
                     _v.Target.Flags |= CalcFlag.HpAlteration;
@@ -123,18 +129,18 @@ namespace Memoria.Scripts.TranceSeek
                 }
                 return;
             }
-            else if(_v.Caster.Data.dms_geo_id == 1213 && _v.Command.Power == 6)
+            else if(_v.Caster.Data.dms_geo_id == 1213 && _v.Command.Power == 6) // Bahamut preparing his Mega Flare.
             {
                 _v.Caster.Data.mot[2] = "ANH_MON_F9_BahamutMG_MEGAFLARECAST2";
                 return;
             }
 
-            if (_v.Command.Data.info.effect_counter == 1)
+            if (_v.Command.Data.info.effect_counter == 1) // Classic script - Make the summon targetable first...
             {
                 BattleUnit btl = btl_scrp.FindBattleUnit(32);
                 btl.Data.bi.target = 1;
             }
-            else
+            else  // Classic script - ... then, change his model.
             {
                 _v.Target.Data.SetDisappear(false, 3);
                 btl_mot.ShowMesh(_v.Target.Data, _v.Target.Data.mesh_banish, false);
@@ -262,6 +268,37 @@ namespace Memoria.Scripts.TranceSeek
                             _v.Target.Data.gameObject.transform.localPosition = newPos;
                     }
 
+                    // Crappy hack to change the name of the summoned monster in the battle HUD
+                    FieldInfo targetPanelField = typeof(BattleHUD).GetField("_targetPanel", BindingFlags.NonPublic | BindingFlags.Instance);
+                    if (targetPanelField != null)
+                    {
+                        object targetPanelObj = targetPanelField.GetValue(UIManager.Battle);
+                        if (targetPanelObj != null)
+                        {
+                            FieldInfo enemiesField = targetPanelObj.GetType().GetField("Enemies", BindingFlags.Public | BindingFlags.Instance);
+                            object enemiesObj = enemiesField.GetValue(targetPanelObj);
+
+                            if (enemiesObj != null)
+                            {
+                                FieldInfo entriesField = enemiesObj.GetType().GetField("Entries", BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy);
+                                Array entriesArray = entriesField.GetValue(enemiesObj) as Array;
+
+                                if (entriesArray != null && entriesArray.Length > 1)
+                                {
+                                    object enemyButtonObj = entriesArray.GetValue(1);
+
+                                    FieldInfo nameField = enemyButtonObj.GetType().GetField("Name", BindingFlags.Public | BindingFlags.Instance);
+                                    object nameObj = nameField.GetValue(enemyButtonObj);
+
+                                    FieldInfo labelField = nameObj.GetType().GetField("Label", BindingFlags.Public | BindingFlags.Instance);
+                                    UILabel uiLabel = labelField.GetValue(nameObj) as UILabel;
+
+                                    if (uiLabel != null)
+                                        uiLabel.rawText = _v.Target.Name;
+                                }
+                            }
+                        }
+                    }
                 }
                 else
                 {

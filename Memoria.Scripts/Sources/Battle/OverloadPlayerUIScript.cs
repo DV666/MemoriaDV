@@ -24,6 +24,11 @@ namespace Memoria.Scripts.TranceSeek
         private Boolean GemColored = Configuration.Mod.FolderNames.Contains("TranceSeek/Options/ColoredGems");
         private Boolean BoostedSAIndicatorDisabled = Configuration.Mod.FolderNames.Contains("Options/BoostedSAIndicator/Disabled");
 
+        private static Boolean _pinkTextEnabled = Configuration.Mod.FolderNames.Contains("TranceSeek/Options/BoostedSAIndicator/PinkText");
+        private static Boolean _fadingTextEnabled = Configuration.Mod.FolderNames.Contains("TranceSeek/Options/BoostedSAIndicator/Fading");
+
+        public static Dictionary<SupportAbility, String> BoostedSATargetNames = new Dictionary<SupportAbility, String>();
+
         public IOverloadPlayerUIScript.Result UpdatePointStatus(PLAYER player)
         {
             if (!_isMenuInjected)
@@ -121,6 +126,11 @@ namespace Memoria.Scripts.TranceSeek
                 dictbattle[3] = 0;
             }
 
+            ValidateBoostedSupportAbilities(player);
+
+            if (!BoostedSAIndicatorDisabled)
+                CheckFadeNextBoostedSA(player);
+
             if (!PlayerPreventEncounter.Contains(player) && player.equip.Accessory == TranceSeekRegularItem.MalboroIncense)
                 PlayerPreventEncounter.Add(player);
             else if (PlayerPreventEncounter.Contains(player) && player.equip.Accessory != TranceSeekRegularItem.MalboroIncense)
@@ -134,6 +144,182 @@ namespace Memoria.Scripts.TranceSeek
             return result;
         }
 
+        public static void CheckFadeNextBoostedSA(PLAYER player)
+        {
+            BoostedSATargetNames.Clear();
+
+            if (player == null || player.saExtended == null)
+                return;
+
+            AbilityUI abilityScene = PersistenSingleton<UIManager>.Instance.AbilityScene;
+            if (abilityScene == null || !abilityScene.isActiveAndEnabled)
+                return;
+
+            bool isInSAMenu = ButtonGroupState.ActiveGroup == "Ability.SupportAbility";
+            bool isHoveringSA = ButtonGroupState.ActiveGroup == "Ability.SubMenu" && abilityScene.MagicStonePanel.activeInHierarchy;
+
+            if (!isInSAMenu && !isHoveringSA)
+                return;
+
+            foreach (SupportAbility equippedSA in player.saExtended)
+            {
+                SupportAbility baseSA = ff9abil.GetBaseAbilityFromBoostedAbility(equippedSA);
+
+                if (BoostedSATargetNames.ContainsKey(baseSA))
+                    continue;
+
+                Int32 currentLevel = ff9abil.GetBoostedAbilityLevel(player, baseSA);
+                List<SupportAbility> boostedList = ff9abil.GetBoostedAbilityList(baseSA);
+
+                if (currentLevel >= boostedList.Count)
+                    continue;
+
+                if (currentLevel == 0 || currentLevel == 1)
+                {
+                    SupportAbility nextSA = boostedList[currentLevel];
+                    Int32 nextAbilityId = ff9abil.GetAbilityIdFromSupportAbility(nextSA);
+                    Int32 nextCost = ff9abil.GetSAGemCostFromPlayer(player, nextSA);
+
+                    Boolean hasAccess = player.saForced.Contains(nextSA) || ff9abil.FF9Abil_IsMaster(player, nextAbilityId);
+
+                    if (!hasAccess)
+                    {
+                        for (Int32 i = 0; i < 5; ++i)
+                        {
+                            RegularItem itemId = player.equip[i];
+                            if (itemId != RegularItem.NoItem && ff9item._FF9Item_Data[itemId].ability.Contains(nextAbilityId))
+                            {
+                                hasAccess = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (hasAccess && !player.saHidden.Contains(nextSA) && player.cur.capa >= nextCost)
+                    {
+                        Int32 highlightTier = (currentLevel == 0) ? 1 : 2;
+
+                        Int32 boostLevelToDisplay = Math.Min(ff9abil.GetBoostedAbilityMaxLevel(player, baseSA), currentLevel);
+                        SupportAbility displaySupportId = baseSA;
+                        if (boostLevelToDisplay > 0)
+                            displaySupportId = boostedList[boostLevelToDisplay - 1];
+
+                        String rawName = FF9TextTool.SupportAbilityName(displaySupportId);
+                        String cleanName = System.Text.RegularExpressions.Regex.Replace(rawName, @"\[/?b\]|\[[a-fA-F0-9]{6}\]|\[HSHD\]", string.Empty);
+                        String targetName = cleanName;
+
+                        if (highlightTier == 2)
+                        {
+                            if (_fadingTextEnabled)
+                                targetName = $"[ANIM=TextRGBA,Loop,Sinus,3.0,Sinus,6.0,0.968,0.118,0.968,1.000,0.843,0.000,0.968,0.118,0.968][HSHD]{cleanName}[383838][HSHD]";
+                            else if (_pinkTextEnabled)
+                                targetName = $"[b][ffd700][HSHD]{cleanName}[383838][HSHD][/b]";
+                        }
+                        else if (highlightTier == 1)
+                        {
+                            if (_fadingTextEnabled)
+                                targetName = $"[ANIM=TextRGBA,Loop,Sinus,3.0,Sinus,6.0,0.784,0.784,0.784,0.968,0.118,0.968,0.784,0.784,0.784][HSHD]{cleanName}[383838][HSHD]";
+                            else if (_pinkTextEnabled)
+                                targetName = $"[b][ffc7ff][HSHD]{cleanName}[383838][HSHD][/b]";
+                        }
+
+                        BoostedSATargetNames[baseSA] = targetName;
+                    }
+                }
+            }
+        }
+
+        public class SABoostVisualizerHandler : MonoBehaviour
+        {
+            private System.Reflection.FieldInfo _saIdListField;
+            private System.Reflection.FieldInfo _scrollListField;
+            private bool _isInitialized = false;
+
+            private RecycleListItem[] _cachedItems = null;
+            private Dictionary<RecycleListItem, UILabel> _cachedLabels = new Dictionary<RecycleListItem, UILabel>();
+
+            private void Awake()
+            {
+                var flags = System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance;
+                _saIdListField = typeof(AbilityUI).GetField("saIdList", flags);
+                _scrollListField = typeof(AbilityUI).GetField("supportAbilityScrollList", flags);
+
+                if (_saIdListField != null && _scrollListField != null)
+                    _isInitialized = true;
+            }
+
+            private void LateUpdate()
+            {
+                if (!_isInitialized)
+                    return;
+
+                AbilityUI abilityScene = PersistenSingleton<UIManager>.Instance.AbilityScene;
+                if (abilityScene == null || !abilityScene.isActiveAndEnabled)
+                    return;
+
+                bool isInSAMenu = ButtonGroupState.ActiveGroup == "Ability.SupportAbility";
+                bool isHoveringSA = ButtonGroupState.ActiveGroup == "Ability.SubMenu" && abilityScene.MagicStonePanel.activeInHierarchy;
+
+                if (!isInSAMenu && !isHoveringSA)
+                    return;
+
+                PLAYER player = OverloadedPlayerUI.CurrentPlayer;
+                if (player == null)
+                    return;
+
+                List<Int32> saIdList = _saIdListField.GetValue(abilityScene) as List<Int32>;
+                RecycleListPopulator scrollList = _scrollListField.GetValue(abilityScene) as RecycleListPopulator;
+
+                if (saIdList == null || scrollList == null)
+                    return;
+
+                if (_cachedItems == null || _cachedItems.Length == 0 || _cachedItems[0] == null)
+                    _cachedItems = scrollList.GetComponentsInChildren<RecycleListItem>(true);
+
+                foreach (RecycleListItem recycleItem in _cachedItems)
+                {
+                    if (!recycleItem.gameObject.activeInHierarchy)
+                        continue;
+
+                    Int32 itemIndex = recycleItem.ItemDataIndex;
+                    if (itemIndex < 0 || itemIndex >= saIdList.Count)
+                        continue;
+
+                    UILabel nameLabel = null;
+                    if (!_cachedLabels.TryGetValue(recycleItem, out nameLabel))
+                    {
+                        ItemListDetailWithIconHUD hud = new ItemListDetailWithIconHUD(recycleItem.gameObject, true);
+                        nameLabel = hud.NameLabel;
+                        if (nameLabel != null)
+                            _cachedLabels[recycleItem] = nameLabel;
+                    }
+
+                    if (nameLabel == null)
+                        continue;
+
+                    Int32 abilityId = saIdList[itemIndex];
+                    SupportAbility baseSupportId = ff9abil.GetSupportAbilityFromAbilityId(abilityId);
+
+                    if (BoostedSATargetNames.TryGetValue(baseSupportId, out String targetName))
+                    {
+                        if (nameLabel.rawText != targetName)
+                            nameLabel.rawText = targetName;
+                    }
+                    else
+                    {
+                        Int32 boostLevel = Math.Min(ff9abil.GetBoostedAbilityMaxLevel(player, baseSupportId), ff9abil.GetBoostedAbilityLevel(player, baseSupportId));
+                        SupportAbility displaySupportId = baseSupportId;
+                        if (boostLevel > 0)
+                            displaySupportId = ff9abil.GetBoostedAbilityList(baseSupportId)[boostLevel - 1];
+
+                        String defaultName = FF9TextTool.SupportAbilityName(displaySupportId);
+
+                        if (nameLabel.rawText != defaultName)
+                            nameLabel.rawText = defaultName;
+                    }
+                }
+            }
+        }
         public class SAClearInputHandler : MonoBehaviour
         {
             private bool _isActionTriggered = false;
@@ -223,7 +409,7 @@ namespace Memoria.Scripts.TranceSeek
                 if (hasChanged)
                 {
                     FF9Sfx.FF9SFX_Play(107);
-                    FF9Play_UpdateFromOverload(player); 
+                    FF9Play_UpdateFromOverload(player);
 
                     AbilityUI abilityScene = PersistenSingleton<UIManager>.Instance.AbilityScene;
                     if (abilityScene != null && abilityScene.isActiveAndEnabled)
@@ -240,149 +426,6 @@ namespace Memoria.Scripts.TranceSeek
                         var setAbilityInfoMethod = abilityUiType.GetMethod("SetAbilityInfo", flags);
                         setAbilityInfoMethod?.Invoke(abilityScene, new object[] { true });
                     }
-                }
-            }
-        }
-
-        public class SABoostVisualizerHandler : MonoBehaviour
-        {
-            private System.Reflection.FieldInfo _saIdListField;
-            private System.Reflection.FieldInfo _scrollListField;
-            private bool _isInitialized = false;
-
-            private Boolean _pinkTextEnabled;
-            private Boolean _fadingTextEnabled;
-
-            private RecycleListItem[] _cachedItems = null;
-            private Dictionary<RecycleListItem, UILabel> _cachedLabels = new Dictionary<RecycleListItem, UILabel>();
-
-            private void Awake()
-            {
-                var flags = System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance;
-                _saIdListField = typeof(AbilityUI).GetField("saIdList", flags);
-                _scrollListField = typeof(AbilityUI).GetField("supportAbilityScrollList", flags);
-
-                if (_saIdListField != null && _scrollListField != null)
-                    _isInitialized = true;
-
-                _pinkTextEnabled = Configuration.Mod.FolderNames.Contains("TranceSeek/Options/BoostedSAIndicator/PinkText");
-                _fadingTextEnabled = Configuration.Mod.FolderNames.Contains("TranceSeek/Options/BoostedSAIndicator/Fading");
-            }
-
-            private void LateUpdate()
-            {
-                if (!_isInitialized)
-                    return;
-
-                AbilityUI abilityScene = PersistenSingleton<UIManager>.Instance.AbilityScene;
-                if (abilityScene == null || !abilityScene.isActiveAndEnabled)
-                    return;
-
-                bool isInSAMenu = ButtonGroupState.ActiveGroup == "Ability.SupportAbility";
-                bool isHoveringSA = ButtonGroupState.ActiveGroup == "Ability.SubMenu" && abilityScene.MagicStonePanel.activeInHierarchy;
-
-                if (!isInSAMenu && !isHoveringSA)
-                    return;
-
-                PLAYER player = OverloadedPlayerUI.CurrentPlayer;
-                if (player == null)
-                    return;
-
-                List<Int32> saIdList = _saIdListField.GetValue(abilityScene) as List<Int32>;
-                RecycleListPopulator scrollList = _scrollListField.GetValue(abilityScene) as RecycleListPopulator;
-
-                if (saIdList == null || scrollList == null)
-                    return;
-
-                if (_cachedItems == null || _cachedItems.Length == 0 || _cachedItems[0] == null)
-                    _cachedItems = scrollList.GetComponentsInChildren<RecycleListItem>(true);
-
-                foreach (RecycleListItem recycleItem in _cachedItems)
-                {
-                    if (!recycleItem.gameObject.activeInHierarchy)
-                        continue;
-
-                    Int32 itemIndex = recycleItem.ItemDataIndex;
-                    if (itemIndex < 0 || itemIndex >= saIdList.Count)
-                        continue;
-
-                    UILabel nameLabel = null;
-                    if (!_cachedLabels.TryGetValue(recycleItem, out nameLabel))
-                    {
-                        ItemListDetailWithIconHUD hud = new ItemListDetailWithIconHUD(recycleItem.gameObject, true);
-                        nameLabel = hud.NameLabel;
-                        if (nameLabel != null)
-                            _cachedLabels[recycleItem] = nameLabel;
-                    }
-
-                    if (nameLabel == null)
-                        continue;
-
-                    Int32 abilityId = saIdList[itemIndex];
-                    SupportAbility baseSupportId = ff9abil.GetSupportAbilityFromAbilityId(abilityId);
-
-                    Int32 maxLevel = ff9abil.GetBoostedAbilityMaxLevel(player, baseSupportId);
-                    Boolean highlight = false;
-                    SupportAbility displaySupportId = baseSupportId;
-
-                    Boolean isBaseEquipped = ff9abil.FF9Abil_IsEnableSA(player.saExtended, baseSupportId);
-
-                    if (isBaseEquipped && maxLevel > 0)
-                    {
-                        Int32 boostLevel = Math.Min(maxLevel, ff9abil.GetBoostedAbilityLevel(player, baseSupportId));
-                        List<SupportAbility> boostedList = ff9abil.GetBoostedAbilityList(baseSupportId);
-
-                        if (boostLevel > 0)
-                            displaySupportId = boostedList[boostLevel - 1];
-
-                        if (boostLevel == maxLevel)
-                        {
-                            highlight = true;
-                        }
-                        else
-                        {
-                            SupportAbility nextBoostId = boostedList[boostLevel];
-                            Int32 nextAbilityId = ff9abil.GetAbilityIdFromSupportAbility(nextBoostId);
-                            Int32 nextCost = ff9abil.GetSAGemCostFromPlayer(player, nextBoostId);
-
-                            Boolean hasAccess = player.saForced.Contains(nextBoostId) || ff9abil.FF9Abil_IsMaster(player, nextAbilityId);
-
-                            if (!hasAccess)
-                            {
-                                for (Int32 i = 0; i < 5; ++i)
-                                {
-                                    RegularItem itemId = player.equip[i];
-                                    if (itemId != RegularItem.NoItem && ff9item._FF9Item_Data[itemId].ability.Contains(nextAbilityId))
-                                    {
-                                        hasAccess = true;
-                                        break;
-                                    }
-                                }
-                            }
-
-                            if (hasAccess && !player.saHidden.Contains(nextBoostId))
-                            {
-                                if (player.cur.capa >= nextCost)
-                                {
-                                    highlight = true;
-                                }
-                            }
-                        }
-                    }
-
-                    String normalName = FF9TextTool.SupportAbilityName(displaySupportId);
-                    String targetName = normalName;
-
-                    if (highlight)
-                    {
-                        if (_fadingTextEnabled)
-                            targetName = $"[ANIM=TextRGBA,Loop,Sinus,3.0,Sinus,6.0,0.784,0.784,0.784,0.968,0.118,0.968,0.784,0.784,0.784]{normalName}[383838][HSHD]";
-                        else if (_pinkTextEnabled)
-                            targetName = $"[b][ffc7ff][HSHD]{normalName}[383838][HSHD][/b]";
-                    }
-
-                    if (nameLabel.rawText != targetName)
-                        nameLabel.rawText = targetName;
                 }
             }
         }
@@ -467,6 +510,81 @@ namespace Memoria.Scripts.TranceSeek
                 play.cur.hp = play.max.hp;
             if (play.cur.mp > play.max.mp)
                 play.cur.mp = play.max.mp;
+        }
+
+        public static void ValidateBoostedSupportAbilities(PLAYER player)
+        {
+            if (player == null || player.saExtended == null)
+                return;
+
+            List<SupportAbility> toDisable = new List<SupportAbility>();
+
+            foreach (SupportAbility sa in player.saExtended)
+            {
+                if (player.saForced.Contains(sa))
+                    continue;
+
+                List<SupportAbility> hierarchy = ff9abil.GetHierarchyFromAnySA(sa);
+                if (hierarchy != null && hierarchy.Count > 0)
+                {
+                    Int32 currentIndex = hierarchy.IndexOf(sa);
+                    Boolean isChainValid = true;
+
+                    for (Int32 i = 0; i <= currentIndex; i++)
+                    {
+                        SupportAbility reqSA = hierarchy[i];
+                        if (!HasSupportAbilityAccess(player, reqSA))
+                        {
+                            if (!toDisable.Contains(reqSA))
+                                toDisable.Add(reqSA);
+                            isChainValid = false;
+                            break;
+                        }
+                    }
+
+                    if (!isChainValid)
+                    {
+                        for (Int32 j = currentIndex; j < hierarchy.Count; j++)
+                        {
+                            SupportAbility saToDisable = hierarchy[j];
+                            if (!toDisable.Contains(saToDisable))
+                                toDisable.Add(saToDisable);
+                        }
+                    }
+                }
+            }
+
+            if (toDisable.Count > 0)
+            {
+                foreach (SupportAbility sa in toDisable)
+                {
+                    Memoria.Prime.Log.Message($"[Trance Seek] Disabling Support Ability: {sa} for player {player.Name} since hierarchy not respected anymore.");
+                    if (player.saExtended.Contains(sa))
+                        ff9abil.FF9Abil_SetEnableSA(player, sa, false);
+                }
+
+                ff9abil.CalculateGemsPlayer(player);
+            }
+        }
+
+        private static Boolean HasSupportAbilityAccess(PLAYER player, SupportAbility sa)
+        {
+            if (player.saForced.Contains(sa))
+                return true;
+
+            Int32 abilityId = ff9abil.GetAbilityIdFromSupportAbility(sa);
+
+            if (ff9abil.FF9Abil_IsMaster(player, abilityId))
+                return true;
+
+            for (Int32 i = 0; i < 5; ++i)
+            {
+                RegularItem itemId = player.equip[i];
+                if (itemId != RegularItem.NoItem && ff9item._FF9Item_Data[itemId].ability.Contains(abilityId))
+                    return true;
+            }
+
+            return false;
         }
 
         private static readonly Dictionary<String, String> ConfirmClearSADialogTexts = new Dictionary<String, String>

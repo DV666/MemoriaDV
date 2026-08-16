@@ -11,12 +11,14 @@ namespace Memoria.DefaultScripts
     public class VirusStatusScript : StatusScriptBase, IOprStatusScript
     {
         public BattleUnit VirusInflicter = null;
+        public Boolean Boss10000HP = false;
 
         public override UInt32 Apply(BattleUnit target, BattleUnit inflicter, params Object[] parameters)
         {
             base.Apply(target, inflicter, parameters);
             target.AddDelayedModifier(HideSHP, null);
             VirusInflicter = inflicter;
+            Boss10000HP = Target.State().Monster.HPBoss10000;
             TranceSeekAPI.SA_StatusApply(inflicter, false);
             return btl_stat.ALTER_SUCCESS;
         }
@@ -44,6 +46,9 @@ namespace Memoria.DefaultScripts
         public Boolean OnOpr()
         {
             if (Target.IsUnderAnyStatus(BattleStatus.Petrify))
+                return false;
+
+            if (Boss10000HP && Target.CurrentHp <= 10000)
                 return false;
 
             if (Target.CurrentHp > 0)

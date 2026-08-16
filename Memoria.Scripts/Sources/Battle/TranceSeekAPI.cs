@@ -511,8 +511,8 @@ namespace Memoria.Scripts.TranceSeek
 
             if (Caster_TSVar.StackStatus.Magic != 0)
                 v.Context.Attack += ((Caster_TSVar.StackStatus.Magic * v.Context.Attack) / 100);
-            if (Caster_TSVar.StackStatus.MDefence != 0)
-                v.Context.Attack -= ((Caster_TSVar.StackStatus.MDefence * v.Context.Attack) / 100);
+            if (Target_TSVar.StackStatus.MDefence != 0)
+                v.Context.Attack -= ((Target_TSVar.StackStatus.MDefence * v.Context.Attack) / 100);
 
             if (v.Context.Attack < 1)
                 v.Context.Attack = 1;

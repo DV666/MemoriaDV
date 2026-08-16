@@ -87,7 +87,8 @@ namespace Memoria.Scripts.TranceSeek
                 if (Configuration.Mod.FolderNames.Contains("TranceSeek/Options/FollowersFeature"))
                     watcherObj.AddComponent<OverloadOnFieldScript>();
 
-                watcherObj.AddComponent<TranceSeekHackShop>();
+                if (Configuration.Mod.FolderNames.Contains("TranceSeek/Options/AutoSorterShop"))
+                    watcherObj.AddComponent<TranceSeekHackShop>();
 #if DEV_TS
                 watcherObj.AddComponent<TranceSeekDebugMenu>();
                 Log.Message("[Trance Seek Init] TranceSeekDebugMenu loaded.");

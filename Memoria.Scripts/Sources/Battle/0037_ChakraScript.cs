@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using FF9;
 using Memoria.Data;
+using Memoria.Prime;
 
 namespace Memoria.Scripts.TranceSeek
 {
@@ -26,12 +27,13 @@ namespace Memoria.Scripts.TranceSeek
             {
                 if (_v.Caster.IsUnderStatus(BattleStatus.Trance))
                 {
-                    _v.Target.Flags |= (CalcFlag.MpAlteration | CalcFlag.MpRecovery);
-                    _v.Target.MpDamage = (int)(_v.Target.MaximumMp / 2U);
+                    _v.Caster.Flags |= (CalcFlag.MpAlteration | CalcFlag.MpRecovery);
+                    _v.Caster.MpDamage = (int)(_v.Caster.MaximumMp / 2U);
                 }
-                _v.Target.TryAlterSingleStatus(BattleStatusId.ChangeStat, true, _v.Caster, "Magic", Math.Min(99, _v.Target.Magic + (_v.Target.Magic / _v.Command.Power)));
-                _v.Target.TryAlterSingleStatus(BattleStatusId.ChangeStat, true, _v.Caster, "Will", Math.Min(50, _v.Target.Will + (_v.Target.Will / _v.Command.Power)));
+                _v.Target.TryAlterSingleStatus(BattleStatusId.ChangeStat, false, _v.Caster, "Magic", Math.Min(99, _v.Target.Magic + (_v.Target.Magic / _v.Command.Power)));
+                _v.Target.TryAlterSingleStatus(BattleStatusId.ChangeStat, false, _v.Caster, "Will", Math.Min(50, _v.Target.Will + (_v.Target.Will / _v.Command.Power)));
                 TranceSeekAPI.TryAlterCommandStatuses(_v);
+                return;
             }
             else if (_v.Command.Power == 111 && _v.Command.HitRate == 111) // Ogre - Zenitude
             {

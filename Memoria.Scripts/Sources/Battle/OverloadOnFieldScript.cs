@@ -76,7 +76,7 @@ namespace Memoria.Scripts.TranceSeek
             { CharacterId.Marcus, new FollowerData(109, "ANH_SUB_F0_MRC_IDLE", "ANH_SUB_F0_MRC_WALK", "ANH_SUB_F0_MRC_RUN", "ANH_SUB_F0_MRC_TAN", new HashSet<Int32>(){45, 109, 660}) },
             { CharacterId.Blank, new FollowerData(5467, "ANH_SUB_F0_BLN_IDLE", "ANH_SUB_F0_BLN_WALK", "ANH_SUB_F0_BLN_RUN", "ANH_SUB_F0_BLN_TAN", new HashSet<Int32>(){42, 608, 639, 5467, 190, 659}) },
             { CharacterId.Beatrix, new FollowerData(204, "ANH_SUB_F0_BTX_IDLE", "ANH_SUB_F0_BTX_WALK", "ANH_SUB_F0_BTX_RUN", "ANH_SUB_F0_BTX_HAIR", new HashSet<Int32>(){427, 204, 358}) },
-            { (CharacterId)12, new FollowerData(368, "ANH_SUB_F0_SBW_IDLE", "ANH_SUB_F0_SBW_WALK", "ANH_SUB_F0_SBW_RUN", "ANH_SUB_F0_SBW_GIVE_ME", new HashSet<Int32>(){427, 204, 358}) }
+            { (CharacterId)12, new FollowerData(368, "ANH_SUB_F0_SBW_IDLE", "ANH_SUB_F0_SBW_WALK", "ANH_SUB_F0_SBW_RUN", "ANH_SUB_F0_SBW_GIVE_ME", new HashSet<Int32>(){427, 204, 368}) }
         };
 
         private Dictionary<CharacterId, Follower> followerPool = new Dictionary<CharacterId, Follower>();
@@ -118,7 +118,7 @@ namespace Memoria.Scripts.TranceSeek
 
         private static readonly HashSet<Int32> BlackListFieldId =
             new HashSet<Int32>(new[] { 70, 152, 209, 260, 261, 453, 454, 606, 655, 767, 768, 769, 811, 813,
-                814, 816, 954, 955, 1400, 1401, 1402, 1403, 1404, 1462, 1609, 1659, 1704, 1800, 2261, 2750, 2751, 2752, 2753, 2754, 2755, 2756, 2850, 2851, 2852, 2853, 2854, 2855, 2856, 2951, 2952, 2953,
+                814, 816, 954, 955, 1400, 1401, 1402, 1403, 1404, 1462, 1609, 1659, 1704, 1800, 2261, 2608, 2700, 2701, 2702, 2703, 2704, 2750, 2751, 2752, 2753, 2754, 2755, 2756, 2850, 2851, 2852, 2853, 2854, 2855, 2856, 2951, 2952, 2953,
             2928, 2929, 2930, 2931, 2932, 2933, 2934, 3000, 3001, 3002, 3003, 3004, 3005, 3006, 3007, 3008, 3009, 3010, 3011, 3012}); // End of the game
 
         private static readonly HashSet<Int32> ModelCantGetFollowers = new HashSet<Int32>(new[] { 317, 312, 320, 321, 308 });
@@ -126,6 +126,72 @@ namespace Memoria.Scripts.TranceSeek
         private static readonly HashSet<Int32> ActorAnimWalking = new HashSet<Int32>(new[] {
             203, 145, 2092, 2006, 2559, 3231, 7505, 8311, 473, 476, 464, 2982, 8347,
             38, 419, 2091, 2005, 2558, 3230, 7506, 8312, 105, 365, 5222, 2981, 8348
+        });
+
+        private static readonly HashSet<Int32> ActorAnimIdle = new HashSet<Int32>(new[]
+        {
+            3286, 3349, 5006, 5346, 12168, 6875, 6880, 7113, 7107, 6463,
+            4533, 8245, 964, 10566, 4684, 4694, 7118, 3140, 8243, 1484,
+            10245, 7503, 11795, 2556, 3724, 4988, 3728, 3731, 3735, 2094,
+            2089, 3208, 3228, 8307, 8155, 8157, 3278, 2012, 6059, 2001,
+            2732, 11736, 11740, 11738, 2469, 148, 11889, 8173, 2624, 2623,
+            7922, 200, 7933, 2633, 3511, 8402, 8400, 2616, 8505, 10607,
+            8853, 2670, 3602, 11107, 6565, 6562, 9786, 5275, 7033, 10372,
+            11417, 7412, 7409, 7592, 7247, 11782, 760, 7659, 7249, 7466,
+            7252, 3108, 7254, 7664, 8623, 11042, 896, 11774, 6908, 6477,
+            454, 4974, 1426, 2800, 552, 555, 2095, 85, 560, 1500,
+            2029, 1965, 567, 9851, 2229, 3174, 3190, 578, 2046, 2057,
+            2171, 458, 11363, 2953, 3202, 11623, 7525, 10255, 580, 1511,
+            2506, 2370, 1540, 1303, 1217, 1908, 6859, 7384, 7255, 7271,
+            2886, 2884, 4459, 8070, 8068, 8056, 7275, 4662, 1531, 2783,
+            10357, 1310, 800, 7148, 3201, 7173, 589, 7135, 1227, 926,
+            617, 6535, 11058, 1235, 2904, 7347, 1921, 2099, 2107, 2494,
+            4689, 4676, 8450, 641, 5762, 653, 664, 1121, 2968, 6188,
+            1536, 691, 3430, 696, 687, 11139, 3410, 704, 706, 4478,
+            1931, 712, 8263, 2204, 1259, 1257, 9859, 725, 2235, 2289,
+            1937, 2516, 3250, 1645, 509, 729, 1285, 1292, 738, 9865,
+            2785, 2526, 14667, 1555, 1125, 743, 2241, 2536, 14679, 1152,
+            749, 2293, 6045, 780, 2068, 462, 1953, 1327, 1328, 13191,
+            13199, 467, 4608, 2978, 5328, 2547, 8328, 11676, 12568, 12579,
+            470, 1067, 1069, 1061, 12273, 12589, 1698, 5681, 5683, 5687,
+            12891, 13075, 13079, 10202, 10206, 10210, 8492, 8478, 11127, 474,
+            1094, 3311, 3324, 8085, 1093, 1758, 1742, 1717, 1722, 1774,
+            1203, 8885, 8344, 10525, 521, 2269, 2266, 2277, 5957, 3249,
+            526, 2758, 1192, 2819, 2814, 3268, 6622, 7295, 11533, 2490,
+            124, 2147, 2213, 537, 548, 152, 4716, 4723, 6140, 6142,
+            4707, 5144, 5134, 5127, 6150, 5114, 3132, 5131, 3598, 5110,
+            5105, 5098, 3284, 3347, 5007, 5345, 12166, 6874, 6877, 7114,
+            7108, 6464, 4531, 8246, 963, 10567, 4683, 4693, 7117, 3138,
+            8242, 1483, 10244, 7504, 11793, 2557, 3722, 4961, 3726, 3730,
+            3734, 2093, 2090, 3206, 3229, 8308, 8156, 8158, 3279, 2011,
+            6060, 2002, 2733, 11737, 11741, 11739, 2468, 573, 11887, 8174,
+            2625, 2622, 7920, 324, 7931, 2632, 3512, 8401, 8399, 2617,
+            8506, 10606, 8852, 2671, 3600, 11104, 6566, 6561, 9787, 5260,
+            7034, 10373, 11415, 7411, 7410, 7589, 7248, 11780, 759, 7660,
+            7250, 7464, 7251, 3106, 7253, 7663, 8621, 11041, 895, 11772,
+            6906, 6478, 453, 4981, 1425, 2801, 429, 596, 2096, 84,
+            606, 1487, 2030, 1966, 610, 9850, 2230, 3175, 3191, 615,
+            2045, 2058, 2172, 840, 11361, 2954, 3203, 11621, 7526, 10254,
+            5242, 1510, 2507, 2371, 1537, 1298, 1212, 1907, 6858, 7383,
+            7256, 7272, 2887, 2885, 4460, 8069, 8067, 8055, 7276, 4661,
+            1527, 2784, 10356, 1305, 799, 7147, 3200, 7174, 623, 7136,
+            1222, 921, 631, 6536, 11057, 1230, 2905, 7348, 1922, 2100,
+            2108, 2495, 4690, 4675, 8449, 636, 5761, 29, 96, 1122,
+            2177, 2967, 6185, 1535, 542, 3428, 644, 5291, 11137, 3407,
+            651, 654, 4477, 1932, 663, 8264, 2203, 1242, 1240, 9858,
+            665, 2236, 2290, 1938, 2517, 3251, 1643, 508, 5, 1274,
+            1281, 75, 9864, 2786, 2527, 14666, 1550, 1126, 675, 2242,
+            2537, 14678, 1153, 682, 2294, 6046, 773, 2067, 5221, 1954,
+            1320, 1321, 13189, 13197, 351, 4605, 2977, 5326, 2546, 8327,
+            11663, 12567, 12580, 101, 1058, 1060, 1052, 12272, 12590, 1695,
+            5680, 5682, 5685, 12889, 13063, 13077, 10200, 10204, 10208, 8491,
+            8477, 11125, 363, 1088, 3312, 3323, 8086, 1087, 1756, 1740,
+            1716, 1719, 1772, 1197, 8883, 8343, 10524, 5276, 2270, 2265,
+            2278, 5956, 3248, 5350, 2759, 1187, 2818, 2815, 3269, 6621,
+            7296, 11531, 2491, 118, 2148, 2214, 5388, 5398, 149, 4715,
+            4724, 6139, 6141, 4706, 5145, 5135, 5126, 6149, 5113, 3130,
+            5130, 3596, 5109, 5106, 5097, 4047, 6508, 6515, 8306, 11836,
+            8838, 13184
         });
 
         private int speedFactor => HonoBehaviorSystem.Instance.IsFastForwardModeActive() ? HonoBehaviorSystem.Instance.GetFastForwardFactor() : 1;
@@ -528,6 +594,7 @@ namespace Memoria.Scripts.TranceSeek
             }
 
             float sqrDistanceMoved = (currentLeaderPos - lastLeaderLocalPos).sqrMagnitude;
+            LeaderState leaderstate = new LeaderState();
 
             if (IsWorldMap && sqrDistanceMoved > 1024f)
             {
@@ -550,15 +617,14 @@ namespace Memoria.Scripts.TranceSeek
             }
             else if (sqrDistanceMoved > 0.0001f)
             {
-                LeaderState state = new LeaderState();
-                state.LocalPosition = currentLeaderPos;
-                state.LocalRotation = leader.transform.localRotation;
-                state.IsMoving = true;
-                state.IsRunning = !IsWorldMap && ActorAnimWalking.Contains(actorleader.anim);
-                state.LightColor = GetLeaderColor();
+                leaderstate.LocalPosition = currentLeaderPos;
+                leaderstate.LocalRotation = leader.transform.localRotation;
+                leaderstate.IsMoving = true;
+                leaderstate.IsRunning = !IsWorldMap && ActorAnimWalking.Contains(actorleader.anim);
+                leaderstate.LightColor = GetLeaderColor();
 
                 foreach (Follower f in activeFollowers)
-                    f.PositionHistory.Enqueue(state);
+                    f.PositionHistory.Enqueue(leaderstate);
             }
 
             foreach (Follower f in activeFollowers)
@@ -567,12 +633,21 @@ namespace Memoria.Scripts.TranceSeek
 
                 if (!IsWorldMap && (IsCharacterModelPresentOnField(f.Id) || !FF9StateSystem.Common.FF9.party.IsInParty(f.Id)))
                 {
-                    if (f.Go.activeSelf) f.Go.SetActive(false);
+                    if (f.Go.activeSelf)
+                        f.Go.SetActive(false);
+
+                    if (f.ShadowObj != null)
+                        f.ShadowObj.SetActive(false);
+
                     continue;
                 }
                 else
                 {
-                    if (!f.Go.activeSelf) f.Go.SetActive(true);
+                    if (!f.Go.activeSelf)
+                        f.Go.SetActive(true);
+
+                    if (f.ShadowObj != null && !f.ShadowObj.activeSelf)
+                        f.ShadowObj.SetActive(true);
                 }
 
                 if (f.ShadowObj != null)
@@ -620,15 +695,16 @@ namespace Memoria.Scripts.TranceSeek
 
                 if (f.PositionHistory.Count > f.FramesBehind)
                 {
-                    LeaderState target = default;
                     while (f.PositionHistory.Count > f.FramesBehind)
-                        target = f.PositionHistory.Dequeue();
+                        leaderstate = f.PositionHistory.Dequeue();
 
-                    f.Go.transform.localPosition = target.LocalPosition;
-                    f.Go.transform.localRotation = target.LocalRotation;
-                    ApplyFollowerColor(f, target.LightColor);
+                    f.Go.transform.localPosition = leaderstate.LocalPosition;
+                    f.Go.transform.localRotation = leaderstate.LocalRotation;
+                    ApplyFollowerColor(f, leaderstate.LightColor);
 
-                    if (IsWorldMap || target.IsRunning)
+                    if (leaderstate.IsMoving && ActorAnimIdle.Contains(GetLeaderAnimID()))
+                        PlayAnimation(f, f.AnimIdle);
+                    else if (IsWorldMap || leaderstate.IsRunning)
                         PlayAnimation(f, f.AnimRun);
                     else
                         PlayAnimation(f, f.AnimWalk);
@@ -774,7 +850,8 @@ namespace Memoria.Scripts.TranceSeek
 
         private void HideFollowers(Boolean hide)
         {
-            if (activeFollowers.Count == 0 || FollowersHidden == hide) return;
+            if (activeFollowers.Count == 0 || FollowersHidden == hide)
+                return;
 
             foreach (Follower f in activeFollowers)
             {
@@ -796,6 +873,7 @@ namespace Memoria.Scripts.TranceSeek
                             f.Go.transform.localPosition = ff9.GetControlChar().pos;
                         else
                             f.Go.transform.localPosition = leader.transform.localPosition;
+
                         f.Go.transform.localRotation = leader.transform.localRotation;
                         f.PositionHistory.Clear();
                         ApplyFollowerColor(f, GetLeaderColor());

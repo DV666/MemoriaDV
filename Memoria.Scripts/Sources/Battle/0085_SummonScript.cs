@@ -84,10 +84,11 @@ namespace Memoria.Scripts.TranceSeek
                     }
                     else if (!_v.Caster.HasSupportAbilityByIndex(SupportAbility.OdinSword))
                     {
-                        _v.Context.HitRate += ((ff9item.FF9Item_GetCount(RegularItem.LapisLazuli) + 1)) / 2;
                         if (TranceSeekAPI.CheckUnsafetyOrGuard(_v))
                         {
-                            TranceSeekAPI.MagicAccuracy(_v);                     
+                            TranceSeekAPI.MagicAccuracy(_v);
+                            _v.Context.HitRate += ((ff9item.FF9Item_GetCount(RegularItem.LapisLazuli) + 1)) / 2;
+                            _v.Target.PenaltyShellHitRate();
                             if (TranceSeekAPI.TryMagicHit(_v))
                                 TranceSeekAPI.TryAlterCommandStatuses(_v);
                         }
@@ -105,7 +106,14 @@ namespace Memoria.Scripts.TranceSeek
                         if ((_v.Command.AbilityCategory & 16) != 0)
                             _v.Command.AbilityCategory -= 16; // Remove Magical effect to prevent Vanish to disappear.
                         _v.Target.TryRemoveStatuses(_v.Command.AbilityStatus);
+
+                        int BonusFormula = (400 + _v.Caster.Will * 3);
                         _v.Target.AlterStatus(BattleStatus.Regen);
+
+                        if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Boost_Boosted))
+                            TranceSeekAPI.AlterStatusDuration(_v, BattleStatus.Regen, BonusFormula * 3, true);
+                        else if (_v.Caster.HasSupportAbilityByIndex(SupportAbility.Boost))
+                            TranceSeekAPI.AlterStatusDuration(_v, BattleStatus.Regen, BonusFormula * 2, true);
                     }
                     break;
                 }
@@ -119,8 +127,15 @@ namespace Memoria.Scripts.TranceSeek
                         if ((_v.Command.AbilityCategory & 16) != 0)
                             _v.Command.AbilityCategory -= 16; // Remove Magical effect to prevent Vanish to disappear.
                         _v.Target.Flags = CalcFlag.MpDamageOrHeal;
-                        _v.Target.MpDamage = (_v.Caster.Magic + Comn.random16() % (1 + (_v.Caster.Level + _v.Caster.Magic) / 2)) / 3;
+                        _v.Target.MpDamage = (_v.Caster.Magic + Comn.random16() % (1 + (_v.Caster.Level + _v.Caster.Magic) / 2)) / (4 - BonusTurbo);
+
+                        int BonusFormula = (400 + _v.Caster.Will * 3);
                         _v.Target.AlterStatus(BattleStatus.Float);
+
+                        if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Boost_Boosted))
+                            TranceSeekAPI.AlterStatusDuration(_v, BattleStatus.Float, BonusFormula * 3, true);
+                        else if (_v.Caster.HasSupportAbilityByIndex(SupportAbility.Boost))
+                            TranceSeekAPI.AlterStatusDuration(_v, BattleStatus.Float, BonusFormula * 2, true);
                     }
                     break;
                 }
@@ -158,13 +173,12 @@ namespace Memoria.Scripts.TranceSeek
                         if (_v.Caster.HasSupportAbilityByIndex(SupportAbility.Boost))
                             return;
 
-                        BonusFormula = BonusFormula / 3;
-                        TranceSeekAPI.AlterStatusDuration(_v, _v.Command.AbilityStatus, BonusFormula, false);
+                        TranceSeekAPI.AlterStatusDuration(_v, _v.Command.AbilityStatus, BonusFormula / 3, false);
                     }
                     else if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Boost_Boosted))
-                        TranceSeekAPI.AlterStatusDuration(_v, _v.Command.AbilityStatus, BonusFormula, true);
+                        TranceSeekAPI.AlterStatusDuration(_v, _v.Command.AbilityStatus, BonusFormula * 3, true);
                     else if (_v.Caster.HasSupportAbilityByIndex(SupportAbility.Boost))
-                        TranceSeekAPI.AlterStatusDuration(_v, _v.Command.AbilityStatus, BonusFormula / 3, true);
+                        TranceSeekAPI.AlterStatusDuration(_v, _v.Command.AbilityStatus, BonusFormula * 2, true);
 
                     return;
                 }
@@ -187,8 +201,11 @@ namespace Memoria.Scripts.TranceSeek
             }
             else if (TranceSeekAPI.CanAttackMagic(_v))
             {
-                int factor = _v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Boost_Boosted) ? 1 : (_v.Caster.HasSupportAbilityByIndex(SupportAbility.Boost) ? 2 : 4);
-                _v.Context.AttackPower += _v.Caster.Level / factor;
+                _v.Context.AttackPower += _v.Caster.Level / (_v.Caster.HasSupportAbilityByIndex(SupportAbility.Boost) ? 1 : 2);
+
+                if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Boost_Boosted))
+                    _v.Context.DamageModifierCount += 2;
+
                 if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Archmage))
                     TranceSeekAPI.TryCriticalHit(_v);
 

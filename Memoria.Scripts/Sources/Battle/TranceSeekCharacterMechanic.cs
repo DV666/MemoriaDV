@@ -67,17 +67,14 @@ namespace Memoria.Scripts.TranceSeek
 
         public static void DragonMechanic(this BattleCalculator v)
         {
-            if (v.Target.IsUnderAnyStatus(TranceSeekStatus.Dragon))
+            if (v.Target.IsUnderAnyStatus(TranceSeekStatus.Dragon) && !v.Caster.IsUnderStatus(BattleStatus.Trance) && v.Command.ScriptId == 79) // Only used with DragonSkillScript
             {
-                if (v.Target.IsUnderAnyStatus(TranceSeekStatus.Dragon) && !v.Caster.IsUnderStatus(BattleStatus.Trance) && v.Command.ScriptId == 79) // Only used with DragonSkillScript
-                {
-                    float DragonRemove = v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.DragonsEye_Boosted) ? 25 : (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.DragonsEye) ? 12.5f : 0); // Eye of the dragon
-                    if (DragonRemove < Comn.random16() % 100)
-                        btl_stat.AlterStatus(v.Target, TranceSeekStatusId.Dragon, v.Caster, parameters: "Remove");
-                }
-                else if (v.Command.Id == BattleCommandId.Attack || v.Command.Id == BattleCommandId.Spear || v.Command.Id == BattleCommandId.SpearInTrance || (v.Command.ScriptId == 79 && !v.Target.IsUnderAnyStatus(TranceSeekStatus.Dragon)))
-                    TryApplyDragon(v);
+                float DragonRemove = v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.DragonsEye_Boosted) ? 25 : (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.DragonsEye) ? 12.5f : 0); // Eye of the dragon
+                if (DragonRemove < Comn.random16() % 100)
+                    btl_stat.AlterStatus(v.Target, TranceSeekStatusId.Dragon, v.Caster, parameters: "Remove");
             }
+            else if (v.Command.Id == BattleCommandId.Attack || v.Command.Id == BattleCommandId.Spear || v.Command.Id == BattleCommandId.SpearInTrance || (v.Command.ScriptId == 79 && !v.Target.IsUnderAnyStatus(TranceSeekStatus.Dragon)))
+                TryApplyDragon(v);
         }
 
         public static void GarnetGemMechanic(this BattleCalculator v, GarnetGemMechanic_Type type = GarnetGemMechanic_Type.ElementalAndHeal)

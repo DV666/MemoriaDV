@@ -47,18 +47,12 @@ namespace Memoria.Scripts.TranceSeek
                         {
                             if (monster.Data.btl_id == 16)
                             {
-                                HPZombDance1 = monster.CurrentHp - 10000 == 0 ? 1 : monster.CurrentHp - 10000;
+                                HPZombDance1 = monster.CurrentHp - 10000 <= 0 ? 1 : monster.CurrentHp - 10000;
                             }
                             else if (monster.Data.btl_id == 64)
                             {
-                                HPZombDance2 = monster.CurrentHp - 10000 == 0 ? 1 : monster.CurrentHp - 10000;
+                                HPZombDance2 = monster.CurrentHp - 10000 <= 0 ? 1 : monster.CurrentHp - 10000;
                             }
-                        }
-                    }
-                    foreach (BattleUnit monster in BattleState.EnumerateUnits())
-                    {
-                        if (!monster.IsPlayer)
-                        {
                             if (monster.Data.btl_id != 128)
                             {
                                 if (monster.CurrentHp != 0)

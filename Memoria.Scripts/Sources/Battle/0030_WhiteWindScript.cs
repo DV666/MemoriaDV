@@ -61,7 +61,7 @@ namespace Memoria.Scripts.TranceSeek
                                     _v.Caster.Flags = CalcFlag.HpDamageOrHeal;
 
                                 if (_v.Command.AbilityId == TranceSeekBattleAbility.Mistral) // Vent Blanc
-                                    _v.Target.RemoveStatus(BattleStatus.Poison | BattleStatus.Silence | BattleStatus.Blind);
+                                    unit.RemoveStatus(_v.Command.AbilityStatus);
 
                                 _v.Caster.Change(unit);
                                 SBattleCalculator.CalcResult(_v);

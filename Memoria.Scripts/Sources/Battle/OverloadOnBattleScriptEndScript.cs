@@ -13,7 +13,6 @@ namespace Memoria.Scripts.TranceSeek
             SOS_SA(v);
             TranceSeekCharacterMechanic.DragonMechanic(v);
             TranceSeekRegularItem.SpecialItemsAtEnd(v);
-            TranceSeekCharacterMechanic.EikoMougMechanic(v);
 
             Caster_TSVar.SpecialSA.Propagation = 0;
 

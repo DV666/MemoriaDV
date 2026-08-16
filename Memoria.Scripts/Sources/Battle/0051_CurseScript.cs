@@ -47,9 +47,8 @@ namespace Memoria.Scripts.TranceSeek
                     TranceSeekAPI.TryAlterCommandStatuses(_v);
                 }
                 if (_v.Command.AbilityId == BattleAbilityId.NoMercy2)
-                {
                     _v.Command.AbilityStatus |= (BattleStatus.Poison | BattleStatus.Venom);
-                }
+
                 if (TranceSeekAPI.TryMagicHit(_v))
                     TranceSeekAPI.TryAlterCommandStatuses(_v);
                 return;

@@ -86,8 +86,6 @@ namespace Memoria.Scripts.TranceSeek
                         TranceSeekCharacterMechanic.AmarantPassive(_v);
                         if (_v.Caster.IsUnderAnyStatus(BattleStatus.Defend) && _v.Command.Id == BattleCommandId.Counter && !_v.CasterState().Amarant.Duel) // Duel Amarant
                         {
-                            short previouscriticalbonus = _v.Caster.Data.critical_rate_deal_bonus;
-                            _v.Caster.Data.critical_rate_deal_bonus += _v.Caster.Will;
                             BattleStatus WeaponStatus = _v.Caster.WeaponStatus;
                             int HitRateWeaponStatus = (50 + _v.Caster.WeaponRate + (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.AddStatus_Boosted) ? (_v.Target.Will / 2) : 0));
                             if (WeaponStatus != 0)
@@ -104,8 +102,7 @@ namespace Memoria.Scripts.TranceSeek
                             else if ((WeaponStatus & BattleStatus.Death) != 0 && (_v.Target.ResistStatus & BattleStatus.Death) != 0)
                                 _v.TargetState().TriggerSPSResistStatus = true;
 
-                            TranceSeekAPI.TryCriticalHit(_v);
-                            _v.Caster.Data.critical_rate_deal_bonus = previouscriticalbonus;
+                            TranceSeekAPI.TryCriticalHit(_v, _v.Caster.Will);
                         }
                         else
                         {
