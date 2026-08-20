@@ -137,6 +137,7 @@ namespace Memoria.Scripts.TranceSeek
 
             if (_v.Command.Data.info.effect_counter == 1) // Classic script - Make the summon targetable first...
             {
+                FF9StateSystem.EventState.gEventGlobal[1305]++;
                 BattleUnit btl = btl_scrp.FindBattleUnit(32);
                 btl.Data.bi.target = 1;
             }

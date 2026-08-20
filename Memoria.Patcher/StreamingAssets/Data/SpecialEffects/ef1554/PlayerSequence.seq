@@ -149,7 +149,7 @@ StartThread: Condition=IsSingleTarget ; Sync=True
 	EffectPoint: Char=Everyone ; Type=Figure
 	Wait: Time=16
 	WaitSFXDone: SFX=Demi__Single ; Reflect=True
-StartThread: Condition=!IsSingleTarget ; Sync=True
+ElseThread: Sync=True
 	LoadSFX: SFX=Demi__Multi ; Reflect=True
 	PlayAnimation: Char=Caster ; Anim=MP_IDLE_TO_CHANT
 	WaitAnimation: Char=Caster

@@ -1,0 +1,60 @@
+// Player sequence of SFX Flare_Propagation
+
+WaitAnimation: Char=Caster
+StartThread: Condition=CasterRow == 0 && AreCasterAndSelectedTargetsEnemies ; Sync=True
+	MoveToPosition: Char=Caster ; RelativePosition=(0, 0, 400) ; Anim=MP_STEP_FORWARD
+	WaitMove: Char=Caster
+EndThread
+StartThread: Condition=IsSingleSelectedTarget
+	Turn: Char=Caster ; BaseAngle=AllTargets ; Time=5
+EndThread
+Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
+SetupReflect: Delay=SFXLoaded
+SetBackgroundIntensity: Intensity=0.5 ; Time=20
+LoadSFX: SFX=Flare_Star ; Reflect=True
+StartThread: Condition=ItemUseId == 255 ; Sync=True
+	PlayAnimation: Char=Caster ; Anim=MP_IDLE_TO_CHANT
+	WaitAnimation: Char=Caster
+	PlayAnimation: Char=Caster ; Anim=MP_CHANT ; Loop=True
+	Channel
+	WaitSFXLoaded: SFX=Flare_Star ; Reflect=True
+	WaitAnimation: Char=Caster
+	StopChannel
+	PlayAnimation: Char=Caster ; Anim=MP_MAGIC
+	WaitAnimation: Char=Caster
+EndThread
+PlaySFX: SFX=Flare_Star ; Reflect=True ; SkipSequence
+SetBackgroundIntensity: Intensity=0.5 ; Time=4
+PlaySound: Sound=2666
+PlaySound: Sound=2667
+PlaySound: Sound=2668
+Wait: Time=1
+SetBackgroundIntensity: Intensity=0 ; Time=8 ; HoldDuration=156
+Wait: Time=36
+PlaySound: Sound=2669
+PlaySound: Sound=2670
+PlaySound: Sound=2671
+Wait: Time=30
+PlaySound: Sound=2672
+PlaySound: Sound=2673
+PlaySound: Sound=2674
+Wait: Time=81
+StartThread: TargetLoop=True ; Chain=True ; Sync=False
+	EffectPoint: Char=AllTargets ; Type=Effect
+	Wait: Time=3
+	EffectPoint: Char=Everyone ; Type=Figure
+EndThread
+Wait: Time=9
+SetBackgroundIntensity: Intensity=1 ; Time=16
+Wait: Time=16
+Wait: Time=20
+WaitSFXDone: SFX=Flare_Star ; Reflect=True
+ActivateReflect
+WaitReflect
+StartThread: Condition=CasterRow == 0 && AreCasterAndSelectedTargetsEnemies ; Sync=True
+	MoveToPosition: Char=Caster ; RelativePosition=(0, 0, -400) ; Anim=MP_STEP_BACK
+	WaitMove: Char=Caster
+EndThread
+PlayAnimation: Char=Caster ; Anim=Idle
+Turn: Char=Caster ; BaseAngle=Default ; Time=5
+WaitTurn: Char=Caster

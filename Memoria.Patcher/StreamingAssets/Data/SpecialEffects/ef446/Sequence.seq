@@ -134,7 +134,7 @@ PlaySound: Sound=2831
 PlaySound: Sound=2832
 PlaySound: Sound=2833
 PlaySound: Sound=2834
-ShowMesh: Char=AllTargets ; Enable=False ; IsDisappear=True
+ShowMesh: Char=MatchingCondition(!IsTargeted && IsTargetable) ; Enable=False ; IsDisappear=True
 Wait: Time=1
 SetBackgroundIntensity: Intensity=0.5 ; Time=16 ; HoldDuration=60
 Wait: Time=60
@@ -142,7 +142,7 @@ SetBackgroundIntensity: Intensity=1 ; Time=16
 MoveToPosition: Char=AllTargets ; AbsolutePosition=Default ; RelativePosition=(0.0, 2008.0, 0.0) ; MoveHeight=True ; Time=0
 Turn: Char=AllTargets ; BaseAngle=Default ; Angle=(0.0, 0.0, 180.0) ; Time=0
 ChangeSize: Char=AllTargets ; Size=1 ; ScaleShadow=True ; Time=0
-ShowMesh: Char=AllTargets ; Enable=True ; IsDisappear=True
+ShowMesh: Char=MatchingCondition(!IsTargeted && IsTargetable) ; Enable=True ; IsDisappear=True
 Wait: Time=1
 MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, -116.0, 0.0) ; MoveHeight=True ; Time=0
 Wait: Time=1

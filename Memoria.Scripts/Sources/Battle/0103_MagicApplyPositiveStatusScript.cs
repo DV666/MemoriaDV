@@ -132,10 +132,7 @@ namespace Memoria.Scripts.TranceSeek
             {
                 _v.Command.AbilityStatus |= (BattleStatus.Regen | BattleStatus.Haste);
                 TranceSeekAPI.TryAlterCommandStatuses(_v);
-                if (_v.Caster.PhysicalEvade < 255)
-                    _v.Caster.PhysicalEvade += 10;
-                else
-                    _v.Caster.PhysicalEvade = 255;
+                _v.Target.TryAlterSingleStatus(BattleStatusId.ChangeStat, false, _v.Target, "PhysicalEvade", Math.Min(99, _v.Target.PhysicalEvade + 10));
             }
             else if (_v.Caster.Data.dms_geo_id == 150 && _v.Command.HitRate == 255) // Exoskeleton
             {

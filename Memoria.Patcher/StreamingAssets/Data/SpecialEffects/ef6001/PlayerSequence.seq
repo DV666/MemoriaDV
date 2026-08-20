@@ -1,0 +1,44 @@
+// Player sequence of SFX Extort
+
+WaitAnimation: Char=Caster
+SetVariable: Variable=cmd_status ; Value=&65533 ; Reflect=True
+StartThread: Condition=AreCasterAndSelectedTargetsEnemies ; Sync=True
+	MoveToPosition: Char=Caster ; RelativePosition=(0, 0, 400) ; Anim=MP_STEP_FORWARD
+	WaitMove: Char=Caster
+EndThread
+StartThread: Condition=IsSingleSelectedTarget
+	Turn: Char=Caster ; BaseAngle=AllTargets ; Time=5
+EndThread
+Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
+SetupReflect: Delay=SFXLoaded
+StartThread: Condition=IsSingleTarget ; Sync=True
+	LoadSFX: SFX=Thievery ; Reflect=True ; UseCamera=False ; Char=AllTargets
+	PlayAnimation: Char=Caster ; Anim=MP_IDLE_TO_CHANT
+	WaitAnimation: Char=Caster
+	PlayAnimation: Char=Caster ; Anim=MP_CHANT ; Loop=True
+	Channel
+	WaitSFXLoaded: SFX=Thievery ; Reflect=True
+	WaitAnimation: Char=Caster
+	StopChannel
+	PlayAnimation: Char=Caster ; Anim=MP_MAGIC
+	WaitAnimation: Char=Caster
+	PlaySFX: SFX=Thievery ; Reflect=True ; SkipSequence ; HideMeshes=2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20
+	PlaySound: Sound=2453
+	PlaySound: Sound=2454
+	PlaySound: Sound=2455
+	Wait: Time=20
+	EffectPoint: Char=AllTargets ; Type=Effect
+	Wait: Time=12
+	EffectPoint: Char=Everyone ; Type=Figure
+	Wait: Time=25
+EndThread
+SetVariable: Variable=cmd_status ; Value=|2 ; Reflect=True
+ActivateReflect
+WaitReflect
+StartThread: Condition=AreCasterAndSelectedTargetsEnemies ; Sync=True
+	MoveToPosition: Char=Caster ; RelativePosition=(0, 0, -400) ; Anim=MP_STEP_BACK
+	WaitMove: Char=Caster
+EndThread
+PlayAnimation: Char=Caster ; Anim=Idle
+Turn: Char=Caster ; BaseAngle=Default ; Time=5
+WaitTurn: Char=Caster

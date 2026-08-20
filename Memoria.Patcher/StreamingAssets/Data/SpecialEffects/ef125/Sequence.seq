@@ -10,9 +10,9 @@ Wait: Time=30
 PlaySound: Sound=1387
 PlaySound: Sound=1388
 PlaySound: Sound=1389
-ShowMesh: Char=Everyone ; Enable=False ; IsDisappear=True
+ShowMesh: Char=MatchingCondition(!IsTargeted && IsTargetable) ; Enable=False ; IsDisappear=True
 Wait: Time=10
-ShowMesh: Char=Everyone ; Enable=True ; IsDisappear=True
+ShowMesh: Char=MatchingCondition(!IsTargeted && IsTargetable) ; Enable=True ; IsDisappear=True
 Wait: Time=55
 EffectPoint: Char=AllTargets ; Type=Effect
 Wait: Time=20

@@ -11,18 +11,39 @@ EndThread
 Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
 StartThread: Condition=IsSingleTarget ; Sync=True
 	LoadSFX: SFX=Absorb_Prison_Cage ; Reflect=True ; Target=Caster
-	PlayAnimation: Char=Caster ; Anim=MP_IDLE_TO_CHANT
-	WaitAnimation: Char=Caster
-	PlayAnimation: Char=Caster ; Anim=MP_CHANT ; Loop=True
 	WaitSFXLoaded: SFX=Absorb_Prison_Cage ; Reflect=True
-	WaitAnimation: Char=Caster
-	PlayAnimation: Char=Caster ; Anim=MP_MAGIC
-	PlaySFX: SFX=Absorb_Prison_Cage ; Reflect=True ; HideMeshes=0, 1, 2, 3, 5, 6, 7, 8, 9, 10 ; JumpToFrame=20 ; SkipSequence
+	ShowMesh: Char=Caster ; Mesh=Weapon ; Enable=False
+	SetVariable: Variable=local ; Index=RandSnd ; Value=Formula(GetRandom(0, 9))
+	StartThread: Condition=local_RandSnd == 0
+		PlaySound: Sound=4506
+	ElseThread: Condition=local_RandSnd == 1
+		PlaySound: Sound=4507
+	ElseThread: Condition=local_RandSnd == 2
+		PlaySound: Sound=4508
+	ElseThread: Condition=local_RandSnd == 3
+		PlaySound: Sound=4509
+	ElseThread: Condition=local_RandSnd == 4
+		PlaySound: Sound=4510
+	ElseThread: Condition=local_RandSnd == 5
+		PlaySound: Sound=4511
+	ElseThread: Condition=local_RandSnd == 6
+		PlaySound: Sound=4512
+	ElseThread: Condition=local_RandSnd == 7
+		PlaySound: Sound=4513
+	ElseThread
+		PlaySound: Sound=4514
+	EndThread
+	StartThread: Condition = GetRandom(0, 2)
+		PlayAnimation: Char=Caster ; Anim=ANH_MAIN_F0_ZDN_BREAK1_FLEX ; Speed=2.0
+	ElseThread
+		PlayAnimation: Char=Caster ; Anim=ANH_MAIN_F0_ZDN_BREAK1_FLEX2 ; Speed=2.0
+	EndThread
+	PlaySFX: SFX=Absorb_Prison_Cage ; Reflect=True ; HideMeshes=0, 1, 2, 3, 5, 6, 7, 8, 9, 10 ; JumpToFrame=20 ; SkipSequence ; MeshColors=(0.708, 0.8629, 2.95955)
 	PlaySound: Sound=3974
 	WaitAnimation: Char=Caster
-	Wait: Time=15
 	EffectPoint: Char=Caster ; Type=Both
-	Wait: Time=10
+	ShowMesh: Char=Caster ; Mesh=Weapon ; Enable=True
+	Wait: Time=15
 EndThread
 StartThread: Condition=CasterRow == 0 && AreCasterAndSelectedTargetsEnemies ; Sync=True
 	MoveToPosition: Char=Caster ; RelativePosition=(0, 0, -400) ; Anim=MP_STEP_BACK

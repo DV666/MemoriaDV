@@ -89,7 +89,7 @@ ElseThread: Sync
 	WaitTurn: Char=Caster
 EndThread
 StartThread: Condition=GetMemoriaDictionary(1050, 0) > 0
-	StartThread: Condition=CasterWeaponId == 1028
+	StartThread: Condition=CasterWeaponId == 1028 && !CheckAnyStatus(TargetCurrentStatus, BattleStatus_BattleEndFull)
 		StartThread: Condition=CheckAnyStatus(TargetCurrentStatus, BattleStatus_Reflect)
 			StartThread: Target=AllPlayers
 				StartThread: Target=RandomTarget
@@ -106,7 +106,7 @@ StartThread: Condition=GetMemoriaDictionary(1050, 0) > 0
 			WaitSFXDone: SFX=Demi__Single ; Reflect=True
 		EndThread
 	EndThread
-	StartThread: Condition=CasterWeaponId == 1029
+	StartThread: Condition=CasterWeaponId == 1029 && !CheckAnyStatus(TargetCurrentStatus, BattleStatus_BattleEndFull)
 		StartThread: Condition=CheckAnyStatus(TargetCurrentStatus, BattleStatus_Reflect)
 			StartThread: Target=AllPlayers
 				StartThread: Target=RandomTarget
@@ -123,7 +123,7 @@ StartThread: Condition=GetMemoriaDictionary(1050, 0) > 0
 			WaitSFXDone: SFX=Poison__Single ; Reflect=True
 		EndThread
 	EndThread
-	StartThread: Condition=CasterWeaponId == 1031
+	StartThread: Condition=CasterWeaponId == 1031 && !CheckAnyStatus(TargetCurrentStatus, BattleStatus_BattleEndFull)
 		StartThread: Condition=CheckAnyStatus(TargetCurrentStatus, BattleStatus_Reflect)
 			StartThread: Target=AllPlayers
 				StartThread: Target=RandomTarget
@@ -140,7 +140,7 @@ StartThread: Condition=GetMemoriaDictionary(1050, 0) > 0
 			WaitSFXDone: SFX=Comet ; Reflect=True
 		EndThread
 	EndThread
-	StartThread: Condition=CasterWeaponId == RegularItem_FlameStaff
+	StartThread: Condition=CasterWeaponId == RegularItem_FlameStaff && !CheckAnyStatus(TargetCurrentStatus, BattleStatus_BattleEndFull)
 		StartThread: Condition=CheckAnyStatus(TargetCurrentStatus, BattleStatus_Reflect)
 			StartThread: Target=AllPlayers
 				StartThread: Target=RandomTarget
@@ -157,7 +157,7 @@ StartThread: Condition=GetMemoriaDictionary(1050, 0) > 0
 			WaitSFXDone: SFX=Fira__Single ; Reflect=True
 		EndThread
 	EndThread
-	StartThread: Condition=CasterWeaponId == RegularItem_IceStaff
+	StartThread: Condition=CasterWeaponId == RegularItem_IceStaff && !CheckAnyStatus(TargetCurrentStatus, BattleStatus_BattleEndFull)
 		StartThread: Condition=CheckAnyStatus(TargetCurrentStatus, BattleStatus_Reflect)
 			StartThread: Target=AllPlayers
 				StartThread: Target=RandomTarget
@@ -174,7 +174,7 @@ StartThread: Condition=GetMemoriaDictionary(1050, 0) > 0
 			WaitSFXDone: SFX=Water__Single ; Reflect=True
 		EndThread
 	EndThread
-	StartThread: Condition=CasterWeaponId == RegularItem_LightningStaff
+	StartThread: Condition=CasterWeaponId == RegularItem_LightningStaff && !CheckAnyStatus(TargetCurrentStatus, BattleStatus_BattleEndFull)
 		StartThread: Condition=CheckAnyStatus(TargetCurrentStatus, BattleStatus_Reflect)
 			StartThread: Target=AllPlayers
 				StartThread: Target=RandomTarget
@@ -191,7 +191,24 @@ StartThread: Condition=GetMemoriaDictionary(1050, 0) > 0
 			WaitSFXDone: SFX=Thundera__Single ; Reflect=True
 		EndThread
 	EndThread
-	StartThread: Condition=CasterWeaponId == RegularItem_StardustRod
+	StartThread: (Condition=CasterWeaponId == 1187 || Condition=CasterWeaponId == 1188) && !CheckAnyStatus(TargetCurrentStatus, BattleStatus_BattleEndFull)
+		StartThread: Condition=CheckAnyStatus(TargetCurrentStatus, BattleStatus_Reflect)
+			StartThread: Target=AllPlayers
+				StartThread: Target=RandomTarget
+					LoadSFX: SFX=Drain ; Reflect=True
+					WaitSFXLoaded: SFX=Drain ; Reflect=True
+					PlaySFX: SFX=Drain ; Reflect=True
+					WaitSFXDone: SFX=Drain ; Reflect=True
+				EndThread
+			EndThread
+		ElseThread
+			LoadSFX: SFX=Drain ; Reflect=True
+			WaitSFXLoaded: SFX=Drain ; Reflect=True
+			PlaySFX: SFX=Drain ; Reflect=True
+			WaitSFXDone: SFX=Drain ; Reflect=True
+		EndThread
+	EndThread
+	StartThread: Condition=CasterWeaponId == RegularItem_StardustRod && !CheckAnyStatus(TargetCurrentStatus, BattleStatus_BattleEndFull)
 		StartThread: Condition=CheckAnyStatus(TargetCurrentStatus, BattleStatus_Reflect)
 			StartThread: Target=AllPlayers
 				StartThread: Target=RandomTarget

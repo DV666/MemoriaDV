@@ -130,9 +130,10 @@ namespace Memoria.Scripts.TranceSeek
                     case 3: // Kuja mode
                         if (FF9StateSystem.EventState.ScenarioCounter > 2250)
                         {
-                            dictdifficulty[DifficultyParameters.Bonus_MaxHP] = 25;
+                            dictdifficulty[DifficultyParameters.Bonus_MaxHP] = 10;
                             dictdifficulty[DifficultyParameters.Bonus_Strength] = 25;
                             dictdifficulty[DifficultyParameters.Bonus_Magic] = 25;
+                            dictdifficulty[DifficultyParameters.Bonus_PowerAA] = 10;
                         }
                         else
                         {
@@ -145,10 +146,10 @@ namespace Memoria.Scripts.TranceSeek
                     case 4: // Necron mode
                         if (FF9StateSystem.EventState.ScenarioCounter > 2250)
                         {
-                            dictdifficulty[DifficultyParameters.Bonus_MaxHP] = 80;
+                            dictdifficulty[DifficultyParameters.Bonus_MaxHP] = 50;
                             dictdifficulty[DifficultyParameters.Bonus_Strength] = 75;
                             dictdifficulty[DifficultyParameters.Bonus_Magic] = 75;
-                            dictdifficulty[DifficultyParameters.Bonus_PowerAA] = 10;
+                            dictdifficulty[DifficultyParameters.Bonus_PowerAA] = 20;
                         }
                         else
                         {
@@ -679,6 +680,12 @@ namespace Memoria.Scripts.TranceSeek
 
                 if (unit.PlayerIndex == CharacterId.Zidane)
                     SwitchWeaponScript.InitZidaneModel(unit);
+            }
+
+            if (TranceSeekBattleDictionary.Init)
+            {
+                FF9StateSystem.Battle.FF9Battle.btl_scene = null;
+                unit.Data = null;
             }
 
         }

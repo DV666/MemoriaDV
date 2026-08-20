@@ -1,31 +1,88 @@
 // Player sequence of SFX Luna
 
-WaitAnimation: Char=Caster
-StartThread: Condition=AreCasterAndSelectedTargetsEnemies ; Sync=True
-	MoveToPosition: Char=Caster ; RelativePosition=(0, 0, 400) ; Anim=MP_STEP_FORWARD
-	WaitMove: Char=Caster
+StartThread: Condition=AbilityId == 121
+	WaitAnimation: Char=Caster
+	StartThread: Condition=AreCasterAndSelectedTargetsEnemies ; Sync=True
+		MoveToPosition: Char=Caster ; RelativePosition=(0, 0, 400) ; Anim=MP_STEP_FORWARD
+		WaitMove: Char=Caster
+	EndThread
+	StartThread: Condition=AreCasterAndSelectedTargetsEnemies || IsSingleSelectedTarget
+		Turn: Char=Caster ; BaseAngle=AllTargets ; Time=5
+	EndThread
+	Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
+	SetupReflect: Delay=SFXLoaded
+	LoadSFX: SFX=Luna ; Reflect=True ; UseCamera=False
+	WaitSFXLoaded: SFX=Luna ; Reflect=True
+	PlayAnimation: Char=Caster ; Anim=MP_IDLE_TO_CHANT
+	WaitAnimation: Char=Caster
+	PlaySFX: SFX=Luna ; Reflect=True ; SkipSequence ; HideMeshes=4, 5, 6, 7, 8, 9, 10
+	PlayAnimation: Char=Caster ; Anim=MP_CHANT ; Loop=True
+	StartThread
+		PlaySound: Sound=1550
+		PlaySound: Sound=1551
+		PlaySound: Sound=1552
+		Wait: Time=46
+		PlaySound: Sound=2511
+		PlaySound: Sound=2512
+		PlaySound: Sound=2513
+	EndThread
+	Wait: Time=45
+	StartThread: TargetLoop=True ; Chain=True ; Sync=True
+		StartThread
+			Wait: Time=15
+			LoadSFX: SFX=Cherry_Blossom ; Reflect=True ; UseCamera=False
+			WaitSFXLoaded: SFX=Cherry_Blossom ; Reflect=True
+			PlaySFX: SFX=Cherry_Blossom ; Reflect=True ; SkipSequence ; MeshColors=(1.00, 0.0, 0.0) ; HideMeshes=0, 3, 4, 5, 6, 7, 8, 9, 10 ; JumpToFrame=46
+			PlaySound: Sound=1153
+			PlaySound: Sound=1154
+			PlaySound: Sound=1232
+			Wait: Time=29
+			EffectPoint: Char=AllTargets ; Type=Both
+			Wait: Time=4
+		EndThread
+	EndThread
+	WaitAnimation: Char=Caster
+	PlayAnimation: Char=Caster ; Anim=MP_MAGIC
+	WaitAnimation: Char=Caster
+	WaitSFXDone: SFX=Luna ; Reflect=True
+	ActivateReflect
+	WaitReflect
+	StartThread: Condition=AreCasterAndSelectedTargetsEnemies ; Sync=True
+		MoveToPosition: Char=Caster ; RelativePosition=(0, 0, -400) ; Anim=MP_STEP_BACK
+		WaitMove: Char=Caster
+	EndThread
+	PlayAnimation: Char=Caster ; Anim=Idle
+	Turn: Char=Caster ; BaseAngle=Default ; Time=5
+	WaitTurn: Char=Caster
+	
+ElseThread
+	WaitAnimation: Char=Caster
+	StartThread: Condition=AreCasterAndSelectedTargetsEnemies ; Sync=True
+		MoveToPosition: Char=Caster ; RelativePosition=(0, 0, 400) ; Anim=MP_STEP_FORWARD
+		WaitMove: Char=Caster
+	EndThread
+	StartThread: Condition=AreCasterAndSelectedTargetsEnemies || IsSingleSelectedTarget
+		Turn: Char=Caster ; BaseAngle=AllTargets ; Time=5
+	EndThread
+	Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
+	SetupReflect: Delay=SFXLoaded
+	LoadSFX: SFX=Luna ; Reflect=True
+	WaitSFXLoaded: SFX=Luna ; Reflect=True
+	PlayAnimation: Char=Caster ; Anim=MP_IDLE_TO_CHANT
+	WaitAnimation: Char=Caster
+	PlaySFX: SFX=Luna ; Reflect=True
+	PlayAnimation: Char=Caster ; Anim=MP_CHANT ; Loop=True
+	Wait: Time=24
+	PlayAnimation: Char=Caster ; Anim=MP_MAGIC
+	WaitAnimation: Char=Caster
+	WaitSFXDone: SFX=Luna ; Reflect=True
+	ActivateReflect
+	WaitReflect
+	StartThread: Condition=AreCasterAndSelectedTargetsEnemies ; Sync=True
+		MoveToPosition: Char=Caster ; RelativePosition=(0, 0, -400) ; Anim=MP_STEP_BACK
+		WaitMove: Char=Caster
+	EndThread
+	PlayAnimation: Char=Caster ; Anim=Idle
+	Turn: Char=Caster ; BaseAngle=Default ; Time=5
+	WaitTurn: Char=Caster
 EndThread
-StartThread: Condition=AreCasterAndSelectedTargetsEnemies || IsSingleSelectedTarget
-	Turn: Char=Caster ; BaseAngle=AllTargets ; Time=5
-EndThread
-Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
-SetupReflect: Delay=SFXLoaded
-LoadSFX: SFX=Luna ; Reflect=True
-WaitSFXLoaded: SFX=Luna ; Reflect=True
-PlayAnimation: Char=Caster ; Anim=MP_IDLE_TO_CHANT
-WaitAnimation: Char=Caster
-PlaySFX: SFX=Luna ; Reflect=True
-PlayAnimation: Char=Caster ; Anim=MP_CHANT ; Loop=True
-Wait: Time=24
-PlayAnimation: Char=Caster ; Anim=MP_MAGIC
-WaitAnimation: Char=Caster
-WaitSFXDone: SFX=Luna ; Reflect=True
-ActivateReflect
-WaitReflect
-StartThread: Condition=AreCasterAndSelectedTargetsEnemies ; Sync=True
-	MoveToPosition: Char=Caster ; RelativePosition=(0, 0, -400) ; Anim=MP_STEP_BACK
-	WaitMove: Char=Caster
-EndThread
-PlayAnimation: Char=Caster ; Anim=Idle
-Turn: Char=Caster ; BaseAngle=Default ; Time=5
-WaitTurn: Char=Caster

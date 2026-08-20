@@ -3,6 +3,7 @@ using Memoria.Data;
 using Memoria.Prime;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using static BTL_DATA;
 using static Memoria.Scripts.TranceSeek.TranceSeekVisualAccessoryDB;
@@ -127,6 +128,7 @@ namespace Memoria.Scripts.TranceSeek
                     follower.LocalPosition = transformConfig.PositionOffset;
                     follower.LocalRotation = transformConfig.RotationOffset;
                     follower.LocalScale = transformConfig.ScaleOffset;
+                    follower.CasterData = unit.Data;
 
                     AccessoryModel.geo.SetActive(true);
 
@@ -213,24 +215,6 @@ namespace Memoria.Scripts.TranceSeek
                                 }
                             }
 
-                            bool areMeshesHidden = (caster.Data.meshflags & 0xFFFF) == 0xFFFF;
-                            bool shouldShow = !areMeshesHidden && caster.Data.bi.disappear == 0;
-
-                            if (AccessoryModel.geo.activeSelf != shouldShow)
-                            {
-                                AccessoryModel.geo.SetActive(shouldShow);
-
-                                if (shouldShow && accessoryShape == 60)
-                                {
-                                    Animation anim = AccessoryModel.geo.GetComponent<Animation>();
-                                    if (anim != null && !string.IsNullOrEmpty(animIdle))
-                                    {
-                                        anim.enabled = true;
-                                        anim.Play(animIdle);
-                                    }
-                                }
-                            }
-
                             return true;
                         },
                         null
@@ -246,27 +230,42 @@ namespace Memoria.Scripts.TranceSeek
             public Vector3 LocalRotation;
             public Vector3 LocalScale = Vector3.one;
 
+            public BTL_DATA CasterData;
+
             private Animation _anim;
+            private Renderer[] _renderers;
 
             void Start()
             {
                 _anim = GetComponent<Animation>();
+                _renderers = GetComponentsInChildren<Renderer>(true);
             }
 
             void LateUpdate()
             {
-                if (TargetBone == null)
+                if (TargetBone == null || CasterData == null)
                     return;
 
-                transform.position = TargetBone.TransformPoint(LocalPosition);
-                transform.rotation = TargetBone.rotation * Quaternion.Euler(LocalRotation);
-                transform.localScale = Vector3.Scale(TargetBone.lossyScale, LocalScale);
+                bool isVisible = CasterData.battleModelIsRendering && CasterData.gameObject.activeInHierarchy && CasterData.bi.disappear == 0;
+
+                foreach (Renderer r in _renderers)
+                {
+                    if (r != null && r.enabled != isVisible)
+                        r.enabled = isVisible;
+                }
+
+                if (isVisible)
+                {
+                    transform.position = TargetBone.TransformPoint(LocalPosition);
+                    transform.rotation = TargetBone.rotation * Quaternion.Euler(LocalRotation);
+                    transform.localScale = Vector3.Scale(TargetBone.lossyScale, LocalScale);
+                }
 
                 if (_anim != null)
                 {
-                    bool isPaused = PersistenSingleton<UIManager>.Instance.IsPause;
-                    if (_anim.enabled == isPaused)
-                        _anim.enabled = !isPaused;
+                    bool shouldPlayAnim = isVisible && !PersistenSingleton<UIManager>.Instance.IsPause;
+                    if (_anim.enabled != shouldPlayAnim)
+                        _anim.enabled = shouldPlayAnim;
                 }
             }
         }

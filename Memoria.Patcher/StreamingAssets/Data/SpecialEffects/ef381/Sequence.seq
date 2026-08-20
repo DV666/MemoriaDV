@@ -1,6 +1,6 @@
 // Shared sequence of SFX Ark__Full
 
-ShowMesh: Char=Everyone ; Enable=False ; IsDisappear=True
+ShowMesh: Char=MatchingCondition(IsTargetable) ; Enable=False ; IsDisappear=True
 StartThread: Condition=SFXUseCamera && AreTargetsPlayers
 	ShiftWorld: Angle=(0, 180, 0)
 EndThread

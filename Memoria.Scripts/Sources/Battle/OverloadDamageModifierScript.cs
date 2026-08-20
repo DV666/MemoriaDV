@@ -166,13 +166,13 @@ namespace Memoria.Scripts.TranceSeek
             if (modifier_factor <= 0f)
                 modifier_factor = 0.01f;
 
-            Int32 reflectMultiplier = GetReflectMultiplierOnTarget(v, v.Target.Id);
+            modifier_factor = modifier_factor * GetReflectMultiplierOnTarget(v, v.Target.Id);
             Boolean IsInvincible = TranceSeekAPI.CheckInvincible(v) && (((v.Target.Flags & CalcFlag.HpAlteration) != 0 && (v.Target.Flags & CalcFlag.HpRecovery) == 0) || ((v.Target.Flags & CalcFlag.MpAlteration) != 0 && (v.Target.Flags & CalcFlag.MpRecovery) == 0));
 
             if (!IsInvincible)
             {
                 if ((v.Target.Flags & CalcFlag.HpAlteration) != 0)
-                    v.Target.HpDamage = (Int32)Math.Round(modifier_factor * v.Target.HpDamage) * reflectMultiplier;
+                    v.Target.HpDamage = (Int32)Math.Round(modifier_factor * v.Target.HpDamage);
 
                 if (v.Target.IsUnderAnyStatus(BattleStatus.EasyKill) && v.Target.IsUnderAnyStatus(BattleStatus.Zombie))
                 {
@@ -184,12 +184,12 @@ namespace Memoria.Scripts.TranceSeek
                     }
                 }
                 if ((v.Target.Flags & CalcFlag.MpAlteration) != 0)
-                    v.Target.MpDamage = (Int32)Math.Round(modifier_factor * v.Target.MpDamage) * reflectMultiplier;
+                    v.Target.MpDamage = (Int32)Math.Round(modifier_factor * v.Target.MpDamage);
 
                 if ((v.Caster.Flags & CalcFlag.HpAlteration) != 0)
-                    v.Caster.HpDamage = (Int32)Math.Round(modifier_factor * v.Caster.HpDamage) * reflectMultiplier;
+                    v.Caster.HpDamage = (Int32)Math.Round(modifier_factor * v.Caster.HpDamage);
                 if ((v.Caster.Flags & CalcFlag.MpAlteration) != 0)
-                    v.Caster.MpDamage = (Int32)Math.Round(modifier_factor * v.Caster.MpDamage) * reflectMultiplier;
+                    v.Caster.MpDamage = (Int32)Math.Round(modifier_factor * v.Caster.MpDamage);
 
                 if (v.Caster.State().CantKill > 0 && (v.Target.Flags & CalcFlag.HpAlteration) != 0 && v.Target.HpDamage > v.Target.CurrentHp)
                 {
@@ -206,11 +206,15 @@ namespace Memoria.Scripts.TranceSeek
         {
             if (v.Command.Data.info.reflec != 1)
                 return 1;
-            Int32 reflectMultiplier = 0;
+            Single reflectMultiplier = 0;
             for (UInt16 index = 0; index < 4; ++index)
                 if ((v.Command.Data.reflec.tar_id[index] & targetId) != 0)
-                    ++reflectMultiplier;
-            return Math.Max(1, reflectMultiplier);
+                    reflectMultiplier++;
+
+            if (TranceSeekBattleDictionary.IsHardcore && reflectMultiplier > 1)
+                reflectMultiplier = 1f + ((reflectMultiplier - 1) / 3);
+
+            return (Int32)Math.Max(1, reflectMultiplier);
         }
 
         private static readonly HashSet<Int32> StoneMonsters = new HashSet<Int32> { 354, 221, 83 };

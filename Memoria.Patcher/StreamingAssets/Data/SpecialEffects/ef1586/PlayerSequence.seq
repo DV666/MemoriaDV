@@ -1,0 +1,134 @@
+// Player sequence of SFX Geirskögul
+
+WaitAnimation: Char=Caster
+StartThread: Condition=AreCasterAndSelectedTargetsEnemies ; Sync=True
+	MoveToPosition: Char=Caster ; RelativePosition=(0, 0, 400) ; Anim=MP_STEP_FORWARD
+	WaitMove: Char=Caster
+EndThread
+StartThread: Condition=AreCasterAndSelectedTargetsEnemies || IsSingleSelectedTarget
+	Turn: Char=Caster ; BaseAngle=AllTargets ; Time=5
+EndThread
+Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
+SetupReflect: Delay=SFXLoaded
+PlayAnimation: Char=Caster ; Anim=MP_IDLE_TO_CHANT
+WaitAnimation: Char=Caster
+StartThread: Sync=False
+	Wait: Time=2
+	LoadSFX: SFX=White_Draw ; UseCamera=False
+	WaitSFXLoaded: SFX=White_Draw
+	PlaySFX: SFX=White_Draw ; MeshColors=(0.143, 0.423, 0.434) ; SkipSequence ; HideMeshes=2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
+	PlaySound: Sound=1550
+	PlaySound: Sound=1551
+	PlaySound: Sound=1552
+	Wait: Time=100
+	WaitSFXDone: SFX=White_Draw ; Reflect=True
+EndThread
+PlayAnimation: Char=Caster ; Anim=MP_CHANT ; Loop=True
+Wait: Time=24
+PlayAnimation: Char=Caster ; Anim=ANH_MAIN_B0_011_600
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MAIN_B0_011_601 ; Loop=True
+StartThread: Sync=False
+	StartThread: Target=RandomTarget ; Sync=True
+		Wait: Time=2
+		LoadSFX: SFX=Lancer ; UseCamera=False
+		WaitSFXLoaded: SFX=Lancer
+		PlaySFX: SFX=Lancer ; MeshColors=(0.143, 0.423, 0.434) ; SkipSequence
+		PlaySound: Sound=1185
+		PlaySound: Sound=1186
+		PlaySound: Sound=1187
+		Wait: Time=14
+		PlaySound: Sound=1547
+		PlaySound: Sound=1548
+		PlaySound: Sound=1549
+		Wait: Time=1
+		EffectPoint: Char=AllTargets ; Type=Effect
+		EffectPoint: Char=Everyone ; Type=Figure
+	EndThread
+EndThread
+Wait: Time=10
+StartThread: Sync=False
+	StartThread: Target=RandomTarget ; Sync=True
+		Wait: Time=2
+		LoadSFX: SFX=Lancer ; UseCamera=False
+		WaitSFXLoaded: SFX=Lancer
+		PlaySFX: SFX=Lancer ; MeshColors=(0.143, 0.423, 0.434) ; SkipSequence
+		PlaySound: Sound=1185
+		PlaySound: Sound=1186
+		PlaySound: Sound=1187
+		Wait: Time=14
+		PlaySound: Sound=1547
+		PlaySound: Sound=1548
+		PlaySound: Sound=1549
+		Wait: Time=1
+		EffectPoint: Char=AllTargets ; Type=Effect
+		EffectPoint: Char=Everyone ; Type=Figure
+	EndThread
+EndThread
+Wait: Time=10
+StartThread: Sync=False
+	StartThread: Target=RandomTarget ; Sync=True
+		Wait: Time=2
+		LoadSFX: SFX=Lancer ; UseCamera=False
+		WaitSFXLoaded: SFX=Lancer
+		PlaySFX: SFX=Lancer ; MeshColors=(0.143, 0.423, 0.434) ; SkipSequence
+		PlaySound: Sound=1185
+		PlaySound: Sound=1186
+		PlaySound: Sound=1187
+		Wait: Time=14
+		PlaySound: Sound=1547
+		PlaySound: Sound=1548
+		PlaySound: Sound=1549
+		Wait: Time=1
+		EffectPoint: Char=AllTargets ; Type=Effect
+		EffectPoint: Char=Everyone ; Type=Figure
+	EndThread
+EndThread
+Wait: Time=10
+StartThread: Sync=False ; Condition=(CasterInTrance || GetRandom(0 , 2) == 0)
+	StartThread: Target=RandomTarget ; Sync=True
+		Wait: Time=2
+		LoadSFX: SFX=Lancer ; UseCamera=False
+		WaitSFXLoaded: SFX=Lancer
+		PlaySFX: SFX=Lancer ; MeshColors=(0.143, 0.423, 0.434) ; SkipSequence
+		PlaySound: Sound=1185
+		PlaySound: Sound=1186
+		PlaySound: Sound=1187
+		Wait: Time=14
+		PlaySound: Sound=1547
+		PlaySound: Sound=1548
+		PlaySound: Sound=1549
+		Wait: Time=1
+		EffectPoint: Char=AllTargets ; Type=Effect
+		EffectPoint: Char=Everyone ; Type=Figure
+	EndThread
+EndThread
+Wait: Time=10
+StartThread: Sync=False ; Condition=(CasterInTrance || GetRandom(0 , 2) == 0)
+	StartThread: Target=RandomTarget ; Sync=True
+		Wait: Time=2
+		LoadSFX: SFX=Lancer ; UseCamera=False
+		WaitSFXLoaded: SFX=Lancer
+		PlaySFX: SFX=Lancer ; MeshColors=(0.143, 0.423, 0.434) ; SkipSequence
+		PlaySound: Sound=1185
+		PlaySound: Sound=1186
+		PlaySound: Sound=1187
+		Wait: Time=14
+		PlaySound: Sound=1547
+		PlaySound: Sound=1548
+		PlaySound: Sound=1549
+		Wait: Time=1
+		EffectPoint: Char=AllTargets ; Type=Effect
+		EffectPoint: Char=Everyone ; Type=Figure
+	EndThread
+EndThread
+WaitSFXDone: SFX=Lancer ; Reflect=True
+ActivateReflect
+WaitReflect
+StartThread: Condition=AreCasterAndSelectedTargetsEnemies ; Sync=True
+	MoveToPosition: Char=Caster ; RelativePosition=(0, 0, -400) ; Anim=MP_STEP_BACK
+	WaitMove: Char=Caster
+EndThread
+PlayAnimation: Char=Caster ; Anim=Idle
+Turn: Char=Caster ; BaseAngle=Default ; Time=5
+WaitTurn: Char=Caster

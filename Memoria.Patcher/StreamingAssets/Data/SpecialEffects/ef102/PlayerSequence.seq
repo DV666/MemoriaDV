@@ -21,9 +21,17 @@ StartThread
 	WaitSFXLoaded: SFX=Player_Attack_Vivi
 	PlaySFX: SFX=Player_Attack_Vivi
 	EffectPoint: Char=AllTargets ; Type=Effect
-	PlaySound: Sound=WeaponAttack
+	StartThread: Condition=IsAttackCritical
+		PlaySound: Sound=WeaponAttack ; Pitch=1.25
+	ElseThread
+		PlaySound: Sound=WeaponAttack
+	EndThread
 	StartThread: Condition=!IsAttackMiss
-		PlaySound: Sound=WeaponHit
+		StartThread: Condition=IsAttackCritical
+			PlaySound: Sound=WeaponHit ; Pitch=1.25
+		ElseThread
+			PlaySound: Sound=WeaponHit
+		EndThread
 	EndThread
 	Wait: Time=4
 	EffectPoint: Char=Everyone ; Type=Figure

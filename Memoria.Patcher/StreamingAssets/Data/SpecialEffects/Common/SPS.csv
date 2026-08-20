@@ -12,3 +12,12 @@ Freeze;4;BattleMap/BattleSPS/st_friz.sps;EmbeddedAsset/BattleMap/Status/freeze;1
 Reflect;5;BattleMap/BattleSPS/st_rif.sps;EmbeddedAsset/BattleMap/Status/reflect;1;3;3
 Blind;6;BattleMap/BattleSPS/st_moum.sps;EmbeddedAsset/BattleMap/Status/blind;2;5;5.5
 Berserk;7;BattleMap/BattleSPS/st_basak.sps;EmbeddedAsset/BattleMap/Status/berserk;1;3;2
+Runic;8;FieldMaps/fbg_n31_iftr_map550a_if_ent_1/316.sps;EmbeddedAsset/BattleMap/Status/Runic/Runic.png;1;1;2
+AutoLife;9;FieldMaps/fbg_n02_alxc_map858_ac_qrm_0/1965.sps;EmbeddedAsset/BattleMap/Status/AutoLife/AutoLife.png;1;0.70;0.70
+Regen;10;FieldMaps/fbg_n36_glgv_map805_gv_mg2_0/355.sps;EmbeddedAsset/BattleMap/Status/Regen/Regen.png;1;0.50;0.50
+Polarity+;11;FieldMaps/fbg_n55_dglo_map775_dg_ent_0/1933.sps;EmbeddedAsset/BattleMap/Status/PolarityPlus/PolarityPlus.png;1;1;1
+Polarity-;12;FieldMaps/fbg_n55_dglo_map775_dg_ent_0/1933.sps;EmbeddedAsset/BattleMap/Status/PolarityMinus/PolarityMinus.png;1;1;1
+ImmunityStatus;13;FieldMaps/fbg_n42_pdmn_map732_pd_elv_0/926.sps;EmbeddedAsset/BattleMap/Status/ImmunityStatus/ImmunityStatus.png;1;1;1
+Old;14;FieldMaps/fbg_n09_cshp_map141_ca_dck_1/443.sps;EmbeddedAsset/BattleMap/Status/Old/Old.png;1;1;1
+ReiWrath;15;FieldMaps/fbg_n01_alxt_map821a_at_msb_b/2334.sps;EmbeddedAsset/BattleMap/Status/ReiWrath/ReiWrath.png;1;1;1
+QuickAttack;16;FieldMaps/fbg_n27_fslr_map467_fr_sbw_0/1305.sps;EmbeddedAsset/BattleMap/Status/VisualEffect/QuickAttack/QuickAttack.png;2;2;1

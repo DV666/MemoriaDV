@@ -717,7 +717,7 @@ namespace Memoria.Scripts.TranceSeek
         {
             if (v.Caster.PlayerIndex != CharacterId.Zidane) return;
 
-            if (StealScript.ForcedHeheZidane || ClassicSteal)
+            if (!Configuration.VoiceActing.Enabled && (StealScript.ForcedHeheZidane || ClassicSteal))
                 SoundLib.PlaySoundEffect(4500 + (Comn.random8() % 6));
         }
 

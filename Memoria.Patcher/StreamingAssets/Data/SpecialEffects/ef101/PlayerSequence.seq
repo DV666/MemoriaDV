@@ -22,9 +22,17 @@ StartThread: Condition=CasterWeaponId == 1161
 		WaitSFXLoaded: SFX=Player_Attack_Zidane_Sword
 		PlaySFX: SFX=Player_Attack_Zidane_Sword
 		EffectPoint: Char=AllTargets ; Type=Effect
-		PlaySound: Sound=WeaponAttack
+		StartThread: Condition=IsAttackCritical
+			PlaySound: Sound=WeaponAttack ; Pitch=1.25
+		ElseThread
+			PlaySound: Sound=WeaponAttack
+		EndThread
 		StartThread: Condition=!IsAttackMiss
-			PlaySound: Sound=WeaponHit
+			StartThread: Condition=IsAttackCritical
+				PlaySound: Sound=WeaponHit ; Pitch=1.25
+			ElseThread
+				PlaySound: Sound=WeaponHit
+			EndThread
 		EndThread
 		Wait: Time=4
 		EffectPoint: Char=Everyone ; Type=Figure
@@ -37,9 +45,17 @@ StartThread: Condition=CasterWeaponId == 1161
 		WaitSFXLoaded: SFX=Player_Attack_Zidane_Sword
 		PlaySFX: SFX=Player_Attack_Zidane_Sword
 		EffectPoint: Char=AllTargets ; Type=Effect
-		PlaySound: Sound=WeaponAttack
+		StartThread: Condition=IsAttackCritical
+			PlaySound: Sound=WeaponAttack ; Pitch=1.25
+		ElseThread
+			PlaySound: Sound=WeaponAttack
+		EndThread
 		StartThread: Condition=!IsAttackMiss
-			PlaySound: Sound=WeaponHit
+			StartThread: Condition=IsAttackCritical
+				PlaySound: Sound=WeaponHit ; Pitch=1.25
+			ElseThread
+				PlaySound: Sound=WeaponHit
+			EndThread
 		EndThread
 		Wait: Time=4
 		EffectPoint: Char=Everyone ; Type=Figure
@@ -80,9 +96,17 @@ ElseThread
 		WaitSFXLoaded: SFX=Player_Attack_Zidane_Sword
 		PlaySFX: SFX=Player_Attack_Zidane_Sword
 		EffectPoint: Char=AllTargets ; Type=Effect
-		PlaySound: Sound=WeaponAttack
+		StartThread: Condition=IsAttackCritical
+			PlaySound: Sound=WeaponAttack ; Pitch=1.25
+		ElseThread
+			PlaySound: Sound=WeaponAttack
+		EndThread
 		StartThread: Condition=!IsAttackMiss
-			PlaySound: Sound=WeaponHit
+			StartThread: Condition=IsAttackCritical
+				PlaySound: Sound=WeaponHit ; Pitch=1.25
+			ElseThread
+				PlaySound: Sound=WeaponHit
+			EndThread
 		EndThread
 		Wait: Time=4
 		EffectPoint: Char=Everyone ; Type=Figure

@@ -16,8 +16,17 @@ WaitSFXLoaded: SFX=Player_Attack_Garnet_SH_Racket
 PlaySFX: SFX=Player_Attack_Garnet_SH_Racket
 Wait: Time=7
 EffectPoint: Char=AllTargets ; Type=Effect
+StartThread: Condition=IsAttackCritical
+	PlaySound: Sound=WeaponAttack ; Pitch=1.25
+ElseThread
+	PlaySound: Sound=WeaponAttack
+EndThread
 StartThread: Condition=!IsAttackMiss
-	PlaySound: Sound=WeaponHit
+	StartThread: Condition=IsAttackCritical
+		PlaySound: Sound=WeaponHit ; Pitch=1.25
+	ElseThread
+		PlaySound: Sound=WeaponHit
+	EndThread
 EndThread
 Wait: Time=10
 EffectPoint: Char=Everyone ; Type=Figure

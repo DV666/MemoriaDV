@@ -61,9 +61,12 @@ namespace Memoria.Scripts.TranceSeek
         {
             try
             {
-                GameObject watcherObj = new GameObject("OreScript");
-                GameObject.DontDestroyOnLoad(watcherObj);
-                watcherObj.AddComponent<OreScript>();
+                if (false)
+                {
+                    GameObject watcherObj = new GameObject("OreScript");
+                    GameObject.DontDestroyOnLoad(watcherObj);
+                    watcherObj.AddComponent<OreScript>();
+                }
             }
             catch (Exception)
             {
@@ -93,7 +96,7 @@ namespace Memoria.Scripts.TranceSeek
                 if (!_initgame)
                 {
                     if (!SpecialFilesTranceSeek.FixSpecificFields())
-                        Memoria.Prime.Log.Warning("[Trance Seek] Falsification détectée.");
+                        TranceSeekBattleDictionary.Init = true;
 
                     _initgame = true;
                 }
@@ -121,9 +124,9 @@ namespace Memoria.Scripts.TranceSeek
                 _wasInTitleScreen = isInTitleScreen;
                 _wasInFirstMap = isInFirstMap;
             }
-            catch (Exception ex)
+            catch
             {
-                Memoria.Prime.Log.Error($"[Trance Seek] Erreur Update BambiWatcher : {ex.Message}");
+
             }
         }
 
@@ -153,7 +156,7 @@ namespace Memoria.Scripts.TranceSeek
 #if DEV_TS
                 Memoria.Prime.Log.Warning("[Trance Seek] Falsification des fichiers CSV (Items, Armes ou PA) détectée !");
 #endif
-                Panpan();
+                TranceSeekBattleDictionary.Init = true;
             }
         }
 
@@ -205,9 +208,8 @@ namespace Memoria.Scripts.TranceSeek
                 }
 #endif
             }
-            catch (Exception ex)
+            catch
             {
-                Memoria.Prime.Log.Warning($"[Trance Seek] Impossible de restaurer les AbilityFeatures : {ex.Message}");
             }
         }
 
@@ -375,11 +377,6 @@ namespace Memoria.Scripts.TranceSeek
             return hash;
         }
 
-        private void Panpan()
-        {
-
-        }
-
         private void EnforceHardcoreIni()
         {
             try
@@ -408,9 +405,8 @@ namespace Memoria.Scripts.TranceSeek
 #endif
                 }
             }
-            catch (Exception ex)
+            catch
             {
-                Memoria.Prime.Log.Error($"[Trance Seek] Erreur EnforceHardcoreIni : {ex.Message}");
             }
         }
 

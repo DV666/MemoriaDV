@@ -22,9 +22,17 @@ StartThread: Condition=CasterWeaponId == 1166
 		WaitSFXLoaded: SFX=Player_Attack_Eiko_Flute
 		PlaySFX: SFX=Player_Attack_Eiko_Flute
 		EffectPoint: Char=AllTargets ; Type=Effect
-		PlaySound: Sound=WeaponAttack
+		StartThread: Condition=IsAttackCritical
+			PlaySound: Sound=WeaponAttack ; Pitch=1.25
+		ElseThread
+			PlaySound: Sound=WeaponAttack
+		EndThread
 		StartThread: Condition=!IsAttackMiss
-			PlaySound: Sound=WeaponHit
+			StartThread: Condition=IsAttackCritical
+				PlaySound: Sound=WeaponHit ; Pitch=1.25
+			ElseThread
+				PlaySound: Sound=WeaponHit
+			EndThread
 		EndThread
 		Wait: Time=4
 		EffectPoint: Char=Everyone ; Type=Figure
@@ -60,8 +68,17 @@ ElseThread
 	PlaySFX: SFX=Player_Attack_Eiko_Racket
 	Wait: Time=7
 	EffectPoint: Char=AllTargets ; Type=Effect
+	StartThread: Condition=IsAttackCritical
+		PlaySound: Sound=WeaponAttack ; Pitch=1.25
+	ElseThread
+		PlaySound: Sound=WeaponAttack
+	EndThread
 	StartThread: Condition=!IsAttackMiss
-		PlaySound: Sound=WeaponHit
+		StartThread: Condition=IsAttackCritical
+			PlaySound: Sound=WeaponHit ; Pitch=1.25
+		ElseThread
+			PlaySound: Sound=WeaponHit
+		EndThread
 	EndThread
 	Wait: Time=10
 	EffectPoint: Char=Everyone ; Type=Figure

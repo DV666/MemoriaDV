@@ -44,7 +44,7 @@ EndThread
 PlayAnimation: Char=Caster ; Anim=Idle ; Reflect=False
 WaitTurn: Char=Caster ; Reflect=False
 StartThread: Condition=GetMemoriaDictionary(1050, 0) > 0
-	StartThread: Condition=CasterWeaponId == 1028
+	StartThread: Condition=CasterWeaponId == 1028 && !CheckAnyStatus(TargetCurrentStatus, BattleStatus_BattleEndFull)
 		StartThread: Condition=CheckAnyStatus(TargetCurrentStatus, BattleStatus_Reflect)
 			StartThread: Target=AllPlayers
 				StartThread: Target=RandomTarget
@@ -61,7 +61,7 @@ StartThread: Condition=GetMemoriaDictionary(1050, 0) > 0
 			WaitSFXDone: SFX=Demi_Shock__Single ; Reflect=True
 		EndThread
 	EndThread
-	StartThread: Condition=CasterWeaponId == 1029
+	StartThread: Condition=CasterWeaponId == 1029 && !CheckAnyStatus(TargetCurrentStatus, BattleStatus_BattleEndFull)
 		StartThread: Condition=CheckAnyStatus(TargetCurrentStatus, BattleStatus_Reflect)
 			StartThread: Target=AllPlayers
 				StartThread: Target=RandomTarget
@@ -78,7 +78,7 @@ StartThread: Condition=GetMemoriaDictionary(1050, 0) > 0
 			WaitSFXDone: SFX=Bio__Single ; Reflect=True
 		EndThread
 	EndThread
-	StartThread: Condition=CasterWeaponId == 1030
+	StartThread: Condition=CasterWeaponId == 1030 && !CheckAnyStatus(TargetCurrentStatus, BattleStatus_BattleEndFull)
 		StartThread: Condition=CheckAnyStatus(TargetCurrentStatus, BattleStatus_Reflect)
 			StartThread: Target=AllPlayers
 				StartThread: Target=RandomTarget
@@ -95,7 +95,24 @@ StartThread: Condition=GetMemoriaDictionary(1050, 0) > 0
 			WaitSFXDone: SFX=Death ; Reflect=True
 		EndThread
 	EndThread
-	StartThread: Condition=CasterWeaponId == 1031
+	StartThread: (Condition=CasterWeaponId == 1187 || Condition=CasterWeaponId == 1188) && !CheckAnyStatus(TargetCurrentStatus, BattleStatus_BattleEndFull)
+		StartThread: Condition=CheckAnyStatus(TargetCurrentStatus, BattleStatus_Reflect)
+			StartThread: Target=AllPlayers
+				StartThread: Target=RandomTarget
+					LoadSFX: SFX=Mind_Blast ; Reflect=True
+					WaitSFXLoaded: SFX=Mind_Blast ; Reflect=True
+					PlaySFX: SFX=Mind_Blast ; Reflect=True
+					WaitSFXDone: SFX=Mind_Blast ; Reflect=True
+				EndThread
+			EndThread
+		ElseThread
+			LoadSFX: SFX=Mind_Blast ; Reflect=True
+			WaitSFXLoaded: SFX=Mind_Blast ; Reflect=True
+			PlaySFX: SFX=Mind_Blast ; Reflect=True
+			WaitSFXDone: SFX=Mind_Blast ; Reflect=True
+		EndThread
+	EndThread
+	StartThread: Condition=CasterWeaponId == 1031 && !CheckAnyStatus(TargetCurrentStatus, BattleStatus_BattleEndFull)
 		LoadSFX: SFX=Meteor__Success
 		WaitSFXLoaded: SFX=Meteor__Success
 		PlaySFX: SFX=Meteor__Success

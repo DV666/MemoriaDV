@@ -10,19 +10,25 @@ StartThread: Condition=IsSingleSelectedTarget
 EndThread
 Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
 SetupReflect: Delay=SFXLoaded
-StartThread: Condition=CasterHasSA(1027) ; Sync=True
+StartThread: Condition=CasterHasSA(1027) && (ItemUseId == 238 || ItemUseId == 1001) ; Sync=True
 	StartThread: Sync=True ; Condition=TargetIsPlayer
 		PlayAnimation: Char=Caster ; Anim=MP_ITEM1
 		WaitAnimation: Char=Caster
 		StartThread: Target = AllPlayers
 			StartThread: TargetLoop=True ; Chain=True ; Sync=True
-			Wait: Time=2
-			LoadSFX: SFX=Ether ; UseCamera=False
-			WaitSFXLoaded: SFX=Ether
-			PlaySFX: SFX=Ether ; SkipSequence
-			PlaySound: Sound=953
-			PlaySound: Sound=954
-			PlaySound: Sound=955
+				Wait: Time=2
+				StartThread: Condition=ItemUseId == 238 ; Sync
+					LoadSFX: SFX=Ether ; UseCamera=False
+					WaitSFXLoaded: SFX=Ether
+					PlaySFX: SFX=Ether ; SkipSequence ; MeshColors=0:(0.0, 1.0, 2.0), 1:(0, 0, 0), 2:(0.0, 1.0, 2.0), 3:(0, 0, 0), 4:(0, 0, 0)
+				ElseThread: Sync
+					LoadSFX: SFX=Ether ; UseCamera=False
+					WaitSFXLoaded: SFX=Ether
+					PlaySFX: SFX=Ether ; SkipSequence ; MeshColors=(0.0, 1.0, 2.0)
+				EndThread
+				PlaySound: Sound=953
+				PlaySound: Sound=954
+				PlaySound: Sound=955
 			EndThread
 		EndThread
 		Wait: Time=22
@@ -35,10 +41,17 @@ StartThread: Condition=CasterHasSA(1027) ; Sync=True
 		WaitAnimation: Char=Caster
 		StartThread: Target = AllEnemies
 			StartThread: TargetLoop=True ; Chain=True ; Sync=True
-			Wait: Time=2
-			LoadSFX: SFX=Ether ; UseCamera=False
+			Wait: Time=2		
 			WaitSFXLoaded: SFX=Ether
-			PlaySFX: SFX=Ether ; SkipSequence
+			StartThread: Condition=ItemUseId == 238 ; Sync
+				LoadSFX: SFX=Ether
+				WaitSFXLoaded: SFX=Ether
+				PlaySFX: SFX=Ether ; MeshColors=0:(0.0, 1.0, 2.0), 1:(0, 0, 0), 2:(0.0, 1.0, 2.0), 3:(0, 0, 0), 4:(0, 0, 0)
+			ElseThread: Sync
+				LoadSFX: SFX=Ether
+				WaitSFXLoaded: SFX=Ether
+				PlaySFX: SFX=Ether ; MeshColors=(0.0, 1.0, 2.0)
+			EndThread
 			PlaySound: Sound=953
 			PlaySound: Sound=954
 			PlaySound: Sound=955
@@ -49,58 +62,12 @@ StartThread: Condition=CasterHasSA(1027) ; Sync=True
 		EffectPoint: Char=Everyone ; Type=Figure
 		Wait: Time=10
 		WaitSFXDone: SFX=Ether ; Reflect=True
-	ElseThread: Sync=True ; Condition=ItemUseId != 238 || Condition=ItemUseId != 1001
-		StartThread: Condition=IsSingleTarget ; Sync=True
-			LoadSFX: SFX=Ether ; Reflect=True
-			StartThread: Condition=ItemUseId == 255 ; Sync=True
-				PlayAnimation: Char=Caster ; Anim=MP_IDLE_TO_CHANT
-				WaitAnimation: Char=Caster
-				PlayAnimation: Char=Caster ; Anim=MP_CHANT ; Loop=True
-				Channel
-				WaitSFXLoaded: SFX=Ether ; Reflect=True
-				WaitAnimation: Char=Caster
-				StopChannel
-				PlayAnimation: Char=Caster ; Anim=MP_MAGIC
-				WaitAnimation: Char=Caster
-			EndThread
-			StartThread: Condition=ItemUseId != 255 ; Sync=True
-				PlayAnimation: Char=Caster ; Anim=MP_ITEM1
-				WaitAnimation: Char=Caster
-				WaitSFXLoaded: SFX=Ether ; Reflect=True
-			EndThread
-			PlaySFX: SFX=Ether ; Reflect=True
-			WaitSFXDone: SFX=Ether ; Reflect=True
-		EndThread
-		StartThread: Condition=!IsSingleTarget ; Sync=True
-			StartThread: Condition=ItemUseId == 255 ; Sync=True
-				PlayAnimation: Char=Caster ; Anim=MP_IDLE_TO_CHANT
-				WaitAnimation: Char=Caster
-				PlayAnimation: Char=Caster ; Anim=MP_CHANT ; Loop=True
-				Channel
-				WaitAnimation: Char=Caster
-				WaitAnimation: Char=Caster
-				StopChannel
-				PlayAnimation: Char=Caster ; Anim=MP_MAGIC
-				WaitAnimation: Char=Caster
-			EndThread
-			StartThread: Condition=ItemUseId != 255 ; Sync=True
-				PlayAnimation: Char=Caster ; Anim=MP_ITEM1
-				WaitAnimation: Char=Caster
-			EndThread
-			StartThread: TargetLoop=True ; Chain=True ; Sync=True
-				LoadSFX: SFX=Ether ; Reflect=True ; UseCamera=False
-				WaitSFXLoaded: SFX=Ether ; Reflect=True
-				PlaySFX: SFX=Ether ; Reflect=True
-				Wait: Time=10
-			EndThread
-		EndThread
-		WaitSFXDone: SFX=Ether ; Reflect=True
 	EndThread
-ElseThread: Condition=!CasterHasSA(1027) ; Sync=True
+ElseThread: Sync=True
 	SetupReflect: Delay=SFXLoaded
 	StartThread: Condition=IsSingleTarget ; Sync=True
-		LoadSFX: SFX=Ether ; Reflect=True
 		StartThread: Condition=ItemUseId == 255 ; Sync=True
+			LoadSFX: SFX=Ether ; Reflect=True
 			PlayAnimation: Char=Caster ; Anim=MP_IDLE_TO_CHANT
 			WaitAnimation: Char=Caster
 			PlayAnimation: Char=Caster ; Anim=MP_CHANT ; Loop=True
@@ -110,13 +77,21 @@ ElseThread: Condition=!CasterHasSA(1027) ; Sync=True
 			StopChannel
 			PlayAnimation: Char=Caster ; Anim=MP_MAGIC
 			WaitAnimation: Char=Caster
+			PlaySFX: SFX=Ether ; Reflect=True
 		EndThread
 		StartThread: Condition=ItemUseId != 255 ; Sync=True
 			PlayAnimation: Char=Caster ; Anim=MP_ITEM1
 			WaitAnimation: Char=Caster
-			WaitSFXLoaded: SFX=Ether ; Reflect=True
+			StartThread: Condition=ItemUseId == 238 ; Sync
+				LoadSFX: SFX=Ether
+				WaitSFXLoaded: SFX=Ether
+				PlaySFX: SFX=Ether ; MeshColors=0:(0.0, 1.0, 2.0), 1:(0, 0, 0), 2:(0.0, 1.0, 2.0), 3:(0, 0, 0), 4:(0, 0, 0)
+			ElseThread: Sync
+				LoadSFX: SFX=Ether
+				WaitSFXLoaded: SFX=Ether
+				PlaySFX: SFX=Ether ; MeshColors=(0.0, 1.0, 2.0)
+			EndThread
 		EndThread
-		PlaySFX: SFX=Ether ; Reflect=True
 		WaitSFXDone: SFX=Ether ; Reflect=True
 	EndThread
 	StartThread: Condition=!IsSingleTarget ; Sync=True

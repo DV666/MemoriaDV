@@ -1,0 +1,20 @@
+// Player sequence of Mascot
+
+SetupReflect: Delay=SFXLoaded
+StartThread: Condition=CasterAccessoryId == 1271 ; Sync=True
+	StartThread: Target=MatchingCondition(IsTargetable && IsPlayer && !CheckAnyStatus(CurrentStatus, BattleStatus_Death | BattleStatus_Petrify | BattleStatus_Zombie | BattleStatus_Regen))
+		Channel: Type=Mascot
+		SetVariable: Variable=gEventGlobal ; Index=1408 ; Value=1
+		Wait: Time=10
+		Message: Priority=1 ; Title=True ; Reflect=True ; TextUS=[STRT=150,1]Regen ; TextUK=[STRT=150,1]Regen ; TextJP=[STRT=150,1]リジェネ ; TextES=Revitalia ; TextFR=[STRT=145,1]Récup ; TextGR=[STRT=160,1]Regena ; TextIT=[STRT=180,1]Rigene
+		StartThread: Target=RandomTarget ; Sync
+			LoadSFX: SFX=Regen ; Reflect=True
+			WaitSFXLoaded: SFX=Regen ; Reflect=True
+			PlaySFX: SFX=Regen ; Reflect=True
+		EndThread
+	EndThread
+EndThread
+WaitSFXDone: Reflect=True
+StopChannel
+ActivateReflect
+WaitReflect

@@ -1,0 +1,8 @@
+// Player sequence of Mog Cure
+
+PlaySound: Sound=1362
+SetupReflect: Delay=SFXLoaded
+CreateVisualEffect: SFXModel=CustomSFX/MougEntrance.sfxmodel ; Char=Caster ; Reflect=True
+WaitAnimation: Char=Caster
+ActivateReflect
+WaitReflect
