@@ -296,7 +296,6 @@ namespace Memoria.Scripts.TranceSeek
         public int SentinelDuel { get; set; }
         public int LastStand { get; set; }
         public int Instinct { get; set; }
-        public Boolean ModeEX { get; set; }
         public int HealHP { get; set; }
         public int HealMP { get; set; }
         public int CriticalHit100 { get; set; }
@@ -304,6 +303,7 @@ namespace Memoria.Scripts.TranceSeek
         public int NewMaximumHP { get; set; }
         public int NewMaximumMP { get; set; }
         public int Propagation { get; set; }
+        public SPSEffect VeilMystic { get; set; }
     }
 
     public class SpecialItemEffects

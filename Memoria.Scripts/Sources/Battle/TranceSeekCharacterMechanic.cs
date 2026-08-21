@@ -7,6 +7,7 @@ using Memoria.Prime;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting.Contexts;
 using static Memoria.Scripts.TranceSeek.TranceSeekBattleDictionary;
 using static SFX;
 
@@ -77,77 +78,113 @@ namespace Memoria.Scripts.TranceSeek
                 TryApplyDragon(v);
         }
 
-        public static void GarnetGemMechanic(this BattleCalculator v, GarnetGemMechanic_Type type = GarnetGemMechanic_Type.ElementalAndHeal)
+        public static Boolean GarnetGemMechanic(this BattleCalculator v, GarnetGemMechanic_Type type = GarnetGemMechanic_Type.ElementalAndHeal, EffectElement element = EffectElement.None)
         {
             if (v.Target.PlayerIndex == CharacterId.Garnet)
             {
                 Boolean GarnetInTrance = v.Target.InTrance;
                 RegularItem GarnetAccessory = v.Target.Accessory;
-                int number_element = 0;
-                int number_gem = 0;
-                float BonusSA = v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.Gemologist_Boosted) ? 1.5f : (v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.Gemologist) ? 1.25f : 1);
 
-                if (type == GarnetGemMechanic_Type.BoostPhysicalEvade)
+                float BonusSA = v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.Gemologist_Boosted) ? 1.5f 
+                    : (v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.Gemologist) ? 1.25f : 1f);
+
+                switch (type)
                 {
-                    if ((GarnetInTrance || GarnetAccessory == RegularItem.Amethyst))
-                        v.Context.Evade += (Int16)(v.Context.Evade * ((1 + ff9item.FF9Item_GetCount(RegularItem.Amethyst) * BonusSA) / 400));
-                }
-                else if (type == GarnetGemMechanic_Type.BoostMagicalEvade)
-                {
-                    if ((GarnetInTrance || GarnetAccessory == RegularItem.LapisLazuli))
-                        v.Context.Evade += (Int16)(v.Context.Evade * ((1 + ff9item.FF9Item_GetCount(RegularItem.LapisLazuli) * BonusSA) / 400));
-                }
-                else
-                {
-                    if (v.Command.Element > 0 && (v.Target.Flags & CalcFlag.HpAlteration) != 0) // Elemental Gems
-                    {
-                        if ((GarnetInTrance || GarnetAccessory == RegularItem.Topaz) && (v.Command.Element & EffectElement.Fire) != 0)
+                    case GarnetGemMechanic_Type.BoostPhysicalDefence:
+                        if ((GarnetInTrance || GarnetAccessory == RegularItem.Diamond) && (v.Command.AbilityCategory & 8) != 0)
                         {
-                            number_element++;
-                            number_gem += ff9item.FF9Item_GetCount(RegularItem.Topaz);
+                            v.Context.Attack -= (Int16)(v.Context.Attack * ((1f + ff9item.FF9Item_GetAnyCount(RegularItem.Diamond) * BonusSA) / 400f));
+                            return true;
                         }
-                        if ((GarnetInTrance || GarnetAccessory == RegularItem.Opal) && (v.Command.Element & EffectElement.Cold) != 0)
+                        break;
+
+                    case GarnetGemMechanic_Type.BoostMagicalDefence:
+                        if ((GarnetInTrance || GarnetAccessory == RegularItem.Garnet) && (v.Command.AbilityCategory & 16) != 0)
                         {
-                            number_element++;
-                            number_gem += ff9item.FF9Item_GetCount(RegularItem.Opal);
+                            v.Context.Attack -= (Int16)(v.Context.Attack * ((1f + ff9item.FF9Item_GetAnyCount(RegularItem.Garnet) * BonusSA) / 400f));
+                            return true;
                         }
-                        if ((GarnetInTrance || GarnetAccessory == RegularItem.Peridot) && (v.Command.Element & EffectElement.Thunder) != 0)
+                        break;
+
+                    case GarnetGemMechanic_Type.BoostPhysicalEvade:
+                        if ((GarnetInTrance || GarnetAccessory == RegularItem.Amethyst))
                         {
-                            number_element++;
-                            number_gem += ff9item.FF9Item_GetCount(RegularItem.Peridot);
+                            v.Context.Evade += (Int16)(v.Context.Evade * ((1f + ff9item.FF9Item_GetAnyCount(RegularItem.Amethyst) * BonusSA) / 400f));
+                            return true;
                         }
-                        if ((GarnetInTrance || GarnetAccessory == RegularItem.Sapphire) && (v.Command.Element & EffectElement.Earth) != 0)
+                        break;
+
+                    case GarnetGemMechanic_Type.BoostMagicalEvade:
+                        if ((GarnetInTrance || GarnetAccessory == RegularItem.LapisLazuli))
                         {
-                            number_element++;
-                            number_gem += ff9item.FF9Item_GetCount(RegularItem.Sapphire);
+                            v.Context.Evade += (Int16)(v.Context.Evade * ((1f + ff9item.FF9Item_GetAnyCount(RegularItem.LapisLazuli) * BonusSA) / 400f));
+                            return true;
                         }
-                        if ((GarnetInTrance || GarnetAccessory == RegularItem.Aquamarine) && (v.Command.Element & EffectElement.Aqua) != 0)
+                        break;
+
+                    case GarnetGemMechanic_Type.ElementalAndHeal:
+                        if (element != EffectElement.None)
                         {
-                            number_element++;
-                            number_gem += ff9item.FF9Item_GetCount(RegularItem.Aquamarine);
+                            int number_element = 0;
+                            int number_gem = 0;
+
+                            if ((GarnetInTrance || GarnetAccessory == RegularItem.Topaz) && (element & EffectElement.Fire) != 0)
+                            {
+                                number_element++;
+                                number_gem += ff9item.FF9Item_GetAnyCount(RegularItem.Topaz);
+                            }
+                            if ((GarnetInTrance || GarnetAccessory == RegularItem.Opal) && (element & EffectElement.Cold) != 0)
+                            {
+                                number_element++;
+                                number_gem += ff9item.FF9Item_GetAnyCount(RegularItem.Opal);
+                            }
+                            if ((GarnetInTrance || GarnetAccessory == RegularItem.Peridot) && (element & EffectElement.Thunder) != 0)
+                            {
+                                number_element++;
+                                number_gem += ff9item.FF9Item_GetAnyCount(RegularItem.Peridot);
+                            }
+                            if ((GarnetInTrance || GarnetAccessory == RegularItem.Sapphire) && (element & EffectElement.Earth) != 0)
+                            {
+                                number_element++;
+                                number_gem += ff9item.FF9Item_GetAnyCount(RegularItem.Sapphire);
+                            }
+                            if ((GarnetInTrance || GarnetAccessory == RegularItem.Aquamarine) && (element & EffectElement.Aqua) != 0)
+                            {
+                                number_element++;
+                                number_gem += ff9item.FF9Item_GetAnyCount(RegularItem.Aquamarine);
+                            }
+                            if ((GarnetInTrance || GarnetAccessory == RegularItem.Emerald) && (element & EffectElement.Wind) != 0)
+                            {
+                                number_element++;
+                                number_gem += ff9item.FF9Item_GetAnyCount(RegularItem.Emerald);
+                            }
+
+                            if (number_element > 0)
+                            {
+                                v.Context.Attack = (Int16)(v.Context.Attack * ((1f + ((float)number_gem / number_element) * BonusSA) / 100f));
+                                return true;
+                            }
                         }
-                        if (number_element > 0)
-                        {
-                            v.Target.Flags |= CalcFlag.HpRecovery;
-                            v.Target.HpDamage += (Int16)(v.Target.HpDamage * ((1 + (number_gem / number_element) * BonusSA) / 100));
-                        }
-                    }
-                    if ((GarnetInTrance || GarnetAccessory == RegularItem.Diamond) && (v.Command.AbilityCategory & 8) != 0) // "Physical" damage reduction
-                        v.Target.HpDamage -= (Int16)(v.Target.HpDamage * ((1 + ff9item.FF9Item_GetCount(RegularItem.Diamond) * BonusSA) / 400));
-                    if ((GarnetInTrance || GarnetAccessory == RegularItem.Garnet) && (v.Command.AbilityCategory & 16) != 0) // "Magical" damage reduction
-                        v.Target.HpDamage -= (Int16)(v.Target.HpDamage * ((1 + ff9item.FF9Item_GetCount(RegularItem.Garnet) * BonusSA) / 400));
+                        break;
                 }
             }
-            else if (v.Caster.PlayerIndex == CharacterId.Garnet && v.Command.ScriptId == 10 && (v.Caster.InTrance || v.Caster.Accessory == RegularItem.Moonstone)) // Only for White Magic Spell
+            else if (v.Caster.PlayerIndex == CharacterId.Garnet && v.Command.ScriptId == 10 && (v.Caster.InTrance || v.Caster.Accessory == RegularItem.Moonstone))
             {
-                float BonusSA = v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.Gemologist_Boosted) ? 1.5f : (v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.Gemologist) ? 1.25f : 1);
-                v.Target.HpDamage += (Int16)(v.Target.HpDamage * ((1 + ff9item.FF9Item_GetCount(RegularItem.Moonstone) * BonusSA) / 200));
+                float BonusSA = v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Gemologist_Boosted) ? 1.5f
+                              : (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Gemologist) ? 1.25f : 1f);
+
+                v.Context.Attack += (Int16)(v.Context.Attack * ((1f + ff9item.FF9Item_GetAnyCount(RegularItem.Moonstone) * BonusSA) / 200f));
+                return true;
             }
+
+            return false;
         }
 
         public enum GarnetGemMechanic_Type
         {
             ElementalAndHeal,
+            BoostPhysicalDefence,
+            BoostMagicalDefence,
             BoostPhysicalEvade,
             BoostMagicalEvade
         }

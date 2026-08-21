@@ -1,5 +1,6 @@
 ﻿using Memoria.Data;
 using Memoria.Prime;
+using System;
 
 namespace Memoria.Scripts.TranceSeek
 {
@@ -9,6 +10,18 @@ namespace Memoria.Scripts.TranceSeek
         {
             var Caster_TSVar = v.CasterState();
             var Target_TSVar = v.TargetState();
+
+            if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.EXMode) && v.Caster.IsUnderAnyStatus(BattleStatus.Trance)) // Mode EX
+            {
+                Int32 HealHPSAOrItem = (int)(v.Caster.MaximumHp * (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.EXMode_Boosted) ? 50 : 25) / 100);
+                Int32 HealMPSAOrItem = (int)(v.Caster.MaximumMp * (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.EXMode_Boosted) ? 50 : 25) / 100);
+                if (HealHPSAOrItem > 0)
+                    v.Caster.CurrentHp = Math.Min(v.Caster.CurrentHp + (uint)HealHPSAOrItem, v.Caster.MaximumHp);
+                if (HealMPSAOrItem > 0)
+                    v.Caster.CurrentMp = Math.Min(v.Caster.CurrentMp + (uint)HealMPSAOrItem, v.Caster.MaximumMp);
+
+                btl2d.Btl2dStatReq(v.Caster, -HealHPSAOrItem, -HealMPSAOrItem);
+            }
 
             SOS_SA(v);
             TranceSeekCharacterMechanic.DragonMechanic(v);

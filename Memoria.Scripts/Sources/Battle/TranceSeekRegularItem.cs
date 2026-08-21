@@ -721,7 +721,9 @@ namespace Memoria.Scripts.TranceSeek
             {
                 int CasterWeaponShape = ff9item._FF9Item_Data[v.Caster.Weapon].shape;
 
-                if (CasterWeaponShape == 7 && v.Target.HpDamage > 0 && v.Command.ScriptId == 10) // Air Racket (nerf White Mage heal)
+                if (v.Caster.Weapon == ExcalipoorII && (v.Target.Flags & CalcFlag.HpRecovery) == 0)
+                    v.Target.HpDamage = 1;
+                else if (CasterWeaponShape == 7 && v.Target.HpDamage > 0 && v.Command.ScriptId == 10) // Air Racket (nerf White Mage heal)
                     v.Target.HpDamage /= 2;
                 else if (CasterWeaponShape == 42 && v.Target.HpDamage > 0 && (v.Command.ScriptId == 48 || v.Command.ScriptId == 83)) // Heavy Spear (on Jump)
                     v.Target.HpDamage += ((v.Target.HpDamage * BonusDamageFromWeapon(v.Caster.Weapon)) / 100);

@@ -1,4 +1,5 @@
 using Memoria.Data;
+using Memoria.Prime;
 using System;
 
 namespace Memoria.Scripts.TranceSeek
@@ -26,13 +27,10 @@ namespace Memoria.Scripts.TranceSeek
                 if (TranceSeekAPI.TryPhysicalHit(_v))
                 {
                     if (_v.Caster.IsPlayer)
-                    {
                         TranceSeekAPI.WeaponPhysicalParams(CalcAttackBonus.Simple, _v);
-                    }
                     else
-                    {
                         _v.NormalPhysicalParams();
-                    }
+
                     TranceSeekAPI.EnemyTranceBonusAttack(_v);
                     TranceSeekAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
                     TranceSeekAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
@@ -44,15 +42,13 @@ namespace Memoria.Scripts.TranceSeek
                     _v.Target.Flags |= CalcFlag.HpAlteration;
                     _v.Caster.Flags |= CalcFlag.HpAlteration;
                     if (_v.Target.IsZombie)
-                    {
                         _v.Target.Flags |= CalcFlag.HpRecovery;
-                    }
                     else
-                    {
                         _v.Caster.Flags |= CalcFlag.HpRecovery;
-                    }
+
                     uint currentHp = _v.Target.CurrentHp;
                     _v.CalcPhysicalHpDamage();
+
                     if (_v.Caster.IsPlayer)
                     {
                         _v.Caster.HpDamage = _v.Target.HpDamage / 4;

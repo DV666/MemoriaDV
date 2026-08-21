@@ -72,28 +72,6 @@ namespace Memoria.Scripts.TranceSeek
                         v.Command.AbilityStatus |= CustomStatusAAMonster[i];
             }
 
-            if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.EXMode) && !Caster_TSVar.SpecialSA.ModeEX && v.Caster.IsUnderAnyStatus(BattleStatus.Trance)) // Mode EX
-            {
-                Int32 HealHPSAOrItem = (int)(v.Caster.MaximumHp * (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.EXMode_Boosted) ? 16 : 8) / 100);
-                Int32 HealMPSAOrItem = (int)(v.Caster.MaximumMp * (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.EXMode_Boosted) ? 16 : 8) / 100);
-                Caster_TSVar.SpecialSA.ModeEX = true;
-                v.Caster.AddDelayedModifier(
-                caster => caster.CurrentAtb >= caster.MaximumAtb,
-                caster =>
-                {
-                    Caster_TSVar.SpecialSA.ModeEX = false;
-                    if (HealHPSAOrItem > 0)
-                    {
-                        caster.CurrentHp = Math.Min(caster.CurrentHp + (uint)HealHPSAOrItem, caster.MaximumHp);
-                    }
-                    if (HealMPSAOrItem > 0)
-                    {
-                        caster.CurrentMp = Math.Min(caster.CurrentMp + (uint)HealMPSAOrItem, caster.MaximumMp);
-                    }
-                    btl2d.Btl2dStatReq(caster, -HealHPSAOrItem, -HealMPSAOrItem);
-                }
-                );
-            }
             if (v.Caster.Data.dms_geo_id == 410 && !v.Caster.IsPlayer) // Refresh Lani boss version animations (after Runic)
             {
                 v.Caster.Data.mot[0] = "ANH_MON_B3_122_000";

@@ -53,7 +53,7 @@ namespace Memoria.Scripts.TranceSeek
             }
 
             TranceSeekAPI.SpecialEffect(v);
-            TranceSeekCharacterMechanic.GarnetGemMechanic(v);
+
             var Caster_TSVar = v.CasterState();
             var Target_TSVar = v.TargetState();
 
@@ -83,13 +83,13 @@ namespace Memoria.Scripts.TranceSeek
             }
             if (v.Target.IsPlayer)
             {
-                if (v.Target.HasTrance && v.Target.Data.cur.hp > 0 && !btl_stat.CheckStatus(v.Target.Data, BattleStatusConst.CannotTrance)) // Prevent to earn easy Trance.
+                if (v.Target.HasTrance && v.Target.CurrentHp > 0 && !btl_stat.CheckStatus(v.Target.Data, BattleStatusConst.CannotTrance)) // Prevent to earn easy Trance.
                 {
                     if (v.Target.HpDamage * 10 <= v.Target.MaximumHp)
                         v.Context.TranceIncrease = 0;
                 }
 
-                if (v.Target.PlayerIndex == (CharacterId)12 && (v.Target.Flags & CalcFlag.HpRecovery) == 0) // Lani's Rage Mechanic
+                if (v.Target.PlayerIndex == (CharacterId)12 && v.Target.HpDamage > 0 && (v.Target.Flags & CalcFlag.HpRecovery) == 0 ) // Lani's Rage Mechanic
                 {
                     v.Target.AlterStatus(TranceSeekStatus.Rage, v.Caster);
 

@@ -27,10 +27,11 @@ namespace Memoria.Scripts.TranceSeek
             }
             else if (_v.Command.AbilityId == TranceSeekBattleAbility.Recover || _v.Command.Power == 99 && _v.Command.HitRate == 99) // Arnica
             {
+                _v.Target.RemoveStatus(BattleStatusConst.AnyNegative);
                 _v.Target.Flags |= CalcFlag.HpAlteration;
                 if (!_v.Target.IsZombie)
                     _v.Target.Flags |= CalcFlag.HpRecovery;
-                _v.Target.HpDamage = 9999;
+                _v.Target.HpDamage = (int)_v.Target.MaximumHp;
 
             }
             else if (_v.Command.Power == 1)

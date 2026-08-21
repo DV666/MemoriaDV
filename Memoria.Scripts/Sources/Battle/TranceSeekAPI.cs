@@ -2,6 +2,7 @@
 using Memoria.Data;
 using System;
 using System.Collections.Generic;
+using System.Runtime.Remoting.Contexts;
 using UnityEngine;
 using static Memoria.Scripts.TranceSeek.TranceSeekBattleDictionary;
 using static Memoria.Scripts.TranceSeek.TranceSeekCharacterMechanic;
@@ -333,6 +334,8 @@ namespace Memoria.Scripts.TranceSeek
             if (v.Target.IsUnderAnyStatus(BattleStatus.Mini) || v.Target.IsUnderAnyStatus(BattleStatus.Sleep) && !v.Target.IsUnderAnyStatus(BattleStatus.EasyKill) || v.Target.IsUnderAnyStatus(BattleStatus.Freeze))
                 ++v.Context.DamageModifierCount;
 
+            TranceSeekCharacterMechanic.GarnetGemMechanic(v, GarnetGemMechanic_Type.BoostPhysicalDefence);
+
             if (Caster_TSVar.StackStatus.Strength != 0)
                 v.Context.Attack += ((Caster_TSVar.StackStatus.Strength * v.Context.Attack) / 100);
             if (Target_TSVar.StackStatus.PDefence != 0)
@@ -467,6 +470,8 @@ namespace Memoria.Scripts.TranceSeek
 
             if (v.Target.IsUnderAnyStatus(BattleStatus.Shell) && v.Command.ScriptId != 125)
                 v.Context.Attack /= 2;
+
+            TranceSeekCharacterMechanic.GarnetGemMechanic(v, GarnetGemMechanic_Type.BoostMagicalDefence);
 
             if (v.Target.IsUnderAnyStatus(BattleStatus.Defend) && v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.SuperGuard))
             {
@@ -646,8 +651,8 @@ namespace Memoria.Scripts.TranceSeek
             if (v.Target.IsUnderAnyStatus(TranceSeekStatus.Runic))
             {
                 v.CalcHpDamage();
-                v.Target.Flags = (CalcFlag.HpDamageOrHeal | CalcFlag.MpDamageOrHeal);
-                v.Target.MpDamage = Math.Max(1, v.Target.HpDamage / 40);
+                v.Target.Flags |= (CalcFlag.HpAlteration | CalcFlag.HpRecovery | CalcFlag.MpAlteration | CalcFlag.MpRecovery);
+                v.Target.MpDamage = Math.Max(1, v.Target.HpDamage / 100);
                 v.Target.HpDamage = Math.Max(1, v.Target.HpDamage / 2);
                 v.Command.AbilityStatus = 0;
 
@@ -694,7 +699,7 @@ namespace Memoria.Scripts.TranceSeek
             if (v.Target.IsWeakElement(Element) || ((v.Command.ScriptId == 118 || v.Command.ScriptId == 119 || v.Command.ScriptId == 145 || IsWeaponPoison) && (Target_TSVar.EffectElement.Poison & 1) != 0) || ((v.Command.ScriptId == 17 || v.Command.ScriptId == 86 || IsWeaponGravity) && (Target_TSVar.EffectElement.Gravity & 1) != 0))
                 v.Context.DamageModifierCount += 2;
 
-            if (v.Target.CanAbsorbElement(Element))
+            if (CanAbsorbElement(v, Element))
             {
                 if (v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.DarkSide) && (Element & EffectElement.Darkness) != 0) // SA Dark side
                 {
@@ -717,6 +722,21 @@ namespace Memoria.Scripts.TranceSeek
 
             v.Target.AlterStatuses(Element);
             return true;
+        }
+
+        public static Boolean CanAbsorbElement(this BattleCalculator v, EffectElement element)
+        {
+            if (IsAbsorbElement(v, element) || TranceSeekCharacterMechanic.GarnetGemMechanic(v, GarnetGemMechanic_Type.ElementalAndHeal, element))
+            {
+                v.Context.Flags |= BattleCalcFlags.Absorb;
+                return true;
+            }
+            return false;
+        }
+
+        public static Boolean IsAbsorbElement(this BattleCalculator v, EffectElement element)
+        {
+            return (v.Target.AbsorbElement & element) != 0;
         }
 
         public static void InfusedWeaponStatus(this BattleCalculator v)
@@ -1199,11 +1219,6 @@ namespace Memoria.Scripts.TranceSeek
                 }
             }
 
-            if (v.Caster.Weapon == TranceSeekRegularItem.ExcalipoorII && (v.Target.Flags & CalcFlag.HpRecovery) == 0)
-            {
-                v.Target.HpDamage = 1;
-            }
-
             if (v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.Assistance) && (v.Command.AbilityCategory & 8) != 0 && v.Command.TargetCount == 1) // Assistance
             {
                 int HPAssistanceDamage = 0;
@@ -1241,6 +1256,28 @@ namespace Memoria.Scripts.TranceSeek
                             unit.CurrentMp = 0;
                     }
                     btl2d.Btl2dStatReq(unit.Data, HPAssistanceDamage, MPAssistanceDamage);
+                }
+            }
+
+            if (v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.MysticVeil) && (v.Target.Flags & CalcFlag.HpRecovery) == 0 && v.Target.HpDamage > 0)
+            {
+                uint TargetMP = v.Target.CurrentMp;
+                Boolean MysticVeilBoosted = v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.MysticVeil_Boosted);
+                uint CostMP = (uint)(TargetMP * (MysticVeilBoosted ? 4 : 2)) / 100;
+                if (TargetMP > CostMP)
+                {
+                    v.Target.HpDamage = v.Target.HpDamage - (v.Target.HpDamage * (MysticVeilBoosted ? 20 : 10)) / 100;
+                    v.Target.CurrentMp -= CostMP;
+
+                    SPSEffect sps = HonoluluBattleMain.battleSPS.AddSequenceSPS(17, -1, 1);
+                    if (sps == null)
+                        return;
+                    btl2d.GetIconPosition(v.Target, btl2d.ICON_POS_TARGET, out Transform attachTransf, out Vector3 iconOff);
+                    sps.charTran = v.Target.Data.gameObject.transform;
+                    sps.boneTran = attachTransf;
+                    sps.posOffset = Vector3.zero;
+                    //sps.scale *= 1;
+                    //SoundLib.PlaySoundEffect(1314); // se000046, se060146, se070003
                 }
             }
 

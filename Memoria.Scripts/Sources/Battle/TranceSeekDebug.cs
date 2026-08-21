@@ -1109,7 +1109,6 @@ namespace Memoria.Scripts.TranceSeek
 
                     GUILayout.BeginVertical("box");
                     GUILayout.Label("<b>✨ Special SA & Items Effects</b>", new GUIStyle(GUI.skin.label) { richText = true });
-                    state.SpecialSA.ModeEX = GUILayout.Toggle(state.SpecialSA.ModeEX, " Mode EX Active");
                     GUILayout.BeginHorizontal();
                     GUILayout.BeginVertical(GUILayout.Width(220));
                     state.SpecialSA.SentinelDuel = DrawStatUI($"TS_{u.Id}_SSASent", "Sentinel Duel", state.SpecialSA.SentinelDuel, 110);

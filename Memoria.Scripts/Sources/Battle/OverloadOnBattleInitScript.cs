@@ -868,6 +868,7 @@ namespace Memoria.Scripts.TranceSeek
 
         private static readonly Dictionary<Int32, IconOffsetPatch> MonsterIconOffsets = new Dictionary<Int32, IconOffsetPatch>
         {
+            { 267, new IconOffsetPatch(new SByte[] { -10, 0, 0, 0, -5, -10 }, new SByte[] { 0, 0, 0, -5, -5, 0 })}, // Kuja CD3
             { 530, new IconOffsetPatch(new SByte[] { -10, 0, -6, -1, -6, -18 }, new SByte[] { -1, -2, -9, -8, -5, 0 })}, // Fire Guardian (Disc 3) ; using Beatrix parameters
             { 1206, new IconOffsetPatch(new SByte[] { -20, 0, -10, -1, -6, -18 }, new SByte[] { -1, -2, -10, -8, -20, 0 })}, // Mysterious Girl (Disc 3)
             { 1208, new IconOffsetPatch(new SByte[] { -4, 0, 0, -1, -6, -8 }, new SByte[] { 10, -2, -10, -8, -5, 0 })}, // Shiva FF4 (MG)

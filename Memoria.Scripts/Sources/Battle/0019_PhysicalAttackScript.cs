@@ -47,12 +47,16 @@ namespace Memoria.Scripts.TranceSeek
             {
                 _v.CalcHpDamage();
 
-                if (_v.Command.AbilityId == TranceSeekBattleAbility.PlutoCharge) // Pluto Charge
+                if (_v.Command.AbilityId == TranceSeekBattleAbility.ExtremeSpeed)
+                {
+                    _v.Target.HpDamage /= 4; // 4 instead of 5 (because "ultime" attack)
+                }
+                else if (_v.Command.AbilityId == TranceSeekBattleAbility.PlutoCharge)
                 {
                     int factorDefense = _v.Caster.PhysicalDefence + (_v.Caster.PhysicalDefence * (_v.CasterState().StackStatus.PDefence) / 100);
                     _v.Target.HpDamage = (_v.Target.HpDamage * factorDefense) / 100;
                 }
-                else if (_v.Command.AbilityId == TranceSeekBattleAbility.Zantetsu) // Fury of the general
+                else if (_v.Command.AbilityId == TranceSeekBattleAbility.Furyofthegeneral)
                     TranceSeekAPI.TryCriticalHit(_v);
                 else if (_v.Command.AbilityId == BattleAbilityId.DemiShock1 || _v.Command.AbilityId == BattleAbilityId.DemiShock2) // Tobigeri
                 {
