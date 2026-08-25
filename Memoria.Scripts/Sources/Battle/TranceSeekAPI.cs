@@ -1011,26 +1011,33 @@ namespace Memoria.Scripts.TranceSeek
             var Caster_TSVar = v.CasterState();
             var Target_TSVar = v.TargetState();
 
-            if (v.Target.HpDamage > 0 && v.Target.IsUnderAnyStatus(TranceSeekStatus.MechanicalArmor) && Target_TSVar.SpecialItem.MechanicalArmor > 0 && (v.Target.Flags & CalcFlag.HpRecovery) == 0) // Armor Mechanical
+            if (v.Target.IsUnderAnyStatus(TranceSeekStatus.MechanicalArmor) && Target_TSVar.SpecialItem.MechanicalArmor > 0) // Armor Mechanical
             {
-                Int32 DamageReduction = Target_TSVar.SpecialItem.MechanicalArmor * 10;
-                if (DamageReduction < 100)
-                v.Target.HpDamage = ((100 - DamageReduction) * v.Target.HpDamage) / 100;
-                else
+                if ((v.Target.HpDamage > 0 && (v.Target.Flags & CalcFlag.HpRecovery) == 0)|| (v.Target.MpDamage > 0) && (v.Target.Flags & CalcFlag.MpRecovery) == 0)
                 {
-                    v.Target.Flags = 0;
-                    v.Context.Flags |= BattleCalcFlags.Guard;
+                    Int32 DamageReduction = Target_TSVar.SpecialItem.MechanicalArmor * 10;
+                    if (DamageReduction < 100)
+                    {
+                        v.Target.HpDamage = ((100 - DamageReduction) * v.Target.HpDamage) / 100;
+                        v.Target.MpDamage = ((100 - DamageReduction) * v.Target.MpDamage) / 100;
+                    }
+                    else
+                    {
+                        v.Target.Flags = 0;
+                        v.Context.Flags |= BattleCalcFlags.Guard;
+                    }
+                    Target_TSVar.SpecialItem.MechanicalArmor--;
+                    if (Target_TSVar.SpecialItem.MechanicalArmor < 4 && Target_TSVar.Monster.Special2 == 0 && v.Target.Data.dms_geo_id == 446) // Refresh Garland stand animation
+                        v.Target.Data.mot[2] = "ANH_MON_B3_185_003";
+
+                    if (Target_TSVar.SpecialItem.MechanicalArmor < 0)
+                    {
+                        Target_TSVar.SpecialItem.MechanicalArmor = 0;
+                        v.Target.RemoveStatus(TranceSeekStatusId.MechanicalArmor);
+                    }
+                    else
+                        v.Target.TryAlterSingleStatus(TranceSeekStatusId.MechanicalArmor, true, v.Caster, Target_TSVar.SpecialItem.MechanicalArmor);
                 }
-                Target_TSVar.SpecialItem.MechanicalArmor--;
-                if (Target_TSVar.SpecialItem.MechanicalArmor < 4 && Target_TSVar.Monster.Special2 == 0 && v.Target.Data.dms_geo_id == 446) // Refresh Garland stand animation
-                    v.Target.Data.mot[2] = "ANH_MON_B3_185_003";
-                if (Target_TSVar.SpecialItem.MechanicalArmor < 0)
-                {
-                    Target_TSVar.SpecialItem.MechanicalArmor = 0;
-                    v.Target.RemoveStatus(TranceSeekStatusId.MechanicalArmor);
-                }
-                else
-                    v.Target.TryAlterSingleStatus(TranceSeekStatusId.MechanicalArmor, true, v.Caster, Target_TSVar.SpecialItem.MechanicalArmor);
             }
             if (v.Context.IsAbsorb)
                 v.Target.Flags |= CalcFlag.HpDamageOrHeal;

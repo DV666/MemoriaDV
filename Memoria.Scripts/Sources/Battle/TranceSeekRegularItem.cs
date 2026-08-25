@@ -711,6 +711,7 @@ namespace Memoria.Scripts.TranceSeek
         public const RegularItem TonberrySoul = (RegularItem)3012;
         public const RegularItem TrollSoul = (RegularItem)3013;
         public const RegularItem DrakanSoul = (RegularItem)3014;
+        public const RegularItem ArmstrongSoul = (RegularItem)3015;
 
         public static readonly HashSet<RegularItem> WeaponAffinitiesPoison = new HashSet<RegularItem>(new[] { RegularItem.RuneTooth, RuneToothDagger, RegularItem.ScissorFangs });
 
@@ -727,7 +728,7 @@ namespace Memoria.Scripts.TranceSeek
                     v.Target.HpDamage /= 2;
                 else if (CasterWeaponShape == 42 && v.Target.HpDamage > 0 && (v.Command.ScriptId == 48 || v.Command.ScriptId == 83)) // Heavy Spear (on Jump)
                     v.Target.HpDamage += ((v.Target.HpDamage * BonusDamageFromWeapon(v.Caster.Weapon)) / 100);
-                else if ((CasterWeaponShape == 56 || CasterWeaponShape == 88) && v.Target.HpDamage > 0 && v.Command.Id != BattleCommandId.Item && v.Command.Id != BattleCommandId.AutoPotion) // Axe
+                else if ((CasterWeaponShape == 56 || CasterWeaponShape == 131) && v.Target.HpDamage > 0 && v.Command.Id != BattleCommandId.Item && v.Command.Id != BattleCommandId.AutoPotion) // Axe + Big Fish
                     v.Target.HpDamage = UnityEngine.Random.Range(v.Target.HpDamage / 10, v.Target.HpDamage);
                 else if (v.Caster.Weapon == GoblinSword && v.Caster.Level == v.Target.Level && v.Command.AbilityId == BattleAbilityId.Attack)
                     v.Target.HpDamage = v.Target.HpDamage * 3;
@@ -818,6 +819,10 @@ namespace Memoria.Scripts.TranceSeek
                             break;
                         case 148: // Drakan
                             battleEnemy.Data.bonus_item[0] = DrakanSoul;
+                            battleEnemy.Data.bonus_item_rate[0] = 256;
+                            break;
+                        case 334: // Armstrong
+                            battleEnemy.Data.bonus_item[0] = ArmstrongSoul;
                             battleEnemy.Data.bonus_item_rate[0] = 256;
                             break;
                     }

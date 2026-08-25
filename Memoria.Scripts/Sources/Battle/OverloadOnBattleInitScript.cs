@@ -543,7 +543,7 @@ namespace Memoria.Scripts.TranceSeek
                     if (unit.IsUnderAnyStatus(BattleStatus.EasyKill))
                     {
                         StateDict.Monster.DurationDeadlyStatus = 100; // Reduce time for Sleep/Freeze/Stop
-                        StateDict.Monster.NerfGravity = 4; // Reduce gravity damage (start at 1 for Elite)
+                        StateDict.Monster.NerfGravity = 4; // Reduce gravity damage (start at 2 for Elite)
                     }
 
                     if ((btl_util.getEnemyPtr(unit).info.flags & 32) == 0)  // Unused (6)

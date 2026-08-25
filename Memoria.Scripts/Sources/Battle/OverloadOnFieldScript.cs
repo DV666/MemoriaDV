@@ -295,6 +295,12 @@ namespace Memoria.Scripts.TranceSeek
                     case 2553:
                     case 2554:
                         return scenario >= 10600 && scenario <= 10700;
+                    case 2706:
+                    case 2707:
+                    case 2708:
+                        return scenario == 10950 && FF9StateSystem.Common.FF9.party.MemberCount < 4; // You are not alone.
+                    case 2711:
+                        return isPlayingATE; // Elevator ATE
                     default: return false;
                 }
             }

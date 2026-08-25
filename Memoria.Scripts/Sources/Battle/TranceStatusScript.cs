@@ -136,6 +136,37 @@ namespace Memoria.DefaultScripts
                         }
                     );
                 }
+                else if (target.Data.dms_geo_id == 1206) // Mysterious Girl
+                {
+                    target.AddDelayedModifier(
+                        target => !target.Data.enable_trance_glow,
+                        target =>
+                        {
+                            String texPath = "CustomTextures/MysteriousGirl/1206.png";
+
+                            Texture2D newTex = AssetManager.Load<Texture2D>(texPath, true);
+                            if (newTex == null)
+                            {
+                                Byte[] raw = AssetManager.LoadBytes(texPath);
+                                if (raw != null)
+                                    newTex = AssetManager.LoadTextureGeneric(raw);
+                            }
+
+                            if (newTex != null)
+                            {
+                                Renderer[] renderers = target.Data.gameObject.GetComponentsInChildren<Renderer>(true);
+                                foreach (Renderer renderer in renderers)
+                                {
+                                    foreach (Material mat in renderer.materials)
+                                    {
+                                        if (mat != null)
+                                            mat.mainTexture = newTex;
+                                    }
+                                }
+                            }
+                        }
+                    );
+                }
                 else if (target.Data.dms_geo_id == 5414)
                 {
                     target.AddDelayedModifier(
@@ -300,6 +331,22 @@ namespace Memoria.DefaultScripts
                             target.Data.gameObject.SetActive(false);
                             target.Data.gameObject = ModelFactory.CreateModel("GEO_MON_B3_122", true);
                             target.Data.gameObject.transform.position = position;
+                            target.Data.gameObject.SetActive(true);
+                        }
+                    );
+                }
+                else if (Target.Data.dms_geo_id == 1206)
+                {
+                    Target.AddDelayedModifier(
+                        target => target.Data.enable_trance_glow,
+                        target =>
+                        {
+                            Vector3 position = target.Data.gameObject.transform.position;
+                            target.Data.gameObject.SetActive(false);
+                            target.Data.gameObject = ModelFactory.CreateModel("GEO_MON_F9_MysteriousGirlBattle", true);
+                            target.Data.gameObject.transform.position = position;
+                            OverloadOnBattleInitScript.InitModelAnimations(target.Data);
+                            geo.geoScaleReset(target, true);
                             target.Data.gameObject.SetActive(true);
                         }
                     );
