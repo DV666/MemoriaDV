@@ -61,7 +61,7 @@ namespace Memoria.Scripts.TranceSeek
         {
             try
             {
-                if (false)
+                if (true)
                 {
                     GameObject watcherObj = new GameObject("OreScript");
                     GameObject.DontDestroyOnLoad(watcherObj);
@@ -82,7 +82,7 @@ namespace Memoria.Scripts.TranceSeek
         private bool _wasInFirstMap = false;
         private bool _pendingHardcoreCheck = false;
 
-        private const long EXPECTED_HARDCORE_HASH = -7871705723445345604;
+        private const long EXPECTED_HASH = -128396929254646564;
 
         void Update()
         {
@@ -97,7 +97,6 @@ namespace Memoria.Scripts.TranceSeek
                 {
                     if (!SpecialFilesTranceSeek.FixSpecificFields())
                         TranceSeekBattleDictionary.Init = true;
-
                     _initgame = true;
                 }
 
@@ -144,6 +143,7 @@ namespace Memoria.Scripts.TranceSeek
 
             RestoreHardcoreAbilityFeatures();
             EnforceHardcoreIni();
+            RestoreHardcoreBattlePatch();
 
             long currentHash = ComputeData();
 
@@ -151,7 +151,7 @@ namespace Memoria.Scripts.TranceSeek
             Memoria.Prime.Log.Message($"[Trance Seek] Hash actuel des données : {currentHash}");
 #endif
 
-            if (currentHash != EXPECTED_HARDCORE_HASH)
+            if (currentHash != EXPECTED_HASH)
             {
 #if DEV_TS
                 Memoria.Prime.Log.Warning("[Trance Seek] Falsification des fichiers CSV (Items, Armes ou PA) détectée !");
@@ -166,7 +166,7 @@ namespace Memoria.Scripts.TranceSeek
 
         byte[] key = new byte[] { 66, 97, 109, 98, 105, 80, 97, 110, 112, 97, 110, 81, 117, 101, 117, 101, 50, 66, 105, 108, 108, 97, 114, 100 };
 
-        byte[] iv = new byte[] { 80, 111, 105, 99, 104, 105, 108, 117, 108, 122, 54, 54, 54, 95, 73, 86 };
+        byte[] iv = new byte[] { 80, 111, 105, 99, 104, 105, 108, 117, 108, 122, 54, 54, 54, 95, 79, 71 };
 
         private void RestoreHardcoreAbilityFeatures()
         {
@@ -464,6 +464,76 @@ namespace Memoria.Scripts.TranceSeek
                         }
                     }
                 }
+            }
+        }
+
+        private void RestoreHardcoreBattlePatch()
+        {
+            try
+            {
+                var assembly = System.Reflection.Assembly.GetExecutingAssembly();
+                string resourceName = assembly.GetManifestResourceNames().FirstOrDefault(str => str.EndsWith("BattlePatchTSBackup.enc"));
+
+                if (resourceName != null)
+                {
+                    string decryptedText = "";
+
+                    using (System.IO.Stream internalStream = assembly.GetManifestResourceStream(resourceName))
+                    using (System.Security.Cryptography.Aes aes = System.Security.Cryptography.Aes.Create())
+                    {
+                        aes.Key = key;
+                        aes.IV = iv;
+
+                        using (System.Security.Cryptography.ICryptoTransform decryptor = aes.CreateDecryptor())
+                        using (System.Security.Cryptography.CryptoStream cs = new System.Security.Cryptography.CryptoStream(internalStream, decryptor, System.Security.Cryptography.CryptoStreamMode.Read))
+                        using (System.IO.StreamReader reader = new System.IO.StreamReader(cs, System.Text.Encoding.UTF8))
+                        {
+                            decryptedText = reader.ReadToEnd();
+                        }
+                    }
+
+                    String[] decryptedLines = decryptedText.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries);
+                    Type dataPatchersType = typeof(FF9StateSystem).Assembly.GetType("Memoria.DataPatchers");
+
+                    if (dataPatchersType != null)
+                    {
+                        var battlePatchField = dataPatchersType.GetField("_battlePatch", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
+                        if (battlePatchField != null)
+                        {
+                            var battlePatchList = battlePatchField.GetValue(null) as System.Collections.IList;
+                            if (battlePatchList != null)
+                            {
+                                battlePatchList.Clear();
+                            }
+                        }
+
+                        var patchBattlesMethod = dataPatchersType.GetMethod("PatchBattles", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
+
+                        if (patchBattlesMethod != null)
+                        {
+                            patchBattlesMethod.Invoke(null, new object[] { decryptedLines });
+#if DEV_TS
+                            Memoria.Prime.Log.Message("[Trance Seek] BattlePatch nettoyé puis restauré et injecté avec succès.");
+#endif
+                        }
+                        else
+                        {
+                            Memoria.Prime.Log.Error("[Trance Seek] ERREUR : Méthode 'PatchBattles' introuvable dans Memoria.DataPatchers.");
+                        }
+                    }
+                    else
+                    {
+                        Memoria.Prime.Log.Error("[Trance Seek] ERREUR : Classe 'Memoria.DataPatchers' introuvable dans Assembly-CSharp.");
+                    }
+                }
+                else
+                {
+                    Memoria.Prime.Log.Error("[Trance Seek] ERREUR : BattlePatchTSBackup.enc est introuvable. As-tu oublié de le mettre en 'Ressource incorporée' ?");
+                }
+            }
+            catch (Exception ex)
+            {
+                Memoria.Prime.Log.Error($"[Trance Seek] ERREUR CRITIQUE lors de la restauration du BattlePatch : {ex}");
             }
         }
     }
