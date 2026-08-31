@@ -5,17 +5,13 @@ on:
     tags:
       - 'v*'
 
-env:
-  # VCPKG: Enable Binary Caching
-  VCPKG_BINARY_SOURCES: clear;nuget,github,readwrite
-
 jobs:
   release:
     runs-on: windows-latest
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
 
     - name: Restore dependency cache
       id: dependency-cache
@@ -33,10 +29,10 @@ jobs:
         7z x .\References\Dependencies.7z -p"$($env:ARCHIVE_PASSWORD)" -oReferences -y
 
     - name: Setup MSBuild path
-      uses: microsoft/setup-msbuild@v2
+      uses: microsoft/setup-msbuild@v3
 
     - name: Cache NuGet packages
-      uses: actions/cache@v4
+      uses: actions/cache@v5
       with:
         path: |
           ~/.nuget/packages
@@ -57,19 +53,39 @@ jobs:
       run: nuget restore Memoria.sln
 
     - name: Build Memoria.MSBuild.csproj (Release)
-      run: msbuild Memoria.MSBuild/Memoria.MSBuild.csproj /t:Build /p:Configuration=Release
+      run: msbuild Memoria.MSBuild/Memoria.MSBuild.csproj /t:Build /p:Configuration=Release /verbosity:minimal
 
     - name: Build main solution (Release)
-      run: msbuild Memoria.sln /t:Build /p:Configuration=Release
+      run: msbuild Memoria.sln /t:Build /p:Configuration=Release /verbosity:minimal
+
+    - name: Run launcher tests (Release)
+      run: dotnet test Memoria.Launcher.Tests/Memoria.Launcher.Tests.csproj --configuration Release --no-restore --filter "Category!=CatalogIntegration" --logger "console;verbosity=normal"
+
+    - name: Verify SaXAudio Release runtime
+      shell: pwsh
+      run: |
+        $saXAudio = 'Output/Global/Sound/SaXAudio/x64/SaXAudio.dll'
+        if (!(Test-Path -LiteralPath $saXAudio)) {
+          throw "SaXAudio build output was not found: $saXAudio"
+        }
+
+        $binaryText = [Text.Encoding]::ASCII.GetString([IO.File]::ReadAllBytes($saXAudio))
+        # Examples: MSVCP140D.dll, VCRUNTIME140D.dll, VCRUNTIME140_1D.dll, ucrtbased.dll.
+        $debugRuntime = [regex]::Matches($binaryText, '(?i)\b(?:msvcp\d+d|vcruntime\d+(?:_\d+)?d|ucrtbased)\.dll\b') |
+          ForEach-Object Value |
+          Sort-Object -Unique
+        if ($debugRuntime) {
+          throw "SaXAudio.dll links against the Debug C++ runtime: $($debugRuntime -join ', ')"
+        }
 
     - name: Publish Memoria.Patcher (Win-x64)
-      run: msbuild Memoria.Patcher/Memoria.Patcher.csproj "/t:Clean;Publish" /p:PublishProfile=Win-x64
+      run: msbuild Memoria.Patcher/Memoria.Patcher.csproj "/t:Clean;Publish" /p:Configuration=Release /p:PublishProfile=Win-x64 /verbosity:minimal
 
     - name: Publish Memoria.Patcher (Linux-x64)
-      run: msbuild Memoria.Patcher/Memoria.Patcher.csproj "/t:Clean;Publish" /p:PublishProfile=Linux-x64
+      run: msbuild Memoria.Patcher/Memoria.Patcher.csproj "/t:Clean;Publish" /p:Configuration=Release /p:PublishProfile=Linux-x64 /verbosity:minimal
 
     - name: Publish Memoria.Patcher (Osx-x64)
-      run: msbuild Memoria.Patcher/Memoria.Patcher.csproj "/t:Clean;Publish" /p:PublishProfile=Osx-x64
+      run: msbuild Memoria.Patcher/Memoria.Patcher.csproj "/t:Clean;Publish" /p:Configuration=Release /p:PublishProfile=Osx-x64 /verbosity:minimal
 
     - name: Rename output files
       run: |
@@ -77,7 +93,7 @@ jobs:
         mv "Output/osx-x64/Memoria.Patcher" "Output/osx-x64/Memoria.Patcher-osx-x64"
 
     - name: Release Memoria.Patcher
-      uses: softprops/action-gh-release@v2
+      uses: softprops/action-gh-release@v3
       with:
         files: |
           Output/win-x64/Memoria.Patcher.exe

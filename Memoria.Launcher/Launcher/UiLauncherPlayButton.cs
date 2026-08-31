@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using Memoria.Launcher.Utils.Downloads;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Reflection;
 using System.Text;
 using System.Threading;
@@ -15,6 +14,7 @@ using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
+using Memoria.Launcher.Utils;
 
 namespace Memoria.Launcher
 {
@@ -35,7 +35,7 @@ namespace Memoria.Launcher
             ApplyDebugSettingsSafe();
 
             int monitor = GetActiveMonitorIndex();
-            if (monitor < 0 || DisplayInfo.Displays == null || monitor >= DisplayInfo.Displays.Count)
+            if (!DisplayService.Current.TryGetMonitor(monitor, out _))
             {
                 MessageBox.Show((Window)this.GetRootElement(), $"Selected monitor ({monitor}) does not appear available.\nDisplaying to monitor 0.", "Information", MessageBoxButton.OK, MessageBoxImage.Asterisk);
                 monitor = 0;
@@ -43,7 +43,7 @@ namespace Memoria.Launcher
 
             GetScreenResolution(out int width, out int height, monitor);
 
-            String gameArch = (GameSettings.IsX64 ? "x64" : "x86");
+            String gameArch = "x64";
             String workingDirectory = Path.GetFullPath(".\\" + gameArch);
             String executablePath = PrepareExecutableAndData(workingDirectory);
             String arguments = $"-runbylauncher -single-instance -monitor {monitor.ToString(CultureInfo.InvariantCulture)} -screen-width {width.ToString(CultureInfo.InvariantCulture)} -screen-height {height.ToString(CultureInfo.InvariantCulture)} -screen-fullscreen {(GameSettingsDisplay.WindowMode == 1 ? "1" : "0")} {(GameSettingsDisplay.WindowMode >= 2 ? "-popupwindow" : "")}";
@@ -106,49 +106,41 @@ namespace Memoria.Launcher
         // Get the screen resolution
         private void GetScreenResolution(out int width, out int height, int monitor)
         {
-            width = height = 0;
-            string res = IniFile.SettingsIni.GetSetting("Settings", "ScreenResolution", GameSettingsDisplay.ScreenResolution);
-            if (!string.IsNullOrWhiteSpace(res))
-            {
+            String configuredValue = IniFile.SettingsIni.GetSetting(
+                "Settings",
+                "ScreenResolution",
+                GameSettingsDisplay.ScreenResolution);
+            Boolean hasConfiguredResolution = DisplayResolution.TryParse(configuredValue, out DisplayResolution configuredResolution);
 
-                var resString = res.Split(' ')[0];
-                var strArray = resString.Split('x');
-                if (strArray.Length < 2
-                    || !int.TryParse(strArray[0], NumberStyles.Integer, CultureInfo.InvariantCulture, out width)
-                    || !int.TryParse(strArray[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out height))
-                {
-                    width = height = 0;
-                }
+            DisplayResolution monitorResolution = DisplayService.Current.TryGetMonitor(monitor, out DisplayMonitor selectedMonitor)
+                ? selectedMonitor.CurrentResolution
+                : DisplayService.Current.PrimaryResolution;
+
+            // EnumDisplaySettings supplies monitorResolution in physical pixels and does not
+            // participate in DPI virtualization. This distinction is essential under Wine:
+            // a 3840x2160 monitor at 200% desktop scaling may have a 1920x1080 logical
+            // monitor rectangle, while the game must still receive 3840x2160.
+            DisplayResolution launchResolution;
+            if (GameSettingsDisplay.WindowMode == 2 || !hasConfiguredResolution)
+            {
+                launchResolution = monitorResolution;
             }
-
-            // Ensure we have monitor information
-            if (monitor < 0 || DisplayInfo.Displays == null || monitor >= DisplayInfo.Displays.Count)
+            else if (monitorResolution.IsValid)
             {
-                if (width == 0 || height == 0)
-                {
-                    // Couldn't get any display information, default to 1080p
-                    width = 1920;
-                    height = 1080;
-                }
-                return;
-            }
-
-            // Adjust the screen size to the monitor
-            var display = DisplayInfo.Displays[monitor];
-
-            int monitorWidth = display.monitorArea.right - display.monitorArea.left;
-            int monitorHeight = display.monitorArea.bottom - display.monitorArea.top;
-
-            if (GameSettingsDisplay.WindowMode == 2 || width == 0 || height == 0)
-            {
-                width = monitorWidth;
-                height = monitorHeight;
+                launchResolution = new DisplayResolution(
+                    Math.Min(configuredResolution.Width, monitorResolution.Width),
+                    Math.Min(configuredResolution.Height, monitorResolution.Height));
             }
             else
             {
-                width = Math.Min(width, monitorWidth);
-                height = Math.Min(height, monitorHeight);
+                launchResolution = configuredResolution;
             }
+
+            if (!launchResolution.IsValid)
+                launchResolution = new DisplayResolution(1920, 1080);
+
+            width = launchResolution.Width;
+            height = launchResolution.Height;
         }
 
         // Handles Unity/Debug shenanigans, returns the executable path to run.
@@ -208,18 +200,18 @@ namespace Memoria.Launcher
             gameProcess.Start();
         }
 
-        internal static async Task<Boolean> CheckUpdates(Window rootElement, ManualResetEvent cancelEvent, SettingsGrid_Vanilla gameSettings)
+        internal static async Task<Boolean> CheckUpdates(Window rootElement, SettingsGrid_Vanilla gameSettings, CancellationToken cancellationToken = default)
         {
             String applicationDirectory = Path.GetFullPath("./");
             String applicationPath = Path.Combine(applicationDirectory, Path.GetFileName(Assembly.GetExecutingAssembly().Location));
-            LinkedList<HttpFileInfo> updateInfo = await FindUpdatesInfo(applicationDirectory, cancelEvent, gameSettings);
+            LinkedList<RemoteFileInfo> updateInfo = await FindUpdatesInfo(applicationDirectory, gameSettings, cancellationToken);
             if (updateInfo.Count == 0)
                 return false;
 
             StringBuilder messageSb = new StringBuilder(256);
             messageSb.AppendLine((String)Lang.Res["Launcher.NewVersionIsAvailable"]);
             Int64 size = 0;
-            foreach (HttpFileInfo info in updateInfo)
+            foreach (RemoteFileInfo info in updateInfo)
             {
                 size += info.ContentLength;
                 messageSb.AppendLine($"{info.TargetName} - {info.LastModified} ({UiProgressWindow.FormatValue(info.ContentLength)})");
@@ -235,26 +227,34 @@ namespace Memoria.Launcher
                     progress.SetTotal(size);
                     progress.Show();
 
-                    Downloader downloader = new Downloader(cancelEvent);
-                    downloader.DownloadProgress += progress.Incremented;
-
-                    foreach (HttpFileInfo info in updateInfo)
+                    using (LauncherUpdateDownloader downloader = new LauncherUpdateDownloader(cancellationToken))
                     {
-                        String filePath = info.TargetPath;
+                        IProgress<Int64> downloadProgress = new Progress<Int64>(progress.Incremented);
 
-                        try
+                        foreach (RemoteFileInfo info in updateInfo)
                         {
-                            await downloader.Download(info.Url, filePath);
-                            File.SetLastWriteTime(filePath, info.LastModified);
+                            String filePath = info.TargetPath;
 
-                            success.Add(filePath);
+                            try
+                            {
+                                await downloader.DownloadAsync(info.Source, filePath, downloadProgress);
+                                File.SetLastWriteTime(filePath, info.LastModified);
+
+                                success.Add(filePath);
+                            }
+                            catch (OperationCanceledException) when (downloader.IsCancellationRequested)
+                            {
+                                progress.Close();
+                                return false;
+                            }
+                            catch (Exception exception)
+                            {
+                                failed.Add($"{filePath}: {exception.Message}");
+                            }
                         }
-                        catch
-                        {
-                            failed.Add(filePath);
-                        }
+
+                        progress.Close();
                     }
-                    progress.Close();
                 }
 
                 Boolean runPatcher = false;
@@ -316,146 +316,53 @@ namespace Memoria.Launcher
             return "https://github.com/Albeoris/Memoria/releases/latest/download/Memoria.Patcher.exe";
         }
 
-        private static async Task<LinkedList<HttpFileInfo>> FindUpdatesInfo(String applicationDirectory, ManualResetEvent cancelEvent, SettingsGrid_Vanilla gameSettings)
+        private static async Task<LinkedList<RemoteFileInfo>> FindUpdatesInfo(String applicationDirectory, SettingsGrid_Vanilla gameSettings, CancellationToken cancellationToken)
         {
-            Downloader downloader = new Downloader(cancelEvent);
-            String[] urls = [GetPatcherDownloadUrl(gameSettings.UpdateChannel)];
-
-            LinkedList<HttpFileInfo> list = new LinkedList<HttpFileInfo>();
-            Dictionary<String, LinkedListNode<HttpFileInfo>> dic = new Dictionary<String, LinkedListNode<HttpFileInfo>>(urls.Length);
-
-            foreach (String url in urls)
+            using (LauncherUpdateDownloader downloader = new LauncherUpdateDownloader(cancellationToken))
             {
-                try
+                String[] urls = [GetPatcherDownloadUrl(gameSettings.UpdateChannel)];
+
+                LinkedList<RemoteFileInfo> list = new LinkedList<RemoteFileInfo>();
+                Dictionary<String, LinkedListNode<RemoteFileInfo>> dic = new Dictionary<String, LinkedListNode<RemoteFileInfo>>(urls.Length);
+
+                foreach (String url in urls)
                 {
-                    HttpFileInfo fileInfo = await downloader.GetRemoteFileInfo(url);
-                    if (fileInfo == null)
-                        continue;
-
-                    Int32 separatorIndex = url.LastIndexOf('/');
-                    String remoteFileName = url.Substring(separatorIndex + 1);
-                    fileInfo.TargetName = remoteFileName;
-                    fileInfo.TargetPath = Path.Combine(applicationDirectory, remoteFileName);
-
-                    LinkedListNode<HttpFileInfo> node;
-                    if (!dic.TryGetValue(fileInfo.TargetPath, out node) && File.Exists(fileInfo.TargetPath) && File.GetLastWriteTime(fileInfo.TargetPath) >= fileInfo.LastModified)
-                        continue;
-
-                    if (node != null)
+                    try
                     {
-                        if (node.Value.LastModified >= fileInfo.LastModified)
+                        RemoteFileInfo fileInfo = await downloader.GetRemoteFileInfoAsync(new Uri(url, UriKind.Absolute));
+
+                        Int32 separatorIndex = url.LastIndexOf('/');
+                        String remoteFileName = url.Substring(separatorIndex + 1);
+                        fileInfo.TargetName = remoteFileName;
+                        fileInfo.TargetPath = Path.Combine(applicationDirectory, remoteFileName);
+
+                        LinkedListNode<RemoteFileInfo> node;
+                        if (!dic.TryGetValue(fileInfo.TargetPath, out node) && File.Exists(fileInfo.TargetPath) && File.GetLastWriteTime(fileInfo.TargetPath) >= fileInfo.LastModified)
                             continue;
 
-                        LinkedListNode<HttpFileInfo> newNode = list.AddBefore(node, fileInfo);
-                        list.Remove(node);
-                        dic[fileInfo.TargetPath] = newNode;
+                        if (node != null)
+                        {
+                            if (node.Value.LastModified >= fileInfo.LastModified)
+                                continue;
+
+                            LinkedListNode<RemoteFileInfo> newNode = list.AddBefore(node, fileInfo);
+                            list.Remove(node);
+                            dic[fileInfo.TargetPath] = newNode;
+                        }
+                        else
+                        {
+                            LinkedListNode<RemoteFileInfo> newNode = list.AddLast(fileInfo);
+                            dic.Add(fileInfo.TargetPath, newNode);
+                        }
                     }
-                    else
+                    catch (DownloadException)
                     {
-                        LinkedListNode<HttpFileInfo> newNode = list.AddLast(fileInfo);
-                        dic.Add(fileInfo.TargetPath, newNode);
+                        // Update checks are optional. The downloader logs actionable diagnostics.
                     }
                 }
-                catch
-                {
-                    // Do nothing
-                }
-            }
 
-            return list; ;
-        }
-    }
-
-    public sealed class HttpFileInfo
-    {
-        public string Url;
-        public long ContentLength = -1;
-        public DateTime LastModified;
-        public String TargetName;
-        public String TargetPath;
-
-        public void ReadFromResponse(string url, HttpResponseMessage response)
-        {
-            Url = url;
-            ContentLength = response.Content.Headers.ContentLength ?? -1;
-            LastModified = response.Content.Headers.LastModified?.UtcDateTime ?? DateTime.MinValue;
-        }
-    }
-
-    public sealed class Downloader
-    {
-        private static readonly HttpClient _httpClient = HttpClients.Shared;
-        private readonly ManualResetEvent _cancelEvent;
-
-        public event Action<long> DownloadProgress;
-
-        public Downloader(ManualResetEvent cancelEvent)
-        {
-            _cancelEvent = cancelEvent;
-        }
-
-        public async Task<HttpFileInfo> GetRemoteFileInfo(string url)
-        {
-            HttpFileInfo result = new HttpFileInfo();
-
-            if (_cancelEvent.WaitOne(0))
-                return result;
-
-            Uri uri = new Uri(url, UriKind.Absolute);
-            HttpResponseMessage response = await HttpClients.SendWithDohFallbackAsync(
-                _httpClient,
-                HttpMethod.Head,
-                uri,
-                HttpCompletionOption.ResponseHeadersRead,
-                CancellationToken.None).ConfigureAwait(false);
-
-            using (response)
-            {
-                response.EnsureSuccessStatusCode();
-                if (_cancelEvent.WaitOne(0))
-                    return result;
-
-                result.ReadFromResponse(url, response);
-                return result;
-            }
-        }
-
-        public async Task Download(string url, string fileName)
-        {
-            if (_cancelEvent.WaitOne(0))
-                return;
-
-            using (Stream output = File.Create(fileName))
-                await Download(url, output);
-        }
-
-        private async Task Download(String url, Stream output)
-        {
-            if (_cancelEvent.WaitOne(0))
-                return;
-
-            Uri uri = new Uri(url, UriKind.Absolute);
-            Stream input = await HttpClients.GetStreamWithDohFallbackAsync(
-                _httpClient,
-                uri,
-                CancellationToken.None).ConfigureAwait(false);
-
-            using (input)
-                await CopyAsync(input, output, _cancelEvent, DownloadProgress);
-        }
-
-        private static async Task CopyAsync(Stream input, Stream output, ManualResetEvent cancelEvent, Action<long> progress)
-        {
-            byte[] buff = new byte[32 * 1024];
-
-            int read;
-            while ((read = await input.ReadAsync(buff, 0, buff.Length)) != 0)
-            {
-                if (cancelEvent.WaitOne(0))
-                    return;
-
-                await output.WriteAsync(buff, 0, read);
-                progress?.Invoke(read);
+                return list;
+                ;
             }
         }
     }
