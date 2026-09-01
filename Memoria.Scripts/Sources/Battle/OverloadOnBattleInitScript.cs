@@ -130,7 +130,7 @@ namespace Memoria.Scripts.TranceSeek
                     case 3: // Kuja mode
                         if (FF9StateSystem.EventState.ScenarioCounter > 2250)
                         {
-                            dictdifficulty[DifficultyParameters.Bonus_MaxHP] = 10;
+                            dictdifficulty[DifficultyParameters.Bonus_MaxHP] = 25;
                             dictdifficulty[DifficultyParameters.Bonus_Strength] = 25;
                             dictdifficulty[DifficultyParameters.Bonus_Magic] = 25;
                             dictdifficulty[DifficultyParameters.Bonus_PowerAA] = 10;
