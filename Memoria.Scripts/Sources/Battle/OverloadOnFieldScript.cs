@@ -1046,7 +1046,6 @@ namespace Memoria.Scripts.TranceSeek
             if (FollowersHidden == hide)
                 return;
 
-            Log.Message("hide2 = " + hide);
             FollowersHidden = hide;
 
             if (activeFollowers.Count == 0)
