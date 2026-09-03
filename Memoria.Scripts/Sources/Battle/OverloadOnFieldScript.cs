@@ -194,7 +194,8 @@ namespace Memoria.Scripts.TranceSeek
                 13059, // Climbing Jump (Rope)
                 13073, // Climbing Down (Rope)
                 10633, // Mounting Gargant
-                159 // Dagga climbing
+                159, // Dagga climbing
+                10741 // Steiner climbing
             });
 
         private static readonly HashSet<Int32> BlackListFieldId =
@@ -204,8 +205,8 @@ namespace Memoria.Scripts.TranceSeek
 
         private static readonly HashSet<Int32> ModelCantGetFollowers = new HashSet<Int32>(new[] { 317, 312, 320, 321, 308 });
 
-        private static readonly HashSet<Int32> ActorAnimWalking = new HashSet<Int32>(new[] {
-            203, 145, 2092, 2006, 2559, 3231, 7505, 8311, 473, 476, 464, 2982, 8347,
+        private static readonly HashSet<Int32> ActorAnimRunning = new HashSet<Int32>(new[] {
+            203, 145, 2092, 2006, 2559, 3231, 7505, 8311, 473, 476, 464, 2982, 8347, 8176,
             38, 419, 2091, 2005, 2558, 3230, 7506, 8312, 105, 365, 5222, 2981, 8348
         });
 
@@ -284,12 +285,92 @@ namespace Memoria.Scripts.TranceSeek
                 int scenario = GameState.ScenarioCounter;
                 switch (FF9StateSystem.Common.FF9.fldMapNo)
                 {
-                    case 652: return scenario < 3700;
-                    case 908: return scenario < 4400;
-                    case 953: return scenario == 4530;
+                    case 63:                  
+                    case 150:
+                    case 151:
+                    case 153:
+                    case 154:
+                        return scenario < 1600;
+                    case 59:
+                    case 64:
+                    case 65:
+                    case 66:
+                    case 67:
+                    case 68:
+                    case 69:
+                        return scenario < 1900;
+                    case 205:
+                    case 208:
+                        return scenario < 2050;
+                    case 257:
+                    case 261:
+                    case 262:
+                        return scenario == 2300;
+                    case 352:
+                        return scenario == 2540;
+                    case 450:
+                        return scenario == 2810;
+                    case 500:
+                        return scenario == 2915;
+                    case 503:
+                        return (scenario == 2940 || scenario == 2970);
+                    case 554:
+                        return scenario == 3105;
+                    case 571:
+                        return scenario == 3050;
+                    case 575:
+                        return scenario == 3165;
+                    case 562:
+                    case 567:
+                    case 601:
+                    case 611:
+                    case 612:
+                    case 613:
+                        return scenario == 3140;
+                    case 652:
+                        return scenario < 3700;
+                    case 662:
+                        return GetLeaderModelID() == 273 && scenario == 5690; // Quina missing after the dialog (when the Fossil Roo opens)
+                    case 908:
+                        return scenario < 4400;
+                    case 930:
+                    case 932:
+                        return scenario == 4460;
+                    case 953:
+                        return scenario == 4530;
                     case 1014:
                         int animId = GetLeaderAnimID();
                         return animId == 581 || animId == 3519;
+                    case 1060:
+                        return scenario == 4730;
+                    case 1202:
+                        return GetMapVar(40) > 0 && (ActorAnimIdle.Contains(GetLeaderAnimID()) || !PersistenSingleton<EventEngine>.Instance.GetUserControl()); // VAR_GlobUInt8_40 = 1
+                    case 1100:
+                    case 1107:
+                    case 1206:
+                    case 1207:
+                    case 1208:
+                        return (scenario == 4800 || scenario == 5020);
+                    case 1209:
+                        return FF9StateSystem.Common.FF9.party.MemberCount != 2; // Zidane appears on Steiner.
+                    case 1223:
+                        return scenario == 5100; // [BUG] Followers t-pose when Zidane switching models
+                    case 1110:
+                        return scenario == 4910;
+                    case 1153:
+                        return (scenario == 4980 || scenario == 5000);
+                    case 1250:
+                        return scenario == 5300;
+                    case 1355:
+                        return scenario == 5680;
+                    case 1450:
+                        return scenario == 6170;
+                    case 1453:
+                        return scenario == 6210;
+                    case 1503:
+                        return scenario == 6260;
+                    case 1506:
+                        return scenario == 6250;
                     case 2550:
                     case 2551:
                     case 2552:
@@ -302,7 +383,8 @@ namespace Memoria.Scripts.TranceSeek
                         return scenario == 10950 && FF9StateSystem.Common.FF9.party.MemberCount < 4; // You are not alone.
                     case 2711:
                         return isPlayingATE; // Elevator ATE
-                    default: return false;
+                    default:
+                        return false;
                 }
             }
         }
@@ -328,7 +410,6 @@ namespace Memoria.Scripts.TranceSeek
             {
                 if (isATEPending)
                 {
-                    Log.Message("[OverloadOnFieldScript] Playing an ATE !");
                     isPlayingATE = true;
                     isATEPending = false;
                 }
@@ -408,6 +489,11 @@ namespace Memoria.Scripts.TranceSeek
             CheckATEState();
             FixZidaneWorldMapWeapon();
 
+            bool shouldHide = actorleader == null || ((actorleader.flags & 1) == 0 || ForceHidden || ModelCantGetFollowers.Contains(leader_model_id) || BlackListFieldId.Contains(FF9StateSystem.Common.FF9.fldMapNo)
+                || BlackListAnimationId.Contains(actorleader.anim) || MBG.Instance.IsPlaying() > 1 || BlackListCondition || isPlayingATE);
+
+            HideFollowers(shouldHide);
+
             if (lastUiState == UIManager.UIState.PartySetting && (currentState == UIManager.UIState.FieldHUD || currentState == UIManager.UIState.WorldHUD))
                 CheckSwapFollower();
             else if ((SceneDirector.IsFieldScene() || SceneDirector.IsWorldScene()) && !SceneDirector.Instance.IsFading)
@@ -418,12 +504,6 @@ namespace Memoria.Scripts.TranceSeek
             else
             {
                 ClearFollowers();
-            }
-
-            if (actorleader != null && ((actorleader.flags & 1) == 0 || ForceHidden || ModelCantGetFollowers.Contains(leader_model_id) || BlackListFieldId.Contains(FF9StateSystem.Common.FF9.fldMapNo)
-                || BlackListAnimationId.Contains(actorleader.anim) || MBG.Instance.IsPlaying() > 1 || BlackListCondition || isPlayingATE))
-            {
-                HideFollowers(true);
             }
 
             HandleAnimationPause(uiManager.IsPause);
@@ -444,12 +524,14 @@ namespace Memoria.Scripts.TranceSeek
             if (engine == null) return;
 
             GameObject oldLeader = leader;
+            int oldModelId = leader_model_id;
             int CurrentMemberCounter = FF9StateSystem.Common.FF9.party.MemberCount;
 
             if (SceneDirector.IsFieldScene())
             {
                 PosObj controlChar = engine.GetControlChar();
-                if (controlChar == null || !(controlChar is Actor)) return;
+                if (controlChar == null || !(controlChar is Actor))
+                    return;
                 actorleader = (Actor)controlChar;
                 leader = actorleader.go;
                 leader_model_id = actorleader.model;
@@ -471,13 +553,17 @@ namespace Memoria.Scripts.TranceSeek
                 leader_model_id = -1;
             }
 
-            if (leader != oldLeader || CurrentMemberCounter != partynumber)
+            if (leader != oldLeader || leader_model_id != oldModelId || CurrentMemberCounter != partynumber)
             {
                 leaderRenderer = leader != null ? leader.GetComponentInChildren<Renderer>() : null;
                 cachedLeaderRenderers = leader != null ? leader.GetComponentsInChildren<Renderer>(true) : null;
 
                 partynumber = FF9StateSystem.Common.FF9.party.MemberCount;
                 ClearHistoryFollowers();
+
+                if (!IsWorldMap && SceneDirector.IsFieldScene())
+                    UpdateModelsOnFieldCache();
+
                 CheckSwapFollower();
             }
         }
@@ -506,7 +592,8 @@ namespace Memoria.Scripts.TranceSeek
         {
             try
             {
-                if (leader == null || leader_model_id == -1 || ModelCantGetFollowers.Contains(leader_model_id)) return;
+                if (leader == null || leader_model_id == -1 || ModelCantGetFollowers.Contains(leader_model_id))
+                    return;
 
                 List<CharacterId> expectedFollowers = new List<CharacterId>();
                 for (int i = 0; i < 4; i++)
@@ -515,6 +602,8 @@ namespace Memoria.Scripts.TranceSeek
                     if (id != CharacterId.NONE && characterDB.ContainsKey(id))
                     {
                         if (characterDB[id].BlackListModelId.Contains(leader_model_id))
+                            continue;
+                        if (!IsWorldMap && IsCharacterModelPresentOnField(id))
                             continue;
                         expectedFollowers.Add(id);
                     }
@@ -539,7 +628,7 @@ namespace Memoria.Scripts.TranceSeek
                             f.Go.transform.localPosition = leader.transform.localPosition;
                         f.Go.transform.localRotation = leader.transform.localRotation;
                         f.PositionHistory.Clear();
-                        f.Go.SetActive(true);
+                        f.Go.SetActive(!FollowersHidden);
                     }
 
                     activeFollowers.Add(f);
@@ -672,8 +761,8 @@ namespace Memoria.Scripts.TranceSeek
             if (!init || leader == null)
                 InitFollower();
 
-            if (FollowersHidden)
-                HideFollowers(false);
+            //if (FollowersHidden)
+                //HideFollowers(false);
 
             Vector3 currentLeaderPos;
             if (IsWorldMap)
@@ -713,7 +802,7 @@ namespace Memoria.Scripts.TranceSeek
                 leaderstate.LocalPosition = currentLeaderPos;
                 leaderstate.LocalRotation = leader.transform.localRotation;
                 leaderstate.IsMoving = true;
-                leaderstate.IsRunning = !IsWorldMap && ActorAnimWalking.Contains(actorleader.anim);
+                leaderstate.IsRunning = !IsWorldMap && ActorAnimRunning.Contains(actorleader.anim);
                 leaderstate.LightColor = GetLeaderColor();
 
                 foreach (Follower f in activeFollowers)
@@ -722,9 +811,10 @@ namespace Memoria.Scripts.TranceSeek
 
             foreach (Follower f in activeFollowers)
             {
-                if (f.Go == null) continue;
+                if (f.Go == null)
+                    continue;
 
-                if (!IsWorldMap && (IsCharacterModelPresentOnField(f.Id) || !FF9StateSystem.Common.FF9.party.IsInParty(f.Id)))
+                if (!IsWorldMap && (IsCharacterModelPresentOnField(f.Id) || !FF9StateSystem.Common.FF9.party.IsInParty(f.Id)) || FollowersHidden)
                 {
                     if (f.Go.activeSelf)
                         f.Go.SetActive(false);
@@ -831,6 +921,10 @@ namespace Memoria.Scripts.TranceSeek
                 {
                     if (characterDB[id].BlackListModelId.Contains(leader_model_id))
                         continue;
+
+                    if (!IsWorldMap && IsCharacterModelPresentOnField(id))
+                        continue;
+
                     expectedFollowers.Add(id);
                 }
             }
@@ -878,7 +972,13 @@ namespace Memoria.Scripts.TranceSeek
 
                     f.Go.transform.localRotation = leader.transform.localRotation;
                     f.PositionHistory.Clear();
-                    f.Go.SetActive(true);
+
+                    bool shouldBeActive = !FollowersHidden;
+                    f.Go.SetActive(shouldBeActive);
+                    if (f.ShadowObj != null)
+                        f.ShadowObj.SetActive(shouldBeActive);
+
+                    PlayAnimation(f, f.AnimIdle);
                 }
 
                 activeFollowers.Add(f);
@@ -943,7 +1043,13 @@ namespace Memoria.Scripts.TranceSeek
 
         private void HideFollowers(Boolean hide)
         {
-            if (activeFollowers.Count == 0 || FollowersHidden == hide)
+            if (FollowersHidden == hide)
+                return;
+
+            Log.Message("hide2 = " + hide);
+            FollowersHidden = hide;
+
+            if (activeFollowers.Count == 0)
                 return;
 
             foreach (Follower f in activeFollowers)
@@ -954,22 +1060,31 @@ namespace Memoria.Scripts.TranceSeek
                     f.ShadowObj.SetActive(!hide);
             }
 
-            FollowersHidden = hide;
-
             if (!hide)
             {
+                int targetLayer = leaderRenderer != null ? leaderRenderer.gameObject.layer : leader.layer;
+
                 foreach (Follower f in activeFollowers)
                 {
-                    if (f.Go != null)
+                    if (f.Go != null && leader != null)
                     {
-                        if (IsWorldMap)
+                        f.Go.layer = targetLayer;
+                        foreach (Renderer r in f.Go.GetComponentsInChildren<Renderer>(true))
+                            r.gameObject.layer = targetLayer;
+
+                        if (f.Go.transform.parent != leader.transform.parent)
+                            f.Go.transform.SetParent(leader.transform.parent, false);
+
+                        if (IsWorldMap && ff9.GetControlChar() != null)
                             f.Go.transform.localPosition = ff9.GetControlChar().pos;
-                        else
+                        else if (!IsWorldMap)
                             f.Go.transform.localPosition = leader.transform.localPosition;
 
                         f.Go.transform.localRotation = leader.transform.localRotation;
                         f.PositionHistory.Clear();
+
                         ApplyFollowerColor(f, GetLeaderColor());
+                        PlayAnimation(f, f.AnimIdle);
                     }
                 }
             }
@@ -1004,6 +1119,15 @@ namespace Memoria.Scripts.TranceSeek
 
                 f.LastAppliedColor = color;
             }
+        }
+
+        private int GetMapVar(int index)
+        {
+            byte[] mapVars = PersistenSingleton<EventEngine>.Instance?.GetMapVar();
+            if (mapVars != null && index >= 0 && index < mapVars.Length)
+                return mapVars[index];
+
+            return 0;
         }
 
         private void ResetTimerInactiveAnimation(Follower f)
@@ -1043,7 +1167,11 @@ namespace Memoria.Scripts.TranceSeek
 
         private void PlayAnimation(Follower f, string animName)
         {
-            if (f.Anim != null && f.Anim.GetClip(animName) != null)
+            if (f.Anim == null)
+                return;
+
+            AnimationState state = f.Anim[animName];
+            if (state != null)
             {
                 if (!f.Anim.IsPlaying(animName))
                     f.Anim.Play(animName);
@@ -1052,9 +1180,7 @@ namespace Memoria.Scripts.TranceSeek
                     ? (float)HonoBehaviorSystem.Instance.GetFastForwardFactor()
                     : 1f;
 
-                AnimationState state = f.Anim[animName];
-                if (state != null)
-                    state.speed = speedFactor;
+                state.speed = speedFactor;
             }
         }
 

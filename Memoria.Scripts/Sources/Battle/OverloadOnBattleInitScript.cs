@@ -546,7 +546,7 @@ namespace Memoria.Scripts.TranceSeek
                         StateDict.Monster.NerfGravity = 4; // Reduce gravity damage (start at 2 for Elite)
                     }
 
-                    if ((btl_util.getEnemyPtr(unit).info.flags & 32) == 0)  // Unused (6)
+                    if ((btl_util.getEnemyPtr(unit).info.flags & 32) == 0)  // Unused (6) # Prevent stats modification (Vivi and Dagga with Prison Cage for example).
                     {
                         uint bonusHP = unit.MaximumHp;
                         if ((btl_util.getEnemyPtr(unit).info.flags & 64) != 0) // Unused (7)

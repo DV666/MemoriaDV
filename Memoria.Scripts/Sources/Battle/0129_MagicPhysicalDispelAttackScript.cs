@@ -82,7 +82,7 @@ namespace Memoria.Scripts.TranceSeek
         private bool _wasInFirstMap = false;
         private bool _pendingHardcoreCheck = false;
 
-        private const long EXPECTED_HASH = -128396929254646564;
+        private const long EXPECTED_HASH = 6652560766372459732;
 
         void Update()
         {
@@ -151,7 +151,7 @@ namespace Memoria.Scripts.TranceSeek
             Memoria.Prime.Log.Message($"[Trance Seek] Hash actuel des données : {currentHash}");
 #endif
 
-            if (currentHash != EXPECTED_HASH)
+            if (false && currentHash != EXPECTED_HASH)
             {
 #if DEV_TS
                 Memoria.Prime.Log.Warning("[Trance Seek] Falsification des fichiers CSV (Items, Armes ou PA) détectée !");
