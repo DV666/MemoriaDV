@@ -97,6 +97,7 @@ namespace Memoria.Scripts.TranceSeek
             public bool IsMoving;
             public bool IsRunning;
             public Color LightColor;
+            public int Slice;
         }
 
         private struct FollowerData
@@ -141,6 +142,7 @@ namespace Memoria.Scripts.TranceSeek
 
             public Transform RootBone;
             public Color LastAppliedColor = Color.clear;
+            public int LastAppliedSlice = -1;
         }
 
         private Dictionary<CharacterId, FollowerData> characterDB = new Dictionary<CharacterId, FollowerData>()
@@ -162,6 +164,7 @@ namespace Memoria.Scripts.TranceSeek
 
         private Dictionary<CharacterId, Follower> followerPool = new Dictionary<CharacterId, Follower>();
         private List<Follower> activeFollowers = new List<Follower>();
+        private CharacterId[] lastParty = new CharacterId[4];
 
         private Boolean init;
         private Vector3 lastLeaderLocalPos;
@@ -173,6 +176,7 @@ namespace Memoria.Scripts.TranceSeek
         private UIManager.UIState lastUiState;
         private Boolean IsWorldMap;
         private Boolean FollowersHidden;
+        private Boolean Debug = false;
 
         private static readonly int ColorPropertyId = Shader.PropertyToID("_Color");
         private Renderer[] cachedLeaderRenderers;
@@ -199,8 +203,8 @@ namespace Memoria.Scripts.TranceSeek
             });
 
         private static readonly HashSet<Int32> BlackListFieldId =
-            new HashSet<Int32>(new[] { 70, 152, 209, 260, 261, 453, 454, 606, 655, 767, 768, 769, 811, 813,
-                814, 816, 954, 955, 1400, 1401, 1402, 1403, 1404, 1462, 1609, 1659, 1704, 1800, 2055, 2261, 2608, 2700, 2701, 2702, 2703, 2704, 2750, 2751, 2752, 2753, 2754, 2755, 2756, 2850, 2851, 2852, 2853, 2854, 2855, 2856, 2951, 2952, 2953,
+            new HashSet<Int32>(new[] { 70, 152, 209, 260, 261, 453, 454, 606, 655, 767, 768, 769, 811, 813, 814, 816, 954, 955, 1400, 1401, 1402, 1403, 1404, 1462, 1609, 1658, 1659, 1704,
+            1800, 2055, 2200, 2204, 2261, 2608, 2700, 2701, 2702, 2703, 2704, 2750, 2751, 2752, 2753, 2754, 2755, 2756, 2850, 2851, 2852, 2853, 2854, 2855, 2856, 2951, 2952, 2953,
             2928, 2929, 2930, 2931, 2932, 2933, 2934, 3000, 3001, 3002, 3003, 3004, 3005, 3006, 3007, 3008, 3009, 3010, 3011, 3012}); // End of the game
 
         private static readonly HashSet<Int32> ModelCantGetFollowers = new HashSet<Int32>(new[] { 317, 312, 320, 321, 308 });
@@ -354,7 +358,7 @@ namespace Memoria.Scripts.TranceSeek
                     case 1209:
                         return FF9StateSystem.Common.FF9.party.MemberCount != 2; // Zidane appears on Steiner.
                     case 1223:
-                        return scenario == 5100; // [BUG] Followers t-pose when Zidane switching models
+                        return scenario == 5100;
                     case 1110:
                         return scenario == 4910;
                     case 1153:
@@ -371,6 +375,60 @@ namespace Memoria.Scripts.TranceSeek
                         return scenario == 6260;
                     case 1506:
                         return scenario == 6250;
+                    case 1601:
+                        return scenario == 6600;
+                    case 1652:
+                        return !PersistenSingleton<EventEngine>.Instance.GetUserControl() && lastLeaderLocalPos.y < -2000; // First Elevator Ifa
+                    case 1750: // Leaf Elevator Ifa
+                    case 1751: // First Elevator Ifa
+                        return !PersistenSingleton<EventEngine>.Instance.GetUserControl();
+                    case 1657:
+                        return scenario == 6910;
+                    case 1663:
+                        return scenario == 6910;
+                    case 1660:
+                    case 1661:
+                        return scenario == 6950;
+                    case 1655: // When Zidane escape Mistodon. The feature doesn't work here since the movement is totaly different (MoveInstant ?)
+                    case 1662:
+                        return scenario == 6960;
+                    case 1851:
+                        return scenario == 7010;
+                    case 1802:
+                        return scenario == 7030;
+                    case 1815:
+                        return scenario == 7070;
+                    case 1816:
+                        return scenario == 7200;
+                    case 2054:
+                        return (scenario == 7300 || scenario == 7700 || scenario == 8500);
+                    case 1807:
+                    case 2009:
+                    case 2051:
+                        return scenario == 8000;
+                    case 2002:
+                        return scenario == 8500;
+                    case 2105:
+                        return scenario == 8800;
+                    case 2172:
+                        return scenario == 9100;
+                    case 2211:
+                        return (scenario == 9200 || scenario == 9830);
+                    case 1458:
+                        return modelsOnFieldCache.Contains(54); // Vivi dialog with 288
+                    case 2209:
+                        return (scenario >= 9520 && scenario <= 9850);
+                    case 2201:
+                        return (scenario == 9530 || scenario == 9810);
+                    case 2202:
+                        return scenario == 9800;
+                    case 2208:
+                        return scenario == 9840;
+                    case 2357:
+                    case 2362:
+                    case 2363:
+                    case 2364:
+                        return scenario == 9950;
                     case 2550:
                     case 2551:
                     case 2552:
@@ -489,7 +547,7 @@ namespace Memoria.Scripts.TranceSeek
             CheckATEState();
             FixZidaneWorldMapWeapon();
 
-            bool shouldHide = actorleader == null || ((actorleader.flags & 1) == 0 || ForceHidden || ModelCantGetFollowers.Contains(leader_model_id) || BlackListFieldId.Contains(FF9StateSystem.Common.FF9.fldMapNo)
+            bool shouldHide = actorleader == null || ((actorleader.flags & 1) == 0 || ForceHidden || ModelCantGetFollowers.Contains(leader_model_id) || (!IsWorldMap && BlackListFieldId.Contains(FF9StateSystem.Common.FF9.fldMapNo))
                 || BlackListAnimationId.Contains(actorleader.anim) || MBG.Instance.IsPlaying() > 1 || BlackListCondition || isPlayingATE);
 
             HideFollowers(shouldHide);
@@ -513,6 +571,17 @@ namespace Memoria.Scripts.TranceSeek
                 Log.Message("[Trance Seek] leader_model_id : " + leader_model_id);
                 if (actorleader != null) Log.Message("[Trance Seek] actorleader.anim : " + actorleader.anim);
                 if (IsWorldMap) Log.Message($"[Trance Seek] WM Actor Position {ff9.GetControlChar().pos}");
+                Log.Message("################################################");
+                Log.Message($"actorleader == null ? => {actorleader == null}.");
+                Log.Message($"(actorleader.flags & 1) == 0 ? => {(actorleader != null && (actorleader.flags & 1) == 0)}.");
+                Log.Message($"ForceHidden ? => {ForceHidden}.");
+                Log.Message($"ModelCantGetFollowers.Contains({leader_model_id}) ? => {ModelCantGetFollowers.Contains(leader_model_id)}.");
+                Log.Message($"BlackListFieldId.Contains({FF9StateSystem.Common.FF9.fldMapNo}) ? => {(FF9StateSystem.Common.FF9 != null && BlackListFieldId.Contains(FF9StateSystem.Common.FF9.fldMapNo))}.");
+                Log.Message($"BlackListAnimationId.Contains({actorleader.anim}) ? => {(actorleader != null && BlackListAnimationId.Contains(actorleader.anim))}.");
+                Log.Message($"MBG.Instance.IsPlaying() > 1 ? => {(MBG.Instance != null && MBG.Instance.IsPlaying() > 1)}.");
+                Log.Message($"BlackListCondition ? => {BlackListCondition}.");
+                Log.Message($"isPlayingATE ? => {isPlayingATE}.");
+                Log.Message("################################################");
             }
 
             lastUiState = currentState;
@@ -521,7 +590,8 @@ namespace Memoria.Scripts.TranceSeek
         private void CheckLeaderAndParty()
         {
             EventEngine engine = PersistenSingleton<EventEngine>.Instance;
-            if (engine == null) return;
+            if (engine == null)
+                return;
 
             GameObject oldLeader = leader;
             int oldModelId = leader_model_id;
@@ -553,10 +623,25 @@ namespace Memoria.Scripts.TranceSeek
                 leader_model_id = -1;
             }
 
-            if (leader != oldLeader || leader_model_id != oldModelId || CurrentMemberCounter != partynumber)
+            bool partyChanged = false;
+            if (FF9StateSystem.Common.FF9?.party != null)
+                for (int i = 0; i < 4; i++)
+                    if (FF9StateSystem.Common.FF9.party.GetCharacterId(i) != lastParty[i])
+                    {
+                        partyChanged = true;
+                        break;
+                    }
+
+            if (leader != oldLeader || leader_model_id != oldModelId || CurrentMemberCounter != partynumber || partyChanged)
             {
+                if (Debug)
+                    Log.Message("CheckLeaderAndParty !");
                 leaderRenderer = leader != null ? leader.GetComponentInChildren<Renderer>() : null;
                 cachedLeaderRenderers = leader != null ? leader.GetComponentsInChildren<Renderer>(true) : null;
+
+                if (FF9StateSystem.Common.FF9?.party != null)
+                    for (int i = 0; i < 4; i++)
+                        lastParty[i] = FF9StateSystem.Common.FF9.party.GetCharacterId(i);
 
                 partynumber = FF9StateSystem.Common.FF9.party.MemberCount;
                 ClearHistoryFollowers();
@@ -603,8 +688,6 @@ namespace Memoria.Scripts.TranceSeek
                     {
                         if (characterDB[id].BlackListModelId.Contains(leader_model_id))
                             continue;
-                        if (!IsWorldMap && IsCharacterModelPresentOnField(id))
-                            continue;
                         expectedFollowers.Add(id);
                     }
                 }
@@ -616,7 +699,8 @@ namespace Memoria.Scripts.TranceSeek
                 foreach (CharacterId id in expectedFollowers)
                 {
                     Follower f = GetOrCreateFollower(id, targetLayer);
-                    if (f == null) continue;
+                    if (f == null)
+                        continue;
 
                     f.FramesBehind = delay;
 
@@ -628,7 +712,10 @@ namespace Memoria.Scripts.TranceSeek
                             f.Go.transform.localPosition = leader.transform.localPosition;
                         f.Go.transform.localRotation = leader.transform.localRotation;
                         f.PositionHistory.Clear();
-                        f.Go.SetActive(!FollowersHidden);
+
+                        f.Go.SetActive(false);
+                        if (f.ShadowObj != null)
+                            f.ShadowObj.SetActive(false);
                     }
 
                     activeFollowers.Add(f);
@@ -804,6 +891,7 @@ namespace Memoria.Scripts.TranceSeek
                 leaderstate.IsMoving = true;
                 leaderstate.IsRunning = !IsWorldMap && ActorAnimRunning.Contains(actorleader.anim);
                 leaderstate.LightColor = GetLeaderColor();
+                leaderstate.Slice = GetLeaderSlice();
 
                 foreach (Follower f in activeFollowers)
                     f.PositionHistory.Enqueue(leaderstate);
@@ -814,23 +902,52 @@ namespace Memoria.Scripts.TranceSeek
                 if (f.Go == null)
                     continue;
 
-                if (!IsWorldMap && (IsCharacterModelPresentOnField(f.Id) || !FF9StateSystem.Common.FF9.party.IsInParty(f.Id)) || FollowersHidden)
+                bool isNpcOnField = !IsWorldMap && IsCharacterModelPresentOnField(f.Id);
+                bool isNotInParty = !FF9StateSystem.Common.FF9.party.IsInParty(f.Id);
+                if (Debug)
+                    Log.Message("FollowersHidden = " + FollowersHidden + " / isNpcOnField = " + isNpcOnField + " / isNotInParty = " + isNotInParty);
+
+                if (FollowersHidden || isNpcOnField || isNotInParty)
                 {
+                    if (Debug)
+                        Log.Message($"Folllower {f.Id} is hidden !");
+
                     if (f.Go.activeSelf)
+                    {
                         f.Go.SetActive(false);
-
-                    if (f.ShadowObj != null)
-                        f.ShadowObj.SetActive(false);
-
+                        if (f.ShadowObj != null)
+                            f.ShadowObj.SetActive(false);
+                    }
                     continue;
                 }
-                else
-                {
-                    if (!f.Go.activeSelf)
-                        f.Go.SetActive(true);
 
-                    if (f.ShadowObj != null && !f.ShadowObj.activeSelf)
+                if (!f.Go.activeSelf)
+                {
+                    int targetLayer = leaderRenderer != null ? leaderRenderer.gameObject.layer : leader.layer;
+                    f.Go.layer = targetLayer;
+                    foreach (Renderer r in f.Go.GetComponentsInChildren<Renderer>(true))
+                        r.gameObject.layer = targetLayer;
+
+                    if (leader != null && f.Go.transform.parent != leader.transform.parent)
+                        f.Go.transform.SetParent(leader.transform.parent, false);
+
+                    if (IsWorldMap && ff9.GetControlChar() != null)
+                        f.Go.transform.localPosition = ff9.GetControlChar().pos;
+                    else if (!IsWorldMap && leader != null)
+                        f.Go.transform.localPosition = leader.transform.localPosition;
+
+                    if (leader != null)
+                        f.Go.transform.localRotation = leader.transform.localRotation;
+
+                    f.PositionHistory.Clear();
+                    ApplyFollowerColor(f, GetLeaderColor());
+                    ApplyFollowerSlice(f, GetLeaderSlice());
+
+                    f.Go.SetActive(true);
+                    if (f.ShadowObj != null)
                         f.ShadowObj.SetActive(true);
+
+                    PlayAnimation(f, f.AnimIdle);
                 }
 
                 if (f.ShadowObj != null)
@@ -858,16 +975,15 @@ namespace Memoria.Scripts.TranceSeek
                     else if (!IsWorldMap && actorleader != null)
                     {
                         int leaderUid = actorleader.uid;
-                        if (FF9StateSystem.Field.FF9Field.loc.map.shadowArray.TryGetValue(leaderUid, out FF9Shadow leaderShadow))
+                        if (!actorleader.isShadowOff && FF9StateSystem.Field.FF9Field.loc.map.shadowArray.TryGetValue(leaderUid, out FF9Shadow leaderShadow))
                         {
                             f.ShadowRenderer.enabled = f.Go.activeSelf;
-                            f.ShadowTransform.localScale = new Vector3(leaderShadow.xScale, 1f, leaderShadow.zScale);
-
-                            Byte amp = (Byte)(leaderShadow.amp * 2);
-                            f.ShadowRenderer.material.SetColor(ColorPropertyId, new Color32(amp, amp, amp, 255));
-                            Vector3 basePos = f.RootBone != null ? f.RootBone.position : f.Go.transform.localPosition;
-                            Vector3 shadowPos = new Vector3(basePos.x, f.Go.transform.localPosition.y, basePos.z);
-                            f.ShadowTransform.localPosition = shadowPos + new Vector3(leaderShadow.xOffset, 5f, leaderShadow.zOffset);
+                                f.ShadowTransform.localScale = new Vector3(leaderShadow.xScale, 1f, leaderShadow.zScale);
+                                Byte amp = (Byte)(leaderShadow.amp * 2);
+                                f.ShadowRenderer.material.SetColor(ColorPropertyId, new Color32(amp, amp, amp, 255));
+                                Vector3 basePos = f.RootBone != null ? f.RootBone.position : f.Go.transform.localPosition;
+                                Vector3 shadowPos = new Vector3(basePos.x, f.Go.transform.localPosition.y, basePos.z);
+                                f.ShadowTransform.localPosition = shadowPos + new Vector3(leaderShadow.xOffset, 5f, leaderShadow.zOffset);
                         }
                         else
                         {
@@ -884,6 +1000,7 @@ namespace Memoria.Scripts.TranceSeek
                     f.Go.transform.localPosition = leaderstate.LocalPosition;
                     f.Go.transform.localRotation = leaderstate.LocalRotation;
                     ApplyFollowerColor(f, leaderstate.LightColor);
+                    ApplyFollowerSlice(f, leaderstate.Slice);
 
                     if (leaderstate.IsMoving && ActorAnimIdle.Contains(GetLeaderAnimID()))
                         PlayAnimation(f, f.AnimIdle);
@@ -896,6 +1013,7 @@ namespace Memoria.Scripts.TranceSeek
                 {
                     f.IdleTimer -= speedFactor;
                     ApplyFollowerColor(f, GetLeaderColor());
+                    ApplyFollowerSlice(f, GetLeaderSlice());
                     if (f.IdleTimer < 0)
                     {
                         PlayAnimation(f, f.AnimInactive);
@@ -911,7 +1029,8 @@ namespace Memoria.Scripts.TranceSeek
 
         public void CheckSwapFollower()
         {
-            if (!init || leader == null) return;
+            if (!init || leader == null)
+                return;
 
             List<CharacterId> expectedFollowers = new List<CharacterId>();
             for (int i = 0; i < 4; i++)
@@ -920,9 +1039,6 @@ namespace Memoria.Scripts.TranceSeek
                 if (id != CharacterId.NONE && characterDB.ContainsKey(id))
                 {
                     if (characterDB[id].BlackListModelId.Contains(leader_model_id))
-                        continue;
-
-                    if (!IsWorldMap && IsCharacterModelPresentOnField(id))
                         continue;
 
                     expectedFollowers.Add(id);
@@ -942,7 +1058,11 @@ namespace Memoria.Scripts.TranceSeek
                 }
             }
 
-            if (!changeDetected) return;
+            if (Debug)
+                Log.Message("[CheckSwapFollower] Change Detected ? => " + changeDetected);
+
+            if (!changeDetected)
+                return;
 
             foreach (Follower f in activeFollowers)
             {
@@ -973,12 +1093,9 @@ namespace Memoria.Scripts.TranceSeek
                     f.Go.transform.localRotation = leader.transform.localRotation;
                     f.PositionHistory.Clear();
 
-                    bool shouldBeActive = !FollowersHidden;
-                    f.Go.SetActive(shouldBeActive);
+                    f.Go.SetActive(false);
                     if (f.ShadowObj != null)
-                        f.ShadowObj.SetActive(shouldBeActive);
-
-                    PlayAnimation(f, f.AnimIdle);
+                        f.ShadowObj.SetActive(false);
                 }
 
                 activeFollowers.Add(f);
@@ -1043,50 +1160,7 @@ namespace Memoria.Scripts.TranceSeek
 
         private void HideFollowers(Boolean hide)
         {
-            if (FollowersHidden == hide)
-                return;
-
             FollowersHidden = hide;
-
-            if (activeFollowers.Count == 0)
-                return;
-
-            foreach (Follower f in activeFollowers)
-            {
-                if (f.Go != null)
-                    f.Go.SetActive(!hide);
-                if (f.ShadowObj != null)
-                    f.ShadowObj.SetActive(!hide);
-            }
-
-            if (!hide)
-            {
-                int targetLayer = leaderRenderer != null ? leaderRenderer.gameObject.layer : leader.layer;
-
-                foreach (Follower f in activeFollowers)
-                {
-                    if (f.Go != null && leader != null)
-                    {
-                        f.Go.layer = targetLayer;
-                        foreach (Renderer r in f.Go.GetComponentsInChildren<Renderer>(true))
-                            r.gameObject.layer = targetLayer;
-
-                        if (f.Go.transform.parent != leader.transform.parent)
-                            f.Go.transform.SetParent(leader.transform.parent, false);
-
-                        if (IsWorldMap && ff9.GetControlChar() != null)
-                            f.Go.transform.localPosition = ff9.GetControlChar().pos;
-                        else if (!IsWorldMap)
-                            f.Go.transform.localPosition = leader.transform.localPosition;
-
-                        f.Go.transform.localRotation = leader.transform.localRotation;
-                        f.PositionHistory.Clear();
-
-                        ApplyFollowerColor(f, GetLeaderColor());
-                        PlayAnimation(f, f.AnimIdle);
-                    }
-                }
-            }
         }
 
         private int GetLeaderModelID()
@@ -1132,6 +1206,47 @@ namespace Memoria.Scripts.TranceSeek
         private void ResetTimerInactiveAnimation(Follower f)
         {
             f.IdleTimer = UnityEngine.Random.Range(2000, 8000);
+        }
+
+        private static readonly int SlicePropertyId = Shader.PropertyToID("_Slice");
+
+        private int GetLeaderSlice()
+        {
+            if (actorleader == null)
+                return 0;
+
+            if (FF9StateSystem.Common.FF9 != null && FF9StateSystem.Common.FF9.charArray.TryGetValue(actorleader.uid, out FF9Char ff9Char))
+            {
+                if ((ff9Char.attr & 1048576u) == 0)
+                    return 0;
+            }
+
+            if (cachedLeaderRenderers != null)
+            {
+                for (int i = 0; i < cachedLeaderRenderers.Length; i++)
+                {
+                    Renderer r = cachedLeaderRenderers[i];
+                    if (r != null && r.material != null && r.material.HasProperty(SlicePropertyId))
+                    {
+                        int s = r.material.GetInt(SlicePropertyId);
+                        if (s > 0)
+                            return s;
+                    }
+                }
+            }
+
+            return 0;
+        }
+
+        private void ApplyFollowerSlice(Follower f, int slice)
+        {
+            if (f.LastAppliedSlice != slice)
+            {
+                for (int i = 0; i < f.CachedMaterials.Count; i++)
+                    f.CachedMaterials[i].SetInt(SlicePropertyId, slice);
+
+                f.LastAppliedSlice = slice;
+            }
         }
 
         private void ClearFollowers()
