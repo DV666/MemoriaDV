@@ -142,6 +142,7 @@ namespace Memoria.Scripts.TranceSeek
 
             public Transform RootBone;
             public Color LastAppliedColor = Color.clear;
+            public int DefaultSlice = 100000; // Fallback
             public int LastAppliedSlice = -1;
         }
 
@@ -435,6 +436,13 @@ namespace Memoria.Scripts.TranceSeek
                     case 2553:
                     case 2554:
                         return scenario >= 10600 && scenario <= 10700;
+                    case 2600:
+                        return scenario == 10700;
+                    case 2651:
+                        return scenario == 10890;
+                    case 2654:
+                    case 2657:
+                        return (scenario == 10903 || scenario == 10905);
                     case 2706:
                     case 2707:
                     case 2708:
@@ -795,6 +803,18 @@ namespace Memoria.Scripts.TranceSeek
                     skinnedRenderer.updateWhenOffscreen = true;
             }
 
+            if (f.CachedMaterials.Count > 0 && f.CachedMaterials[0].HasProperty("_Slice"))
+            {
+                int initial = f.CachedMaterials[0].GetInt("_Slice");
+                f.DefaultSlice = (initial != 0) ? initial : 100000;
+            }
+            else
+            {
+                f.DefaultSlice = 100000;
+            }
+
+            f.LastAppliedSlice = f.DefaultSlice;
+
             f.Anim = f.Go.GetComponent<Animation>();
             f.RootBone = f.Go.transform.FindChild("bone000");
             AnimationFactory.AddAnimWithAnimatioName(f.Go, f.AnimIdle);
@@ -1014,6 +1034,7 @@ namespace Memoria.Scripts.TranceSeek
                     f.IdleTimer -= speedFactor;
                     ApplyFollowerColor(f, GetLeaderColor());
                     ApplyFollowerSlice(f, GetLeaderSlice());
+
                     if (f.IdleTimer < 0)
                     {
                         PlayAnimation(f, f.AnimInactive);
@@ -1208,8 +1229,6 @@ namespace Memoria.Scripts.TranceSeek
             f.IdleTimer = UnityEngine.Random.Range(2000, 8000);
         }
 
-        private static readonly int SlicePropertyId = Shader.PropertyToID("_Slice");
-
         private int GetLeaderSlice()
         {
             if (actorleader == null)
@@ -1226,9 +1245,9 @@ namespace Memoria.Scripts.TranceSeek
                 for (int i = 0; i < cachedLeaderRenderers.Length; i++)
                 {
                     Renderer r = cachedLeaderRenderers[i];
-                    if (r != null && r.material != null && r.material.HasProperty(SlicePropertyId))
+                    if (r != null && r.material != null && r.material.HasProperty("_Slice"))
                     {
-                        int s = r.material.GetInt(SlicePropertyId);
+                        int s = r.material.GetInt("_Slice");
                         if (s > 0)
                             return s;
                     }
@@ -1240,12 +1259,14 @@ namespace Memoria.Scripts.TranceSeek
 
         private void ApplyFollowerSlice(Follower f, int slice)
         {
-            if (f.LastAppliedSlice != slice)
+            int targetSlice = (slice > 0) ? slice : f.DefaultSlice;
+
+            if (f.LastAppliedSlice != targetSlice)
             {
                 for (int i = 0; i < f.CachedMaterials.Count; i++)
-                    f.CachedMaterials[i].SetInt(SlicePropertyId, slice);
+                    f.CachedMaterials[i].SetInt("_Slice", targetSlice);
 
-                f.LastAppliedSlice = slice;
+                f.LastAppliedSlice = targetSlice;
             }
         }
 
