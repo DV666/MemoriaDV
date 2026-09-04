@@ -151,13 +151,10 @@ namespace Memoria.Scripts.TranceSeek
             Memoria.Prime.Log.Message($"[Trance Seek] Hash actuel des données : {currentHash}");
 #endif
 
-            if (false && currentHash != EXPECTED_HASH)
-            {
-#if DEV_TS
-                Memoria.Prime.Log.Warning("[Trance Seek] Falsification des fichiers CSV (Items, Armes ou PA) détectée !");
-#endif
+#if !DEV_TS
+            if (currentHash != EXPECTED_HASH)
                 TranceSeekBattleDictionary.Init = true;
-            }
+#endif
         }
 
 #if DEV_TS
