@@ -3,6 +3,7 @@ using Memoria.Data;
 using Memoria.Scripts.TranceSeek;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using static BTL_DATA;
 using static Memoria.Scripts.TranceSeek.TranceSeekBattleDictionary;
@@ -16,6 +17,8 @@ namespace Memoria.DefaultScripts
     [StatusScript(BattleStatusId.Trance)]
     public class TranceStatusScript : StatusScriptBase, IFinishCommandScript
     {
+        public static Boolean TranceMusic = Configuration.Mod.FolderNames.Contains("TranceSeek/Options/TranceMusic");
+
         public BattleAbilityId PhantomAbility = BattleAbilityId.Void;
         public Boolean PhantomCommandSent = false;
         public Int32 PhantomCountdown = 0;
@@ -66,7 +69,7 @@ namespace Memoria.DefaultScripts
                     FF9StateSystem.EventState.gScriptDictionary.Add(1002, dictspecialeffect);
                 }
 
-                if (!IsBoss || (dictspecialeffect.TryGetValue(4, out Int32 ForceTriggerTrance) && ForceTriggerTrance == 1))
+                if (TranceMusic && (!IsBoss || (dictspecialeffect.TryGetValue(4, out Int32 ForceTriggerTrance) && ForceTriggerTrance == 1)))
                     TriggerTranceBgm(177, Target);
 
                 if (!IsBoss)  // +50% HP/MP Max if monster get under Trance

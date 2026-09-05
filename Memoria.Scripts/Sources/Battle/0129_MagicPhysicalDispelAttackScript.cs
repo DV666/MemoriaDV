@@ -82,7 +82,7 @@ namespace Memoria.Scripts.TranceSeek
         private bool _wasInFirstMap = false;
         private bool _pendingHardcoreCheck = false;
 
-        private const long EXPECTED_HASH = 6652560766372459732;
+        private const long EXPECTED_HASH = 2469718391589169588;
 
         void Update()
         {
@@ -139,21 +139,25 @@ namespace Memoria.Scripts.TranceSeek
         private void OnSaveLoaded()
         {
             if (FF9StateSystem.EventState.gEventGlobal[1407] == 0)
+            {
+                TranceSeekBattleDictionary.Init = false;
                 return;
+            }
 
             RestoreHardcoreAbilityFeatures();
             EnforceHardcoreIni();
             RestoreHardcoreBattlePatch();
 
-            long currentHash = ComputeData();
+            //long currentHash = ComputeData();
+            //Memoria.Prime.Log.Message($"[Trance Seek] Hash actuel des données : {currentHash}");
 
 #if DEV_TS
-            Memoria.Prime.Log.Message($"[Trance Seek] Hash actuel des données : {currentHash}");
+            //Memoria.Prime.Log.Message($"[Trance Seek] Hash actuel des données : {currentHash}");
 #endif
 
 #if !DEV_TS
-            if (currentHash != EXPECTED_HASH)
-                TranceSeekBattleDictionary.Init = true;
+            //if (currentHash != EXPECTED_HASH)
+            //TranceSeekBattleDictionary.Init = true;
 #endif
         }
 
@@ -210,16 +214,34 @@ namespace Memoria.Scripts.TranceSeek
             }
         }
 
+        private long GetDeterministicStringHash(string str)
+        {
+            if (string.IsNullOrEmpty(str)) return 0;
+
+            unchecked
+            {
+                long hash = 23;
+                foreach (char c in str)
+                {
+                    hash = (hash * 31) + c;
+                }
+                return hash;
+            }
+        }
+
         private long ComputeData()
         {
             long hash = 17;
+
+            Memoria.Prime.Log.Message($"[Trance Seek Hash Debug] --- DÉBUT DU HACHAGE --- Hash initial : {hash}");
 
             unchecked
             {
                 if (ff9item._FF9Item_Data != null)
                 {
-                    foreach (var item in ff9item._FF9Item_Data.Values)
+                    foreach (var kvp in ff9item._FF9Item_Data.OrderBy(x => x.Key))
                     {
+                        var item = kvp.Value;
                         hash = (hash * 397) ^ item.price;
                         hash = (hash * 397) ^ item.selling_price;
                         hash = (hash * 397) ^ (long)item.type;
@@ -235,12 +257,14 @@ namespace Memoria.Scripts.TranceSeek
                                 hash = (hash * 397) ^ abil;
                         }
                     }
+                    Memoria.Prime.Log.Message($"[Trance Seek Hash Debug] Après ff9item._FF9Item_Data : {hash}");
                 }
 
                 if (ff9item._FF9Item_Info != null)
                 {
-                    foreach (var effect in ff9item._FF9Item_Info.Values)
+                    foreach (var kvp in ff9item._FF9Item_Info.OrderBy(x => x.Key))
                     {
+                        var effect = kvp.Value;
                         hash = (hash * 397) ^ (long)effect.info.Target;
                         hash = (hash * 397) ^ effect.Ref.ScriptId;
                         hash = (hash * 397) ^ effect.Ref.Power;
@@ -248,12 +272,14 @@ namespace Memoria.Scripts.TranceSeek
                         hash = (hash * 397) ^ effect.Ref.Rate;
                         hash = (hash * 397) ^ (long)effect.status;
                     }
+                    Memoria.Prime.Log.Message($"[Trance Seek Hash Debug] Après ff9item._FF9Item_Info : {hash}");
                 }
 
                 if (ff9weap.WeaponData != null)
                 {
-                    foreach (var weap in ff9weap.WeaponData.Values)
+                    foreach (var kvp in ff9weap.WeaponData.OrderBy(x => x.Key))
                     {
+                        var weap = kvp.Value;
                         hash = (hash * 397) ^ weap.Ref.ScriptId;
                         hash = (hash * 397) ^ weap.Ref.Power;
                         hash = (hash * 397) ^ weap.Ref.Elements;
@@ -261,35 +287,40 @@ namespace Memoria.Scripts.TranceSeek
                         hash = (hash * 397) ^ (long)weap.Category;
                         hash = (hash * 397) ^ (long)weap.StatusIndex;
                     }
+                    Memoria.Prime.Log.Message($"[Trance Seek Hash Debug] Après ff9weap.WeaponData : {hash}");
                 }
 
                 if (ff9armor.ArmorData != null)
                 {
-                    foreach (var armor in ff9armor.ArmorData.Values)
+                    foreach (var kvp in ff9armor.ArmorData.OrderBy(x => x.Key))
                     {
+                        var armor = kvp.Value;
                         hash = (hash * 397) ^ armor.PhysicalDefence;
                         hash = (hash * 397) ^ armor.PhysicalEvade;
                         hash = (hash * 397) ^ armor.MagicalDefence;
                         hash = (hash * 397) ^ armor.MagicalEvade;
                     }
+                    Memoria.Prime.Log.Message($"[Trance Seek Hash Debug] Après ff9armor.ArmorData : {hash}");
                 }
 
                 if (ff9equip.ItemStatsData != null)
                 {
-                    foreach (var stat in ff9equip.ItemStatsData.Values)
+                    foreach (var kvp in ff9equip.ItemStatsData.OrderBy(x => x.Key))
                     {
+                        var stat = kvp.Value;
                         hash = (hash * 397) ^ stat.dex;
                         hash = (hash * 397) ^ stat.str;
                         hash = (hash * 397) ^ stat.mgc;
                         hash = (hash * 397) ^ stat.wpr;
                     }
+                    Memoria.Prime.Log.Message($"[Trance Seek Hash Debug] Après ff9equip.ItemStatsData : {hash}");
                 }
 
                 if (ff9abil._FF9Abil_PaData != null)
                 {
-                    foreach (var paList in ff9abil._FF9Abil_PaData.Values)
+                    foreach (var kvp in ff9abil._FF9Abil_PaData.OrderBy(x => x.Key))
                     {
-                        foreach (var pa in paList)
+                        foreach (var pa in kvp.Value)
                         {
                             hash = (hash * 397) ^ pa.Id;
                             hash = (hash * 397) ^ pa.Ap;
@@ -297,26 +328,31 @@ namespace Memoria.Scripts.TranceSeek
                             hash = (hash * 397) ^ (long)pa.PassiveId;
                         }
                     }
+                    Memoria.Prime.Log.Message($"[Trance Seek Hash Debug] Après ff9abil._FF9Abil_PaData : {hash}");
                 }
 
                 if (ff9abil._FF9Abil_SaData != null)
                 {
-                    foreach (var sa in ff9abil._FF9Abil_SaData.Values)
+                    foreach (var kvp in ff9abil._FF9Abil_SaData.OrderBy(x => x.Key))
                     {
+                        var sa = kvp.Value;
                         hash = (hash * 397) ^ sa.GemsCount;
                     }
+                    Memoria.Prime.Log.Message($"[Trance Seek Hash Debug] Après ff9abil._FF9Abil_SaData : {hash}");
                 }
 
                 if (ff9level.CharacterBaseStats != null)
                 {
-                    foreach (var bStat in ff9level.CharacterBaseStats.Values)
+                    foreach (var kvp in ff9level.CharacterBaseStats.OrderBy(x => x.Key))
                     {
+                        var bStat = kvp.Value;
                         hash = (hash * 397) ^ bStat.Dexterity;
                         hash = (hash * 397) ^ bStat.Strength;
                         hash = (hash * 397) ^ bStat.Magic;
                         hash = (hash * 397) ^ bStat.Will;
                         hash = (hash * 397) ^ bStat.Gems;
                     }
+                    Memoria.Prime.Log.Message($"[Trance Seek Hash Debug] Après ff9level.CharacterBaseStats : {hash}");
                 }
 
                 if (ff9level.CharacterLevelUps != null)
@@ -327,16 +363,19 @@ namespace Memoria.Scripts.TranceSeek
                         hash = (hash * 397) ^ lvl.BonusMP;
                         hash = (hash * 397) ^ lvl.ExperienceToLevel;
                     }
+                    Memoria.Prime.Log.Message($"[Trance Seek Hash Debug] Après ff9level.CharacterLevelUps : {hash}");
                 }
 
                 if (btl_mot.BattleParameterList != null)
                 {
-                    foreach (var bParam in btl_mot.BattleParameterList.Values)
+                    foreach (var kvp in btl_mot.BattleParameterList.OrderBy(x => x.Key))
                     {
-                        hash = (hash * 397) ^ (bParam.ModelId?.GetHashCode() ?? 0);
-                        hash = (hash * 397) ^ (bParam.TranceModelId?.GetHashCode() ?? 0);
+                        var bParam = kvp.Value;
+                        hash = (hash * 397) ^ GetDeterministicStringHash(bParam.ModelId);
+                        hash = (hash * 397) ^ GetDeterministicStringHash(bParam.TranceModelId);
                         hash = (hash * 397) ^ (bParam.TranceParameters ? 1 : 0);
                     }
+                    Memoria.Prime.Log.Message($"[Trance Seek Hash Debug] Après btl_mot.BattleParameterList : {hash}");
                 }
 
                 var charParamListField = typeof(ff9play).GetField("CharacterParameterList", BindingFlags.NonPublic | BindingFlags.Static);
@@ -345,12 +384,14 @@ namespace Memoria.Scripts.TranceSeek
                     var charParamList = charParamListField.GetValue(null) as Dictionary<CharacterId, CharacterParameter>;
                     if (charParamList != null)
                     {
-                        foreach (var cParam in charParamList.Values)
+                        foreach (var kvp in charParamList.OrderBy(x => x.Key))
                         {
+                            var cParam = kvp.Value;
                             hash = (hash * 397) ^ (long)cParam.DefaultRow;
                             hash = (hash * 397) ^ cParam.DefaultWinPose;
                             hash = (hash * 397) ^ (long)cParam.DefaultCategory;
                         }
+                        Memoria.Prime.Log.Message($"[Trance Seek Hash Debug] Après CharacterParameterList : {hash}");
                     }
                 }
 
@@ -360,16 +401,20 @@ namespace Memoria.Scripts.TranceSeek
                     var defEquips = defEquipField.GetValue(null) as Dictionary<EquipmentSetId, CharacterEquipment>;
                     if (defEquips != null)
                     {
-                        foreach (var equipSet in defEquips.Values)
+                        foreach (var kvp in defEquips.OrderBy(x => x.Key))
                         {
+                            var equipSet = kvp.Value;
                             for (int i = 0; i < 5; i++)
                             {
                                 hash = (hash * 397) ^ (long)equipSet[i];
                             }
                         }
+                        Memoria.Prime.Log.Message($"[Trance Seek Hash Debug] Après DefaultEquipment : {hash}");
                     }
                 }
             }
+
+            Memoria.Prime.Log.Message($"[Trance Seek Hash Debug] --- FIN DU HACHAGE --- Hash final : {hash}");
 
             return hash;
         }

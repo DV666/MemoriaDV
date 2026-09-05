@@ -39,7 +39,7 @@ namespace Memoria.Scripts.TranceSeek
                 {
                     ShopUI.ShopType shopType = (ShopUI.ShopType)typeField.GetValue(_cachedShopUI);
 
-                    if (shopType == ShopUI.ShopType.Synthesis && _lastSortedShop != _cachedShopUI)
+                    if (shopType == ShopUI.ShopType.Synthesis && _lastSortedShop != _cachedShopUI && _cachedShopUI.Id != 101)
                     {
                         _lastSortedShop = _cachedShopUI;
                         SortAndRefreshSynthesisShop(_cachedShopUI);

@@ -290,7 +290,10 @@ namespace Memoria.Scripts.TranceSeek
                 int scenario = GameState.ScenarioCounter;
                 switch (FF9StateSystem.Common.FF9.fldMapNo)
                 {
-                    case 63:                  
+                    case 61:
+                    case 62:
+                    case 63:
+                    case 100:
                     case 150:
                     case 151:
                     case 153:
