@@ -151,15 +151,6 @@ namespace Memoria.Scripts.TranceSeek
         public const RegularItem FeatheryRing = (RegularItem)1225;
         public const RegularItem MagicRing = (RegularItem)1226;
         public const RegularItem RingOfCourage = (RegularItem)1227;
-        public const RegularItem Belias_2 = (RegularItem)1228;
-        public const RegularItem Mateus_2 = (RegularItem)1229;
-        public const RegularItem Adrammelech_2 = (RegularItem)1230;
-        public const RegularItem Famfrit_2 = (RegularItem)1231;
-        public const RegularItem Chaos_2 = (RegularItem)1232;
-        public const RegularItem Hashmal_2 = (RegularItem)1233;
-        public const RegularItem Zodiark_2 = (RegularItem)1234;
-        public const RegularItem Ultima_2 = (RegularItem)1235;
-        public const RegularItem Montblanc_2 = (RegularItem)1236;
         public const RegularItem Claymore = (RegularItem)1237;
         public const RegularItem Lindblarmor = (RegularItem)1238;
         public const RegularItem GoldenEgg = (RegularItem)1239;

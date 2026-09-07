@@ -3,18 +3,21 @@ using FF9;
 using Memoria.Assets;
 using Memoria.Data;
 using Memoria.Database;
-using Memoria.Prime;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Remoting.Contexts;
 using static Memoria.Scripts.TranceSeek.TranceSeekBattleDictionary;
-using static SFX;
 
 namespace Memoria.Scripts.TranceSeek
 {
     public static class TranceSeekCharacterMechanic
     {
+        public static Boolean ZidaneDagger(BattleUnit zidane)
+        {
+            int WeaponShape = ff9item._FF9Item_Data[zidane.Weapon].shape;
+            return zidane.IsPlayer && WeaponShape != 2 && WeaponShape != 117;
+        }
+
         public static void TryApplyDragon(this BattleCalculator v)
         {
             if (v.Caster.PlayerIndex == CharacterId.Freya)
@@ -453,7 +456,7 @@ namespace Memoria.Scripts.TranceSeek
                                         btl2d.Btl2dReqSymbolMessage(Vivi, "[FF0000]", TranceSeekMessages.MessageFocusViviLost, HUDMessage.MessageStyle.DAMAGE, 40);
                                     }
                                 }
-                                ViviSelected_TSVar.PreviousSpell = v.Command.AbilityId;
+                                ViviSelected_TSVar.PreviousSpell = BlackMagicAbilityId;
                             }
                         }
                     }

@@ -230,7 +230,7 @@ namespace Memoria.Scripts.TranceSeek
                     if (Caster_TSVar.Zidane.Flexible >= FlexibleTurn)
                     {
                         Caster_TSVar.Zidane.Flexible = 0;
-                        if (btl_util.getSerialNumber(v.Caster.Data) == CharacterSerialNumber.ZIDANE_SWORD)
+                        if (!TranceSeekCharacterMechanic.ZidaneDagger(v.Caster))
                             BattleState.EnqueueCounter(v.Caster, BattleCommandId.RushAttack, TranceSeekBattleAbility.Thief, v.Caster.Id);
                         else
                             BattleState.EnqueueCounter(v.Caster, BattleCommandId.RushAttack, TranceSeekBattleAbility.Bandit, v.Caster.Id);

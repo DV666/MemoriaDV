@@ -90,8 +90,8 @@ namespace Memoria.Scripts.TranceSeek
             {
                 int bonusgil = 0;
                 byte delay = 16;
-                CharacterSerialNumber serialNumber = btl_util.getSerialNumber(v.Caster.Data);
-                if (serialNumber == CharacterSerialNumber.ZIDANE_SWORD)
+
+                if (!TranceSeekCharacterMechanic.ZidaneDagger(v.Caster))
                     delay = 8;
 
                 if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.StealGil_Boosted))

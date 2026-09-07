@@ -82,7 +82,7 @@ namespace Memoria.Scripts.TranceSeek
                 v.Target.MpDamage *= 2;
                 v.Target.Flags |= CalcFlag.Critical;
             }
-            else if (v.Caster.PlayerIndex == CharacterId.Zidane && btl_util.getSerialNumber(v.Caster.Data) == CharacterSerialNumber.ZIDANE_SWORD && v.Command.AbilityId == BattleAbilityId.Attack)
+            else if (v.Caster.PlayerIndex == CharacterId.Zidane && !TranceSeekCharacterMechanic.ZidaneDagger(v.Caster) && v.Command.AbilityId == BattleAbilityId.Attack)
             {
                 Caster_TSVar.Zidane.Critical += 5;
                 btl2d.Btl2dReqSymbolMessage(v.Caster.Data, "[FFFF00]", TranceSeekMessages.MessageZidaneCritical, HUDMessage.MessageStyle.DAMAGE, 15);
@@ -220,7 +220,7 @@ namespace Memoria.Scripts.TranceSeek
             }
             if ((v.Target.Data == v.Caster.Data || (v.Context.Evade + (v.Target.PlayerIndex == CharacterId.Zidane ? Target_TSVar.Zidane.Dodge : 0)) <= Comn.random16() % 100 || v.Context.Evade == 0))
             {
-                if (v.Target.PlayerIndex == CharacterId.Zidane && v.Target.Data != v.Caster.Data && btl_util.getSerialNumber(v.Target.Data) == CharacterSerialNumber.ZIDANE_DAGGER && !v.Target.IsUnderAnyStatus(BattleStatusConst.BattleEndFull) && !v.Caster.HasSupportAbility(SupportAbility1.Healer))
+                if (v.Target.PlayerIndex == CharacterId.Zidane && v.Target.Data != v.Caster.Data && ZidaneDagger(v.Target) && !v.Target.IsUnderAnyStatus(BattleStatusConst.BattleEndFull) && !v.Caster.HasSupportAbility(SupportAbility1.Healer))
                 {
                     Target_TSVar.Zidane.Dodge += 5;
                     btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[FFFF00]", TranceSeekMessages.MessageZidaneDodge, HUDMessage.MessageStyle.DAMAGE, 20);
@@ -571,7 +571,7 @@ namespace Memoria.Scripts.TranceSeek
                 v.Target.HpDamage = (int)v.Target.MaximumHp;
                 v.Target.MpDamage = (int)v.Target.MaximumMp;
             }
-            else if (v.Target.Accessory == TranceSeekRegularItem.HaloGhost)
+            else if (v.Caster.Accessory == TranceSeekRegularItem.HaloGhost)
                 v.Target.HpDamage = (int)(reviveheal + v.Target.MaximumHp / 4);
             else
                 v.Target.HpDamage = reviveheal;
@@ -1134,7 +1134,7 @@ namespace Memoria.Scripts.TranceSeek
             {
                 foreach (BattleUnit unit in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
                 {
-                    if (btl_util.getSerialNumber(unit.Data) == CharacterSerialNumber.VIVI && (unit.CurrentMp >= v.Command.Data.aa.MP / (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Agreement_Boosted) ? 2 : 4)))
+                    if (v.Caster.PlayerIndex == CharacterId.Vivi && (unit.CurrentMp >= v.Command.Data.aa.MP / (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Agreement_Boosted) ? 2 : 4)))
                     {
                         if (unit.CurrentMp > v.Command.Data.aa.MP)
                             unit.CurrentMp = (uint)(unit.CurrentMp - (v.Command.Data.aa.MP / (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Agreement_Boosted) ? 2 : 4)));

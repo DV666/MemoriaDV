@@ -392,7 +392,7 @@ namespace Memoria.Scripts.TranceSeek
 
             var casterState = _v.CasterState();
             int bonusgil = 0;
-            byte delay = btl_util.getSerialNumber(_v.Caster.Data) == CharacterSerialNumber.ZIDANE_SWORD ? (byte)8 : (byte)16;
+            byte delay = TranceSeekCharacterMechanic.ZidaneDagger(_v.Caster) ? (byte)16 : (byte)8;
 
             if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.StealGil_Boosted))
                 bonusgil = (int)UnityEngine.Random.Range(btl_util.getEnemyPtr(_v.Target).bonus_gil / 12, btl_util.getEnemyPtr(_v.Target).bonus_gil / 6);

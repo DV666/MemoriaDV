@@ -204,7 +204,7 @@ namespace Memoria.Scripts.TranceSeek
             });
 
         private static readonly HashSet<Int32> BlackListFieldId =
-            new HashSet<Int32>(new[] { 70, 152, 209, 260, 261, 453, 454, 606, 655, 767, 768, 769, 811, 813, 814, 816, 954, 955, 1400, 1401, 1402, 1403, 1404, 1462, 1609, 1658, 1659, 1704,
+            new HashSet<Int32>(new[] { 70, 152, 209, 260, 261, 453, 454, 506, 606, 655, 767, 768, 769, 811, 813, 814, 816, 954, 955, 1400, 1401, 1402, 1403, 1404, 1462, 1609, 1658, 1659, 1704,
             1800, 2055, 2200, 2204, 2261, 2608, 2700, 2701, 2702, 2703, 2704, 2750, 2751, 2752, 2753, 2754, 2755, 2756, 2850, 2851, 2852, 2853, 2854, 2855, 2856, 2951, 2952, 2953,
             2928, 2929, 2930, 2931, 2932, 2933, 2934, 3000, 3001, 3002, 3003, 3004, 3005, 3006, 3007, 3008, 3009, 3010, 3011, 3012}); // End of the game
 
@@ -322,15 +322,19 @@ namespace Memoria.Scripts.TranceSeek
                         return scenario == 2915;
                     case 503:
                         return (scenario == 2940 || scenario == 2970);
+                    case 601:
+                        return (scenario == 3050 || scenario == 3140);
                     case 554:
                         return scenario == 3105;
+                    case 570:
                     case 571:
-                        return scenario == 3050;
+                        return (scenario == 3050 || scenario == 3100);
+                    case 561:
+                        return scenario == 3110;
                     case 575:
                         return scenario == 3165;
                     case 562:
                     case 567:
-                    case 601:
                     case 611:
                     case 612:
                     case 613:

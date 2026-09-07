@@ -24,7 +24,7 @@ namespace Memoria.Scripts.TranceSeek
         public static Boolean DebugBattle = false;
         public static void WriteStuffInFile()
         {
-            if (!TranceSeekBattleDictionary.Init)
+            if (TranceSeekBattleDictionary.Init)
                 return;
 
             if (!File.Exists(StuffListedPath))
@@ -40,8 +40,11 @@ namespace Memoria.Scripts.TranceSeek
 
             foreach (var SAfield in SAfields)
             {
-                int value = Convert.ToInt32(SAfield.GetValue(null));
-                SATranceSeek[value] = SAfield.Name;
+                if (SAfield.FieldType == typeof(SupportAbility))
+                {
+                    int value = Convert.ToInt32(SAfield.GetValue(null));
+                    SATranceSeek[value] = SAfield.Name;
+                }
             }
 
             var Itemfields = typeof(TranceSeekRegularItem)
@@ -49,8 +52,11 @@ namespace Memoria.Scripts.TranceSeek
 
             foreach (var itemfield in Itemfields)
             {
-                int value = Convert.ToInt32(itemfield.GetValue(null));
-                RegularItemTranceSeek[value] = itemfield.Name;
+                if (itemfield.FieldType == typeof(RegularItem))
+                {
+                    int value = Convert.ToInt32(itemfield.GetValue(null));
+                    RegularItemTranceSeek[value] = itemfield.Name;
+                }
             }
 
             foreach (BattleUnit PlayerUnit in BattleState.EnumerateUnits())

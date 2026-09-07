@@ -246,7 +246,7 @@ namespace Memoria.Scripts.TranceSeek
                 if (TargetBone == null || CasterData == null)
                     return;
 
-                bool isVisible = CasterData.battleModelIsRendering && CasterData.gameObject.activeInHierarchy && CasterData.bi.disappear == 0;
+                bool isVisible = CasterData.gameObject.activeInHierarchy && CasterData.bi.disappear == 0; // CasterData.battleModelIsRendering not working with Zidane (Sword Form)
 
                 foreach (Renderer r in _renderers)
                 {

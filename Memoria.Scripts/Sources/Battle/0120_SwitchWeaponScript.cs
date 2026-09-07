@@ -18,6 +18,8 @@ namespace Memoria.Scripts.TranceSeek
 
         private readonly BattleCalculator _v;
 
+        private static Boolean EEM_Enabled = Configuration.Mod.FolderNames.Contains("ExtraEquipmentMenu");
+
         public SwitchWeaponScript(BattleCalculator v)
         {
             _v = v;
@@ -45,7 +47,7 @@ namespace Memoria.Scripts.TranceSeek
                 Vector3 ModelStatusScaleOld = _v.Caster.ModelStatusScale;
                 _v.Caster.ModelStatusScale += new Vector3(0.1f, 0.1f, 0.1f); // To force reset stack status.
 
-                if (btl_util.getSerialNumber(_v.Caster.Data) == CharacterSerialNumber.ZIDANE_DAGGER)
+                if (TranceSeekCharacterMechanic.ZidaneDagger(_v.Caster))
                     ModelZidane = "GEO_MAIN_B0_001"; // Model Zidane_Sword
                 else
                     ModelZidane = "GEO_MAIN_B0_000"; // Model Zidane_Dagger
@@ -125,8 +127,10 @@ namespace Memoria.Scripts.TranceSeek
             string ModelZidane;
             string ModelTranceZidane;
             Vector3 ZidanePosition = unit.Data.gameObject.transform.localPosition;
+            Boolean VanillaZidaneModel = (unit.SerialNumber == CharacterSerialNumber.ZIDANE_DAGGER || unit.SerialNumber == CharacterSerialNumber.ZIDANE_SWORD);
+            Boolean EEM_Mod = EEM_Enabled && !VanillaZidaneModel;
 
-            if (btl_util.getSerialNumber(unit.Data) == CharacterSerialNumber.ZIDANE_DAGGER)
+            if (TranceSeekCharacterMechanic.ZidaneDagger(unit))
             {
                 ModelZidane = "GEO_MAIN_B0_001"; // Model Zidane_Sword
                 ModelTranceZidane = "GEO_MAIN_B0_023";
@@ -140,8 +144,8 @@ namespace Memoria.Scripts.TranceSeek
             Zidane_TSVar.OriginalModel = unit.Data.gameObject;
             Zidane_TSVar.OriginalTranceModel = unit.Data.tranceGo;
 
-            Zidane_TSVar.AltModel = ModelFactory.CreateModel(ModelZidane, true);
-            Zidane_TSVar.AltTranceModel = ModelFactory.CreateModel(ModelTranceZidane, true);
+            Zidane_TSVar.AltModel = EEM_Mod ? unit.Data.gameObject : ModelFactory.CreateModel(ModelZidane, true);
+            Zidane_TSVar.AltTranceModel = EEM_Mod ? unit.Data.tranceGo : ModelFactory.CreateModel(ModelTranceZidane, true);
 
             Zidane_TSVar.AltModel.transform.localPosition = ZidanePosition;
             Zidane_TSVar.AltTranceModel.transform.localPosition = ZidanePosition;
