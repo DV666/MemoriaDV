@@ -49,8 +49,7 @@ namespace Memoria.Scripts.TranceSeek
                 }
                 return;
             }
-
-            if ( _v.Command.AbilityId == TranceSeekBattleAbility.LifeorDeath) // Sang Maudit
+            else if ( _v.Command.AbilityId == TranceSeekBattleAbility.LifeorDeath) // Sang Maudit
             {
                 if (Target_TSVar.Marcus.LifeOrDeath || (_v.Target.ResistStatus & BattleStatus.Doom) != 0)
                 {
@@ -76,13 +75,12 @@ namespace Memoria.Scripts.TranceSeek
                 );
                 return;
             }
-
-            if (_v.Command.AbilityId == TranceSeekBattleAbility.Ironclad) // Iron Clad
+            else if (_v.Command.AbilityId == TranceSeekBattleAbility.Ironclad) // Iron Clad
             {
                 _v.Command.AbilityStatus |= TranceSeekStatus.ArmorUp;
                 if (Target_TSVar.Steiner.PlutoStackUsed > 0)
                 {
-                    btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.ArmorUp, parameters: $"+{Target_TSVar.Steiner.PlutoStackUsed}");
+                    btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.ArmorUp, parameters: $"+{1 + Target_TSVar.Steiner.PlutoStackUsed}");
                     if (Target_TSVar.Steiner.PlutoStackUsed == 5)
                         _v.Target.AlterStatus(BattleStatus.Protect);
                     TranceSeekCharacterMechanic.ResetSteinerPassive(_v.Caster);
@@ -94,18 +92,19 @@ namespace Memoria.Scripts.TranceSeek
             else if (_v.Command.AbilityId == TranceSeekBattleAbility.Bulwark) // Rempart
             {
                 _v.Command.AbilityStatus |= TranceSeekStatus.Bulwark;
-                if (Target_TSVar.Steiner.PlutoStackUsed > 0)
+                if (Caster_TSVar.Steiner.PlutoStackUsed > 0)
                 {
-                    if (Target_TSVar.Steiner.PlutoStackUsed == 5)
+                    if (Caster_TSVar.Steiner.PlutoStackUsed == 5)
                         btl_stat.RemoveStatus(_v.Target, TranceSeekStatusId.ArmorBreak);
 
                     btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.ArmorUp);
-                    if (Target_TSVar.Steiner.PlutoStackUsed >= 3)
+                    if (Caster_TSVar.Steiner.PlutoStackUsed >= 3)
                         btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.ArmorUp);
+
                     TranceSeekCharacterMechanic.ResetSteinerPassive(_v.Caster);
                 }
-                else
-                    _v.Target.AlterStatus(_v.Command.AbilityStatus);
+
+                _v.Target.AlterStatus(_v.Command.AbilityStatus);
                 return;
             }
             else if (_v.Command.AbilityId == TranceSeekBattleAbility.Runic) // Runic

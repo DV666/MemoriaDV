@@ -214,7 +214,7 @@ namespace Memoria.Scripts.TranceSeek
                     _v.Target.Data.dms_geo_id = (short)FF9BattleDB.GEO.GetKey(summon.ModelName);
                     OverloadOnBattleInitScript.FixMonsterIconOffset(_v.Target);
 
-                    ENEMY_TYPE et = FF9StateSystem.Battle.FF9Battle.enemy[_v.Target.Data.bi.slot_no].et;
+                    ENEMY_TYPE et = FF9StateSystem.Battle.FF9Battle.enemy[_v.Target.GetSlotNo()].et;
                     et.name = summon.BTLName;
                     et.icon_bone = summon.IconBones;
                     SFX.InitBattleParty();

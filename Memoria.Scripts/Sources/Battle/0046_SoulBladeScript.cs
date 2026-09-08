@@ -22,7 +22,7 @@ namespace Memoria.Scripts.TranceSeek
         public void Perform()
         {
             _v.Command.AbilityStatus = _v.Caster.WeaponStatus;
-            if (ff9item._FF9Item_Data[_v.Caster.Weapon].shape != 2 || _v.Command.AbilityStatus == 0) // Shape 1 => Dagger, Shape 2 => Thief Sword
+            if (TranceSeekCharacterMechanic.ZidaneDagger(_v.Caster) || _v.Command.AbilityStatus == 0)
             {
                 _v.Context.Flags |= BattleCalcFlags.Miss;
                 return;

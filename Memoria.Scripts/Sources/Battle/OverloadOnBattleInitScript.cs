@@ -590,7 +590,7 @@ namespace Memoria.Scripts.TranceSeek
                         battleEnemy.Data.bonus_gil = (uint)(battleEnemy.Data.bonus_gil + ((battleEnemy.Data.bonus_gil * dictdifficulty[DifficultyParameters.Bonus_Gil]) / 100));
                     }
 
-                    if (BattleID == 838 && sb2Pattern.Monster[unit.Data.bi.slot_no].TypeNo == 1) // Golden Pidove (fake Sleep)
+                    if (BattleID == 838 && sb2Pattern.Monster[unit.GetSlotNo()].TypeNo == 1) // Golden Pidove (fake Sleep)
                     {
                         SPSEffect sps = HonoluluBattleMain.battleSPS.AddSequenceSPS(2, -1, 1, true);
                         if (sps == null)
@@ -602,7 +602,7 @@ namespace Memoria.Scripts.TranceSeek
                         StateDict.PolaritySPS = sps;
                     }
 
-                    SB2_PUT enemyPlacement = btl_scene.PatAddr[GroupeBattleID].Monster[unit.Data.bi.slot_no];
+                    SB2_PUT enemyPlacement = btl_scene.PatAddr[GroupeBattleID].Monster[unit.GetSlotNo()];
                     SB2_MON_PARM monParam = btl_scene.MonAddr[enemyPlacement.TypeNo];
 
                     // Pad 0 (byte) => Unused (1) ; Pad 1 (uint16) => Unused (2) ; Pad 2 (uint16) => Unused (3)
@@ -783,7 +783,7 @@ namespace Memoria.Scripts.TranceSeek
 
         public static void FixMonsterIconOffset(BattleUnit btl)
         {
-            ENEMY_TYPE et = FF9StateSystem.Battle.FF9Battle.enemy[btl.Data.bi.slot_no].et;
+            ENEMY_TYPE et = FF9StateSystem.Battle.FF9Battle.enemy[btl.GetSlotNo()].et;
 
             if (MonsterIconOffsets.TryGetValue(btl.Data.dms_geo_id, out IconOffsetPatch patch))
             {

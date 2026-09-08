@@ -56,11 +56,13 @@ namespace Memoria.Scripts.TranceSeek
                 if (!TranceSeekAPI.TryKillFrozen(_v))
                 {
                     var Caster_TSVar = _v.CasterState();
-                    int ChanceDeathBlow = 33;
+                    int ChanceDeathBlow = _v.Command.AbilityId == TranceSeekBattleAbility.PlutoStrike ? 50 : 33;
                     if (Caster_TSVar.Steiner.PlutoStackUsed > 0)
                         ChanceDeathBlow += 10 * Caster_TSVar.Steiner.PlutoStackUsed;
 
-                    if (Comn.random16() % 100 > ChanceDeathBlow && _v.Command.AbilityId != TranceSeekBattleAbility.PlutoStrike && false)
+                    Boolean PlutoStrike = _v.Command.AbilityId == TranceSeekBattleAbility.PlutoStrike;
+
+                    if (Comn.random16() % 100 > ChanceDeathBlow && !PlutoStrike)
                     {
                         _v.Context.Flags |= BattleCalcFlags.Miss;
                     }
@@ -80,6 +82,12 @@ namespace Memoria.Scripts.TranceSeek
                             _v.Target.HpDamage *= 2;
                             _v.Target.MpDamage *= 2;
                             _v.Target.Flags |= CalcFlag.Critical;
+
+                            if (PlutoStrike)
+                            {
+                                _v.Caster.Flags |= CalcFlag.HpDamageOrHeal;
+                                _v.Caster.HpDamage = (_v.Target.HpDamage / 2);
+                            }
                             TranceSeekAPI.InfusedWeaponStatus(_v);
                             TranceSeekAPI.TryAlterCommandStatuses(_v, false);
                             TranceSeekAPI.RaiseTrouble(_v);

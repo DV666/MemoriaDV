@@ -45,9 +45,15 @@ namespace Memoria.Scripts.TranceSeek
                 _v.CalcHpDamage();
                 TranceSeekAPI.TryAlterMagicStatuses(_v);
             }
-            if (_v.CasterState().Steiner.PlutoStackUsed > 0)
+
+            int PlutoStackUsed = _v.CasterState().Steiner.PlutoStackUsed;
+
+            if (PlutoStackUsed > 0)
             {
-                if (_v.Command.AbilityId == BattleAbilityId.IaiStrike && _v.Command.Data.info.effect_counter == 1 && _v.CasterState().Steiner.PlutoStackUsed == 5)
+                if (_v.Command.Data.info.effect_counter == 1)
+                    _v.CasterState().Steiner.Authority = PlutoStackUsed;
+
+                if (_v.Command.AbilityId == BattleAbilityId.IaiStrike && _v.Command.Data.info.effect_counter == 1 && PlutoStackUsed == 5)
                     _v.Caster.CurrentMp = (uint)Math.Min(_v.Caster.CurrentMp + FF9StateSystem.Battle.FF9Battle.aa_data[_v.Command.AbilityId].MP, _v.Caster.MaximumMp);
 
                 TranceSeekCharacterMechanic.ResetSteinerPassive(_v.Caster);

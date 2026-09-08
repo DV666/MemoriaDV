@@ -72,6 +72,7 @@ namespace Memoria.DefaultScripts
                     Target_TSVar.Vivi = new ViviPassives();
                 else if (target.PlayerIndex == CharacterId.Steiner)
                 {
+                    TranceSeekCharacterMechanic.ResetSteinerPassive(target);
                     Target_TSVar.Steiner = new SteinerPassives();
                     Target_TSVar.Steiner.Duelist = 0;
                 }

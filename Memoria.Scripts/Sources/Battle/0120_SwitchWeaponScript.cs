@@ -75,7 +75,7 @@ namespace Memoria.Scripts.TranceSeek
                     _v.Caster.Data.gameObject = SwitchToAlt ? Zidane_TSVar.AltModel : Zidane_TSVar.OriginalModel;
                 }
 
-                FF9StateSystem.Common.FF9.player[(CharacterId)_v.Caster.Data.bi.slot_no].equip[0] = nextWeaponItem;
+                FF9StateSystem.Common.FF9.player[(CharacterId)_v.Caster.GetSlotNo()].equip[0] = nextWeaponItem;
                 _v.Caster.Data.weapon = ff9item.GetItemWeapon(nextWeaponItem);
                 btl_eqp.InitWeapon(FF9StateSystem.Common.FF9.player[CharacterId.Zidane], _v.Caster.Data);
                

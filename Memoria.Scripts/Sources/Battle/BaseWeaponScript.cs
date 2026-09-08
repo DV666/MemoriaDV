@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System;
 using FF9;
 using static Memoria.Scripts.TranceSeek.TranceSeekBattleDictionary;
+using Memoria.Prime;
 
 namespace Memoria.Scripts.TranceSeek
 {
@@ -140,8 +141,9 @@ namespace Memoria.Scripts.TranceSeek
                     TranceSeekAPI.InfusedWeaponStatus(_v);
                     TranceSeekAPI.TryAlterCommandStatuses(_v, false);
                     TranceSeekAPI.RaiseTrouble(_v);
-                    if (_v.Caster.PlayerIndex == CharacterId.Zidane && ff9item._FF9Item_Data[_v.Caster.Weapon].shape == 1) // Zidane - Dagger double hits
-                    { 
+                    if (_v.Caster.PlayerIndex == CharacterId.Zidane && TranceSeekCharacterMechanic.ZidaneDagger(_v.Caster)) // Zidane - Dagger double hits
+                    {
+                        Log.Message("héhé !");
                         _v.Target.HpDamage /= 2;
                         if (_v.Command.Data.info.effect_counter == 0)
                             _v.Command.AbilityCategory -= 64; // Hit Anim off
@@ -337,7 +339,7 @@ namespace Memoria.Scripts.TranceSeek
                 else if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.MasterThief_Boosted) && slot == 1)
                     casterState.Zidane.ItemMugMasterThief = 2;
 
-                if (_v.Caster.PlayerIndex == CharacterId.Zidane && ff9item._FF9Item_Data[FF9StateSystem.Common.FF9.player[(CharacterId)_v.Caster.Data.bi.slot_no].equip.Weapon].shape == 2)
+                if (_v.Caster.PlayerIndex == CharacterId.Zidane && !TranceSeekCharacterMechanic.ZidaneDagger(_v.Caster))
                 {
                     UiState.SetBattleFollowFormatMessage(BattleMesages.Stole, FF9TextTool.ItemName(_v.Context.ItemSteal) + " X 2");
                     TranceSeekCharacterMechanic.Hehe(_v, false);
@@ -346,7 +348,7 @@ namespace Memoria.Scripts.TranceSeek
             else
             {
                 BattleItem.AddToInventory(_v.Context.ItemSteal);
-                if (_v.Caster.PlayerIndex == CharacterId.Zidane && ff9item._FF9Item_Data[FF9StateSystem.Common.FF9.player[(CharacterId)_v.Caster.Data.bi.slot_no].equip.Weapon].shape == 2)
+                if (_v.Caster.PlayerIndex == CharacterId.Zidane && !TranceSeekCharacterMechanic.ZidaneDagger(_v.Caster))
                 {
                     UiState.SetBattleFollowFormatMessage(BattleMesages.Stole, FF9TextTool.ItemName(_v.Context.ItemSteal));
                     TranceSeekCharacterMechanic.Hehe(_v, false);
@@ -361,7 +363,7 @@ namespace Memoria.Scripts.TranceSeek
 
             var casterState = _v.CasterState();
 
-            if (ff9item._FF9Item_Data[FF9StateSystem.Common.FF9.player[(CharacterId)_v.Caster.Data.bi.slot_no].equip.Weapon].shape == 1 && _v.Command.Data.info.effect_counter == 2)
+            if (TranceSeekCharacterMechanic.ZidaneDagger(_v.Caster) && _v.Command.Data.info.effect_counter == 2)
             {
                 if (casterState.Zidane.FirstItemMug != RegularItem.NoItem || casterState.Zidane.SecondItemMug != RegularItem.NoItem)
                 {
@@ -399,7 +401,7 @@ namespace Memoria.Scripts.TranceSeek
             else
                 bonusgil = (int)(GameRandom.Next16() % (btl_util.getEnemyPtr(_v.Target).bonus_gil / 8));
 
-            if (ff9item._FF9Item_Data[FF9StateSystem.Common.FF9.player[(CharacterId)_v.Caster.Data.bi.slot_no].equip.Weapon].shape == 1 && _v.Command.Data.info.effect_counter != 2)
+            if (TranceSeekCharacterMechanic.ZidaneDagger(_v.Caster) && _v.Command.Data.info.effect_counter != 2)
             {
                 casterState.Zidane.StealGil = bonusgil;
             }

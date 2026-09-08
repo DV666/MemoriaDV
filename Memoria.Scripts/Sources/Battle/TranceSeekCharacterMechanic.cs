@@ -6,6 +6,8 @@ using Memoria.Database;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
+using System.Reflection;
 using static Memoria.Scripts.TranceSeek.TranceSeekBattleDictionary;
 
 namespace Memoria.Scripts.TranceSeek
@@ -216,29 +218,64 @@ namespace Memoria.Scripts.TranceSeek
             }
         }
 
+        private static readonly Func<BattleHUD, BattleCommandId> GetCurrentCommandId = CreateCurrentCommandIdGetter();
+        private static readonly Action<BattleHUD> DisplayCommand = CreateDisplayCommandAction();
+
+        private static Func<BattleHUD, BattleCommandId> CreateCurrentCommandIdGetter()
+        {
+            FieldInfo field = typeof(BattleHUD).GetField("_currentCommandId", BindingFlags.Instance | BindingFlags.NonPublic);
+            if (field == null)
+                return _ => BattleCommandId.None;
+
+            ParameterExpression param = Expression.Parameter(typeof(BattleHUD), "hud");
+            MemberExpression member = Expression.Field(param, field);
+            return Expression.Lambda<Func<BattleHUD, BattleCommandId>>(member, param).Compile();
+        }
+
+        private static Action<BattleHUD> CreateDisplayCommandAction()
+        {
+            MethodInfo method = typeof(BattleHUD).GetMethod("DisplayCommand", BindingFlags.Instance | BindingFlags.NonPublic);
+            if (method == null)
+                return _ => { };
+
+            ParameterExpression param = Expression.Parameter(typeof(BattleHUD), "hud");
+            MethodCallExpression call = Expression.Call(param, method);
+            return Expression.Lambda<Action<BattleHUD>>(call, param).Compile();
+        }
+
         public static Boolean SteinerMechanic(BattleUnit unit)
         {
             var StateDict = GetState(unit.Data);
 
-            if (UIManager.Input.GetKey(Control.RightTrigger) && StateDict.Steiner.PlutoStackUsed > 0 && !StateDict.Steiner.TriggerOneTime && unit.Data.bi.line_no == UIManager.Battle.CurrentPlayerIndex)
+            if (unit.Data.bi.line_no == UIManager.Battle.CurrentPlayerIndex)
             {
-                StateDict.Steiner.TriggerOneTime = true;
-                StateDict.Steiner.PlutoStackUsed--;
-                StateDict.Steiner.PlutoStackRemain++;
+                bool isSwordActMenuOpen = UIManager.Battle.AbilityPanel.activeSelf && GetCurrentCommandId(UIManager.Battle) == BattleCommandId.SwordAct;
 
-                FF9TextTool.SetCommandName(BattleCommandId.SwordAct, TranceSeekBattleCommand.SwdArtCMDNameVanilla[Localization.CurrentDisplaySymbol] + " (" + StateDict.Steiner.PlutoStackRemain + "/" + (StateDict.Steiner.PlutoStackUsed + StateDict.Steiner.PlutoStackRemain) + ")");
-                UIManager.Battle.OnLocalize();
-                SoundLib.PlaySoundEffect(1577);
-            }
-            else if (UIManager.Input.GetKey(Control.LeftTrigger) && StateDict.Steiner.PlutoStackRemain > 0 && !StateDict.Steiner.TriggerOneTime && unit.Data.bi.line_no == UIManager.Battle.CurrentPlayerIndex)
-            {
-                StateDict.Steiner.TriggerOneTime = true;
-                StateDict.Steiner.PlutoStackUsed++;
-                StateDict.Steiner.PlutoStackRemain--;
+                if (isSwordActMenuOpen)
+                {
+                    if (UIManager.Input.GetKey(Control.Left) && StateDict.Steiner.PlutoStackUsed > 0 && !StateDict.Steiner.TriggerOneTime)
+                    {
+                        StateDict.Steiner.TriggerOneTime = true;
+                        StateDict.Steiner.PlutoStackUsed--;
+                        StateDict.Steiner.PlutoStackRemain++;
 
-                FF9TextTool.SetCommandName(BattleCommandId.SwordAct, TranceSeekBattleCommand.SwdArtCMDNameVanilla[Localization.CurrentDisplaySymbol] + " (" + StateDict.Steiner.PlutoStackRemain + "/" + (StateDict.Steiner.PlutoStackUsed + StateDict.Steiner.PlutoStackRemain) + ")");
-                UIManager.Battle.OnLocalize();
-                SoundLib.PlaySoundEffect(1577);
+                        FF9TextTool.SetCommandName(BattleCommandId.SwordAct, TranceSeekBattleCommand.SwdArtCMDNameVanilla[Localization.CurrentDisplaySymbol] + " (" + StateDict.Steiner.PlutoStackRemain + "/" + (StateDict.Steiner.PlutoStackUsed + StateDict.Steiner.PlutoStackRemain) + ")");
+
+                        DisplayCommand(UIManager.Battle);
+                        SoundLib.PlaySoundEffect(1577);
+                    }
+                    else if (UIManager.Input.GetKey(Control.Right) && StateDict.Steiner.PlutoStackRemain > 0 && !StateDict.Steiner.TriggerOneTime)
+                    {
+                        StateDict.Steiner.TriggerOneTime = true;
+                        StateDict.Steiner.PlutoStackUsed++;
+                        StateDict.Steiner.PlutoStackRemain--;
+
+                        FF9TextTool.SetCommandName(BattleCommandId.SwordAct, TranceSeekBattleCommand.SwdArtCMDNameVanilla[Localization.CurrentDisplaySymbol] + " (" + StateDict.Steiner.PlutoStackRemain + "/" + (StateDict.Steiner.PlutoStackUsed + StateDict.Steiner.PlutoStackRemain) + ")");
+
+                        DisplayCommand(UIManager.Battle);
+                        SoundLib.PlaySoundEffect(1577);
+                    }
+                }
             }
 
             if (StateDict.Steiner.PlutoStackUsed > 0)
@@ -246,7 +283,7 @@ namespace Memoria.Scripts.TranceSeek
             else
                 unit.UILabelHP = unit.CurrentHp.ToString();
 
-            if (!UIManager.Input.GetKey(Control.LeftTrigger) && !UIManager.Input.GetKey(Control.RightTrigger)) // Prevent to do it quickly
+            if (!UIManager.Input.GetKey(Control.Left) && !UIManager.Input.GetKey(Control.Right))
                 StateDict.Steiner.TriggerOneTime = false;
 
             return true;
@@ -281,6 +318,7 @@ namespace Memoria.Scripts.TranceSeek
                 caster =>
                 {
                     unit.State().Steiner.PlutoStackUsed = 0;
+                    unit.State().Steiner.Authority = 0;
                 }
             );
         }
@@ -465,17 +503,6 @@ namespace Memoria.Scripts.TranceSeek
                         Vivi_TSVar.NumberTargets = 0;
                 }
             }
-        }
-
-        private static Int32 GetViviSpellFromSteinerMagicSword(Int32 steinerAbilityId)
-        {
-            foreach (BattleMagicSwordSet magicSet in FF9BattleDB.MagicSwordData.Values)
-            {
-                Int32 index = Array.IndexOf(magicSet.UnlockedAbilities, steinerAbilityId);
-                if (index >= 0 && index < magicSet.BaseAbilities.Length)
-                    return magicSet.BaseAbilities[index];
-            }
-            return steinerAbilityId;
         }
 
         public static void EikoMougMechanic(BattleCalculator v)

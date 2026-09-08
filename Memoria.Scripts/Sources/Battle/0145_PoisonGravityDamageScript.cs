@@ -25,7 +25,7 @@ namespace Memoria.Scripts.TranceSeek
             SB2_PATTERN sb2Pattern = FF9StateSystem.Battle.FF9Battle.btl_scene.PatAddr[FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum];
             for (Int32 i = 0; i < ImmuneGravity.GetLength(0); i++)
             {
-                if (FF9StateSystem.Battle.battleMapIndex == ImmuneGravity[i, 0] && sb2Pattern.Monster[_v.Target.Data.bi.slot_no].TypeNo == ImmuneGravity[i, 1])
+                if (FF9StateSystem.Battle.battleMapIndex == ImmuneGravity[i, 0] && sb2Pattern.Monster[_v.Target.GetSlotNo()].TypeNo == ImmuneGravity[i, 1])
                 {
                     _v.Context.Flags = BattleCalcFlags.Guard;
                     return;

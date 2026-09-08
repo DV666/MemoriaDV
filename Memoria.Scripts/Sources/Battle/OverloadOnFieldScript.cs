@@ -102,14 +102,14 @@ namespace Memoria.Scripts.TranceSeek
 
         private struct FollowerData
         {
-            public int ModelId;
+            public string ModelId;
             public string AnimIdle;
             public string AnimWalk;
             public string AnimRun;
             public string AnimInactive;
             public HashSet<Int32> BlackListModelId;
 
-            public FollowerData(int modelName, string animIdle, string animWalk, string animRun, string animInactive, HashSet<Int32> blackListModelId)
+            public FollowerData(string modelName, string animIdle, string animWalk, string animRun, string animInactive, HashSet<Int32> blackListModelId)
             {
                 ModelId = modelName;
                 AnimIdle = animIdle;
@@ -148,19 +148,19 @@ namespace Memoria.Scripts.TranceSeek
 
         private Dictionary<CharacterId, FollowerData> characterDB = new Dictionary<CharacterId, FollowerData>()
         {
-            { CharacterId.Zidane, new FollowerData(98, "ANH_MAIN_F0_ZDN_IDLE", "ANH_MAIN_F0_ZDN_WALK", "ANH_MAIN_F0_ZDN_RUN", "ANH_MAIN_F0_ZDN_BREAK1_XARM", new HashSet<Int32>(){98, 532, 203, 569, 310, 285, 5414}) },
-            { CharacterId.Vivi, new FollowerData(8, "ANH_MAIN_F0_VIV_IDLE", "ANH_MAIN_F0_VIV_WALK", "ANH_MAIN_F0_VIV_RUN", "ANH_MAIN_F0_VIV_BREAK1", new HashSet<Int32>(){5415, 8, 662}) },
-            { CharacterId.Garnet, new FollowerData(185, "ANH_MAIN_F0_GRN_IDLE", "ANH_MAIN_F0_GRN_WALK", "ANH_MAIN_F0_GRN_RUN", "ANH_MAIN_F0_GRN_BREAK_2", new HashSet<Int32>(){526, 532, 557, 202, 205, 666, 557, 671, 309, 281, 283, 287, 288, 185}) },
-            { CharacterId.Steiner, new FollowerData(5489, "ANH_MAIN_F0_STN_IDLE", "ANH_MAIN_F0_STN_WALK", "ANH_MAIN_F0_STN_RUN", "ANH_MAIN_F0_STN_BREAK_1", new HashSet<Int32>(){286, 655, 5489, 658, 526}) },
-            { CharacterId.Freya, new FollowerData(192, "ANH_MAIN_F0_FRJ_IDLE", "ANH_MAIN_F0_FRJ_WALK", "ANH_MAIN_F0_FRJ_RUN", "ANH_MAIN_F0_FRJ_DANCE_IDLE", new HashSet<Int32>(){290, 297, 192}) },
-            { CharacterId.Quina, new FollowerData(273, "ANH_MAIN_F0_KUI_IDLE", "ANH_MAIN_F0_KUI_WALK", "ANH_MAIN_F0_KUI_RUN", "ANH_MAIN_F0_KUI_BERO_1", new HashSet<Int32>(){289, 273, 295}) },
-            { CharacterId.Eiko, new FollowerData(443, "ANH_MAIN_F0_EIK_IDLE", "ANH_MAIN_F0_EIK_WALK", "ANH_MAIN_F0_EIK_RUN", "ANH_MAIN_F0_EIK_BREAK_2", new HashSet<Int32>(){284, 291, 443, 570}) },
-            { CharacterId.Amarant, new FollowerData(509, "ANH_MAIN_F0_SLM_IDLE", "ANH_MAIN_F0_SLM_WALK", "ANH_MAIN_F0_SLM_RUN", "ANH_MAIN_F0_SLM_BYE", new HashSet<Int32>(){572, 509, 444}) },
-            { CharacterId.Cinna, new FollowerData(107, "ANH_SUB_F0_CNA_IDLE", "ANH_SUB_F0_CNA_WALK", "ANH_SUB_F0_CNA_RUN", "ANH_SUB_F0_CNA_SIGN", new HashSet<Int32>(){39, 107, 661}) },
-            { CharacterId.Marcus, new FollowerData(109, "ANH_SUB_F0_MRC_IDLE", "ANH_SUB_F0_MRC_WALK", "ANH_SUB_F0_MRC_RUN", "ANH_SUB_F0_MRC_TAN", new HashSet<Int32>(){45, 109, 660}) },
-            { CharacterId.Blank, new FollowerData(5467, "ANH_SUB_F0_BLN_IDLE", "ANH_SUB_F0_BLN_WALK", "ANH_SUB_F0_BLN_RUN", "ANH_SUB_F0_BLN_TAN", new HashSet<Int32>(){42, 608, 639, 5467, 190, 659}) },
-            { CharacterId.Beatrix, new FollowerData(204, "ANH_SUB_F0_BTX_IDLE", "ANH_SUB_F0_BTX_WALK", "ANH_SUB_F0_BTX_RUN", "ANH_SUB_F0_BTX_HAIR", new HashSet<Int32>(){427, 204, 358}) },
-            { (CharacterId)12, new FollowerData(368, "ANH_SUB_F0_SBW_IDLE", "ANH_SUB_F0_SBW_WALK", "ANH_SUB_F0_SBW_RUN", "ANH_SUB_F0_SBW_GIVE_ME", new HashSet<Int32>(){427, 204, 368}) }
+            { CharacterId.Zidane, new FollowerData("GEO_MAIN_F0_ZDN", "ANH_MAIN_F0_ZDN_IDLE", "ANH_MAIN_F0_ZDN_WALK", "ANH_MAIN_F0_ZDN_RUN", "ANH_MAIN_F0_ZDN_BREAK1_XARM", new HashSet<Int32>(){98, 532, 203, 569, 310, 285, 5414}) },
+            { CharacterId.Vivi, new FollowerData("GEO_MAIN_F0_VIV", "ANH_MAIN_F0_VIV_IDLE", "ANH_MAIN_F0_VIV_WALK", "ANH_MAIN_F0_VIV_RUN", "ANH_MAIN_F0_VIV_BREAK1", new HashSet<Int32>(){5415, 8, 662}) },
+            { CharacterId.Garnet, new FollowerData("GEO_MAIN_F0_GRN", "ANH_MAIN_F0_GRN_IDLE", "ANH_MAIN_F0_GRN_WALK", "ANH_MAIN_F0_GRN_RUN", "ANH_MAIN_F0_GRN_BREAK_2", new HashSet<Int32>(){526, 532, 557, 202, 205, 666, 557, 671, 309, 281, 283, 287, 288, 185}) },
+            { CharacterId.Steiner, new FollowerData("GEO_MAIN_F0_STN", "ANH_MAIN_F0_STN_IDLE", "ANH_MAIN_F0_STN_WALK", "ANH_MAIN_F0_STN_RUN", "ANH_MAIN_F0_STN_BREAK_1", new HashSet<Int32>(){286, 655, 5489, 658, 526}) },
+            { CharacterId.Freya, new FollowerData("GEO_MAIN_F0_FRJ", "ANH_MAIN_F0_FRJ_IDLE", "ANH_MAIN_F0_FRJ_WALK", "ANH_MAIN_F0_FRJ_RUN", "ANH_MAIN_F0_FRJ_DANCE_IDLE", new HashSet<Int32>(){290, 297, 192}) },
+            { CharacterId.Quina, new FollowerData("GEO_MAIN_F0_KUI", "ANH_MAIN_F0_KUI_IDLE", "ANH_MAIN_F0_KUI_WALK", "ANH_MAIN_F0_KUI_RUN", "ANH_MAIN_F0_KUI_BERO_1", new HashSet<Int32>(){289, 273, 295}) },
+            { CharacterId.Eiko, new FollowerData("GEO_MAIN_F0_EIK", "ANH_MAIN_F0_EIK_IDLE", "ANH_MAIN_F0_EIK_WALK", "ANH_MAIN_F0_EIK_RUN", "ANH_MAIN_F0_EIK_BREAK_2", new HashSet<Int32>(){284, 291, 443, 570}) },
+            { CharacterId.Amarant, new FollowerData("GEO_MAIN_F0_SLM", "ANH_MAIN_F0_SLM_IDLE", "ANH_MAIN_F0_SLM_WALK", "ANH_MAIN_F0_SLM_RUN", "ANH_MAIN_F0_SLM_BYE", new HashSet<Int32>(){572, 509, 444}) },
+            { CharacterId.Cinna, new FollowerData("GEO_SUB_F0_CNA", "ANH_SUB_F0_CNA_IDLE", "ANH_SUB_F0_CNA_WALK", "ANH_SUB_F0_CNA_RUN", "ANH_SUB_F0_CNA_SIGN", new HashSet<Int32>(){39, 107, 661}) },
+            { CharacterId.Marcus, new FollowerData("GEO_SUB_F0_MRC", "ANH_SUB_F0_MRC_IDLE", "ANH_SUB_F0_MRC_WALK", "ANH_SUB_F0_MRC_RUN", "ANH_SUB_F0_MRC_TAN", new HashSet<Int32>(){45, 109, 660}) },
+            { CharacterId.Blank, new FollowerData("GEO_SUB_F0_BLN", "ANH_SUB_F0_BLN_IDLE", "ANH_SUB_F0_BLN_WALK", "ANH_SUB_F0_BLN_RUN", "ANH_SUB_F0_BLN_TAN", new HashSet<Int32>(){42, 608, 639, 5467, 190, 659}) },
+            { CharacterId.Beatrix, new FollowerData("GEO_SUB_F0_BTX", "ANH_SUB_F0_BTX_IDLE", "ANH_SUB_F0_BTX_WALK", "ANH_SUB_F0_BTX_RUN", "ANH_SUB_F0_BTX_HAIR", new HashSet<Int32>(){427, 204, 358}) },
+            { (CharacterId)12, new FollowerData("GEO_SUB_F0_SBW", "ANH_SUB_F0_SBW_IDLE", "ANH_SUB_F0_SBW_WALK", "ANH_SUB_F0_SBW_RUN", "ANH_SUB_F0_SBW_GIVE_ME", new HashSet<Int32>(){427, 204, 368}) }
         };
 
         private Dictionary<CharacterId, Follower> followerPool = new Dictionary<CharacterId, Follower>();
@@ -766,11 +766,7 @@ namespace Memoria.Scripts.TranceSeek
             f.AnimInactive = characterDB[id].AnimInactive;
             ResetTimerInactiveAnimation(f);
 
-            if (!FF9BattleDB.GEO.TryGetValue(characterDB[id].ModelId, out String modelName))
-            {
-                Log.Warning($"[Trance Seek] ERROR : can't load follower with ModelId : {characterDB[id].ModelId}...");
-                return null;
-            }
+            string modelName = characterDB[id].ModelId;
 
             f.Go = ModelFactory.CreateModel(modelName, false, true, Configuration.Graphics.ElementsSmoothTexture);
             GeoTexAnim.addTexAnim(f.Go, modelName);
