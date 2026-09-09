@@ -21,3 +21,5 @@ ImmunityStatus;13;FieldMaps/fbg_n42_pdmn_map732_pd_elv_0/926.sps;EmbeddedAsset/B
 Old;14;FieldMaps/fbg_n09_cshp_map141_ca_dck_1/443.sps;EmbeddedAsset/BattleMap/Status/Old/Old.png;1;1;1
 ReiWrath;15;FieldMaps/fbg_n01_alxt_map821a_at_msb_b/2334.sps;EmbeddedAsset/BattleMap/Status/ReiWrath/ReiWrath.png;1;1;1
 QuickAttack;16;FieldMaps/fbg_n27_fslr_map467_fr_sbw_0/1305.sps;EmbeddedAsset/BattleMap/Status/VisualEffect/QuickAttack/QuickAttack.png;2;2;1
+MysticVeil;17;FieldMaps/fbg_n19_clir_map389_cy_twn_h/279.sps;EmbeddedAsset/BattleMap/Status/MysticVeil/MysticVeil.png;1;2;1
+SoulDrain;18;FieldMaps/fbg_n19_clir_map389_cy_twn_h/279.sps;EmbeddedAsset/BattleMap/Status/SoulDrain/SoulDrain.png;1;2;1

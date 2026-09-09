@@ -719,7 +719,7 @@ namespace Memoria.Scripts.TranceSeek
                     v.Target.HpDamage /= 2;
                 else if (CasterWeaponShape == 42 && v.Target.HpDamage > 0 && (v.Command.ScriptId == 48 || v.Command.ScriptId == 83)) // Heavy Spear (on Jump)
                     v.Target.HpDamage += ((v.Target.HpDamage * BonusDamageFromWeapon(v.Caster.Weapon)) / 100);
-                else if ((CasterWeaponShape == 56 || CasterWeaponShape == 131) && v.Target.HpDamage > 0 && v.Command.Id != BattleCommandId.Item && v.Command.Id != BattleCommandId.AutoPotion) // Axe + Big Fish
+                else if ((CasterWeaponShape == 121 || CasterWeaponShape == 131) && v.Target.HpDamage > 0 && v.Command.Id != BattleCommandId.Item && v.Command.Id != BattleCommandId.AutoPotion) // Axe + Big Fish
                     v.Target.HpDamage = UnityEngine.Random.Range(v.Target.HpDamage / 10, v.Target.HpDamage);
                 else if (v.Caster.Weapon == GoblinSword && v.Caster.Level == v.Target.Level && v.Command.AbilityId == BattleAbilityId.Attack)
                     v.Target.HpDamage = v.Target.HpDamage * 3;
@@ -843,6 +843,7 @@ namespace Memoria.Scripts.TranceSeek
                         int PotionHeal = v.Target.HasSupportAbility(SupportAbility1.Chemist) ? 400 : 200;
                         if (!TargetPreventStatus && v.Caster.IsPlayer != v.Target.IsPlayer && Target_TSVar.SpecialItem.EmergencySatchel > 0 && (v.Target.MaximumHp - v.Target.CurrentHp + v.Target.HpDamage) > PotionHeal && v.Command.Id <= BattleCommandId.BoundaryCheck)
                         {
+                            ff9item.FF9Item_Add(RegularItem.Potion, 1);
                             btl_cmd.SetCounter(v.Target.Data, BattleCommandId.AutoPotion, (int)RegularItem.Potion, v.Target.Id);
                             Target_TSVar.SpecialItem.EmergencySatchel--;
                         }

@@ -89,8 +89,8 @@ ElseThread: Sync
 	WaitTurn: Char=Caster
 EndThread
 WaitTurn: Char=Caster ; Reflect=False
-StartThread: Condition=GetMemoriaDictionary(1050, 0) > 0
-	StartThread: Condition=CasterWeaponId == RegularItem_FlameStaff && !CheckAnyStatus(TargetCurrentStatus, BattleStatus_BattleEndFull)
+StartThread: Condition=GetMemoriaDictionary(1050, 0) > 0 && !CheckAnyStatus(TargetCurrentStatus, BattleStatus_BattleEndFull)
+	StartThread: Condition=CasterWeaponId == RegularItem_FlameStaff
 		StartThread: Condition=CheckAnyStatus(TargetCurrentStatus, BattleStatus_Reflect)
 			StartThread: Target=AllPlayers
 				StartThread: Target=RandomTarget
@@ -106,8 +106,7 @@ StartThread: Condition=GetMemoriaDictionary(1050, 0) > 0
 			PlaySFX: SFX=Fire__Single ; Reflect=True
 			WaitSFXDone: SFX=Fire__Single ; Reflect=True
 		EndThread
-	EndThread
-	StartThread: Condition=CasterWeaponId == RegularItem_IceStaff && !CheckAnyStatus(TargetCurrentStatus, BattleStatus_BattleEndFull)
+	ElseThread: Condition=CasterWeaponId == RegularItem_IceStaff
 		StartThread: Condition=CheckAnyStatus(TargetCurrentStatus, BattleStatus_Reflect)
 			StartThread: Target=AllPlayers
 				StartThread: Target=RandomTarget
@@ -123,8 +122,7 @@ StartThread: Condition=GetMemoriaDictionary(1050, 0) > 0
 			PlaySFX: SFX=Bubbles ; Reflect=True
 			WaitSFXDone: SFX=Bubbles ; Reflect=True
 		EndThread
-	EndThread
-	StartThread: Condition=CasterWeaponId == RegularItem_LightningStaff && !CheckAnyStatus(TargetCurrentStatus, BattleStatus_BattleEndFull)
+	ElseThread: Condition=CasterWeaponId == RegularItem_LightningStaff
 		StartThread: Condition=CheckAnyStatus(TargetCurrentStatus, BattleStatus_Reflect)
 			StartThread: Target=AllPlayers
 				StartThread: Target=RandomTarget
@@ -140,8 +138,7 @@ StartThread: Condition=GetMemoriaDictionary(1050, 0) > 0
 			PlaySFX: SFX=Thunder__Single ; Reflect=True
 			WaitSFXDone: SFX=Thunder__Single ; Reflect=True
 		EndThread
-	EndThread
-	StartThread: Condition=CasterWeaponId == RegularItem_StardustRod && !CheckAnyStatus(TargetCurrentStatus, BattleStatus_BattleEndFull)
+	ElseThread: Condition=CasterWeaponId == RegularItem_StardustRod
 		StartThread: Condition=CheckAnyStatus(TargetCurrentStatus, BattleStatus_Reflect)
 			StartThread: Target=AllPlayers
 				StartThread: Target=RandomTarget
@@ -156,6 +153,22 @@ StartThread: Condition=GetMemoriaDictionary(1050, 0) > 0
 			WaitSFXLoaded: SFX=Darkness ; Reflect=True
 			PlaySFX: SFX=Darkness ; Reflect=True
 			WaitSFXDone: SFX=Darkness ; Reflect=True
+		EndThread
+	ElseThread
+		StartThread: Condition=CheckAnyStatus(TargetCurrentStatus, BattleStatus_Reflect)
+			StartThread: Target=AllPlayers
+				StartThread: Target=RandomTarget
+					LoadSFX: SFX=Dummy ; Reflect=True
+					WaitSFXLoaded: SFX=Dummy ; Reflect=True
+					PlaySFX: SFX=Dummy ; Reflect=True
+					WaitSFXDone: SFX=Dummy ; Reflect=True
+				EndThread
+			EndThread
+		ElseThread
+			LoadSFX: SFX=Dummy ; Reflect=True
+			WaitSFXLoaded: SFX=Dummy ; Reflect=True
+			PlaySFX: SFX=Dummy ; Reflect=True
+			WaitSFXDone: SFX=Dummy ; Reflect=True
 		EndThread
 	EndThread
 EndThread

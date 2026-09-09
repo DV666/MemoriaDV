@@ -19,7 +19,7 @@ WaitMove: Char=Caster
 StartThread
 	Wait: Time=3
 	WaitSFXLoaded: SFX=SFX_Attack_Duel_Claws
-	PlaySFX: SFX=SFX_Attack_Duel_Claws ; MeshColors=(0.82735, 0.00458, 0.9452)
+	PlaySFX: SFX=SFX_Attack_Duel_Claws ; MeshColors=(0.82735, 0.00458, 0.9452) ; SkipSequence
 	EffectPoint: Char=AllTargets ; Type=Effect
 	PlaySound: Sound=WeaponAttack
 	StartThread: Condition=!IsAttackMiss

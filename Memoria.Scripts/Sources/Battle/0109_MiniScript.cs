@@ -22,7 +22,7 @@ namespace Memoria.Scripts.TranceSeek
         {
             if (_v.Target.IsUnderAnyStatus(BattleStatus.Mini) || _v.Command.HitRate == 255)
             {
-                TranceSeekAPI.TryAlterCommandStatuses(_v);
+                _v.Target.RemoveStatus(BattleStatus.Mini);
                 return;
             }
 

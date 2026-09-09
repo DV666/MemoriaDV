@@ -7,14 +7,15 @@ StartThread: Condition=(CasterWeaponId == 57 || CasterWeaponId == 58) && TargetC
 	Message: Priority=4 ; Title=True ; Reflect=False ; TextUS=[STRT=28,1]Pray ; TextUK=[STRT=28,1]Pray ; TextJP=[STRT=28,1]Pray ; TextES=[STRT=28,1]Pray ; TextFR=[STRT=36,1]Prière ; TextGR=[STRT=28,1]Pray ; TextIT=[STRT=28,1]Pray
 	Channel
 	PlayAnimation: Char=Caster ; Anim=MP_CHANT ; Loop=True
+	LoadSFX: SFX=Cure__Single ; Reflect=True ; UseCamera=False
+	WaitSFXLoaded: SFX=Cure__Single ; Reflect=True
 	WaitAnimation: Char=Caster
 	PlayAnimation: Char=Caster ; Anim=MP_MAGIC
 	WaitAnimation: Char=Caster
 	StartThread: Target=AllPlayers ; Sync
 		StartThread: TargetLoop=True ; Chain=True ; Sync=True
-			LoadSFX: SFX=Cure__Single ; Reflect=True ; UseCamera=False
-			WaitSFXLoaded: SFX=Cure__Single ; Reflect=True
-			PlaySFX: SFX=Cure__Single ; Reflect=True ; MeshColors=(0.0, 0.0, 0.5); SkipSequence
+			Wait: Time=2
+			PlaySFX: SFX=Cure__Single ; Reflect=True ; MeshColors=(0.5, 0.5, 1.5); SkipSequence
 			PlaySound: Sound=16
 			PlaySound: Sound=6
 			PlaySound: Sound=78

@@ -205,7 +205,7 @@ namespace Memoria.Scripts.TranceSeek
 
         private static readonly HashSet<Int32> BlackListFieldId =
             new HashSet<Int32>(new[] { 70, 152, 209, 260, 261, 453, 454, 506, 606, 655, 767, 768, 769, 811, 813, 814, 816, 954, 955, 1400, 1401, 1402, 1403, 1404, 1462, 1609, 1658, 1659, 1704,
-            1800, 2055, 2200, 2204, 2261, 2608, 2700, 2701, 2702, 2703, 2704, 2750, 2751, 2752, 2753, 2754, 2755, 2756, 2850, 2851, 2852, 2853, 2854, 2855, 2856, 2951, 2952, 2953,
+            1800, 2055, 2200, 2204, 2261, 2608, 2700, 2701, 2702, 2703, 2704, 2750, 2751, 2752, 2753, 2754, 2755, 2756, 2850, 2851, 2852, 2853, 2854, 2855, 2856, 2950, 2951, 2952, 2953,
             2928, 2929, 2930, 2931, 2932, 2933, 2934, 3000, 3001, 3002, 3003, 3004, 3005, 3006, 3007, 3008, 3009, 3010, 3011, 3012}); // End of the game
 
         private static readonly HashSet<Int32> ModelCantGetFollowers = new HashSet<Int32>(new[] { 317, 312, 320, 321, 308 });
@@ -341,6 +341,11 @@ namespace Memoria.Scripts.TranceSeek
                         return scenario == 3140;
                     case 652:
                         return scenario < 3700;
+                    case 656:
+                    case 657:
+                    case 658:
+                    case 659:
+                        return GetLeaderModelID() == 273; // Frog Mini game
                     case 662:
                         return GetLeaderModelID() == 273 && scenario == 5690; // Quina missing after the dialog (when the Fossil Roo opens)
                     case 908:
@@ -371,6 +376,8 @@ namespace Memoria.Scripts.TranceSeek
                         return scenario == 4910;
                     case 1153:
                         return (scenario == 4980 || scenario == 5000);
+                    case 1205:
+                        return scenario == 5075;
                     case 1250:
                         return scenario == 5300;
                     case 1355:

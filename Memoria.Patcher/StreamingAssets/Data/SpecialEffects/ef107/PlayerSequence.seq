@@ -21,7 +21,6 @@ StartThread: Condition=CasterWeaponId == 1152 && CasterLevel == TargetLevel
 		Wait: Time=1
 		WaitSFXLoaded: SFX=Goblin_Punch
 		PlaySFX: SFX=Goblin_Punch
-		EffectPoint: Char=AllTargets ; Type=Effect
 		StartThread: Condition=IsAttackCritical
 			PlaySound: Sound=WeaponAttack ; Pitch=1.25
 		ElseThread
