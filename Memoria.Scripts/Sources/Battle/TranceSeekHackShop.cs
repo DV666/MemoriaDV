@@ -21,6 +21,8 @@ namespace Memoria.Scripts.TranceSeek
         private ItemUI _cachedItemUI = null;
         private EquipUI _cachedEquipUI = null;
 
+        private static readonly HashSet<Int32> ShopBlackListed = new HashSet<Int32>(new[] { 8, 101 });
+
         private void Update()
         {
             _updateTimer += Time.deltaTime;
@@ -39,7 +41,7 @@ namespace Memoria.Scripts.TranceSeek
                 {
                     ShopUI.ShopType shopType = (ShopUI.ShopType)typeField.GetValue(_cachedShopUI);
 
-                    if (shopType == ShopUI.ShopType.Synthesis && _lastSortedShop != _cachedShopUI && _cachedShopUI.Id != 101)
+                    if (shopType == ShopUI.ShopType.Synthesis && _lastSortedShop != _cachedShopUI && !ShopBlackListed.Contains(_cachedShopUI.Id))
                     {
                         _lastSortedShop = _cachedShopUI;
                         SortAndRefreshSynthesisShop(_cachedShopUI);

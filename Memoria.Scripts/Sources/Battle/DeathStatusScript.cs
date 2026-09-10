@@ -81,6 +81,9 @@ namespace Memoria.DefaultScripts
                     Target_TSVar.Beatrix = new BeatrixPassives();
                     Target_TSVar.Beatrix.Braver = 0;
                 }
+
+                Target_TSVar.SpecialSA.OneTriggerSOS = 0; // Reset SOS trigger
+                TranceSeekCharacterMechanic.UpdateRedemptionHUD(Target); // Reset Redemption HUD
             }
             if (!target.HasSupportAbilityByIndex(TranceSeekSupportAbility.Expiation_Boosted)) // SA Expiation+
                 btl_stat.RemoveStatus(target, TranceSeekStatusId.Redemption);
@@ -97,12 +100,6 @@ namespace Memoria.DefaultScripts
             btl.bi.stop_anim = 0;
             btl.escape_key = 0;
             btl.killer_track = null;
-
-            if (Target.IsPlayer)
-            {
-                Target.State().SpecialSA.OneTriggerSOS = 0; // Reset SOS trigger
-                TranceSeekCharacterMechanic.UpdateRedemptionHUD(Target); // Reset Redemption HUD
-            }
 
             if (btl_mot.checkMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_DISABLE) || btl_mot.checkMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_DOWN_DISABLE))
             {

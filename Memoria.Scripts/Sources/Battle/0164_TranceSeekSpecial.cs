@@ -229,7 +229,7 @@ namespace Memoria.Scripts.TranceSeek
             }
             else if (_v.Command.HitRate == 133 && _v.Caster.Data.dms_geo_id == 593) // Polarity (+) with SPS effect (Black Waltz 3 broken)
             {
-                var Caster_TSVar = _v.CasterState();
+                var Target_TSVar = _v.TargetState();
 
                 _v.SetCommandAttack();
                 TranceSeekAPI.PenaltyCommandDividedAttack(_v);
@@ -249,7 +249,7 @@ namespace Memoria.Scripts.TranceSeek
                 sps.charTran = _v.Target.Data.gameObject.transform;
                 sps.boneTran = attachTransf;
                 sps.posOffset = Vector3.zero;
-                Caster_TSVar.PolaritySPS = sps;
+                Target_TSVar.PolaritySPS = sps;
                 FF9StateSystem.EventState.gEventGlobal[1305] = (byte)_v.Target.Id;
                 return;
             }

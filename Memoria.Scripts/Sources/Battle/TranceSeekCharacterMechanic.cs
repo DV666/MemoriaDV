@@ -557,7 +557,7 @@ namespace Memoria.Scripts.TranceSeek
                             }
                             case TranceSeekBattleAbility.MogAutoLife: // Mog AutoLife
                             {
-                                AddAA = Eiko.Level >= 35 && !Eiko.IsUnderAnyStatus(BattleStatus.AutoLife);
+                                AddAA = Eiko.Level >= 35 && !Eiko.IsUnderAnyStatus(BattleStatus.AutoLife) && Eiko.Accessory != TranceSeekRegularItem.HaloGhost;
                                 break;
                             }
                             case TranceSeekBattleAbility.MogEsuna: // Mog Esuna

@@ -49,6 +49,9 @@ namespace Memoria.Scripts.TranceSeek
                 return;
             }
 
+            if (FF9StateSystem.Battle.FF9Battle.btl_phase != FF9StateBattleSystem.PHASE_NORMAL)
+                return;
+
             if (FF9StateSystem.Battle.FF9Battle == null || FF9StateSystem.Battle.FF9Battle.btl_list == null)
                 return;
 

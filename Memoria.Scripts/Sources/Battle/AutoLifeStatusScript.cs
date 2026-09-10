@@ -1,4 +1,5 @@
 ﻿using Memoria.Data;
+using Memoria.Prime;
 using Memoria.Scripts.TranceSeek;
 using System;
 using System.Collections.Generic;
@@ -62,7 +63,7 @@ namespace Memoria.DefaultScripts
                 btl_stat.RemoveStatus(Target, BattleStatusId.Death);
             }
             BattleVoice.TriggerOnStatusChange(Target, BattleVoice.BattleMoment.Used, BattleStatusId.AutoLife);
-
+            OverloadOnBattleScriptEndScript.SOS_SA(Target, true);
             UnloadSPS();
             return true;
         }

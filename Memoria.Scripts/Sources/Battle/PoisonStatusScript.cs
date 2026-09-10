@@ -64,7 +64,7 @@ namespace Memoria.DefaultScripts
                 else
                     Target.Kill(PoisonInflicter);
 
-                if (InflicterNymphAccessory)
+                if (InflicterNymphAccessory && !Inflicter.IsUnderAnyStatus(BattleStatusConst.BattleEndFull))
                 {
                     uint healHP = damage >> 2;
                     Inflicter.CurrentHp = Math.Min(Inflicter.CurrentHp + healHP, Inflicter.MaximumHp);

@@ -5,16 +5,13 @@ StartThread: Condition=(CasterWeaponId == 57 || CasterWeaponId == 58) && TargetC
 	PlayAnimation: Char=Caster ; Anim=MP_IDLE_TO_CHANT
 	WaitAnimation: Char=Caster
 	Message: Priority=4 ; Title=True ; Reflect=False ; TextUS=[STRT=28,1]Pray ; TextUK=[STRT=28,1]Pray ; TextJP=[STRT=28,1]Pray ; TextES=[STRT=28,1]Pray ; TextFR=[STRT=36,1]Prière ; TextGR=[STRT=28,1]Pray ; TextIT=[STRT=28,1]Pray
-	Channel
 	PlayAnimation: Char=Caster ; Anim=MP_CHANT ; Loop=True
-	WaitAnimation: Char=Caster
-	PlayAnimation: Char=Caster ; Anim=MP_MAGIC
-	WaitAnimation: Char=Caster
 	StartThread: Target=AllPlayers ; Sync
-		StartThread: TargetLoop=True ; Chain=True ; Sync=True
+		StartThread: TargetLoop=True ; Chain=True ; Sync
+			Wait: Time=2
 			LoadSFX: SFX=Cure__Single ; Reflect=True ; UseCamera=False
 			WaitSFXLoaded: SFX=Cure__Single ; Reflect=True
-			PlaySFX: SFX=Cure__Single ; Reflect=True ; MeshColors=(0.0, 0.0, 0.5); SkipSequence
+			PlaySFX: SFX=Cure__Single ; Reflect=True ; MeshColors=(0.5, 0.5, 1.5); SkipSequence
 			PlaySound: Sound=16
 			PlaySound: Sound=6
 			PlaySound: Sound=78
@@ -23,26 +20,25 @@ StartThread: Condition=(CasterWeaponId == 57 || CasterWeaponId == 58) && TargetC
 				EffectPoint: Char=AllTargets ; Type=Effect
 				Wait: Time=22
 				EffectPoint: Char=Everyone ; Type=Figure
-			ElseThread: Sync=False
-				Wait: Time=22
+				Wait: Time=10
 			EndThread
 		EndThread
 	EndThread
-	WaitSFXDone: SFX=Cure__Single
+	Wait: Time=28
+	WaitAnimation: Char=Caster
+	PlayAnimation: Char=Caster ; Anim=ANH_MAIN_B0_002_PRAY3
+	WaitAnimation: Char=Caster
 ElseThread: Condition=(CasterWeaponId == 60 || CasterWeaponId == 61) && TargetCharacterIndex == CharacterId_Garnet ; Sync
 	PlayAnimation: Char=Caster ; Anim=MP_IDLE_TO_CHANT
 	WaitAnimation: Char=Caster
-	Message: Priority=4 ; Title=True ; Reflect=False ; TextUS=[STRT=28,1]Prayara ; TextUK=[STRT=28,1]Prayara ; TextJP=[STRT=28,1]Prayara ; TextES=[STRT=28,1]Prayara ; TextFR=[STRT=36,1]Prière + ; TextGR=[STRT=28,1]Prayara ; TextIT=[STRT=28,1]Prayara
-	Channel
+	Message: Priority=4 ; Title=True ; Reflect=False ; TextUS=[STRT=28,1]Pray ; TextUK=[STRT=28,1]Pray ; TextJP=[STRT=28,1]Pray ; TextES=[STRT=28,1]Pray ; TextFR=[STRT=36,1]Prière ; TextGR=[STRT=28,1]Pray ; TextIT=[STRT=28,1]Pray
 	PlayAnimation: Char=Caster ; Anim=MP_CHANT ; Loop=True
-	WaitAnimation: Char=Caster
-	PlayAnimation: Char=Caster ; Anim=MP_MAGIC
-	WaitAnimation: Char=Caster
 	StartThread: Target=AllPlayers ; Sync
-		StartThread: TargetLoop=True ; Chain=True ; Sync=True
+		StartThread: TargetLoop=True ; Chain=True ; Sync
+			Wait: Time=2
 			LoadSFX: SFX=Cura__Single ; Reflect=True ; UseCamera=False
 			WaitSFXLoaded: SFX=Cura__Single ; Reflect=True
-			PlaySFX: SFX=Cura__Single ; Reflect=True ; MeshColors=(0.0, 0.0, 0.5) ; SkipSequence
+			PlaySFX: SFX=Cura__Single ; Reflect=True ; MeshColors=(0.5, 0.5, 1.5); SkipSequence
 			PlaySound: Sound=448
 			PlaySound: Sound=442
 			PlaySound: Sound=434
@@ -51,26 +47,25 @@ ElseThread: Condition=(CasterWeaponId == 60 || CasterWeaponId == 61) && TargetCh
 				EffectPoint: Char=AllTargets ; Type=Effect
 				Wait: Time=32
 				EffectPoint: Char=Everyone ; Type=Figure
-			ElseThread: Sync=False
-				Wait: Time=32
+				Wait: Time=10
 			EndThread
 		EndThread
 	EndThread
-	WaitSFXDone: SFX=Cura__Single
+	Wait: Time=38
+	WaitAnimation: Char=Caster
+	PlayAnimation: Char=Caster ; Anim=ANH_MAIN_B0_002_PRAY3
+	WaitAnimation: Char=Caster
 ElseThread: Condition=(CasterWeaponId == 62 || CasterWeaponId == 63) && TargetCharacterIndex == CharacterId_Garnet ; Sync
 	PlayAnimation: Char=Caster ; Anim=MP_IDLE_TO_CHANT
 	WaitAnimation: Char=Caster
-	Message: Priority=4 ; Title=True ; Reflect=False ; TextUS=[STRT=28,1]Prayaga ; TextUK=[STRT=28,1]Prayaga ; TextJP=[STRT=28,1]Prayaga ; TextES=[STRT=28,1]Prayaga ; TextFR=[STRT=36,1]Prière X ; TextGR=[STRT=28,1]Prayaga ; TextIT=[STRT=28,1]Prayaga
-	Channel
+	Message: Priority=4 ; Title=True ; Reflect=False ; TextUS=[STRT=28,1]Pray ; TextUK=[STRT=28,1]Pray ; TextJP=[STRT=28,1]Pray ; TextES=[STRT=28,1]Pray ; TextFR=[STRT=36,1]Prière ; TextGR=[STRT=28,1]Pray ; TextIT=[STRT=28,1]Pray
 	PlayAnimation: Char=Caster ; Anim=MP_CHANT ; Loop=True
-	WaitAnimation: Char=Caster
-	PlayAnimation: Char=Caster ; Anim=MP_MAGIC
-	WaitAnimation: Char=Caster
-	StartThread: Target=AllPlayers ; Sync		
-		StartThread: TargetLoop=True ; Chain=True ; Sync=True
-			LoadSFX: SFX=Curaga__Single ; Reflect=True ; UseCamera=False ; Args=10
+	StartThread: Target=AllPlayers ; Sync
+		StartThread: TargetLoop=True ; Chain=True ; Sync
+			Wait: Time=2
+			LoadSFX: SFX=Curaga__Single ; Reflect=True ; UseCamera=False
 			WaitSFXLoaded: SFX=Curaga__Single ; Reflect=True
-			PlaySFX: SFX=Curaga__Single ; Reflect=True ; MeshColors=(0.0, 0.0, 0.5) ; SkipSequence
+			PlaySFX: SFX=Curaga__Single ; Reflect=True ; MeshColors=(0.5, 0.5, 1.5); SkipSequence
 			PlaySound: Sound=473
 			PlaySound: Sound=468
 			PlaySound: Sound=461
@@ -79,12 +74,14 @@ ElseThread: Condition=(CasterWeaponId == 62 || CasterWeaponId == 63) && TargetCh
 				EffectPoint: Char=AllTargets ; Type=Effect
 				Wait: Time=17
 				EffectPoint: Char=Everyone ; Type=Figure
-			ElseThread: Sync=False
-				Wait: Time=17
+				Wait: Time=10
 			EndThread
-		EndThread		
+		EndThread
 	EndThread
-	WaitSFXDone: SFX=Curaga__Single
+	Wait: Time=38
+	WaitAnimation: Char=Caster
+	PlayAnimation: Char=Caster ; Anim=ANH_MAIN_B0_002_PRAY3
+	WaitAnimation: Char=Caster
 ElseThread: Sync
 	LoadSFX: SFX=Player_Attack_Garnet_SH_Rod
 	PlayAnimation: Char=Caster ; Anim=MP_SET

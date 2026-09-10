@@ -517,6 +517,7 @@
     <Compile Include="Sources\Battle\TranceSeekCanaryFix.cs" />
     <Compile Include="Sources\Battle\TranceSeekHackShop.cs" />
     <Compile Include="Sources\Battle\TranceSeekMessages.cs" />
+    <Compile Include="Sources\Battle\SwitchWeaponTransition.cs" />
     <Compile Include="Sources\Battle\TranceSeekWatcher.cs" />
     <Compile Include="Sources\Battle\TranceSeekBattleDictionary.cs" />
     <Compile Include="Sources\Battle\TranceSeekCharacterMechanic.cs" />

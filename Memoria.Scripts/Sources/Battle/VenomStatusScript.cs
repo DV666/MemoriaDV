@@ -72,7 +72,7 @@ namespace Memoria.DefaultScripts
             else
                 Target.Kill(VenomInflicter);
 
-            if (InflicterNymphAccessory)
+            if (InflicterNymphAccessory && !Inflicter.IsUnderAnyStatus(BattleStatusConst.BattleEndFull))
             {
                 uint healHP = HPdamage >> 2;
                 uint healMP = MPdamage >> 2;

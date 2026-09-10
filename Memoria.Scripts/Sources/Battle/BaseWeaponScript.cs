@@ -143,7 +143,6 @@ namespace Memoria.Scripts.TranceSeek
                     TranceSeekAPI.RaiseTrouble(_v);
                     if (_v.Caster.PlayerIndex == CharacterId.Zidane && TranceSeekCharacterMechanic.ZidaneDagger(_v.Caster)) // Zidane - Dagger double hits
                     {
-                        Log.Message("héhé !");
                         _v.Target.HpDamage /= 2;
                         if (_v.Command.Data.info.effect_counter == 0)
                             _v.Command.AbilityCategory -= 64; // Hit Anim off

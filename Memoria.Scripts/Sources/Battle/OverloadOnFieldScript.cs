@@ -335,6 +335,10 @@ namespace Memoria.Scripts.TranceSeek
                         return scenario == 3165;
                     case 562:
                     case 567:
+                    /*case 602: // Lindblum truck
+                    case 603: // Lindblum ascensor + truck
+                    case 605: // Lindblum truck
+                        return GetLeaderFloor() == -1;*/
                     case 611:
                     case 612:
                     case 613:
@@ -350,6 +354,8 @@ namespace Memoria.Scripts.TranceSeek
                         return GetLeaderModelID() == 273 && scenario == 5690; // Quina missing after the dialog (when the Fossil Roo opens)
                     case 908:
                         return scenario < 4400;
+                    case 914:
+                        return scenario == 4455;
                     case 930:
                     case 932:
                         return scenario == 4460;
@@ -371,25 +377,32 @@ namespace Memoria.Scripts.TranceSeek
                     case 1209:
                         return FF9StateSystem.Common.FF9.party.MemberCount != 2; // Zidane appears on Steiner.
                     case 1223:
+                    case 1225:
                         return scenario == 5100;
+                    case 1204:
+                        return scenario == 5140;
                     case 1110:
                         return scenario == 4910;
                     case 1153:
                         return (scenario == 4980 || scenario == 5000);
                     case 1205:
-                        return scenario == 5075;
+                        return (scenario == 5075 || scenario == 5080) && !PersistenSingleton<EventEngine>.Instance.GetUserControl();
                     case 1250:
                         return scenario == 5300;
                     case 1355:
                         return scenario == 5680;
+                    case 1424: // Lani in Fossil Roo : showing followers after Zidane go into his "Idle" pose.
+                        return scenario == 5900 && !PersistenSingleton<EventEngine>.Instance.GetUserControl();
                     case 1450:
                         return scenario == 6170;
                     case 1453:
                         return scenario == 6210;
+                    case 1501:
+                        return scenario == 6000;
                     case 1503:
                         return scenario == 6260;
                     case 1506:
-                        return scenario == 6250;
+                        return (scenario == 6250 || scenario == 6260);
                     case 1601:
                         return scenario == 6600;
                     case 1652:
@@ -569,7 +582,7 @@ namespace Memoria.Scripts.TranceSeek
             CheckATEState();
             FixZidaneWorldMapWeapon();
 
-            bool shouldHide = actorleader == null || ((actorleader.flags & 1) == 0 || ForceHidden || ModelCantGetFollowers.Contains(leader_model_id) || (!IsWorldMap && BlackListFieldId.Contains(FF9StateSystem.Common.FF9.fldMapNo))
+            bool shouldHide = actorleader == null || ((actorleader.flags & 1) == 0 || ForceHidden || ModelCantGetFollowers.Contains(leader_model_id) || !IsWorldMap && (BlackListFieldId.Contains(FF9StateSystem.Common.FF9.fldMapNo) || GetLeaderFloor() == -1)
                 || BlackListAnimationId.Contains(actorleader.anim) || MBG.Instance.IsPlaying() > 1 || BlackListCondition || isPlayingATE);
 
             HideFollowers(shouldHide);
@@ -1196,14 +1209,26 @@ namespace Memoria.Scripts.TranceSeek
 
         private int GetLeaderModelID()
         {
-            if (actorleader == null) return -1;
+            if (actorleader == null)
+                return -1;
+
             return actorleader.model;
         }
 
         private int GetLeaderAnimID()
         {
-            if (actorleader == null) return -1;
+            if (actorleader == null)
+                return -1;
+
             return actorleader.anim;
+        }
+
+        private int GetLeaderFloor()
+        {
+            if (actorleader == null || actorleader.fieldMapActorController == null)
+                return -1;
+
+            return actorleader.fieldMapActorController.activeFloor;
         }
 
         private Color GetLeaderColor()

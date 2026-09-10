@@ -9,7 +9,7 @@ namespace Memoria.Scripts.TranceSeek
 
         public static void OnHitEnd(BattleCalculator v)
         {
-            SOS_SA(v);
+            SOS_SA(v.Target);
             TranceSeekCharacterMechanic.DragonMechanic(v);
         }
 
@@ -38,13 +38,11 @@ namespace Memoria.Scripts.TranceSeek
             casterState.SpecialSA.Propagation = 0;
         }
 
-        public static void SOS_SA(BattleCalculator v)
+        public static void SOS_SA(BattleUnit unit, Boolean ForceTrigger = false)
         {
-            var targetState = v.TargetState();
-            BattleUnit target = v.Target;
-
-            bool isHpBelowHalf = target.CurrentHp <= (target.MaximumHp / 2);
-            bool isLowHp = target.IsUnderAnyStatus(BattleStatus.LowHP);
+            var targetState = unit.State();
+            bool isHpBelowHalf = unit.CurrentHp <= (unit.MaximumHp / 2) || ForceTrigger;
+            bool isLowHp = unit.IsUnderAnyStatus(BattleStatus.LowHP) || ForceTrigger;
 
             if (!isHpBelowHalf)
                 targetState.SpecialSA.OneTriggerSOS &= ~(1 | 4 | 16 | 64 | 256 | 1024);
@@ -52,12 +50,12 @@ namespace Memoria.Scripts.TranceSeek
             if (!isLowHp)
                 targetState.SpecialSA.OneTriggerSOS &= ~(2 | 8 | 32 | 128 | 512 | 2048);
 
-            CheckAndTriggerSOS(target, targetState, isLowHp, isHpBelowHalf, TranceSeekSupportAbility.SOS_Protect, TranceSeekSupportAbility.SOS_Protect_Boosted, BattleStatus.Protect, 2, 1);
-            CheckAndTriggerSOS(target, targetState, isLowHp, isHpBelowHalf, TranceSeekSupportAbility.SOS_Shell, TranceSeekSupportAbility.SOS_Shell_Boosted, BattleStatus.Shell, 8, 4);
-            CheckAndTriggerSOS(target, targetState, isLowHp, isHpBelowHalf, TranceSeekSupportAbility.SOS_Regen, TranceSeekSupportAbility.SOS_Regen_Boosted, BattleStatus.Regen, 32, 16);
-            CheckAndTriggerSOS(target, targetState, isLowHp, isHpBelowHalf, TranceSeekSupportAbility.SOS_Haste, TranceSeekSupportAbility.SOS_Haste_Boosted, BattleStatus.Haste, 128, 64);
-            CheckAndTriggerSOS(target, targetState, isLowHp, isHpBelowHalf, TranceSeekSupportAbility.SOS_Reflect, TranceSeekSupportAbility.SOS_Reflect_Boosted, BattleStatus.Reflect, 512, 256);
-            CheckAndTriggerSOS(target, targetState, isLowHp, isHpBelowHalf, TranceSeekSupportAbility.SOS_Vanish, TranceSeekSupportAbility.SOS_Vanish_Boosted, BattleStatus.Vanish, 2048, 1024);
+            CheckAndTriggerSOS(unit, targetState, isLowHp, isHpBelowHalf, TranceSeekSupportAbility.SOS_Protect, TranceSeekSupportAbility.SOS_Protect_Boosted, BattleStatus.Protect, 2, 1);
+            CheckAndTriggerSOS(unit, targetState, isLowHp, isHpBelowHalf, TranceSeekSupportAbility.SOS_Shell, TranceSeekSupportAbility.SOS_Shell_Boosted, BattleStatus.Shell, 8, 4);
+            CheckAndTriggerSOS(unit, targetState, isLowHp, isHpBelowHalf, TranceSeekSupportAbility.SOS_Regen, TranceSeekSupportAbility.SOS_Regen_Boosted, BattleStatus.Regen, 32, 16);
+            CheckAndTriggerSOS(unit, targetState, isLowHp, isHpBelowHalf, TranceSeekSupportAbility.SOS_Haste, TranceSeekSupportAbility.SOS_Haste_Boosted, BattleStatus.Haste, 128, 64);
+            CheckAndTriggerSOS(unit, targetState, isLowHp, isHpBelowHalf, TranceSeekSupportAbility.SOS_Reflect, TranceSeekSupportAbility.SOS_Reflect_Boosted, BattleStatus.Reflect, 512, 256);
+            CheckAndTriggerSOS(unit, targetState, isLowHp, isHpBelowHalf, TranceSeekSupportAbility.SOS_Vanish, TranceSeekSupportAbility.SOS_Vanish_Boosted, BattleStatus.Vanish, 2048, 1024);
         }
 
         private static void CheckAndTriggerSOS(BattleUnit target, TranceSeekFighterState state, bool isLowHp, bool isHpBelowHalf, SupportAbility normal, SupportAbility boosted, BattleStatus status, int normalBit, int boostedBit)

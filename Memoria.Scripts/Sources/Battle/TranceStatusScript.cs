@@ -27,8 +27,6 @@ namespace Memoria.DefaultScripts
         public List<BattleStatusId> StatusResistOni = new List<BattleStatusId>();
         public Int32 TimerEndTrance = 0;
         public Boolean TriggerTimerEndTrance = false;
-
-        public Boolean CallFixVanish = false;
         public Int32 DurationFixVanish = 0;
 
         public static Int32 GetPhantomCount(BattleUnit btl)
@@ -55,9 +53,6 @@ namespace Memoria.DefaultScripts
         public override UInt32 Apply(BattleUnit target, BattleUnit inflicter, params Object[] parameters)
         {
             base.Apply(target, inflicter, parameters);
-            if (target.IsUnderAnyStatus(BattleStatus.Vanish))
-                CallFixVanish = true;
-
             btl_cmd.SetCommand(target.Data.cmd[4], BattleCommandId.SysTrans, 0, target.Id, 0u);
             var Target_TSVar = target.State();
             if (!Target.IsPlayer)
@@ -276,11 +271,41 @@ namespace Memoria.DefaultScripts
         {
             Target.Trance = 0;
             var Target_TSVar = Target.State();
-            if (!Target.IsUnderAnyStatus(BattleStatus.Vanish) && CallFixVanish)
+
+            if (!Target.IsUnderAnyStatus(BattleStatus.Vanish))
             {
-                CallFixVanish = false;
-                DurationFixVanish = 10;
-                Target.AddDelayedModifier(FixVanish, null);
+                Int32 remainingFrames = 10;
+                Renderer[] cachedRenderers = null;
+
+                Target.AddDelayedModifier(unit =>
+                {
+                    if (unit.Data == null || unit.Data.gameObject == null)
+                        return false;
+
+                    if (unit.Data.gameObject != unit.Data.originalGo)
+                        return true;
+
+                    if (cachedRenderers == null)
+                        cachedRenderers = unit.Data.gameObject.GetComponentsInChildren<Renderer>(true);
+
+                    for (Int32 i = 0; i < cachedRenderers.Length; i++)
+                    {
+                        Renderer r = cachedRenderers[i];
+                        if (r != null)
+                            r.enabled = true;
+                    }
+
+                    btl_mot.ShowWeapon(unit.Data);
+                    btl_mot.ShowMesh(unit.Data, UInt16.MaxValue, true);
+
+                    if (remainingFrames > 0)
+                    {
+                        remainingFrames--;
+                        return true;
+                    }
+
+                    return false;
+                }, null);
             }
 
             if (Target.IsUnderAnyStatus(BattleStatus.Jump))

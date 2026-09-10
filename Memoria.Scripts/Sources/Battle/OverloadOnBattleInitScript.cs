@@ -405,16 +405,16 @@ namespace Memoria.Scripts.TranceSeek
                             IsVisualAccessory = true;
                             break;
                         case TranceSeekRegularItem.CharonsRing:
-                            unit.State().SoulChance = 10;
+                            unit.State().SoulChance = 20;
                             break;
                         case TranceSeekRegularItem.ErebusRing:
-                            unit.State().SoulChance = 25;
+                            unit.State().SoulChance = 40;
                             break;
                         case TranceSeekRegularItem.ThanatosRing:
-                            unit.State().SoulChance = 50;
+                            unit.State().SoulChance = 60;
                             break;
                         case TranceSeekRegularItem.AnimaRing:
-                            unit.State().SoulChance = 75;
+                            unit.State().SoulChance = 80;
                             break;
                     }
 

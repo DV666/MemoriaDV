@@ -1,5 +1,6 @@
 ﻿using FF9;
 using Memoria.Data;
+using Memoria.Prime;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -88,8 +89,18 @@ namespace Memoria.Scripts.TranceSeek
                 _v.Caster.Data.gameObject.transform.localPosition = position;
                 _v.Caster.Data.dms_geo_id = btl_init.GetModelID(btl_util.getSerialNumber(_v.Caster.Data));
 
+                _v.Caster.RemoveStatus(BattleStatus.Vanish);
+                _v.Caster.ModelStatusScale = ModelStatusScaleOld;
+
+                Renderer[] renderers = _v.Caster.Data.gameObject.GetComponentsInChildren<Renderer>(true);
+                foreach (Renderer r in renderers)
+                    r.enabled = true;
+
                 _v.Caster.Data.gameObject.SetActive(true);
                 _v.Caster.Data.weapon_geo.SetActive(true);
+
+                btl_mot.ShowWeapon(_v.Caster.Data);
+                btl_mot.ShowMesh(_v.Caster.Data, UInt16.MaxValue, true);
 
                 btl_mot.setMotion(_v.Caster.Data, BattlePlayerCharacter.PlayerMotionIndex.MP_WIN); //MP_MAGIC
                 _v.Caster.Data.evt.animFrame = 0;
@@ -104,8 +115,6 @@ namespace Memoria.Scripts.TranceSeek
                     {
                         if (!caster.IsUnderAnyStatus(BattleStatusConst.StopAtb) && caster.CurrentAtb < (4 * caster.MaximumAtb / 5))
                             caster.CurrentAtb += (Int16)(4 * caster.MaximumAtb / 5);
-                        caster.RemoveStatus(BattleStatus.Vanish);
-                        caster.ModelStatusScale = ModelStatusScaleOld;
                     }
                 );
             }

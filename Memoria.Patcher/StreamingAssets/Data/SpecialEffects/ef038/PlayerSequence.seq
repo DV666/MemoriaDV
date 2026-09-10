@@ -43,7 +43,6 @@ ElseThread: Condition=CasterCharacterIndex == CharacterId_Garnet
 	EndThread
 	SetupReflect: Delay=SFXLoaded
 	LoadSFX: SFX=Shiva__Full ; Reflect=True ; UseCamera=True
-	ShowMesh: Char=Caster ; Mesh=Weapon ; Enable=False
 	PlayAnimation: Char=Caster ; Anim=ANH_MAIN_B0_002_SUPERSUMMON1
 	WaitAnimation: Char=Caster
 	Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True

@@ -47,11 +47,11 @@ namespace Memoria.Scripts.TranceSeek
 
                 if (Caster_TSVar.PolaritySPS != null && Target_TSVar.PolaritySPS != null)
                 {
-                    Caster_TSVar.PolaritySPS.attr = 0;
-                    Caster_TSVar.PolaritySPS.meshRenderer.enabled = false;
-                    Caster_TSVar.PolaritySPS = null;
+                    Target_TSVar.PolaritySPS.attr = 0;
+                    Target_TSVar.PolaritySPS.meshRenderer.enabled = false;
+                    Target_TSVar.PolaritySPS = null;
                     v.Context.Flags |= BattleCalcFlags.Guard;
-                    Caster_TSVar.Monster.NoDodge = true; // Don't miss the attack.
+                    Target_TSVar.Monster.NoDodge = true; // Don't miss the attack.
                     btl_stat.RemoveStatus(v.Target, BattleStatusId.Haste);
                     FF9StateSystem.EventState.gEventGlobal[1305] = 0;
                     UIManager.Battle.SetBattleFollowMessage(3, Localization.GetWithDefault("PolarityOFF"));
