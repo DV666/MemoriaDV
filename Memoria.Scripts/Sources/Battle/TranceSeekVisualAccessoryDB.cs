@@ -11,11 +11,17 @@ namespace Memoria.Scripts.TranceSeek
         {
             public string ModelName { get; }
             public string AnimIdle { get; }
+            public float ModelScale { get; }
 
-            public AccessoryConfig(string modelName, string animIdle = null)
+            public AccessoryConfig(string modelName, string animIdle = null, float modelScale = 1f)
             {
                 ModelName = modelName;
                 AnimIdle = animIdle;
+                ModelScale = modelScale;
+            }
+            public AccessoryConfig(string modelName, float modelScale)
+                : this(modelName, null, modelScale)
+            {
             }
         }
 
@@ -209,7 +215,11 @@ namespace Memoria.Scripts.TranceSeek
                 }
             },
 
-            { Mini_FriendlyFeatherCircle, new("GEO_MON_B3_162") }
+            { Mini_FriendlyFeatherCircle, new("GEO_MON_B3_162") },
+            { Mini_Dracozombie,           new("GEO_MON_B3_086", 0.5f) },
+            { Mini_Grenade,               new("GEO_MON_B3_079", 0.80f) },
+            { Mini_Mandragora,            new("GEO_MON_B3_016", 0.75f) },   
+            { Mini_Clipper,               new("GEO_MON_B3_039", 0.45f) }
         };
     }
 }

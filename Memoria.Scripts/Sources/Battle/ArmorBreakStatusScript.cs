@@ -131,7 +131,11 @@ namespace Memoria.DefaultScripts
         {
             if (!unit.IsUnderAnyStatus(BattleStatusId.CustomStatus3))
                 return false;
-            if (unit.Data.bi.disappear != 0 || Stack <= 1 || ModelScale != unit.ModelStatusScale || !unit.Data.gameObject.activeSelf)
+
+            Boolean NeedToReset = unit.Data.bi.disappear != 0 || Stack <= 1 || ModelScale != unit.ModelStatusScale || !unit.Data.gameObject.activeSelf;
+            Boolean isDetached = NumberHUD.Follower == null || NumberHUD.Follower.target == null || !NumberHUD.Follower.target.IsChildOf(unit.Data.gameObject.transform);
+
+            if (NeedToReset || isDetached)
             {
                 ModelScale = unit.ModelStatusScale;
                 if (NumberHUD != null)
@@ -141,7 +145,6 @@ namespace Memoria.DefaultScripts
                     Singleton<HUDMessage>.Instance.ReleaseObject(NumberHUD);
                     NumberHUD = null;
                 }
-                return true;
             }
 
             if (NumberHUD == null)

@@ -127,7 +127,7 @@ namespace Memoria.Scripts.TranceSeek
                     follower.TargetBone = targetBone;
                     follower.LocalPosition = transformConfig.PositionOffset;
                     follower.LocalRotation = transformConfig.RotationOffset;
-                    follower.LocalScale = transformConfig.ScaleOffset;
+                    follower.LocalScale = transformConfig.ScaleOffset * accessoryConfig.ModelScale;
                     follower.CasterData = unit.Data;
 
                     AccessoryModel.geo.SetActive(true);

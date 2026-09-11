@@ -399,11 +399,6 @@ namespace Memoria.Scripts.TranceSeek
                         case TranceSeekRegularItem.YanHorns:
                             IsVisualAccessory = true;
                             break;
-                        case TranceSeekRegularItem.Mini_FriendlyFeatherCircle:
-                            unit.State().MascotCooldown = (60 - unit.Will) * UnityEngine.Random.Range(150, 250);
-                            unit.AddDelayedModifier(TranceSeekVisualAccessory.ProcessMascotRecast, null);
-                            IsVisualAccessory = true;
-                            break;
                         case TranceSeekRegularItem.CharonsRing:
                             unit.State().SoulChance = 20;
                             break;
@@ -416,6 +411,13 @@ namespace Memoria.Scripts.TranceSeek
                         case TranceSeekRegularItem.AnimaRing:
                             unit.State().SoulChance = 80;
                             break;
+                    }
+
+                    if (ff9item._FF9Item_Data[unit.Accessory].shape == 60)
+                    {
+                        unit.State().MascotCooldown = (60 - unit.Will) * UnityEngine.Random.Range(150, 250);
+                        unit.AddDelayedModifier(TranceSeekVisualAccessory.ProcessMascotRecast, null);
+                        IsVisualAccessory = true;
                     }
 
                     if (unit.PlayerIndex == CharacterId.Eiko) // Init Moug

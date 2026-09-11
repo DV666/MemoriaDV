@@ -195,6 +195,10 @@ namespace Memoria.Scripts.TranceSeek
         public const RegularItem AnimaRing = (RegularItem)1278;
         public const RegularItem LunarCrown = (RegularItem)1279;
         public const RegularItem LunarRobe = (RegularItem)1280;
+        public const RegularItem Mini_Dracozombie = (RegularItem)1281;
+        public const RegularItem Mini_Grenade = (RegularItem)1282;
+        public const RegularItem Mini_Mandragora = (RegularItem)1283;
+        public const RegularItem Mini_Clipper = (RegularItem)1284;
         // Chemist Stuff # (2000-2999)
         public const RegularItem HiPotion2 = (RegularItem)2000;
         public const RegularItem UltraPotion2 = (RegularItem)2001;
@@ -817,6 +821,18 @@ namespace Memoria.Scripts.TranceSeek
                             battleEnemy.Data.bonus_item_rate[0] = 256;
                             break;
                     }
+
+                    int StealItemId = (int)battleEnemy.Data.bonus_item[0];
+                    int SPSId = StealItemId >= 3000 && StealItemId <= 3999 ? 18 : 19;
+
+                    SPSEffect sps = HonoluluBattleMain.battleSPS.AddSequenceSPS(SPSId, -1, 1);
+                    if (sps == null)
+                        return;
+
+                    btl2d.GetIconPosition(v.Caster, btl2d.ICON_POS_WEAPON, out Transform attachTransf, out Vector3 iconOff);
+                    sps.charTran = v.Caster.Data.gameObject.transform;
+                    sps.boneTran = attachTransf;
+                    sps.posOffset = Vector3.zero;
                 }
             }
             if (v.Target.IsPlayer)

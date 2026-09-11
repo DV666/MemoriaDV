@@ -45,7 +45,7 @@ namespace Memoria.Scripts.TranceSeek
             if (FF9StateSystem.Battle.battleMapIndex == 52 && FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum == 0 && FF9StateSystem.EventState.gEventGlobal[1305] > 0 && v.Caster.IsPlayer && v.Command.Id == BattleCommandId.Attack && v.Caster.Data != v.Target.Data)
             { // Black Waltz 3 Broken (Polarity Mechanic)
 
-                if (Caster_TSVar.PolaritySPS != null && Target_TSVar.PolaritySPS != null)
+                if (FF9StateSystem.EventState.gEventGlobal[1305] == (byte)v.Target.Id && Caster_TSVar.PolaritySPS != null && Target_TSVar.PolaritySPS != null)
                 {
                     Target_TSVar.PolaritySPS.attr = 0;
                     Target_TSVar.PolaritySPS.meshRenderer.enabled = false;
@@ -112,7 +112,7 @@ namespace Memoria.Scripts.TranceSeek
                     }
                 }
             }
-            if (v.Caster.PlayerIndex == CharacterId.Cinna) // Cinna's Mechanic
+            else if (v.Caster.PlayerIndex == CharacterId.Cinna) // Cinna's Mechanic
             {
                 int InventionsCD = 0; // For Genie/Eureka mechanic.
 
@@ -203,6 +203,16 @@ namespace Memoria.Scripts.TranceSeek
                     }
                 }
             }
+            else if (v.Caster.PlayerIndex == (CharacterId)14)
+            {
+                CharacterPresetId presetId = v.Caster.Player.PresetId;
+                v.Caster.SummonCount++;
+                if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.TakeThat_Boosted) || v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.TakeThat) && v.Caster.SummonCount % 2 == 0) // SA Take that!
+                    CharacterCommands.CommandSets[presetId].Regular[0] = (BattleCommandId)(UnityEngine.Random.Range(1042, 1045));
+                else
+                    CharacterCommands.CommandSets[presetId].Regular[0] = (BattleCommandId)(UnityEngine.Random.Range(1038, 1041));
+            }
+
             if (Caster_TSVar.Cinna.SpringBoots > 0) // AA SpringBoots
             {
                 v.Caster.AddDelayedModifier(
@@ -427,14 +437,11 @@ namespace Memoria.Scripts.TranceSeek
                 );
             }
 
-            if (v.Caster.PlayerIndex == (CharacterId)14)
+            if (v.Command.AbilityId == TranceSeekBattleAbility.Geirskögul && v.Command.Data.info.effect_counter == 1) // SA Enchanted blade
             {
-                CharacterPresetId presetId = v.Caster.Player.PresetId;
-                v.Caster.SummonCount++;
-                if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.TakeThat_Boosted) || v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.TakeThat) && v.Caster.SummonCount % 2 == 0) // SA Take that!
-                    CharacterCommands.CommandSets[presetId].Regular[0] = (BattleCommandId)(UnityEngine.Random.Range(1042, 1045));
-                else
-                    CharacterCommands.CommandSets[presetId].Regular[0] = (BattleCommandId)(UnityEngine.Random.Range(1038, 1041));
+                Caster_TSVar.GeirskögulDragon = 0;
+                if (v.Target.IsUnderAnyStatus(TranceSeekStatus.Dragon))
+                    Caster_TSVar.GeirskögulDragon = 1;
             }
 
             // [TODO] To remove when this function will be fixed (in my PR https://github.com/Albeoris/Memoria/pull/1255 or before)

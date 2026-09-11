@@ -425,6 +425,29 @@ namespace Memoria.Scripts.TranceSeek
                 dictbattle[1] = value;
             }
         }
+
+        public int GeirskögulDragon
+        {
+            get
+            {
+                if (FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1000, out Dictionary<Int32, Int32> dictbattle))
+                    if (dictbattle.TryGetValue(13, out int cantKillValue))
+                        return cantKillValue;
+
+                return 0;
+            }
+            set
+            {
+                if (!FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1000, out Dictionary<Int32, Int32> dictbattle))
+                {
+                    dictbattle = new Dictionary<Int32, Int32>();
+                    FF9StateSystem.EventState.gScriptDictionary.Add(1002, dictbattle);
+                }
+
+                dictbattle[13] = value;
+            }
+        }
+
         public int SuperCheat { get; set; }
     }
         /*

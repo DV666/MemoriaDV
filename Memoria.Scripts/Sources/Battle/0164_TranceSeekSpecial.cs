@@ -190,18 +190,18 @@ namespace Memoria.Scripts.TranceSeek
                 _v.Caster.Data.gameObject.SetActive(true);
                 return;
             }
-            else if (_v.Command.Power == 67 && _v.Command.HitRate == 67 && _v.Caster.Data.dms_geo_id == 362) // Giant Scream - Hilgigars
+            else if (_v.Command.Power == 67 && _v.Command.HitRate == 67 && _v.Caster.Data.dms_geo_id == 362) // War Cry - Hilgigars
             {
                 if (!_v.Target.IsPlayer)
                 {
-                    _v.Target.AlterStatus(BattleStatus.Haste, _v.Target);
-                    _v.Target.AlterStatus(TranceSeekStatus.PowerUp | TranceSeekStatus.MagicUp | TranceSeekStatus.ArmorUp | TranceSeekStatus.MentalUp, _v.Target);
+                    _v.Command.AbilityStatus |= (BattleStatus.Haste | TranceSeekStatus.PowerUp | TranceSeekStatus.MagicUp | TranceSeekStatus.ArmorUp | TranceSeekStatus.MentalUp);
                 }
                 else
                 {
                     _v.Target.RemoveStatus(BattleStatusConst.AnyPositive);
-                    _v.Target.AlterStatus(TranceSeekStatus.PowerBreak | TranceSeekStatus.MagicBreak | TranceSeekStatus.ArmorBreak | TranceSeekStatus.MentalBreak, _v.Target);
+                    _v.Command.AbilityStatus |= (TranceSeekStatus.PowerBreak | TranceSeekStatus.MagicBreak | TranceSeekStatus.ArmorBreak | TranceSeekStatus.MentalBreak);
                 }
+                TranceSeekAPI.TryAlterCommandStatuses(_v);
             }
             else if (_v.Command.Power == 25 && _v.Command.HitRate == 111 && _v.Caster.Data.dms_geo_id == 278) // Polarity (+) with SPS effect (Black Waltz 3)
             {

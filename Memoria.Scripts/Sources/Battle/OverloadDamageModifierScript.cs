@@ -52,8 +52,6 @@ namespace Memoria.Scripts.TranceSeek
                     v.Target.MpDamage = Math.Max(1, v.Target.MpDamage - malusMPdamage);
             }
 
-            TranceSeekAPI.SpecialEffect(v);
-
             var Caster_TSVar = v.CasterState();
             var Target_TSVar = v.TargetState();
 
@@ -200,6 +198,8 @@ namespace Memoria.Scripts.TranceSeek
                     v.Target.CurrentHp = (uint)((1 + GameRandom.Next8() % 9));
                 }
             }
+
+            TranceSeekAPI.SpecialEffect(v);
         }
 
         private Int32 GetReflectMultiplierOnTarget(BattleCalculator v, UInt16 targetId)
