@@ -194,7 +194,7 @@ namespace Memoria.Scripts.TranceSeek
 
             if (CasterWeaponShape == 42) // Heavy Spear
                 v.Context.HitRate /= 2;
-            else if (CasterWeaponShape == 63) // Boomerang
+            else if (CasterWeaponShape == 63 || CasterWeaponShape == 118) // Boomerang weapons
             {
                 v.Context.HitRate += (v.Context.HitRate) / 2;
                 v.Context.Evade /= 4;

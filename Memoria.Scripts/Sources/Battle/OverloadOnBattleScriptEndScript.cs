@@ -1,6 +1,8 @@
-﻿using System;
+﻿using FF9;
 using Memoria.Data;
 using Memoria.Prime;
+using System;
+using System.Collections.Generic;
 
 namespace Memoria.Scripts.TranceSeek
 {
@@ -34,8 +36,51 @@ namespace Memoria.Scripts.TranceSeek
 
             TranceSeekRegularItem.SpecialItemsAtEnd(v);
             TranceSeekCharacterMechanic.EikoMougMechanic(v);
+            TranceSeekCharacterMechanic.HeheTriggered = false;
 
             casterState.SpecialSA.Propagation = 0;
+
+            if (v.Target.Data.dms_geo_id == 353 && !v.Target.IsPlayer && v.Caster.IsPlayer && FF9StateSystem.Battle.battleMapIndex == 930 && FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum == 0)
+            { // Tantarian because it piss me off ! -_-. Also this script can handle "multi hit".
+                int page = 0;
+                if (FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1004, out Dictionary<int, int> dict))
+                    dict.TryGetValue(0, out page);
+                int previouspage = FF9StateSystem.EventState.gEventGlobal[1305];
+                int summonchance = FF9StateSystem.EventState.gEventGlobal[1306];
+
+                if (previouspage == page)
+                    return;
+
+                if (page < 230)
+                {
+                    if ((Comn.random8() % 2) == 0)
+                    {
+                        summonchance = 1;
+                        btl_cmd.SetEnemyCommand(v.Target, BattleCommandId.EnemyCounter, 9, v.Target.Id);
+                    }
+                    else
+                    {
+                        if (summonchance == 0)
+                        {
+                            summonchance = 1;
+                            btl_cmd.SetEnemyCommand(v.Target, BattleCommandId.EnemyCounter, 9, v.Target.Id);
+                        }
+                        else
+                        {
+                            if (summonchance > 0)
+                            {
+                                summonchance--;
+                            }
+                            btl_cmd.SetEnemyCommand(v.Target, BattleCommandId.EnemyCounter, 6, v.Target.Id);
+                        }
+                    }
+                }
+                else
+                {
+                    btl_cmd.SetEnemyCommand(v.Target, BattleCommandId.EnemyCounter, 3, v.Target.Id);
+                }
+                previouspage = page;
+            }
         }
 
         public static void SOS_SA(BattleUnit unit, Boolean ForceTrigger = false)

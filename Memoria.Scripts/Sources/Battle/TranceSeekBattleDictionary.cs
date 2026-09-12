@@ -441,14 +441,14 @@ namespace Memoria.Scripts.TranceSeek
                 if (!FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1000, out Dictionary<Int32, Int32> dictbattle))
                 {
                     dictbattle = new Dictionary<Int32, Int32>();
-                    FF9StateSystem.EventState.gScriptDictionary.Add(1002, dictbattle);
+                    FF9StateSystem.EventState.gScriptDictionary.Add(1000, dictbattle);
                 }
 
                 dictbattle[13] = value;
             }
         }
 
-        public int SuperCheat { get; set; }
+    public int SuperCheat { get; set; }
     }
         /*
         public static Dictionary<BTL_DATA, Int32[]> ZidanePassive = new Dictionary<BTL_DATA, Int32[]>();

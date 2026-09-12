@@ -72,7 +72,6 @@ namespace Memoria.Scripts.TranceSeek
                 if (!String.IsNullOrEmpty(steal_text))
                 {
                     UiState.SetBattleFollowFormatMessage(BattleMesages.Stole, steal_text);
-                    TranceSeekCharacterMechanic.Hehe(v, false);
                 }
             }
         }

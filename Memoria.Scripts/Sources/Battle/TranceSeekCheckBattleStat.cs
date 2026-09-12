@@ -32,14 +32,14 @@ namespace Memoria.Scripts.TranceSeek
 
         private Dictionary<BTL_DATA, StatCache> _unitCache = new Dictionary<BTL_DATA, StatCache>();
         private float _timer = 0f;
-        private const float CheckInterval = 1f; // 1 second
+        private const float CheckInterval = 0.5f; // 1 second
 
         public static Boolean GreenRedColor_SubModCheck = Configuration.Mod.FolderNames.Contains("TranceSeek/Options/StatModifierIndicator/GreenRed");
         public static Boolean YellowPurple_SubModCheck = Configuration.Mod.FolderNames.Contains("TranceSeek/Options/StatModifierIndicator/YellowPurple");
 
         private void Update()
         {
-            _timer += Time.deltaTime;
+            _timer += Time.deltaTime * FF9StateSystem.Settings.FastForwardFactor;
             if (_timer < CheckInterval) return;
             _timer = 0f;
 
@@ -49,23 +49,26 @@ namespace Memoria.Scripts.TranceSeek
                 return;
             }
 
-            if (FF9StateSystem.Battle.FF9Battle.btl_phase != FF9StateBattleSystem.PHASE_NORMAL)
+            if (FF9StateSystem.Battle.FF9Battle == null || FF9StateSystem.Battle.FF9Battle.btl_list == null)
                 return;
 
-            if (FF9StateSystem.Battle.FF9Battle == null || FF9StateSystem.Battle.FF9Battle.btl_list == null)
+            if (FF9StateSystem.Battle.FF9Battle.btl_phase != FF9StateBattleSystem.PHASE_NORMAL)
                 return;
 
             int invincibleTargetId = 0;
             int dodgeALLTargetId = 0;
             int immunestealTargetId = 0;
             int hidestatmodifTargetId = 0;
+            int hidestatupdateTargetId = 0;
 
-            if (FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1000, out Dictionary<int, int> dictbattle))
+            Dictionary<int, int> dictbattle = null;
+            if (FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1000, out dictbattle))
             {
                 dictbattle.TryGetValue(7, out invincibleTargetId);
                 dictbattle.TryGetValue(8, out dodgeALLTargetId);
                 dictbattle.TryGetValue(9, out immunestealTargetId);
                 dictbattle.TryGetValue(10, out hidestatmodifTargetId);
+                dictbattle.TryGetValue(11, out hidestatupdateTargetId);
             }
 
             foreach (BattleUnit unit in BattleState.EnumerateUnits())
@@ -87,11 +90,13 @@ namespace Memoria.Scripts.TranceSeek
                         PhysicalEvade = unit.PhysicalEvade,
                         MagicDefence = unit.MagicDefence,
                         MagicEvade = unit.MagicEvade,
-                        WasOldStatus = unit.IsUnderAnyStatus(TranceSeekStatus.Old), // Trigger to much "popup" text.
-                        WasHidden = hidestatmodifTargetId != 0 && (hidestatmodifTargetId & unit.Id) != 0
+                        WasOldStatus = unit.IsUnderAnyStatus(TranceSeekStatus.Old)
                     };
                     continue;
                 }
+
+                if (hidestatupdateTargetId != 0 && (hidestatupdateTargetId & unit.Id) != 0)
+                    ForceCachedValue(unit, cached);
 
                 unit.State().Invincible = (invincibleTargetId != 0 && (invincibleTargetId & unit.Id) != 0);
                 unit.State().ImmuneSteal = (immunestealTargetId != 0 && (immunestealTargetId & unit.Id) != 0);
@@ -100,15 +105,8 @@ namespace Memoria.Scripts.TranceSeek
                 if (unit.IsPlayer)
                     unit.State().Invincible = TranceSeekDebug.TranceSeekDebugMenu.MegaCheat > 0;
 #endif
-                bool isCurrentlyHidden = hidestatmodifTargetId != 0 && (hidestatmodifTargetId & unit.Id) != 0;
-                bool hidePopups = isCurrentlyHidden;
+                bool hidePopups = hidestatmodifTargetId != 0 && (hidestatmodifTargetId & unit.Id) != 0;
                 int displayOffset = 0;
-
-                if (cached.WasHidden != isCurrentlyHidden)
-                {
-                    ForceCachedValue(unit, cached);
-                    cached.WasHidden = isCurrentlyHidden;
-                }
 
                 bool isOld = unit.IsUnderAnyStatus(TranceSeekStatus.Old);
                 if (isOld != cached.WasOldStatus)
@@ -171,6 +169,12 @@ namespace Memoria.Scripts.TranceSeek
                 {
                     RequestPopup(unit, unit.MagicEvade > cached.MagicEvade ? "MDev_Up" : "MDev_Down", unit.MagicEvade > cached.MagicEvade, Math.Abs(unit.MagicEvade - cached.MagicEvade), ref displayOffset, hidePopups);
                     cached.MagicEvade = unit.MagicEvade;
+                }
+
+                if (dictbattle != null && hidestatupdateTargetId != 0 && (hidestatupdateTargetId & unit.Id) != 0)
+                {
+                    ForceCachedValue(unit, cached);
+                    dictbattle[11] &= ~unit.Id;
                 }
             }
         }

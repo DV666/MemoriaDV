@@ -352,6 +352,10 @@ namespace Memoria.Scripts.TranceSeek
                         return GetLeaderModelID() == 273; // Frog Mini game
                     case 662:
                         return GetLeaderModelID() == 273 && scenario == 5690; // Quina missing after the dialog (when the Fossil Roo opens)
+                    case 809:
+                        return (scenario >= 4160 && scenario <= 4210);
+                    case 810:
+                        return scenario <= 4210;
                     case 908:
                         return scenario < 4400;
                     case 914:

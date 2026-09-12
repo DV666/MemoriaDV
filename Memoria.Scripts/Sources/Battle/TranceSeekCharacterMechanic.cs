@@ -3,6 +3,7 @@ using FF9;
 using Memoria.Assets;
 using Memoria.Data;
 using Memoria.Database;
+using Memoria.Prime;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +15,9 @@ namespace Memoria.Scripts.TranceSeek
 {
     public static class TranceSeekCharacterMechanic
     {
+        public static Boolean ForcedHeheZidane = Configuration.Mod.FolderNames.Contains("TranceSeek/Options/HeheZidane");
+        public static Boolean HeheTriggered = false;
+
         public static Boolean ZidaneDagger(BattleUnit zidane)
         {
             int WeaponShape = ff9item._FF9Item_Data[zidane.Weapon].shape;
@@ -73,6 +77,9 @@ namespace Memoria.Scripts.TranceSeek
 
         public static void DragonMechanic(this BattleCalculator v)
         {
+            if ((v.Context.Flags & BattleCalcFlags.Miss) != 0)
+                return;
+
             if (v.Target.IsUnderAnyStatus(TranceSeekStatus.Dragon) && !v.Caster.IsUnderStatus(BattleStatus.Trance) && v.Command.ScriptId == 79) // Only used with DragonSkillScript
             {
                 float DragonRemove = v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.DragonsEye_Boosted) ? 25 : (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.DragonsEye) ? 12.5f : 0); // Eye of the dragon
@@ -780,11 +787,15 @@ namespace Memoria.Scripts.TranceSeek
             btl2d.Btl2dReqSymbolMessage(unit.Data, color, formattedMessage, HUDMessage.MessageStyle.DAMAGE, 40);
         }
 
-        public static void Hehe(BattleCalculator v, Boolean ClassicSteal)
-        {
-            if (v.Caster.PlayerIndex != CharacterId.Zidane) return;
 
-            if (!Configuration.VoiceActing.Enabled && (StealScript.ForcedHeheZidane || ClassicSteal))
+
+        public static void Hehe(BattleCalculator v, Boolean EyeOfThief)
+        {
+            if (v.Caster.PlayerIndex != CharacterId.Zidane)
+                return;
+
+            HeheTriggered = true;
+            if (!Configuration.VoiceActing.Enabled && (ForcedHeheZidane || EyeOfThief))
                 SoundLib.PlaySoundEffect(4500 + (Comn.random8() % 6));
         }
 

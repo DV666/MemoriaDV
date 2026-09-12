@@ -2,12 +2,8 @@
 using FF9;
 using Memoria.Assets;
 using Memoria.Data;
-using Memoria.Prime;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Remoting.Contexts;
-using static Memoria.Scripts.TranceSeek.TranceSeekAPI;
 
 namespace Memoria.Scripts.TranceSeek
 {
@@ -20,8 +16,6 @@ namespace Memoria.Scripts.TranceSeek
         public const Int32 Id = 0058;
 
         private readonly BattleCalculator _v;
-
-        public static Boolean ForcedHeheZidane = Configuration.Mod.FolderNames.Contains("TranceSeek/Options/HeheZidane");
 
         public StealScript(BattleCalculator v)
         {
@@ -154,7 +148,7 @@ namespace Memoria.Scripts.TranceSeek
             {
                 StealItem(v, battleEnemy, 0, ShowHUDMessage);
             }
-            else if (v.TargetState().Zidane.EyeOfTheThief)
+            else if (v.Caster.PlayerIndex == CharacterId.Zidane && v.TargetState().Zidane.EyeOfTheThief)
             {
                 EyeOfThief(v, ShowHUDMessage);
             }
@@ -176,19 +170,19 @@ namespace Memoria.Scripts.TranceSeek
             {
                 if (battleEnemy.StealableItems[0] != RegularItem.NoItem)
                 {
-                    StealItem(v, battleEnemy, 0, ShowHUDMessage);
+                    StealItem(v, battleEnemy, 0, ShowHUDMessage, true);
                 }
                 else if (battleEnemy.StealableItems[1] != RegularItem.NoItem)
                 {
-                    StealItem(v, battleEnemy, 1, ShowHUDMessage);
+                    StealItem(v, battleEnemy, 1, ShowHUDMessage, true);
                 }
                 else if (battleEnemy.StealableItems[2] != RegularItem.NoItem)
                 {
-                    StealItem(v, battleEnemy, 2, ShowHUDMessage);
+                    StealItem(v, battleEnemy, 2, ShowHUDMessage, true);
                 }
                 else if (battleEnemy.StealableItems[3] != RegularItem.NoItem && GameRandom.Next8() < (127 + battleEnemy.StealableItemRates[3]))
                 {
-                    StealItem(v, battleEnemy, 3, ShowHUDMessage);
+                    StealItem(v, battleEnemy, 3, ShowHUDMessage, true);
                 }
                 else
                 {
@@ -199,24 +193,23 @@ namespace Memoria.Scripts.TranceSeek
                     return;
                 }
                 btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[FDEE00]", MessageEyeOfThief, HUDMessage.MessageStyle.DAMAGE, 5);
-                TranceSeekCharacterMechanic.Hehe(v, true);
                 return;
             }
             else if (GameRandom.Next8() < NewStealableItemRates(battleEnemy.StealableItemRates[3], v.Caster) && battleEnemy.StealableItems[3] != RegularItem.NoItem)
             {
-                StealItem(v, battleEnemy, 3, ShowHUDMessage);
+                StealItem(v, battleEnemy, 3, ShowHUDMessage, true);
             }
             else if (GameRandom.Next8() < NewStealableItemRates(battleEnemy.StealableItemRates[2], v.Caster) && battleEnemy.StealableItems[2] != RegularItem.NoItem)
             {
-                StealItem(v, battleEnemy, 2, ShowHUDMessage);
+                StealItem(v, battleEnemy, 2, ShowHUDMessage, true);
             }
             else if (GameRandom.Next8() < NewStealableItemRates(battleEnemy.StealableItemRates[1], v.Caster) && battleEnemy.StealableItems[1] != RegularItem.NoItem)
             {
-                StealItem(v, battleEnemy, 1, ShowHUDMessage);
+                StealItem(v, battleEnemy, 1, ShowHUDMessage, true);
             }
             else if (GameRandom.Next8() < NewStealableItemRates(battleEnemy.StealableItemRates[0], v.Caster) && battleEnemy.StealableItems[0] != RegularItem.NoItem)
             {
-                StealItem(v, battleEnemy, 0, ShowHUDMessage);
+                StealItem(v, battleEnemy, 0, ShowHUDMessage, true);
             }
             else
             {
@@ -227,7 +220,6 @@ namespace Memoria.Scripts.TranceSeek
                 return;
             }
             btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[FDEE00]", MessageEyeOfThief, HUDMessage.MessageStyle.DAMAGE, 5);
-            TranceSeekCharacterMechanic.Hehe(v, false);
         }
 
         public static float NewStealableItemRates(ushort StealableItemRates, BattleCaster Caster)
@@ -300,7 +292,7 @@ namespace Memoria.Scripts.TranceSeek
             }
         }
 
-        public static void StealItem(BattleCalculator v, BattleEnemy enemy, Int32 slot, Boolean ShowHUDMessage = true)
+        public static void StealItem(BattleCalculator v, BattleEnemy enemy, Int32 slot, Boolean ShowHUDMessage = true, Boolean EyeOfThief = false)
         {
             v.Context.ItemSteal = enemy.StealableItems[slot];
             if (v.Context.ItemSteal == RegularItem.NoItem)
@@ -329,6 +321,7 @@ namespace Memoria.Scripts.TranceSeek
                 UiState.SetBattleFollowFormatMessage(BattleMesages.Stole, FF9TextTool.ItemName(v.Context.ItemSteal));
             }
             TranceSeekAPI.PhantomHandSA(v);
+            TranceSeekCharacterMechanic.Hehe(v, EyeOfThief);
         }
 
         private static readonly Dictionary<String, String> MessageEyeOfThief = new Dictionary<String, String>

@@ -240,13 +240,13 @@ namespace Memoria.Scripts.TranceSeek
             var casterState = _v.CasterState();
             bool isFirstMug = _v.Command.Data.info.effect_counter == 1;
 
-            void AssignStolenItem(int slotIndex)
+            void AssignStolenItem(int slotIndex, Boolean EyeOfThief = false)
             {
                 RegularItem itemToSteal = battleEnemy.StealableItems[slotIndex];
                 if (isFirstMug) casterState.Zidane.FirstItemMug = itemToSteal;
                 else casterState.Zidane.SecondItemMug = itemToSteal;
 
-                MugItem(battleEnemy, slotIndex);
+                MugItem(battleEnemy, slotIndex, EyeOfThief);
             }
 
             bool TryStealSlot(int slot)
@@ -279,10 +279,10 @@ namespace Memoria.Scripts.TranceSeek
                 AddBonusSteal();
                 bool success = false;
 
-                if (TryStealSlot(3)) { AssignStolenItem(3); success = true; }
-                else if (TryStealSlot(2)) { AssignStolenItem(2); success = true; }
-                else if (TryStealSlot(1)) { AssignStolenItem(1); success = true; }
-                else if (TryStealSlot(0)) { AssignStolenItem(0); success = true; }
+                if (TryStealSlot(3)) { AssignStolenItem(3, true); success = true; }
+                else if (TryStealSlot(2)) { AssignStolenItem(2, true); success = true; }
+                else if (TryStealSlot(1)) { AssignStolenItem(1, true); success = true; }
+                else if (TryStealSlot(0)) { AssignStolenItem(0, true); success = true; }
                 else if (IsZidaneTrance())
                 {
                     success = TryGuaranteedTranceSteal();
@@ -311,7 +311,7 @@ namespace Memoria.Scripts.TranceSeek
             else AddBonusSteal();
         }
 
-        public void MugItem(BattleEnemy enemy, Int32 slot)
+        public void MugItem(BattleEnemy enemy, Int32 slot, Boolean EyeOfThief = false)
         {
             _v.Context.ItemSteal = enemy.StealableItems[slot];
             if (_v.Context.ItemSteal == RegularItem.NoItem)
@@ -322,7 +322,7 @@ namespace Memoria.Scripts.TranceSeek
 
             enemy.StealableItems[slot] = RegularItem.NoItem;
             GameState.Thefts++;
-            var casterState = _v.CasterState(); // Nouvel appel !
+            var casterState = _v.CasterState();
 
             foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(_v.Caster))
                 saFeature.TriggerOnAbility(_v, "Steal", false);
@@ -341,7 +341,6 @@ namespace Memoria.Scripts.TranceSeek
                 if (_v.Caster.PlayerIndex == CharacterId.Zidane && !TranceSeekCharacterMechanic.ZidaneDagger(_v.Caster))
                 {
                     UiState.SetBattleFollowFormatMessage(BattleMesages.Stole, FF9TextTool.ItemName(_v.Context.ItemSteal) + " X 2");
-                    TranceSeekCharacterMechanic.Hehe(_v, false);
                 }
             }
             else
@@ -350,10 +349,10 @@ namespace Memoria.Scripts.TranceSeek
                 if (_v.Caster.PlayerIndex == CharacterId.Zidane && !TranceSeekCharacterMechanic.ZidaneDagger(_v.Caster))
                 {
                     UiState.SetBattleFollowFormatMessage(BattleMesages.Stole, FF9TextTool.ItemName(_v.Context.ItemSteal));
-                    TranceSeekCharacterMechanic.Hehe(_v, false);
                 }
             }
             TranceSeekAPI.PhantomHandSA(_v);
+            TranceSeekCharacterMechanic.Hehe(_v, EyeOfThief);
         }
 
         public void ShowMugMessage()
@@ -382,8 +381,6 @@ namespace Memoria.Scripts.TranceSeek
                     casterState.Zidane.FirstItemMug = RegularItem.NoItem;
                     casterState.Zidane.SecondItemMug = RegularItem.NoItem;
                     casterState.Zidane.ItemMugMasterThief = 0;
-
-                    TranceSeekCharacterMechanic.Hehe(_v, false);
                 }
             }
         }
