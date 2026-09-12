@@ -468,6 +468,16 @@ namespace Memoria.Scripts.TranceSeek
                 }
             }
 
+            if (v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.EtherealSteps))
+            {
+                int DodgeChance = (v.Target.MagicEvade / (v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.EtherealSteps_Boosted) ? 2 : 4));
+                if (Comn.random16() % 100 <= DodgeChance)
+                {
+                    v.Context.Flags |= BattleCalcFlags.Dodge;
+                    return;
+                }
+            }
+
             if (v.Target.IsUnderAnyStatus(BattleStatus.Shell) && v.Command.ScriptId != 125)
                 v.Context.Attack /= 2;
 
