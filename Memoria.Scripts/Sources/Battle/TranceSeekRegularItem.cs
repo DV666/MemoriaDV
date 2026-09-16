@@ -707,6 +707,10 @@ namespace Memoria.Scripts.TranceSeek
         public const RegularItem TrollSoul = (RegularItem)3013;
         public const RegularItem DrakanSoul = (RegularItem)3014;
         public const RegularItem ArmstrongSoul = (RegularItem)3015;
+        public const RegularItem DracoZombieSoul = (RegularItem)3016;
+        public const RegularItem GrenadeSoul = (RegularItem)3017;
+        public const RegularItem MandragoraSoul = (RegularItem)3018;
+        public const RegularItem ClipperSoul = (RegularItem)3019;
 
         public static readonly HashSet<RegularItem> WeaponAffinitiesPoison = new HashSet<RegularItem>(new[] { RegularItem.RuneTooth, RuneToothDagger, RegularItem.ScissorFangs });
 
@@ -818,6 +822,22 @@ namespace Memoria.Scripts.TranceSeek
                             break;
                         case 334: // Armstrong
                             battleEnemy.Data.bonus_item[0] = ArmstrongSoul;
+                            battleEnemy.Data.bonus_item_rate[0] = 256;
+                            break;
+                        case 165: // DracoZombie
+                            battleEnemy.Data.bonus_item[0] = DracoZombieSoul;
+                            battleEnemy.Data.bonus_item_rate[0] = 256;
+                            break;
+                        case 333: // Grenade
+                            battleEnemy.Data.bonus_item[0] = GrenadeSoul;
+                            battleEnemy.Data.bonus_item_rate[0] = 256;
+                            break;
+                        case 161: // Mandragora
+                            battleEnemy.Data.bonus_item[0] = MandragoraSoul;
+                            battleEnemy.Data.bonus_item_rate[0] = 256;
+                            break;
+                        case 150: // Clipper
+                            battleEnemy.Data.bonus_item[0] = ClipperSoul;
                             battleEnemy.Data.bonus_item_rate[0] = 256;
                             break;
                     }

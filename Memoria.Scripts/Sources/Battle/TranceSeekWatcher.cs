@@ -85,6 +85,9 @@ namespace Memoria.Scripts.TranceSeek
                 GameObject watcherObj = new GameObject("TranceSeek_Watcher");
                 GameObject.DontDestroyOnLoad(watcherObj);
                 watcherObj.AddComponent<OverloadOnFieldScript>();
+#if DEV_TS
+                watcherObj.AddComponent<TranceSeekBestiaryMenu>();
+#endif
 
                 if (Configuration.Mod.FolderNames.Contains("TranceSeek/Options/AutoSorterShop"))
                     watcherObj.AddComponent<TranceSeekHackShop>();

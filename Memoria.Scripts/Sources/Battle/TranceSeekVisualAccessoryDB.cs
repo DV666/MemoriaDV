@@ -216,10 +216,10 @@ namespace Memoria.Scripts.TranceSeek
             },
 
             { Mini_FriendlyFeatherCircle, new("GEO_MON_B3_162") },
-            { Mini_Dracozombie,           new("GEO_MON_B3_086", 0.5f) },
-            { Mini_Grenade,               new("GEO_MON_B3_079", 0.80f) },
-            { Mini_Mandragora,            new("GEO_MON_B3_016", 0.75f) },   
-            { Mini_Clipper,               new("GEO_MON_B3_039", 0.45f) }
+            { Mini_Dracozombie,           new("GEO_MON_B3_086", 0.25f) },
+            { Mini_Grenade,               new("GEO_MON_B3_079", 0.50f) },
+            { Mini_Mandragora,            new("GEO_MON_B3_016", 0.60f) },   
+            { Mini_Clipper,               new("GEO_MON_B3_039", 0.25f) }
         };
     }
 }

@@ -317,15 +317,19 @@ namespace Memoria.Scripts.TranceSeek
             if (unit.PlayerIndex != CharacterId.Steiner)
                 return;
 
-            FF9TextTool.SetCommandName(BattleCommandId.SwordAct, TranceSeekBattleCommand.SwdArtCMDNameVanilla[Localization.CurrentDisplaySymbol]);
             unit.UILabelHP = unit.CurrentHp.ToString();
 
             unit.AddDelayedModifier(
                 caster => caster.CurrentAtb >= caster.MaximumAtb,
                 caster =>
                 {
-                    unit.State().Steiner.PlutoStackUsed = 0;
-                    unit.State().Steiner.Authority = 0;
+                    var Steiner_TSVar = unit.State().Steiner;
+                    Steiner_TSVar.PlutoStackUsed = 0;
+                    Steiner_TSVar.Authority = 0;
+                    if (Steiner_TSVar.PlutoStackRemain == 0)
+                        FF9TextTool.SetCommandName(BattleCommandId.SwordAct, TranceSeekBattleCommand.SwdArtCMDNameVanilla[Localization.CurrentDisplaySymbol]);
+                    else
+                        FF9TextTool.SetCommandName(BattleCommandId.SwordAct, TranceSeekBattleCommand.SwdArtCMDNameVanilla[Localization.CurrentSymbol] + " (" + Steiner_TSVar.PlutoStackRemain + "/" + (Steiner_TSVar.PlutoStackUsed + Steiner_TSVar.PlutoStackRemain) + ")");
                 }
             );
         }

@@ -20,7 +20,7 @@ namespace Memoria.Scripts.TranceSeek
 
         public void Perform()
         {
-            if (_v.Target.IsUnderAnyStatus(BattleStatus.Mini) || _v.Command.HitRate == 255)
+            if (_v.Target.IsUnderAnyStatus(BattleStatus.Mini))
             {
                 _v.Target.RemoveStatus(BattleStatus.Mini);
                 return;
@@ -29,7 +29,7 @@ namespace Memoria.Scripts.TranceSeek
             TranceSeekAPI.MagicAccuracy(_v);
             _v.Target.PenaltyShellHitRate();
             _v.PenaltyCommandDividedHitRate();
-            if (TranceSeekAPI.TryMagicHit(_v))
+            if (TranceSeekAPI.TryMagicHit(_v) || _v.Command.HitRate == 255)
                 TranceSeekAPI.TryAlterCommandStatuses(_v);
         }
     }

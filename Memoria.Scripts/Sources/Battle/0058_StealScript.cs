@@ -93,6 +93,9 @@ namespace Memoria.Scripts.TranceSeek
                 else
                     bonusgil = (int)(GameRandom.Next16() % (btl_util.getEnemyPtr(v.Target).bonus_gil / 8));
 
+                if (bonusgil <= 0)
+                    bonusgil = 1;
+
                 string textToDisplay = GilFormats[Localization.CurrentDisplaySymbol].Replace("[GIL]", bonusgil.ToString());
                 btl2d.Btl2dReqSymbolMessage(v.Caster.Data, NGUIText.FF9YellowColor, textToDisplay, HUDMessage.MessageStyle.DAMAGE, delay);
                 GameState.Gil += (uint)bonusgil;

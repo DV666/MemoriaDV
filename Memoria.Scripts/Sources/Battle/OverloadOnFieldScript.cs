@@ -290,6 +290,7 @@ namespace Memoria.Scripts.TranceSeek
                 int scenario = GameState.ScenarioCounter;
                 switch (FF9StateSystem.Common.FF9.fldMapNo)
                 {
+                    case 55:
                     case 61:
                     case 62:
                     case 63:
@@ -358,6 +359,8 @@ namespace Memoria.Scripts.TranceSeek
                         return scenario <= 4210;
                     case 908:
                         return scenario < 4400;
+                    case 909:
+                        return scenario == 4430;
                     case 914:
                         return scenario == 4455;
                     case 930:
@@ -378,8 +381,13 @@ namespace Memoria.Scripts.TranceSeek
                     case 1207:
                     case 1208:
                         return (scenario == 4800 || scenario == 5020);
+                    case 1105:
+                        return scenario == 4910 && GetLeaderAnimID() == 8196;
                     case 1209:
                         return FF9StateSystem.Common.FF9.party.MemberCount != 2; // Zidane appears on Steiner.
+                    case 1150:
+                    case 1151:
+                        return scenario == 5000 && FF9StateSystem.Common.FF9.party.MemberCount == 4;
                     case 1223:
                     case 1225:
                         return scenario == 5100;

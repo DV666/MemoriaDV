@@ -21,6 +21,12 @@ namespace Memoria.Scripts.TranceSeek
 
         public void Perform()
         {
+            if (_v.Target.IsUnderAnyStatus(BattleStatus.Vanish) || _v.Target.State().ImmuneSteal)
+            {
+                _v.Context.Flags |= BattleCalcFlags.Miss;
+                return;
+            }
+
             _v.NormalPhysicalParams();
             
             TranceSeekAPI.CasterPhysicalPenaltyAndBonusAttack(_v);

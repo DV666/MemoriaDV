@@ -131,8 +131,6 @@ namespace Memoria.Scripts.TranceSeek
 
         public static void CheckFadeNextBoostedSA(PLAYER player)
         {
-            BoostedSATargetNames.Clear();
-
             if (player == null || player.saExtended == null)
                 return;
 
@@ -145,6 +143,9 @@ namespace Memoria.Scripts.TranceSeek
 
             if (!isInSAMenu && !isHoveringSA)
                 return;
+
+            // Ne vider qu'une fois la présence dans le menu validée
+            BoostedSATargetNames.Clear();
 
             foreach (SupportAbility equippedSA in player.saExtended)
             {
@@ -218,16 +219,25 @@ namespace Memoria.Scripts.TranceSeek
         {
             private System.Reflection.FieldInfo _saIdListField;
             private System.Reflection.FieldInfo _scrollListField;
+            private System.Reflection.FieldInfo _currentPartyIndexField;
             private bool _isInitialized = false;
 
             private RecycleListItem[] _cachedItems = null;
             private Dictionary<RecycleListItem, UILabel> _cachedLabels = new Dictionary<RecycleListItem, UILabel>();
+
+            // Suivi d'état pour éviter les recalculs inutiles (zéro garbage par frame)
+            private int _lastPartyIndex = -1;
+            private uint _lastCapa = UInt32.MaxValue;
+            private int _lastEquipHash = -1;
+            private int _lastSaHash = -1;
+            private bool _wasInSAMenu = false;
 
             private void Awake()
             {
                 var flags = System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance;
                 _saIdListField = typeof(AbilityUI).GetField("saIdList", flags);
                 _scrollListField = typeof(AbilityUI).GetField("supportAbilityScrollList", flags);
+                _currentPartyIndexField = typeof(AbilityUI).GetField("currentPartyIndex", flags);
 
                 if (_saIdListField != null && _scrollListField != null)
                     _isInitialized = true;
@@ -240,23 +250,66 @@ namespace Memoria.Scripts.TranceSeek
 
                 AbilityUI abilityScene = PersistenSingleton<UIManager>.Instance.AbilityScene;
                 if (abilityScene == null || !abilityScene.isActiveAndEnabled)
+                {
+                    _wasInSAMenu = false;
                     return;
+                }
 
                 bool isInSAMenu = ButtonGroupState.ActiveGroup == "Ability.SupportAbility";
                 bool isHoveringSA = ButtonGroupState.ActiveGroup == "Ability.SubMenu" && abilityScene.MagicStonePanel.activeInHierarchy;
 
                 if (!isInSAMenu && !isHoveringSA)
+                {
+                    _wasInSAMenu = false;
+                    return;
+                }
+
+                int partyIndex = _currentPartyIndexField != null
+                    ? (int)_currentPartyIndexField.GetValue(abilityScene)
+                    : (OverloadedPlayerUI.CurrentPlayer != null ? (int)OverloadedPlayerUI.CurrentPlayer.Index : 0);
+
+                if (partyIndex < 0 || partyIndex >= FF9StateSystem.Common.FF9.party.member.Length)
                     return;
 
-                PLAYER player = OverloadedPlayerUI.CurrentPlayer;
+                PLAYER player = FF9StateSystem.Common.FF9.party.member[partyIndex];
                 if (player == null)
                     return;
+
+                OverloadedPlayerUI.CurrentPlayer = player;
+
+                int equipHash = 17;
+                for (int i = 0; i < 5; ++i)
+                    equipHash = equipHash * 31 + (int)player.equip[i];
+
+                int saHash = 19;
+                if (player.saExtended != null)
+                {
+                    foreach (SupportAbility sa in player.saExtended)
+                        saHash = saHash * 31 + (int)sa;
+                }
+
+                bool needsRefresh = !_wasInSAMenu || _lastPartyIndex != partyIndex || _lastCapa != player.cur.capa || _lastEquipHash != equipHash || _lastSaHash != saHash;
 
                 List<Int32> saIdList = _saIdListField.GetValue(abilityScene) as List<Int32>;
                 RecycleListPopulator scrollList = _scrollListField.GetValue(abilityScene) as RecycleListPopulator;
 
                 if (saIdList == null || scrollList == null)
                     return;
+
+                if (needsRefresh)
+                {
+                    _wasInSAMenu = true;
+                    _lastPartyIndex = partyIndex;
+                    _lastCapa = player.cur.capa;
+                    _lastEquipHash = equipHash;
+                    _lastSaHash = saHash;
+
+                    OverloadedPlayerUI.ValidateBoostedSupportAbilities(player);
+                    OverloadedPlayerUI.CheckFadeNextBoostedSA(player);
+
+                    _cachedItems = scrollList.GetComponentsInChildren<RecycleListItem>(true);
+                    _cachedLabels.Clear();
+                }
 
                 if (_cachedItems == null || _cachedItems.Length == 0 || _cachedItems[0] == null)
                     _cachedItems = scrollList.GetComponentsInChildren<RecycleListItem>(true);
@@ -271,7 +324,7 @@ namespace Memoria.Scripts.TranceSeek
                         continue;
 
                     UILabel nameLabel = null;
-                    if (!_cachedLabels.TryGetValue(recycleItem, out nameLabel))
+                    if (!_cachedLabels.TryGetValue(recycleItem, out nameLabel) || nameLabel == null)
                     {
                         ItemListDetailWithIconHUD hud = new ItemListDetailWithIconHUD(recycleItem.gameObject, true);
                         nameLabel = hud.NameLabel;
@@ -305,6 +358,7 @@ namespace Memoria.Scripts.TranceSeek
                 }
             }
         }
+
         public class SAClearInputHandler : MonoBehaviour
         {
             private bool _isActionTriggered = false;

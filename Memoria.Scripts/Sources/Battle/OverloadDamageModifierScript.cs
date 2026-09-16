@@ -200,6 +200,27 @@ namespace Memoria.Scripts.TranceSeek
             }
 
             TranceSeekAPI.SpecialEffect(v);
+
+            if (FF9StateSystem.Battle.battleMapIndex == 930 && FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum == 0 && v.Target.Data.dms_geo_id == 353 && !v.Target.IsPlayer && v.Caster.IsPlayer && 
+                v.Target.Data.bi.def_idle == 0 && v.Command.Id != BattleCommandId.Counter && v.Command.Id != BattleCommandId.MagicCounter && v.Command.Id != BattleCommandId.EnemyCounter)
+            { // Tantarian because it piss me off ! -_-. Also this script can handle "multi hit".
+                
+                if ((v.Context.Flags & BattleCalcFlags.Dodge) != 0)
+                    return;
+
+                int page = 0;
+                if (FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1004, out Dictionary<int, int> dict))
+                    dict.TryGetValue(0, out page);
+
+                page += v.Target.HpDamage;
+
+                if (page > 255)
+                    page = page % 255;
+
+                dict[0] = page;
+                ETb.SetMesValue(0, page);
+                OverloadOnBattleScriptEndScript.TantarianPage = true;
+            }
         }
 
         private Int32 GetReflectMultiplierOnTarget(BattleCalculator v, UInt16 targetId)

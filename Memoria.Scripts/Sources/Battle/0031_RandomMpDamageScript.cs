@@ -23,7 +23,7 @@ namespace Memoria.Scripts.TranceSeek
 
         public void Perform()
         {
-            if (_v.Command.Id == BattleCommandId.Attack && _v.Caster.PlayerIndex == CharacterId.Quina) // Magik Fork
+            if (_v.Command.Id == BattleCommandId.Attack) // Magik Fork
             {
                 _v.PhysicalAccuracy();
                 if (!TranceSeekAPI.TryPhysicalHit(_v))

@@ -681,6 +681,8 @@ namespace Memoria.Scripts.TranceSeek
             if (Element == 0)
                 Element = v.Command.Element;
 
+            v.Command.Element |= Element;
+
             if (v.Target.IsLevitate && v.Command.IsGround)
             {
                 v.Context.Flags |= BattleCalcFlags.Miss;
@@ -962,7 +964,7 @@ namespace Memoria.Scripts.TranceSeek
                     && v.Command.IsManyTarget && TranceSeekBattleAbility.SpellUsingPropagation(v.Command.AbilityId))
                     durationfactor /= 2;
 
-                v.Target.Data.stat.conti[statusId] = (Int16)((statusData.ContiCnt * durationfactor) * v.Target.Data.stat.duration_factor[statusId]);
+                v.Target.Data.stat.conti[statusId] = (Int32)((statusData.ContiCnt * durationfactor) * v.Target.Data.stat.duration_factor[statusId]);
             }
         }
 
@@ -1350,11 +1352,22 @@ namespace Memoria.Scripts.TranceSeek
 
                     v.Target.MaximumHp = (uint)Math.Min(v.Target.CurrentHp + v.Target.HpDamage, LimitMaxHP);
                     v.Target.CurrentHp = v.Target.MaximumHp;
+
                     v.Target.AddDelayedModifier(
-                        target => v.Target.CurrentHp > OldMaximumHP,
                         target =>
                         {
-                            v.Target.MaximumHp = OldMaximumHP;
+                            if (target == null || target.CurrentHp <= OldMaximumHP)
+                                return false;
+
+                            if (target.MaximumHp > target.CurrentHp)
+                                target.MaximumHp = Math.Max(target.CurrentHp, OldMaximumHP);
+
+                            return true;
+                        },
+                        target =>
+                        {
+                            if (target != null)
+                                target.MaximumHp = OldMaximumHP;
                         }
                     );
                 }

@@ -146,7 +146,7 @@ namespace Memoria.Scripts.TranceSeek
                     case 4: // Necron mode
                         if (FF9StateSystem.EventState.ScenarioCounter > 2250)
                         {
-                            dictdifficulty[DifficultyParameters.Bonus_MaxHP] = 50;
+                            dictdifficulty[DifficultyParameters.Bonus_MaxHP] = 75;
                             dictdifficulty[DifficultyParameters.Bonus_Strength] = 75;
                             dictdifficulty[DifficultyParameters.Bonus_Magic] = 75;
                             dictdifficulty[DifficultyParameters.Bonus_PowerAA] = 20;
@@ -158,7 +158,7 @@ namespace Memoria.Scripts.TranceSeek
                             dictdifficulty[DifficultyParameters.Bonus_Magic] = 25;
                             dictdifficulty[DifficultyParameters.Bonus_PowerAA] = 10;
                         }
-                        dictdifficulty[12] = -90; // Gils Malus
+                        dictdifficulty[DifficultyParameters.Bonus_Gil] = -75;
                         break;
 
                     case 5: // Beatrix mode + Ozma Mode

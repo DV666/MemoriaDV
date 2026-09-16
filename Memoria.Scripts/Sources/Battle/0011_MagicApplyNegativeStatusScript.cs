@@ -1,6 +1,7 @@
-﻿using System;
+﻿using Memoria.Data;
+using System;
 using System.Collections.Generic;
-using Memoria.Data;
+using static SiliconStudio.Social.ResponseData;
 
 namespace Memoria.Scripts.TranceSeek
 {
@@ -37,6 +38,16 @@ namespace Memoria.Scripts.TranceSeek
                     _v.PenaltyCommandDividedHitRate();
                     if (TranceSeekAPI.TryMagicHit(_v))
                         TranceSeekAPI.TryAlterCommandStatuses(_v);
+                }
+            }
+            else if (_v.Command.AbilityId == BattleAbilityId.FrogDrop || (_v.Command.Power == 125 && _v.Command.HitRate == 125)) // Flash
+            {
+                if (_v.Target.Data != _v.Caster.Data)
+                {
+                    if ((_v.Target.ResistStatus & BattleStatus.Blind) == 0)
+                        btl_stat.AlterStatuses(_v.Target, BattleStatus.Blind, _v.Caster, false);
+                    else
+                        TranceSeekAPI.SPS_GuardStatus(_v);
                 }
             }
             else
