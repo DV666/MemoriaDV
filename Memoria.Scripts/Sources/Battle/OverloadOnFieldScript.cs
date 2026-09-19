@@ -409,6 +409,7 @@ namespace Memoria.Scripts.TranceSeek
                         return scenario == 6170;
                     case 1453:
                         return scenario == 6210;
+                    case 1500:
                     case 1501:
                         return scenario == 6000;
                     case 1503:
@@ -417,6 +418,8 @@ namespace Memoria.Scripts.TranceSeek
                         return (scenario == 6250 || scenario == 6260);
                     case 1601:
                         return scenario == 6600;
+                    case 1607: // Eiko's ATE when cooking
+                        return scenario < 6630 && GetLeaderModelID() == 443;
                     case 1652:
                         return !PersistenSingleton<EventEngine>.Instance.GetUserControl() && lastLeaderLocalPos.y < -2000; // First Elevator Ifa
                     case 1750: // Leaf Elevator Ifa
@@ -439,9 +442,9 @@ namespace Memoria.Scripts.TranceSeek
                     case 1815:
                         return scenario == 7070;
                     case 1816:
-                        return scenario == 7200;
+                        return scenario == 7200 || scenario == 7300;
                     case 2054:
-                        return (scenario == 7300 || scenario == 7700 || scenario == 8500);
+                        return (scenario >= 7300 && scenario <= 8500);
                     case 1807:
                     case 2009:
                     case 2051:
@@ -449,7 +452,7 @@ namespace Memoria.Scripts.TranceSeek
                     case 2002:
                         return scenario == 8500;
                     case 2105:
-                        return scenario == 8800;
+                        return scenario == 8800 || scenario == 9000;
                     case 2172:
                         return scenario == 9100;
                     case 2211:
@@ -507,7 +510,7 @@ namespace Memoria.Scripts.TranceSeek
             }
         }
 
-        private void CheckATEState()
+        private void CheckATEState() // [DV] It's working except using Soft Reset durant an ATE :(
         {
             int currentMap = FF9StateSystem.Common.FF9.fldMapNo;
 
@@ -589,6 +592,12 @@ namespace Memoria.Scripts.TranceSeek
 
             UIManager uiManager = PersistenSingleton<UIManager>.Instance;
             UIManager.UIState currentState = uiManager.State;
+
+            if (currentState == UIManager.UIState.BattleHUD)
+            {
+                ClearFollowers();
+                return;
+            }     
 
             CheckLeaderAndParty();
             CheckATEState();

@@ -448,8 +448,6 @@ namespace Memoria.Scripts.TranceSeek
 
             if (v.Command.Data.info.effect_counter == 1)
             {
-                TranceSeekCharacterMechanic.EikoMougMechanic(v);
-
                 v.Caster.AddDelayedModifier(
                     caster => btl_util.IsBtlBusy(caster.Data, btl_util.BusyMode.CASTER), 
                     caster =>

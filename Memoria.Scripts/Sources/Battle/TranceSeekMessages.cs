@@ -21,6 +21,12 @@ namespace Memoria.Scripts.TranceSeek
             }
         }
 
+        public static readonly Dictionary<String, String> EyeOfThief = new Dictionary<String, String>
+        {
+            { "US", "Thief's Eye!" }, { "UK", "Thief's Eye!" }, { "JP", "盗賊の眼！" },
+            { "ES", "¡Ojo de ladrón!" }, { "FR", "Œil du voleur !" }, { "DE", "Diebesauge!" }, { "IT", "Occhio del ladro!" }
+        };
+
         public static readonly Dictionary<String, String> MessageNope = new Dictionary<String, String>
         {
             { "US", "It's a NO!" }, { "UK", "It's a NO!" }, { "JP", "ダメだ！" },

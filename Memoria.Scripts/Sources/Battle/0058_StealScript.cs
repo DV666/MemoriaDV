@@ -195,7 +195,7 @@ namespace Memoria.Scripts.TranceSeek
                     UiState.SetBattleFollowFormatMessage(BattleMesages.CouldNotStealAnything);
                     return;
                 }
-                btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[FDEE00]", MessageEyeOfThief, HUDMessage.MessageStyle.DAMAGE, 5);
+                btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[FDEE00]", TranceSeekMessages.EyeOfThief, HUDMessage.MessageStyle.DAMAGE, 5);
                 return;
             }
             else if (GameRandom.Next8() < NewStealableItemRates(battleEnemy.StealableItemRates[3], v.Caster) && battleEnemy.StealableItems[3] != RegularItem.NoItem)
@@ -222,7 +222,7 @@ namespace Memoria.Scripts.TranceSeek
                 UiState.SetBattleFollowFormatMessage(BattleMesages.CouldNotStealAnything);
                 return;
             }
-            btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[FDEE00]", MessageEyeOfThief, HUDMessage.MessageStyle.DAMAGE, 5);
+            btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[FDEE00]", TranceSeekMessages.EyeOfThief, HUDMessage.MessageStyle.DAMAGE, 5);
         }
 
         public static float NewStealableItemRates(ushort StealableItemRates, BattleCaster Caster)
@@ -326,17 +326,6 @@ namespace Memoria.Scripts.TranceSeek
             TranceSeekAPI.PhantomHandSA(v);
             TranceSeekCharacterMechanic.Hehe(v, EyeOfThief);
         }
-
-        private static readonly Dictionary<String, String> MessageEyeOfThief = new Dictionary<String, String>
-        {
-            { "US", "Thief's Eye!" },
-            { "UK", "Thief's Eye!" },
-            { "JP", "æ³¥æ£’ã ®ç›®!" },
-            { "ES", "Ojo del ladrÃ³n!" },
-            { "FR", "Å’il du voleur !" },
-            { "GR", "Auge des Diebes!" },
-            { "IT", "Occhio del ladro!" },
-        };
 
         private static readonly Dictionary<String, String> GilFormats = new Dictionary<String, String>
         {

@@ -818,19 +818,24 @@ namespace Memoria.Scripts.TranceSeek
                 if (units.Count == 0) return;
                 if (_currentUnitIndex >= units.Count) _currentUnitIndex = 0;
 
+                // DEBUT DE LA LIGNE
                 GUILayout.BeginHorizontal();
+
                 if (GUILayout.Button("<", GUILayout.Width(40), GUILayout.Height(30))) { _currentUnitIndex--; if (_currentUnitIndex < 0) _currentUnitIndex = units.Count - 1; _statTextCache.Clear(); GUI.FocusControl(null); }
                 BattleUnit u = units[_currentUnitIndex];
                 string n = u.IsPlayer ? $"<color=#00FFFF>{FF9TextTool.CharacterDefaultName(u.PlayerIndex)}</color> ⭐" : $"<color=#FF5555>{SpecialFilesTranceSeek.RemoveTags(u.Name)}</color>";
                 GUILayout.Label($"<b>{n}</b>\nID: {u.Id}", new GUIStyle(GUI.skin.label) { richText = true, alignment = TextAnchor.MiddleCenter });
                 if (GUILayout.Button(">", GUILayout.Width(40), GUILayout.Height(30))) { _currentUnitIndex++; if (_currentUnitIndex >= units.Count) _currentUnitIndex = 0; _statTextCache.Clear(); GUI.FocusControl(null); }
+
                 GUILayout.Space(10);
+
                 if (GUILayout.Button("Refresh", GUILayout.Width(80), GUILayout.Height(30)))
                 {
                     _statTextCache.Clear();
                     GUI.FocusControl(null);
                     SoundLib.PlaySoundEffect(103);
                 }
+
                 if (GUILayout.Button("Apply", GUILayout.Width(90), GUILayout.Height(30)))
                 {
                     ApplyUnitStats(u);
@@ -838,13 +843,24 @@ namespace Memoria.Scripts.TranceSeek
                     GUI.FocusControl(null);
                     SoundLib.PlaySoundEffect(104);
                 }
+
+                if (u.IsPlayer && GUILayout.Button("Ref. Arme", GUILayout.Width(90), GUILayout.Height(30)))
+                {
+                    btl_eqp.InitWeapon(u.Player, u.Data);
+                    GUI.FocusControl(null);
+                    SoundLib.PlaySoundEffect(103);
+                }
+
+                // FIN DE LA LIGNE (Une seule fois)
                 GUILayout.EndHorizontal();
 
                 GUILayout.Space(5);
+
                 GUILayout.BeginHorizontal();
                 if (GUILayout.Button(_unitSubTab == 0 ? "<color=orange><b>Stats & Status Base</b></color>" : "Stats & Status Base", GUILayout.Height(25))) { _unitSubTab = 0; GUI.FocusControl(null); }
                 if (GUILayout.Button(_unitSubTab == 1 ? "<color=orange><b>Trance Seek State</b></color>" : "Trance Seek State", GUILayout.Height(25))) { _unitSubTab = 1; GUI.FocusControl(null); }
                 GUILayout.EndHorizontal();
+
                 GUILayout.Space(5);
 
                 _unitMainScrollPos = GUILayout.BeginScrollView(_unitMainScrollPos, GUILayout.Height(480));

@@ -2,6 +2,7 @@
 using Memoria.Data;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Remoting.Contexts;
 using UnityEngine;
 using static Memoria.Scripts.TranceSeek.TranceSeekBattleDictionary;
@@ -11,6 +12,8 @@ namespace Memoria.Scripts.TranceSeek
 {
     public static class TranceSeekAPI
     {
+        public static Boolean EEM_Enabled = Configuration.Mod.FolderNames.Contains("ExtraEquipmentMenu");
+
         public static Boolean EliteMonster(BTL_DATA Monster)
         {
             if (Monster.bi.player != 0)
@@ -249,14 +252,14 @@ namespace Memoria.Scripts.TranceSeek
 
             TranceSeekCharacterMechanic.GarnetGemMechanic(v, GarnetGemMechanic_Type.BoostMagicalEvade);
 
-            if (v.Context.HitRate <= Comn.random16() % 100)
+            if (v.Context.HitRate <= Comn.random16() % 100 && !CheckInvincible(v))
             {
                 v.Context.Flags |= BattleCalcFlags.Miss;
                 SPS_GuardStatus(v);
                 return false;
             }
 
-            if (v.Context.Evade > Comn.random16() % 100)
+            if (v.Context.Evade > Comn.random16() % 100 && !CheckInvincible(v))
             {
                 v.Context.Flags |= BattleCalcFlags.Miss;
                 SPS_GuardStatus(v);
@@ -277,13 +280,13 @@ namespace Memoria.Scripts.TranceSeek
 
             TranceSeekCharacterMechanic.GarnetGemMechanic(v, GarnetGemMechanic_Type.BoostMagicalEvade);
 
-            if (v.Context.HitRate <= Comn.random16() % 100)
+            if (v.Context.HitRate <= Comn.random16() % 100 && !CheckInvincible(v))
             {
                 SPS_GuardStatus(v);
                 return false;
             }
 
-            if (v.Context.Evade > Comn.random16() % 100)
+            if (v.Context.Evade > Comn.random16() % 100 && !CheckInvincible(v))
             {
                 SPS_GuardStatus(v);
                 return false;
@@ -303,7 +306,7 @@ namespace Memoria.Scripts.TranceSeek
 
             ReduceAccuracyEliteMonsters(v);
 
-            if (v.Command.HitRate > Comn.random16() % 100)
+            if (v.Command.HitRate > Comn.random16() % 100 && !CheckInvincible(v))
             {
                 v.Target.TryAlterStatuses(v.Command.AbilityStatus, false, v.Caster);
                 AlterStatusDurationFromSA(v, v.Command.AbilityStatus);
@@ -839,7 +842,7 @@ namespace Memoria.Scripts.TranceSeek
 
         public static void RaiseTrouble(this BattleCalculator v)
         {
-            if (v.Target.PhysicalDefence != 255 && v.Target.PhysicalEvade != 255 && v.Target.MagicDefence != 255 && v.Target.MagicEvade != 255 && !v.Command.IsManyTarget)
+            if (!CheckInvincible(v) && !v.Command.IsManyTarget)
                 v.RaiseTrouble();
         }
 
@@ -1004,13 +1007,15 @@ namespace Memoria.Scripts.TranceSeek
         {
             //if (ScriptIdIgnoreInvincible.Contains(v.Command.ScriptId)) return false;
 
-            if (v.TargetState().Invincible)
+            var Target_TSVar = v.TargetState();
+
+            if (Target_TSVar.Invincible)
             {
                 v.Context.Attack = 0;
                 v.Context.Flags |= BattleCalcFlags.Guard;
                 return true;
             }
-            if (v.TargetState().DodgeALL)
+            if (Target_TSVar.DodgeALL)
             {
                 v.Context.Flags |= BattleCalcFlags.Miss;
                 return true;

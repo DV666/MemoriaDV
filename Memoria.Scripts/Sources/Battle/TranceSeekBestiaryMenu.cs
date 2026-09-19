@@ -13,11 +13,9 @@ namespace Memoria.Scripts.TranceSeek
         private const string BestiaryGroupName = "TranceSeek.Bestiary";
         private const string BestiaryButtonName = "Bestiary Panel - Button";
 
-        // Réflexion sur les champs privés de ConfigUI
         private static readonly FieldInfo ConfigFieldListField = typeof(ConfigUI).GetField("ConfigFieldList", BindingFlags.Instance | BindingFlags.NonPublic);
         private static readonly FieldInfo ConfigScrollViewField = typeof(ConfigUI).GetField("configScrollView", BindingFlags.Instance | BindingFlags.NonPublic);
 
-        // Réflexion sur les types internal d'Assembly-CSharp
         private static readonly Type ScrollItemKeyNavType = typeof(ConfigUI).Assembly.GetType("ScrollItemKeyNavigation");
         private static readonly FieldInfo NavIdField = ScrollItemKeyNavType?.GetField("ID", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
 
@@ -25,22 +23,28 @@ namespace Memoria.Scripts.TranceSeek
         private static readonly PropertyInfo MaxItemProp = SnapDragScrollViewType?.GetProperty("MaxItem", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
         private static readonly FieldInfo MaxItemField = SnapDragScrollViewType?.GetField("MaxItem", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
 
-        // Éléments du menu Config
+        private int _infoWindowWidth = 800;
+        private int _infoWindowHeight = 750;
+        private float _infoWindowPosX = 340f;
+        private float _infoWindowPosY = -15f;
+
         private GameObject _bestiaryEntryButton;
         private UILabel _configTitleLabel;
         private string _originalTitleText = "Config.";
 
-        // Éléments du menu Bestiaire
         private GameObject _bestiaryMenuRoot;
         private GameObject _bestiaryReturnButton;
         private bool _isBestiaryOpen = false;
+
+        private UILabel _monsterInfoLabel;
+        private int _currentPage = 0;
+        private int _currentMonsterId = 0;
 
         private void Update()
         {
             if (PersistenSingleton<UIManager>.Instance == null)
                 return;
 
-            // Si le joueur quitte l'écran de configuration (ex: fondu, transition forcée)
             if (PersistenSingleton<UIManager>.Instance.State != UIManager.UIState.Config)
             {
                 if (_isBestiaryOpen)
@@ -52,13 +56,11 @@ namespace Memoria.Scripts.TranceSeek
             if (configScene == null || configScene.ConfigList == null)
                 return;
 
-            // 1. Injection du bouton dans la liste Config si ce n'est pas encore fait
             if (_bestiaryEntryButton == null)
             {
                 TryInjectBestiaryButton(configScene);
             }
 
-            // 2. Gestion des inputs selon le mode actif
             if (_isBestiaryOpen)
             {
                 UpdateBestiaryMenuInput(configScene);
@@ -69,7 +71,7 @@ namespace Memoria.Scripts.TranceSeek
             }
         }
 
-        #region Injection du bouton dans le menu Config
+        #region Injection 
 
         private void TryInjectBestiaryButton(ConfigUI configUI)
         {
@@ -100,7 +102,6 @@ namespace Memoria.Scripts.TranceSeek
             if (templateGo == null)
                 return;
 
-            // Cloner le bouton du tutoriel des commandes
             _bestiaryEntryButton = Instantiate(templateGo);
             _bestiaryEntryButton.name = BestiaryButtonName;
             _bestiaryEntryButton.transform.SetParent(listParent, false);
@@ -137,7 +138,6 @@ namespace Memoria.Scripts.TranceSeek
 
             fieldList.Insert(tutorialIndex, bestiaryField);
 
-            // Mise à jour des IDs de navigation NGUI
             if (ScrollItemKeyNavType != null && NavIdField != null)
             {
                 for (int i = 0; i < fieldList.Count; i++)
@@ -148,7 +148,6 @@ namespace Memoria.Scripts.TranceSeek
                 }
             }
 
-            // Mise à jour de la portée du ScrollView
             if (ConfigScrollViewField != null)
             {
                 object scrollView = ConfigScrollViewField.GetValue(configUI);
@@ -161,13 +160,11 @@ namespace Memoria.Scripts.TranceSeek
                 }
             }
 
-            // Repositionnement NGUI
             RepositionList(listParent, templateGo, targetSiblingIndex);
             RebuildNavigationChain(fieldList);
 
             UIEventListener.Get(_bestiaryEntryButton).onClick = go => OpenBestiaryMenu(configUI);
 
-            // Recherche du label de titre de la scène Config (badge en haut à droite)
             FindConfigTitleLabel(configUI);
         }
 
@@ -234,7 +231,7 @@ namespace Memoria.Scripts.TranceSeek
 
         #endregion
 
-        #region Création et Gestion du Menu Bestiaire
+        #region Menu Bestiaire
 
         private void FindConfigTitleLabel(ConfigUI configUI)
         {
@@ -259,7 +256,6 @@ namespace Memoria.Scripts.TranceSeek
             _bestiaryMenuRoot.transform.localPosition = Vector3.zero;
             _bestiaryMenuRoot.transform.localScale = Vector3.one;
 
-            // 1. Cadre principal cloné depuis ConfigList (garde le style, dégradé bleu et bordures exacts)
             GameObject frameTemplate = configUI.ConfigList.transform.GetChild(2).gameObject;
             GameObject bestiaryFrame = Instantiate(frameTemplate);
             bestiaryFrame.name = "Bestiary Window Frame";
@@ -267,7 +263,6 @@ namespace Memoria.Scripts.TranceSeek
             bestiaryFrame.transform.localPosition = frameTemplate.transform.localPosition;
             bestiaryFrame.transform.localScale = Vector3.one;
 
-            // Renommer le titre d'onglet dans le coin supérieur gauche ("CONFIG." -> "BESTIAIRE")
             foreach (UILabel lbl in bestiaryFrame.GetComponentsInChildren<UILabel>(true))
             {
                 if (lbl.rawText != null && lbl.rawText.Contains("CONFIG"))
@@ -278,38 +273,21 @@ namespace Memoria.Scripts.TranceSeek
                 }
             }
 
-            // 2. Message / Contenu du Bestiaire
-            UILabel templateLabel = _bestiaryEntryButton.GetComponentInChildren<UILabel>();
-            GameObject textObj = Instantiate(templateLabel.gameObject);
-            textObj.name = "Bestiary Content Label";
-            textObj.transform.SetParent(_bestiaryMenuRoot.transform, false);
-            textObj.transform.localPosition = new Vector3(0f, 40f, 0f);
-
-            UILabel contentLabel = textObj.GetComponent<UILabel>();
-            UILocalize textLoc = contentLabel.GetComponent<UILocalize>();
-            if (textLoc != null) Destroy(textLoc);
-
-            contentLabel.width = 720;
-            contentLabel.height = 260;
-            contentLabel.alignment = NGUIText.Alignment.Center;
-            contentLabel.overflowMethod = UILabel.Overflow.ResizeHeight;
-            contentLabel.rawText = "[FF9900]Menu Bestiaire[-]\n\n" +
-                                   "[FFFFFF]Bienvenue dans le bestiaire de Trance Seek !\n\n" +
-                                   "Ce panneau utilise les composants natifs du jeu et servira\n" +
-                                   "de base pour afficher vos fiches de monstres et stats.[-]\n\n" +
-                                   "[A0A0A0](Appuyez sur Annuler pour revenir)[-]";
-
-            // 3. Bouton Retour (cloné pour conserver les colliders, hover et curseur NGUI)
             _bestiaryReturnButton = Instantiate(_bestiaryEntryButton);
             _bestiaryReturnButton.name = "Bestiary Return Button";
             _bestiaryReturnButton.transform.SetParent(_bestiaryMenuRoot.transform, false);
-            _bestiaryReturnButton.transform.localPosition = new Vector3(0f, -150f, 0f);
+            _bestiaryReturnButton.transform.localPosition = new Vector3(-350f, -300f, 0f);
 
-            // Nettoyage des dummy choices
             Transform d1 = _bestiaryReturnButton.transform.Find("DummyChoice1");
             if (d1 != null) Destroy(d1.gameObject);
             Transform d2 = _bestiaryReturnButton.transform.Find("DummyChoice2");
             if (d2 != null) Destroy(d2.gameObject);
+
+            UIWidget buttonWidget = _bestiaryReturnButton.GetComponent<UIWidget>();
+            if (buttonWidget != null)
+            {
+                buttonWidget.width = 400;
+            }
 
             UILabel returnLabel = _bestiaryReturnButton.GetComponentInChildren<UILabel>();
             if (returnLabel != null)
@@ -329,7 +307,108 @@ namespace Memoria.Scripts.TranceSeek
 
             UIEventListener.Get(_bestiaryReturnButton).onClick = go => CloseBestiaryMenu(configUI);
 
+            GameObject infoFrame = Instantiate(frameTemplate);
+            infoFrame.name = "Bestiary Info Frame";
+            infoFrame.transform.SetParent(_bestiaryMenuRoot.transform, false);
+            infoFrame.transform.localPosition = new Vector3(_infoWindowPosX, _infoWindowPosY, 0f);
+
+            UIWidget rootWidget = infoFrame.GetComponent<UIWidget>();
+            if (rootWidget != null)
+            {
+                rootWidget.leftAnchor.target = null;
+                rootWidget.rightAnchor.target = null;
+                rootWidget.topAnchor.target = null;
+                rootWidget.bottomAnchor.target = null;
+
+                rootWidget.width = _infoWindowWidth;
+                rootWidget.height = _infoWindowHeight;
+            }
+
+            UIWidget[] infoWidgets = infoFrame.GetComponentsInChildren<UIWidget>(true);
+            foreach (UIWidget widget in infoWidgets)
+            {
+                widget.depth += 10;
+            }
+
+            foreach (UILabel lbl in infoFrame.GetComponentsInChildren<UILabel>(true))
+            {
+                if (lbl.rawText != null && lbl.rawText.Contains("CONFIG"))
+                {
+                    UILocalize loc = lbl.GetComponent<UILocalize>();
+                    if (loc != null) Destroy(loc);
+                    lbl.rawText = "INFORMATIONS";
+                }
+            }
+
+            UILabel templateLabel = _bestiaryEntryButton.GetComponentInChildren<UILabel>();
+            GameObject infoTextObj = Instantiate(templateLabel.gameObject);
+            infoTextObj.name = "Monster Info Text";
+            infoTextObj.transform.SetParent(infoFrame.transform, false);
+
+            _monsterInfoLabel = infoTextObj.GetComponent<UILabel>();
+            UILocalize infoLoc = _monsterInfoLabel.GetComponent<UILocalize>();
+            if (infoLoc != null) Destroy(infoLoc);
+
+            _monsterInfoLabel.leftAnchor.target = null;
+            _monsterInfoLabel.rightAnchor.target = null;
+            _monsterInfoLabel.topAnchor.target = null;
+            _monsterInfoLabel.bottomAnchor.target = null;
+
+            _monsterInfoLabel.pivot = UIWidget.Pivot.TopLeft;
+            _monsterInfoLabel.alignment = NGUIText.Alignment.Left;
+            _monsterInfoLabel.width = _infoWindowWidth - 60;
+            _monsterInfoLabel.height = _infoWindowHeight - 80;
+            _monsterInfoLabel.depth += 15;
+
+            float textPosX = -(_infoWindowWidth / 2f) + 30f;
+            float textPosY = (_infoWindowHeight / 2f) - 40f;
+            infoTextObj.transform.localPosition = new Vector3(textPosX, textPosY, 0f);
+
+            _currentPage = 0;
+            RefreshMonsterInfo();
+
             _bestiaryMenuRoot.SetActive(false);
+        }
+
+        private void RefreshMonsterInfo()
+        {
+            if (_monsterInfoLabel == null)
+                return;
+
+            string text = "";
+
+            if (_currentPage == 0)
+            {
+                text = "[FFCC00]Nom :[-] ???\n\n" +
+                       "[FFCC00]HP :[-] ???               [FFCC00]MP :[-] ???\n" +
+                       "[FFCC00]Vitesse :[-] ???          [FFCC00]Force :[-] ???\n" +
+                       "[FFCC00]Magie :[-] ???            [FFCC00]Esprit :[-] ???\n" +
+                       "[FFCC00]Défense :[-] ???          [FFCC00]Esquive :[-] ???\n" +
+                       "[FFCC00]Déf. Mag. :[-] ???        [FFCC00]Esq. Mag. :[-] ???\n\n" +
+                       "[FFCC00]Gils :[-] ???\n" +
+                       "[FFCC00]Exp :[-] ???";
+            }
+            else if (_currentPage == 1)
+            {
+                text = "[FFCC00]Absorption Élémentaire :[-]\n???\n\n" +
+                       "[FFCC00]Immunité Élémentaire :[-]\n???\n\n" +
+                       "[FFCC00]Réduction Élémentaire :[-]\n???\n\n" +
+                       "[FFCC00]Faiblesse Élémentaire :[-]\n???\n\n" +
+                       "[FFCC00]Catégorie :[-] ???\n\n" +
+                       "[FFCC00]Résistance aux altérations :[-]\n???";
+            }
+            else if (_currentPage == 2)
+            {
+                text = "[FFCC00]Objets à voler :[-]\n" +
+                       "- ???\n- ???\n- ???\n- ???\n\n" +
+                       "[FFCC00]Récompenses :[-]\n" +
+                       "- ???\n- ???\n- ???\n- ???\n\n" +
+                       "[FFCC00]Récompense carte :[-] ???";
+            }
+
+            text += $"\n\n[A0A0A0]< Page {_currentPage + 1}/3 >[-]";
+
+            _monsterInfoLabel.rawText = text;
         }
 
         private void OpenBestiaryMenu(ConfigUI configUI)
@@ -337,24 +416,20 @@ namespace Memoria.Scripts.TranceSeek
             if (_isBestiaryOpen)
                 return;
 
-            FF9Sfx.FF9SFX_Play(103); // Bruit de confirmation FFIX
+            FF9Sfx.FF9SFX_Play(103);
 
             CreateBestiaryMenuHierarchy(configUI);
 
-            // 1. Masquer les listes de la Configuration
             configUI.ConfigList.SetActive(false);
             if (configUI.BoosterPanel != null)
                 configUI.BoosterPanel.SetActive(false);
 
-            // 2. Mettre à jour le badge de titre
             if (_configTitleLabel != null)
                 _configTitleLabel.rawText = "Bestiaire";
 
-            // 3. Afficher notre nouveau menu
             _bestiaryMenuRoot.SetActive(true);
             _isBestiaryOpen = true;
 
-            // 4. Configurer la main-curseur et le groupe d'input dédié
             ButtonGroupState.SetPointerOffsetToGroup(new Vector2(30f, 0f), BestiaryGroupName);
             ButtonGroupState.SetPointerDepthToGroup(7, BestiaryGroupName);
             ButtonGroupState.SetCursorStartSelect(_bestiaryReturnButton, BestiaryGroupName);
@@ -367,24 +442,20 @@ namespace Memoria.Scripts.TranceSeek
             if (!_isBestiaryOpen)
                 return;
 
-            FF9Sfx.FF9SFX_Play(101); // Bruit d'annulation FFIX
+            FF9Sfx.FF9SFX_Play(101);
 
-            // 1. Masquer notre menu Bestiaire
             if (_bestiaryMenuRoot != null)
                 _bestiaryMenuRoot.SetActive(false);
 
-            // 2. Restaurer le badge de titre
             if (_configTitleLabel != null)
                 _configTitleLabel.rawText = _originalTitleText;
 
-            // 3. Réactiver la liste du menu Config
             configUI.ConfigList.SetActive(true);
             if (configUI.BoosterPanel != null)
                 configUI.BoosterPanel.SetActive(true);
 
             _isBestiaryOpen = false;
 
-            // 4. Rétablir le groupe et replacer le curseur sur "Bestiaire"
             ButtonGroupState.ActiveGroup = ConfigGroupName;
             if (_bestiaryEntryButton != null)
             {
@@ -414,7 +485,6 @@ namespace Memoria.Scripts.TranceSeek
             if (ButtonGroupState.ActiveButton != _bestiaryEntryButton)
                 return;
 
-            // Validation via manette ou clavier
             if (UIManager.Input.GetKeyTrigger(Control.Confirm) || Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
             {
                 OpenBestiaryMenu(configUI);
@@ -423,14 +493,27 @@ namespace Memoria.Scripts.TranceSeek
 
         private void UpdateBestiaryMenuInput(ConfigUI configUI)
         {
-            // Touche Annuler (Manette Cercle/B, Échap, etc.)
             if (UIManager.Input.GetKeyTrigger(Control.Cancel) || Input.GetKeyDown(KeyCode.Escape))
             {
                 CloseBestiaryMenu(configUI);
                 return;
             }
 
-            // Touche Confirmer sur le bouton Retour
+            if (UIManager.Input.GetKeyTrigger(Control.Left) || Input.GetKeyDown(KeyCode.LeftArrow))
+            {
+                _currentPage--;
+                if (_currentPage < 0) _currentPage = 2;
+                FF9Sfx.FF9SFX_Play(103);
+                RefreshMonsterInfo();
+            }
+            else if (UIManager.Input.GetKeyTrigger(Control.Right) || Input.GetKeyDown(KeyCode.RightArrow))
+            {
+                _currentPage++;
+                if (_currentPage > 2) _currentPage = 0;
+                FF9Sfx.FF9SFX_Play(103);
+                RefreshMonsterInfo();
+            }
+
             if (ButtonGroupState.ActiveGroup == BestiaryGroupName && ButtonGroupState.ActiveButton == _bestiaryReturnButton)
             {
                 if (UIManager.Input.GetKeyTrigger(Control.Confirm) || Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))

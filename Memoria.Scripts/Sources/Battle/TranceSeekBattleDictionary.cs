@@ -70,6 +70,28 @@ namespace Memoria.Scripts.TranceSeek
                 dictbattle[6] = value;
             }
         }
+
+        public static int RefreshCacheStat
+        {
+            get
+            {
+                if (FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1000, out Dictionary<Int32, Int32> dictbattle))
+                    if (dictbattle.TryGetValue(11, out int canCoverValue))
+                        return canCoverValue;
+
+                return 0;
+            }
+            set
+            {
+                if (!FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1000, out Dictionary<Int32, Int32> dictbattle))
+                {
+                    dictbattle = new Dictionary<Int32, Int32>();
+                    FF9StateSystem.EventState.gScriptDictionary.Add(1000, dictbattle);
+                }
+
+                dictbattle[11] = value;
+            }
+        }
     }
 
     public static class TranceSeekExtensions

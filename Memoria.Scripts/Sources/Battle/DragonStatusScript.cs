@@ -95,11 +95,18 @@ namespace Memoria.DefaultScripts
                 if (inflicter.HasSupportAbilityByIndex(TranceSeekSupportAbility.Embrace)) // SA Embrace
                 {
                     DiffPhysicalEvade = target.PhysicalEvade / 4;
-                    target.PhysicalEvade = Math.Max(0, target.PhysicalEvade - DiffPhysicalEvade);
+                    if (target.IsPlayer)
+                        target.PhysicalEvade = Math.Max(0, target.PhysicalEvade + DiffPhysicalEvade);
+                    else
+                        target.PhysicalEvade = Math.Max(0, target.PhysicalEvade - DiffPhysicalEvade);
+
                     if (inflicter.HasSupportAbilityByIndex(TranceSeekSupportAbility.Embrace_Boosted))
                     {
                         DiffMagicalEvade = target.MagicEvade / 4;
-                        target.MagicEvade = Math.Max(0, target.MagicEvade - DiffMagicalEvade);
+                        if (target.IsPlayer)
+                            target.MagicEvade = Math.Max(0, target.MagicEvade + DiffMagicalEvade);
+                        else
+                            target.MagicEvade = Math.Max(0, target.MagicEvade - DiffMagicalEvade);
                     }
                 }
             }
@@ -117,11 +124,18 @@ namespace Memoria.DefaultScripts
             }
             if (DiffPhysicalEvade > 0)
             {
-                Target.PhysicalEvade = Math.Min(255, Target.PhysicalEvade + DiffPhysicalEvade);
+                if (Target.IsPlayer)
+                    Target.PhysicalEvade = Math.Max(0, Target.PhysicalEvade - DiffPhysicalEvade);
+                else
+                    Target.PhysicalEvade = Math.Min(255, Target.PhysicalEvade + DiffPhysicalEvade);
             }
             if (DiffMagicalEvade > 0)
             {
-                Target.MagicEvade = Math.Min(255, Target.MagicEvade + DiffMagicalEvade);
+                if (Target.IsPlayer)
+                    Target.MagicEvade = Math.Max(0, Target.MagicEvade - DiffMagicalEvade);
+                else
+                    Target.MagicEvade = Math.Min(255, Target.MagicEvade + DiffMagicalEvade);
+
             }
             return true;
         }

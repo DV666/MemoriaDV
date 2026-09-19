@@ -514,6 +514,9 @@ namespace Memoria.Scripts.TranceSeek
 
                     if (IsVisualAccessory)
                         TranceSeekVisualAccessory.CheckCreateVisualAccessory(unit);
+
+                    if (TranceSeekAPI.EEM_Enabled)
+                        btl_eqp.InitWeapon(unit.Player, unit.Data);
                 }
                 else // Monsters init
                 {
@@ -521,6 +524,7 @@ namespace Memoria.Scripts.TranceSeek
                         StateDict.IsBackAttack = true;
 
                     FixMonsterIconOffset(unit);
+                    FixMonsterHeightAndRadius(unit);
                     InitModelAnimations(unit);
 
                     if ((BattleID == 849 && GroupeBattleID == 2)) // TO DELETE - After Memoria Update :) (fix cover)
@@ -855,6 +859,47 @@ namespace Memoria.Scripts.TranceSeek
                     if (!String.IsNullOrEmpty(customAnims[i]))
                         AnimationFactory.AddAnimWithAnimatioName(btl.gameObject, customAnims[i]);
         }
+
+        public static void FixMonsterHeightAndRadius(BattleUnit btl)
+        {
+            if (btl == null || btl.Data == null)
+                return;
+
+            Int32 geoId = btl.Data.dms_geo_id;
+            if (CustomModelHeightAndRadius.TryGetValue(geoId, out ModelDimension dim))
+            {
+                btl.Data.height = dim.Height;
+                btl.Data.radius_effect = dim.Radius;
+            }
+        }
+
+        public class ModelDimension
+        {
+            public Int32 Height;
+            public Int32 Radius;
+            public Int32 BoneNeck;
+            public Byte TargetBone;
+
+            public ModelDimension(Int32 height, Int32 radius, Int32 boneNeck = 0, Byte targetBone = 0)
+            {
+                Height = height;
+                Radius = radius;
+                BoneNeck = boneNeck;
+                TargetBone = targetBone;
+            }
+        }
+
+        public static readonly Dictionary<Int32, ModelDimension> CustomModelHeightAndRadius = new Dictionary<Int32, ModelDimension>
+        {
+            { 1206, new ModelDimension(900, 500) }, // Mysterious Girl FF4
+            { 1208, new ModelDimension(900, 500) }, // Shiva FF4
+            { 1209, new ModelDimension(900, 500) }, // Ifrit FF4
+            { 1210, new ModelDimension(900, 500) }, // Ramuh FF4
+            { 1211, new ModelDimension(900, 500) }, // Leviathan FF4
+            { 1212, new ModelDimension(900, 500) }, // Asura FF4
+            { 1213, new ModelDimension(900, 500) } // Bahamut FF4
+
+        };
 
         private class IconOffsetPatch
         {

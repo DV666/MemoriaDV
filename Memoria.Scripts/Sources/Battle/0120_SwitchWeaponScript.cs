@@ -19,7 +19,6 @@ namespace Memoria.Scripts.TranceSeek
 
         private readonly BattleCalculator _v;
 
-        private static Boolean EEM_Enabled = Configuration.Mod.FolderNames.Contains("ExtraEquipmentMenu");
 
         public SwitchWeaponScript(BattleCalculator v)
         {
@@ -137,7 +136,7 @@ namespace Memoria.Scripts.TranceSeek
             string ModelTranceZidane;
             Vector3 ZidanePosition = unit.Data.gameObject.transform.localPosition;
             Boolean VanillaZidaneModel = (unit.SerialNumber == CharacterSerialNumber.ZIDANE_DAGGER || unit.SerialNumber == CharacterSerialNumber.ZIDANE_SWORD);
-            Boolean EEM_Mod = EEM_Enabled && !VanillaZidaneModel;
+            Boolean EEM_Mod = TranceSeekAPI.EEM_Enabled && !VanillaZidaneModel;
 
             if (TranceSeekCharacterMechanic.ZidaneDagger(unit))
             {

@@ -114,43 +114,33 @@ namespace Memoria.Scripts.TranceSeek
                 ItemStolen = battleEnemy.StealableItems[0];
                 StealScript.StealItem(v, battleEnemy, 0, false);
             }
-            else if (monster.State().Zidane.EyeOfTheThief && caster.PlayerIndex == CharacterId.Zidane) // Oeil de voleur activé
+            else if (monster.State().Zidane.EyeOfTheThief && caster.PlayerIndex == CharacterId.Zidane)
             {
                 if (caster.PlayerIndex == CharacterId.Zidane)
                     AddBonusSteal(monster);
 
-                Dictionary<String, String> ThiefEyeMessage = new Dictionary<String, String>
-                {
-                    { "US", "Thief's Eye!" },
-                    { "UK", "Thief's Eye!" },
-                    { "JP", "泥棒の目!" },
-                    { "ES", "Ojo del ladrón!" },
-                    { "FR", "Œil du voleur !" },
-                    { "GR", "Auge des Diebes!" },
-                    { "IT", "Occhio del ladro!" },
-                };
                 if (GameRandom.Next8() < StealScript.NewStealableItemRates(battleEnemy.StealableItemRates[3], caster) && battleEnemy.StealableItems[3] != RegularItem.NoItem)
                 {
                     ItemStolen = battleEnemy.StealableItems[3];
-                    btl2d.Btl2dReqSymbolMessage(monster.Data, "[FDEE00]", ThiefEyeMessage, HUDMessage.MessageStyle.DAMAGE, 5);
+                    btl2d.Btl2dReqSymbolMessage(monster.Data, "[FDEE00]", TranceSeekMessages.EyeOfThief, HUDMessage.MessageStyle.DAMAGE, 5);
                     StealScript.StealItem(v, battleEnemy, 3, false);
                 }
                 else if (GameRandom.Next8() < StealScript.NewStealableItemRates(battleEnemy.StealableItemRates[2], caster) && battleEnemy.StealableItems[2] != RegularItem.NoItem)
                 {
                     ItemStolen = battleEnemy.StealableItems[2];
-                    btl2d.Btl2dReqSymbolMessage(monster.Data, "[FDEE00]", ThiefEyeMessage, HUDMessage.MessageStyle.DAMAGE, 5);
+                    btl2d.Btl2dReqSymbolMessage(monster.Data, "[FDEE00]", TranceSeekMessages.EyeOfThief, HUDMessage.MessageStyle.DAMAGE, 5);
                     StealScript.StealItem(v, battleEnemy, 2, false);
                 }
                 else if (GameRandom.Next8() < StealScript.NewStealableItemRates(battleEnemy.StealableItemRates[1], caster) && battleEnemy.StealableItems[1] != RegularItem.NoItem)
                 {
                     ItemStolen = battleEnemy.StealableItems[1];
-                    btl2d.Btl2dReqSymbolMessage(monster.Data, "[FDEE00]", ThiefEyeMessage, HUDMessage.MessageStyle.DAMAGE, 5);
+                    btl2d.Btl2dReqSymbolMessage(monster.Data, "[FDEE00]", TranceSeekMessages.EyeOfThief, HUDMessage.MessageStyle.DAMAGE, 5);
                     StealScript.StealItem(v, battleEnemy, 1, false);
                 }
                 else if (GameRandom.Next8() < StealScript.NewStealableItemRates(battleEnemy.StealableItemRates[0], caster) && battleEnemy.StealableItems[0] != RegularItem.NoItem)
                 {
                     ItemStolen = battleEnemy.StealableItems[0];
-                    btl2d.Btl2dReqSymbolMessage(monster.Data, "[FDEE00]", ThiefEyeMessage, HUDMessage.MessageStyle.DAMAGE, 5);
+                    btl2d.Btl2dReqSymbolMessage(monster.Data, "[FDEE00]", TranceSeekMessages.EyeOfThief, HUDMessage.MessageStyle.DAMAGE, 5);
                     StealScript.StealItem(v, battleEnemy, 0, false);
                 }
             }

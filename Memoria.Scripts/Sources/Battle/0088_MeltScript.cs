@@ -72,6 +72,7 @@ namespace Memoria.Scripts.TranceSeek
                             {
                                 monster.Data.bi.target = 1;
                                 btl_mot.ShowMesh(monster.Data, 65535, false);
+                                TranceSeekBattleDictionary.RefreshCacheStat |= monster.Id;
                                 _v.Target.HpDamage = (int)(HPZombDance1 + HPZombDance2) / 10;
                                 monster.Strength = (byte)(monster.Strength + (HPZombDance1 + HPZombDance2) / 1000);
                                 monster.Magic = (byte)(monster.Magic + (HPZombDance1 + HPZombDance2) / 1000);

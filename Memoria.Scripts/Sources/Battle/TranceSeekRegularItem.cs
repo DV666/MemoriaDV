@@ -723,6 +723,8 @@ namespace Memoria.Scripts.TranceSeek
 
                 if (v.Caster.Weapon == ExcalipoorII && (v.Target.Flags & CalcFlag.HpRecovery) == 0)
                     v.Target.HpDamage = 1;
+                else if (v.Caster.IsHealingRod)
+                    v.Target.Flags |= CalcFlag.HpRecovery;
                 else if (CasterWeaponShape == 7 && v.Target.HpDamage > 0 && v.Command.ScriptId == 10) // Air Racket (nerf White Mage heal)
                     v.Target.HpDamage /= 2;
                 else if (CasterWeaponShape == 42 && v.Target.HpDamage > 0 && (v.Command.ScriptId == 48 || v.Command.ScriptId == 83)) // Heavy Spear (on Jump)
@@ -800,7 +802,7 @@ namespace Memoria.Scripts.TranceSeek
                             battleEnemy.Data.bonus_item[0] = GoblinMageSoul;
                             battleEnemy.Data.bonus_item_rate[0] = 256;
                             break;
-                        case 90: // Gnoll
+                        case 92: // Gnoll
                             battleEnemy.Data.bonus_item[0] = GnollSoul;
                             battleEnemy.Data.bonus_item_rate[0] = 256;
                             break;

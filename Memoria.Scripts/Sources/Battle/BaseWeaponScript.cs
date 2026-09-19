@@ -291,17 +291,8 @@ namespace Memoria.Scripts.TranceSeek
 
                 if (success)
                 {
-                    Dictionary<String, String> localizedMessage = new Dictionary<String, String>
-                    {
-                        { "US", $"Thief's Eye!" },
-                        { "UK", $"Thief's Eye!" },
-                        { "JP", $"盗賊の眼！" },
-                        { "ES", $"¡Ojo de ladrón!" },
-                        { "FR", $"Œil du voleur !" },
-                        { "DE", $"Diebesauge!" },
-                        { "IT", $"Occhio del ladro!" },
-                    };
-                    btl2d.Btl2dReqSymbolMessage(_v.Target.Data, "[FDEE00]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 10);
+
+                    btl2d.Btl2dReqSymbolMessage(_v.Target.Data, "[FDEE00]", TranceSeekMessages.EyeOfThief, HUDMessage.MessageStyle.DAMAGE, 10);
                 }
             }
             else if (IsZidaneTrance())
