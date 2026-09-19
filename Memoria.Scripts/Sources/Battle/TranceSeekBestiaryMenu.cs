@@ -23,10 +23,26 @@ namespace Memoria.Scripts.TranceSeek
         private static readonly PropertyInfo MaxItemProp = SnapDragScrollViewType?.GetProperty("MaxItem", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
         private static readonly FieldInfo MaxItemField = SnapDragScrollViewType?.GetField("MaxItem", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
 
-        private int _infoWindowWidth = 800;
-        private int _infoWindowHeight = 750;
-        private float _infoWindowPosX = 340f;
-        private float _infoWindowPosY = -15f;
+        private int _infoWindowWidth = 680;
+        private int _infoWindowHeight = 700;
+        private float _infoWindowPosX = 360f;
+        private float _infoWindowPosY = -25f;
+
+        private int _modelWindowWidth = 550;
+        private int _modelWindowHeight = 600;
+        private float _modelWindowPosX = -340f;
+        private float _modelWindowPosY = 25f;
+
+        private float _buttonPosX = -340f;
+        private float _buttonPosY = -340f;
+
+        private float _modelPosX = 0f;
+        private float _modelPosY = -150f;
+        private float _modelPosZ = 100f;
+        private float _modelScale = 0.5f;
+        private float _modelRotX = 0f;
+        private float _modelRotY = 340f;
+        private float _modelRotZ = 180f;
 
         private GameObject _bestiaryEntryButton;
         private UILabel _configTitleLabel;
@@ -37,6 +53,10 @@ namespace Memoria.Scripts.TranceSeek
         private bool _isBestiaryOpen = false;
 
         private UILabel _monsterInfoLabel;
+        private GameObject _monsterModel;
+        private RenderTexture _monsterRt;
+        private GameObject _monsterCamObj;
+
         private int _currentPage = 0;
         private int _currentMonsterId = 0;
 
@@ -70,8 +90,6 @@ namespace Memoria.Scripts.TranceSeek
                 UpdateConfigMenuInput(configScene);
             }
         }
-
-        #region Injection 
 
         private void TryInjectBestiaryButton(ConfigUI configUI)
         {
@@ -229,10 +247,6 @@ namespace Memoria.Scripts.TranceSeek
             }
         }
 
-        #endregion
-
-        #region Menu Bestiaire
-
         private void FindConfigTitleLabel(ConfigUI configUI)
         {
             foreach (UILabel lbl in configUI.GetComponentsInChildren<UILabel>(true))
@@ -276,7 +290,7 @@ namespace Memoria.Scripts.TranceSeek
             _bestiaryReturnButton = Instantiate(_bestiaryEntryButton);
             _bestiaryReturnButton.name = "Bestiary Return Button";
             _bestiaryReturnButton.transform.SetParent(_bestiaryMenuRoot.transform, false);
-            _bestiaryReturnButton.transform.localPosition = new Vector3(-350f, -300f, 0f);
+            _bestiaryReturnButton.transform.localPosition = new Vector3(_buttonPosX, _buttonPosY, 0f);
 
             Transform d1 = _bestiaryReturnButton.transform.Find("DummyChoice1");
             if (d1 != null) Destroy(d1.gameObject);
@@ -312,16 +326,15 @@ namespace Memoria.Scripts.TranceSeek
             infoFrame.transform.SetParent(_bestiaryMenuRoot.transform, false);
             infoFrame.transform.localPosition = new Vector3(_infoWindowPosX, _infoWindowPosY, 0f);
 
-            UIWidget rootWidget = infoFrame.GetComponent<UIWidget>();
-            if (rootWidget != null)
+            UIWidget rootWidgetInfo = infoFrame.GetComponent<UIWidget>();
+            if (rootWidgetInfo != null)
             {
-                rootWidget.leftAnchor.target = null;
-                rootWidget.rightAnchor.target = null;
-                rootWidget.topAnchor.target = null;
-                rootWidget.bottomAnchor.target = null;
-
-                rootWidget.width = _infoWindowWidth;
-                rootWidget.height = _infoWindowHeight;
+                rootWidgetInfo.leftAnchor.target = null;
+                rootWidgetInfo.rightAnchor.target = null;
+                rootWidgetInfo.topAnchor.target = null;
+                rootWidgetInfo.bottomAnchor.target = null;
+                rootWidgetInfo.width = _infoWindowWidth;
+                rootWidgetInfo.height = _infoWindowHeight;
             }
 
             UIWidget[] infoWidgets = infoFrame.GetComponentsInChildren<UIWidget>(true);
@@ -364,10 +377,113 @@ namespace Memoria.Scripts.TranceSeek
             float textPosY = (_infoWindowHeight / 2f) - 40f;
             infoTextObj.transform.localPosition = new Vector3(textPosX, textPosY, 0f);
 
+            GameObject modelFrame = Instantiate(frameTemplate);
+            modelFrame.name = "Bestiary Model Frame";
+            modelFrame.transform.SetParent(_bestiaryMenuRoot.transform, false);
+            modelFrame.transform.localPosition = new Vector3(_modelWindowPosX, _modelWindowPosY, 0f);
+
+            UIWidget rootWidgetModel = modelFrame.GetComponent<UIWidget>();
+            if (rootWidgetModel != null)
+            {
+                rootWidgetModel.leftAnchor.target = null;
+                rootWidgetModel.rightAnchor.target = null;
+                rootWidgetModel.topAnchor.target = null;
+                rootWidgetModel.bottomAnchor.target = null;
+                rootWidgetModel.width = _modelWindowWidth;
+                rootWidgetModel.height = _modelWindowHeight;
+            }
+
+            UIWidget[] modelWidgets = modelFrame.GetComponentsInChildren<UIWidget>(true);
+            foreach (UIWidget widget in modelWidgets)
+            {
+                widget.depth += 10;
+            }
+
+            foreach (UILabel lbl in modelFrame.GetComponentsInChildren<UILabel>(true))
+            {
+                if (lbl.rawText != null && lbl.rawText.Contains("CONFIG"))
+                {
+                    UILocalize loc = lbl.GetComponent<UILocalize>();
+                    if (loc != null) Destroy(loc);
+                    lbl.rawText = "APERÇU";
+                }
+            }
+
+            foreach (UISprite s in modelFrame.GetComponentsInChildren<UISprite>(true))
+            {
+                if (s.name != null && !s.name.ToLower().Contains("border"))
+                {
+                    Destroy(s.gameObject);
+                }
+            }
+
+            _monsterRt = new RenderTexture(_modelWindowWidth, _modelWindowHeight, 24);
+            _monsterRt.antiAliasing = 2;
+
+            _monsterCamObj = new GameObject("MonsterRTCam");
+            _monsterCamObj.transform.position = new Vector3(20000f, 20000f, -1000f);
+            Camera cam = _monsterCamObj.AddComponent<Camera>();
+            cam.orthographic = true;
+            cam.orthographicSize = _modelWindowHeight / 2f;
+            cam.targetTexture = _monsterRt;
+            cam.clearFlags = CameraClearFlags.SolidColor;
+            cam.backgroundColor = new Color(0.05f, 0.05f, 0.05f, 1f);
+            cam.cullingMask = 1 << 31;
+
+            GameObject texObj = new GameObject("MonsterTexture");
+            texObj.transform.SetParent(modelFrame.transform, false);
+            texObj.transform.localPosition = Vector3.zero;
+            UITexture uiTex = texObj.AddComponent<UITexture>();
+            uiTex.mainTexture = _monsterRt;
+            uiTex.width = _modelWindowWidth;
+            uiTex.height = _modelWindowHeight;
+            uiTex.depth = 12;
+
+            _monsterModel = ModelFactory.CreateModel("GEO_MON_B3_001", false);
+            if (_monsterModel != null)
+            {
+                _monsterModel.SetActive(true);
+                _monsterModel.transform.SetParent(_monsterCamObj.transform, false);
+
+                NGUITools.SetLayer(_monsterModel, 31);
+
+                Shader unlitShader = ShadersLoader.Find("Unlit/Transparent Cutout");
+                foreach (Renderer r in _monsterModel.GetComponentsInChildren<Renderer>(true))
+                {
+                    r.enabled = true;
+                    if (r is SkinnedMeshRenderer smr)
+                    {
+                        smr.updateWhenOffscreen = true;
+                        smr.localBounds = new Bounds(Vector3.zero, new Vector3(10000f, 10000f, 10000f));
+                    }
+
+                    foreach (Material m in r.materials)
+                    {
+                        if (m != null)
+                        {
+                            if (unlitShader != null)
+                                m.shader = unlitShader;
+                        }
+                    }
+                }
+
+                _monsterModel.transform.localPosition = new Vector3(_modelPosX, _modelPosY, _modelPosZ);
+                _monsterModel.transform.localRotation = Quaternion.Euler(_modelRotX, _modelRotY, _modelRotZ);
+                _monsterModel.transform.localScale = new Vector3(_modelScale, _modelScale, _modelScale);
+
+                AnimationFactory.AddAnimWithAnimatioName(_monsterModel, "ANH_MON_B3_001_000");
+                Animation anim = _monsterModel.GetComponent<Animation>();
+                if (anim != null)
+                {
+                    anim.wrapMode = WrapMode.Loop;
+                }
+            }
+
             _currentPage = 0;
             RefreshMonsterInfo();
 
             _bestiaryMenuRoot.SetActive(false);
+            if (_monsterCamObj != null) _monsterCamObj.SetActive(false);
         }
 
         private void RefreshMonsterInfo()
@@ -428,6 +544,21 @@ namespace Memoria.Scripts.TranceSeek
                 _configTitleLabel.rawText = "Bestiaire";
 
             _bestiaryMenuRoot.SetActive(true);
+
+            if (_monsterCamObj != null)
+            {
+                _monsterCamObj.SetActive(true);
+            }
+
+            if (_monsterModel != null)
+            {
+                Animation anim = _monsterModel.GetComponent<Animation>();
+                if (anim != null)
+                {
+                    anim.Play("ANH_MON_B3_001_000");
+                }
+            }
+
             _isBestiaryOpen = true;
 
             ButtonGroupState.SetPointerOffsetToGroup(new Vector2(30f, 0f), BestiaryGroupName);
@@ -446,6 +577,9 @@ namespace Memoria.Scripts.TranceSeek
 
             if (_bestiaryMenuRoot != null)
                 _bestiaryMenuRoot.SetActive(false);
+
+            if (_monsterCamObj != null)
+                _monsterCamObj.SetActive(false);
 
             if (_configTitleLabel != null)
                 _configTitleLabel.rawText = _originalTitleText;
@@ -470,6 +604,9 @@ namespace Memoria.Scripts.TranceSeek
             if (_bestiaryMenuRoot != null)
                 _bestiaryMenuRoot.SetActive(false);
 
+            if (_monsterCamObj != null)
+                _monsterCamObj.SetActive(false);
+
             if (_configTitleLabel != null)
                 _configTitleLabel.rawText = _originalTitleText;
         }
@@ -493,6 +630,39 @@ namespace Memoria.Scripts.TranceSeek
 
         private void UpdateBestiaryMenuInput(ConfigUI configUI)
         {
+            if (_monsterModel != null)
+            {
+                float moveSpeed = 1f;
+                float scaleSpeed = 0.05f;
+                float rotSpeed = 5f;
+
+                if (Input.GetKey(KeyCode.H)) _modelPosX += moveSpeed;
+                if (Input.GetKey(KeyCode.F)) _modelPosX -= moveSpeed;
+                if (Input.GetKey(KeyCode.T)) _modelPosY += moveSpeed;
+                if (Input.GetKey(KeyCode.G)) _modelPosY -= moveSpeed;
+                if (Input.GetKey(KeyCode.R)) _modelPosZ += moveSpeed;
+                if (Input.GetKey(KeyCode.Y)) _modelPosZ -= moveSpeed;
+
+                if (Input.GetKey(KeyCode.P)) _modelScale += scaleSpeed;
+                if (Input.GetKey(KeyCode.M)) _modelScale -= scaleSpeed;
+
+                if (Input.GetKey(KeyCode.U)) _modelRotX += rotSpeed;
+                if (Input.GetKey(KeyCode.J)) _modelRotX -= rotSpeed;
+                if (Input.GetKey(KeyCode.I)) _modelRotY += rotSpeed;
+                if (Input.GetKey(KeyCode.K)) _modelRotY -= rotSpeed;
+                if (Input.GetKey(KeyCode.O)) _modelRotZ += rotSpeed;
+                if (Input.GetKey(KeyCode.L)) _modelRotZ -= rotSpeed;
+
+                _monsterModel.transform.localPosition = new Vector3(_modelPosX, _modelPosY, _modelPosZ);
+                _monsterModel.transform.localRotation = Quaternion.Euler(_modelRotX, _modelRotY, _modelRotZ);
+                _monsterModel.transform.localScale = new Vector3(_modelScale, _modelScale, _modelScale);
+
+                if (Input.GetKeyDown(KeyCode.Space))
+                {
+                    Log.Message($"[Debug RT Model] Pos: ({_modelPosX:F1}, {_modelPosY:F1}, {_modelPosZ:F1}) | Scale: {_modelScale:F3} | Rot: ({_modelRotX:F1}, {_modelRotY:F1}, {_modelRotZ:F1})");
+                }
+            }
+
             if (UIManager.Input.GetKeyTrigger(Control.Cancel) || Input.GetKeyDown(KeyCode.Escape))
             {
                 CloseBestiaryMenu(configUI);
@@ -523,13 +693,20 @@ namespace Memoria.Scripts.TranceSeek
             }
         }
 
-        #endregion
-
         private void OnDestroy()
         {
             ForceCloseBestiary();
             if (_bestiaryMenuRoot != null)
                 Destroy(_bestiaryMenuRoot);
+
+            if (_monsterModel != null)
+                Destroy(_monsterModel);
+
+            if (_monsterRt != null)
+                _monsterRt.Release();
+
+            if (_monsterCamObj != null)
+                Destroy(_monsterCamObj);
         }
     }
 }
