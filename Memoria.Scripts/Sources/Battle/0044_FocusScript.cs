@@ -41,17 +41,15 @@ namespace Memoria.Scripts.TranceSeek
                 {
                     _v.Target.Flags |= CalcFlag.MpDamageOrHeal;
 
-                    uint num;
-                    uint num2;
                     uint factor = 4;
                     if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Overload_Boosted)) // SA Overload+
                         factor = 2;
                     else if (_v.Caster.HasSupportAbilityByIndex(SupportAbility.MagElemNull)) // SA Overload
                         factor = 3;
 
-                    num = 255 / (factor * 3);
-                    num2 = _v.Target.MaximumMp / factor;
-                    int num3 = (int)(_v.Target.Trance - num);
+                    uint TranceFactor = 255 / (factor * 3);
+                    uint MPFactor = _v.Caster.MaximumMp / factor;
+                    int RemainingTrance = (int)(_v.Caster.Trance - TranceFactor);
 
                     if (_v.Caster.Trance == 0)
                     {
@@ -59,49 +57,47 @@ namespace Memoria.Scripts.TranceSeek
                     }
                     else
                     {
-                        if (num3 <= 0)
+                        if (RemainingTrance <= 0)
                         {
-                            _v.Target.MpDamage = (int)(num2 * _v.Target.Trance / num);
-                            _v.Target.Trance = 0;
+                            _v.Caster.MpDamage = (int)(MPFactor * _v.Caster.Trance / TranceFactor);
+                            _v.Caster.Trance = 0;
                         }
                         else
                         {
-                            _v.Target.Trance -= (byte)num;
-                            _v.Target.MpDamage = (int)num2;
+                            _v.Caster.Trance -= (byte)TranceFactor;
+                            _v.Caster.MpDamage = (int)MPFactor;
                         }
                     }
                 }
                 else if (_v.Command.Id == BattleCommandId.Accumulate)
                 {
-                    _v.Target.Flags |= (CalcFlag.HpAlteration | CalcFlag.MpDamageOrHeal);
+                    _v.Caster.Flags |= (CalcFlag.HpAlteration | CalcFlag.MpDamageOrHeal);
 
-                    uint num;
-                    uint num2;
                     uint factor = 4;
                     if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Overload_Boosted)) // SA Overload+
                         factor = 2;
                     else if (_v.Caster.HasSupportAbilityByIndex(SupportAbility.MagElemNull)) // SA Overload
                         factor = 3;
 
-                    num = _v.Target.MaximumHp / factor;
-                    num2 = _v.Target.MaximumMp / factor;
-                    int num3 = (int)(_v.Target.CurrentHp - num);
+                    uint HPFactor = _v.Caster.MaximumHp / factor;
+                    uint MPFactor = _v.Caster.MaximumMp / factor;
+                    int RemainingHP = (int)(_v.Caster.CurrentHp - HPFactor);
 
-                    if (_v.Caster.CurrentHp == 1U)
+                    if (_v.Caster.CurrentHp == 1)
                     {
                         _v.Context.Flags |= BattleCalcFlags.Miss;
                     }
                     else
                     {
-                        if (num3 <= 0)
+                        if (RemainingHP <= 0)
                         {
-                            _v.Target.HpDamage = (int)(_v.Target.CurrentHp - 1U);
-                            _v.Target.MpDamage = (int)(num2 * _v.Target.CurrentHp / num);
+                            _v.Caster.HpDamage = (int)(_v.Caster.CurrentHp - 1);
+                            _v.Caster.MpDamage = (int)(MPFactor * _v.Caster.CurrentHp / HPFactor);
                         }
                         else
                         {
-                            _v.Target.HpDamage = (int)num;
-                            _v.Target.MpDamage = (int)num2;
+                            _v.Caster.HpDamage = (int)HPFactor;
+                            _v.Caster.MpDamage = (int)MPFactor;
                         }
                     }
                 }
@@ -110,28 +106,25 @@ namespace Memoria.Scripts.TranceSeek
                     _v.Target.Flags |= CalcFlag.HpAlteration;
                     _v.Caster.Flags |= CalcFlag.MpDamageOrHeal;
 
-                    uint num;
-                    uint num2;
+                    uint HPAbsorbed = (uint)(_v.Target.MaximumHp / _v.Command.Power);
+                    uint MPRestored = (uint)(_v.Target.MaximumMp / _v.Command.Power);
+                    uint RemainingHP = _v.Target.CurrentHp - HPAbsorbed;
 
-                    num = (uint)(_v.Target.MaximumHp / _v.Command.Power);
-                    num2 = (uint)(_v.Target.MaximumMp / _v.Command.Power);
-                    uint num3 = _v.Target.CurrentHp - num;
-
-                    if (num3 <= 0)
+                    if (RemainingHP <= 0)
                     {
                         _v.Target.HpDamage = (int)(_v.Target.CurrentHp);
-                        _v.Caster.MpDamage = (int)(num2 * _v.Target.CurrentHp / num);
+                        _v.Caster.MpDamage = (int)(MPRestored * _v.Target.CurrentHp / HPAbsorbed);
                     }
                     else
                     {
-                        _v.Target.HpDamage = (int)num;
-                        _v.Caster.MpDamage = (int)num2;
+                        _v.Target.HpDamage = (int)HPAbsorbed;
+                        _v.Caster.MpDamage = (int)MPRestored;
                     }
                 }
             }
             else
             {
-                btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.MagicUp, parameters: $"+{_v.Command.Power}");
+                btl_stat.AlterStatus(_v.Caster, TranceSeekStatusId.MagicUp, parameters: $"+{_v.Command.Power}");
             }
         }
     }

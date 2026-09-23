@@ -18,12 +18,6 @@ namespace Memoria.Scripts.TranceSeek
         public static Boolean ForcedHeheZidane = Configuration.Mod.FolderNames.Contains("TranceSeek/Options/HeheZidane");
         public static Boolean HeheTriggered = false;
 
-        public static Boolean ZidaneDagger(BattleUnit zidane)
-        {
-            int WeaponShape = ff9item._FF9Item_Data[zidane.Weapon].shape;
-            return zidane.IsPlayer && WeaponShape != 2 && WeaponShape != 117;
-        }
-
         public static void TryApplyDragon(this BattleCalculator v)
         {
             if (v.Caster.PlayerIndex == CharacterId.Freya)

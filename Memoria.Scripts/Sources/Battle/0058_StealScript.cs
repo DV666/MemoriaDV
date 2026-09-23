@@ -85,7 +85,7 @@ namespace Memoria.Scripts.TranceSeek
                 int bonusgil = 0;
                 byte delay = 16;
 
-                if (!TranceSeekCharacterMechanic.ZidaneDagger(v.Caster))
+                if (!TranceSeekRegularItem.DaggerWeapon(v.Caster))
                     delay = 8;
 
                 if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.StealGil_Boosted))

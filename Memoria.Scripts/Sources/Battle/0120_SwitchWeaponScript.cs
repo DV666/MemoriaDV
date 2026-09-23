@@ -47,7 +47,7 @@ namespace Memoria.Scripts.TranceSeek
                 Vector3 ModelStatusScaleOld = _v.Caster.ModelStatusScale;
                 _v.Caster.ModelStatusScale += new Vector3(0.1f, 0.1f, 0.1f); // To force reset stack status.
 
-                if (TranceSeekCharacterMechanic.ZidaneDagger(_v.Caster))
+                if (TranceSeekRegularItem.DaggerWeapon(_v.Caster))
                     ModelZidane = "GEO_MAIN_B0_001"; // Model Zidane_Sword
                 else
                     ModelZidane = "GEO_MAIN_B0_000"; // Model Zidane_Dagger
@@ -138,7 +138,7 @@ namespace Memoria.Scripts.TranceSeek
             Boolean VanillaZidaneModel = (unit.SerialNumber == CharacterSerialNumber.ZIDANE_DAGGER || unit.SerialNumber == CharacterSerialNumber.ZIDANE_SWORD);
             Boolean EEM_Mod = TranceSeekAPI.EEM_Enabled && !VanillaZidaneModel;
 
-            if (TranceSeekCharacterMechanic.ZidaneDagger(unit))
+            if (TranceSeekRegularItem.DaggerWeapon(unit))
             {
                 ModelZidane = "GEO_MAIN_B0_001"; // Model Zidane_Sword
                 ModelTranceZidane = "GEO_MAIN_B0_023";

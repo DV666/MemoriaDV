@@ -69,6 +69,10 @@ namespace Memoria.Scripts.TranceSeek
                 }
             }
 
+            // [TODO] Need to use Memoria variables for next version
+            if (FF9StateSystem.EventState.ScenarioCounter >= 9790)
+                btl_scene.Info.NoMagical = false;
+
             OverlapSHP.ClearInBattleInit();
 
             FF9StateSystem.EventState.gEventGlobal[1544] = 0; // Reset Charm Target
@@ -415,7 +419,7 @@ namespace Memoria.Scripts.TranceSeek
 
                     if (ff9item._FF9Item_Data[unit.Accessory].shape == 60)
                     {
-                        unit.State().MascotCooldown = (60 - unit.Will) * UnityEngine.Random.Range(150, 250);
+                        unit.State().MascotCooldown = (60 - unit.Will) * UnityEngine.Random.Range(200, 250);
                         unit.AddDelayedModifier(TranceSeekVisualAccessory.ProcessMascotRecast, null);
                         IsVisualAccessory = true;
                     }
@@ -451,7 +455,7 @@ namespace Memoria.Scripts.TranceSeek
                     if (FF9StateSystem.EventState.gScriptDictionary.ContainsKey(ID)) // Reset infused weapon.
                         FF9StateSystem.EventState.gScriptDictionary.Remove(ID);
 
-                    if (FF9StateSystem.EventState.ScenarioCounter >= 11100 && FF9StateSystem.EventState.gEventGlobal[1500] == 0)
+                    if (FF9StateSystem.EventState.ScenarioCounter >= 11100 && FF9StateSystem.EventState.gEventGlobal[1500] == 0) // [TODO] Remove for Disc 4 release !
                     {
                         unit.AlterStatus(BattleStatus.Death, unit);
                         unit.CurrentHp = 0;
@@ -926,6 +930,8 @@ namespace Memoria.Scripts.TranceSeek
             { 1213, new IconOffsetPatch(new SByte[] { -10, 0, -2, 4, -6, -15 }, new SByte[] { -1, -14, -10, -8, -10, 0 })} // Bahamut FF4 (MG)
 
         };
+
+        private static readonly HashSet<Int32> StoneMonsters = new HashSet<Int32> { 354, 221, 83 };
 
         public static Dictionary<KeyValuePair<Int32, Int32>, Int32> ChangeDepthBBGfromBattleID = new Dictionary<KeyValuePair<Int32, Int32>, Int32>
         {

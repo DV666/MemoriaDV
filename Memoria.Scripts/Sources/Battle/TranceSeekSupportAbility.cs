@@ -116,6 +116,7 @@ namespace Memoria.Scripts.TranceSeek
         public const SupportAbility Mania = (SupportAbility)257;
         public const SupportAbility Reward = (SupportAbility)258;
         public const SupportAbility MogKiss = (SupportAbility)259;
+        public const SupportAbility TrueSight = (SupportAbility)260;
         public const SupportAbility Blessing_Boosted = (SupportAbility)1000;
         public const SupportAbility LightStep_Boosted = (SupportAbility)1001;
         public const SupportAbility Initiative_Boosted = (SupportAbility)1002;
@@ -275,6 +276,7 @@ namespace Memoria.Scripts.TranceSeek
         public const SupportAbility Mania_Boosted = (SupportAbility)1257;
         public const SupportAbility Reward_Boosted = (SupportAbility)1258;
         public const SupportAbility MogKiss_Boosted = (SupportAbility)1259;
+        public const SupportAbility TrueSight_Boosted = (SupportAbility)1260;
         public const SupportAbility BirdKiller_Boosted_3 = (SupportAbility)2013;
         public const SupportAbility BugKiller_Boosted_3 = (SupportAbility)2014;
         public const SupportAbility GiantKiller_Boosted_3 = (SupportAbility)2015;

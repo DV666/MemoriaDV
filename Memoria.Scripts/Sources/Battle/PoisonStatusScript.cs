@@ -52,6 +52,10 @@ namespace Memoria.DefaultScripts
                 return false;
 
             var Target_TSVar = Target.State();
+
+            if (Target_TSVar.Invincible)
+                return false;
+
             uint TargetMaxHP = Target_TSVar.Monster.HPBoss10000  ? (Target.MaximumHp - 10000) : Target.MaximumHp;
             UInt32 damage = (UInt32)Math.Round(Target.IsUnderAnyStatus(BattleStatus.EasyKill) ? (TargetMaxHP / 256.0) : (TargetMaxHP / 32.0));
             Boolean isDmg = false;

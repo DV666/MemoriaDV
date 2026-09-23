@@ -22,7 +22,7 @@ namespace Memoria.Scripts.TranceSeek
         public void Perform()
         {
             _v.Command.AbilityStatus = _v.Caster.WeaponStatus;
-            if (TranceSeekCharacterMechanic.ZidaneDagger(_v.Caster) || _v.Command.AbilityStatus == 0)
+            if (TranceSeekRegularItem.DaggerWeapon(_v.Caster) || _v.Command.AbilityStatus == 0)
             {
                 _v.Context.Flags |= BattleCalcFlags.Miss;
                 return;

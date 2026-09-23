@@ -38,6 +38,7 @@ namespace Memoria.Scripts.TranceSeek
                     Int32 baseDamage = Comn.random16() % (1 + (_v.Caster.Level + _v.Caster.Magic >> 3));
                     _v.Context.AttackPower = _v.Caster.GetWeaponPower(_v.Command);
                     _v.Target.SetMagicDefense();
+                    TranceSeekAPI.CheckHealerSA(_v);
                     _v.Context.Attack = _v.Caster.Magic + baseDamage;
                     _v.Command.Element = _v.Caster.WeaponElement;
                     TranceSeekAPI.BonusBackstabAndPenaltyLongDistance(_v);

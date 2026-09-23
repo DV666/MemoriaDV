@@ -26,9 +26,9 @@ namespace Memoria.Scripts.TranceSeek
         {
             Int32 baseDamage = Comn.random16() % (1 + (v.Caster.Level + v.Caster.Strength >> 3));
             v.Context.AttackPower = v.Caster.GetWeaponPower(v.Command);
-            if ((!v.Caster.HasSupportAbility(SupportAbility1.Healer) && !v.Caster.IsHealingRod) || !v.Target.IsPlayer)
-                v.Target.SetPhysicalDefense();
-            
+            v.Target.SetPhysicalDefense();
+            CheckHealerSA(v);
+
             switch (bonus)
             {
                 case CalcAttackBonus.Simple:
@@ -71,23 +71,23 @@ namespace Memoria.Scripts.TranceSeek
 
             if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Archmage_Boosted)) // Archimage+ (10% crit en bonus)
                 BonusCrit += 10;
-            Int32 quarterWill = (v.Caster.Data.elem.wpr + Caster_TSVar.General.Critical) >> 2;
-            if (quarterWill != 0 && (((Comn.random16() % quarterWill) + v.Caster.Data.critical_rate_deal_bonus + v.Target.Data.critical_rate_receive_resistance + TranceSeekRegularItem.BonusCriticalFromWeapon(v.Caster.Weapon) + BonusCrit) > Comn.random16() % 100) || v.Caster.IsUnderAnyStatus(TranceSeekStatus.PerfectCrit) || Caster_TSVar.SpecialSA.CriticalHit100 > 0)
+
+            BonusCrit += Caster_TSVar.Zidane.Critical + TranceSeekRegularItem.BonusCriticalFromWeapon(v.Caster.Weapon);
+            Int32 quarterWill = Math.Max(1 , (v.Caster.Data.elem.wpr) >> 2);
+            if ((((Comn.random16() % quarterWill) + v.Caster.Data.critical_rate_deal_bonus + v.Target.Data.critical_rate_receive_resistance + BonusCrit) > Comn.random16() % 100) || v.Caster.IsUnderAnyStatus(TranceSeekStatus.PerfectCrit) || v.Caster.IsUnderAnyStatus(TranceSeekStatus.PerfectCrit))
             {
-                if (Caster_TSVar.SpecialSA.CriticalHit100 > 0) // Still usefull ?
-                    Caster_TSVar.SpecialSA.CriticalHit100--;
                 if (v.Caster.IsUnderAnyStatus(TranceSeekStatus.PerfectCrit)) // Perfect Crit
                     btl_stat.AlterStatus(v.Caster, TranceSeekStatusId.PerfectCrit, parameters: "-1");
                 else
-                    Caster_TSVar.General.Critical = 0;
+                    Caster_TSVar.Zidane.Critical = 0;
                 v.Context.Attack *= 2;
                 v.Target.HpDamage *= 2;
                 v.Target.MpDamage *= 2;
                 v.Target.Flags |= CalcFlag.Critical;
             }
-            else if (v.Caster.PlayerIndex == CharacterId.Zidane && !TranceSeekCharacterMechanic.ZidaneDagger(v.Caster) && v.Command.AbilityId == BattleAbilityId.Attack)
+            else if (v.Caster.PlayerIndex == CharacterId.Zidane && !TranceSeekRegularItem.DaggerWeapon(v.Caster) && v.Command.AbilityId == BattleAbilityId.Attack)
             {
-                Caster_TSVar.Zidane.Critical += 5;
+                Caster_TSVar.Zidane.Critical += 2;
                 btl2d.Btl2dReqSymbolMessage(v.Caster.Data, "[FFFF00]", TranceSeekMessages.MessageZidaneCritical, HUDMessage.MessageStyle.DAMAGE, 15);
             }
         }
@@ -223,7 +223,7 @@ namespace Memoria.Scripts.TranceSeek
             }
             if ((v.Target.Data == v.Caster.Data || (v.Context.Evade + (v.Target.PlayerIndex == CharacterId.Zidane ? Target_TSVar.Zidane.Dodge : 0)) <= Comn.random16() % 100 || v.Context.Evade == 0))
             {
-                if (v.Target.PlayerIndex == CharacterId.Zidane && v.Target.Data != v.Caster.Data && ZidaneDagger(v.Target) && !v.Target.IsUnderAnyStatus(BattleStatusConst.BattleEndFull) && !v.Caster.HasSupportAbility(SupportAbility1.Healer))
+                if (v.Target.PlayerIndex == CharacterId.Zidane && v.Target.Data != v.Caster.Data && TranceSeekRegularItem.DaggerWeapon(v.Target) && !v.Target.IsUnderAnyStatus(BattleStatusConst.BattleEndFull) && !v.Caster.HasSupportAbility(SupportAbility1.Healer))
                 {
                     Target_TSVar.Zidane.Dodge += 5;
                     btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[FFFF00]", TranceSeekMessages.MessageZidaneDodge, HUDMessage.MessageStyle.DAMAGE, 20);
@@ -297,6 +297,9 @@ namespace Memoria.Scripts.TranceSeek
 
         public static void TryAlterMagicStatuses(this BattleCalculator v)
         {
+            if (v.Command.AbilityStatus == 0)
+                return;
+
             ViviFocus(v);
 
             foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(v.Caster))
@@ -842,7 +845,7 @@ namespace Memoria.Scripts.TranceSeek
 
         public static void RaiseTrouble(this BattleCalculator v)
         {
-            if (!CheckInvincible(v) && !v.Command.IsManyTarget)
+            if (!v.Command.IsManyTarget)
                 v.RaiseTrouble();
         }
 
@@ -1023,6 +1026,20 @@ namespace Memoria.Scripts.TranceSeek
             return false;
         }
 
+        public static void CheckHealerSA(this BattleCalculator v)
+        {
+            Boolean HasHealer = v.Caster.HasSupportAbility(SupportAbility1.Healer) || v.Caster.IsHealingRod;
+
+            if (HasHealer)
+            {
+                if (!v.Target.IsZombie)
+                    v.Target.Flags |= CalcFlag.HpRecovery;
+
+                if (v.Target.IsPlayer)
+                    v.Context.DefensePower = 0;
+            }
+        }
+
         public static void SpecialEffect(this BattleCalculator v)
         {
             var Caster_TSVar = v.CasterState();
@@ -1113,10 +1130,10 @@ namespace Memoria.Scripts.TranceSeek
                 }
 
             }
-            if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Proliferation) && !v.Command.IsManyTarget && v.Command.Id != BattleCommandId.Attack && v.Target.HpDamage > 0 && 
-                (v.Command.ScriptId == 9 || v.Command.ScriptId == 10 || v.Command.ScriptId == 17 || v.Command.ScriptId == 18 || v.Command.ScriptId == 116 || v.Command.ScriptId == 118
-                || v.Command.AbilityId == BattleAbilityId.PumpkinHead || v.Command.AbilityId == BattleAbilityId.ThousandNeedles || v.Command.AbilityId == BattleAbilityId.GoblinPunch
-                || v.Command.AbilityId == BattleAbilityId.AutoLife)) // Prolifération
+            if (v.Target.HpDamage > 0 && v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Proliferation) && !v.Command.IsManyTarget && v.Command.Id != BattleCommandId.Attack && 
+                (v.Command.ScriptId == 9 || v.Command.ScriptId == 10 || v.Command.ScriptId == 16 || v.Command.ScriptId == 17 || v.Command.ScriptId == 18 || v.Command.ScriptId == 116 
+                || v.Command.ScriptId == 118 || v.Command.AbilityId == BattleAbilityId.PumpkinHead || v.Command.AbilityId == BattleAbilityId.ThousandNeedles
+                || v.Command.AbilityId == BattleAbilityId.GoblinPunch || v.Command.AbilityId == BattleAbilityId.AutoLife)) // Prolifération
             {
                 int basedamage = v.Target.HpDamage;
                 BTL_DATA targetdefault = v.Target.Data;
@@ -1149,17 +1166,22 @@ namespace Memoria.Scripts.TranceSeek
             }
             if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Agreement) && v.Command.Id == BattleCommandId.MagicSword) // Entente
             {
+                Boolean AgreementTrigger = false;
                 foreach (BattleUnit unit in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
                 {
-                    if (v.Caster.PlayerIndex == CharacterId.Vivi && (unit.CurrentMp >= v.Command.Data.aa.MP / (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Agreement_Boosted) ? 2 : 4)))
+                    if (unit.PlayerIndex == CharacterId.Vivi && (unit.CurrentMp >= v.Command.Data.aa.MP / (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Agreement_Boosted) ? 2 : 4)))
                     {
                         if (unit.CurrentMp > v.Command.Data.aa.MP)
+                        {
+                            AgreementTrigger = true;
                             unit.CurrentMp = (uint)(unit.CurrentMp - (v.Command.Data.aa.MP / (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Agreement_Boosted) ? 2 : 4)));
+                        }
                         else
                             unit.CurrentMp = 0;
                     }
                 }
-                v.Caster.CurrentMp = (uint)(v.Caster.CurrentMp + (v.Command.Data.aa.MP / (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Agreement_Boosted) ? 2 : 4)));
+                if (AgreementTrigger)
+                    v.Caster.CurrentMp = (uint)(v.Caster.CurrentMp + (v.Command.Data.aa.MP / (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Agreement_Boosted) ? 2 : 4)));
             }
 
             if (v.Caster.HasSupportAbility(SupportAbility1.ReflectNull) && v.Target.IsUnderAnyStatus(BattleStatus.Reflect) && !v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.ReflectNull_Boosted))

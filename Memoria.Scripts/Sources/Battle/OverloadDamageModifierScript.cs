@@ -140,7 +140,7 @@ namespace Memoria.Scripts.TranceSeek
                 }
 
                 if (v.Command.ScriptId != 118 && v.Command.ScriptId != 119 && v.Command.ScriptId != 17)  // Stone monsters
-                    if (v.Target.HpDamage > 0 && TranceSeekAPI.IsAttackElement(v, EffectElement.None) && (v.Target.Flags & CalcFlag.HpRecovery) == 0 && StoneMonsters.Contains(v.Target.Data.dms_geo_id))
+                    if (v.Target.HpDamage > 0 && TranceSeekAPI.IsAttackElement(v, EffectElement.None) && (v.Target.Flags & CalcFlag.HpRecovery) == 0 && Target_TSVar.Monster.StoneMonster)
                     {
                         v.Target.HpDamage /= 2;
                         SoundLib.PlaySoundEffect(5003); //se770003
@@ -237,8 +237,6 @@ namespace Memoria.Scripts.TranceSeek
 
             return (Int32)Math.Max(1, reflectMultiplier);
         }
-
-        private static readonly HashSet<Int32> StoneMonsters = new HashSet<Int32> { 354, 221, 83 };
     }
 }
 

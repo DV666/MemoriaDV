@@ -36,7 +36,11 @@ namespace Memoria.Scripts.TranceSeek
             }
             else if (_v.Command.Power == 1)
             {
-                _v.Target.Flags |= CalcFlag.HpDamageOrHeal;
+                if (_v.Target.IsZombie)
+                    _v.Target.Flags |= CalcFlag.HpAlteration;
+                else
+                    _v.Target.Flags |= CalcFlag.HpDamageOrHeal;
+
                 _v.Target.HpDamage = (int)_v.Caster.CurrentHp;
             }
             else

@@ -71,7 +71,7 @@ namespace Memoria.Scripts.TranceSeek
                 _v.CalcHpDamage();
                 if (_v.Command.AbilityId == TranceSeekBattleAbility.Zantetsu)
                 {
-                    _v.Target.Flags |= (CalcFlag.MpAlteration | CalcFlag.MpRecovery);
+                    _v.Target.Flags |= (CalcFlag.MpAlteration);
                     _v.Target.MpDamage = (_v.Target.HpDamage >> 5);
                 }
             }

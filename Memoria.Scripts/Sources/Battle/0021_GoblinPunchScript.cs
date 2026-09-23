@@ -68,7 +68,11 @@ namespace Memoria.Scripts.TranceSeek
                     }
                     else
                     {
-                        TranceSeekAPI.WeaponPhysicalParams(CalcAttackBonus.Simple, _v);
+                        if (_v.Caster.IsPlayer)
+                            TranceSeekAPI.WeaponPhysicalParams(CalcAttackBonus.Simple, _v);
+                        else
+                            _v.NormalPhysicalParams();
+
                         TranceSeekAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
                         TranceSeekAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
                         if (_v.Caster.IsUnderStatus(BattleStatus.Trance) && _v.Caster.PlayerIndex == CharacterId.Steiner)

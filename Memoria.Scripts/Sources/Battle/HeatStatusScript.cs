@@ -34,7 +34,7 @@ namespace Memoria.DefaultScripts
                 if (heat_damage > 9999)
                     heat_damage = Math.Max(Target.CurrentHp, 9999);
 
-                if (heat_damage > 0)
+                if (heat_damage > 0 && !Target.State().Invincible)
                 {
                     if ((EffectElement.Fire & Target.AbsorbElement) != 0 || Target.Accessory == TranceSeekRegularItem.SolarCrown)
                     {

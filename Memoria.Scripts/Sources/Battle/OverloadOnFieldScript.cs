@@ -310,7 +310,7 @@ namespace Memoria.Scripts.TranceSeek
                         return scenario < 1900;
                     case 205:
                     case 208:
-                        return scenario < 2050;
+                        return scenario <= 2050;
                     case 257:
                     case 261:
                     case 262:
@@ -333,7 +333,7 @@ namespace Memoria.Scripts.TranceSeek
                     case 561:
                         return scenario == 3110;
                     case 575:
-                        return scenario == 3165;
+                        return scenario == 3165 || scenario == 3170;
                     case 562:
                     case 567:
                     /*case 602: // Lindblum truck
@@ -462,11 +462,15 @@ namespace Memoria.Scripts.TranceSeek
                     case 2209:
                         return (scenario >= 9520 && scenario <= 9850);
                     case 2201:
-                        return (scenario == 9530 || scenario == 9810);
+                        return (scenario >= 9530 && scenario <= 9810);
                     case 2202:
                         return scenario == 9800;
                     case 2208:
                         return scenario == 9840;
+                    case 2251:
+                        return scenario == 9700;
+                    case 2260:
+                        return scenario == 9750 && !PersistenSingleton<EventEngine>.Instance.GetUserControl();
                     case 2357:
                     case 2362:
                     case 2363:

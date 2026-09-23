@@ -229,8 +229,7 @@ namespace Memoria.Scripts.TranceSeek
             if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Flexible) && v.Caster.PlayerIndex == CharacterId.Zidane && Caster_TSVar.Zidane.DaggerAttack == 0
                 && v.Command.Id != BattleCommandId.Counter && v.Command.Id != BattleCommandId.RushAttack && v.Command.Data.info.effect_counter == 1) // SA Flexible
             {
-                // Permanent [code=Condition] WeaponId == 1 || WeaponId == 2 || WeaponId == 3 || WeaponId == 1153 || WeaponId == 1155 || WeaponId == 1158 || WeaponId == 1161 || WeaponId == 1164 || WeaponId == 1167 [/code] [code=BanishSAByLvl] 203 ; -1 [/code]
-                if (!BlackListedWeaponForFlexible.Contains(v.Caster.Weapon))
+                if (SwitchWeaponScript.Dagger_Sword_DB.ContainsKey(v.Caster.Weapon))
                 {
                     if (Caster_TSVar.Zidane.FlexibleLvl > 0)
                         Caster_TSVar.Zidane.FlexibleLvl = 0;
@@ -240,7 +239,7 @@ namespace Memoria.Scripts.TranceSeek
                     if (Caster_TSVar.Zidane.Flexible >= FlexibleTurn)
                     {
                         Caster_TSVar.Zidane.Flexible = 0;
-                        if (!TranceSeekCharacterMechanic.ZidaneDagger(v.Caster))
+                        if (!TranceSeekRegularItem.DaggerWeapon(v.Caster))
                             BattleState.EnqueueCounter(v.Caster, BattleCommandId.RushAttack, TranceSeekBattleAbility.Thief, v.Caster.Id);
                         else
                             BattleState.EnqueueCounter(v.Caster, BattleCommandId.RushAttack, TranceSeekBattleAbility.Bandit, v.Caster.Id);

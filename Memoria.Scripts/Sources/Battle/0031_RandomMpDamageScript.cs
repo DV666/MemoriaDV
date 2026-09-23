@@ -31,13 +31,20 @@ namespace Memoria.Scripts.TranceSeek
 
                 Int32 baseDamage = Comn.random16() % (1 + (_v.Caster.Level + _v.Caster.Magic >> 3));
                 _v.Context.AttackPower = _v.Caster.GetWeaponPower(_v.Command);
+
+                Boolean HasHealer = _v.Caster.HasSupportAbility(SupportAbility1.Healer);
+
                 _v.Target.SetMagicDefense();
+                if (HasHealer && _v.Target.IsPlayer)
+                    _v.Context.DefensePower = 0;
+
                 if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Sharpening_Boosted)) // SA Sharpening +
                     _v.Context.Attack = _v.Caster.Magic + baseDamage;
-                else if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Sharpening)) // SA Sharpening +
+                else if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Sharpening)) // SA Sharpening
                     _v.Context.Attack = UnityEngine.Random.Range(_v.Caster.Magic / 2, _v.Caster.Magic) + baseDamage;
                 else
                     _v.Context.Attack = Comn.random16() % _v.Caster.Magic + baseDamage;
+
                 TranceSeekAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
                 TranceSeekAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
                 _v.BonusBackstabAndPenaltyLongDistance();
@@ -47,8 +54,10 @@ namespace Memoria.Scripts.TranceSeek
                     _v.TryCriticalHit();
                     _v.PenaltyReverseAttack();
                     _v.CalcPhysicalHpDamage();
-                    _v.Target.HpDamage /= 2;
-                    if (!_v.Context.IsAbsorb)
+                    if (HasHealer && !_v.Target.IsZombie)
+                        _v.Target.Flags |= CalcFlag.HpRecovery;
+                
+                    if (!_v.Context.IsAbsorb && !HasHealer)
                     {
                         _v.Target.Flags |= CalcFlag.MpAlteration;
                         foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(_v.Caster))
@@ -57,8 +66,11 @@ namespace Memoria.Scripts.TranceSeek
                             saFeature.TriggerOnAbility(_v, "CalcDamage", true);
 
 
-                        _v.Target.MpDamage = Math.Max(0, _v.Context.PowerDifference) * _v.Context.EnsureAttack >> 3;
+                        _v.Target.MpDamage = _v.Target.HpDamage >> 4;
                     }
+                    if (HasHealer && !_v.Target.IsZombie)
+                        _v.Target.HpDamage /= 2;
+
                     TranceSeekAPI.RaiseTrouble(_v);
                 }
             }

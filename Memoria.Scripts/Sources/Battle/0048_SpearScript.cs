@@ -22,10 +22,12 @@ namespace Memoria.Scripts.TranceSeek
 
         public void Perform()
         {
-            if (!_v.Caster.IsPlayer && (_v.Caster.Data.dms_geo_id == 66 || _v.Caster.Data.dms_geo_id == 181 || _v.Caster.Data.dms_geo_id == 2001))
+            if (!_v.Caster.IsPlayer && (_v.Caster.Data.dms_geo_id == 66 || _v.Caster.Data.dms_geo_id == 181 || _v.Caster.Data.dms_geo_id == 2001)) // Fratley
                 FF9StateSystem.EventState.gEventGlobal[1305] &= (byte)~_v.Caster.Id;
 
-            if (_v.Target.IsUnderAnyStatus(BattleStatus.Vanish))
+            Boolean Skydive = _v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Skydive);
+
+            if (_v.Target.IsUnderAnyStatus(BattleStatus.Vanish) && !Skydive)
             {
                 _v.Context.Flags |= BattleCalcFlags.Miss;
                 return;
@@ -34,17 +36,17 @@ namespace Memoria.Scripts.TranceSeek
             {
 
                 if (_v.Caster.HasSupportAbility(SupportAbility1.HighJump) && GameRandom.Next8() % 2 == 0 || _v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.HighJump_Boosted))
-                {
                     _v.Target.AlterStatus(TranceSeekStatus.Dragon, _v.Caster);
-                }
-                if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Skydive)) // SA Skydive
+
+                if (Skydive)
                 {
                     int num = Comn.random16() % (1 + (_v.Caster.Level + _v.Caster.Strength >> 3));
                     _v.Context.AttackPower = _v.Caster.WeaponPower;
                     _v.Context.Attack = ((short)(_v.Caster.Strength + num));
                     _v.Context.DefensePower = _v.Target.MagicDefence / 2;
+                    _v.Command.AbilityCategory = 20; // Is Magical + No Magic Sword
                     TranceSeekAPI.PenaltyShellAttack(_v);
-                    if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Skydive_Boosted)) // SA Skydive+
+                    if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Skydive_Boosted))
                         _v.Caster.AlterStatus(TranceSeekStatus.MagicUp, _v.Caster);
                 }
                 else

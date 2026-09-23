@@ -93,7 +93,7 @@ namespace Memoria.Scripts.TranceSeek
         public const RegularItem Dainsleif = (RegularItem)1138;
         public const RegularItem Tyrfing = (RegularItem)1139;
         public const RegularItem Zeromus = (RegularItem)1140;
-        public const RegularItem AssassinDagger = (RegularItem)1141;
+        public const RegularItem TonberrysKnife = (RegularItem)1141;
         public const RegularItem AssassinSword = (RegularItem)1142;
         public const RegularItem Belias = (RegularItem)1143;
         public const RegularItem Mateus = (RegularItem)1144;
@@ -121,8 +121,28 @@ namespace Memoria.Scripts.TranceSeek
         public const RegularItem TypeCRod = (RegularItem)1166;
         public const RegularItem ImpDagger = (RegularItem)1167;
         public const RegularItem OgraKnife = (RegularItem)1168;
+        public const RegularItem GoblinSword_Improved = (RegularItem)1169;
+        public const RegularItem CryptDagger_Improved = (RegularItem)1170;
+        public const RegularItem Komodaxe_Improved = (RegularItem)1171;
+        public const RegularItem ViceDagger_Improved = (RegularItem)1172;
+        public const RegularItem SeaSpear_Improved = (RegularItem)1173;
+        public const RegularItem BlessedSting_Improved = (RegularItem)1174;
+        public const RegularItem LamiaDagger_Improved = (RegularItem)1175;
+        public const RegularItem LamiaFan_Improved = (RegularItem)1176;
+        public const RegularItem GoblinMageScepter_Improved = (RegularItem)1177;
+        public const RegularItem TwinLance_Improved = (RegularItem)1178;
+        public const RegularItem Howlfang_Improved = (RegularItem)1179;
+        public const RegularItem LarcenyScepter_Improved = (RegularItem)1180;
+        public const RegularItem OgraSurin_Improved = (RegularItem)1181;
+        public const RegularItem HunterSpear_Improved = (RegularItem)1182;
+        public const RegularItem TypeCRod_Improved = (RegularItem)1183;
+        public const RegularItem ImpDagger_Improved = (RegularItem)1184;
+        public const RegularItem OgraKnife_Improved = (RegularItem)1185;
+        public const RegularItem TonberrysKnife_Improved = (RegularItem)1186;
         public const RegularItem DrakanScepter = (RegularItem)1187;
-        public const RegularItem DrakanScepterEvolved = (RegularItem)1188;
+        public const RegularItem DrakanScepter_Evolved = (RegularItem)1188;
+        public const RegularItem BigFish = (RegularItem)1189;
+        public const RegularItem BigFish_Evolved = (RegularItem)1190;
         public const RegularItem GhostScarf = (RegularItem)1200;
         public const RegularItem LamiaEarrings = (RegularItem)1201;
         public const RegularItem Limblulline = (RegularItem)1202;
@@ -715,6 +735,14 @@ namespace Memoria.Scripts.TranceSeek
         public static readonly HashSet<RegularItem> WeaponAffinitiesPoison = new HashSet<RegularItem>(new[] { RegularItem.RuneTooth, RuneToothDagger, RegularItem.ScissorFangs });
 
         public static readonly HashSet<RegularItem> WeaponAffinitiesGravity = new HashSet<RegularItem>(new[] { AtomosScepter });
+
+        public static readonly HashSet<int> WeaponShapeDoubleHit = new HashSet<int>(new[] { 1, 111, 120, 122, 123, 124, 127, 129 });
+
+        public static Boolean DaggerWeapon(BattleUnit unit)
+        {
+            return WeaponShapeDoubleHit.Contains(ff9item._FF9Item_Data[unit.Weapon].shape);
+        }
+
         public static void SpecialItems(this BattleCalculator v)
         {
             if (v.Caster.IsPlayer)
@@ -723,13 +751,12 @@ namespace Memoria.Scripts.TranceSeek
 
                 if (v.Caster.Weapon == ExcalipoorII && (v.Target.Flags & CalcFlag.HpRecovery) == 0)
                     v.Target.HpDamage = 1;
-                else if (v.Caster.IsHealingRod)
-                    v.Target.Flags |= CalcFlag.HpRecovery;
                 else if (CasterWeaponShape == 7 && v.Target.HpDamage > 0 && v.Command.ScriptId == 10) // Air Racket (nerf White Mage heal)
                     v.Target.HpDamage /= 2;
                 else if (CasterWeaponShape == 42 && v.Target.HpDamage > 0 && (v.Command.ScriptId == 48 || v.Command.ScriptId == 83)) // Heavy Spear (on Jump)
                     v.Target.HpDamage += ((v.Target.HpDamage * BonusDamageFromWeapon(v.Caster.Weapon)) / 100);
-                else if ((CasterWeaponShape == 121 || CasterWeaponShape == 131) && v.Target.HpDamage > 0 && v.Command.Id != BattleCommandId.Item && v.Command.Id != BattleCommandId.AutoPotion) // Komodaxe + Big Fish
+                else if ((CasterWeaponShape == 121 || CasterWeaponShape == 131) && v.Target.HpDamage > 0 && (v.Command.Id == BattleCommandId.Attack || v.Command.Id == BattleCommandId.Counter
+                    || v.Command.Id == BattleCommandId.SwordAct || v.Command.Id == BattleCommandId.HolySword1 || v.Command.Id == BattleCommandId.HolySword2)) // Komodaxe + Big Fish
                     v.Target.HpDamage = UnityEngine.Random.Range(v.Target.HpDamage / 10, v.Target.HpDamage);
                 else if (CasterWeaponShape == 119 && v.Caster.Level == v.Target.Level && v.Command.AbilityId == BattleAbilityId.Attack)
                     v.Target.HpDamage = v.Target.HpDamage * 3;
@@ -865,14 +892,15 @@ namespace Memoria.Scripts.TranceSeek
                 {
                     case TetraWrist:
                     {
-                        if (v.Target.HpDamage > 0 && (v.Target.Flags & CalcFlag.HpRecovery) == 0 && v.Command.ScriptId != 10 && v.Command.ScriptId != 37)
-                            if (v.Command.Element == 0 && v.Command.ScriptId != 10 && v.Command.ScriptId != 17 && v.Command.ScriptId != 26  && v.Command.ScriptId != 118 && v.Command.ScriptId != 119) // Neutral damage
+                        if (v.Target.HpDamage > 0 && (v.Target.Flags & CalcFlag.HpRecovery) == 0 && v.Command.ScriptId != 10 && v.Command.ScriptId != 37 && v.Command.ScriptId != 44)
+                            if (v.Command.Element == 0 && v.Command.ScriptId != 17 && v.Command.ScriptId != 26  && v.Command.ScriptId != 118 && v.Command.ScriptId != 119) // Neutral damage
                                 v.Context.DamageModifierCount += 2;
                             else
                                 v.Context.DamageModifierCount -= 2;
                         break;
                     }
                 }
+
                 switch (v.Target.Accessory)
                 {
                     case EmergencySatchel:

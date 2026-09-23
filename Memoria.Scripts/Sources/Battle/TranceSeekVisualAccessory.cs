@@ -43,7 +43,7 @@ namespace Memoria.Scripts.TranceSeek
             if (CasterTSVAR.MascotCooldown <= 0)
             {
                 btl_cmd.SetCommand(caster.Data.cmd[3], BattleCommandId.SysPhantom, 2100, 254, 8u);
-                CasterTSVAR.MascotCooldown = (60 - caster.Will) * UnityEngine.Random.Range(150, 250);
+                CasterTSVAR.MascotCooldown = (60 - caster.Will) * UnityEngine.Random.Range(200, 250);
             }
             else
             {
@@ -128,7 +128,7 @@ namespace Memoria.Scripts.TranceSeek
                     follower.LocalPosition = transformConfig.PositionOffset;
                     follower.LocalRotation = transformConfig.RotationOffset;
                     follower.LocalScale = transformConfig.ScaleOffset * accessoryConfig.ModelScale;
-                    follower.CasterData = unit.Data;
+                    follower.CasterUnit = unit;
 
                     AccessoryModel.geo.SetActive(true);
 
@@ -230,7 +230,7 @@ namespace Memoria.Scripts.TranceSeek
             public Vector3 LocalRotation;
             public Vector3 LocalScale = Vector3.one;
 
-            public BTL_DATA CasterData;
+            public BattleUnit CasterUnit;
 
             private Animation _anim;
             private Renderer[] _renderers;
@@ -243,10 +243,10 @@ namespace Memoria.Scripts.TranceSeek
 
             void LateUpdate()
             {
-                if (TargetBone == null || CasterData == null)
+                if (TargetBone == null || CasterUnit == null)
                     return;
 
-                bool isVisible = CasterData.gameObject.activeInHierarchy && CasterData.bi.disappear == 0; // CasterData.battleModelIsRendering not working with Zidane (Sword Form)
+                bool isVisible = CasterUnit.Data.gameObject.activeInHierarchy && CasterUnit.Data.bi.disappear == 0 && !CasterUnit.IsUnderAnyStatus(BattleStatusId.Jump); // CasterData.battleModelIsRendering not working with Zidane (Sword Form)
 
                 foreach (Renderer r in _renderers)
                 {

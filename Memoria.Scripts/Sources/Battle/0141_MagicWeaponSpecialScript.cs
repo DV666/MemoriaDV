@@ -77,7 +77,7 @@ namespace Memoria.Scripts.TranceSeek
                         break;
                     }
                     case TranceSeekRegularItem.DrakanScepter:
-                    case TranceSeekRegularItem.DrakanScepterEvolved: 
+                    case TranceSeekRegularItem.DrakanScepter_Evolved: 
                     {
                         ScriptId = 16; // Script 0016_DrainHpScript.cs
                         _v.Command.Power = IsAttackStrong ? 71 : 31;

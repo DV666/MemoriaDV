@@ -122,8 +122,7 @@ namespace Memoria.Scripts.TranceSeek
             }
             if (_v.Caster.Data.dms_geo_id == 125 && _v.Command.Power == 1) // Valseur 2 - Stasis
             {
-                _v.Target.PhysicalDefence = 255;
-                _v.Target.MagicDefence = 255;
+                _v.Target.State().Invincible = true;
                 btl_stat.MakeStatusesPermanent(_v.Target, BattleStatus.Stop, true);
                 return;
             }

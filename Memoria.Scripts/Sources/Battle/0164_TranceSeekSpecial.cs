@@ -146,6 +146,12 @@ namespace Memoria.Scripts.TranceSeek
                     _v.Target.AddDelayedModifier(AjustMistyOnBoss, null);
                 }
             }
+            else if (_v.Command.Power == 49 && _v.Command.HitRate == 49) // Change default size (used for Bombo when growing)
+            {
+                _v.Caster.Data.geo_scale_default = _v.Caster.Data.geo_scale_x;
+                geo.geoScaleUpdate(_v.Caster, true);
+                return;
+            }
             else if (_v.Command.Power == 1 && _v.Command.HitRate == 1 && _v.Caster.Data.dms_geo_id == 405) // Friendly Lady Bug - Wind mechanics
             {
                 int ColorWing = GameRandom.Next16() % 5;

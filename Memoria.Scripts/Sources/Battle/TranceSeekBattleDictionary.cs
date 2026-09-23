@@ -325,6 +325,8 @@ namespace Memoria.Scripts.TranceSeek
         public uint DurationDeadlyStatus { get; set; }
         public int NerfGravity { get; set; }
         public Boolean NoDodge { get; set; }
+        public Boolean StoneMonster { get; set; }
+
     }
 
     public class StackBreakOrUpStatuses
