@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Reflection;
-using Assets.Sources.Scripts.UI.Common;
+﻿using Assets.Sources.Scripts.UI.Common;
 using FF9;
 using Memoria.Assets;
 using Memoria.Data;
 using Memoria.Prime;
+using System;
+using System.Collections.Generic;
+using System.Reflection;
 using UnityEngine;
-
 namespace Memoria.Scripts.TranceSeek
 {
     public class TranceSeekBestiaryMenu : MonoBehaviour
@@ -16,7 +15,7 @@ namespace Memoria.Scripts.TranceSeek
         private const string BestiaryGroupName = "TranceSeek.Bestiary";
         private const string BestiaryButtonName = "Bestiary Panel - Button";
 
-        private const Boolean UnlockAll = false;
+        private const Boolean UnlockAll = true;
 
         private static readonly FieldInfo ConfigFieldListField = typeof(ConfigUI).GetField("ConfigFieldList", BindingFlags.Instance | BindingFlags.NonPublic);
         private static readonly FieldInfo ConfigScrollViewField = typeof(ConfigUI).GetField("configScrollView", BindingFlags.Instance | BindingFlags.NonPublic);
@@ -70,6 +69,8 @@ namespace Memoria.Scripts.TranceSeek
 
         private UILabel _monsterInfoLabel;
         private GameObject _monsterModel;
+        private Single _monsterAdjustScale;
+        private String _monsterAnimation;
         private RenderTexture _monsterRt;
         private GameObject _monsterCamObj;
 
@@ -83,10 +84,25 @@ namespace Memoria.Scripts.TranceSeek
         private int _statusChunkIndex = 0;
         private float _statusTimer = 0f;
 
+        private bool _lastSecondaryLanguageState = false;
+        private UILabel _infoTitleLabel;
+        private UILabel _bestiaryTitleLabel;
+        private UILabel _previewTitleLabel;
+        private UILabel _returnButtonLabel;
+
         private void Update()
         {
             if (PersistenSingleton<UIManager>.Instance == null)
                 return;
+
+            if (Localization.UseSecondaryLanguage != _lastSecondaryLanguageState)
+            {
+                _lastSecondaryLanguageState = Localization.UseSecondaryLanguage;
+                if (_isBestiaryOpen)
+                {
+                    RefreshLocalization();
+                }
+            }
 
             if (PersistenSingleton<UIManager>.Instance.State != UIManager.UIState.Config)
             {
@@ -306,7 +322,8 @@ namespace Memoria.Scripts.TranceSeek
                 {
                     UILocalize loc = lbl.GetComponent<UILocalize>();
                     if (loc != null) Destroy(loc);
-                    lbl.rawText = "BESTIAIRE";
+                    _bestiaryTitleLabel = lbl;
+                    _bestiaryTitleLabel.rawText = Localization.GetWithDefault("BestiaryTitle");
                 }
             }
 
@@ -326,13 +343,13 @@ namespace Memoria.Scripts.TranceSeek
                 buttonWidget.width = 400;
             }
 
-            UILabel returnLabel = _bestiaryReturnButton.GetComponentInChildren<UILabel>();
-            if (returnLabel != null)
+            _returnButtonLabel = _bestiaryReturnButton.GetComponentInChildren<UILabel>();
+            if (_returnButtonLabel != null)
             {
-                UILocalize loc = returnLabel.GetComponent<UILocalize>();
+                UILocalize loc = _returnButtonLabel.GetComponent<UILocalize>();
                 if (loc != null) Destroy(loc);
-                returnLabel.rawText = Localization.GetWithDefault("BestiaryBack");
-                returnLabel.alignment = NGUIText.Alignment.Center;
+                _returnButtonLabel.rawText = Localization.GetWithDefault("BestiaryBack");
+                _returnButtonLabel.alignment = NGUIText.Alignment.Center;
             }
 
             ButtonGroupState bgs = _bestiaryReturnButton.GetComponent<ButtonGroupState>();
@@ -372,7 +389,8 @@ namespace Memoria.Scripts.TranceSeek
                 {
                     UILocalize loc = lbl.GetComponent<UILocalize>();
                     if (loc != null) Destroy(loc);
-                    lbl.rawText = Localization.GetWithDefault("BestiaryInfo");
+                    _infoTitleLabel = lbl;
+                    _infoTitleLabel.rawText = Localization.GetWithDefault("BestiaryInfo");
                 }
             }
 
@@ -428,7 +446,8 @@ namespace Memoria.Scripts.TranceSeek
                 {
                     UILocalize loc = lbl.GetComponent<UILocalize>();
                     if (loc != null) Destroy(loc);
-                    lbl.rawText = Localization.GetWithDefault("BestiaryPreview");
+                    _previewTitleLabel = lbl;
+                    _previewTitleLabel.rawText = Localization.GetWithDefault("BestiaryPreview");
                 }
             }
 
@@ -475,6 +494,9 @@ namespace Memoria.Scripts.TranceSeek
             if (!TranceSeekBestiaryDB.TryGetDisplayEntry(_currentMonsterId, out _currentDisplayEntry))
                 return;
 
+            _monsterAdjustScale = _currentDisplayEntry.AdjustScale;
+            _monsterAnimation = _currentDisplayEntry.AnimationIdle;
+
             BTL_SCENE scene = new BTL_SCENE();
             string battleSceneName = "";
             FF9BattleDB.SceneData.TryGetKey(_currentDisplayEntry.BattleId, out battleSceneName);
@@ -507,6 +529,10 @@ namespace Memoria.Scripts.TranceSeek
         {
             if (_currentMonsterParam == null)
                 return;
+
+            DestroyModelSafely(ref _monsterModel);
+            DestroyModelSafely(ref _bbgModel);
+            Resources.UnloadUnusedAssets();
 
             if (_monsterModel != null)
             {
@@ -585,11 +611,13 @@ namespace Memoria.Scripts.TranceSeek
 
                 _monsterModel.transform.localPosition = new Vector3(_modelPosX, _modelPosY, _modelPosZ);
                 _monsterModel.transform.localRotation = Quaternion.Euler(_modelRotX, _modelRotY, _modelRotZ);
-                _monsterModel.transform.localScale = new Vector3(_modelScale, _modelScale, _modelScale);
+                _monsterModel.transform.localScale = new Vector3(_modelScale, _modelScale, _modelScale) * _monsterAdjustScale;
 
                 if (_currentMonsterParam.Mot != null && _currentMonsterParam.Mot.Length > 0)
                 {
-                    string animName = FF9BattleDB.Animation[_currentMonsterParam.Mot[0]];
+                    string animName = _monsterAnimation;
+                    if (string.IsNullOrEmpty(animName))
+                        animName = FF9BattleDB.Animation[_currentMonsterParam.Mot[0]];
                     AnimationFactory.AddAnimWithAnimatioName(_monsterModel, animName);
                     Animation anim = _monsterModel.GetComponent<Animation>();
                     if (anim != null)
@@ -698,7 +726,8 @@ namespace Memoria.Scripts.TranceSeek
 
         private string GetCardName(TetraMasterCardId card)
         {
-            if (card == TetraMasterCardId.NONE) return "---";
+            if (card == TetraMasterCardId.NONE)
+                return "---";
             return FF9TextTool.CardName(card);
         }
 
@@ -708,6 +737,10 @@ namespace Memoria.Scripts.TranceSeek
                 return;
 
             int status = TranceSeekBestiaryDB.GetMonsterStatus(_currentMonsterId);
+            int kills = TranceSeekBestiaryDB.GetMonsterKills(_currentMonsterId);
+
+            if (UnlockAll || kills >= TranceSeekBestiaryDB.RequiredKillsForMastery)
+                status = TranceSeekBestiaryDB.StatusMastered;
 
             _statusTimer = 0.5f;
             _statusChunkIndex = 0;
@@ -715,14 +748,14 @@ namespace Memoria.Scripts.TranceSeek
 
             if (status < TranceSeekBestiaryDB.StatusScannedPlus)
             {
-                _statusChunks.Add("???");
+                _statusChunks.Add("[FFFFFF]???[-]");
             }
             else
             {
                 List<string> statuses = GetStatusList(_currentMonsterParam.ResistStatus);
                 if (statuses.Count == 0)
                 {
-                    _statusChunks.Add("Aucune");
+                    _statusChunks.Add(Localization.GetWithDefault("BestiaryNone"));
                 }
                 else
                 {
@@ -750,8 +783,9 @@ namespace Memoria.Scripts.TranceSeek
 
             string text = "";
             string pageNav = $"\n\n[A0A0A0]< Page {_currentPage + 1}/3 >[FFFFFF]";
+            Boolean MobScannedorMore = (UnlockAll || status >= TranceSeekBestiaryDB.StatusScanned);
 
-            string monsterName = status >= TranceSeekBestiaryDB.StatusDiscovered ? _currentMonsterName : "???";
+            string monsterName = MobScannedorMore ? _currentMonsterName : "???";
             if (status >= TranceSeekBestiaryDB.StatusMastered)
                 monsterName += " [SPRT=IconAtlas,item200_03,36,36]";
 
@@ -761,8 +795,8 @@ namespace Memoria.Scripts.TranceSeek
 
             string TrueText = Localization.GetWithDefault("BestiaryTrue");
             string FalseText = Localization.GetWithDefault("BestiaryFalse");
-            string sElite = ((_currentMonsterParam.Flags & 128) != 0) ? TrueText : FalseText;
-            string sBoss = ((_currentMonsterParam.ResistStatus & BattleStatus.EasyKill) != 0) ? TrueText : FalseText;
+            string sElite = MobScannedorMore ? (((_currentMonsterParam.Flags & 128) != 0) ? TrueText : FalseText) : "???";
+            string sBoss = MobScannedorMore ? (((_currentMonsterParam.InitialStatus & BattleStatus.EasyKill) != 0) ? TrueText : FalseText) : "???";
 
             if (_currentDisplayEntry.MaxHP.HasValue)
                 maxHp = _currentDisplayEntry.MaxHP.Value;
@@ -779,20 +813,20 @@ namespace Memoria.Scripts.TranceSeek
             int winGil = _currentDisplayEntry.WinGil ?? (int)_currentMonsterParam.WinGil;
             int winExp = _currentDisplayEntry.WinExp ?? (int)_currentMonsterParam.WinExp;
 
-            string sHp = status >= TranceSeekBestiaryDB.StatusScanned ? maxHp.ToString() : "???";
-            string sMp = status >= TranceSeekBestiaryDB.StatusScanned ? maxMp.ToString() : "???";
-            string sSpeed = status >= TranceSeekBestiaryDB.StatusScanned ? speed.ToString() : "???";
-            string sStr = status >= TranceSeekBestiaryDB.StatusScanned ? strength.ToString() : "???";
-            string sMag = status >= TranceSeekBestiaryDB.StatusScanned ? magic.ToString() : "???";
-            string sSpr = status >= TranceSeekBestiaryDB.StatusScanned ? spirit.ToString() : "???";
-            string sPDef = status >= TranceSeekBestiaryDB.StatusScanned ? pDef.ToString() : "???";
-            string sPEvade = status >= TranceSeekBestiaryDB.StatusScanned ? pEvade.ToString() : "???";
-            string sMDef = status >= TranceSeekBestiaryDB.StatusScanned ? mDef.ToString() : "???";
-            string sMEvade = status >= TranceSeekBestiaryDB.StatusScanned ? mEvade.ToString() : "???";
+            string sHp = MobScannedorMore ? maxHp.ToString() : "???";
+            string sMp = MobScannedorMore ? maxMp.ToString() : "???";
+            string sSpeed = MobScannedorMore ? speed.ToString() : "???";
+            string sStr = MobScannedorMore ? strength.ToString() : "???";
+            string sMag = MobScannedorMore ? magic.ToString() : "???";
+            string sSpr = MobScannedorMore ? spirit.ToString() : "???";
+            string sPDef = MobScannedorMore ? pDef.ToString() : "???";
+            string sPEvade = MobScannedorMore ? pEvade.ToString() : "???";
+            string sMDef = MobScannedorMore ? mDef.ToString() : "???";
+            string sMEvade = MobScannedorMore ? mEvade.ToString() : "???";
 
-            string sGil = status >= TranceSeekBestiaryDB.StatusDiscovered ? winGil.ToString() : "???";
-            string sExp = status >= TranceSeekBestiaryDB.StatusDiscovered ? winExp.ToString() : "???";
-            string sCategory = status >= TranceSeekBestiaryDB.StatusDiscovered ? GetCategoryString(_currentMonsterParam.Category) : "???";
+            string sGil = MobScannedorMore ? winGil.ToString() : "???";
+            string sExp = MobScannedorMore ? winExp.ToString() : "???";
+            string sCategory = MobScannedorMore ? GetCategoryString(_currentMonsterParam.Category) : "???";
 
             if (_currentPage == 0)
             {
@@ -819,10 +853,10 @@ namespace Memoria.Scripts.TranceSeek
                     alphaTag = "[" + NGUIText.EncodeAlpha(alpha) + "]";
                 }
 
-                string sAbsorb = status >= TranceSeekBestiaryDB.StatusScannedPlus ? GetElementsString(_currentMonsterParam.AbsorbElement) : "???";
-                string sImmune = status >= TranceSeekBestiaryDB.StatusScannedPlus ? GetElementsString(_currentMonsterParam.GuardElement) : "???";
-                string sHalf = status >= TranceSeekBestiaryDB.StatusScannedPlus ? GetElementsString(_currentMonsterParam.HalfElement) : "???";
-                string sWeak = status >= TranceSeekBestiaryDB.StatusScannedPlus ? GetElementsString(_currentMonsterParam.WeakElement) : "???";
+                string sAbsorb = MobScannedorMore ? GetElementsString(_currentMonsterParam.AbsorbElement) : "???";
+                string sImmune = MobScannedorMore ? GetElementsString(_currentMonsterParam.GuardElement) : "???";
+                string sHalf = MobScannedorMore ? GetElementsString(_currentMonsterParam.HalfElement) : "???";
+                string sWeak = MobScannedorMore ? GetElementsString(_currentMonsterParam.WeakElement) : "???";
 
                 text = $"[FFCC00]{Localization.GetWithDefault("BestiaryElemAbsorb")} :[FFFFFF]\n{sAbsorb}\n\n" +
                        $"[FFCC00]{Localization.GetWithDefault("BestiaryElemImmunity")} :[FFFFFF]\n{sImmune}\n\n" +
@@ -834,17 +868,17 @@ namespace Memoria.Scripts.TranceSeek
             }
             else if (_currentPage == 2)
             {
-                string steal0 = status >= TranceSeekBestiaryDB.StatusScannedPlus ? GetItemStringWithIcon(_currentMonsterParam.StealItems[0]) : "???";
-                string steal1 = status >= TranceSeekBestiaryDB.StatusScannedPlus ? GetItemStringWithIcon(_currentMonsterParam.StealItems[1]) : "???";
-                string steal2 = status >= TranceSeekBestiaryDB.StatusScannedPlus ? GetItemStringWithIcon(_currentMonsterParam.StealItems[2]) : "???";
-                string steal3 = status >= TranceSeekBestiaryDB.StatusScannedPlus ? GetItemStringWithIcon(_currentMonsterParam.StealItems[3]) : "???";
+                string steal0 = MobScannedorMore ? GetItemStringWithIcon(_currentMonsterParam.StealItems[0]) : "???";
+                string steal1 = MobScannedorMore ? GetItemStringWithIcon(_currentMonsterParam.StealItems[1]) : "???";
+                string steal2 = MobScannedorMore ? GetItemStringWithIcon(_currentMonsterParam.StealItems[2]) : "???";
+                string steal3 = MobScannedorMore ? GetItemStringWithIcon(_currentMonsterParam.StealItems[3]) : "???";
 
-                string drop0 = status >= TranceSeekBestiaryDB.StatusScannedPlus ? GetItemStringWithIcon(_currentMonsterParam.WinItems[0]) : "???";
-                string drop1 = status >= TranceSeekBestiaryDB.StatusScannedPlus ? GetItemStringWithIcon(_currentMonsterParam.WinItems[1]) : "???";
-                string drop2 = status >= TranceSeekBestiaryDB.StatusScannedPlus ? GetItemStringWithIcon(_currentMonsterParam.WinItems[2]) : "???";
-                string drop3 = status >= TranceSeekBestiaryDB.StatusScannedPlus ? GetItemStringWithIcon(_currentMonsterParam.WinItems[3]) : "???";
+                string drop0 = MobScannedorMore ? GetItemStringWithIcon(_currentMonsterParam.WinItems[0]) : "???";
+                string drop1 = MobScannedorMore ? GetItemStringWithIcon(_currentMonsterParam.WinItems[1]) : "???";
+                string drop2 = MobScannedorMore ? GetItemStringWithIcon(_currentMonsterParam.WinItems[2]) : "???";
+                string drop3 = MobScannedorMore ? GetItemStringWithIcon(_currentMonsterParam.WinItems[3]) : "???";
 
-                string sCard = status >= TranceSeekBestiaryDB.StatusScannedPlus ? GetCardName(_currentMonsterParam.WinCard) : "???";
+                string sCard = MobScannedorMore ? GetCardName(_currentMonsterParam.WinCard) : "???";
 
                 text = $"[FFCC00]{Localization.GetWithDefault("BestiarySteal")} :[FFFFFF]\n" +
                        $"{steal0}\n{steal1}\n{steal2}\n{steal3}\n\n" +
@@ -854,6 +888,27 @@ namespace Memoria.Scripts.TranceSeek
             }
 
             _monsterInfoLabel.rawText = text;
+        }
+
+        private void RefreshLocalization()
+        {
+            if (_configTitleLabel != null)
+                _configTitleLabel.rawText = Localization.GetWithDefault("BestiaryTitle");
+
+            if (_returnButtonLabel != null)
+                _returnButtonLabel.rawText = Localization.GetWithDefault("BestiaryBack");
+
+            if (_infoTitleLabel != null)
+                _infoTitleLabel.rawText = Localization.GetWithDefault("BestiaryInfo");
+
+            if (_previewTitleLabel != null)
+                _previewTitleLabel.rawText = Localization.GetWithDefault("BestiaryPreview");
+
+            if (_bestiaryTitleLabel != null)
+                _bestiaryTitleLabel.rawText = Localization.GetWithDefault("BestiaryTitle");
+
+            LoadMonsterData();
+            InitializeMonsterInfo();
         }
 
         private void CleanupMenu()
@@ -874,6 +929,10 @@ namespace Memoria.Scripts.TranceSeek
                 Destroy(_bbgModel);
                 _bbgModel = null;
             }
+
+            DestroyModelSafely(ref _monsterModel);
+            DestroyModelSafely(ref _bbgModel);
+            Resources.UnloadUnusedAssets();
         }
 
         private void OpenBestiaryMenu(ConfigUI configUI)
@@ -1080,6 +1139,24 @@ namespace Memoria.Scripts.TranceSeek
                     CloseBestiaryMenu(configUI);
                 }
             }
+        }
+
+        private void DestroyModelSafely(ref GameObject obj) // [TODO] Maybe removing that next Memoria update ? (Tir made a fix for texture : https://github.com/Albeoris/Memoria/pull/1502
+        {
+            if (obj == null) return;
+
+            Renderer[] renderers = obj.GetComponentsInChildren<Renderer>(true);
+            foreach (Renderer r in renderers)
+            {
+                foreach (Material m in r.materials)
+                {
+                    if (m != null)
+                        Destroy(m);
+                }
+            }
+
+            Destroy(obj);
+            obj = null;
         }
 
         private void OnDestroy()

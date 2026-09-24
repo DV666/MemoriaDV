@@ -18,7 +18,6 @@ namespace Memoria.Scripts.TranceSeek
         public const Int32 Id = 0144;
 
         private readonly BattleCalculator _v;
-        private Transform _berthaCannonBone;
 
         public MetronomeScript(BattleCalculator v)
         {
