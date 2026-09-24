@@ -224,6 +224,8 @@ namespace Memoria.Scripts.TranceSeek
                 {
                     if (TryGetDisplayEntry(bestiaryId, out BestiaryDisplayEntry entry))
                     {
+                        UpdateMonsterStatus(battleId, monsterIndex, StatusMastered);
+
                         if (entry.RewardGils.HasValue)
                             battle.btl_bonus.gil += entry.RewardGils.Value;
 
