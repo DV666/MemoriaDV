@@ -1,5 +1,6 @@
 ﻿using FF9;
 using Memoria.Data;
+using Memoria.Prime;
 using Memoria.Scripts.TranceSeek;
 using System;
 using System.Threading;
@@ -41,6 +42,10 @@ namespace Memoria.DefaultScripts
                 btl_sys.CheckForecastMenuOff(target);
                 if (GameState.ModelKillCount(target.Data.dms_geo_id) > 0 && ((GameState.ModelKillCount(target.Data.dms_geo_id) + 1) % 10) == 0) // Need +1 because the kill count is updated after
                     TranceSeekAPI.OverTranceTrigger(target);
+
+#if DEV_TS
+                TranceSeekBestiaryDB.ProcessMonsterDeath(FF9StateSystem.Battle.battleMapIndex, target.Data.typeNo);
+#endif
             }
             if (target.IsUnderAnyStatus(BattleStatus.Trance) && btl_cmd.KillSpecificCommand(target, BattleCommandId.SysTrans))
             {

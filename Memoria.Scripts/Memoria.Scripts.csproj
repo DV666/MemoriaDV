@@ -513,6 +513,7 @@
     <Compile Include="Sources\Battle\SpecialStatusScript.cs" />
     <Compile Include="Sources\Battle\StopStatusScript.cs" />
     <Compile Include="Sources\Battle\TranceSeekBestiaryDB.cs" />
+    <Compile Include="Sources\Battle\TranceSeekBestiaryRewardUI.cs" />
     <Compile Include="Sources\Battle\TranceSeekDebug.cs" />
     <Compile Include="Sources\Battle\TranceSeekCheckBattleStat.cs" />
     <Compile Include="Sources\Battle\TranceSeekCanaryFix.cs" />

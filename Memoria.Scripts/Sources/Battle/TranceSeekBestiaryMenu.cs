@@ -16,7 +16,7 @@ namespace Memoria.Scripts.TranceSeek
         private const string BestiaryGroupName = "TranceSeek.Bestiary";
         private const string BestiaryButtonName = "Bestiary Panel - Button";
 
-        private const Boolean UnlockAll = true;
+        private const Boolean UnlockAll = false;
 
         private static readonly FieldInfo ConfigFieldListField = typeof(ConfigUI).GetField("ConfigFieldList", BindingFlags.Instance | BindingFlags.NonPublic);
         private static readonly FieldInfo ConfigScrollViewField = typeof(ConfigUI).GetField("configScrollView", BindingFlags.Instance | BindingFlags.NonPublic);
@@ -433,7 +433,6 @@ namespace Memoria.Scripts.TranceSeek
             _monsterRt.antiAliasing = 2;
 
             _monsterCamObj = new GameObject("MonsterRTCam");
-            // Rendre la caméra indépendante de l'interface NGUI pour garder son échelle à (1, 1, 1)
             UnityEngine.Object.DontDestroyOnLoad(_monsterCamObj);
             _monsterCamObj.transform.position = new Vector3(20000f, 20000f, -1000f);
             Camera cam = _monsterCamObj.AddComponent<Camera>();
@@ -502,9 +501,10 @@ namespace Memoria.Scripts.TranceSeek
                 _monsterModel = null;
             }
 
+            Boolean BlackModel = false;
             int status = TranceSeekBestiaryDB.GetMonsterStatus(_currentMonsterId);
             if (status == TranceSeekBestiaryDB.StatusUndiscovered && !UnlockAll)
-                return;
+                BlackModel = true;
 
             string geoPath = FF9BattleDB.GEO.GetValue(_currentMonsterParam.Geo);
             if (string.IsNullOrEmpty(geoPath))
@@ -535,6 +535,12 @@ namespace Memoria.Scripts.TranceSeek
                             m.shader = unlitShader;
                         }
                     }
+                }
+
+                if (BlackModel)
+                {
+                    btl_util.GeoSetABR(_monsterModel, "PSX/BattleMap_StatusEffect");
+                    btl_util.GeoSetColor2DrawPacket(_monsterModel, 0, 0, 0, Byte.MaxValue);
                 }
 
                 _monsterModel.transform.localPosition = new Vector3(_modelPosX, _modelPosY, _modelPosZ);
@@ -691,7 +697,6 @@ namespace Memoria.Scripts.TranceSeek
             string text = "";
             string pageNav = $"\n\n[A0A0A0]< Page {_currentPage + 1}/3 >[-]";
 
-            // GESTION DE LA DECOUVERTE DU NOM ET DE L'ETOILE DE MAITRISE
             string monsterName = status >= TranceSeekBestiaryDB.StatusDiscovered ? _currentMonsterName : "???";
             if (status >= TranceSeekBestiaryDB.StatusMastered)
                 monsterName += " [SPRT=IconAtlas,item200_03,36,36]";
@@ -718,7 +723,6 @@ namespace Memoria.Scripts.TranceSeek
             int winGil = _currentDisplayEntry.WinGil ?? (int)_currentMonsterParam.WinGil;
             int winExp = _currentDisplayEntry.WinExp ?? (int)_currentMonsterParam.WinExp;
 
-            // MASQUAGE DYNAMIQUE SELON LE STATUT DE DECOUVERTE
             string sHp = status >= TranceSeekBestiaryDB.StatusScanned ? maxHp.ToString() : "???";
             string sMp = status >= TranceSeekBestiaryDB.StatusScanned ? maxMp.ToString() : "???";
             string sSpeed = status >= TranceSeekBestiaryDB.StatusScanned ? speed.ToString() : "???";
@@ -736,7 +740,8 @@ namespace Memoria.Scripts.TranceSeek
 
             if (_currentPage == 0)
             {
-                text = $"[FFCC00]Nom :[-] {monsterName}\n\n" +
+                text = $"[FFCC00]Entrée n°{_currentMonsterId}\n" +
+                       $"[FFCC00]Nom :[-] {monsterName}\n\n" +
                        $"[FFCC00]HP :[-] {sHp}               [FFCC00]MP :[-] {sMp}\n" +
                        $"[FFCC00]{Localization.GetWithDefault("Speed")} :[-] {sSpeed}          [FFCC00]{Localization.GetWithDefault("Strength")} :[-] {sStr}\n" +
                        $"[FFCC00]{Localization.GetWithDefault("Magic")} :[-] {sMag}            [FFCC00]{Localization.GetWithDefault("Spirit")} :[-] {sSpr}\n" +
@@ -995,7 +1000,7 @@ namespace Memoria.Scripts.TranceSeek
 
             if (ButtonGroupState.ActiveGroup == BestiaryGroupName && ButtonGroupState.ActiveButton == _bestiaryReturnButton)
             {
-                if (UIManager.Input.GetKeyTrigger(Control.Confirm) || UIManager.Input.GetKeyTrigger(Control.Cancel) || Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
+                if (PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.Confirm) || Input.GetKeyDown(KeyCode.KeypadEnter))
                 {
                     CloseBestiaryMenu(configUI);
                 }
