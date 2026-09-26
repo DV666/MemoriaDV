@@ -217,34 +217,9 @@ namespace Memoria.Scripts.TranceSeek
                 string themeKey = GreenRedColor_SubModCheck ? (isUp ? "Green" : "Red") : (isUp ? "Yellow" : "Purple");
                 string hexColor = ColorThemes[themeKey][arrowCount - 1];
 
-                Btl2dReqHeadSymbolMessage(unit.Data, hexColor, msg, HUDMessage.MessageStyle.DAMAGE, (byte)(offset * 5), 100);
+                TranceSeekAPI.Btl2dReqHeadSymbolMessage(unit.Data, hexColor, msg, HUDMessage.MessageStyle.DAMAGE, (byte)(offset * 5), 100);
                 offset++;
             }
-        }
-
-        public static BTL2D_ENT Btl2dReqHeadSymbolMessage(BTL_DATA pBtl, String messageColor, Dictionary<String, String> multiLangMessage, HUDMessage.MessageStyle style, Byte pDelay, SByte customYofs = -16)
-        {
-            if (!multiLangMessage.TryGetValue(Localization.CurrentDisplaySymbol, out String msg))
-                multiLangMessage.TryGetValue(Localization.GetFallbackSymbol(), out msg);
-            return Btl2dReqHeadSymbolMessage(pBtl, messageColor, msg, style, pDelay, customYofs);
-        }
-
-        public static BTL2D_ENT Btl2dReqHeadSymbolMessage(BTL_DATA pBtl, String messageColor, String message, HUDMessage.MessageStyle style, Byte pDelay, SByte customYofs = -16)
-        {
-            BTL2D_ENT freeEntry = btl2d.GetFreeEntry(pBtl);
-
-            freeEntry.Type = 3;
-            freeEntry.Delay = pDelay;
-            freeEntry.CustomColor = messageColor;
-            freeEntry.CustomMessage = message;
-            freeEntry.CustomStyle = style;
-
-            btl2d.GetIconPosition(pBtl, btl2d.ICON_POS_DEFAULT, out Transform headTransform, out Vector3 _);
-            if (headTransform != null)
-                freeEntry.trans = headTransform;
-
-            freeEntry.Yofs = customYofs;
-            return freeEntry;
         }
 
         private void OnDestroy()

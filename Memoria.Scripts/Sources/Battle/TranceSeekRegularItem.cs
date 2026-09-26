@@ -756,7 +756,7 @@ namespace Memoria.Scripts.TranceSeek
                 else if (CasterWeaponShape == 42 && v.Target.HpDamage > 0 && (v.Command.ScriptId == 48 || v.Command.ScriptId == 83)) // Heavy Spear (on Jump)
                     v.Target.HpDamage += ((v.Target.HpDamage * BonusDamageFromWeapon(v.Caster.Weapon)) / 100);
                 else if ((CasterWeaponShape == 121 || CasterWeaponShape == 131) && v.Target.HpDamage > 0 && (v.Command.Id == BattleCommandId.Attack || v.Command.Id == BattleCommandId.Counter
-                    || v.Command.Id == BattleCommandId.SwordAct || v.Command.Id == BattleCommandId.HolySword1 || v.Command.Id == BattleCommandId.HolySword2)) // Komodaxe + Big Fish
+                    || v.Command.Id == BattleCommandId.SwordAct || v.Command.Id == BattleCommandId.MagicSword || v.Command.Id == BattleCommandId.HolySword1 || v.Command.Id == BattleCommandId.HolySword2)) // Komodaxe + Big Fish
                     v.Target.HpDamage = UnityEngine.Random.Range(v.Target.HpDamage / 10, v.Target.HpDamage);
                 else if (CasterWeaponShape == 119 && v.Caster.Level == v.Target.Level && v.Command.AbilityId == BattleAbilityId.Attack)
                     v.Target.HpDamage = v.Target.HpDamage * 3;
@@ -765,7 +765,8 @@ namespace Memoria.Scripts.TranceSeek
                 {
                     case CursedRing:
                     {
-                        v.Context.DamageModifierCount++;
+                        if (v.Command.Id != BattleCommandId.Item || v.Command.Id != BattleCommandId.AutoPotion)
+                            v.Context.DamageModifierCount++;
                         break;
                     }
                     case YetiMouth:

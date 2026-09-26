@@ -476,6 +476,10 @@ namespace Memoria.Scripts.TranceSeek
                     case 2363:
                     case 2364:
                         return scenario == 9950;
+                    case 2508: // Hidden wall with Zidane
+                        return !PersistenSingleton<EventEngine>.Instance.GetUserControl() && PersistenSingleton<EventEngine>.Instance.eBin.GetVariableValueInternal(FF9StateSystem.EventState.gEventGlobal, 3471, EBin.VariableType.Bit, 0) == 0 && lastLeaderLocalPos.z < -1100 && lastLeaderLocalPos.z > -1500  && lastLeaderLocalPos.x > -1000 && lastLeaderLocalPos.x < 800;
+                    case 2510:
+                        return scenario == 10590;
                     case 2550:
                     case 2551:
                     case 2552:

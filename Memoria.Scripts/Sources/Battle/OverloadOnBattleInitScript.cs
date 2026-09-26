@@ -381,12 +381,11 @@ namespace Memoria.Scripts.TranceSeek
                                     caster =>
                                     {
                                         foreach (BattleUnit monsteratb in BattleState.EnumerateUnits())
-                                            if (!monsteratb.IsPlayer && monsteratb.IsTargetable)
+                                            if (!monsteratb.IsPlayer)
                                             {
-                                                ScanScript.TriggerOneTime[monsteratb.Data] = false;
-                                                ScanScript.HPBarHidden[monsteratb.Data] = false;
-                                                ScanScript.ATBGreenBarHUD[monsteratb.Data] = null;
-                                                ScanScript.ATBFrameHUD[monsteratb.Data] = null;
+                                                StateDict.Monster.HPBarHidden = false;
+                                                StateDict.Monster.ATBGreenBarHUD = null;
+                                                StateDict.Monster.ATBFrameHUD = null;
                                                 monsteratb.AddDelayedModifier(ScanScript.ShowATBBar, null);
                                             }
                                     }
@@ -530,6 +529,7 @@ namespace Memoria.Scripts.TranceSeek
                     FixMonsterIconOffset(unit);
                     FixMonsterHeightAndRadius(unit);
                     InitModelAnimations(unit);
+                    TranceSeekBestiaryDB.UpdateMonsterStatus(BattleID, unit.Data.typeNo, TranceSeekBestiaryDB.StatusDiscovered);
 
                     if ((BattleID == 849 && GroupeBattleID == 2)) // TO DELETE - After Memoria Update :) (fix cover)
                     {
@@ -567,6 +567,8 @@ namespace Memoria.Scripts.TranceSeek
                                 unit.MaximumHp += (uint)((bonusHP * dictdifficulty[DifficultyParameters.Bonus_MaxHP]) / 100);
                                 unit.CurrentHp = unit.MaximumHp;
                                 StateDict.Monster.HPBoss10000 = true;
+                                StateDict.Monster.HPBoss10000_UpdateBestiary = true;
+                                unit.AddDelayedModifier(CheckBossDeathForBestiary, null);
                             }
                             else
                             {
@@ -702,8 +704,8 @@ namespace Memoria.Scripts.TranceSeek
 
         private Boolean FixCoverVisualForBrother(BattleUnit brother) // TO DELETE AFTER MEMORIA UPDATE
         {
-            if (brother == null || Sister == null)
-                return true;
+            if (brother.CurrentHp == 0 || Sister.CurrentHp == 0)
+                return false;
 
             if (brother.IsCovering)
                 Sister.Data.pos[2] = SisterPosition[2] + 400f;
@@ -711,6 +713,17 @@ namespace Memoria.Scripts.TranceSeek
                 Sister.Data.pos[2] = SisterPosition[2];
 
             return true;
+        }
+
+        private Boolean CheckBossDeathForBestiary(BattleUnit boss)
+        {
+            if (boss.CurrentHp > 10000)
+                return true;
+            else
+            {
+                TranceSeekBestiaryDB.ProcessMonsterDeath(FF9StateSystem.Battle.battleMapIndex, boss.Data.typeNo, true);
+                return false;
+            }
         }
 
         private Boolean ProcessMagicLampRecast(BattleUnit caster)

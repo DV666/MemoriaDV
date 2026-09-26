@@ -322,10 +322,23 @@ namespace Memoria.Scripts.TranceSeek
         public int Special1 { get; set; }
         public int Special2 { get; set; }
         public Boolean HPBoss10000 { get; set; }
+        public Boolean HPBoss10000_UpdateBestiary { get; set; }
+
         public uint DurationDeadlyStatus { get; set; }
         public int NerfGravity { get; set; }
         public Boolean NoDodge { get; set; }
         public Boolean StoneMonster { get; set; }
+        public Boolean OverTrance { get; set; }
+
+        // Scan, ATB and HPBar mechanic
+
+        public HUDMessageChild HPGreenBarHUD { get; set; }
+        public HUDMessageChild HPRedBarHUD { get; set; }
+        public HUDMessageChild ATBGreenBarHUD { get; set; }
+        public HUDMessageChild ATBFrameHUD { get; set; }
+        public UInt32 HPBarValue { get; set; }
+        public Boolean HPBarHidden { get; set; }
+        public Boolean TriggerHPHUDOneTime { get; set; }
 
     }
 
@@ -427,6 +440,8 @@ namespace Memoria.Scripts.TranceSeek
         public int SoulChance { get; set; }
 
         public SPSEffect PolaritySPS { get; set; }
+
+        public BTL_DATA CasterScanga { get; set; }
 
         public int CantKill
         {

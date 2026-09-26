@@ -331,7 +331,7 @@ namespace Memoria.Scripts.TranceSeek
                 else if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.MasterThief_Boosted) && slot == 1)
                     casterState.Zidane.ItemMugMasterThief = 2;
 
-                if (_v.Caster.PlayerIndex == CharacterId.Zidane && !TranceSeekRegularItem.DaggerWeapon(_v.Caster))
+                if (!TranceSeekRegularItem.DaggerWeapon(_v.Caster))
                 {
                     UiState.SetBattleFollowFormatMessage(BattleMesages.Stole, FF9TextTool.ItemName(_v.Context.ItemSteal) + " X 2");
                 }
@@ -339,7 +339,7 @@ namespace Memoria.Scripts.TranceSeek
             else
             {
                 BattleItem.AddToInventory(_v.Context.ItemSteal);
-                if (_v.Caster.PlayerIndex == CharacterId.Zidane && !TranceSeekRegularItem.DaggerWeapon(_v.Caster))
+                if (!TranceSeekRegularItem.DaggerWeapon(_v.Caster))
                 {
                     UiState.SetBattleFollowFormatMessage(BattleMesages.Stole, FF9TextTool.ItemName(_v.Context.ItemSteal));
                 }
@@ -350,8 +350,6 @@ namespace Memoria.Scripts.TranceSeek
 
         public void ShowMugMessage()
         {
-            if (_v.Caster.PlayerIndex != CharacterId.Zidane) return;
-
             var casterState = _v.CasterState();
 
             if (TranceSeekRegularItem.DaggerWeapon(_v.Caster) && _v.Command.Data.info.effect_counter == 2)

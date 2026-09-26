@@ -101,14 +101,7 @@ namespace Memoria.Scripts.TranceSeek
                     }
                 }
 
-                if (v.Target.PlayerIndex == CharacterId.Amarant && Target_TSVar.Amarant.Duel && (v.Command.AbilityCategory & 8) != 0 && v.Target.IsUnderAnyStatus(BattleStatus.Defend)) // Duel Amarant
-                {
-                    if (v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.Ferocity) && (v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.Ferocity_Boosted) ? 50 : 25) > Comn.random16() % 100) // SA Ferocity
-                        btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[FF2716]", TranceSeekMessages.MessageFerocity, HUDMessage.MessageStyle.DAMAGE, 10);
-                    else
-                        Target_TSVar.Amarant.Duel = false;
-                }
-                else if (v.Target.PlayerIndex == CharacterId.Marcus && (v.Command.Element & EffectElement.Darkness) != 0
+                if (v.Target.PlayerIndex == CharacterId.Marcus && (v.Command.Element & EffectElement.Darkness) != 0
                     && (v.Target.Flags & CalcFlag.HpAlteration) != 0 && (v.Target.Flags & CalcFlag.MpAlteration) == 0) // Marcus mechanic
                 {
                     int HealMP = ((v.Target.HpDamage * (1 + Comn.random16() % 9)) / 1000);

@@ -24,7 +24,7 @@ namespace Memoria.Scripts.TranceSeek
         {
             if (_v.Caster.Data.dms_geo_id == 401 && _v.Command.HitRate == 1) // Friendly Feather Circle - Mega Death
             {
-                if (FF9StateSystem.EventState.gEventGlobal[1307] == 1) // SetVariable: Variable=gEventGlobal ; Index=1307 ; Value=0
+                if (FF9StateSystem.EventState.gEventGlobal[1307] == 0) // SetVariable: Variable=gEventGlobal ; Index=1307 ; Value=0
                 {
                     _v.Target.RemoveStatus(BattleStatus.AutoLife);
                     if (_v.Target.IsZombie)
@@ -51,6 +51,7 @@ namespace Memoria.Scripts.TranceSeek
                         { "GR", "B-Virus!" },
                         { "IT", "B-Virus!" },
                     };
+                    _v.Target.ResistStatus &= ~BattleStatus.Zombie;
                     btl2d.Btl2dReqSymbolMessage(_v.Target.Data, "[00FF00]", localizedMessage, HUDMessage.MessageStyle.DAMAGE, 5);
                     btl_stat.MakeStatusesPermanent(_v.Target, BattleStatus.Zombie, true);
                 }

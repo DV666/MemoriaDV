@@ -1,4 +1,5 @@
 ﻿using FF9;
+using Memoria.Assets;
 using Memoria.Data;
 using System;
 using System.Collections.Generic;
@@ -339,6 +340,9 @@ namespace Memoria.Scripts.TranceSeek
                 v.Context.Attack /= 2;
             if (v.Target.IsUnderAnyStatus(BattleStatus.Mini) || v.Target.IsUnderAnyStatus(BattleStatus.Sleep) && !v.Target.IsUnderAnyStatus(BattleStatus.EasyKill) || v.Target.IsUnderAnyStatus(BattleStatus.Freeze))
                 ++v.Context.DamageModifierCount;
+
+            if (v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.StoneSkin))
+                v.Context.Attack -= (v.Context.Attack * (v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.StoneSkin_Boosted) ? 15 : 10)) / 100;
 
             TranceSeekCharacterMechanic.GarnetGemMechanic(v, GarnetGemMechanic_Type.BoostPhysicalDefence);
 
@@ -705,16 +709,19 @@ namespace Memoria.Scripts.TranceSeek
                 IsWeaponGravity = TranceSeekRegularItem.WeaponAffinitiesGravity.Contains(v.Caster.Weapon);
             }
 
-            if (v.Target.IsGuardElement(Element) || ((v.Command.ScriptId == 118 || v.Command.ScriptId == 119 || v.Command.ScriptId == 145 || IsWeaponPoison) && (Target_TSVar.EffectElement.Poison & 4) != 0) || ((v.Command.ScriptId == 17 || v.Command.ScriptId == 86 || IsWeaponGravity) && (Target_TSVar.EffectElement.Gravity & 4) != 0))
+            Boolean IsPoisonElement = (v.Command.ScriptId == 118 || v.Command.ScriptId == 119 || v.Command.ScriptId == 145 || IsWeaponPoison);
+            Boolean IsGravityElement = (v.Command.ScriptId == 17 || v.Command.ScriptId == 86 || IsWeaponGravity);
+
+            if (v.Target.IsGuardElement(Element) || (IsPoisonElement && (Target_TSVar.EffectElement.Poison & 4) != 0) || (IsGravityElement && (Target_TSVar.EffectElement.Gravity & 4) != 0))
             {
                 v.Context.Flags |= BattleCalcFlags.Guard;
                 return false;
             }
 
-            if (v.Target.IsHalfElement(Element) || ((v.Command.ScriptId == 118 || v.Command.ScriptId == 119 || v.Command.ScriptId == 145 || IsWeaponPoison) && (Target_TSVar.EffectElement.Poison & 2) != 0) || ((v.Command.ScriptId == 17 || v.Command.ScriptId == 86 || IsWeaponGravity) && (Target_TSVar.EffectElement.Gravity & 2) != 0))
+            if (v.Target.IsHalfElement(Element) || (IsPoisonElement && (Target_TSVar.EffectElement.Poison & 2) != 0) || (IsGravityElement && (Target_TSVar.EffectElement.Gravity & 2) != 0))
                 v.Context.Attack /= 2;
 
-            if (v.Target.IsWeakElement(Element) || ((v.Command.ScriptId == 118 || v.Command.ScriptId == 119 || v.Command.ScriptId == 145 || IsWeaponPoison) && (Target_TSVar.EffectElement.Poison & 1) != 0) || ((v.Command.ScriptId == 17 || v.Command.ScriptId == 86 || IsWeaponGravity) && (Target_TSVar.EffectElement.Gravity & 1) != 0))
+            if (v.Target.IsWeakElement(Element) || (IsPoisonElement && (Target_TSVar.EffectElement.Poison & 1) != 0) || (IsGravityElement && (Target_TSVar.EffectElement.Gravity & 1) != 0))
                 v.Context.DamageModifierCount += 2;
 
             if (CanAbsorbElement(v, Element))
@@ -728,15 +735,9 @@ namespace Memoria.Scripts.TranceSeek
             }
             int elementProtect = Target_TSVar.AbsorbElement;
 
-            if (elementProtect != -1 && (Element & (EffectElement)elementProtect) != 0)
-            {
+            if ((elementProtect != -1 && (Element & (EffectElement)elementProtect) != 0) || (IsPoisonElement && ((Target_TSVar.EffectElement.Poison & 8) != 0 || v.Target.IsZombie))
+                || (IsGravityElement && (Target_TSVar.EffectElement.Gravity & 8) != 0))
                 v.Context.Flags |= BattleCalcFlags.Absorb;
-            }
-            else if (((v.Command.ScriptId == 118 || v.Command.ScriptId == 119) && (Target_TSVar.EffectElement.Poison & 8) != 0) ||
-                     ((v.Command.ScriptId == 17 || v.Command.ScriptId == 86) && (Target_TSVar.EffectElement.Gravity & 8) != 0))
-            {
-                v.Context.Flags |= BattleCalcFlags.Absorb;
-            }
 
             v.Target.AlterStatuses(Element);
             return true;
@@ -744,7 +745,7 @@ namespace Memoria.Scripts.TranceSeek
 
         public static Boolean CanAbsorbElement(this BattleCalculator v, EffectElement element)
         {
-            if (IsAbsorbElement(v, element) || TranceSeekCharacterMechanic.GarnetGemMechanic(v, GarnetGemMechanic_Type.ElementalAndHeal, element))
+            if (TranceSeekCharacterMechanic.GarnetGemMechanic(v, GarnetGemMechanic_Type.ElementalAndHeal, element) || IsAbsorbElement(v, element))
             {
                 v.Context.Flags |= BattleCalcFlags.Absorb;
                 return true;
@@ -1450,6 +1451,31 @@ namespace Memoria.Scripts.TranceSeek
                 if (Mog.HasSupportAbilityByIndex(TranceSeekSupportAbility.MogKiss_Boosted))
                     v.Target.RemoveStatus(BattleStatusConst.AnyNegative &~BattleStatus.Death);
             }
+        }
+
+        public static BTL2D_ENT Btl2dReqHeadSymbolMessage(BTL_DATA pBtl, String messageColor, Dictionary<String, String> multiLangMessage, HUDMessage.MessageStyle style, Byte pDelay, SByte customYofs = -16)
+        {
+            if (!multiLangMessage.TryGetValue(Localization.CurrentDisplaySymbol, out String msg))
+                multiLangMessage.TryGetValue(Localization.GetFallbackSymbol(), out msg);
+            return Btl2dReqHeadSymbolMessage(pBtl, messageColor, msg, style, pDelay, customYofs);
+        }
+
+        public static BTL2D_ENT Btl2dReqHeadSymbolMessage(BTL_DATA pBtl, String messageColor, String message, HUDMessage.MessageStyle style, Byte pDelay, SByte customYofs = -16)
+        {
+            BTL2D_ENT freeEntry = btl2d.GetFreeEntry(pBtl);
+
+            freeEntry.Type = 3;
+            freeEntry.Delay = pDelay;
+            freeEntry.CustomColor = messageColor;
+            freeEntry.CustomMessage = message;
+            freeEntry.CustomStyle = style;
+
+            btl2d.GetIconPosition(pBtl, btl2d.ICON_POS_DEFAULT, out Transform headTransform, out Vector3 _);
+            if (headTransform != null)
+                freeEntry.trans = headTransform;
+
+            freeEntry.Yofs = customYofs;
+            return freeEntry;
         }
     }
 }

@@ -83,7 +83,7 @@ namespace Memoria.Scripts.TranceSeek
                 TranceSeekAPI.TryAlterMagicStatuses(_v);
             }
 
-            if (Target_TSVar.AbsorbElement == 256)
+            if ((Target_TSVar.AbsorbElement & 256) != 0)
                 _v.Target.Flags |= CalcFlag.HpRecovery;
         }
 

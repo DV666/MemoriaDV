@@ -74,6 +74,7 @@ namespace Memoria.DefaultScripts
                     Target.CurrentHp = Target.MaximumHp;
                     Target.CurrentMp = Target.MaximumMp;
                     Target.AlterStatus(BattleStatus.EasyKill);
+                    Target.State().Monster.OverTrance = true;
                 }
                 Target.RemoveStatus(BattleStatusConst.AnyNegative);
             }
@@ -521,17 +522,35 @@ namespace Memoria.DefaultScripts
             if (battleEnemy.StealableItems[3] != RegularItem.NoItem)
             {
                 if (mob.Data.dms_geo_id == 92) // Gnoll
+                {
                     battleEnemy.StealableItems[3] = TranceSeekRegularItem.TwinLance;
+                    battleEnemy.DroppableItems[3] = TranceSeekRegularItem.TwinLance;
+                }
                 else if (mob.Data.dms_geo_id == 85) // Lamia
+                {
                     battleEnemy.StealableItems[3] = TranceSeekRegularItem.LamiaFan;
+                    battleEnemy.DroppableItems[3] = TranceSeekRegularItem.LamiaFan;
+                }
                 else if (mob.Data.dms_geo_id == 152) // Goblin
+                {
                     battleEnemy.StealableItems[3] = TranceSeekRegularItem.Forklin;
+                    battleEnemy.DroppableItems[3] = TranceSeekRegularItem.Forklin;
+                }
                 else if (mob.Data.dms_geo_id == 556) // Mistodon
+                {
                     battleEnemy.StealableItems[3] = TranceSeekRegularItem.Mistfork;
+                    battleEnemy.DroppableItems[3] = TranceSeekRegularItem.Mistfork;
+                }
                 else if (mob.Data.dms_geo_id == 90) // Griffin
+                {
                     battleEnemy.StealableItems[3] = TranceSeekRegularItem.Forkstral;
+                    battleEnemy.DroppableItems[3] = TranceSeekRegularItem.Forkstral;
+                }
                 else if (mob.Data.dms_geo_id == 327) // Ogra
+                {
                     battleEnemy.StealableItems[3] = TranceSeekRegularItem.OgraKnife;
+                    battleEnemy.DroppableItems[3] = TranceSeekRegularItem.OgraKnife;
+                }
             }
         }
 

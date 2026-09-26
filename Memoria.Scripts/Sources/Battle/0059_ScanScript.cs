@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using FF9;
 using Memoria.Data;
 using UnityEngine;
 
@@ -17,15 +15,11 @@ namespace Memoria.Scripts.TranceSeek
 
         private readonly BattleCalculator _v;
 
-        public static Dictionary<BTL_DATA, HUDMessageChild> HPGreenBarHUD = new Dictionary<BTL_DATA, HUDMessageChild>();
-        public static Dictionary<BTL_DATA, HUDMessageChild> HPRedBarHUD = new Dictionary<BTL_DATA, HUDMessageChild>();
-        public static Dictionary<BTL_DATA, HUDMessageChild> ATBGreenBarHUD = new Dictionary<BTL_DATA, HUDMessageChild>();
-        public static Dictionary<BTL_DATA, HUDMessageChild> ATBFrameHUD = new Dictionary<BTL_DATA, HUDMessageChild>();
-        public static Dictionary<BTL_DATA, UInt32> HPBarValue = new Dictionary<BTL_DATA, UInt32>();
-        public static Dictionary<BTL_DATA, Boolean> HPBarHidden = new Dictionary<BTL_DATA, Boolean>();
-        public static Dictionary<BTL_DATA, Boolean> TriggerOneTime = new Dictionary<BTL_DATA, Boolean>();
-
-        public static Dictionary<BTL_DATA, BTL_DATA> CasterScanga = new Dictionary<BTL_DATA, BTL_DATA>();
+        public static Dictionary<KeyValuePair<Int32, Int32>, Vector3> AdjustOffsetForScan = new Dictionary<KeyValuePair<Int32, Int32>, Vector3>
+        {
+            { new KeyValuePair<Int32, Int32>(4, 2), new Vector3(200, 0, 0) }, // Nightmare
+            { new KeyValuePair<Int32, Int32>(4, 3), new Vector3(200, -400, 0) }, // Thousand Fears
+        };
 
         public ScanScript(BattleCalculator v)
         {
@@ -34,6 +28,7 @@ namespace Memoria.Scripts.TranceSeek
 
         public void Perform()
         {
+            var TargetMonster_TSVAR = _v.Target.State().Monster;
             if (_v.Caster.IsPlayer)
             {
                 if (_v.Command.AbilityId == TranceSeekBattleAbility.PredatorsEye) // Lani - Predator's Eye
@@ -48,17 +43,11 @@ namespace Memoria.Scripts.TranceSeek
                         _v.Target.Libra(BattleHUD.LibraInformation.All);
 
                     if (btl_para.IsNonDyingVanillaBoss(_v.Target))
-                        HPBarValue[_v.Target.Data] = (_v.Target.CurrentHp - 10000);
+                        TargetMonster_TSVAR.HPBarValue = (_v.Target.CurrentHp - 10000);
                     else
-                        HPBarValue[_v.Target.Data] = _v.Target.CurrentHp;
+                        TargetMonster_TSVAR.HPBarValue = _v.Target.CurrentHp;
 
-                    //HPBarHidden[_v.Target.Data] = false;
-                    //TriggerOneTime[_v.Target.Data] = false;
-                    //HPGreenBarHUD[_v.Target.Data] = null;
-                    //HPRedBarHUD[_v.Target.Data] = null;
-                    //ATBGreenBarHUD[_v.Target.Data] = null;
-                    //ATBFrameHUD[_v.Target.Data] = null;
-                    CasterScanga[_v.Target.Data] = _v.Caster.Data;
+                    _v.Target.State().CasterScanga = _v.Caster.Data;
                     _v.Target.AddDelayedModifier(ShowScan, null);
                 }
                 else if (_v.Target.IsUnderStatus(BattleStatus.EasyKill) && !TranceSeekAPI.EliteMonster(_v.Target.Data)) // Boss
@@ -68,10 +57,12 @@ namespace Memoria.Scripts.TranceSeek
                 else if (_v.Command.AbilityId == TranceSeekBattleAbility.Scanra) // Scan +
                 {
                     _v.Target.Libra(BattleHUD.LibraInformation.All);
+                    TranceSeekBestiaryDB.UpdateMonsterStatus(FF9StateSystem.Battle.battleMapIndex, _v.Target.Data.typeNo, TranceSeekBestiaryDB.StatusScannedPlus);
                 }
                 else
                 {
                     _v.Target.Libra(BattleHUD.LibraInformation.Default | BattleHUD.LibraInformation.ItemSteal);
+                    TranceSeekBestiaryDB.UpdateMonsterStatus(FF9StateSystem.Battle.battleMapIndex, _v.Target.Data.typeNo, TranceSeekBestiaryDB.StatusScanned);
                 }
             }
             else
@@ -92,8 +83,9 @@ namespace Memoria.Scripts.TranceSeek
             if (mob.IsUnderAnyStatus(BattleStatusConst.BattleEndFull))
                 return false;
 
-            BattleUnit caster = new BattleUnit (CasterScanga[mob.Data]);
-            if (caster.CurrentAtb >= caster.MaximumAtb && CasterScanga[mob.Data].currentAnimationName.Contains("_000"))
+            var Unit_TSVAR = mob.State();
+            BattleUnit caster = new BattleUnit (Unit_TSVAR.CasterScanga);
+            if (caster.CurrentAtb >= caster.MaximumAtb && Unit_TSVAR.CasterScanga.currentAnimationName.Contains("_000"))
             {
                 if (((Input.GetKey(KeyCode.Alpha2) || (UIManager.Input.GetKey(Control.LeftBumper) && UIManager.Input.GetKey(Control.Special))) && mob.Id == 16)
                     || ((Input.GetKey(KeyCode.Alpha3) || (UIManager.Input.GetKey(Control.LeftTrigger) && UIManager.Input.GetKey(Control.Special))) && mob.Id == 32)
@@ -112,21 +104,23 @@ namespace Memoria.Scripts.TranceSeek
 
         private Boolean ShowHPBar(BattleUnit mob)
         {
+            var TargetMonster_TSVAR = mob.State().Monster;
+
             if (mob.IsUnderAnyStatus(BattleStatusConst.BattleEndFull) || btl_para.IsNonDyingVanillaBoss(mob) && mob.CurrentHp <= 10000)
             {
-                btl2d.StatusMessages.Remove(HPRedBarHUD[mob.Data]);
-                btl2d.StatusMessages.Remove(HPGreenBarHUD[mob.Data]);
-                Singleton<HUDMessage>.Instance.ReleaseObject(HPRedBarHUD[mob.Data]);
-                Singleton<HUDMessage>.Instance.ReleaseObject(HPGreenBarHUD[mob.Data]);
-                HPRedBarHUD[mob.Data] = null;
-                HPGreenBarHUD[mob.Data] = null;
+                btl2d.StatusMessages.Remove(TargetMonster_TSVAR.HPRedBarHUD);
+                btl2d.StatusMessages.Remove(TargetMonster_TSVAR.HPGreenBarHUD);
+                Singleton<HUDMessage>.Instance.ReleaseObject(TargetMonster_TSVAR.HPRedBarHUD);
+                Singleton<HUDMessage>.Instance.ReleaseObject(TargetMonster_TSVAR.HPGreenBarHUD);
+                TargetMonster_TSVAR.HPRedBarHUD = null;
+                TargetMonster_TSVAR.HPGreenBarHUD = null;
                 return false;
             }
 
             if (FF9StateSystem.Battle.FF9Battle.btl_phase < FF9StateBattleSystem.PHASE_MENU_ON) // Don't show HP Bar in intro
                 return true;
 
-            if (HPGreenBarHUD[mob.Data] == null && HPRedBarHUD[mob.Data] == null)
+            if (TargetMonster_TSVAR.HPGreenBarHUD == null && TargetMonster_TSVAR.HPRedBarHUD == null)
             {
                 BattleStatusDataEntry statusData = FF9StateSystem.Battle.FF9Battle.status_data[BattleStatusId.Poison];
                 btl2d.GetIconPosition(mob.Data, btl2d.ICON_POS_HEAD, out Transform attachTransf, out Vector3 iconOff);
@@ -134,73 +128,84 @@ namespace Memoria.Scripts.TranceSeek
 
                 uint HPValue = btl_para.IsNonDyingVanillaBoss(mob) ? ((mob.CurrentHp - 10000) * 150) / (mob.MaximumHp - 10000) : ((mob.CurrentHp * 150) / mob.MaximumHp);
                 // Red HP Bar (background)
-                HPRedBarHUD[mob.Data] = Singleton<HUDMessage>.Instance.Show(attachTransf, "[SPRT=GeneralAtlas,ap_bar_complete,150,15]", HUDMessage.MessageStyle.DEATH_SENTENCE, HPBarHUD_Offset, 0);
-                HPRedBarHUD[mob.Data].Follower.clampToScreen = false;
-                btl2d.StatusMessages.Add(HPRedBarHUD[mob.Data]);
+                TargetMonster_TSVAR.HPRedBarHUD = Singleton<HUDMessage>.Instance.Show(attachTransf, "[SPRT=GeneralAtlas,ap_bar_complete,150,15]", HUDMessage.MessageStyle.DEATH_SENTENCE, HPBarHUD_Offset, 0);
+                TargetMonster_TSVAR.HPRedBarHUD.Follower.clampToScreen = false;
+                btl2d.StatusMessages.Add(TargetMonster_TSVAR.HPRedBarHUD);
 
                 // Green HP Bar (actual)               
-                HPGreenBarHUD[mob.Data] = Singleton<HUDMessage>.Instance.Show(attachTransf, $"[SPRT=GeneralAtlas,ap_bar_progress,{HPValue},15]", HUDMessage.MessageStyle.DEATH_SENTENCE, HPBarHUD_Offset, 0);
-                UILabel UILabelHPGreenBarHUD = HPGreenBarHUD[mob.Data].GetComponent<UILabel>();
-                HPGreenBarHUD[mob.Data].Follower.clampToScreen = false;
+                TargetMonster_TSVAR.HPGreenBarHUD = Singleton<HUDMessage>.Instance.Show(attachTransf, $"[SPRT=GeneralAtlas,ap_bar_progress,{HPValue},15]", HUDMessage.MessageStyle.DEATH_SENTENCE, HPBarHUD_Offset, 0);
+                UILabel UILabelHPGreenBarHUD = TargetMonster_TSVAR.HPGreenBarHUD.GetComponent<UILabel>();
+                TargetMonster_TSVAR.HPGreenBarHUD.Follower.clampToScreen = false;
                 UILabelHPGreenBarHUD.spacingY = -10;
-                btl2d.StatusMessages.Add(HPGreenBarHUD[mob.Data]);
+                btl2d.StatusMessages.Add(TargetMonster_TSVAR.HPGreenBarHUD);
             }
 
-            if (HPGreenBarHUD[mob.Data] != null && HPRedBarHUD[mob.Data] != null && (Input.GetKey(KeyCode.Alpha2) || UIManager.Input.GetKey(Control.Special)) && !TriggerOneTime[mob.Data])
+            if (TargetMonster_TSVAR.HPGreenBarHUD != null && TargetMonster_TSVAR.HPRedBarHUD != null && (Input.GetKey(KeyCode.Alpha2) || UIManager.Input.GetKey(Control.Special)) && !TargetMonster_TSVAR.TriggerHPHUDOneTime)
             {
-                HPBarHidden[mob.Data] = !HPBarHidden[mob.Data];
-                TriggerOneTime[mob.Data] = true;
+                TargetMonster_TSVAR.HPBarHidden = !TargetMonster_TSVAR.HPBarHidden;
+                TargetMonster_TSVAR.TriggerHPHUDOneTime = true;
 
-                if (HPBarHidden[mob.Data])
+                if (TargetMonster_TSVAR.HPBarHidden)
                 {
-                    HPRedBarHUD[mob.Data].gameObject.SetActive(false);
-                    HPGreenBarHUD[mob.Data].gameObject.SetActive(false);
+                    TargetMonster_TSVAR.HPRedBarHUD.gameObject.SetActive(false);
+                    TargetMonster_TSVAR.HPGreenBarHUD.gameObject.SetActive(false);
                 }
                 else
-                {      
-                    HPRedBarHUD[mob.Data].gameObject.SetActive(true);
-                    HPGreenBarHUD[mob.Data].gameObject.SetActive(true);
+                {
+                    TargetMonster_TSVAR.HPRedBarHUD.gameObject.SetActive(true);
+                    TargetMonster_TSVAR.HPGreenBarHUD.gameObject.SetActive(true);
                     uint ShowHPValue = btl_para.IsNonDyingVanillaBoss(mob) ? ((mob.CurrentHp - 10000) * 150) / (mob.MaximumHp - 10000) : ((mob.CurrentHp * 150) / mob.MaximumHp);
-                    HPGreenBarHUD[mob.Data].Label = $"[SPRT=GeneralAtlas,ap_bar_progress,{ShowHPValue},15]";
+                    TargetMonster_TSVAR.HPGreenBarHUD.Label = $"[SPRT=GeneralAtlas,ap_bar_progress,{ShowHPValue},15]";
                 }
             }
             else if (!Input.GetKey(KeyCode.Alpha2) && !UIManager.Input.GetKey(Control.Special))
             {
-                TriggerOneTime[mob.Data] = false;
+                TargetMonster_TSVAR.TriggerHPHUDOneTime = false;
             }
 
-            if (HPBarValue[mob.Data] != mob.CurrentHp)
+            if (TargetMonster_TSVAR.HPBarValue != mob.CurrentHp)
             {
                 uint newHPValue = btl_para.IsNonDyingVanillaBoss(mob) ? ((mob.CurrentHp - 10000) * 150) / (mob.MaximumHp - 10000) : ((mob.CurrentHp * 150) / mob.MaximumHp);
-                HPGreenBarHUD[mob.Data].Label = $"[SPRT=GeneralAtlas,ap_bar_progress,{newHPValue},15]";               
+                TargetMonster_TSVAR.HPGreenBarHUD.Label = $"[SPRT=GeneralAtlas,ap_bar_progress,{newHPValue},15]";
             }
             return true;
         }
 
         public static Boolean ShowATBBar(BattleUnit mob)
         {
-            if (mob.IsUnderAnyStatus(BattleStatusConst.BattleEndFull) || btl_para.IsNonDyingVanillaBoss(mob) && mob.CurrentHp <= 10000 || mob.CurrentHp == 0)
+            var TargetMonster_TSVAR = mob.State().Monster;
+            HUDMessageChild greenHUD = TargetMonster_TSVAR.ATBGreenBarHUD;
+            HUDMessageChild frameHUD = TargetMonster_TSVAR.ATBFrameHUD;
+
+            if (mob.IsUnderAnyStatus(BattleStatusConst.BattleEndFull) || mob.CurrentHp == 0)
             {
-                if (ATBFrameHUD[mob.Data] != null)
+                if (greenHUD != null)
                 {
-                    ATBFrameHUD[mob.Data].FontSize = 36;
-                    btl2d.StatusMessages.Remove(ATBFrameHUD[mob.Data]);
-                    Singleton<HUDMessage>.Instance.ReleaseObject(ATBFrameHUD[mob.Data]);
-                    ATBFrameHUD[mob.Data] = null;
+                    btl2d.StatusMessages.Remove(greenHUD);
+                    Singleton<HUDMessage>.Instance.ReleaseObject(greenHUD);
+                    TargetMonster_TSVAR.ATBGreenBarHUD = null;
                 }
 
-                if (ATBGreenBarHUD[mob.Data] != null)
+                if (frameHUD != null)
                 {
-                    ATBGreenBarHUD[mob.Data].FontSize = 36;
-                    btl2d.StatusMessages.Remove(ATBGreenBarHUD[mob.Data]);
-                    Singleton<HUDMessage>.Instance.ReleaseObject(ATBGreenBarHUD[mob.Data]);
-                    ATBGreenBarHUD[mob.Data] = null;
+                    btl2d.StatusMessages.Remove(frameHUD);
+                    Singleton<HUDMessage>.Instance.ReleaseObject(frameHUD);
+                    TargetMonster_TSVAR.ATBFrameHUD = null;
                 }
                 return false;
             }
 
-            if (FF9StateSystem.Battle.FF9Battle.btl_phase < FF9StateBattleSystem.PHASE_MENU_ON) // Don't show ATB Bar in intro
+            BattleStateSystem FF9BattleState = FF9StateSystem.Battle;
+            if (FF9BattleState.FF9Battle.btl_phase < FF9StateBattleSystem.PHASE_MENU_ON || FF9BattleState.FF9Battle.btl_phase == FF9StateBattleSystem.PHASE_MENU_OFF || mob.Data.bi.disappear == 1 || !mob.Data.gameObject.activeSelf || !mob.IsTargetable)
+            {
+                if (frameHUD != null)
+                    frameHUD.Label = string.Empty;
+
+                if (greenHUD != null)
+                    greenHUD.Label = string.Empty;
+
                 return true;
+            }
 
             float atbPercent = (float)mob.CurrentAtb / (float)mob.MaximumAtb;
             atbPercent = Mathf.Clamp01(atbPercent);
@@ -211,55 +216,69 @@ namespace Memoria.Scripts.TranceSeek
             else if (mob.IsUnderAnyStatus(BattleStatus.Haste))
                 ATBSprite = "battle_bar_haste";
 
-            if (ATBGreenBarHUD[mob.Data] == null && ATBFrameHUD[mob.Data] == null)
+            if (greenHUD == null && frameHUD == null)
             {
                 BattleStatusDataEntry statusData = FF9StateSystem.Battle.FF9Battle.status_data[BattleStatusId.Poison];
                 btl2d.GetIconPosition(mob.Data, btl2d.ICON_POS_HEAD, out Transform attachTransf, out Vector3 iconOff);
 
-                Vector3 ATB_BG_HUD_Offset = statusData.SHPExtraPos + iconOff + new Vector3(200, 150, 0);
-                Vector3 ATB_BAR_HUD_Offset = statusData.SHPExtraPos + iconOff + new Vector3(220, 160, 0);
+                Vector3 offset = Vector3.zero;
+                KeyValuePair<Int32, Int32> MobBattleId = new KeyValuePair<Int32, Int32>(FF9StateSystem.Battle.battleMapIndex, mob.Data.typeNo);
+                if (!AdjustOffsetForScan.TryGetValue(MobBattleId, out offset))
+                    offset = new Vector3(200, 150, 0);
 
-                ATBFrameHUD[mob.Data] = Singleton<HUDMessage>.Instance.Show(attachTransf, "[SPRT=GeneralAtlas,battle_bar_bg,150,18]", HUDMessage.MessageStyle.DEATH_SENTENCE, ATB_BG_HUD_Offset, 0);
-                ATBFrameHUD[mob.Data].Follower.clampToScreen = false;
+                Vector3 ATB_HUD_Offset = statusData.SHPExtraPos + iconOff + offset;
 
-                UILabel bgLabel = ATBFrameHUD[mob.Data].GetComponent<UILabel>();
+                frameHUD = Singleton<HUDMessage>.Instance.Show(attachTransf, "[SPRT=GeneralAtlas,battle_bar_bg_monster,150,18]", HUDMessage.MessageStyle.DEATH_SENTENCE, ATB_HUD_Offset, 0);
+                frameHUD.Follower.clampToScreen = false;
+
+                UILabel bgLabel = frameHUD.GetComponent<UILabel>();
                 bgLabel.pivot = UIWidget.Pivot.Center;
-                bgLabel.spacingY = 0; 
-                ATBFrameHUD[mob.Data].transform.localScale = Vector3.one;
+                bgLabel.spacingY = 0;
+                bgLabel.depth = 20;
+                frameHUD.transform.localScale = Vector3.one;
 
-                btl2d.StatusMessages.Add(ATBFrameHUD[mob.Data]);
+                btl2d.StatusMessages.Add(frameHUD);
 
-                ATBGreenBarHUD[mob.Data] = Singleton<HUDMessage>.Instance.Show(attachTransf, $"[SPRT=GeneralAtlas,{ATBSprite},145,14]", HUDMessage.MessageStyle.DEATH_SENTENCE, ATB_BAR_HUD_Offset, 0);
+                greenHUD = Singleton<HUDMessage>.Instance.Show(attachTransf, $"[SPRT=GeneralAtlas,{ATBSprite},148,16]", HUDMessage.MessageStyle.DEATH_SENTENCE, ATB_HUD_Offset, 0);
+                greenHUD.Follower.clampToScreen = false;
 
-                UILabel atbLabel = ATBGreenBarHUD[mob.Data].GetComponent<UILabel>();
-                ATBGreenBarHUD[mob.Data].Follower.clampToScreen = false;
-
-                atbLabel.spacingY = -10;
+                UILabel atbLabel = greenHUD.GetComponent<UILabel>();
                 atbLabel.pivot = UIWidget.Pivot.Left;
+                atbLabel.alignment = NGUIText.Alignment.Left;
+                atbLabel.spacingY = -10;
+                atbLabel.depth = 10;
 
-                btl2d.StatusMessages.Add(ATBGreenBarHUD[mob.Data]);
+                greenHUD.transform.localPosition = new Vector3(-165f, 0f, 0f);
+
+                btl2d.StatusMessages.Add(greenHUD);
+
+                TargetMonster_TSVAR.ATBFrameHUD = frameHUD;
+                TargetMonster_TSVAR.ATBGreenBarHUD = greenHUD;
             }
 
-            string currentText = $"[SPRT=GeneralAtlas,{ATBSprite},145,14]";
-            if (ATBGreenBarHUD[mob.Data].Label != currentText)
-                ATBGreenBarHUD[mob.Data].Label = currentText;
-
-            if (ATBGreenBarHUD[mob.Data] != null)
-                ATBGreenBarHUD[mob.Data].transform.localScale = new Vector3(atbPercent, 1f, 1f);
-
-            if (ATBGreenBarHUD[mob.Data] != null && ATBFrameHUD[mob.Data] != null)
+            if (greenHUD != null && frameHUD != null)
             {
                 if (PersistenSingleton<BattleHUD>.Instance.AllMenuPanel.gameObject.activeSelf && btl2d.ShouldShowSPS && mob.Data.bi.disappear == 0)
                 {
-                    ATBFrameHUD[mob.Data].gameObject.SetActive(true);
-                    ATBGreenBarHUD[mob.Data].gameObject.SetActive(true);
+                    string bgText = "[SPRT=GeneralAtlas,battle_bar_bg_monster,150,18]";
+                    if (frameHUD.Label != bgText)
+                        frameHUD.Label = bgText;
+
+                    string currentText = $"[SPRT=GeneralAtlas,{ATBSprite},148,16]";
+                    if (greenHUD.Label != currentText)
+                        greenHUD.Label = currentText;
+
+                    greenHUD.transform.localScale = new Vector3(atbPercent, 1f, 1f);
                 }
                 else
                 {
-                    ATBFrameHUD[mob.Data].gameObject.SetActive(false);
-                    ATBGreenBarHUD[mob.Data].gameObject.SetActive(false);
+                    if (frameHUD.Label != string.Empty)
+                        frameHUD.Label = string.Empty;
+                    if (greenHUD.Label != string.Empty)
+                        greenHUD.Label = string.Empty;
                 }
             }
+
             return true;
         }
     }

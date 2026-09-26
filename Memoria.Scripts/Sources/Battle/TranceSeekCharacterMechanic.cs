@@ -531,7 +531,6 @@ namespace Memoria.Scripts.TranceSeek
 
                     ushort TargetId = v.Caster.Id;
                     Eiko.State().Eiko.StateMoug = 1;
-                    Boolean TargetReflect = false;
                     var Eiko_TSVar = Eiko.State();
                     List<BattleAbilityId> ClassicMougAAList = new List<BattleAbilityId>();
                     List<BattleAbilityId> SuperMougAAList = new List<BattleAbilityId>();
@@ -580,14 +579,12 @@ namespace Memoria.Scripts.TranceSeek
                             {
                                 if (FF9StateSystem.EventState.ScenarioCounter >= 9990) // The party finds Hilda
                                 {
-                                    Boolean TargetAvailable = true;
+                                    Boolean TargetAvailable = false;
                                     foreach (BattleUnit monster in BattleState.EnumerateUnits())
                                     {
-                                        if (!monster.IsPlayer && monster.IsTargetable && !monster.IsUnderAnyStatus(BattleStatus.Death | BattleStatus.Petrify | BattleStatus.Jump | BattleStatus.Reflect))
-                                            TargetAvailable = true;
-
-                                        if (monster.IsUnderAnyStatus(BattleStatus.Reflect))
-                                            TargetReflect = true;
+                                        if (!monster.IsPlayer && monster.IsTargetable)
+                                            if (!monster.IsUnderAnyStatus(BattleStatus.Death | BattleStatus.Petrify | BattleStatus.Jump | BattleStatus.Reflect))
+                                                TargetAvailable = true;
                                     }
 
                                     if (TargetAvailable)
@@ -760,16 +757,6 @@ namespace Memoria.Scripts.TranceSeek
                         }
                     }
 
-                    if (TargetReflect && (MougAAChoosen == TranceSeekBattleAbility.MogFlare || MougAAChoosen == TranceSeekBattleAbility.MogHoly)) // Prevent Moug use Mog Flare / Mog Holy on target under Reflect
-                    {
-                        List<UInt16> TargetsAvailable = new List<UInt16>(4);
-                        for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
-                            if (next.bi.player == 0 && (!btl_stat.CheckStatus(next, BattleStatus.Death | BattleStatus.Petrify | BattleStatus.Reflect)) && next.bi.target != 0)
-                                TargetsAvailable.Add(next.btl_id);
-
-                        if (TargetsAvailable.Count > 0)
-                            TargetId = TargetsAvailable[UnityEngine.Random.Range(0, TargetsAvailable.Count)];
-                    }
                     btl_cmd.SetCounter(Eiko, BattleCommandId.Counter, (int)MougAAChoosen, TargetId);
                 }
             }
@@ -789,7 +776,7 @@ namespace Memoria.Scripts.TranceSeek
 
         public static void Hehe(BattleCalculator v, Boolean EyeOfThief)
         {
-            if (v.Caster.PlayerIndex != CharacterId.Zidane)
+            if (v.Caster.PlayerIndex != CharacterId.Zidane || HeheTriggered)
                 return;
 
             HeheTriggered = true;

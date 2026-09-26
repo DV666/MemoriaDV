@@ -5,6 +5,7 @@ using Memoria.Data;
 using Memoria.Prime;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using UnityEngine;
 namespace Memoria.Scripts.TranceSeek
@@ -15,7 +16,7 @@ namespace Memoria.Scripts.TranceSeek
         private const string BestiaryGroupName = "TranceSeek.Bestiary";
         private const string BestiaryButtonName = "Bestiary Panel - Button";
 
-        private const Boolean UnlockAll = true;
+        private const Boolean UnlockAll = false;
 
         private static readonly FieldInfo ConfigFieldListField = typeof(ConfigUI).GetField("ConfigFieldList", BindingFlags.Instance | BindingFlags.NonPublic);
         private static readonly FieldInfo ConfigScrollViewField = typeof(ConfigUI).GetField("configScrollView", BindingFlags.Instance | BindingFlags.NonPublic);
@@ -69,6 +70,7 @@ namespace Memoria.Scripts.TranceSeek
 
         private UILabel _monsterInfoLabel;
         private GameObject _monsterModel;
+        private List<GameObject> _weaponModels = new List<GameObject>();
         private Single _monsterAdjustScale;
         private String _monsterAnimation;
         private RenderTexture _monsterRt;
@@ -503,7 +505,11 @@ namespace Memoria.Scripts.TranceSeek
             battleSceneName = battleSceneName.Substring(4);
             scene.ReadBattleScene(battleSceneName);
             _currentMonsterParam = scene.MonAddr[_currentDisplayEntry.MonsterIndex];
-            _currentBbgName = string.IsNullOrEmpty(scene.Info.BattleBackground) ? FF9BattleDB.MapModel["BSC_" + battleSceneName] : scene.Info.BattleBackground;
+
+            if (!String.IsNullOrEmpty(_currentDisplayEntry.CustomBBG))
+                _currentBbgName = _currentDisplayEntry.CustomBBG;
+            else
+                _currentBbgName = string.IsNullOrEmpty(scene.Info.BattleBackground) ? FF9BattleDB.MapModel["BSC_" + battleSceneName] : scene.Info.BattleBackground;
 
             try
             {
@@ -519,7 +525,7 @@ namespace Memoria.Scripts.TranceSeek
                     _currentMonsterName = $"Monstre ID N°{_currentMonsterId}";
                 }
             }
-            catch (Exception ex)
+            catch
             {
                 _currentMonsterName = $"Monstre ID N°{_currentMonsterId}";
             }
@@ -530,25 +536,20 @@ namespace Memoria.Scripts.TranceSeek
             if (_currentMonsterParam == null)
                 return;
 
+            foreach (GameObject wep in _weaponModels)
+            {
+                GameObject tempW = wep;
+                DestroyModelSafely(ref tempW);
+            }
+            _weaponModels.Clear();
+
             DestroyModelSafely(ref _monsterModel);
             DestroyModelSafely(ref _bbgModel);
             Resources.UnloadUnusedAssets();
 
-            if (_monsterModel != null)
-            {
-                Destroy(_monsterModel);
-                _monsterModel = null;
-            }
-
-            if (_bbgModel != null)
-            {
-                Destroy(_bbgModel);
-                _bbgModel = null;
-            }
-
             if (!string.IsNullOrEmpty(_currentBbgName))
             {
-                _bbgModel = ModelFactory.CreateModel($"BattleMap/BattleModel/battleMap_all/{_currentBbgName}/{_currentBbgName}", false, true, Configuration.Graphics.BattleSmoothTexture);
+                _bbgModel = ModelFactory.CreateModel($"BattleMap/BattleModel/battleMap_all/{_currentBbgName}/{_currentBbgName}", true, true, Configuration.Graphics.BattleSmoothTexture);
                 if (_bbgModel != null)
                 {
                     _bbgModel.SetActive(true);
@@ -556,7 +557,7 @@ namespace Memoria.Scripts.TranceSeek
                     NGUITools.SetLayer(_bbgModel, 31);
                     Int32.TryParse(_currentBbgName.Replace("BBG_B", ""), out battlebg.nf_BbgNumber);
                     battlebg.SetDefaultShader(_bbgModel);
-                    if (String.Equals(_currentBbgName, "BBG_B171_OBJ2")) // Crystal World, Crystal
+                    if (String.Equals(_currentBbgName, "BBG_B171_OBJ2"))
                         battlebg.SetMaterialShader(_bbgModel, "PSX/BattleMap_Cystal");
 
                     foreach (Renderer r in _bbgModel.GetComponentsInChildren<Renderer>(true))
@@ -590,8 +591,96 @@ namespace Memoria.Scripts.TranceSeek
                 _monsterModel.SetActive(true);
                 _monsterModel.transform.SetParent(_monsterCamObj.transform, false);
 
-                NGUITools.SetLayer(_monsterModel, 31);
+                if (_currentMonsterParam.TextureFiles != null)
+                {
+                    ModelFactory.ChangeModelTexture(_monsterModel, _currentMonsterParam.TextureFiles);
+                }
 
+                if (_currentMonsterParam.WeaponAttachment != null)
+                {
+                    for (Int32 j = 0; j < _currentMonsterParam.WeaponAttachment.Length; j++)
+                    {
+                        BTL_DATA.WEAPON_MODEL weapon = new BTL_DATA.WEAPON_MODEL();
+                        btl_eqp.SetupWeaponAttachmentFromMonster(weapon, _currentMonsterParam, j);
+
+                        if (_currentMonsterParam.WeaponModel == null || _currentMonsterParam.WeaponModel.Length <= j || _currentMonsterParam.WeaponModel[j] == "DEFAULT")
+                            weapon.geo = null;
+                        else if (_currentMonsterParam.WeaponModel[j] == "NONE")
+                            weapon.geo = new GameObject(btl_eqp.DummyWeaponName);
+                        else if (_currentMonsterParam.WeaponModel[j].StartsWith("GEO_WEP"))
+                            weapon.geo = ModelFactory.CreateModel("BattleMap/BattleModel/battle_weapon/" + _currentMonsterParam.WeaponModel[j] + "/" + _currentMonsterParam.WeaponModel[j], true);
+                        else
+                            weapon.geo = ModelFactory.CreateModel(_currentMonsterParam.WeaponModel[j], true);
+
+                        if (weapon.geo != null)
+                        {
+                            weapon.geo.SetActive(true);
+                            weapon.geo.transform.SetParent(_monsterCamObj.transform, false);
+                            _weaponModels.Add(weapon.geo);
+
+                            Transform boneTransform = _monsterModel.transform.GetChildByName("bone" + weapon.bone.ToString("D3"));
+                            if (boneTransform != null)
+                            {
+                                weapon.geo.transform.SetParent(boneTransform, false);
+
+                                Vector3 finalScale = (weapon.scale == Vector3.zero) ? Vector3.one : weapon.scale;
+
+                                bool needsRebalance = false;
+                                if (btl_eqp.EnemyBuiltInWeaponTable.TryGetValue(_currentMonsterParam.Geo, out Int32[] builtInWeapons))
+                                {
+                                    if (builtInWeapons != null && builtInWeapons.Contains(weapon.bone))
+                                        needsRebalance = true;
+                                }
+
+                                BestiaryWeaponUpdater updater = weapon.geo.AddComponent<BestiaryWeaponUpdater>();
+                                updater.BoneTransform = boneTransform;
+                                updater.OffsetPos = weapon.offset_pos;
+                                updater.OffsetRot = weapon.offset_rot;
+                                updater.Scale = finalScale;
+                                updater.NeedsRebalance = needsRebalance;
+                            }
+
+                            if (_currentMonsterParam.WeaponTextureFiles != null)
+                            {
+                                List<String> textureFiles = new List<String>();
+                                for (Int32 k = 0; k < _currentMonsterParam.WeaponTextureFiles.Length; k++)
+                                {
+                                    String file = _currentMonsterParam.WeaponTextureFiles[k];
+                                    Int32 weaponIndex = 0;
+                                    String[] splitted = file.Split(':');
+                                    if (splitted.Length == 2)
+                                    {
+                                        Int32.TryParse(splitted[0], out weaponIndex);
+                                        file = splitted[1];
+                                    }
+                                    if (weaponIndex == j)
+                                        textureFiles.Add(file);
+                                }
+
+                                if (textureFiles.Count > 0)
+                                {
+                                    MeshRenderer[] weaponRenderers = weapon.geo.GetComponentsInChildren<MeshRenderer>();
+                                    if (weaponRenderers.Length > 0)
+                                    {
+                                        for (Int32 k = 0; k < weaponRenderers.Length && k < textureFiles.Count; k++)
+                                        {
+                                            Texture2D customTex = AssetManager.Load<Texture2D>(textureFiles[k], false);
+                                            if (customTex != null)
+                                                weaponRenderers[k].GetComponent<Renderer>().material.mainTexture = customTex;
+
+                                        }
+                                    }
+                                    else
+                                    {
+                                        ModelFactory.ChangeModelTexture(weapon.geo, textureFiles.ToArray());
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                NGUITools.SetLayer(_monsterModel, 31);
                 btl_util.GeoSetABR(_monsterModel, "PSX/BattleMap_StatusEffect");
 
                 if (BlackModel)
@@ -615,9 +704,7 @@ namespace Memoria.Scripts.TranceSeek
 
                 if (_currentMonsterParam.Mot != null && _currentMonsterParam.Mot.Length > 0)
                 {
-                    string animName = _monsterAnimation;
-                    if (string.IsNullOrEmpty(animName))
-                        animName = FF9BattleDB.Animation[_currentMonsterParam.Mot[0]];
+                    string animName = String.IsNullOrEmpty(_monsterAnimation) ? FF9BattleDB.Animation[_currentMonsterParam.Mot[0]] : _monsterAnimation;
                     AnimationFactory.AddAnimWithAnimatioName(_monsterModel, animName);
                     Animation anim = _monsterModel.GetComponent<Animation>();
                     if (anim != null)
@@ -783,9 +870,13 @@ namespace Memoria.Scripts.TranceSeek
 
             string text = "";
             string pageNav = $"\n\n[A0A0A0]< Page {_currentPage + 1}/3 >[FFFFFF]";
-            Boolean MobScannedorMore = (UnlockAll || status >= TranceSeekBestiaryDB.StatusScanned);
 
-            string monsterName = MobScannedorMore ? _currentMonsterName : "???";
+            Boolean MobAtLeastKilledOnce = (UnlockAll || (status >= TranceSeekBestiaryDB.StatusDiscovered && kills > 0));
+            Boolean MobAtLeastScanned = (UnlockAll || status >= TranceSeekBestiaryDB.StatusScanned);
+            Boolean MobAtLeastScannedPlusorMastered = (UnlockAll || status >= TranceSeekBestiaryDB.StatusScannedPlus);
+            Boolean MobAtLeastDiscovered = (UnlockAll || status >= TranceSeekBestiaryDB.StatusDiscovered || MobAtLeastKilledOnce || MobAtLeastScanned);
+
+            string monsterName = MobAtLeastDiscovered ? _currentMonsterName : "???";
             if (status >= TranceSeekBestiaryDB.StatusMastered)
                 monsterName += " [SPRT=IconAtlas,item200_03,36,36]";
 
@@ -795,8 +886,8 @@ namespace Memoria.Scripts.TranceSeek
 
             string TrueText = Localization.GetWithDefault("BestiaryTrue");
             string FalseText = Localization.GetWithDefault("BestiaryFalse");
-            string sElite = MobScannedorMore ? (((_currentMonsterParam.Flags & 128) != 0) ? TrueText : FalseText) : "???";
-            string sBoss = MobScannedorMore ? (((_currentMonsterParam.InitialStatus & BattleStatus.EasyKill) != 0) ? TrueText : FalseText) : "???";
+            string sElite = MobAtLeastDiscovered ? (((_currentMonsterParam.Flags & 128) != 0) ? TrueText : FalseText) : "???";
+            string sBoss = MobAtLeastDiscovered ? (((_currentMonsterParam.InitialStatus & BattleStatus.EasyKill) != 0) ? TrueText : FalseText) : "???";
 
             if (_currentDisplayEntry.MaxHP.HasValue)
                 maxHp = _currentDisplayEntry.MaxHP.Value;
@@ -813,20 +904,20 @@ namespace Memoria.Scripts.TranceSeek
             int winGil = _currentDisplayEntry.WinGil ?? (int)_currentMonsterParam.WinGil;
             int winExp = _currentDisplayEntry.WinExp ?? (int)_currentMonsterParam.WinExp;
 
-            string sHp = MobScannedorMore ? maxHp.ToString() : "???";
-            string sMp = MobScannedorMore ? maxMp.ToString() : "???";
-            string sSpeed = MobScannedorMore ? speed.ToString() : "???";
-            string sStr = MobScannedorMore ? strength.ToString() : "???";
-            string sMag = MobScannedorMore ? magic.ToString() : "???";
-            string sSpr = MobScannedorMore ? spirit.ToString() : "???";
-            string sPDef = MobScannedorMore ? pDef.ToString() : "???";
-            string sPEvade = MobScannedorMore ? pEvade.ToString() : "???";
-            string sMDef = MobScannedorMore ? mDef.ToString() : "???";
-            string sMEvade = MobScannedorMore ? mEvade.ToString() : "???";
+            string sHp = MobAtLeastKilledOnce ? maxHp.ToString() : "???";
+            string sMp = MobAtLeastKilledOnce ? maxMp.ToString() : "???";
+            string sSpeed = MobAtLeastScanned ? speed.ToString() : "???";
+            string sStr = MobAtLeastScanned ? strength.ToString() : "???";
+            string sMag = MobAtLeastScanned ? magic.ToString() : "???";
+            string sSpr = MobAtLeastScanned ? spirit.ToString() : "???";
+            string sPDef = MobAtLeastScanned ? pDef.ToString() : "???";
+            string sPEvade = MobAtLeastScanned ? pEvade.ToString() : "???";
+            string sMDef = MobAtLeastScanned ? mDef.ToString() : "???";
+            string sMEvade = MobAtLeastScanned ? mEvade.ToString() : "???";
 
-            string sGil = MobScannedorMore ? winGil.ToString() : "???";
-            string sExp = MobScannedorMore ? winExp.ToString() : "???";
-            string sCategory = MobScannedorMore ? GetCategoryString(_currentMonsterParam.Category) : "???";
+            string sGil = MobAtLeastScanned ? winGil.ToString() : "???";
+            string sExp = MobAtLeastScanned ? winExp.ToString() : "???";
+            string sCategory = MobAtLeastScanned ? GetCategoryString(_currentMonsterParam.Category) : "???";
 
             if (_currentPage == 0)
             {
@@ -853,10 +944,10 @@ namespace Memoria.Scripts.TranceSeek
                     alphaTag = "[" + NGUIText.EncodeAlpha(alpha) + "]";
                 }
 
-                string sAbsorb = MobScannedorMore ? GetElementsString(_currentMonsterParam.AbsorbElement) : "???";
-                string sImmune = MobScannedorMore ? GetElementsString(_currentMonsterParam.GuardElement) : "???";
-                string sHalf = MobScannedorMore ? GetElementsString(_currentMonsterParam.HalfElement) : "???";
-                string sWeak = MobScannedorMore ? GetElementsString(_currentMonsterParam.WeakElement) : "???";
+                string sAbsorb = MobAtLeastScannedPlusorMastered ? GetElementsString(_currentMonsterParam.AbsorbElement) : "???";
+                string sImmune = MobAtLeastScannedPlusorMastered ? GetElementsString(_currentMonsterParam.GuardElement) : "???";
+                string sHalf = MobAtLeastScannedPlusorMastered ? GetElementsString(_currentMonsterParam.HalfElement) : "???";
+                string sWeak = MobAtLeastScannedPlusorMastered ? GetElementsString(_currentMonsterParam.WeakElement) : "???";
 
                 text = $"[FFCC00]{Localization.GetWithDefault("BestiaryElemAbsorb")} :[FFFFFF]\n{sAbsorb}\n\n" +
                        $"[FFCC00]{Localization.GetWithDefault("BestiaryElemImmunity")} :[FFFFFF]\n{sImmune}\n\n" +
@@ -868,17 +959,17 @@ namespace Memoria.Scripts.TranceSeek
             }
             else if (_currentPage == 2)
             {
-                string steal0 = MobScannedorMore ? GetItemStringWithIcon(_currentMonsterParam.StealItems[0]) : "???";
-                string steal1 = MobScannedorMore ? GetItemStringWithIcon(_currentMonsterParam.StealItems[1]) : "???";
-                string steal2 = MobScannedorMore ? GetItemStringWithIcon(_currentMonsterParam.StealItems[2]) : "???";
-                string steal3 = MobScannedorMore ? GetItemStringWithIcon(_currentMonsterParam.StealItems[3]) : "???";
+                string steal0 = MobAtLeastScannedPlusorMastered ? GetItemStringWithIcon(_currentMonsterParam.StealItems[0]) : "???";
+                string steal1 = MobAtLeastScannedPlusorMastered ? GetItemStringWithIcon(_currentMonsterParam.StealItems[1]) : "???";
+                string steal2 = MobAtLeastScannedPlusorMastered ? GetItemStringWithIcon(_currentMonsterParam.StealItems[2]) : "???";
+                string steal3 = MobAtLeastScannedPlusorMastered ? GetItemStringWithIcon(_currentMonsterParam.StealItems[3]) : "???";
 
-                string drop0 = MobScannedorMore ? GetItemStringWithIcon(_currentMonsterParam.WinItems[0]) : "???";
-                string drop1 = MobScannedorMore ? GetItemStringWithIcon(_currentMonsterParam.WinItems[1]) : "???";
-                string drop2 = MobScannedorMore ? GetItemStringWithIcon(_currentMonsterParam.WinItems[2]) : "???";
-                string drop3 = MobScannedorMore ? GetItemStringWithIcon(_currentMonsterParam.WinItems[3]) : "???";
+                string drop0 = MobAtLeastScannedPlusorMastered ? GetItemStringWithIcon(_currentMonsterParam.WinItems[0]) : "???";
+                string drop1 = MobAtLeastScannedPlusorMastered ? GetItemStringWithIcon(_currentMonsterParam.WinItems[1]) : "???";
+                string drop2 = MobAtLeastScannedPlusorMastered ? GetItemStringWithIcon(_currentMonsterParam.WinItems[2]) : "???";
+                string drop3 = MobAtLeastScannedPlusorMastered ? GetItemStringWithIcon(_currentMonsterParam.WinItems[3]) : "???";
 
-                string sCard = MobScannedorMore ? GetCardName(_currentMonsterParam.WinCard) : "???";
+                string sCard = MobAtLeastScannedPlusorMastered ? GetCardName(_currentMonsterParam.WinCard) : "???";
 
                 text = $"[FFCC00]{Localization.GetWithDefault("BestiarySteal")} :[FFFFFF]\n" +
                        $"{steal0}\n{steal1}\n{steal2}\n{steal3}\n\n" +
@@ -919,16 +1010,12 @@ namespace Memoria.Scripts.TranceSeek
             if (_monsterCamObj != null)
                 _monsterCamObj.SetActive(false);
 
-            if (_monsterModel != null)
+            foreach (GameObject w in _weaponModels)
             {
-                Destroy(_monsterModel);
-                _monsterModel = null;
+                GameObject tempW = w;
+                DestroyModelSafely(ref tempW);
             }
-            if (_bbgModel != null)
-            {
-                Destroy(_bbgModel);
-                _bbgModel = null;
-            }
+            _weaponModels.Clear();
 
             DestroyModelSafely(ref _monsterModel);
             DestroyModelSafely(ref _bbgModel);
@@ -1020,7 +1107,7 @@ namespace Memoria.Scripts.TranceSeek
             if (ButtonGroupState.ActiveButton != _bestiaryEntryButton)
                 return;
 
-            if (UIManager.Input.GetKeyTrigger(Control.Confirm) || Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
+            if (PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.Confirm) || Input.GetKeyDown(KeyCode.KeypadEnter))
             {
                 OpenBestiaryMenu(configUI);
             }
@@ -1077,6 +1164,8 @@ namespace Memoria.Scripts.TranceSeek
                 }
             }
 
+            Boolean ChangeEntry = false;
+
             if (_currentPage == 1 && _statusChunks.Count > 1)
             {
                 _statusTimer += Time.deltaTime;
@@ -1088,20 +1177,20 @@ namespace Memoria.Scripts.TranceSeek
                 RefreshPageText();
             }
 
-            if (UIManager.Input.GetKeyTrigger(Control.Cancel) || Input.GetKeyDown(KeyCode.Escape))
+            if (PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.Cancel) || Input.GetKeyDown(KeyCode.Escape))
             {
                 CloseBestiaryMenu(configUI);
                 return;
             }
 
-            if (UIManager.Input.GetKeyTrigger(Control.Left) || Input.GetKeyDown(KeyCode.LeftArrow))
+            if (PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.Left) || Input.GetKeyDown(KeyCode.LeftArrow))
             {
                 _currentPage--;
                 if (_currentPage < 0) _currentPage = 2;
                 FF9Sfx.FF9SFX_Play(103);
                 InitializeMonsterInfo();
             }
-            else if (UIManager.Input.GetKeyTrigger(Control.Right) || Input.GetKeyDown(KeyCode.RightArrow))
+            else if (PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.Right) || Input.GetKeyDown(KeyCode.RightArrow))
             {
                 _currentPage++;
                 if (_currentPage > 2) _currentPage = 0;
@@ -1109,32 +1198,96 @@ namespace Memoria.Scripts.TranceSeek
                 InitializeMonsterInfo();
             }
 
-            if (UIManager.Input.GetKeyTrigger(Control.Up) || Input.GetKeyDown(KeyCode.UpArrow))
+            if (PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.Up) || Input.GetKeyDown(KeyCode.UpArrow))
             {
                 if (_currentMonsterId > 1)
-                {
                     _currentMonsterId--;
-                    FF9Sfx.FF9SFX_Play(103);
-                    LoadMonsterData();
-                    UpdateMonsterModel();
-                    InitializeMonsterInfo();
-                }
+                else
+                    _currentMonsterId = TranceSeekBestiaryDB.DisplayDatabase.Count;
+
+                ChangeEntry = true;
             }
-            else if (UIManager.Input.GetKeyTrigger(Control.Down) || Input.GetKeyDown(KeyCode.DownArrow))
+            else if (PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.Down) || Input.GetKeyDown(KeyCode.DownArrow))
             {
                 if (_currentMonsterId < TranceSeekBestiaryDB.DisplayDatabase.Count)
-                {
                     _currentMonsterId++;
-                    FF9Sfx.FF9SFX_Play(103);
-                    LoadMonsterData();
-                    UpdateMonsterModel();
-                    InitializeMonsterInfo();
+                else
+                    _currentMonsterId = 1;
+
+                ChangeEntry = true;
+
+            }
+
+            if (UIManager.Input.L1Down)
+            {
+                _currentMonsterId -= 10;
+                if (_currentMonsterId < 1)
+                    _currentMonsterId += TranceSeekBestiaryDB.DisplayDatabase.Count;
+
+                ChangeEntry = true;
+            }
+            else if (UIManager.Input.R1Down)
+            {
+                _currentMonsterId += 10;
+                if (_currentMonsterId > TranceSeekBestiaryDB.DisplayDatabase.Count)
+                    _currentMonsterId -= TranceSeekBestiaryDB.DisplayDatabase.Count;
+
+                ChangeEntry = true;
+            }
+            else if (UIManager.Input.L2Down)
+            {
+                int monsterId = _currentMonsterId;
+
+                for (int i = 0; i < TranceSeekBestiaryDB.DisplayDatabase.Count; i++)
+                {
+                    monsterId--;
+                    if (monsterId < 1)
+                        monsterId = TranceSeekBestiaryDB.DisplayDatabase.Count;
+
+                    if (UnlockAll || TranceSeekBestiaryDB.GetMonsterStatus(monsterId) != TranceSeekBestiaryDB.StatusUndiscovered)
+                    {
+                        if (monsterId != _currentMonsterId)
+                        {
+                            _currentMonsterId = monsterId;
+                            ChangeEntry = true;
+                        }
+                        break;
+                    }
                 }
+            }
+            else if (UIManager.Input.R2Down)
+            {
+                int monsterId = _currentMonsterId;
+
+                for (int i = 0; i < TranceSeekBestiaryDB.DisplayDatabase.Count; i++)
+                {
+                    monsterId++;
+                    if (monsterId > TranceSeekBestiaryDB.DisplayDatabase.Count)
+                        monsterId = 1;
+
+                    if (UnlockAll || TranceSeekBestiaryDB.GetMonsterStatus(monsterId) != TranceSeekBestiaryDB.StatusUndiscovered)
+                    {
+                        if (monsterId != _currentMonsterId)
+                        {
+                            _currentMonsterId = monsterId;
+                            ChangeEntry = true;
+                        }
+                        break;
+                    }
+                }
+            }
+
+            if (ChangeEntry)
+            {
+                FF9Sfx.FF9SFX_Play(103);
+                LoadMonsterData();
+                UpdateMonsterModel();
+                InitializeMonsterInfo();
             }
 
             if (ButtonGroupState.ActiveGroup == BestiaryGroupName && ButtonGroupState.ActiveButton == _bestiaryReturnButton)
             {
-                if (PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.Confirm) || Input.GetKeyDown(KeyCode.KeypadEnter))
+                if (PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.Confirm) || PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.Cancel) || Input.GetKeyDown(KeyCode.KeypadEnter))
                 {
                     CloseBestiaryMenu(configUI);
                 }
@@ -1174,6 +1327,35 @@ namespace Memoria.Scripts.TranceSeek
             {
                 Destroy(_monsterCamObj);
                 _monsterCamObj = null;
+            }
+        }
+
+        private class BestiaryWeaponUpdater : MonoBehaviour
+        {
+            public Transform BoneTransform;
+            public Vector3 OffsetPos;
+            public Vector3 OffsetRot;
+            public Vector3 Scale;
+            public bool NeedsRebalance;
+
+            private void LateUpdate()
+            {
+                if (BoneTransform == null)
+                    return;
+
+                if (NeedsRebalance)
+                {
+                    BoneTransform.localScale = new Vector3(0.01f, 0.01f, 0.01f);
+                    transform.localScale = Scale * 100f;
+                    transform.localPosition = OffsetPos * 100f;
+                }
+                else
+                {
+                    transform.localScale = Scale;
+                    transform.localPosition = OffsetPos;
+                }
+
+                transform.localRotation = Quaternion.Euler(OffsetRot);
             }
         }
     }

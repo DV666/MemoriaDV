@@ -16,6 +16,9 @@ namespace Memoria.Scripts.TranceSeek
         {
             var CasterTSVAR = caster.State();
 
+            if (caster.IsUnderAnyStatus(BattleStatusConst.BattleEndFull | BattleStatus.Jump | BattleStatus.Stop | BattleStatus.Confuse))
+                return true;
+
             if (FF9StateSystem.EventState.gEventGlobal[1408] == 1 && CasterTSVAR.Mascot != null)
             {
                 Animation anim = CasterTSVAR.Mascot.geo.GetComponent<Animation>();

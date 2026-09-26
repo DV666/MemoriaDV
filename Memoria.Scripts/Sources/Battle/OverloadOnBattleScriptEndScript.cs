@@ -13,13 +13,23 @@ namespace Memoria.Scripts.TranceSeek
 
         public static void OnHitEnd(BattleCalculator v)
         {
+            var Target_TSVar = v.TargetState();
+
             SOS_SA(v.Target);
             TranceSeekCharacterMechanic.DragonMechanic(v);
+
+            if (v.Target.PlayerIndex == CharacterId.Amarant && Target_TSVar.Amarant.Duel && (v.Command.AbilityCategory & 8) != 0 && v.Target.IsUnderAnyStatus(BattleStatus.Defend)) // Duel Amarant
+            {
+                if (v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.Ferocity) && (v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.Ferocity_Boosted) ? 50 : 25) > Comn.random16() % 100) // SA Ferocity
+                    TranceSeekAPI.Btl2dReqHeadSymbolMessage(v.Target.Data, "[FF2716]", TranceSeekMessages.MessageFerocity, HUDMessage.MessageStyle.DAMAGE, 10);
+                else
+                    Target_TSVar.Amarant.Duel = false;
+            }
         }
 
         public static void OnCommandEnd(BattleCalculator v)
         {
-            var casterState = v.CasterState();
+            var Caster_TSVar = v.CasterState();
 
             // Mode EX
             if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.EXMode) && v.Caster.IsUnderAnyStatus(BattleStatus.Trance))
@@ -40,7 +50,7 @@ namespace Memoria.Scripts.TranceSeek
             TranceSeekCharacterMechanic.EikoMougMechanic(v);
             TranceSeekCharacterMechanic.HeheTriggered = false;
 
-            casterState.SpecialSA.Propagation = 0;
+            Caster_TSVar.SpecialSA.Propagation = 0;
 
             int summonchance = FF9StateSystem.EventState.gEventGlobal[1306];
 

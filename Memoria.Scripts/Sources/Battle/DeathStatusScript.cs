@@ -44,7 +44,8 @@ namespace Memoria.DefaultScripts
                     TranceSeekAPI.OverTranceTrigger(target);
 
 #if DEV_TS
-                TranceSeekBestiaryDB.ProcessMonsterDeath(FF9StateSystem.Battle.battleMapIndex, target.Data.typeNo);
+                Boolean ForceMasteringBestiary = target.IsUnderAnyStatus(BattleStatus.EasyKill) && !Target_TSVar.Monster.OverTrance;
+                TranceSeekBestiaryDB.ProcessMonsterDeath(FF9StateSystem.Battle.battleMapIndex, target.Data.typeNo, ForceMasteringBestiary);
 #endif
             }
             if (target.IsUnderAnyStatus(BattleStatus.Trance) && btl_cmd.KillSpecificCommand(target, BattleCommandId.SysTrans))

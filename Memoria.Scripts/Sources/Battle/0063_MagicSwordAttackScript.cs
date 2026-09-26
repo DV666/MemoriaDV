@@ -1,5 +1,7 @@
-﻿using System;
-using Memoria.Data;
+﻿using Memoria.Data;
+using Memoria.Prime;
+using System;
+using System.Runtime.Remoting.Contexts;
 
 namespace Memoria.Scripts.TranceSeek
 {
@@ -67,7 +69,7 @@ namespace Memoria.Scripts.TranceSeek
                     Target_TSVar.Monster.NerfGravity = Target_TSVar.Monster.NerfGravity * 2;
                 }
                 TranceSeekAPI.TryAlterMagicStatuses(_v);
-                if (Target_TSVar.AbsorbElement == 256)
+                if ((Target_TSVar.AbsorbElement & 256) != 0)
                     _v.Target.Flags |= CalcFlag.HpRecovery;
             }
             else
@@ -80,7 +82,7 @@ namespace Memoria.Scripts.TranceSeek
                 {
                     _v.Caster.SetLowPhysicalAttack();
                 }
-                _v.SetWeaponPowerSum();
+                _v.Context.AttackPower = (Int16)(_v.Caster.GetWeaponPower(_v.Command) + _v.Command.Power);
                 _v.Target.SetMagicDefense();
                 TranceSeekAPI.EnemyTranceBonusAttack(_v);
                 TranceSeekAPI.PenaltyShellAttack(_v);

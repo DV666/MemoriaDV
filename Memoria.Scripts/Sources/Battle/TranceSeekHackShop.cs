@@ -11,14 +11,16 @@ namespace Memoria.Scripts.TranceSeek
 {
     public class TranceSeekHackShop : MonoBehaviour
     {
-        private ShopUI _lastSortedShop = null;
-        private string _lastActiveGroup = string.Empty;
+        private static readonly FieldInfo ShopTypeField = typeof(ShopUI).GetField("type", BindingFlags.NonPublic | BindingFlags.Instance);
+        private static readonly FieldInfo CurrentEquipPartField = typeof(EquipUI).GetField("currentEquipPart", BindingFlags.NonPublic | BindingFlags.Instance);
+        private static readonly FieldInfo ItemIdListField = typeof(EquipUI).GetField("itemIdList", BindingFlags.NonPublic | BindingFlags.Instance);
+        private static readonly FieldInfo EquipScrollListField = typeof(EquipUI).GetField("equipSelectScrollList", BindingFlags.NonPublic | BindingFlags.Instance);
 
+        private ShopUI _lastSortedShop = null;
         private float _updateTimer = 0f;
-        private const float UpdateInterval = 0.50f;
+        private const float UpdateInterval = 0.10f;
 
         private ShopUI _cachedShopUI = null;
-        private ItemUI _cachedItemUI = null;
         private EquipUI _cachedEquipUI = null;
 
         private static readonly HashSet<Int32> ShopBlackListed = new HashSet<Int32>(new[] { 8, 101 });
@@ -36,10 +38,9 @@ namespace Memoria.Scripts.TranceSeek
 
             if (_cachedShopUI != null && _cachedShopUI.isActiveAndEnabled)
             {
-                FieldInfo typeField = typeof(ShopUI).GetField("type", BindingFlags.NonPublic | BindingFlags.Instance);
-                if (typeField != null)
+                if (ShopTypeField != null)
                 {
-                    ShopUI.ShopType shopType = (ShopUI.ShopType)typeField.GetValue(_cachedShopUI);
+                    ShopUI.ShopType shopType = (ShopUI.ShopType)ShopTypeField.GetValue(_cachedShopUI);
 
                     if (shopType == ShopUI.ShopType.Synthesis && _lastSortedShop != _cachedShopUI && !ShopBlackListed.Contains(_cachedShopUI.Id))
                     {
@@ -58,40 +59,19 @@ namespace Memoria.Scripts.TranceSeek
                 _cachedEquipUI = UnityEngine.Object.FindObjectOfType<EquipUI>();
             }
 
+            if (_cachedEquipUI == null)
+            {
+                _cachedEquipUI = UnityEngine.Object.FindObjectOfType<EquipUI>();
+            }
+
             if (_cachedEquipUI != null && _cachedEquipUI.isActiveAndEnabled)
             {
-                ApplyEquipCustomSort(_cachedEquipUI);
-            }
-
-            /*if (_cachedItemUI == null)
-            {
-                _cachedItemUI = UnityEngine.Object.FindObjectOfType<ItemUI>();
-            }
-
-            if (_cachedItemUI != null && _cachedItemUI.isActiveAndEnabled)
-            {
-                string currentGroup = ButtonGroupState.ActiveGroup;
-
-                if (_lastActiveGroup == ItemUI.ArrangeMenuGroupButton && currentGroup == ItemUI.SubMenuGroupButton)
+                if (CurrentEquipPartField != null)
                 {
-                    FieldInfo arrangeModeField = typeof(ItemUI).GetField("_currentArrangeMode", BindingFlags.NonPublic | BindingFlags.Instance);
-                    if (arrangeModeField != null)
-                    {
-                        int arrangeMode = (int)arrangeModeField.GetValue(_cachedItemUI);
-
-                        if (arrangeMode == 1)
-                        {
-                            ApplyCustomSort(_cachedItemUI);
-                        }
-                    }
+                    int currentPart = (int)CurrentEquipPartField.GetValue(_cachedEquipUI);
+                    ApplyEquipCustomSort(_cachedEquipUI, currentPart);
                 }
-
-                _lastActiveGroup = currentGroup;
             }
-            else
-            {
-                _lastActiveGroup = string.Empty;
-            }*/
         }
 
         private void SortAndRefreshSynthesisShop(ShopUI shop)
@@ -145,6 +125,53 @@ namespace Memoria.Scripts.TranceSeek
             catch (Exception ex)
             {
                 Log.Warning($"[TranceSeekShop] Error when sorting the synth shop n°{shop.Id} : {ex.Message}");
+            }
+        }
+
+        private void ApplyEquipCustomSort(EquipUI equipUI, int currentPart)
+        {
+            try
+            {
+                if (currentPart < 0 || currentPart > 4) return;
+                if (ItemIdListField == null) return;
+
+                List<List<FF9ITEM>> itemIdList = (List<List<FF9ITEM>>)ItemIdListField.GetValue(equipUI);
+                List<FF9ITEM> currentList = itemIdList[currentPart];
+
+                if (currentList == null || currentList.Count <= 1) return;
+
+                bool needsSorting = false;
+                for (int i = 0; i < currentList.Count - 1; i++)
+                {
+                    if (CompareEquipItems(currentList[i], currentList[i + 1], currentPart) > 0)
+                    {
+                        needsSorting = true;
+                        break;
+                    }
+                }
+
+                if (needsSorting)
+                {
+                    currentList.Sort((item1, item2) => CompareEquipItems(item1, item2, currentPart));
+
+                    if (EquipScrollListField != null)
+                    {
+                        RecycleListPopulator scrollList = (RecycleListPopulator)EquipScrollListField.GetValue(equipUI);
+
+                        List<ListDataTypeBase> equipTable = new List<ListDataTypeBase>();
+                        foreach (FF9ITEM itemData in currentList)
+                        {
+                            equipTable.Add(new EquipUI.EquipInventoryListData { ItemData = itemData });
+                        }
+
+                        scrollList.SetOriginalData(equipTable);
+                        Log.Message($"[TranceSeekEquip] Custom shape/price sort applied to equipment part {currentPart}.");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Warning($"[TranceSeekEquip] Error during custom equip arrange : {ex.Message}");
             }
         }
 
