@@ -357,7 +357,7 @@ namespace Memoria.Scripts.TranceSeek
                             unit.GuardElement = (EffectElement)(1 << Comn.random16() % 8);
                             unit.AbsorbElement = (EffectElement)(1 << Comn.random16() % 8);
 
-                            btl_stat.AlterStatus(unit, StrangeCubeStatuses[Comn.random16() % StrangeCubeStatuses.Length]);
+                            btl_stat.AlterStatus(unit, StrangeCubeStatuses[Comn.random16() % StrangeCubeStatuses.Length], unit);                            
                             break;
                         case TranceSeekRegularItem.MagicLamp:
                             magiclampcooldown = (60 - unit.Will) * UnityEngine.Random.Range(1, 11) * 100;
@@ -547,7 +547,7 @@ namespace Memoria.Scripts.TranceSeek
 
                     BattleEnemy battleEnemy = BattleEnemy.Find(unit);
 
-                    if (GameState.ModelKillCount(unit.Data.dms_geo_id) > 0 && (GameState.ModelKillCount(unit.Data.dms_geo_id) % 10) == 0)
+                    if (CanOverloadTrance(unit) && GameState.ModelKillCount(unit.Data.dms_geo_id) > 0 && (GameState.ModelKillCount(unit.Data.dms_geo_id) % 10) == 0)
                         OverTranceTrigger(unit);
 
                     if (unit.IsUnderAnyStatus(BattleStatus.EasyKill))
@@ -667,7 +667,7 @@ namespace Memoria.Scripts.TranceSeek
             state.Zidane.SecondItemMug = RegularItem.NoItem;
             state.Vivi.PreviousSpell = BattleAbilityId.Void;
             state.ProtectStatus = new Dictionary<BattleStatus, int> { { (BattleStatus)0, 0 } };
-            state.AbsorbElement = -1;
+            state.AbsorbElement = 0;
             state.Monster.DurationDeadlyStatus = 100;
             state.Monster.NerfGravity = 2;
             state.SpecialSA.Instinct = 2;
@@ -692,6 +692,11 @@ namespace Memoria.Scripts.TranceSeek
 
                 if (unit.PlayerIndex == CharacterId.Zidane)
                     SwitchWeaponScript.InitZidaneModel(unit);
+            }
+            else
+            {
+                if (StoneMonsters.Contains(unit.Data.dms_geo_id))
+                    state.Monster.StoneMonster = true;
             }
 
             if (TranceSeekBattleDictionary.Init)

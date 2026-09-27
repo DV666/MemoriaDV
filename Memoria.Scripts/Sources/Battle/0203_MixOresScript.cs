@@ -229,13 +229,15 @@ namespace Memoria.Scripts.TranceSeek
                         Target_TSVar.AbsorbElement = (Int32)ElementItem[_v.Command.ItemId];
                     if (_v.Command.ItemId == TranceSeekRegularItem.PurpleElixir || _v.Command.ItemId == TranceSeekRegularItem.PurpleMegalixir)
                         Target_TSVar.AbsorbElement = 256; // Gravity
+                    else if (Target_TSVar.AbsorbElement == 0)
+                        Target_TSVar.AbsorbElement = 8192; // Neutral
 
                     Int32 wait = (short)((400 + (_v.Caster.Will * 3)) * 30);
                     _v.Target.AddDelayedModifier(
                     target => (wait -= target.Data.cur.at_coef * BattleState.ATBTickCount) > 0,
                     target =>
                     {
-                        Target_TSVar.AbsorbElement = -1;
+                        Target_TSVar.AbsorbElement = 0;
                         if (!Message)
                         {
                             Dictionary<String, String> localizedStatusProtect = new Dictionary<String, String>

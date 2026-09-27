@@ -20,6 +20,8 @@ namespace Memoria.DefaultScripts
             if (parameters[0] is not Int32)
                 return btl_stat.ALTER_INVALID;
 
+            if (inflicter == null)
+                inflicter = target;
             Int32 level = (Int32)parameters[0];
             base.Apply(target, inflicter, parameters);
             OverlapSHP.SetupOverlappingSHP2(target);

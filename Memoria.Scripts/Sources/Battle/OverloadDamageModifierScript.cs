@@ -30,7 +30,7 @@ namespace Memoria.Scripts.TranceSeek
 
             int difficultyMode = FF9StateSystem.EventState.gEventGlobal[1403];
 
-            if (!v.Caster.IsPlayer && (difficultyMode == 1 || difficultyMode == 2)) // Lower Difficulty
+            if (!v.Caster.IsPlayer && (difficultyMode == 1 || difficultyMode == 2) && (btl_util.GetCommandAction(v.Command).Type & 2) != 0) // Lower Difficulty
             {
                 Int32 malusHPdamage = 0;
                 Int32 malusMPdamage = 0;

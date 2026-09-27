@@ -23,6 +23,14 @@ namespace Memoria.Scripts.TranceSeek
             return (btl_util.getEnemyPtr(Monster).info.flags & 128) != 0; // Unused (8)
         }
 
+        public static Boolean CanOverloadTrance(BTL_DATA Monster)
+        {
+            if (Monster.bi.player != 0)
+                return false;
+
+            return (btl_util.getEnemyPtr(Monster).info.flags & 16) == 0; // Unused (5)
+        }
+
         public static void WeaponPhysicalParams(CalcAttackBonus bonus, BattleCalculator v)
         {
             Int32 baseDamage = Comn.random16() % (1 + (v.Caster.Level + v.Caster.Strength >> 3));
@@ -735,7 +743,10 @@ namespace Memoria.Scripts.TranceSeek
             }
             int elementProtect = Target_TSVar.AbsorbElement;
 
-            if ((elementProtect != -1 && (Element & (EffectElement)elementProtect) != 0) || (IsPoisonElement && ((Target_TSVar.EffectElement.Poison & 8) != 0 || v.Target.IsZombie))
+            Boolean ElementTempAbsorption = (elementProtect > 0 && (Element & (EffectElement)elementProtect) != 0);
+            Boolean NeutralTempAbsorption = (Element == 0 && (elementProtect & 8192) != 0);
+
+            if (NeutralTempAbsorption || ElementTempAbsorption || (IsPoisonElement && ((Target_TSVar.EffectElement.Poison & 8) != 0 || v.Target.IsZombie))
                 || (IsGravityElement && (Target_TSVar.EffectElement.Gravity & 8) != 0))
                 v.Context.Flags |= BattleCalcFlags.Absorb;
 

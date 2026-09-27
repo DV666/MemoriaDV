@@ -16,6 +16,8 @@ namespace Memoria.DefaultScripts
     {
         public override UInt32 Apply(BattleUnit target, BattleUnit inflicter, params Object[] parameters)
         {
+            if (inflicter == null)
+                inflicter = target;
             base.Apply(target, inflicter, parameters);
             if (target.CurrentHp > 0)
             {
@@ -40,7 +42,7 @@ namespace Memoria.DefaultScripts
                         target.Data.die_seq = 1;
                 }
                 btl_sys.CheckForecastMenuOff(target);
-                if (GameState.ModelKillCount(target.Data.dms_geo_id) > 0 && ((GameState.ModelKillCount(target.Data.dms_geo_id) + 1) % 10) == 0) // Need +1 because the kill count is updated after
+                if (TranceSeekAPI.CanOverloadTrance(target) && GameState.ModelKillCount(target.Data.dms_geo_id) > 0 && ((GameState.ModelKillCount(target.Data.dms_geo_id) + 1) % 10) == 0) // Need +1 because the kill count is updated after
                     TranceSeekAPI.OverTranceTrigger(target);
 
 #if DEV_TS

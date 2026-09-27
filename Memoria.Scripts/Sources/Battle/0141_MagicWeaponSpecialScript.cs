@@ -65,9 +65,19 @@ namespace Memoria.Scripts.TranceSeek
                     }
                     case TranceSeekRegularItem.AnkousScepter:
                     {
-                        ScriptId = 14; // Script 0014_DeathScript.cs
-                        _v.Command.HitRate = 30;
-                        _v.Command.AbilityStatus |= BattleStatus.Death;
+                        if (IsAttackStrong)
+                        {
+                            ScriptId = 14; // Script 0014_DeathScript.cs
+                            _v.Command.HitRate = 30;
+                            _v.Command.AbilityStatus |= BattleStatus.Death;
+                        }
+                        else
+                        {
+                            ScriptId = 11; // Script 0011_MagicApplyNegativeStatusScript.cs
+                            _v.Command.HitRate = 25;
+                            _v.Command.AbilityStatus |= BattleStatus.Doom;
+                        }
+
                         break;
                     }
                     case TranceSeekRegularItem.StardustScepter:

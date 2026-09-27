@@ -52,6 +52,8 @@ namespace Memoria.DefaultScripts
 
         public override UInt32 Apply(BattleUnit target, BattleUnit inflicter, params Object[] parameters)
         {
+            if (inflicter == null)
+                inflicter = target;
             base.Apply(target, inflicter, parameters);
             btl_cmd.SetCommand(target.Data.cmd[4], BattleCommandId.SysTrans, 0, target.Id, 0u);
             var Target_TSVar = target.State();

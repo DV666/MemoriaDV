@@ -18,6 +18,8 @@ namespace Memoria.DefaultScripts
 
         public override UInt32 Apply(BattleUnit target, BattleUnit inflicter, params Object[] parameters)
         {
+            if (inflicter == null)
+                inflicter = target;
             Boolean RedemptionSHPActivate = Configuration.Mod.FolderNames.Contains("TranceSeek/Options/RedemptionIconInBattle");
             base.Apply(target, inflicter, parameters);
             OverlapSHP.SetupOverlappingSHP2(target);

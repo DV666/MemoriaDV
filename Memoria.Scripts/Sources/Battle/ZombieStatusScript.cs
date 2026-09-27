@@ -10,7 +10,11 @@ namespace Memoria.DefaultScripts
     {
         public override UInt32 Apply(BattleUnit target, BattleUnit inflicter, params Object[] parameters)
         {
+            if (inflicter == null)
+                inflicter = target;
             base.Apply(target, inflicter, parameters);
+            if (target.IsZombie)
+                return btl_stat.ALTER_INVALID;
             if (target.IsPlayer && !target.IsUnderAnyStatus(BattleStatus.Trance))
                 target.Trance = 0;
             TranceSeekAPI.SA_StatusApply(inflicter, false);

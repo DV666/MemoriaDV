@@ -18,6 +18,8 @@ namespace Memoria.DefaultScripts
 
         public override UInt32 Apply(BattleUnit target, BattleUnit inflicter, params Object[] parameters)
         {
+            if (inflicter == null)
+                inflicter = target;
             base.Apply(target, inflicter, parameters);
             btl2d.GetIconPosition(target, btl2d.ICON_POS_NUMBER, out Transform attachTransf, out Vector3 iconOff);
             InitialCounter = parameters.Length > 0 ? Convert.ToInt32(parameters[0]) : 10;

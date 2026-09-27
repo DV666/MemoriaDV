@@ -19,6 +19,8 @@ namespace Memoria.DefaultScripts
 
         public override UInt32 Apply(BattleUnit target, BattleUnit inflicter, params Object[] parameters)
         {
+            if (inflicter == null)
+                inflicter = target;
             base.Apply(target, inflicter, parameters);
             Int32 StackMaximum = 1;
             if (inflicter != null)

@@ -10,6 +10,8 @@ namespace Memoria.DefaultScripts
     {
         public override UInt32 Apply(BattleUnit target, BattleUnit inflicter, params Object[] parameters)
         {
+            if (inflicter == null)
+                inflicter = target;
             base.Apply(target, inflicter, parameters);
             btl_stat.RemoveStatus(target, BattleStatusId.GradualPetrify);
             if (!btl_cmd.CheckUsingCommand(target.PetrifyCommand) && FF9StateSystem.Battle.FF9Battle.btl_phase > FF9StateBattleSystem.PHASE_ENTER && Configuration.Battle.Speed < 3)

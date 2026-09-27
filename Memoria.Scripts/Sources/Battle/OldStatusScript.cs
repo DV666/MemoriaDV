@@ -31,6 +31,8 @@ namespace Memoria.DefaultScripts
             if (target.IsUnderAnyStatus(BattleStatus.Trance) || target.IsUnderAnyStatus(BattleStatus.CustomStatus16))
                 return btl_stat.ALTER_INVALID;
 
+            if (inflicter == null)
+                inflicter = target;
             base.Apply(target, inflicter, parameters);
             if (!Init)
             {

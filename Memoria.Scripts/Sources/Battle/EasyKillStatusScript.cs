@@ -12,6 +12,8 @@ namespace Memoria.DefaultScripts
 
         public override UInt32 Apply(BattleUnit target, BattleUnit inflicter, params Object[] parameters)
         {
+            if (inflicter == null)
+                inflicter = target;
             base.Apply(target, inflicter, parameters);
             DeathResistanceAdded = DeathResistanceAdded || (target.ResistStatus & BattleStatus.Death) == 0;
             target.ResistStatus |= BattleStatus.Death;

@@ -13,6 +13,8 @@ namespace Memoria.DefaultScripts
 
         public override UInt32 Apply(BattleUnit target, BattleUnit inflicter, params Object[] parameters)
         {
+            if (inflicter == null)
+                inflicter = target;
             base.Apply(target, inflicter, parameters);
             ForcedTargetId = inflicter.Id;
             target.PartialResistStatus[BattleStatusId.CustomStatus22] = Math.Min(target.PartialResistStatus[BattleStatusId.CustomStatus22] + 0.20f, 1f);
