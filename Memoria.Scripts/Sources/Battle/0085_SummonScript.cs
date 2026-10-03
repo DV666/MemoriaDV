@@ -84,14 +84,11 @@ namespace Memoria.Scripts.TranceSeek
                     }
                     else if (!_v.Caster.HasSupportAbilityByIndex(SupportAbility.OdinSword))
                     {
-                        if (TranceSeekAPI.CheckUnsafetyOrGuard(_v))
-                        {
-                            TranceSeekAPI.MagicAccuracy(_v);
-                            _v.Context.HitRate += ((ff9item.FF9Item_GetCount(RegularItem.LapisLazuli) + 1)) / 2;
-                            _v.Target.PenaltyShellHitRate();
-                            if (TranceSeekAPI.TryMagicHit(_v))
-                                TranceSeekAPI.TryAlterCommandStatuses(_v);
-                        }
+                        TranceSeekAPI.MagicAccuracy(_v);
+                        _v.Context.HitRate += ((ff9item.FF9Item_GetCount(RegularItem.LapisLazuli) + 1)) / 2;
+                        _v.Target.PenaltyShellHitRate();
+                        if (TranceSeekAPI.TryMagicHit(_v))
+                            TranceSeekAPI.TryAlterCommandStatuses(_v);
                         return;
                     }
                     break;

@@ -15,12 +15,15 @@ namespace Memoria.DefaultScripts
             if (inflicter == null)
                 inflicter = target;
             base.Apply(target, inflicter, parameters);
-            DeathResistanceAdded = DeathResistanceAdded || (target.ResistStatus & BattleStatus.Death) == 0;
-            target.ResistStatus |= BattleStatus.Death;
             if (!target.IsPlayer)
             {
                 OldResistanceAdded = OldResistanceAdded || (target.ResistStatus & BattleStatus.CustomStatus16) == 0;
                 target.ResistStatus |= BattleStatus.CustomStatus16; // Old
+            }
+            else // Death can work on boss now (Mark Of Death)
+            {
+                DeathResistanceAdded = DeathResistanceAdded || (target.ResistStatus & BattleStatus.Death) == 0;
+                target.ResistStatus |= BattleStatus.Death;
             }
             return btl_stat.ALTER_SUCCESS;
         }

@@ -141,6 +141,7 @@ namespace Memoria.Scripts.TranceSeek
             private int _statusMode = 0;
             private readonly string[] _statusModeNames = { "<color=#55FF55>Current Status</color>", "<color=#FFFF55>Permanent Status</color>", "<color=#FF5555>Resist Status</color>" };
             private Vector2 _statusScrollPos = Vector2.zero;
+            private bool _enableTransformEdit = false;
 
             private Dictionary<int, List<Transform>> _unitBonesVisuals = new Dictionary<int, List<Transform>>();
             private int _boneColorIndex = 0;
@@ -1077,26 +1078,42 @@ namespace Memoria.Scripts.TranceSeek
 
                     GUILayout.BeginVertical("box");
                     GUILayout.Label("<b>🛡️ Global State & Flags</b>", new GUIStyle(GUI.skin.label) { richText = true });
+
                     GUILayout.BeginHorizontal();
                     state.Invincible = GUILayout.Toggle(state.Invincible, " Invincible", GUILayout.Width(145));
                     state.DodgeALL = GUILayout.Toggle(state.DodgeALL, " Dodge All", GUILayout.Width(145));
                     state.ImmuneSteal = GUILayout.Toggle(state.ImmuneSteal, " Immune Steal", GUILayout.Width(145));
                     GUILayout.EndHorizontal();
+
                     GUILayout.BeginHorizontal();
                     state.IsBackAttack = GUILayout.Toggle(state.IsBackAttack, " Back Attack", GUILayout.Width(145));
                     state.PreventTranceSFX = GUILayout.Toggle(state.PreventTranceSFX, " No Trance SFX", GUILayout.Width(145));
                     state.TriggerSPSResistStatus = GUILayout.Toggle(state.TriggerSPSResistStatus, " SPS Resist Stat", GUILayout.Width(145));
                     GUILayout.EndHorizontal();
+
+                    GUILayout.BeginHorizontal();
+                    state.FreezeAltEffect = GUILayout.Toggle(state.FreezeAltEffect, " Freeze Alt Effect", GUILayout.Width(145));
+                    GUILayout.EndHorizontal();
+
                     GUILayout.Space(5);
                     GUILayout.BeginHorizontal();
                     GUILayout.BeginVertical(GUILayout.Width(220));
                     state.SuperCheat = DrawStatUI($"TS_{u.Id}_SupCht", "Super Cheat", state.SuperCheat, 110);
                     state.CantKill = DrawStatUI($"TS_{u.Id}_CantK", "Cant Kill (HW)", state.CantKill, 110);
                     TranceSeekBattleDictionary.CanCover = DrawStatUI($"TS_{u.Id}_CanCov", "Can Cover (HW)", TranceSeekBattleDictionary.CanCover, 110);
+
+                    TranceSeekBattleDictionary.TypeAttack = DrawStatUI($"TS_{u.Id}_TypAtk", "Type Attack", TranceSeekBattleDictionary.TypeAttack, 110);
+                    TranceSeekBattleDictionary.RefreshCacheStat = DrawStatUI($"TS_{u.Id}_RefCach", "Refresh Cache", TranceSeekBattleDictionary.RefreshCacheStat, 110);
+                    state.AbsorbElement = DrawStatUI($"TS_{u.Id}_AbsElm", "Absorb Element", state.AbsorbElement, 110);
                     GUILayout.EndVertical();
+
                     GUILayout.BeginVertical(GUILayout.Width(220));
                     state.MascotCooldown = DrawStatUI($"TS_{u.Id}_MascCD", "Mascot CD", state.MascotCooldown, 110);
                     state.DragonChanceProc = DrawStatUI($"TS_{u.Id}_DragPr", "Dragon Chance", state.DragonChanceProc, 110);
+
+                    state.SoulChance = DrawStatUI($"TS_{u.Id}_SoulCh", "Soul Chance", state.SoulChance, 110);
+                    state.PreviousMPCostFactor = DrawStatUI($"TS_{u.Id}_PrMPCo", "Prev MP Factor", state.PreviousMPCostFactor, 110);
+                    state.GeirskögulDragon = DrawStatUI($"TS_{u.Id}_GeirDr", "Geirskögul", state.GeirskögulDragon, 110);
                     GUILayout.EndVertical();
                     GUILayout.EndHorizontal();
                     GUILayout.EndVertical();
@@ -1143,6 +1160,7 @@ namespace Memoria.Scripts.TranceSeek
                     state.SpecialItem.EmergencySatchel = DrawStatUI($"TS_{u.Id}_SIEmerg", "Emerg. Satchel", state.SpecialItem.EmergencySatchel, 110);
                     state.SpecialItem.MagicalSatchel = DrawStatUI($"TS_{u.Id}_SIMagic", "Magical Satchel", state.SpecialItem.MagicalSatchel, 110);
                     state.SpecialItem.MechanicalArmor = DrawStatUI($"TS_{u.Id}_SIMecha", "Mecha Armor", state.SpecialItem.MechanicalArmor, 110);
+                    state.SpecialItem.JabberworkCrestCooldown = (uint)DrawStatUI($"TS_{u.Id}_SIJabb", "Jabberwock CD", (int)state.SpecialItem.JabberworkCrestCooldown, 110);
                     GUILayout.EndVertical();
                     GUILayout.EndHorizontal();
                     GUILayout.EndVertical();
@@ -1150,16 +1168,34 @@ namespace Memoria.Scripts.TranceSeek
 
                     GUILayout.BeginVertical("box");
                     GUILayout.Label("<b>👹 Monster Mechanics</b>", new GUIStyle(GUI.skin.label) { richText = true });
-                    state.Monster.HPBoss10000 = GUILayout.Toggle(state.Monster.HPBoss10000, " HP Boss Threshold (10k System)");
-                    state.Monster.NoDodge = GUILayout.Toggle(state.Monster.NoDodge, " No Dodge Forced");
+
+                    GUILayout.BeginHorizontal();
+                    state.Monster.HPBoss10000 = GUILayout.Toggle(state.Monster.HPBoss10000, " HP Boss 10k", GUILayout.Width(145));
+                    state.Monster.HPBoss10000_UpdateBestiary = GUILayout.Toggle(state.Monster.HPBoss10000_UpdateBestiary, " Upd Bestiary", GUILayout.Width(145));
+                    state.Monster.NoDodge = GUILayout.Toggle(state.Monster.NoDodge, " No Dodge Forced", GUILayout.Width(145));
+                    GUILayout.EndHorizontal();
+
+                    GUILayout.BeginHorizontal();
+                    state.Monster.OverTrance = GUILayout.Toggle(state.Monster.OverTrance, " Over Trance", GUILayout.Width(145));
+                    state.Monster.HPBarHidden = GUILayout.Toggle(state.Monster.HPBarHidden, " HP Bar Hidden", GUILayout.Width(145));
+                    state.Monster.TriggerHPHUDOneTime = GUILayout.Toggle(state.Monster.TriggerHPHUDOneTime, " 1Time HP HUD", GUILayout.Width(145));
+                    GUILayout.EndHorizontal();
+
+                    GUILayout.BeginHorizontal();
+                    state.Monster.MarkOfDeath = GUILayout.Toggle(state.Monster.MarkOfDeath, " Mark Of Death", GUILayout.Width(145));
+                    state.Monster.StoneMonster = GUILayout.Toggle(state.Monster.StoneMonster, " Stone Monster", GUILayout.Width(145));
+                    GUILayout.EndHorizontal();
+                    GUILayout.Space(2);
+
                     GUILayout.BeginHorizontal();
                     GUILayout.BeginVertical(GUILayout.Width(220));
-                    state.Monster.Special1 = DrawStatUI($"TS_{u.Id}_MstSpc1", "Special Value 1", state.Monster.Special1, 110);
+                    state.Monster.CellularReaction = DrawStatUI($"TS_{u.Id}_CelReact", "CellularReaction", state.Monster.CellularReaction, 110);
                     state.Monster.DurationDeadlyStatus = (uint)DrawStatUI($"TS_{u.Id}_MstDead", "Deadly Stat Dur.", (int)state.Monster.DurationDeadlyStatus, 110);
                     GUILayout.EndVertical();
                     GUILayout.BeginVertical(GUILayout.Width(220));
                     state.Monster.Special2 = DrawStatUI($"TS_{u.Id}_MstSpc2", "Special Value 2", state.Monster.Special2, 110);
                     state.Monster.NerfGravity = DrawStatUI($"TS_{u.Id}_MstGrav", "Nerf Gravity", state.Monster.NerfGravity, 110);
+                    state.Monster.HPBarValue = (uint)DrawStatUI($"TS_{u.Id}_MstHPB", "HP Bar Value", (int)state.Monster.HPBarValue, 110);
                     GUILayout.EndVertical();
                     GUILayout.EndHorizontal();
                     GUILayout.EndVertical();
@@ -1204,6 +1240,7 @@ namespace Memoria.Scripts.TranceSeek
                             state.Steiner.Sentinel = GUILayout.Toggle(state.Steiner.Sentinel, " Sentinel Stance");
                             state.Steiner.TriggerOneTime = GUILayout.Toggle(state.Steiner.TriggerOneTime, " Trigger One Time");
                             state.Steiner.PlutoStackUsed = DrawStatUI($"TS_{u.Id}_StPluU", "Pluto Stacks Used", state.Steiner.PlutoStackUsed, 120);
+                            state.Steiner.Authority = DrawStatUI($"TS_{u.Id}_StAuth", "Authority", state.Steiner.Authority, 120);
                             GUILayout.EndVertical(); GUILayout.BeginVertical(GUILayout.Width(220));
                             state.Steiner.PlutoStackRemain = DrawStatUI($"TS_{u.Id}_StPluR", "Pluto Stacks Left", state.Steiner.PlutoStackRemain, 120);
                             state.Steiner.SteinerEnchantedBlade = DrawStatUI($"TS_{u.Id}_StEnch", "Enchanted Blade", state.Steiner.SteinerEnchantedBlade, 120);
@@ -1261,7 +1298,29 @@ namespace Memoria.Scripts.TranceSeek
 
                 GUILayout.Space(5);
                 GUILayout.BeginVertical("box");
+
+                GUILayout.BeginHorizontal();
                 GUILayout.Label("<b>Transform (Position, Rotation & Scale)</b>", new GUIStyle(GUI.skin.label) { richText = true });
+                _enableTransformEdit = GUILayout.Toggle(_enableTransformEdit, " <b>Éditer</b>", new GUIStyle(GUI.skin.toggle) { richText = true });
+                GUILayout.EndHorizontal();
+
+                // On force la mise à jour du cache si l'édition est désactivée.
+                // Cela permet aux champs de texte de suivre les mouvements réels de l'unité (animations, attaques...)
+                if (!_enableTransformEdit)
+                {
+                    _statTextCache[$"{u.Id}_PosX"] = u.Data.pos.x.ToString("F0");
+                    _statTextCache[$"{u.Id}_PosY"] = u.Data.pos.y.ToString("F0");
+                    _statTextCache[$"{u.Id}_PosZ"] = u.Data.pos.z.ToString("F0");
+
+                    Vector3 euler = u.Data.rot.eulerAngles;
+                    _statTextCache[$"{u.Id}_RotX"] = euler.x.ToString("F0");
+                    _statTextCache[$"{u.Id}_RotY"] = euler.y.ToString("F0");
+                    _statTextCache[$"{u.Id}_RotZ"] = euler.z.ToString("F0");
+
+                    _statTextCache[$"{u.Id}_ScaleX"] = u.Data.geo_scale_x.ToString();
+                    _statTextCache[$"{u.Id}_ScaleY"] = u.Data.geo_scale_y.ToString();
+                    _statTextCache[$"{u.Id}_ScaleZ"] = u.Data.geo_scale_z.ToString();
+                }
 
                 GUILayout.Label("<b>Position (X, Y, Z) :</b>", new GUIStyle(GUI.skin.label) { richText = true });
                 GUILayout.BeginHorizontal();
@@ -1270,7 +1329,8 @@ namespace Memoria.Scripts.TranceSeek
                 float newPz = DrawFloatStatUI($"{u.Id}_PosZ", "Z", u.Data.pos.z, 20, 50);
                 GUILayout.EndHorizontal();
 
-                if (newPx != u.Data.pos.x || newPy != u.Data.pos.y || newPz != u.Data.pos.z)
+                // L'assignation est bloquée par le Toggle
+                if (_enableTransformEdit && (newPx != u.Data.pos.x || newPy != u.Data.pos.y || newPz != u.Data.pos.z))
                 {
                     Vector3 newPos = new Vector3(newPx, newPy, newPz);
 
@@ -1293,7 +1353,7 @@ namespace Memoria.Scripts.TranceSeek
                 float newRz = DrawFloatStatUI($"{u.Id}_RotZ", "Z", currentEuler.z, 20, 50);
                 GUILayout.EndHorizontal();
 
-                if (Mathf.Abs(newRx - currentEuler.x) > 0.01f || Mathf.Abs(newRy - currentEuler.y) > 0.01f || Mathf.Abs(newRz - currentEuler.z) > 0.01f)
+                if (_enableTransformEdit && (Mathf.Abs(newRx - currentEuler.x) > 0.01f || Mathf.Abs(newRy - currentEuler.y) > 0.01f || Mathf.Abs(newRz - currentEuler.z) > 0.01f))
                 {
                     Quaternion newRot = Quaternion.Euler(newRx, newRy, newRz);
                     u.Data.rot = newRot;
@@ -1310,7 +1370,7 @@ namespace Memoria.Scripts.TranceSeek
                 int newSz = DrawStatUI($"{u.Id}_ScaleZ", "Z", u.Data.geo_scale_z, 20);
                 GUILayout.EndHorizontal();
 
-                if (newSx != u.Data.geo_scale_x || newSy != u.Data.geo_scale_y || newSz != u.Data.geo_scale_z)
+                if (_enableTransformEdit && (newSx != u.Data.geo_scale_x || newSy != u.Data.geo_scale_y || newSz != u.Data.geo_scale_z))
                 {
                     geo.geoScaleSetXYZ(u.Data, newSx, newSy, newSz, false);
                 }

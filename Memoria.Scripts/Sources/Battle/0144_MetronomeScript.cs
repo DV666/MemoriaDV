@@ -186,21 +186,11 @@ namespace Memoria.Scripts.TranceSeek
                     target = candidates[UnityEngine.Random.Range(0, candidates.Count)];
             }
 
-            short OldMpCostFactor = _v.Caster.Player.mpCostFactor;
+            _v.Caster.State().PreviousMPCostFactor = _v.Caster.Player.mpCostFactor;
             _v.Caster.Player.mpCostFactor = 0; // Magic cost 0 MP.
 
             BattleState.EnqueueCounter(_v.Caster, BattleCommandId.RushAttack, AbilityChoosen, target);
-
-            Int32 counter = 80;
-            _v.Caster.AddDelayedModifier(
-                caster => (counter -= BattleState.ATBTickCount) > 0,
-                caster =>
-                {
-                    _v.Caster.Player.mpCostFactor = OldMpCostFactor;
-                }
-            );
         }
-
     }
 }
 

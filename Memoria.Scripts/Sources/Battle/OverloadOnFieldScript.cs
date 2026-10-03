@@ -16,6 +16,9 @@ namespace Memoria.Scripts.TranceSeek
         private static bool _wasAccessoryEquipped = false;
         private static bool _isManualNoEncounterActivated = false;
 
+        private static bool _wasSpeedConditionMet = false;
+        private static float _originalWalkSpeedFloat = 30f;
+
         private void Awake()
         {
             isFollowerFeatureEnabled = Configuration.Mod.FolderNames.Contains("TranceSeek/Options/FollowersFeature");
@@ -87,6 +90,46 @@ namespace Memoria.Scripts.TranceSeek
             {
                 PersistenSingleton<UIManager>.Instance.Booster.SetBoosterHudIcon(BoosterType.NoRandomEncounter, flag);
                 PersistenSingleton<UIManager>.Instance.Booster.SetBoosterButton(BoosterType.NoRandomEncounter, flag);
+            }
+        }
+
+        private void CheckSpeedOverride()
+        {
+            if (FF9StateSystem.Common.FF9 == null || !SceneDirector.IsFieldScene())
+                return;
+
+            PosObj controlChar = PersistenSingleton<EventEngine>.Instance.GetControlChar();
+            if (controlChar == null || !(controlChar is Actor))
+                return;
+
+            Actor leaderActor = (Actor)controlChar;
+            int bonus_speed = 0;
+
+            bool isConditionMet = false;
+            if (FF9StateSystem.Common.FF9.fldMapNo == 2950)
+            {
+                if (FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1008, out Dictionary<Int32, Int32> dict))
+                {
+                    if (dict.TryGetValue(7, out bonus_speed) && bonus_speed > 0)
+                        isConditionMet = true;
+                }
+            }
+
+            if (isConditionMet != _wasSpeedConditionMet)
+            {
+                _wasSpeedConditionMet = isConditionMet;
+
+                FieldMapActorController fmac = leaderActor.fieldMapActorController;
+
+                if (isConditionMet)
+                {
+                    _originalWalkSpeedFloat = fmac.speed;
+                    fmac.speed += (float)bonus_speed;
+                }
+                else
+                {
+                    fmac.speed = _originalWalkSpeedFloat;
+                }
             }
         }
 
@@ -185,12 +228,9 @@ namespace Memoria.Scripts.TranceSeek
         private Dialog cachedAteDialog;
 
         // For ATE system
-        private bool isATEPending = false;
-        private bool isPlayingATE = false;
         private bool wasATEMenuOpen = false;
         private int lastATEChoiceCount = 0;
         private int lastATESelectedChoice = -1;
-        private int lastFieldMapNo = -1;
 
         private static readonly HashSet<Int32> BlackListAnimationId =
             new HashSet<Int32>(new[] {
@@ -314,17 +354,17 @@ namespace Memoria.Scripts.TranceSeek
                     case 257:
                     case 261:
                     case 262:
-                        return scenario == 2300;
+                        return scenario <= 2400;
                     case 352:
                         return scenario == 2540;
+                    case 404:
+                        return !PersistenSingleton<EventEngine>.Instance.GetUserControl() && lastLeaderLocalPos.z <= 950 && lastLeaderLocalPos.z >= 940 && lastLeaderLocalPos.x >= -2325 && lastLeaderLocalPos.x <= -2285;
                     case 450:
                         return scenario == 2810;
                     case 500:
                         return scenario == 2915;
                     case 503:
                         return (scenario == 2940 || scenario == 2970);
-                    case 601:
-                        return (scenario == 3050 || scenario == 3140);
                     case 554:
                         return scenario == 3105;
                     case 570:
@@ -343,7 +383,7 @@ namespace Memoria.Scripts.TranceSeek
                     case 611:
                     case 612:
                     case 613:
-                        return scenario == 3115 || scenario == 3140;
+                        return scenario >= 3115 && scenario <= 3140;
                     case 652:
                         return scenario < 3700;
                     case 656:
@@ -422,8 +462,10 @@ namespace Memoria.Scripts.TranceSeek
                         return scenario < 6630 && GetLeaderModelID() == 443;
                     case 1652:
                         return !PersistenSingleton<EventEngine>.Instance.GetUserControl() && lastLeaderLocalPos.y < -2000; // First Elevator Ifa
+                    case 601:
                     case 1750: // Leaf Elevator Ifa
-                    case 1751: // First Elevator Ifa
+                    case 1751: // First Elevator Ifa              
+                    case 2151:
                         return !PersistenSingleton<EventEngine>.Instance.GetUserControl();
                     case 1657:
                         return scenario == 6910;
@@ -518,11 +560,96 @@ namespace Memoria.Scripts.TranceSeek
             }
         }
 
-        private void CheckATEState() // [DV] It's working except using Soft Reset durant an ATE :(
+        private static bool isPlayingATE
         {
-            int currentMap = FF9StateSystem.Common.FF9.fldMapNo;
+            get
+            {
+                if (FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1007, out Dictionary<Int32, Int32> dict))
+                {
+                    if (dict.TryGetValue(3, out int isPlayingATEValue))
+                        return isPlayingATEValue > 0;
+                }
+                return false;
+            }
+            set
+            {
+                if (!FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1007, out Dictionary<Int32, Int32> dict))
+                {
+                    dict = new Dictionary<Int32, Int32>();
+                    // Correction de la clé (1007 au lieu de 1000)
+                    FF9StateSystem.EventState.gScriptDictionary.Add(1007, dict);
+                }
+                dict[3] = value ? 1 : 0;
+            }
+        }
 
-            if (lastFieldMapNo != -1 && currentMap != lastFieldMapNo)
+        private static bool isATEPending
+        {
+            get
+            {
+                if (FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1007, out Dictionary<Int32, Int32> dict))
+                {
+                    if (dict.TryGetValue(4, out int isATEPendingValue))
+                        return isATEPendingValue > 0;
+                }
+                return false;
+            }
+            set
+            {
+                if (!FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1007, out Dictionary<Int32, Int32> dict))
+                {
+                    dict = new Dictionary<Int32, Int32>();
+                    // Correction de la clé (1007 au lieu de 1000)
+                    FF9StateSystem.EventState.gScriptDictionary.Add(1007, dict);
+                }
+                dict[4] = value ? 1 : 0;
+            }
+        }
+
+        private static int lastFieldMapNo
+        {
+            get
+            {
+                if (FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1007, out Dictionary<Int32, Int32> dict))
+                {
+                    if (dict.TryGetValue(5, out int mapNo))
+                        return mapNo;
+                }
+                return -1;
+            }
+            set
+            {
+                if (!FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1007, out Dictionary<Int32, Int32> dict))
+                {
+                    dict = new Dictionary<Int32, Int32>();
+                    FF9StateSystem.EventState.gScriptDictionary.Add(1007, dict);
+                }
+                dict[5] = value;
+            }
+        }
+
+        private void CheckATEState()
+        {
+            if (PersistenSingleton<UIManager>.Instance != null && PersistenSingleton<UIManager>.Instance.State == UIManager.UIState.Title)
+                return;
+
+            if (FF9StateSystem.Common.FF9 == null)
+                return;
+
+            int currentMap = FF9StateSystem.Common.FF9.fldMapNo;
+            int savedMap = lastFieldMapNo;
+
+            if (savedMap == -1)
+            {
+                lastFieldMapNo = currentMap;
+
+                if (isATEPending)
+                {
+                    isPlayingATE = true;
+                    isATEPending = false;
+                }
+            }
+            else if (currentMap != savedMap)
             {
                 if (isATEPending)
                 {
@@ -533,8 +660,8 @@ namespace Memoria.Scripts.TranceSeek
                 {
                     isPlayingATE = false;
                 }
+                lastFieldMapNo = currentMap;
             }
-            lastFieldMapNo = currentMap;
 
             Dialog activeATEDialog = FindActiveATEDialog();
 
@@ -559,19 +686,22 @@ namespace Memoria.Scripts.TranceSeek
             if (cachedAteDialog != null && cachedAteDialog.gameObject.activeSelf && cachedAteDialog.CapType == Dialog.CaptionType.ActiveTimeEvent)
                 return cachedAteDialog;
 
-            if (Time.frameCount % 10 == 0) // Check for time to time.
+            DialogManager dialogManager = Singleton<DialogManager>.Instance;
+            if (dialogManager != null)
             {
-                Dialog[] dialogs = UnityEngine.Object.FindObjectsOfType<Dialog>();
-                for (int i = 0; i < dialogs.Length; i++)
+                List<Dialog> activeDialogs = dialogManager.ActiveDialogList;
+                for (int i = 0; i < activeDialogs.Count; i++)
                 {
-                    Dialog d = dialogs[i];
-                    if (d != null && d.gameObject.activeSelf && d.CapType == Dialog.CaptionType.ActiveTimeEvent)
+                    Dialog dialog = activeDialogs[i];
+
+                    if (dialog != null && dialog.gameObject.activeSelf && dialog.CapType == Dialog.CaptionType.ActiveTimeEvent)
                     {
-                        cachedAteDialog = d;
-                        return d;
+                        cachedAteDialog = dialog;
+                        return dialog;
                     }
                 }
             }
+
             return null;
         }
 
@@ -594,6 +724,7 @@ namespace Memoria.Scripts.TranceSeek
         private void LateUpdate()
         {
             CheckEncounterBooster();
+            CheckSpeedOverride();
 
             if (!isFollowerFeatureEnabled)
                 return;
@@ -635,16 +766,18 @@ namespace Memoria.Scripts.TranceSeek
                 Log.Message("[Trance Seek] leader_model_id : " + leader_model_id);
                 if (actorleader != null) Log.Message("[Trance Seek] actorleader.anim : " + actorleader.anim);
                 if (IsWorldMap) Log.Message($"[Trance Seek] WM Actor Position {ff9.GetControlChar().pos}");
-                Log.Message("################################################");
-                Log.Message($"actorleader == null ? => {actorleader == null}.");
-                Log.Message($"(actorleader.flags & 1) == 0 ? => {(actorleader != null && (actorleader.flags & 1) == 0)}.");
-                Log.Message($"ForceHidden ? => {ForceHidden}.");
-                Log.Message($"ModelCantGetFollowers.Contains({leader_model_id}) ? => {ModelCantGetFollowers.Contains(leader_model_id)}.");
-                Log.Message($"BlackListFieldId.Contains({FF9StateSystem.Common.FF9.fldMapNo}) ? => {(FF9StateSystem.Common.FF9 != null && BlackListFieldId.Contains(FF9StateSystem.Common.FF9.fldMapNo))}.");
-                Log.Message($"BlackListAnimationId.Contains({actorleader.anim}) ? => {(actorleader != null && BlackListAnimationId.Contains(actorleader.anim))}.");
-                Log.Message($"MBG.Instance.IsPlaying() > 1 ? => {(MBG.Instance != null && MBG.Instance.IsPlaying() > 1)}.");
-                Log.Message($"BlackListCondition ? => {BlackListCondition}.");
-                Log.Message($"isPlayingATE ? => {isPlayingATE}.");
+                Log.Message($"##########[DEBUG SUR FIELD {FF9StateSystem.Common.FF9.fldMapNo}]########");
+                Log.Message($"actorleader == null ? => {actorleader == null}");
+                Log.Message($"lastLeaderLocalPos ? => {lastLeaderLocalPos}");
+                Log.Message($"(actorleader.flags & 1) == 0 ? => {(actorleader != null && (actorleader.flags & 1) == 0)}");
+                Log.Message($"ForceHidden ? => {ForceHidden}");
+                Log.Message($"ModelCantGetFollowers.Contains({leader_model_id}) ? => {ModelCantGetFollowers.Contains(leader_model_id)}");
+                Log.Message($"BlackListFieldId.Contains({FF9StateSystem.Common.FF9.fldMapNo}) ? => {(FF9StateSystem.Common.FF9 != null && BlackListFieldId.Contains(FF9StateSystem.Common.FF9.fldMapNo))}");
+                Log.Message($"BlackListAnimationId.Contains({actorleader.anim}) ? => {(actorleader != null && BlackListAnimationId.Contains(actorleader.anim))}");
+                Log.Message($"MBG.Instance.IsPlaying() > 1 ? => {(MBG.Instance != null && MBG.Instance.IsPlaying() > 1)}");
+                Log.Message($"BlackListCondition ? => {BlackListCondition}");
+                Log.Message($"isPlayingATE ? => {isPlayingATE}");
+                Log.Message($"BlackListCondition ? => {BlackListCondition}");
                 Log.Message("################################################");
             }
 
@@ -1084,8 +1217,6 @@ namespace Memoria.Scripts.TranceSeek
                 else
                 {
                     f.IdleTimer -= speedFactor;
-                    ApplyFollowerColor(f, GetLeaderColor());
-                    ApplyFollowerSlice(f, GetLeaderSlice());
 
                     if (f.IdleTimer < 0)
                     {
@@ -1296,12 +1427,12 @@ namespace Memoria.Scripts.TranceSeek
         private int GetLeaderSlice()
         {
             if (actorleader == null)
-                return 0;
+                return 100000;
 
             if (FF9StateSystem.Common.FF9 != null && FF9StateSystem.Common.FF9.charArray.TryGetValue(actorleader.uid, out FF9Char ff9Char))
             {
                 if ((ff9Char.attr & 1048576u) == 0)
-                    return 0;
+                    return 100000;
             }
 
             if (cachedLeaderRenderers != null)
@@ -1309,21 +1440,19 @@ namespace Memoria.Scripts.TranceSeek
                 for (int i = 0; i < cachedLeaderRenderers.Length; i++)
                 {
                     Renderer r = cachedLeaderRenderers[i];
-                    if (r != null && r.material != null && r.material.HasProperty("_Slice"))
+                    if (r != null && r.sharedMaterial != null && r.sharedMaterial.HasProperty("_Slice"))
                     {
-                        int s = r.material.GetInt("_Slice");
-                        if (s > 0)
-                            return s;
+                        return r.sharedMaterial.GetInt("_Slice");
                     }
                 }
             }
 
-            return 0;
+            return 100000;
         }
 
         private void ApplyFollowerSlice(Follower f, int slice)
         {
-            int targetSlice = (slice > 0) ? slice : f.DefaultSlice;
+            int targetSlice = (slice != 100000) ? slice : f.DefaultSlice;
 
             if (f.LastAppliedSlice != targetSlice)
             {

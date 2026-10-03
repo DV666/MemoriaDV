@@ -198,10 +198,16 @@ namespace Memoria.Scripts.TranceSeek
         public static void AmarantPassive(this BattleCalculator v)
         {
             Int32 factor = 0;
+            var TargetMonster_State = v.Target.State().Monster;
 
             for (Int32 i = 0; i < AmarantPassiveStatuses.Length; i++)
                 if (v.Target.IsUnderAnyStatus(AmarantPassiveStatuses[i].ToBattleStatus()))
                     factor++;
+
+            if (TargetMonster_State.MarkOfDeath)
+                factor++;
+            if (TargetMonster_State.Statufication)
+                factor++;
 
             int bonus = v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Assassin_Boosted) ? 12 : (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Assassin) ? 10 : 8);
 
@@ -787,9 +793,9 @@ namespace Memoria.Scripts.TranceSeek
         private static readonly BattleStatusId[] AmarantPassiveStatuses =
         {
             BattleStatusId.Poison, BattleStatusId.Venom, BattleStatusId.Blind, BattleStatusId.Silence, BattleStatusId.Trouble,
-            BattleStatusId.Sleep, BattleStatusId.Freeze, BattleStatusId.Heat, BattleStatusId.Doom, BattleStatusId.Mini, BattleStatusId.Petrify, BattleStatusId.GradualPetrify,
+            BattleStatusId.Sleep, BattleStatusId.Freeze, BattleStatusId.Heat, BattleStatusId.Doom, BattleStatusId.Mini, BattleStatusId.GradualPetrify,
             BattleStatusId.Berserk, BattleStatusId.Confuse, BattleStatusId.Stop, BattleStatusId.Zombie, BattleStatusId.Slow, TranceSeekStatusId.Old,
-            TranceSeekStatusId.ArmorBreak, TranceSeekStatusId.MagicBreak, TranceSeekStatusId.MentalBreak, TranceSeekStatusId.PowerBreak
+            TranceSeekStatusId.ArmorBreak, TranceSeekStatusId.MagicBreak, TranceSeekStatusId.MentalBreak, TranceSeekStatusId.PowerBreak, TranceSeekStatusId.Dragon
         };
     }
 }

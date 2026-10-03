@@ -162,6 +162,17 @@ namespace Memoria.Scripts.TranceSeek
 
             if (!IsInvincible)
             {
+                if (Target_TSVar.Monster.MarkOfDeath && Target_TSVar.Monster.MarkOfDeath_SHP != null && (v.Target.Flags & CalcFlag.Critical) == 0 && (v.Target.HpDamage > 0 || v.Target.MpDamage > 0))
+                {
+                    v.Target.HpDamage *= 2;
+                    v.Target.MpDamage *= 2;
+                    v.Target.Flags |= CalcFlag.Critical;
+                    v.Target.Data.fig.info |= Param.FIG_INFO_HP_CRITICAL;
+                    v.Target.State().Monster.MarkOfDeath = false;
+                    v.Target.State().Monster.MarkOfDeath_SHP.Unload();
+                    v.Target.State().Monster.MarkOfDeath_SHP = null;
+                }
+
                 if ((v.Target.Flags & CalcFlag.HpAlteration) != 0)
                     v.Target.HpDamage = (Int32)Math.Round(modifier_factor * v.Target.HpDamage);
 

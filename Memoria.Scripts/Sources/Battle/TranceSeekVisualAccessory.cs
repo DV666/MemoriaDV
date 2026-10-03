@@ -246,10 +246,20 @@ namespace Memoria.Scripts.TranceSeek
 
             void LateUpdate()
             {
-                if (TargetBone == null || CasterUnit == null)
+                if (TargetBone == null || CasterUnit == null || CasterUnit.Data == null)
                     return;
 
-                bool isVisible = CasterUnit.Data.gameObject.activeInHierarchy && CasterUnit.Data.bi.disappear == 0 && !CasterUnit.IsUnderAnyStatus(BattleStatusId.Jump); // CasterData.battleModelIsRendering not working with Zidane (Sword Form)
+                BTL_DATA btl = CasterUnit.Data;
+                bool isMeshVisible = false;
+                if (btl.meshIsRendering != null)
+                    for (int i = 0; i < btl.meshIsRendering.Length; i++)
+                        if (btl.meshIsRendering[i])
+                        {
+                            isMeshVisible = true;
+                            break;
+                        }
+
+                bool isVisible = btl.gameObject.activeInHierarchy &&  btl.bi.disappear == 0 && !CasterUnit.IsUnderAnyStatus(BattleStatusId.Jump) && isMeshVisible;
 
                 foreach (Renderer r in _renderers)
                 {

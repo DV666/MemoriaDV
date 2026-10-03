@@ -135,8 +135,11 @@ namespace Memoria.DefaultScripts
             if (!unit.IsUnderAnyStatus(BattleStatusId.CustomStatus2))
                 return false;
 
+            Boolean isDetached = false;
+            if (NumberHUD != null)
+                isDetached = NumberHUD.Follower == null || NumberHUD.Follower.target == null || !NumberHUD.Follower.target.IsChildOf(unit.Data.gameObject.transform);
+
             Boolean NeedToReset = unit.Data.bi.disappear != 0 || Stack <= 1 || ModelScale != unit.ModelStatusScale || !unit.Data.gameObject.activeSelf;
-            Boolean isDetached = NumberHUD.Follower == null || NumberHUD.Follower.target == null || !NumberHUD.Follower.target.IsChildOf(unit.Data.gameObject.transform);
 
             if (NeedToReset || isDetached)
             {
@@ -149,6 +152,9 @@ namespace Memoria.DefaultScripts
                     NumberHUD = null;
                 }
             }
+
+            if (NeedToReset)
+                return true;
 
             if (NumberHUD == null)
             {

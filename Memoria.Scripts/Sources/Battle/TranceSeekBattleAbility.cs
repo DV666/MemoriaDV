@@ -437,7 +437,7 @@ namespace Memoria.Scripts.TranceSeek
         public const BattleAbilityId Attack9 = (BattleAbilityId)1547;
         public const BattleAbilityId Hehehehe = (BattleAbilityId)1548;
         public const BattleAbilityId HEHEHEHE = (BattleAbilityId)1549;
-        public const BattleAbilityId Deathblow = (BattleAbilityId)1550;
+        public const BattleAbilityId DeathblowPlus = (BattleAbilityId)1550;
         public const BattleAbilityId PlutoStrike = (BattleAbilityId)1551;
         public const BattleAbilityId EMPTY = (BattleAbilityId)1552;
         public const BattleAbilityId Poison = (BattleAbilityId)1553;

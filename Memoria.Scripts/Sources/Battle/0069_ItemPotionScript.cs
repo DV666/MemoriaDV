@@ -163,7 +163,7 @@ namespace Memoria.Scripts.TranceSeek
                         }
                         if (unit.Data.dms_geo_id == 416) // Meltigemini
                         {
-                            _v.TargetState().Monster.Special1 = Math.Min(healing, 9999);
+                            _v.TargetState().Monster.CellularReaction = Math.Min(_v.TargetState().Monster.CellularReaction + _v.Target.HpDamage, 9999);
                             btl_stat.AlterStatus(unit, TranceSeekStatusId.ZombieArmor, parameters: healing);
                         }
                     }
@@ -173,7 +173,7 @@ namespace Memoria.Scripts.TranceSeek
                     _v.CalcHpMagicRecovery();
                     if (_v.Target.Data.dms_geo_id == 416) // Meltigemini
                     {
-                        _v.TargetState().Monster.Special1 = Math.Min(_v.Target.HpDamage, 9999);
+                        _v.TargetState().Monster.CellularReaction = Math.Min(_v.TargetState().Monster.CellularReaction + _v.Target.HpDamage, 9999);
                         btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.ZombieArmor, parameters: _v.Target.HpDamage);
                     }
                 }  

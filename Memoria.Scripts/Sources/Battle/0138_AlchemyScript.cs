@@ -124,7 +124,7 @@ namespace Memoria.Scripts.TranceSeek
                             {
                                 if (_v.Target.Data.dms_geo_id == 416)
                                 {
-                                    _v.TargetState().Monster.Special1 = 9999;
+                                    _v.TargetState().Monster.CellularReaction = 9999;
                                     _v.Target.CurrentHp = 1;
                                     return;
                                 }

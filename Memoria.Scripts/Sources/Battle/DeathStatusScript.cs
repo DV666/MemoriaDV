@@ -4,6 +4,7 @@ using Memoria.Prime;
 using Memoria.Scripts.TranceSeek;
 using System;
 using System.Threading;
+using UnityEngine;
 using Object = System.Object;
 
 namespace Memoria.DefaultScripts
@@ -21,8 +22,28 @@ namespace Memoria.DefaultScripts
             base.Apply(target, inflicter, parameters);
             if (target.CurrentHp > 0)
             {
-                target.FigInfo |= Param.FIG_INFO_DEATH;
-                target.Kill(inflicter);
+                if (target.IsUnderAnyStatus(BattleStatus.EasyKill))
+                {
+                    var MonsterState = target.State().Monster;
+                    if (MonsterState.MarkOfDeath_SHP == null)
+                    {
+                        MonsterState.MarkOfDeath_SHP = HonoluluBattleMain.battleSPS.AddSequenceSHP(21, -1, 1, true);
+                        if (MonsterState.MarkOfDeath_SHP == null)
+                            return btl_stat.ALTER_INVALID;
+
+                        btl2d.GetIconPosition(target, btl2d.ICON_POS_NUMBER, out Transform attachTransf, out Vector3 iconOff);
+                        MonsterState.MarkOfDeath_SHP.attach = attachTransf;
+                        MonsterState.MarkOfDeath_SHP.posOffset = (iconOff * 3) / 2;
+                        MonsterState.MarkOfDeath_SHP.scale *= 2;
+                        return btl_stat.ALTER_SUCCESS_NO_SET;
+                    }
+                    return btl_stat.ALTER_INVALID;
+                }
+                else
+                {
+                    target.FigInfo |= Param.FIG_INFO_DEATH;
+                    target.Kill(inflicter);
+                }
             }
             else
             {

@@ -27,17 +27,8 @@ namespace Memoria.Scripts.TranceSeek
                 if (FF9StateSystem.EventState.gEventGlobal[1307] == 0) // SetVariable: Variable=gEventGlobal ; Index=1307 ; Value=0
                 {
                     _v.Target.RemoveStatus(BattleStatus.AutoLife);
-                    if (_v.Target.IsZombie)
-                    {
-                        if (_v.Target.CanBeAttacked())
-                        {
-                            _v.Target.CurrentHp = _v.Target.MaximumHp;
-                        }
-                    }
-                    else
-                    {
+                    if (!TranceSeekAPI.CheckDeathOnZombie(_v))
                         TranceSeekAPI.TryAlterCommandStatuses(_v);
-                    }
                 }
                 else
                 {
@@ -57,24 +48,14 @@ namespace Memoria.Scripts.TranceSeek
                 }
                 return;
             }
-            if (TranceSeekAPI.CheckUnsafetyOrGuard(_v))
+            if (!TranceSeekAPI.CheckDeathOnZombie(_v))
             {
-                if (_v.Target.IsZombie)
+                TranceSeekAPI.MagicAccuracy(_v);
+                _v.Target.PenaltyShellHitRate();
+                _v.PenaltyCommandDividedHitRate();
+                if (TranceSeekAPI.TryMagicHit(_v) || _v.Command.HitRate == 255)
                 {
-                    if (_v.Target.CanBeAttacked())
-                    {
-                        _v.Target.CurrentHp = _v.Target.MaximumHp;
-                    }
-                }
-                else
-                {
-                    TranceSeekAPI.MagicAccuracy(_v);
-                    _v.Target.PenaltyShellHitRate();
-                    _v.PenaltyCommandDividedHitRate();
-                    if (TranceSeekAPI.TryMagicHit(_v) || _v.Command.HitRate == 255)
-                    {
-                        TranceSeekAPI.TryAlterCommandStatuses(_v);
-                    }
+                    TranceSeekAPI.TryAlterCommandStatuses(_v);
                 }
             }
         }

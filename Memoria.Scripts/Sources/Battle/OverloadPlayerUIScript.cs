@@ -78,6 +78,12 @@ namespace Memoria.Scripts.TranceSeek
                 result.ColorMagicStone = new Color(red, green, blue);
             }
 
+            if (player.Index == CharacterId.Beatrix)
+            {
+                FF9TextTool.SetCommandName(BattleCommandId.HolySword1, TranceSeekBattleCommand.SeikenCMDNameVanilla[Localization.CurrentDisplaySymbol]);
+                FF9TextTool.SetCommandName(BattleCommandId.HolySword2, TranceSeekBattleCommand.SeikenPlusCMDNameVanilla[Localization.CurrentDisplaySymbol]);
+            }
+
             int IdDict = (int)(2000 + player.Index);
             if (!FF9StateSystem.EventState.gScriptDictionary.TryGetValue(IdDict, out Dictionary<Int32, Int32> dictbattle))
             {
@@ -144,7 +150,6 @@ namespace Memoria.Scripts.TranceSeek
             if (!isInSAMenu && !isHoveringSA)
                 return;
 
-            // Ne vider qu'une fois la présence dans le menu validée
             BoostedSATargetNames.Clear();
 
             foreach (SupportAbility equippedSA in player.saExtended)
@@ -225,7 +230,6 @@ namespace Memoria.Scripts.TranceSeek
             private RecycleListItem[] _cachedItems = null;
             private Dictionary<RecycleListItem, UILabel> _cachedLabels = new Dictionary<RecycleListItem, UILabel>();
 
-            // Suivi d'état pour éviter les recalculs inutiles (zéro garbage par frame)
             private int _lastPartyIndex = -1;
             private uint _lastCapa = UInt32.MaxValue;
             private int _lastEquipHash = -1;

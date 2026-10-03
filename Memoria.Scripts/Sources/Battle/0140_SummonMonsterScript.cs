@@ -436,22 +436,12 @@ namespace Memoria.Scripts.TranceSeek
                     case TranceSeekBattleAbility.Mimic2: // Mimic - Death
                     case TranceSeekBattleAbility.Drakan: // Drakan - Death
                     {
-                        if (TranceSeekAPI.CheckUnsafetyOrGuard(_v))
+                        if (!TranceSeekAPI.CheckDeathOnZombie(_v))
                         {
-                            if (_v.Target.IsZombie)
+                            TranceSeekAPI.MagicAccuracy(_v);
+                            if (TranceSeekAPI.TryMagicHit(_v) || _v.Command.HitRate == 255)
                             {
-                                if (_v.Target.CanBeAttacked())
-                                {
-                                    _v.Target.CurrentHp = _v.Target.MaximumHp;
-                                }
-                            }
-                            else
-                            {
-                                TranceSeekAPI.MagicAccuracy(_v);
-                                if (TranceSeekAPI.TryMagicHit(_v) || _v.Command.HitRate == 255)
-                                {
-                                    TranceSeekAPI.TryAlterCommandStatuses(_v);
-                                }
+                                TranceSeekAPI.TryAlterCommandStatuses(_v);
                             }
                         }
                         break;
@@ -643,7 +633,7 @@ namespace Memoria.Scripts.TranceSeek
                         {
                             if (_v.Command.Power == 1 && _v.Command.HitRate == 1)
                             {
-                                _v.TryDirectHPDamage();
+                                TranceSeekAPI.TryDirectHPDamage(_v);
                             }
                             else
                             {
@@ -670,7 +660,7 @@ namespace Memoria.Scripts.TranceSeek
                                 }
                                 else
                                 {
-                                    _v.TryDirectHPDamage();
+                                    TranceSeekAPI.TryDirectHPDamage(_v);
                                 }
                             }                       
                         }
@@ -719,7 +709,7 @@ namespace Memoria.Scripts.TranceSeek
                     case TranceSeekBattleAbility.Zombie2: // Zombie - Roulette
                     {
                         if (TranceSeekAPI.CheckUnsafetyOrGuard(_v) && _v.Target.CanBeAttacked())
-                            _v.TryDirectHPDamage();
+                            TranceSeekAPI.TryDirectHPDamage(_v);
                         break;
                     }
                     // THOUNSAND NEEDLES - Script 26

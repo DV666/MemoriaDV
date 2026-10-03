@@ -69,6 +69,12 @@ namespace Memoria.Scripts.TranceSeek
             { "ES", "¡Instinto!" }, { "FR", "Instinct !" }, { "GR", "Instinkt!" }, { "IT", "Istinto!" }
         };
 
+        public static readonly Dictionary<String, String> DeathHealZombie = new Dictionary<String, String>
+        {
+            { "US", "Recovered!" }, { "UK", "Recovered!" }, { "JP", "回復！" },
+            { "ES", "¡Restablecido!" }, { "FR", "Rétabli !" }, { "GR", "Wiederhergestellt!" }, { "IT", "Ristabilito!" }
+        };
+
         public static readonly Dictionary<String, String> MessageZidaneDodge = new Dictionary<String, String>
         {
             { "US", "↑ Dodge ↑" }, { "UK", "↑ Dodge ↑" }, { "JP", "↑ かいひりつ ↑" },

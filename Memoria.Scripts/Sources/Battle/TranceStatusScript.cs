@@ -181,7 +181,7 @@ namespace Memoria.DefaultScripts
                                 AnimationFactory.AddAnimWithAnimatioName(target.Data.gameObject, target.Data.mot[j]);
                             target.Data.gameObject.transform.position = position;
 
-                            WEAPON_MODEL Dagger = new WEAPON_MODEL { geo = ModelFactory.CreateModel("GEO_WEP_B1_012", true), bone = 13 };  
+                            WEAPON_MODEL Dagger = new WEAPON_MODEL { geo = ModelFactory.CreateModel("GEO_WEP_B1_013", true), bone = 13 };  
                             target.Data.weaponModels.Add(Dagger);
                             GeoAttach(Dagger.geo, target.Data.gameObject, Dagger.bone);
                         }

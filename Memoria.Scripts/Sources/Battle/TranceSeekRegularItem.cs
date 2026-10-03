@@ -748,6 +748,8 @@ namespace Memoria.Scripts.TranceSeek
             if (v.Caster.IsPlayer)
             {
                 int CasterWeaponShape = ff9item._FF9Item_Data[v.Caster.Weapon].shape;
+                if (v.Command.ScriptId == 42)
+                    CasterWeaponShape = ff9item._FF9Item_Data[v.Command.ItemId].shape;
 
                 if (v.Caster.Weapon == ExcalipoorII && (v.Target.Flags & CalcFlag.HpRecovery) == 0)
                     v.Target.HpDamage = 1;
@@ -755,7 +757,7 @@ namespace Memoria.Scripts.TranceSeek
                     v.Target.HpDamage /= 2;
                 else if (CasterWeaponShape == 42 && v.Target.HpDamage > 0 && (v.Command.ScriptId == 48 || v.Command.ScriptId == 83)) // Heavy Spear (on Jump)
                     v.Target.HpDamage += ((v.Target.HpDamage * BonusDamageFromWeapon(v.Caster.Weapon)) / 100);
-                else if ((CasterWeaponShape == 121 || CasterWeaponShape == 131) && v.Target.HpDamage > 0 && (v.Command.Id == BattleCommandId.Attack || v.Command.Id == BattleCommandId.Counter
+                else if ((CasterWeaponShape == 121 || CasterWeaponShape == 131) && v.Target.HpDamage > 0 && (v.Command.Id == BattleCommandId.Attack || v.Command.Id == BattleCommandId.Counter || v.Command.Id == (BattleCommandId)1055
                     || v.Command.Id == BattleCommandId.SwordAct || v.Command.Id == BattleCommandId.MagicSword || v.Command.Id == BattleCommandId.HolySword1 || v.Command.Id == BattleCommandId.HolySword2)) // Komodaxe + Big Fish
                     v.Target.HpDamage = UnityEngine.Random.Range(v.Target.HpDamage / 10, v.Target.HpDamage);
                 else if (CasterWeaponShape == 119 && v.Caster.Level == v.Target.Level && v.Command.AbilityId == BattleAbilityId.Attack)

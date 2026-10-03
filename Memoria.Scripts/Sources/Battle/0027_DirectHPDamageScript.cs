@@ -44,7 +44,7 @@ namespace Memoria.Scripts.TranceSeek
                     _v.Target.PenaltyShellHitRate();
                     if (TranceSeekAPI.TryMagicHit(_v))
                     {
-                        _v.TryDirectHPDamage();
+                        TranceSeekAPI.TryDirectHPDamage(_v);
                     }
                 }
             }

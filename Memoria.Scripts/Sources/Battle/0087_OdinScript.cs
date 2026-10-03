@@ -35,13 +35,10 @@ namespace Memoria.Scripts.TranceSeek
             }
             else
             {
-                if (TranceSeekAPI.CheckUnsafetyOrGuard(_v))
-                {
-                    TranceSeekAPI.MagicAccuracy(_v);
-                    _v.Context.HitRate += (Int16)(ff9item.FF9Item_GetCount(RegularItem.Ore) >> 1);
-                    if (TranceSeekAPI.TryMagicHit(_v))
-                        TranceSeekAPI.TryAlterCommandStatuses(_v);
-                }
+                TranceSeekAPI.MagicAccuracy(_v);
+                _v.Context.HitRate += (Int16)(ff9item.FF9Item_GetCount(RegularItem.Ore) >> 1);
+                if (TranceSeekAPI.TryMagicHit(_v))
+                    TranceSeekAPI.TryAlterCommandStatuses(_v);
             }
         }
     }

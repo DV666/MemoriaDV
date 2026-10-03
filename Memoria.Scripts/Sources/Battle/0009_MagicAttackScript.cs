@@ -42,6 +42,8 @@ namespace Memoria.Scripts.TranceSeek
                     _v.Context.Attack = _v.Caster.Magic + baseDamage;
                     _v.Command.Element = _v.Caster.WeaponElement;
                     TranceSeekAPI.BonusBackstabAndPenaltyLongDistance(_v);
+                    TranceSeekAPI.IpsenCastleMalus(_v);
+                    TranceSeekAPI.InfusedWeaponStatus(_v);
                 }
                 else
                     return;

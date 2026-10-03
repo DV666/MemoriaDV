@@ -32,26 +32,6 @@ namespace Memoria.Scripts.TranceSeek
             {
                 battle.btl_bonus.Event = false;
             }
-            else if (_v.Caster.Data.dms_geo_id == 221 && _v.Command.AbilityStatus == BattleStatus.Trance) // Mirror - Trance Zidane
-            {
-                Int32 counter = 15;
-                _v.Caster.AddDelayedModifier(
-                caster => (counter -= BattleState.ATBTickCount) > 0,
-                caster =>
-                {
-                    foreach (BattleUnit zidanemonster in BattleState.EnumerateUnits())
-                    {
-                        if (!zidanemonster.IsPlayer && zidanemonster.Data.dms_geo_id == 5414 && zidanemonster.IsTargetable)
-                        {
-                            zidanemonster.ResistStatus &= ~BattleStatus.Trance;
-                            btl_stat.MakeStatusesPermanent(zidanemonster, BattleStatus.Trance);
-                            break;
-                        }
-
-                    }
-                }
-                );
-            }
             else if (_v.Caster.Data.dms_geo_id == 338 && _v.Command.Power == 33 && _v.Command.HitRate == 33) // Hiberation - Ice Dragon
             {
                 var Caster_TSVar = _v.CasterState();
@@ -388,6 +368,10 @@ namespace Memoria.Scripts.TranceSeek
                 _v.Target.AlterStatus(BattleStatus.Poison, _v.Caster);
                 if ((_v.TargetState().EffectElement.Poison & 8) == 0)
                     _v.TargetState().EffectElement.Poison = 8;
+            }
+            else if (_v.Command.Power == 54 && _v.Command.HitRate == 54 && _v.Caster.Data.dms_geo_id == 548 && _v.Command.AbilityStatus == BattleStatus.Virus) // Germs (Friendly Nymph)
+            {
+                btl_stat.MakeStatusesPermanent(_v.Target, BattleStatus.Virus, true, _v.Caster);
             }
             else if (_v.Command.Power == 66 && _v.Command.HitRate == 66 && (_v.Caster.Data.dms_geo_id == 66 || _v.Caster.Data.dms_geo_id == 181 || _v.Caster.Data.dms_geo_id == 2001)) // Jump (Burmecian Soldier & Fratley)
             {

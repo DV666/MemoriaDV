@@ -127,20 +127,21 @@ namespace Memoria.Scripts.TranceSeek
                     return;
             }
 
-            if (_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill) || !_v.Target.CanBeAttacked() || btl_util.getEnemyTypePtr(_v.Target.Data).category == 1 && blueMagicId == 0)
+            Boolean EatInflictDamage = saAppetite || saGluttony || _v.Caster.IsUnderAnyStatus(BattleStatus.Trance);
+
+            if (_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill) || !_v.Target.CanBeAttacked())
             {
-                if (saAppetite || saGluttony)
-                    return;
-                if (!_v.Caster.IsUnderAnyStatus(BattleStatus.Trance))
+                if (!EatInflictDamage)
                 {
-                    UiState.SetBattleFollowFormatMessage(BattleMesages.CannotEat);
                     _v.Context.Flags |= BattleCalcFlags.Guard;
                     return;
                 }
             }
             else
             {
-                if (_v.Target.CurrentHp <= _v.Target.MaximumHp / PowerCMD)
+                uint TargetCurrentHP = (uint)(EatInflictDamage ? (Math.Max(0, _v.Target.CurrentHp - _v.Target.HpDamage)) : _v.Target.CurrentHp);
+
+                if (TargetCurrentHP <= _v.Target.MaximumHp / PowerCMD)
                 {
                     Int32 BonusHealFork = 0;
                     switch (_v.Caster.Weapon)
@@ -212,10 +213,10 @@ namespace Memoria.Scripts.TranceSeek
                 }
                 else
                 {
-                    if (_v.Target.CurrentHp <= _v.Target.MaximumHp / PowerCMD)
+                    if (TargetCurrentHP <= _v.Target.MaximumHp / PowerCMD)
                         UIManager.Battle.SetBattleFollowMessage(3, Localization.GetWithDefault("Eat25"));
                     else
-                        if (_v.Target.CurrentHp <= _v.Target.MaximumHp / PowerCMD)
+                        if (TargetCurrentHP <= _v.Target.MaximumHp / PowerCMD)
                             UIManager.Battle.SetBattleFollowMessage(3, Localization.GetWithDefault("Eat50"));
                         else
                             UiState.SetBattleFollowFormatMessage(BattleMesages.CannotEatStrong);

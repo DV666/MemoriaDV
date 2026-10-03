@@ -62,7 +62,7 @@ namespace Memoria.Scripts.TranceSeek
                 {
                     if (_v.Command.Power == 1 && _v.Command.HitRate == 1)
                     {
-                        _v.TryDirectHPDamage();
+                        TranceSeekAPI.TryDirectHPDamage(_v);
                     }
                     else
                     {
@@ -82,7 +82,7 @@ namespace Memoria.Scripts.TranceSeek
                         }
                         else
                         {
-                            _v.TryDirectHPDamage();
+                            TranceSeekAPI.TryDirectHPDamage(_v);
                         }
                     }
                 }

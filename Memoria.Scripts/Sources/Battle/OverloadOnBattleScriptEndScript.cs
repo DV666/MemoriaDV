@@ -30,6 +30,7 @@ namespace Memoria.Scripts.TranceSeek
         public static void OnCommandEnd(BattleCalculator v)
         {
             var Caster_TSVar = v.CasterState();
+            var Target_TSVar = v.TargetState();
 
             // Mode EX
             if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.EXMode) && v.Caster.IsUnderAnyStatus(BattleStatus.Trance))
@@ -51,11 +52,36 @@ namespace Memoria.Scripts.TranceSeek
             TranceSeekCharacterMechanic.HeheTriggered = false;
 
             Caster_TSVar.SpecialSA.Propagation = 0;
+            Caster_TSVar.Monster.CellularReaction = 0;
+            if (Target_TSVar.Monster.MarkOfDeath_SHP != null)
+                Target_TSVar.Monster.MarkOfDeath = true;
 
-            int summonchance = FF9StateSystem.EventState.gEventGlobal[1306];
-
-            if (TantarianPage)
+            if (v.Command.ScriptId == 121 && v.Caster.PlayerIndex == CharacterId.Eiko)
             {
+                Caster_TSVar.Eiko.StateMoug = 0;
+                Caster_TSVar.Eiko.ModelMoug.SetActive(false);
+            }
+            else if (v.Command.ScriptId == 144)
+            {
+                v.Caster.Player.mpCostFactor = (short)v.Caster.State().PreviousMPCostFactor;
+                v.Caster.State().PreviousMPCostFactor = 0;
+            }
+            else if (v.Command.ScriptId == 164 && v.Caster.Data.dms_geo_id == 221 && v.Command.AbilityStatus == BattleStatus.Trance) // Mirror - Trance Zidane
+            {
+                foreach (BattleUnit zidanemonster in BattleState.EnumerateUnits())
+                {
+                    if (!zidanemonster.IsPlayer && zidanemonster.Data.dms_geo_id == 5414 && zidanemonster.IsTargetable)
+                    {
+                        zidanemonster.ResistStatus &= ~BattleStatus.Trance;
+                        btl_stat.MakeStatusesPermanent(zidanemonster, BattleStatus.Trance);
+                        break;
+                    }
+
+                }
+            }
+            else if (TantarianPage)
+            {
+                int summonchance = FF9StateSystem.EventState.gEventGlobal[1306];
                 int page = 0;
                 if (FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1004, out Dictionary<int, int> dict))
                     dict.TryGetValue(0, out page);

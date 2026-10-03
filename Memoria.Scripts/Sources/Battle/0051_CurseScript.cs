@@ -40,17 +40,16 @@ namespace Memoria.Scripts.TranceSeek
                         if (_v.Target.IsUnderAnyStatus(status))
                         {
                             _v.Target.RemoveStatus(status);
-                            _v.Command.AbilityStatus |= status;
+                            _v.Target.TryAlterStatuses(status, false, _v.Caster);
                         }
                     }
-
-                    TranceSeekAPI.TryAlterCommandStatuses(_v);
                 }
+
                 if (_v.Command.AbilityId == BattleAbilityId.NoMercy2)
                     _v.Command.AbilityStatus |= (BattleStatus.Poison | BattleStatus.Venom);
 
                 if (TranceSeekAPI.TryMagicHit(_v))
-                    TranceSeekAPI.TryAlterCommandStatuses(_v);
+                    TranceSeekAPI.TryMagicHitWithoutBattleCalcFlag(_v);
                 return;
             }               
             

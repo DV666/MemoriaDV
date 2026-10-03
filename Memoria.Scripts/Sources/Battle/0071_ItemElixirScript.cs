@@ -42,7 +42,7 @@ namespace Memoria.Scripts.TranceSeek
                     _v.Target.HpDamage = 9999;
                     _v.Target.MpDamage = 999;
                     if (_v.Target.Data.dms_geo_id == 416)
-                        _v.TargetState().Monster.Special1 = 9999;
+                        _v.TargetState().Monster.CellularReaction = 9999;
 
                     return;
                 }

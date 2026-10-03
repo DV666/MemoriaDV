@@ -41,20 +41,19 @@ StartThread: Condition=CasterHasSA(1027) && (ItemUseId == 238 || ItemUseId == 10
 		WaitAnimation: Char=Caster
 		StartThread: Target = AllEnemies
 			StartThread: TargetLoop=True ; Chain=True ; Sync=True
-			Wait: Time=2		
-			WaitSFXLoaded: SFX=Ether
-			StartThread: Condition=ItemUseId == 238 ; Sync
-				LoadSFX: SFX=Ether
-				WaitSFXLoaded: SFX=Ether
-				PlaySFX: SFX=Ether ; MeshColors=0:(0.0, 1.0, 2.0), 1:(0, 0, 0), 2:(0.0, 1.0, 2.0), 3:(0, 0, 0), 4:(0, 0, 0)
-			ElseThread: Sync
-				LoadSFX: SFX=Ether
-				WaitSFXLoaded: SFX=Ether
-				PlaySFX: SFX=Ether ; MeshColors=(0.0, 1.0, 2.0)
-			EndThread
-			PlaySound: Sound=953
-			PlaySound: Sound=954
-			PlaySound: Sound=955
+				Wait: Time=2
+				StartThread: Condition=ItemUseId == 238 ; Sync
+					LoadSFX: SFX=Ether ; UseCamera=False
+					WaitSFXLoaded: SFX=Ether
+					PlaySFX: SFX=Ether ; SkipSequence ; MeshColors=0:(0.0, 1.0, 2.0), 1:(0, 0, 0), 2:(0.0, 1.0, 2.0), 3:(0, 0, 0), 4:(0, 0, 0)
+				ElseThread: Sync
+					LoadSFX: SFX=Ether ; UseCamera=False
+					WaitSFXLoaded: SFX=Ether
+					PlaySFX: SFX=Ether ; SkipSequence ; MeshColors=(0.0, 1.0, 2.0)
+				EndThread
+				PlaySound: Sound=953
+				PlaySound: Sound=954
+				PlaySound: Sound=955
 			EndThread
 		EndThread
 		Wait: Time=22

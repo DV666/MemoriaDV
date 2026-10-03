@@ -120,24 +120,24 @@ namespace Memoria.Scripts.TranceSeek
                         if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Lethality_Boosted))
                             _v.Command.AbilityStatus |= BattleStatus.Doom;
                     }
+                    TranceSeekAPI.IpsenCastleMalus(_v);
+                    _v.CalcPhysicalHpDamage(); // Calcul before Death here, for HpDamage from CheckDeathOnZombie
+
                     if (_v.Caster.HasSupportAbility(SupportAbility1.AddStatus)) // SA Add Status (to handle specific case, like Elite Monsters). Can be improved ...?
                     {
                         BattleStatus WeaponStatus = _v.Caster.WeaponStatus;
 
-                        if (((WeaponStatus & BattleStatus.Death) != 0 && !_v.Target.IsUnderAnyStatus(BattleStatus.EasyKill)) || (WeaponStatus & BattleStatus.Death) == 0) // Don't force Death status.
+                        if ((WeaponStatus & BattleStatus.Death) != 0)
                         {
                             int HitRateWeaponStatus = _v.Caster.WeaponRate + (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.AddStatus_Boosted) ? (_v.Caster.Will / 4) : 0);
                             if ((WeaponStatus & BattleStatus.Death) != 0 && TranceSeekAPI.EliteMonster(_v.Target.Data))
-                                    HitRateWeaponStatus /= 2;
+                                HitRateWeaponStatus /= 2;
 
-                            if ((GameRandom.Next8() % 100) < HitRateWeaponStatus)
+                            if ((GameRandom.Next8() % 100) < HitRateWeaponStatus && !TranceSeekAPI.CheckDeathOnZombie(_v))
                                 _v.Command.AbilityStatus |= WeaponStatus;
-                        }
-                        else if ((WeaponStatus & BattleStatus.Death) != 0 && (_v.Target.ResistStatus & BattleStatus.Death) != 0)
-                            _v.TargetState().TriggerSPSResistStatus = true;
+                        }                  
                     }
-                    TranceSeekAPI.IpsenCastleMalus(_v);
-                    _v.CalcPhysicalHpDamage();
+
                     TranceSeekAPI.InfusedWeaponStatus(_v);
                     TranceSeekAPI.TryAlterCommandStatuses(_v, false);
                     TranceSeekAPI.RaiseTrouble(_v);

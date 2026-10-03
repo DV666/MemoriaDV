@@ -1,9 +1,10 @@
-﻿using System;
+﻿using Memoria.Data;
+using Memoria.Prime;
+using Memoria.Scripts.TranceSeek;
+using System;
 using UnityEngine;
-using Memoria.Data;
 using static Memoria.Scripts.TranceSeek.TranceSeekBattleDictionary;
 using Object = System.Object;
-using Memoria.Scripts.TranceSeek;
 
 namespace Memoria.DefaultScripts
 {
@@ -121,7 +122,6 @@ namespace Memoria.DefaultScripts
                 btl2d.StatusMessages.Remove(NumberHUD);
                 Singleton<HUDMessage>.Instance.ReleaseObject(NumberHUD);
             }
-            //Target.MagicDefence = (Byte)BasicMagicDefence;
             return true;
         }
 
@@ -135,8 +135,11 @@ namespace Memoria.DefaultScripts
             if (!unit.IsUnderAnyStatus(BattleStatusId.CustomStatus8))
                 return false;
 
+            Boolean isDetached = false;
+            if (NumberHUD != null)
+                isDetached = NumberHUD.Follower == null || NumberHUD.Follower.target == null || !NumberHUD.Follower.target.IsChildOf(unit.Data.gameObject.transform);
+
             Boolean NeedToReset = unit.Data.bi.disappear != 0 || Stack <= 1 || ModelScale != unit.ModelStatusScale || !unit.Data.gameObject.activeSelf;
-            Boolean isDetached = NumberHUD.Follower == null || NumberHUD.Follower.target == null || !NumberHUD.Follower.target.IsChildOf(unit.Data.gameObject.transform);
 
             if (NeedToReset || isDetached)
             {
@@ -149,6 +152,9 @@ namespace Memoria.DefaultScripts
                     NumberHUD = null;
                 }
             }
+
+            if (NeedToReset)
+                return true;
 
             if (NumberHUD == null)
             {

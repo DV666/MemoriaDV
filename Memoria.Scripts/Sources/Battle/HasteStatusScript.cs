@@ -1,5 +1,6 @@
 ﻿using FF9;
 using Memoria.Data;
+using Memoria.Prime;
 using Memoria.Scripts.TranceSeek;
 using System;
 using System.Linq;
@@ -49,6 +50,7 @@ namespace Memoria.DefaultScripts
 
             BattlePlayerCharacter.PlayerMotionIndex currentAnim = btl_mot.getMotion(target.Data);
 
+            // [DV] Maybe using !btl_util.IsBtlBusy(target.Data, btl_util.BusyMode.CASTER) too in the condition ?
             if (btl_mot.IsLoopingMotion(currentAnim))
                 target.Data.animSpeed = 2F;
             else

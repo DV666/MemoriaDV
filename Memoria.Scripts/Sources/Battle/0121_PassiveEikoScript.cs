@@ -190,15 +190,6 @@ namespace Memoria.Scripts.TranceSeek
                             if (Eiko_TSVar.AnimationMoug["ANH_NPC_F4_MOG_INTO_EIK_PASSIVE_2"] != null)
                                 Eiko_TSVar.AnimationMoug["ANH_NPC_F4_MOG_INTO_EIK_PASSIVE_2"].speed = 1f;
                         }
-                        Int32 counter = 25;
-                        _v.Caster.AddDelayedModifier(
-                            caster => (counter -= BattleState.ATBTickCount) > 0,
-                            caster =>
-                            {
-                                Eiko_TSVar.StateMoug = 0;
-                                Eiko_TSVar.ModelMoug.SetActive(false);
-                            }
-                        );
                     }
                 }
             }

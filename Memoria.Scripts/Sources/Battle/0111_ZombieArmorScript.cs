@@ -28,15 +28,7 @@ namespace Memoria.Scripts.TranceSeek
                 if (_v.Command.Power == 99)
                     _v.Target.HpDamage = 9999;
                 else
-                    _v.Target.HpDamage = Caster_TSVar.Monster.Special1;
-                Int32 wait = 40; // TODO - Need to improve, maybe doing a local variable on the .seq file CellularReaction ?
-                _v.Caster.AddDelayedModifier(
-                    caster => (wait -= BattleState.ATBTickCount) > 0,
-                    caster =>
-                    {
-                        Caster_TSVar.Monster.Special1 = 0;
-                    }
-                );
+                    _v.Target.HpDamage = Caster_TSVar.Monster.CellularReaction;
             }
         }
     }

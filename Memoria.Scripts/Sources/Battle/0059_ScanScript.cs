@@ -19,6 +19,8 @@ namespace Memoria.Scripts.TranceSeek
         {
             { new KeyValuePair<Int32, Int32>(4, 2), new Vector3(200, 0, 0) }, // Nightmare
             { new KeyValuePair<Int32, Int32>(4, 3), new Vector3(200, -400, 0) }, // Thousand Fears
+            { new KeyValuePair<Int32, Int32>(144, 3), new Vector3(200, -400, 0) }, // Sand Worm
+            { new KeyValuePair<Int32, Int32>(871, 1), new Vector3(0, 200, 0) }, // Mysterious Girl
         };
 
         public ScanScript(BattleCalculator v)

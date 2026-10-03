@@ -319,7 +319,7 @@ namespace Memoria.Scripts.TranceSeek
 
     public class MonsterMechanics
     {
-        public int Special1 { get; set; }
+        public int CellularReaction { get; set; } // Meltigemini Mechanic
         public int Special2 { get; set; }
         public Boolean HPBoss10000 { get; set; }
         public Boolean HPBoss10000_UpdateBestiary { get; set; }
@@ -339,7 +339,10 @@ namespace Memoria.Scripts.TranceSeek
         public UInt32 HPBarValue { get; set; }
         public Boolean HPBarHidden { get; set; }
         public Boolean TriggerHPHUDOneTime { get; set; }
-
+        public Boolean MarkOfDeath { get; set; }
+        public SHPEffect MarkOfDeath_SHP { get; set; }
+        public Boolean Statufication { get; set; }
+        public Boolean TroubleOnBoss { get; set; }
     }
 
     public class StackBreakOrUpStatuses
@@ -442,6 +445,8 @@ namespace Memoria.Scripts.TranceSeek
         public SPSEffect PolaritySPS { get; set; }
 
         public BTL_DATA CasterScanga { get; set; }
+
+        public int PreviousMPCostFactor { get; set; }
 
         public int CantKill
         {

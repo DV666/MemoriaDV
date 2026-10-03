@@ -1,6 +1,7 @@
 ﻿using FF9;
 using Memoria.Assets;
 using Memoria.Data;
+using Memoria.Prime;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +15,7 @@ namespace Memoria.Scripts.TranceSeek
     public static class TranceSeekAPI
     {
         public static Boolean EEM_Enabled = Configuration.Mod.FolderNames.Contains("ExtraEquipmentMenu");
+        public static Boolean OneTriggerHitRateBonus = false;
 
         public static Boolean EliteMonster(BTL_DATA Monster)
         {
@@ -259,7 +261,7 @@ namespace Memoria.Scripts.TranceSeek
             foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(v.Target))
                 saFeature.TriggerOnAbility(v, "HitRateSetup", true);
 
-            TranceSeekCharacterMechanic.GarnetGemMechanic(v, GarnetGemMechanic_Type.BoostMagicalEvade);
+            AlterHitRateForStatus(v);
 
             if (v.Context.HitRate <= Comn.random16() % 100 && !CheckInvincible(v))
             {
@@ -287,7 +289,7 @@ namespace Memoria.Scripts.TranceSeek
             foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(v.Target))
                 saFeature.TriggerOnAbility(v, "HitRateSetup", true);
 
-            TranceSeekCharacterMechanic.GarnetGemMechanic(v, GarnetGemMechanic_Type.BoostMagicalEvade);
+            AlterHitRateForStatus(v);
 
             if (v.Context.HitRate <= Comn.random16() % 100 && !CheckInvincible(v))
             {
@@ -316,7 +318,7 @@ namespace Memoria.Scripts.TranceSeek
             foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(v.Target))
                 saFeature.TriggerOnAbility(v, "HitRateSetup", true);
 
-            ReduceAccuracyEliteMonsters(v);
+            AlterHitRateForStatus(v);
 
             if (v.Command.HitRate > Comn.random16() % 100 && !CheckInvincible(v))
             {
@@ -325,6 +327,19 @@ namespace Memoria.Scripts.TranceSeek
             }
 
             SPS_GuardStatus(v);
+        }
+
+        public static void AlterHitRateForStatus(this BattleCalculator v)
+        {
+            if (OneTriggerHitRateBonus)
+                return;
+
+            if (v.Target.State().Monster.TroubleOnBoss)
+                v.Context.HitRate += 10;
+
+            TranceSeekCharacterMechanic.GarnetGemMechanic(v, GarnetGemMechanic_Type.BoostMagicalEvade);
+            ReduceAccuracyEliteMonsters(v);
+            OneTriggerHitRateBonus = true;
         }
 
         public static void TargetPhysicalPenaltyAndBonusAttack(this BattleCalculator v)
@@ -429,7 +444,7 @@ namespace Memoria.Scripts.TranceSeek
             if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Venefic))
                 TranceSeekCharacterMechanic.AmarantPassive(v);
 
-            ReduceAccuracyEliteMonsters(v);
+            AlterHitRateForStatus(v);
 
             if (v.Context.HitRate < 1)
                 v.Context.HitRate = 1;
@@ -452,15 +467,6 @@ namespace Memoria.Scripts.TranceSeek
                     v.Command.HitRate /= 2;
                 }
             }
-            else if (v.Target.IsUnderAnyStatus(BattleStatus.EasyKill)) // Security for special cases... maybe useless.
-            {
-                if ((v.Command.AbilityStatus & BattleStatus.Death) != 0)
-                {
-                    v.Command.AbilityStatus &= ~BattleStatus.Death;
-                    v.TargetState().TriggerSPSResistStatus = true;
-                }
-            }
-
         }
 
         public static void PenaltyShellAttack(this BattleCalculator v)
@@ -669,7 +675,7 @@ namespace Memoria.Scripts.TranceSeek
 
         public static Boolean CanAttackMagic(this BattleCalculator v)
         {
-            TranceSeekCharacterMechanic.ViviFocus(v);
+            ViviFocus(v);
 
             if ((v.Context.Flags & TranceSeekBattleCalcFlags.PropagationFail) != 0)
             {
@@ -773,11 +779,6 @@ namespace Memoria.Scripts.TranceSeek
         {
             if (InfusedWeaponScript.WeaponNewStatus[v.Caster.Data] != 0 && InfusedWeaponScript.WeaponNewStatus[v.Caster.Data] != BattleStatus.Protect && InfusedWeaponScript.WeaponNewStatus[v.Caster.Data] != BattleStatus.Shell)
             {
-                foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(v.Caster))
-                    saFeature.TriggerOnAbility(v, "HitRateSetup", false);
-                foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(v.Target))
-                    saFeature.TriggerOnAbility(v, "HitRateSetup", true);
-
                 if (v.Caster.IsPlayer)
                 {
                     if (v.Caster.WeaponRate > Comn.random16() % 100)
@@ -859,6 +860,55 @@ namespace Memoria.Scripts.TranceSeek
         {
             if (!v.Command.IsManyTarget)
                 v.RaiseTrouble();
+        }
+
+        public static Boolean CheckDeathOnZombie(this BattleCalculator v)
+        {
+            if (v.Target.IsZombie)
+            {
+                if (v.Target.CanBeAttacked())
+                {
+                    v.Target.CurrentHp = v.Target.MaximumHp;
+                    btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[00FF00]", TranceSeekMessages.DeathHealZombie, HUDMessage.MessageStyle.DEATH, 5);
+                    SPSEffect sps = HonoluluBattleMain.battleSPS.AddSequenceSPS(20, -1, 1);
+                    if (sps == null)
+                        return true;
+
+                    btl2d.GetIconPosition(v.Target, btl2d.ICON_POS_ROOT, out Transform attachTransf, out Vector3 iconOff);
+                    sps.charTran = v.Target.Data.gameObject.transform;
+                    sps.boneTran = attachTransf;
+                    //sps.scale *= 1;
+                    SoundLib.PlaySoundEffect(5013);
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public static void TryDirectHPDamage(this BattleCalculator v)
+        {
+            if (v.Command.Power == 0)
+            {
+                if (CheckDeathOnZombie(v))
+                    return;
+
+                if (v.Target.IsUnderAnyStatus(BattleStatus.EasyKill))
+                    v.Context.Flags |= BattleCalcFlags.Guard;
+                else
+                    v.Target.Kill(v.Caster.Data);
+
+                return;
+            }
+
+            if (v.Target.IsUnderStatus(BattleStatus.Death))
+            {
+                v.Context.Flags |= BattleCalcFlags.Miss;
+                return;
+            }
+
+            v.Context.Flags |= BattleCalcFlags.DirectHP;
+            v.Target.CurrentHp = (UInt32)v.Command.Power;
+            v.Target.FaceTheEnemy();
         }
 
         public static void ChangeRow(BattleUnit unit)
@@ -1317,7 +1367,7 @@ namespace Memoria.Scripts.TranceSeek
                 }
             }
 
-            if (v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.MysticVeil) && (v.Target.Flags & CalcFlag.HpRecovery) == 0 && v.Target.HpDamage > 0)
+            if (v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.MysticVeil) && (v.Target.Flags & CalcFlag.HpRecovery) == 0 && v.Target.HpDamage > 0 && (TypeAttack & 2) != 0)
             {
                 uint TargetMP = v.Target.CurrentMp;
                 Boolean MysticVeilBoosted = v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.MysticVeil_Boosted);

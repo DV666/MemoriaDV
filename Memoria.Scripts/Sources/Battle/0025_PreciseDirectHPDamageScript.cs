@@ -20,7 +20,7 @@ namespace Memoria.Scripts.TranceSeek
         public void Perform()
         {
             if (TranceSeekAPI.CheckUnsafetyOrGuard(_v) && _v.Target.CanBeAttacked())
-                _v.TryDirectHPDamage();
+                TranceSeekAPI.TryDirectHPDamage(_v);
         }
     }
 }

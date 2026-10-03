@@ -1,6 +1,7 @@
-﻿using System;
-using FF9;
+﻿using FF9;
 using Memoria.Data;
+using System;
+using System.Runtime.Remoting.Contexts;
 
 namespace Memoria.Scripts.TranceSeek
 {
@@ -67,9 +68,10 @@ namespace Memoria.Scripts.TranceSeek
                 }
                 else
                 {
+                    _v.Context.AttackPower = _v.Command.Weapon.Power << 1;
+
                     if (_v.Command.ItemId == TranceSeekRegularItem.Katon || _v.Command.ItemId == TranceSeekRegularItem.Suiton || _v.Command.ItemId == TranceSeekRegularItem.Raijin)
                     {
-                        _v.Context.AttackPower = _v.Command.Weapon.Power << 1;
                         _v.Context.Attack = (Int16)(_v.Caster.Magic + Comn.random16() % (1 + (_v.Caster.Level + _v.Caster.Magic >> 3)));
                         _v.Target.SetMagicDefense();
                         TranceSeekAPI.CasterPenaltyMini(_v);
@@ -78,28 +80,34 @@ namespace Memoria.Scripts.TranceSeek
                     }
                     else
                     {
+                        int WeaponShape = ff9item._FF9Item_Data[_v.Command.ItemId].shape;
+
                         if (!TranceSeekAPI.TryKillFrozen(_v))
                         {
                             if (_v.Target.IsUnderAnyStatus(BattleStatus.Vanish))
                             {
                                 _v.Context.Flags |= BattleCalcFlags.Miss;
                             }
-                            _v.Caster.SetLowPhysicalAttack();
-                            
-                            _v.Target.SetPhysicalDefense();
-                            _v.Context.AttackPower = _v.Command.Weapon.Power << 1;
+                            int strengthvalue = WeaponShape == 11 ? (Comn.random16() % _v.Caster.Strength) : _v.Caster.Strength;
+                            _v.Context.Attack = (Int16)(strengthvalue + Comn.random16() % (1 + (_v.Caster.Level + _v.Caster.Strength >> 3)));
+
+                            _v.Command.Element = _v.Command.Weapon.Element;
+                            if (_v.Command.Weapon.HitRate > Comn.random16() % 100)
+                                _v.Command.AbilityStatus |= _v.Command.Weapon.Status;
+
+                            if (WeaponShape == 7)
+                                _v.Target.SetMagicDefense();
+                            else
+                                _v.Target.SetPhysicalDefense();
+
                             TranceSeekAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
+                            TranceSeekAPI.BonusWeaponElement(_v);
+                            TranceSeekAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
+                            TranceSeekAPI.TryAlterCommandStatuses(_v);
+                            if (TranceSeekAPI.CanAttackMagic(_v))
+                                _v.CalcPhysicalHpDamage();
                         }
                     }
-                    _v.Command.Element = _v.Command.Weapon.Element;
-                    if (_v.Command.Weapon.HitRate > Comn.random16() % 100)
-                        _v.Command.AbilityStatus |= _v.Command.Weapon.Status;
-
-                    TranceSeekAPI.BonusWeaponElement(_v);
-                    TranceSeekAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
-                    TranceSeekAPI.TryAlterCommandStatuses(_v);
-                    if (TranceSeekAPI.CanAttackMagic(_v))
-                        _v.CalcPhysicalHpDamage();
                 }
             }
             else
