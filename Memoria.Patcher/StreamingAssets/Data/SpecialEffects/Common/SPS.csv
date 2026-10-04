@@ -22,4 +22,6 @@ Old;14;FieldMaps/fbg_n09_cshp_map141_ca_dck_1/443.sps;EmbeddedAsset/BattleMap/St
 ReiWrath;15;FieldMaps/fbg_n01_alxt_map821a_at_msb_b/2334.sps;EmbeddedAsset/BattleMap/Status/ReiWrath/ReiWrath.png;1;1;1
 QuickAttack;16;FieldMaps/fbg_n27_fslr_map467_fr_sbw_0/1305.sps;EmbeddedAsset/BattleMap/Status/VisualEffect/QuickAttack/QuickAttack.png;2;2;1
 MysticVeil;17;FieldMaps/fbg_n19_clir_map389_cy_twn_h/279.sps;EmbeddedAsset/BattleMap/Status/MysticVeil/MysticVeil.png;1;2;1
-SoulDrain;18;FieldMaps/fbg_n19_clir_map389_cy_twn_h/279.sps;EmbeddedAsset/BattleMap/Status/SoulDrain/SoulDrain.png;1;2;1
+SoulRingSuccess;18;FieldMaps/fbg_n41_brbl_map692_bb_fgt_0/1048.sps;EmbeddedAsset/BattleMap/Status/SoulRing/SoulRingSuccess.png;1;2;1
+SoulRingFail;19;FieldMaps/fbg_n41_brbl_map692_bb_fgt_0/1048.sps;EmbeddedAsset/BattleMap/Status/SoulRing/SoulRingFail.png;1;2;1
+DeathRestoreZombie;20;FieldMaps/fbg_n45_cysw_mapx27_cw_lst_1/163.sps;EmbeddedAsset/BattleMap/Status/DeathRestoreZombie/DeathRestoreZombie.png;1;1.5;1

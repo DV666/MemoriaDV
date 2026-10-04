@@ -9,6 +9,8 @@ namespace Memoria.Scripts.TranceSeek
 {
     public class OverloadUnitCheckPointScript : IOverloadUnitCheckPointScript
     {
+        public static Color ColorInvigorating => new Color(0.66654f, 0.99999f, 0.6715f);
+
         public BattleStatus UpdatePointStatus(BattleUnit unit)
         {
             if (!unit.IsPlayer)
@@ -26,7 +28,9 @@ namespace Memoria.Scripts.TranceSeek
             }
             else
             {
-                if (HPColored && unit.IsPlayer && unit.CurrentHp == unit.MaximumHp)
+                if (unit.State().SpecialSA.Invigorating)
+                    unit.UIColorHP = ColorInvigorating;
+                else if (HPColored && unit.IsPlayer && unit.CurrentHp == unit.MaximumHp)
                     unit.UIColorHP = FF9TextTool.Green;
                 else
                     unit.UIColorHP = FF9TextTool.White;

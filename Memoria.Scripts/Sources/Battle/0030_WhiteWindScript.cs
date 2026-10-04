@@ -1,4 +1,5 @@
 ﻿using Memoria.Data;
+using Memoria.Prime;
 using System;
 
 namespace Memoria.Scripts.TranceSeek
@@ -18,7 +19,7 @@ namespace Memoria.Scripts.TranceSeek
             _v = v;
         }
 
-        public void Perform()
+        public void Perform() // [TODO] Maybe redoing the White Wind script, by using some TS dict var ?
         {
             if (_v.Command.HitRate == 111)
             {
@@ -45,80 +46,16 @@ namespace Memoria.Scripts.TranceSeek
             }
             else
             {
-                if (_v.Command.Power == 0)
-                {
-                    if (_v.Caster.PlayerIndex == CharacterId.Quina)
-                    {
-                        if (_v.Target.PlayerIndex == CharacterId.Quina)
-                        {
-                            _v.Caster.HpDamage = (int)_v.Caster.CurrentHp;
+                var CasterState = _v.Caster.State();
+                if (CasterState.CasterHP_WhiteWind == 0)
+                    CasterState.CasterHP_WhiteWind = _v.Caster.CurrentHp;
 
-                            if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Doctor)) // Medecin
-                                _v.Target.HpDamage += _v.Caster.HpDamage / (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Doctor_Boosted) ? 2 : 4);
+                if (_v.Target.IsZombie)
+                    _v.Target.Flags |= CalcFlag.HpAlteration;
+                else
+                    _v.Target.Flags |= CalcFlag.HpDamageOrHeal;
 
-                            foreach (BattleUnit unit in BattleState.EnumerateUnits())
-                            {
-                                if (!unit.IsPlayer || !unit.IsTargetable || unit.IsUnderAnyStatus(BattleStatus.Death | BattleStatus.Petrify | BattleStatus.Jump))
-                                    continue;
-
-                                _v.Caster.Flags = CalcFlag.HpAlteration;
-                                if (!unit.IsUnderAnyStatus(BattleStatus.Zombie))
-                                    _v.Caster.Flags = CalcFlag.HpDamageOrHeal;
-
-                                if (_v.Command.AbilityId == TranceSeekBattleAbility.Mistral) // Vent Blanc
-                                    unit.RemoveStatus(_v.Command.AbilityStatus);
-
-                                _v.Caster.Change(unit);
-                                SBattleCalculator.CalcResult(_v);
-                                BattleState.Unit2DReq(unit);
-                            }
-                            _v.Caster.Flags = 0;
-                            _v.Caster.HpDamage = 0;
-                            _v.PerformCalcResult = false;
-                        }
-                    }
-                    else
-                    {
-                        if (_v.Target.Data == _v.Caster.Data)
-                        {
-                            if (!_v.Target.CanBeHealed())
-                                return;
-
-                            _v.Caster.Flags = CalcFlag.HpAlteration | CalcFlag.HpRecovery;
-                            _v.Caster.HpDamage = (int)_v.Caster.CurrentHp;
-
-                            foreach (BattleUnit unit in BattleState.EnumerateUnits())
-                            {
-                                if (unit.IsPlayer)
-                                    continue;
-
-                                _v.Caster.Change(unit);
-                                SBattleCalculator.CalcResult(_v);
-                                BattleState.Unit2DReq(unit);
-                            }
-                            _v.Caster.Flags = 0;
-                            _v.Caster.HpDamage = 0;
-                            _v.PerformCalcResult = false;
-                        }
-                    }
-                }
-                else // Telekenesis
-                {
-                    _v.NormalMagicParams();
-                        
-                    TranceSeekAPI.CasterPenaltyMini(_v);
-                    TranceSeekAPI.PenaltyShellAttack(_v);
-                    TranceSeekAPI.PenaltyCommandDividedAttack(_v);
-                    TranceSeekAPI.BonusElement(_v);
-                    if (TranceSeekAPI.CanAttackMagic(_v))
-                    {
-                        if (_v.Target.IsLevitate) // (x 3 against Flying)
-                            _v.Context.DamageModifierCount += 8;
-                        _v.CalcHpDamage();
-                        TranceSeekAPI.RaiseTrouble(_v);
-                    }
-                    TranceSeekAPI.TryAlterMagicStatuses(_v);
-                }
+                _v.Target.HpDamage = (int)CasterState.CasterHP_WhiteWind;
             }
         }
     }

@@ -11,19 +11,45 @@ EndThread
 Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
 SetupReflect: Delay=SFXLoaded
 StartThread: Condition=CasterHasSA(1027) && ItemUseId == 1000 && TargetIsPlayer ; Sync
-	LoadSFX: SFX=Curaga__Multi ; Reflect=True ; Target = AllPlayers
-	PlayAnimation: Char=Caster ; Anim=MP_ITEM1
-	WaitAnimation: Char=Caster
-	WaitSFXLoaded: SFX=Curaga__Multi ; Reflect=True
-	PlaySFX: SFX=Curaga__Multi ; Reflect=True ; MeshColors=(1.0, 0.2, 0.2)
-	WaitSFXDone: SFX=Curaga__Multi ; Reflect=True
+
+	StartThread: Condition=CommandTargetId == 1
+		SetVariable: Variable=gEventGlobal ; Index=1326 ; Value=1
+	ElseThread: Condition=CommandTargetId == 2
+		SetVariable: Variable=gEventGlobal ; Index=1326 ; Value=2
+	ElseThread: Condition=CommandTargetId == 4
+		SetVariable: Variable=gEventGlobal ; Index=1326 ; Value=4
+	ElseThread
+		SetVariable: Variable=gEventGlobal ; Index=1326 ; Value=8
+	EndThread
+	
+	StartThread: Target=AllPlayers ; Sync
+		LoadSFX: SFX=Curaga__Multi ; Reflect=True ; Target = AllPlayers
+		PlayAnimation: Char=Caster ; Anim=MP_ITEM1
+		WaitAnimation: Char=Caster
+		WaitSFXLoaded: SFX=Curaga__Multi ; Reflect=True
+		PlaySFX: SFX=Curaga__Multi ; Reflect=True ; MeshColors=(1.0, 0.2, 0.2)
+		WaitSFXDone: SFX=Curaga__Multi ; Reflect=True
+	EndThread
 ElseThread: Condition=CasterHasSA(1027) && ItemUseId == 1000 && !TargetIsPlayer ; Sync
-	LoadSFX: SFX=Curaga__Multi ; Reflect=True ; Target = AllEnemies
-	PlayAnimation: Char=Caster ; Anim=MP_ITEM1
-	WaitAnimation: Char=Caster
-	WaitSFXLoaded: SFX=Curaga__Multi ; Reflect=True
-	PlaySFX: SFX=Curaga__Multi ; Reflect=True ; MeshColors=(1.0, 0.2, 0.2)
-	WaitSFXDone: SFX=Curaga__Multi ; Reflect=True
+
+	StartThread: Condition=CommandTargetId == 16
+		SetVariable: Variable=gEventGlobal ; Index=1326 ; Value=16
+	ElseThread: Condition=CommandTargetId == 32
+		SetVariable: Variable=gEventGlobal ; Index=1326 ; Value=32
+	ElseThread: Condition=CommandTargetId == 64
+		SetVariable: Variable=gEventGlobal ; Index=1326 ; Value=64
+	ElseThread
+		SetVariable: Variable=gEventGlobal ; Index=1326 ; Value=128
+	EndThread
+	
+	StartThread: Target=AllEnemies ; Sync
+		LoadSFX: SFX=Curaga__Multi ; Reflect=True ; Target = AllEnemies
+		PlayAnimation: Char=Caster ; Anim=MP_ITEM1
+		WaitAnimation: Char=Caster
+		WaitSFXLoaded: SFX=Curaga__Multi ; Reflect=True
+		PlaySFX: SFX=Curaga__Multi ; Reflect=True ; MeshColors=(1.0, 0.2, 0.2)
+		WaitSFXDone: SFX=Curaga__Multi ; Reflect=True
+	EndThread
 ElseThread: Sync
 	StartThread: Condition=IsSingleTarget ; Sync=True
 		LoadSFX: SFX=Curaga__Single ; Reflect=True

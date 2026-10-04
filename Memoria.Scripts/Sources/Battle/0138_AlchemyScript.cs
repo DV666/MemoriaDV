@@ -99,9 +99,6 @@ namespace Memoria.Scripts.TranceSeek
                                 _v.Context.AttackPower = 1250;
                             }
 
-                            if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Doctor)) // Medecin
-                                _v.Target.HpDamage += _v.Target.HpDamage / (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Doctor_Boosted) ? 2 : 4);
-
                             _v.CalcHpMagicRecovery();
                             break;
                         }

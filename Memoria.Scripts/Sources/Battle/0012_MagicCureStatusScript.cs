@@ -25,7 +25,7 @@ namespace Memoria.Scripts.TranceSeek
             {
                 _v.Command.AbilityStatus |= TranceSeekStatus.Old;
             }
-            if (_v.Command.HitRate == 244) // Black Hole
+            else if (_v.Command.HitRate == 244) // Black Hole
             {
                 _v.Command.AbilityStatus |= (BattleStatusConst.AnyPositive);
                 _v.Command.AbilityStatus &= ~BattleStatus.Trance;

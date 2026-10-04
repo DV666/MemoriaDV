@@ -51,11 +51,7 @@ namespace Memoria.Scripts.TranceSeek
             if (TranceSeekAPI.TryPhysicalHit(_v) || _v.Command.AbilityId == TranceSeekBattleAbility.Attack) // Attack from King Leo
             {
                 if (_v.Command.Id == TranceSeekBattleCommand.MagicWeapon_Weak || _v.Command.Id == TranceSeekBattleCommand.MagicWeapon_Normal || _v.Command.Id == TranceSeekBattleCommand.MagicWeapon_Strong)
-                {
-                    _v.Target.RemoveStatus(BattleStatusConst.RemoveOnPhysicallyAttacked & ~_v.Context.AddedStatuses);
-                    if (FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1050, out Dictionary<Int32, Int32> dict))
-                        dict[0] = 1;
-                }
+                    MagicWeapon = 1;
 
                 TranceSeekAPI.WeaponPhysicalParams(_bonus, _v);
                 TranceSeekAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
@@ -127,15 +123,20 @@ namespace Memoria.Scripts.TranceSeek
                     {
                         BattleStatus WeaponStatus = _v.Caster.WeaponStatus;
 
-                        if ((WeaponStatus & BattleStatus.Death) != 0)
-                        {
-                            int HitRateWeaponStatus = _v.Caster.WeaponRate + (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.AddStatus_Boosted) ? (_v.Caster.Will / 4) : 0);
-                            if ((WeaponStatus & BattleStatus.Death) != 0 && TranceSeekAPI.EliteMonster(_v.Target.Data))
-                                HitRateWeaponStatus /= 2;
+                        int HitRateWeaponStatus = _v.Caster.WeaponRate + (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.AddStatus_Boosted) ? (_v.Caster.Will / 4) : 0);
+                        if (_v.Target.State().Monster.TroubleOnBoss)
+                            HitRateWeaponStatus += 10;
 
-                            if ((GameRandom.Next8() % 100) < HitRateWeaponStatus && !TranceSeekAPI.CheckDeathOnZombie(_v))
-                                _v.Command.AbilityStatus |= WeaponStatus;
-                        }                  
+                        BattleStatus LethalStatus = BattleStatus.Death | BattleStatus.Petrify | BattleStatus.Mini | BattleStatus.Heat |
+                        BattleStatus.Freeze | BattleStatus.Zombie | BattleStatus.Stop | TranceSeekStatus.Old;
+
+                        if ((WeaponStatus & LethalStatus) != 0 && TranceSeekAPI.EliteMonster(_v.Target.Data))
+                            HitRateWeaponStatus /= 2;
+
+                        Boolean DeathOnZombie = (WeaponStatus & BattleStatus.Death) != 0 && TranceSeekAPI.CheckDeathOnZombie(_v);
+
+                        if ((GameRandom.Next8() % 100) < HitRateWeaponStatus && !DeathOnZombie)
+                            _v.Command.AbilityStatus |= WeaponStatus;
                     }
 
                     TranceSeekAPI.InfusedWeaponStatus(_v);
@@ -188,8 +189,6 @@ namespace Memoria.Scripts.TranceSeek
             if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Archmage))
                 TranceSeekAPI.TryCriticalHit(_v);
             _v.Caster.HpDamage = _v.Context.EnsureAttack * _v.Context.EnsurePowerDifference;
-            if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Doctor)) // Medecin
-                _v.Caster.HpDamage += _v.Target.HpDamage / (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Doctor_Boosted) ? 2 : 4);
 
             foreach (BattleUnit unit in BattleState.EnumerateUnits())
             {

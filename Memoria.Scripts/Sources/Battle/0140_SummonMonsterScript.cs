@@ -726,7 +726,7 @@ namespace Memoria.Scripts.TranceSeek
                         _v.Target.HpDamage = (Int32)(_v.Caster.MaximumHp - _v.Caster.CurrentHp);
                         break;
                     }
-                    // WHITE WIND - Script 30
+                    // WHITE WIND - Script 30 [TODO] DV : Need to be adjusted since i remade script for White Wind and Psychokinesis
                     case TranceSeekBattleAbility.Zuu2: // Zuu - White Wind
                     case TranceSeekBattleAbility.Jabberwock2: // Jabberwock - Psychokinesis
                     case TranceSeekBattleAbility.Zemzelett: // Zemzelett - Psychokinesis

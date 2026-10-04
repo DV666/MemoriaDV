@@ -1,10 +1,7 @@
 ﻿using FF9;
-using Memoria.Assets;
 using Memoria.Data;
-using Memoria.Prime;
 using System;
 using System.Collections.Generic;
-using static Memoria.Scripts.TranceSeek.TranceSeekAPI;
 
 namespace Memoria.Scripts.TranceSeek
 {
@@ -78,6 +75,9 @@ namespace Memoria.Scripts.TranceSeek
                     v.Target.HpDamage *= 2;
                     Caster_TSVar.Blank.SecretIngredient--;
                 }
+
+                if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Doctor) && (v.Target.Flags & CalcFlag.HpRecovery) != 0 && v.Target.MpDamage == 0) // Medecin
+                    v.Context.DamageModifierCount += v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Doctor_Boosted) ? 2 : 1;
             }
             if (v.Target.IsPlayer)
             {

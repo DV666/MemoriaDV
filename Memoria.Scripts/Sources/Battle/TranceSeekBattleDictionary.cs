@@ -76,8 +76,8 @@ namespace Memoria.Scripts.TranceSeek
             get
             {
                 if (FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1000, out Dictionary<Int32, Int32> dictbattle))
-                    if (dictbattle.TryGetValue(11, out int canCoverValue))
-                        return canCoverValue;
+                    if (dictbattle.TryGetValue(11, out int refreshcachevalue))
+                        return refreshcachevalue;
 
                 return 0;
             }
@@ -90,6 +90,28 @@ namespace Memoria.Scripts.TranceSeek
                 }
 
                 dictbattle[11] = value;
+            }
+        }
+
+        public static int MagicWeapon
+        {
+            get
+            {
+                if (FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1050, out Dictionary<Int32, Int32> dictbattle))
+                    if (dictbattle.TryGetValue(0, out int MagicWeaponValue))
+                        return MagicWeaponValue;
+
+                return 0;
+            }
+            set
+            {
+                if (!FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1050, out Dictionary<Int32, Int32> dictbattle))
+                {
+                    dictbattle = new Dictionary<Int32, Int32>();
+                    FF9StateSystem.EventState.gScriptDictionary.Add(1050, dictbattle);
+                }
+
+                dictbattle[0] = value;
             }
         }
     }
@@ -364,6 +386,7 @@ namespace Memoria.Scripts.TranceSeek
         public int OneTriggerSOS { get; set; }
         public int NewMaximumHP { get; set; }
         public int NewMaximumMP { get; set; }
+        public Boolean Invigorating { get; set; }
         public int Propagation { get; set; }
         public SPSEffect VeilMystic { get; set; }
     }
@@ -441,6 +464,9 @@ namespace Memoria.Scripts.TranceSeek
         public Boolean FreezeAltEffect { get; set; } // For ice monsters or LunarCrown
         public int MascotCooldown { get; set; }
         public int SoulChance { get; set; }
+        public uint CasterHP_WhiteWind { get; set; }
+        public Boolean OverloadEndCalled { get; set; }
+
 
         public SPSEffect PolaritySPS { get; set; }
 

@@ -111,7 +111,7 @@ ElseThread: Condition=GetItemProperty(ItemUseId, 'Shape') == 43 && GetItemProper
 	WaitSFXLoaded: SFX=Vanish
 	PlaySFX: SFX=Vanish
 	WaitSFXDone: SFX=Vanish ; Reflect=True
-ElseThread: Condition=GetItemProperty(ItemUseId, 'Shape') == 42
+ElseThread: Condition=(GetItemProperty(ItemUseId, 'Shape') == 5 || GetItemProperty(ItemUseId, 'Shape') == 42 || GetItemProperty(ItemUseId, 'Shape') == 115 || GetItemProperty(ItemUseId, 'Shape') == 116 || GetItemProperty(ItemUseId, 'Shape') == 128)
 	WaitAnimation: Char=Caster
 	Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
 	SetupReflect: Delay=SFXLoaded
@@ -132,7 +132,7 @@ ElseThread: Condition=GetItemProperty(ItemUseId, 'Shape') == 42
 	WaitSFXDone: SFX=Throw_Spear ; Reflect=True
 	ActivateReflect
 	WaitReflect
-ElseThread: Condition=GetItemProperty(ItemUseId, 'Shape') == 44
+ElseThread: Condition=(GetItemProperty(ItemUseId, 'Shape') == 3 || GetItemProperty(ItemUseId, 'Shape') == 44 || GetItemProperty(ItemUseId, 'Shape') == 119 || GetItemProperty(ItemUseId, 'Shape') == 121 || GetItemProperty(ItemUseId, 'Shape') == 126)
 	WaitAnimation: Char=Caster
 	Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
 	SetupReflect: Delay=SFXLoaded
@@ -174,7 +174,7 @@ ElseThread: Condition=GetItemProperty(ItemUseId, 'Shape') == 45
 	WaitSFXDone: SFX=Paper_Storm ; Reflect=True
 	ActivateReflect
 	WaitReflect
-ElseThread: Condition=GetItemProperty(ItemUseId, 'Shape') == 12	
+ElseThread: Condition=GetItemProperty(ItemUseId, 'Shape') == 12
 	WaitAnimation: Char=Caster
 	Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
 	SetupReflect: Delay=SFXLoaded
@@ -195,7 +195,7 @@ ElseThread: Condition=GetItemProperty(ItemUseId, 'Shape') == 12
 	WaitSFXDone: SFX=Throw_Disc ; Reflect=True
 	ActivateReflect
 	WaitReflect
-ElseThread: Condition=GetItemProperty(ItemUseId, 'Shape') == 11
+ElseThread: Condition=(GetItemProperty(ItemUseId, 'Shape') == 11 || GetItemProperty(ItemUseId, 'Shape') == 131)
 	WaitAnimation: Char=Caster
 	Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
 	SetupReflect: Delay=SFXLoaded
@@ -216,7 +216,7 @@ ElseThread: Condition=GetItemProperty(ItemUseId, 'Shape') == 11
 	WaitSFXDone: SFX=Throw_Fork ; Reflect=True
 	ActivateReflect
 	WaitReflect
-ElseThread: Condition=(GetItemProperty(ItemUseId, 'Shape') == 8 || GetItemProperty(ItemUseId, 'Shape') == 9 || GetItemProperty(ItemUseId, 'Shape') == 10)
+ElseThread: Condition=(GetItemProperty(ItemUseId, 'Shape') == 8 || GetItemProperty(ItemUseId, 'Shape') == 9 || GetItemProperty(ItemUseId, 'Shape') == 10 || GetItemProperty(ItemUseId, 'Shape') == 110 || GetItemProperty(ItemUseId, 'Shape') == 112 || GetItemProperty(ItemUseId, 'Shape') == 113 || GetItemProperty(ItemUseId, 'Shape') == 114 || GetItemProperty(ItemUseId, 'Shape') == 132)
 	WaitAnimation: Char=Caster
 	Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
 	SetupReflect: Delay=SFXLoaded
@@ -237,7 +237,7 @@ ElseThread: Condition=(GetItemProperty(ItemUseId, 'Shape') == 8 || GetItemProper
 	WaitSFXDone: SFX=Throw_Rod ; Reflect=True
 	ActivateReflect
 	WaitReflect
-ElseThread: Condition=GetItemProperty(ItemUseId, 'Shape') == 7
+ElseThread: Condition=(GetItemProperty(ItemUseId, 'Shape') == 7 || GetItemProperty(ItemUseId, 'Shape') == 124)
 	WaitAnimation: Char=Caster
 	Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
 	SetupReflect: Delay=SFXLoaded
@@ -258,7 +258,7 @@ ElseThread: Condition=GetItemProperty(ItemUseId, 'Shape') == 7
 	WaitSFXDone: SFX=Throw_Racket ; Reflect=True
 	ActivateReflect
 	WaitReflect
-ElseThread: Condition=GetItemProperty(ItemUseId, 'Shape') == 6
+ElseThread: Condition=(GetItemProperty(ItemUseId, 'Shape') == 6 || GetItemProperty(ItemUseId, 'Shape') == 63 || GetItemProperty(ItemUseId, 'Shape') == 118)
 	WaitAnimation: Char=Caster
 	Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
 	SetupReflect: Delay=SFXLoaded
@@ -279,48 +279,7 @@ ElseThread: Condition=GetItemProperty(ItemUseId, 'Shape') == 6
 	WaitSFXDone: SFX=Throw_Claw ; Reflect=True
 	ActivateReflect
 	WaitReflect
-ElseThread: Condition=GetItemProperty(ItemUseId, 'Shape') == 5
-	WaitAnimation: Char=Caster
-	Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
-	SetupReflect: Delay=SFXLoaded
-	Turn: Char=Caster ; BaseAngle=AllTargets ; Time=5
-	LoadSFX: SFX=Throw_Spear ; Reflect=True
-	WaitSFXLoaded: SFX=Throw_Spear ; Reflect=True
-	WaitAnimation: Char=Caster
-	PlayAnimation: Char=Caster ; Anim=MP_SPECIAL1
-	StartThread
-		WaitAnimation: Char=Caster
-		PlayAnimation: Char=Caster ; Anim=MP_IDLE_NORMAL
-		PlayAnimation: Char=Caster ; Anim=Idle
-		Turn: Char=Caster ; BaseAngle=Default ; Time=5
-		WaitTurn: Char=Caster
-	EndThread
-	Wait: Time=6
-	PlaySFX: SFX=Throw_Spear ; Reflect=True
-	WaitSFXDone: SFX=Throw_Spear ; Reflect=True
-	ActivateReflect
-ElseThread: Condition=GetItemProperty(ItemUseId, 'Shape') == 3
-	WaitAnimation: Char=Caster
-	Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
-	SetupReflect: Delay=SFXLoaded
-	Turn: Char=Caster ; BaseAngle=AllTargets ; Time=5
-	LoadSFX: SFX=Throw_Sword ; Reflect=True
-	WaitSFXLoaded: SFX=Throw_Sword ; Reflect=True
-	WaitAnimation: Char=Caster
-	PlayAnimation: Char=Caster ; Anim=MP_SPECIAL1
-	StartThread
-		WaitAnimation: Char=Caster
-		PlayAnimation: Char=Caster ; Anim=MP_IDLE_NORMAL
-		PlayAnimation: Char=Caster ; Anim=Idle
-		Turn: Char=Caster ; BaseAngle=Default ; Time=5
-		WaitTurn: Char=Caster
-	EndThread
-	Wait: Time=6
-	PlaySFX: SFX=Throw_Sword ; Reflect=True
-	WaitSFXDone: SFX=Throw_Sword ; Reflect=True
-	ActivateReflect
-	WaitReflect
-ElseThread: Condition=GetItemProperty(ItemUseId, 'Shape') == 2
+ElseThread: Condition=(GetItemProperty(ItemUseId, 'Shape') == 2 || GetItemProperty(ItemUseId, 'Shape') == 117)
 	WaitAnimation: Char=Caster
 	Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
 	SetupReflect: Delay=SFXLoaded
@@ -341,7 +300,7 @@ ElseThread: Condition=GetItemProperty(ItemUseId, 'Shape') == 2
 	WaitSFXDone: SFX=Throw_Thief_Sword ; Reflect=True
 	ActivateReflect
 	WaitReflect
-ElseThread: Condition=GetItemProperty(ItemUseId, 'Shape') == 1
+ElseThread: Condition=(GetItemProperty(ItemUseId, 'Shape') == 1 || GetItemProperty(ItemUseId, 'Shape') == 111 || GetItemProperty(ItemUseId, 'Shape') == 120 || GetItemProperty(ItemUseId, 'Shape') == 122 || GetItemProperty(ItemUseId, 'Shape') == 120 || GetItemProperty(ItemUseId, 'Shape') == 123 || GetItemProperty(ItemUseId, 'Shape') == 127 || GetItemProperty(ItemUseId, 'Shape') == 129)
 	WaitAnimation: Char=Caster
 	Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
 	SetupReflect: Delay=SFXLoaded

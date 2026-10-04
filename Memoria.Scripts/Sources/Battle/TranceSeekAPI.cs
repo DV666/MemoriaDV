@@ -425,7 +425,7 @@ namespace Memoria.Scripts.TranceSeek
                         if (!unit.IsPlayer || unit.Position == v.Target.Position)
                             continue;
 
-                        if (v.Target.Row != unit.Row && !unit.IsUnderAnyStatus(BattleStatusConst.Immobilized) && (unit.Position == v.Target.Position + 1 || unit.Position == v.Target.Position - 1))
+                        if (v.Target.Row != unit.Row && !unit.IsUnderAnyStatus(BattleStatusConst.Immobilized | BattleStatus.Sleep) && (unit.Position == v.Target.Position + 1 || unit.Position == v.Target.Position - 1))
                             longDistance = true;
                     }
                 }
@@ -609,9 +609,6 @@ namespace Memoria.Scripts.TranceSeek
                 v.Target.HpDamage = (int)(reviveheal + v.Target.MaximumHp / 4);
             else
                 v.Target.HpDamage = reviveheal;
-
-            if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Doctor) && v.Command.Id != BattleCommandId.Item) // Medecin, only for magic heal
-                v.Target.HpDamage += v.Target.HpDamage / (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Doctor_Boosted) ? 2 : 4);
         }
 
         public static Boolean IsAttackElement(this BattleCalculator v, EffectElement element)
@@ -1226,6 +1223,12 @@ namespace Memoria.Scripts.TranceSeek
                     }                   
                 }
             }
+            if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Chemist_Boosted) && v.Target.Id != FF9StateSystem.EventState.gEventGlobal[1326])
+            {
+                v.Target.HpDamage /= 2;
+                v.Target.MpDamage /= 2;
+            }
+
             if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Agreement) && v.Command.Id == BattleCommandId.MagicSword) // Entente
             {
                 Boolean AgreementTrigger = false;
@@ -1441,6 +1444,7 @@ namespace Memoria.Scripts.TranceSeek
 
                     v.Target.MaximumHp = (uint)Math.Min(v.Target.CurrentHp + v.Target.HpDamage, LimitMaxHP);
                     v.Target.CurrentHp = v.Target.MaximumHp;
+                    Target_TSVar.SpecialSA.Invigorating = true;
 
                     v.Target.AddDelayedModifier(
                         target =>
@@ -1456,7 +1460,10 @@ namespace Memoria.Scripts.TranceSeek
                         target =>
                         {
                             if (target != null)
+                            {
                                 target.MaximumHp = OldMaximumHP;
+                                Target_TSVar.SpecialSA.Invigorating = false;
+                            }
                         }
                     );
                 }

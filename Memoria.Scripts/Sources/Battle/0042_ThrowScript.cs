@@ -103,11 +103,13 @@ namespace Memoria.Scripts.TranceSeek
                             TranceSeekAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
                             TranceSeekAPI.BonusWeaponElement(_v);
                             TranceSeekAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
-                            TranceSeekAPI.TryAlterCommandStatuses(_v);
-                            if (TranceSeekAPI.CanAttackMagic(_v))
-                                _v.CalcPhysicalHpDamage();
+
                         }
                     }
+
+                    TranceSeekAPI.TryAlterCommandStatuses(_v);
+                    if (TranceSeekAPI.CanAttackMagic(_v))
+                        _v.CalcPhysicalHpDamage();
                 }
             }
             else

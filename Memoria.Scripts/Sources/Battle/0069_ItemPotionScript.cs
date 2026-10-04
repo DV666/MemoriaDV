@@ -111,72 +111,13 @@ namespace Memoria.Scripts.TranceSeek
                     _v.Context.AttackPower = 1250;
                 }
 
-                if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Doctor)) // Medecin
-                    _v.Target.HpDamage += _v.Target.HpDamage / (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Doctor_Boosted) ? 2 : 4);
+                _v.CalcHpMagicRecovery();
 
-                if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Chemist_Boosted) && (_v.Target.IsPlayer && BattleState.BattleUnitCount(true) > 1 || !_v.Target.IsPlayer && BattleState.BattleUnitCount(false) > 1))
-                { // Herboriste +                    
-                    foreach (BattleUnit unit in BattleState.EnumerateUnits())
-                    {
-                        int healing = 0;
-                        if (_v.Target.IsPlayer)
-                        {
-                            if (!unit.IsPlayer || !unit.IsTargetable || unit.IsUnderAnyStatus(BattleStatus.Death | BattleStatus.Petrify | BattleStatus.Jump))
-                                continue;                  
-
-                            if (unit.Data == _v.Target.Data)
-                            {
-                                healing = _v.Context.AttackPower * _v.Context.Attack * 2;
-                            }
-                            else
-                            {
-                                healing = _v.Context.AttackPower * _v.Context.Attack;
-                            }
-                        }
-                        else
-                        {
-                            if (unit.IsPlayer || !unit.IsTargetable || unit.IsUnderAnyStatus(BattleStatus.Death | BattleStatus.Petrify | BattleStatus.Jump))
-                                continue;
-
-                            if (unit.Data == _v.Target.Data)
-                            {
-                                healing = _v.Context.AttackPower * _v.Context.Attack * 2;
-                            }
-                            else
-                            {
-                                healing = _v.Context.AttackPower * _v.Context.Attack;
-                            }
-                        }
-
-                        if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Doctor)) // Medecin
-                            healing += healing / (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Doctor_Boosted) ? 2 : 4);
-
-                        if (unit.IsZombie)
-                        {
-                            btl2d.Btl2dStatReq(unit, healing, 0);
-                            btl_para.SetDamage(unit, healing, 1, _v.Command.Data);
-                        }
-                        else
-                        {
-                            btl2d.Btl2dStatReq(unit, -healing, 0);
-                            btl_para.SetRecover(unit, (uint)healing);
-                        }
-                        if (unit.Data.dms_geo_id == 416) // Meltigemini
-                        {
-                            _v.TargetState().Monster.CellularReaction = Math.Min(_v.TargetState().Monster.CellularReaction + _v.Target.HpDamage, 9999);
-                            btl_stat.AlterStatus(unit, TranceSeekStatusId.ZombieArmor, parameters: healing);
-                        }
-                    }
-                }
-                else
+                if (_v.Target.Data.dms_geo_id == 416) // Meltigemini
                 {
-                    _v.CalcHpMagicRecovery();
-                    if (_v.Target.Data.dms_geo_id == 416) // Meltigemini
-                    {
-                        _v.TargetState().Monster.CellularReaction = Math.Min(_v.TargetState().Monster.CellularReaction + _v.Target.HpDamage, 9999);
-                        btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.ZombieArmor, parameters: _v.Target.HpDamage);
-                    }
-                }  
+                    _v.TargetState().Monster.CellularReaction = Math.Min(_v.TargetState().Monster.CellularReaction + _v.Target.HpDamage, 9999);
+                    btl_stat.AlterStatus(_v.Target, TranceSeekStatusId.ZombieArmor, parameters: _v.Target.HpDamage);
+                }
             }
             if (_v.Caster.PlayerIndex == CharacterId.Blank && _v.Command.Id == BattleCommandId.Item)
                 _v.CasterState().Blank.SoakedBlade = _v.Command.ItemId;

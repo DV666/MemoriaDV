@@ -88,7 +88,7 @@ ElseThread: Sync
 	PlayAnimation: Char=Caster ; Anim=Idle
 	WaitTurn: Char=Caster
 EndThread
-StartThread: Condition=GetMemoriaDictionary(1050, 0) > 0 && !CheckAnyStatus(TargetCurrentStatus, BattleStatus_BattleEndFull) 
+StartThread: Condition=GetMemoriaDictionary(1050, 0) > 0 && !GetMemoriaDictionary(1050, 1) && !CheckAnyStatus(TargetCurrentStatus, BattleStatus_BattleEndFull) 
 	StartThread: Condition=CasterWeaponId == 1028
 		StartThread: Condition=CheckAnyStatus(TargetCurrentStatus, BattleStatus_Reflect)
 			StartThread: Target=AllPlayers
@@ -185,7 +185,7 @@ StartThread: Condition=GetMemoriaDictionary(1050, 0) > 0 && !CheckAnyStatus(Targ
 			PlaySFX: SFX=Thundera__Single ; Reflect=True
 			WaitSFXDone: SFX=Thundera__Single ; Reflect=True
 		EndThread
-	ElseThread: Condition=(CasterWeaponId == 1187 || Condition=CasterWeaponId == 1188)
+	ElseThread: Condition=(CasterWeaponId == 1187 || CasterWeaponId == 1188)
 		StartThread: Condition=CheckAnyStatus(TargetCurrentStatus, BattleStatus_Reflect)
 			StartThread: Target=AllPlayers
 				StartThread: Target=RandomTarget
@@ -216,6 +216,22 @@ StartThread: Condition=GetMemoriaDictionary(1050, 0) > 0 && !CheckAnyStatus(Targ
 			WaitSFXLoaded: SFX=Darkside_1 ; Reflect=True
 			PlaySFX: SFX=Darkside_1 ; Reflect=True
 			WaitSFXDone: SFX=Darkside_1 ; Reflect=True
+		EndThread
+	ElseThread: Condition=CasterWeaponId == 1030
+		StartThread: Condition=CheckAnyStatus(TargetCurrentStatus, BattleStatus_Reflect)
+			StartThread: Target=AllPlayers
+				StartThread: Target=RandomTarget
+					LoadSFX: SFX=Doom ; Reflect=True
+					WaitSFXLoaded: SFX=Doom ; Reflect=True
+					PlaySFX: SFX=Doom ; Reflect=True
+					WaitSFXDone: SFX=Doom ; Reflect=True
+				EndThread
+			EndThread
+		ElseThread
+			LoadSFX: SFX=Doom ; Reflect=True
+			WaitSFXLoaded: SFX=Doom ; Reflect=True
+			PlaySFX: SFX=Doom ; Reflect=True
+			WaitSFXDone: SFX=Doom ; Reflect=True
 		EndThread
 	ElseThread
 		StartThread: Condition=CheckAnyStatus(TargetCurrentStatus, BattleStatus_Reflect)

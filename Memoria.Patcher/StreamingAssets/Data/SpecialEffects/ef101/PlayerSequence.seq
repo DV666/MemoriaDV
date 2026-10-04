@@ -1,6 +1,6 @@
 // Player sequence of SFX Player_Attack_Zidane_Sword
 
-StartThread: Condition=CasterWeaponId == 1161
+StartThread: Condition=(CasterWeaponId == 1161 || CasterWeaponId == 1178)
 	WaitAnimation: Char=Caster
 	LoadSFX: SFX=Player_Attack_Zidane_Sword
 	PlayAnimation: Char=Caster ; Anim=MP_SET

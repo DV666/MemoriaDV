@@ -53,6 +53,8 @@ namespace Memoria.Scripts.TranceSeek
 
             Caster_TSVar.SpecialSA.Propagation = 0;
             Caster_TSVar.Monster.CellularReaction = 0;
+            Caster_TSVar.CasterHP_WhiteWind = 0;
+
             if (Target_TSVar.Monster.MarkOfDeath_SHP != null)
                 Target_TSVar.Monster.MarkOfDeath = true;
 

@@ -1,6 +1,6 @@
 // Player sequence of SFX Player_Attack_Amarant
 
-StartThread: Condition=GetItemProperty(CasterWeaponId, 'Shape') == 63
+StartThread: Condition=(GetItemProperty(CasterWeaponId, 'Shape') == 63 || GetItemProperty(CasterWeaponId, 'Shape') == 118)
 	WaitAnimation: Char=Caster
 	Message: Text=[CastName] ; Priority=1 ; Title=True
 	Turn: Char=Caster ; BaseAngle=AllTargets ; Time=5

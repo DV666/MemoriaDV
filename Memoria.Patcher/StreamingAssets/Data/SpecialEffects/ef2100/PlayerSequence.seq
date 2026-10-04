@@ -13,6 +13,105 @@ StartThread: Condition=CasterAccessoryId == 1271 ; Sync=True
 			PlaySFX: SFX=Regen ; Reflect=True
 		EndThread
 	EndThread
+ElseThread: Condition=CasterAccessoryId == 1281 ; Sync=True
+	StartThread: Target=MatchingCondition(IsTargetable && !IsPlayer && !CheckAnyStatus(CurrentStatus, BattleStatus_Death | BattleStatus_Petrify | BattleStatus_Zombie))
+		Channel: Type=Mascot
+		SetVariable: Variable=gEventGlobal ; Index=1408 ; Value=1
+		Wait: Time=10
+		Message: Priority=1 ; Title=True ; Reflect=True ; TextUS=[STRT=80,1]Zombie Breath ; TextUK=[STRT=80,1]Zombie Breath ; TextJP=[STRT=58,1]ゾンビブレス ; TextGR=[STRT=70,1]Zombiehauch ; TextIT=[STRT=81,1]Alito di Zombie ; TextES=[STRT=73,1]Aliento zombi ; TextFR=[STRT=82,1]Souffle Zombie
+		StartThread: Target=RandomTarget ; Sync
+			LoadSFX: SFX=Zombie_Breath ; Reflect=True
+			WaitSFXLoaded: SFX=Zombie_Breath ; Reflect=True
+			PlaySFX: SFX=Zombie_Breath ; Reflect=True
+		EndThread
+	EndThread
+ElseThread: Condition=CasterAccessoryId == 1282 ; Sync=True
+	StartThread: Target=MatchingCondition(IsTargetable && !IsPlayer && !CheckAnyStatus(CurrentStatus, BattleStatus_Death | BattleStatus_Petrify))
+		Channel: Type=Mascot
+		SetVariable: Variable=gEventGlobal ; Index=1408 ; Value=1
+		Wait: Time=10
+		Message: Priority=1 ; Title=True ; Reflect=True ; TextUS=[STRT=62,1]Fireballs ; TextUK=[STRT=62,1]Fireballs ; TextJP=[STRT=48,1]火の玉 ; TextGR=[STRT=70,1]Feuerbälle ; TextIT=[STRT=88,1]Palle di fuoco ; TextES=[STRT=88,1]Bolas de fuego ; TextFR=[STRT=81,1]Boules de feu
+		StartThread: Target=RandomTarget ; Sync
+			WaitAnimation: Char=Caster
+			LoadSFX: SFX=Lava_Gun_x6 ; FirstBone=0 ; SecondBone=0 ; Args=0 ; Reflect=True
+			WaitSFXLoaded: Reflect=True
+			Wait: Time=6
+			PlaySFX: Reflect=True ; SkipSequence
+			PlaySound: Sound=2374
+			PlaySound: Sound=2375
+			PlaySound: Sound=2376
+			Wait: Time=5
+			EffectPoint: Char=AllTargets ; Type=Both
+			Wait: Time=1
+			PlaySound: Sound=2377
+			PlaySound: Sound=2378
+			PlaySound: Sound=2379
+			Wait: Time=2
+			PlaySound: Sound=2374
+			PlaySound: Sound=2375
+			PlaySound: Sound=2376
+			Wait: Time=5
+			EffectPoint: Char=AllTargets ; Type=Both
+			Wait: Time=1
+			PlaySound: Sound=2377
+			PlaySound: Sound=2378
+			PlaySound: Sound=2379
+			Wait: Time=2
+			PlaySound: Sound=2374
+			PlaySound: Sound=2375
+			PlaySound: Sound=2376
+			Wait: Time=5
+			EffectPoint: Char=AllTargets ; Type=Both
+			Wait: Time=1
+			PlaySound: Sound=2377
+			PlaySound: Sound=2378
+			PlaySound: Sound=2379
+			Wait: Time=2
+			PlaySound: Sound=2374
+			PlaySound: Sound=2375
+			PlaySound: Sound=2376
+			Wait: Time=5
+			EffectPoint: Char=AllTargets ; Type=Both
+			Wait: Time=1
+			PlaySound: Sound=2377
+			PlaySound: Sound=2378
+			PlaySound: Sound=2379
+			Wait: Time=2
+			PlaySound: Sound=2374
+			PlaySound: Sound=2375
+			PlaySound: Sound=2376
+			Wait: Time=6
+			EffectPoint: Char=AllTargets ; Type=Both
+			PlaySound: Sound=2377
+			PlaySound: Sound=2378
+			PlaySound: Sound=2379
+			Wait: Time=35
+		EndThread
+	EndThread
+ElseThread: Condition=CasterAccessoryId == 1283 ; Sync=True
+	StartThread: Target=MatchingCondition(IsTargetable && !IsPlayer && !CheckAnyStatus(CurrentStatus, BattleStatus_Death | BattleStatus_Petrify))
+		Channel: Type=Mascot
+		SetVariable: Variable=gEventGlobal ; Index=1408 ; Value=1
+		Wait: Time=10
+		Message: Priority=1 ; Title=True ; Reflect=True ; TextUS=[STRT=48,1]Chestnut ; TextUK=[STRT=48,1]Chestnut ; TextJP=[STRT=69,1]ライフいがぐり ; TextGR=[STRT=74,1]Lebenszwang ; TextIT=[STRT=35,1]Bacca ; TextES=[STRT=77,1]Fruto de vida ; TextFR=[STRT=38,1]Ourson
+		StartThread: Target=RandomTarget ; Sync
+			LoadSFX: SFX=Chestnut ; Reflect=True
+			WaitSFXLoaded: SFX=Chestnut ; Reflect=True
+			PlaySFX: SFX=Chestnut ; Reflect=True
+		EndThread
+	EndThread
+ElseThread: Condition=CasterAccessoryId == 1284 ; Sync=True
+	StartThread: Target=MatchingCondition(IsTargetable && IsPlayer && !CheckAnyStatus(CurrentStatus, BattleStatus_Death | BattleStatus_Petrify) && CasterPropertyByName('StatusProperty CustomStatus7 Stack') < 5)
+		Channel: Type=Mascot
+		SetVariable: Variable=gEventGlobal ; Index=1408 ; Value=1
+		Wait: Time=10
+		Message: Priority=1 ; Title=True ; Reflect=True ; TextUS=[STRT=72,1]Exoskeleton ; TextUK=[STRT=72,1]Exoskeleton ; TextJP=[STRT=45,1]外骨格 ; TextGR=[STRT=62,1]Exoskelett ; TextIT=[STRT=77,1]Esoscheletro ; TextES=[STRT=79,1]Exoesqueleto ; TextFR=[STRT=76,1]Exosquelette
+		StartThread: Target=Caster ; Sync
+			LoadSFX: SFX=Protect ; FirstBone=16 ; SecondBone=0 ; Args=0 ; Reflect=True
+			WaitSFXLoaded: Reflect=True
+			PlaySFX: Reflect=True ; MeshColors=(2.0, 0.0, 0.0)
+		EndThread
+	EndThread
 EndThread
 WaitSFXDone: Reflect=True
 StopChannel

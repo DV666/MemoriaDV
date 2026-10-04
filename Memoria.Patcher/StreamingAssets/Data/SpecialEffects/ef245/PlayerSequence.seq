@@ -20,7 +20,7 @@ WaitAnimation: Char=Caster
 StopChannel
 PlayAnimation: Char=Caster ; Anim=MP_MAGIC
 WaitAnimation: Char=Caster
-StartThread: Condition=CasterInTrance && ((CasterMP + 33) % 5) == 0 ; Sync=True
+StartThread: Condition=CasterInTrance && ((CasterMP + MPCost) % 10) == 5 ; Sync=True
 	PlaySFX: SFX=Stellar_Circle_5 ; Reflect=True ; SkipSequence
 	PlaySound: Sound=1843
 	PlaySound: Sound=1844

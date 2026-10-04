@@ -43,7 +43,7 @@ StartThread: Condition=!AreCasterAndTargetsEnemies ; Sync=True ; Reflect=False
 EndThread
 PlayAnimation: Char=Caster ; Anim=Idle ; Reflect=False
 WaitTurn: Char=Caster ; Reflect=False
-StartThread: Condition=GetMemoriaDictionary(1050, 0) > 0 && !CheckAnyStatus(TargetCurrentStatus, BattleStatus_BattleEndFull)
+StartThread: Condition=GetMemoriaDictionary(1050, 0) > 0 && !GetMemoriaDictionary(1050, 1) && !CheckAnyStatus(TargetCurrentStatus, BattleStatus_BattleEndFull)
 	StartThread: Condition=CasterWeaponId == 1028
 		StartThread: Condition=CheckAnyStatus(TargetCurrentStatus, BattleStatus_Reflect)
 			StartThread: Target=AllPlayers
@@ -92,7 +92,7 @@ StartThread: Condition=GetMemoriaDictionary(1050, 0) > 0 && !CheckAnyStatus(Targ
 			PlaySFX: SFX=Death ; Reflect=True
 			WaitSFXDone: SFX=Death ; Reflect=True
 		EndThread
-	ElseThread: (Condition=CasterWeaponId == 1187 || Condition=CasterWeaponId == 1188)
+	ElseThread: Condition=(CasterWeaponId == 1187 || CasterWeaponId == 1188)
 		StartThread: Condition=CheckAnyStatus(TargetCurrentStatus, BattleStatus_Reflect)
 			StartThread: Target=AllPlayers
 				StartThread: Target=RandomTarget

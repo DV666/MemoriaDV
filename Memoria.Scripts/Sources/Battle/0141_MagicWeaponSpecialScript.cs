@@ -18,12 +18,6 @@ namespace Memoria.Scripts.TranceSeek
 
         public void Perform()
         {
-            if (!FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1050, out Dictionary<Int32, Int32> dict)) // To handle if the first hit miss.
-            {
-                dict = new Dictionary<Int32, Int32>();
-                FF9StateSystem.EventState.gScriptDictionary.Add(1050, dict);
-            }
-
             Boolean CantReflect = (_v.Caster.Weapon == TranceSeekRegularItem.StardustScepter && _v.Command.Id == TranceSeekBattleCommand.MagicWeapon_Strong);
             Boolean IsAttackNormal = (_v.Command.Id == TranceSeekBattleCommand.MagicWeapon_Normal);
             Boolean IsAttackStrong = (_v.Command.Id == TranceSeekBattleCommand.MagicWeapon_Strong);
@@ -109,7 +103,7 @@ namespace Memoria.Scripts.TranceSeek
             }
             else
             {
-                dict[0] = 0;
+                TranceSeekBattleDictionary.MagicWeapon = 0;
                 BattleScriptFactory factoryattack = SBattleCalculator.FindScriptFactory(1); // Script 0001_SimpleWeaponScript.cs
                 if (factoryattack != null)
                 {

@@ -55,6 +55,7 @@ namespace Memoria.DefaultScripts
 
             if (!target.IsPlayer)
             {
+                TranceSeekRegularItem.SoulMechanic(target, inflicter, true);
                 if (target.Data.die_seq == 0)
                 {
                     if (target.IsSlave)

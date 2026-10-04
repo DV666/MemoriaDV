@@ -1,4 +1,5 @@
 ﻿using Memoria.Data;
+using Memoria.Prime;
 using System;
 
 namespace Memoria.Scripts.TranceSeek
@@ -23,53 +24,8 @@ namespace Memoria.Scripts.TranceSeek
             _v.Context.Attack = 15;
             _v.Context.AttackPower = _v.Command.Item.Power;
             _v.Context.DefensePower = 0;
-            if (_v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Chemist_Boosted) && (_v.Target.IsPlayer && BattleState.BattleUnitCount(true) > 1 || !_v.Target.IsPlayer && BattleState.BattleUnitCount(false) > 1))
-            { // Herboriste +                    
-                foreach (BattleUnit unit in BattleState.EnumerateUnits())
-                {
-                    int healing = 0;
-                    if (_v.Target.IsPlayer)
-                    {
-                        if (!unit.IsPlayer || !unit.IsTargetable || unit.IsUnderAnyStatus(BattleStatus.Death | BattleStatus.Petrify | BattleStatus.Jump))
-                            continue;
 
-                        if (unit.Data == _v.Target.Data)
-                        {
-                            healing = _v.Context.AttackPower * _v.Context.Attack * 2;
-                        }
-                        else
-                        {
-                            healing = _v.Context.AttackPower * _v.Context.Attack;
-                        }
-                    }
-                    else
-                    {
-                        if (unit.IsPlayer || !unit.IsTargetable || unit.IsUnderAnyStatus(BattleStatus.Death | BattleStatus.Petrify | BattleStatus.Jump))
-                            continue;
-
-                        if (unit.Data == _v.Target.Data)
-                        {
-                            healing = _v.Context.AttackPower * _v.Context.Attack * 2;
-                        }
-                        else
-                        {
-                            healing = _v.Context.AttackPower * _v.Context.Attack;
-                        }
-                    }
-                    if (unit.IsZombie)
-                    {
-                        btl2d.Btl2dStatReq(unit, 0, healing);
-                        btl_para.SetMpDamage(unit, (uint)healing);
-                    }
-                    else
-                    {
-                        btl2d.Btl2dStatReq(unit, 0, -healing);
-                        btl_para.SetMpRecover(unit, (uint)healing);
-                    }
-                }
-            }
-            else
-                _v.CalcMpMagicRecovery();
+            _v.CalcMpMagicRecovery();
 
             if (_v.Caster.PlayerIndex == CharacterId.Blank && _v.Command.Id == BattleCommandId.Item)
                 _v.CasterState().Blank.SoakedBlade = _v.Command.ItemId;

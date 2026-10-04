@@ -36,6 +36,7 @@ namespace Memoria.Scripts.TranceSeek
             var Target_TSVar = v.TargetState();
             TranceSeekBattleDictionary.TypeAttack = 0;
             TranceSeekAPI.OneTriggerHitRateBonus = false;
+            TranceSeekRegularItem.SoulTriggered = false;
 
             if (Target_TSVar.Monster.HPBoss10000 && v.Target.CurrentHp <= 10000) // Prevent boss to die => Maybe use CustomBattleFlagsMeaning ?
                 v.Target.CurrentHp = 10000;
@@ -446,13 +447,15 @@ namespace Memoria.Scripts.TranceSeek
 
             // [TODO] To remove when this function will be fixed (in my PR https://github.com/Albeoris/Memoria/pull/1255 or before)
 
-            if (v.Command.Data.info.effect_counter == 1)
+            if (!Caster_TSVar.OverloadEndCalled)
             {
+                Caster_TSVar.OverloadEndCalled = true;
                 v.Caster.AddDelayedModifier(
                     caster => btl_util.IsBtlBusy(caster.Data, btl_util.BusyMode.CASTER), 
                     caster =>
                     {
                         OverloadOnBattleScriptEndScript.OnCommandEnd(v);
+                        Caster_TSVar.OverloadEndCalled = false;
                     }
                 );
             }

@@ -27,7 +27,7 @@ StartThread
 	EndThread
 	Wait: Time=4
 	EffectPoint: Char=AllTargets ; Type=Figure
-	StartThread: Sync=False ; Target=MatchingCondition(IsTargeted && !CheckAnyStatus(CurrentStatus, BattleStatus_Death))
+	StartThread: Sync=False ; Target=MatchingCondition(IsTargeted && !CheckAnyStatus(CurrentStatus, BattleStatus_Death) && GetItemProperty(CasterWeaponId, 'Shape') != 2 && GetItemProperty(CasterWeaponId, 'Shape') != 117)
 		Wait: Time=2
 		EffectPoint: Char=AllTargets ; Type=Both
 	EndThread

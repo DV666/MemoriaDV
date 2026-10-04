@@ -738,6 +738,8 @@ namespace Memoria.Scripts.TranceSeek
 
         public static readonly HashSet<int> WeaponShapeDoubleHit = new HashSet<int>(new[] { 1, 111, 120, 122, 123, 124, 127, 129 });
 
+        public static Boolean SoulTriggered = false;
+
         public static Boolean DaggerWeapon(BattleUnit unit)
         {
             return WeaponShapeDoubleHit.Contains(ff9item._FF9Item_Data[unit.Weapon].shape);
@@ -786,106 +788,7 @@ namespace Memoria.Scripts.TranceSeek
                     }
                 }
 
-                int SoulChance = v.Caster.State().SoulChance;
-                if (!v.Target.IsPlayer && SoulChance > 0 && (v.Target.Flags & CalcFlag.HpRecovery) == 0 && v.Target.HpDamage > v.Target.CurrentHp && (GameRandom.Next16() % 100) < SoulChance)
-                {
-                    BattleEnemy battleEnemy = BattleEnemy.Find(v.Target);
-                    switch (v.Target.Data.dms_geo_id)
-                    {
-                        case 152: // Goblin
-                            battleEnemy.Data.bonus_item[0] = GoblinSoul;
-                            battleEnemy.Data.bonus_item_rate[0] = 256;
-                            break;
-                        case 162: // Skeleton
-                            battleEnemy.Data.bonus_item[0] = SkeletonSoul;
-                            battleEnemy.Data.bonus_item_rate[0] = 256;
-                            break;
-                        case 546: // Cave Imp
-                            battleEnemy.Data.bonus_item[0] = CaveImpSoul;
-                            battleEnemy.Data.bonus_item_rate[0] = 256;
-                            break;
-                        case 135: // Vice
-                            battleEnemy.Data.bonus_item[0] = ViceSoul;
-                            battleEnemy.Data.bonus_item_rate[0] = 256;
-                            break;
-                        case 136: // Ladybug
-                            battleEnemy.Data.bonus_item[0] = LadybugSoul;
-                            battleEnemy.Data.bonus_item_rate[0] = 256;
-                            break;
-                        case 85: // Lamia
-                            battleEnemy.Data.bonus_item[0] = LamiaSoul;
-                            battleEnemy.Data.bonus_item_rate[0] = 256;
-                            break;
-                        case 5459: // Lizard Man
-                            battleEnemy.Data.bonus_item[0] = LizardManSoul;
-                            battleEnemy.Data.bonus_item_rate[0] = 256;
-                            break;
-                        case 265: // Magic Vice
-                            battleEnemy.Data.bonus_item[0] = MagicViceSoul;
-                            battleEnemy.Data.bonus_item_rate[0] = 256;
-                            break;
-                        case 138: // Sahagin
-                            battleEnemy.Data.bonus_item[0] = SahaginSoul;
-                            battleEnemy.Data.bonus_item_rate[0] = 256;
-                            break;
-                        case 46: // Goblin Mage
-                            battleEnemy.Data.bonus_item[0] = GoblinMageSoul;
-                            battleEnemy.Data.bonus_item_rate[0] = 256;
-                            break;
-                        case 92: // Gnoll
-                            battleEnemy.Data.bonus_item[0] = GnollSoul;
-                            battleEnemy.Data.bonus_item_rate[0] = 256;
-                            break;
-                        case 327: // Ogre
-                            battleEnemy.Data.bonus_item[0] = OgreSoul;
-                            battleEnemy.Data.bonus_item_rate[0] = 256;
-                            break;
-                        case 184: // Tonberry
-                            battleEnemy.Data.bonus_item[0] = TonberrySoul;
-                            battleEnemy.Data.bonus_item_rate[0] = 256;
-                            break;
-                        case 326: // Troll
-                            battleEnemy.Data.bonus_item[0] = TrollSoul;
-                            battleEnemy.Data.bonus_item_rate[0] = 256;
-                            break;
-                        case 148: // Drakan
-                            battleEnemy.Data.bonus_item[0] = DrakanSoul;
-                            battleEnemy.Data.bonus_item_rate[0] = 256;
-                            break;
-                        case 334: // Armstrong
-                            battleEnemy.Data.bonus_item[0] = ArmstrongSoul;
-                            battleEnemy.Data.bonus_item_rate[0] = 256;
-                            break;
-                        case 165: // DracoZombie
-                            battleEnemy.Data.bonus_item[0] = DracoZombieSoul;
-                            battleEnemy.Data.bonus_item_rate[0] = 256;
-                            break;
-                        case 333: // Grenade
-                            battleEnemy.Data.bonus_item[0] = GrenadeSoul;
-                            battleEnemy.Data.bonus_item_rate[0] = 256;
-                            break;
-                        case 161: // Mandragora
-                            battleEnemy.Data.bonus_item[0] = MandragoraSoul;
-                            battleEnemy.Data.bonus_item_rate[0] = 256;
-                            break;
-                        case 150: // Clipper
-                            battleEnemy.Data.bonus_item[0] = ClipperSoul;
-                            battleEnemy.Data.bonus_item_rate[0] = 256;
-                            break;
-                    }
-
-                    int StealItemId = (int)battleEnemy.Data.bonus_item[0];
-                    int SPSId = StealItemId >= 3000 && StealItemId <= 3999 ? 18 : 19;
-
-                    SPSEffect sps = HonoluluBattleMain.battleSPS.AddSequenceSPS(SPSId, -1, 1);
-                    if (sps == null)
-                        return;
-
-                    btl2d.GetIconPosition(v.Caster, btl2d.ICON_POS_WEAPON, out Transform attachTransf, out Vector3 iconOff);
-                    sps.charTran = v.Caster.Data.gameObject.transform;
-                    sps.boneTran = attachTransf;
-                    sps.posOffset = Vector3.zero;
-                }
+                SoulMechanic(v.Target, v.Caster);
             }
             if (v.Target.IsPlayer)
             {
@@ -970,6 +873,115 @@ namespace Memoria.Scripts.TranceSeek
                 }
                 else
                     Caster_Item_TSVar.JabberworkCrestCooldown--;
+            }
+        }
+
+        public static void SoulMechanic(BattleUnit mob, BattleUnit caster, Boolean KillDone = false)
+        {
+            if (mob.IsPlayer || SoulTriggered)
+                return;
+
+            Boolean GetKilled = mob.HpDamage > mob.CurrentHp || KillDone;
+            int SoulChance = caster.State().SoulChance;
+            if (SoulChance > 0 && (mob.Flags & CalcFlag.HpRecovery) == 0 && GetKilled && (GameRandom.Next16() % 100) < SoulChance)
+            {
+                SoulTriggered = true;
+                BattleEnemy battleEnemy = BattleEnemy.Find(mob);
+                switch (mob.Data.dms_geo_id)
+                {
+                    case 152: // Goblin
+                        battleEnemy.Data.bonus_item[0] = GoblinSoul;
+                        battleEnemy.Data.bonus_item_rate[0] = 256;
+                        break;
+                    case 162: // Skeleton
+                        battleEnemy.Data.bonus_item[0] = SkeletonSoul;
+                        battleEnemy.Data.bonus_item_rate[0] = 256;
+                        break;
+                    case 546: // Cave Imp
+                        battleEnemy.Data.bonus_item[0] = CaveImpSoul;
+                        battleEnemy.Data.bonus_item_rate[0] = 256;
+                        break;
+                    case 135: // Vice
+                        battleEnemy.Data.bonus_item[0] = ViceSoul;
+                        battleEnemy.Data.bonus_item_rate[0] = 256;
+                        break;
+                    case 136: // Ladybug
+                        battleEnemy.Data.bonus_item[0] = LadybugSoul;
+                        battleEnemy.Data.bonus_item_rate[0] = 256;
+                        break;
+                    case 85: // Lamia
+                        battleEnemy.Data.bonus_item[0] = LamiaSoul;
+                        battleEnemy.Data.bonus_item_rate[0] = 256;
+                        break;
+                    case 5459: // Lizard Man
+                        battleEnemy.Data.bonus_item[0] = LizardManSoul;
+                        battleEnemy.Data.bonus_item_rate[0] = 256;
+                        break;
+                    case 265: // Magic Vice
+                        battleEnemy.Data.bonus_item[0] = MagicViceSoul;
+                        battleEnemy.Data.bonus_item_rate[0] = 256;
+                        break;
+                    case 138: // Sahagin
+                        battleEnemy.Data.bonus_item[0] = SahaginSoul;
+                        battleEnemy.Data.bonus_item_rate[0] = 256;
+                        break;
+                    case 46: // Goblin Mage
+                        battleEnemy.Data.bonus_item[0] = GoblinMageSoul;
+                        battleEnemy.Data.bonus_item_rate[0] = 256;
+                        break;
+                    case 92: // Gnoll
+                        battleEnemy.Data.bonus_item[0] = GnollSoul;
+                        battleEnemy.Data.bonus_item_rate[0] = 256;
+                        break;
+                    case 327: // Ogre
+                        battleEnemy.Data.bonus_item[0] = OgreSoul;
+                        battleEnemy.Data.bonus_item_rate[0] = 256;
+                        break;
+                    case 184: // Tonberry
+                        battleEnemy.Data.bonus_item[0] = TonberrySoul;
+                        battleEnemy.Data.bonus_item_rate[0] = 256;
+                        break;
+                    case 326: // Troll
+                        battleEnemy.Data.bonus_item[0] = TrollSoul;
+                        battleEnemy.Data.bonus_item_rate[0] = 256;
+                        break;
+                    case 148: // Drakan
+                        battleEnemy.Data.bonus_item[0] = DrakanSoul;
+                        battleEnemy.Data.bonus_item_rate[0] = 256;
+                        break;
+                    case 334: // Armstrong
+                        battleEnemy.Data.bonus_item[0] = ArmstrongSoul;
+                        battleEnemy.Data.bonus_item_rate[0] = 256;
+                        break;
+                    case 165: // DracoZombie
+                        battleEnemy.Data.bonus_item[0] = DracoZombieSoul;
+                        battleEnemy.Data.bonus_item_rate[0] = 256;
+                        break;
+                    case 333: // Grenade
+                        battleEnemy.Data.bonus_item[0] = GrenadeSoul;
+                        battleEnemy.Data.bonus_item_rate[0] = 256;
+                        break;
+                    case 161: // Mandragora
+                        battleEnemy.Data.bonus_item[0] = MandragoraSoul;
+                        battleEnemy.Data.bonus_item_rate[0] = 256;
+                        break;
+                    case 150: // Clipper
+                        battleEnemy.Data.bonus_item[0] = ClipperSoul;
+                        battleEnemy.Data.bonus_item_rate[0] = 256;
+                        break;
+                }
+
+                int StealItemId = (int)battleEnemy.Data.bonus_item[0];
+                int SPSId = StealItemId >= 3000 && StealItemId <= 3999 ? 18 : 19;
+
+                SPSEffect sps = HonoluluBattleMain.battleSPS.AddSequenceSPS(SPSId, -1, 1);
+                if (sps == null)
+                    return;
+
+                btl2d.GetIconPosition(caster, btl2d.ICON_POS_WEAPON, out Transform attachTransf, out Vector3 iconOff);
+                sps.charTran = caster.Data.gameObject.transform;
+                sps.boneTran = attachTransf;
+                sps.posOffset = Vector3.zero;
             }
         }
 

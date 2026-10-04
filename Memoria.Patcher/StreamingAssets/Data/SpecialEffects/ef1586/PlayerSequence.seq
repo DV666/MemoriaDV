@@ -85,7 +85,7 @@ StartThread: Sync=False
 	EndThread
 EndThread
 Wait: Time=10
-StartThread: Sync=False ; Condition=(CasterInTrance || GetRandom(0 , 2) == 0)
+StartThread: Sync=False ; Condition=(CasterInTrance || GetRandom(0 , 2) == 0 || GetMemoriaDictionary(1000, 13) > 0)
 	StartThread: Target=RandomTarget ; Sync=True
 		Wait: Time=2
 		LoadSFX: SFX=Lancer ; UseCamera=False
@@ -104,7 +104,7 @@ StartThread: Sync=False ; Condition=(CasterInTrance || GetRandom(0 , 2) == 0)
 	EndThread
 EndThread
 Wait: Time=10
-StartThread: Sync=False ; Condition=(CasterInTrance || GetRandom(0 , 2) == 0)
+StartThread: Sync=False ; Condition=(CasterInTrance || GetRandom(0 , 2) == 0 || GetMemoriaDictionary(1000, 13) > 0)
 	StartThread: Target=RandomTarget ; Sync=True
 		Wait: Time=2
 		LoadSFX: SFX=Lancer ; UseCamera=False

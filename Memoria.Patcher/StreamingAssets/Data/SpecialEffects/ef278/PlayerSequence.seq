@@ -12,6 +12,17 @@ Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
 SetupReflect: Delay=SFXLoaded
 StartThread: Condition=CasterHasSA(1027) && (ItemUseId == 238 || ItemUseId == 1001) ; Sync=True
 	StartThread: Sync=True ; Condition=TargetIsPlayer
+	
+		StartThread: Condition=CommandTargetId == 1
+			SetVariable: Variable=gEventGlobal ; Index=1326 ; Value=1
+		ElseThread: Condition=CommandTargetId == 2
+			SetVariable: Variable=gEventGlobal ; Index=1326 ; Value=2
+		ElseThread: Condition=CommandTargetId == 4
+			SetVariable: Variable=gEventGlobal ; Index=1326 ; Value=4
+		ElseThread
+			SetVariable: Variable=gEventGlobal ; Index=1326 ; Value=8
+		EndThread
+	
 		PlayAnimation: Char=Caster ; Anim=MP_ITEM1
 		WaitAnimation: Char=Caster
 		StartThread: Target = AllPlayers
@@ -20,23 +31,31 @@ StartThread: Condition=CasterHasSA(1027) && (ItemUseId == 238 || ItemUseId == 10
 				StartThread: Condition=ItemUseId == 238 ; Sync
 					LoadSFX: SFX=Ether ; UseCamera=False
 					WaitSFXLoaded: SFX=Ether
-					PlaySFX: SFX=Ether ; SkipSequence ; MeshColors=0:(0.0, 1.0, 2.0), 1:(0, 0, 0), 2:(0.0, 1.0, 2.0), 3:(0, 0, 0), 4:(0, 0, 0)
+					PlaySFX: SFX=Ether ; MeshColors=0:(0.0, 1.0, 2.0), 1:(0, 0, 0), 2:(0.0, 1.0, 2.0), 3:(0, 0, 0), 4:(0, 0, 0)
 				ElseThread: Sync
 					LoadSFX: SFX=Ether ; UseCamera=False
 					WaitSFXLoaded: SFX=Ether
-					PlaySFX: SFX=Ether ; SkipSequence ; MeshColors=(0.0, 1.0, 2.0)
+					PlaySFX: SFX=Ether ; MeshColors=(0.0, 1.0, 2.0)
 				EndThread
 				PlaySound: Sound=953
 				PlaySound: Sound=954
 				PlaySound: Sound=955
 			EndThread
 		EndThread
-		Wait: Time=22
-		EffectPoint: Char=AllTargets ; Type=Effect
-		EffectPoint: Char=Everyone ; Type=Figure
-		Wait: Time=10
+		Wait: Time=32
 		WaitSFXDone: SFX=Ether ; Reflect=True
 	ElseThread: Sync=True ; Condition=!TargetIsPlayer
+	
+		StartThread: Condition=CommandTargetId == 16
+			SetVariable: Variable=gEventGlobal ; Index=1326 ; Value=16
+		ElseThread: Condition=CommandTargetId == 32
+			SetVariable: Variable=gEventGlobal ; Index=1326 ; Value=32
+		ElseThread: Condition=CommandTargetId == 64
+			SetVariable: Variable=gEventGlobal ; Index=1326 ; Value=64
+		ElseThread
+			SetVariable: Variable=gEventGlobal ; Index=1326 ; Value=128
+		EndThread
+	
 		PlayAnimation: Char=Caster ; Anim=MP_ITEM1
 		WaitAnimation: Char=Caster
 		StartThread: Target = AllEnemies
@@ -45,21 +64,18 @@ StartThread: Condition=CasterHasSA(1027) && (ItemUseId == 238 || ItemUseId == 10
 				StartThread: Condition=ItemUseId == 238 ; Sync
 					LoadSFX: SFX=Ether ; UseCamera=False
 					WaitSFXLoaded: SFX=Ether
-					PlaySFX: SFX=Ether ; SkipSequence ; MeshColors=0:(0.0, 1.0, 2.0), 1:(0, 0, 0), 2:(0.0, 1.0, 2.0), 3:(0, 0, 0), 4:(0, 0, 0)
+					PlaySFX: SFX=Ether ; MeshColors=0:(0.0, 1.0, 2.0), 1:(0, 0, 0), 2:(0.0, 1.0, 2.0), 3:(0, 0, 0), 4:(0, 0, 0)
 				ElseThread: Sync
 					LoadSFX: SFX=Ether ; UseCamera=False
 					WaitSFXLoaded: SFX=Ether
-					PlaySFX: SFX=Ether ; SkipSequence ; MeshColors=(0.0, 1.0, 2.0)
+					PlaySFX: SFX=Ether ; MeshColors=(0.0, 1.0, 2.0)
 				EndThread
 				PlaySound: Sound=953
 				PlaySound: Sound=954
 				PlaySound: Sound=955
 			EndThread
 		EndThread
-		Wait: Time=22
-		EffectPoint: Char=AllTargets ; Type=Effect
-		EffectPoint: Char=Everyone ; Type=Figure
-		Wait: Time=10
+		Wait: Time=32
 		WaitSFXDone: SFX=Ether ; Reflect=True
 	EndThread
 ElseThread: Sync=True
