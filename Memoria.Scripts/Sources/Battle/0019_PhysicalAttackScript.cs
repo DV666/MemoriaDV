@@ -77,8 +77,8 @@ namespace Memoria.Scripts.TranceSeek
                     if (_v.Caster.IsUnderAnyStatus(BattleStatus.Float))
                         _v.Command.AbilityStatus |= BattleStatus.GradualPetrify;
                 }
-                else
-                    TranceSeekAPI.TryAlterMagicStatuses(_v);
+
+                TranceSeekAPI.TryAlterMagicStatuses(_v);
             }
         }
     }

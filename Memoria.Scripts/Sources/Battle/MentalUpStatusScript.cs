@@ -122,6 +122,7 @@ namespace Memoria.DefaultScripts
                 btl2d.StatusMessages.Remove(NumberHUD);
                 Singleton<HUDMessage>.Instance.ReleaseObject(NumberHUD);
             }
+            Target.State().StackStatus.MDefence = 0;
             return true;
         }
 

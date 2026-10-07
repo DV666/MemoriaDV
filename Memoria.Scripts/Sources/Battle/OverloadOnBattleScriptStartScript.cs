@@ -35,6 +35,9 @@ namespace Memoria.Scripts.TranceSeek
             var Caster_TSVar = v.CasterState();
             var Target_TSVar = v.TargetState();
             TranceSeekBattleDictionary.TypeAttack = 0;
+            TranceSeekBattleDictionary.CommandPower = v.Command.Power;
+            TranceSeekBattleDictionary.CommandMPCost = v.Command.Data.aa.MP;
+
             TranceSeekAPI.OneTriggerHitRateBonus = false;
             TranceSeekRegularItem.SoulTriggered = false;
 

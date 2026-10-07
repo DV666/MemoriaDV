@@ -24,32 +24,31 @@ namespace Memoria.Scripts.TranceSeek
 
         public void Perform()
         {
-            if (!TranceSeekAPI.TryKillFrozen(_v))
+            _v.NormalMagicParams();
+
+            if (_v.Command.HitRate == 199 && _v.Command.AbilityStatus == BattleStatus.Reflect) // AntiBoom from Invincible (CD3 Kuja)
             {
-                if (_v.Target.IsUnderAnyStatus(BattleStatus.Vanish))
-                {
-                    _v.Context.Flags |= BattleCalcFlags.Miss;
-                    return;
-                }
+                _v.Target.Flags = CalcFlag.HpAlteration | CalcFlag.MpAlteration;
+                _v.Target.HpDamage = (int)(_v.Target.CurrentHp - 1);
+                _v.Target.MpDamage = (int)(_v.Target.CurrentMp - 1);
+                if (_v.Target.IsUnderPermanentStatus(BattleStatus.Reflect))
+                    _v.Target.Data.stat.permanent &= ~BattleStatus.Reflect;
 
-                btl_stat.RemoveStatuses(_v.Target, _v.Command.AbilityStatus);
-                _v.NormalPhysicalParams();
+                _v.Target.RemoveStatus(BattleStatus.Reflect);
+            }
+            else if (_v.Command.HitRate == 254)
+                _v.Command.AbilityStatus |= BattleStatusConst.AnyPositive;
 
-                TranceSeekAPI.EnemyTranceBonusAttack(_v);
-                TranceSeekAPI.CasterPhysicalPenaltyAndBonusAttack(_v);
-                TranceSeekAPI.TargetPhysicalPenaltyAndBonusAttack(_v);
-                if (_v.Command.HitRate != 101)
-                {
-                    TranceSeekAPI.BonusBackstabAndPenaltyLongDistance(_v);
-                }
-                TranceSeekAPI.BonusElement(_v);
-                if (_v.CanAttackElementalCommand())
-                {
-                    TranceSeekAPI.TryCriticalHit(_v);
-                    _v.CalcPhysicalHpDamage();
-                    TranceSeekAPI.RaiseTrouble(_v);
-                    TranceSeekAPI.InfusedWeaponStatus(_v);
-                }
+            btl_stat.RemoveStatuses(_v.Target, _v.Command.AbilityStatus);
+            TranceSeekAPI.CasterPenaltyMini(_v);
+            TranceSeekAPI.EnemyTranceBonusAttack(_v);
+            TranceSeekAPI.PenaltyShellAttack(_v);
+            TranceSeekAPI.PenaltyCommandDividedAttack(_v);
+            TranceSeekAPI.BonusElement(_v);
+            if (TranceSeekAPI.CanAttackMagic(_v))
+            {
+                _v.CalcHpDamage();
+                TranceSeekAPI.RaiseTrouble(_v);
             }
         }
     }

@@ -1,5 +1,7 @@
-using System;
 using Memoria.Data;
+using Memoria.Prime;
+using System;
+using static Memoria.IOverloadPlayerUIScript;
 
 namespace Memoria.Scripts.TranceSeek
 {
@@ -82,7 +84,7 @@ namespace Memoria.Scripts.TranceSeek
                 if (_v.Command.IsShortSummon)
                     reviveheal /= 2;
 
-                reviveheal = Math.Max(1, _v.Target.HpDamage);
+                reviveheal = Math.Max(1, reviveheal);
             }
             else
             {
@@ -120,6 +122,7 @@ namespace Memoria.Scripts.TranceSeek
                 Single result = BattleScriptStatusEstimate.RateStatus(BattleStatusId.Death) * hitRate * evaRate;
                 if (!_v.Target.IsPlayer)
                     result *= -1;
+
                 return result;
             }
 

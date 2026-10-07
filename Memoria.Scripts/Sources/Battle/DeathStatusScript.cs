@@ -3,6 +3,7 @@ using Memoria.Data;
 using Memoria.Prime;
 using Memoria.Scripts.TranceSeek;
 using System;
+using System.Security.Cryptography;
 using System.Threading;
 using UnityEngine;
 using Object = System.Object;
@@ -15,6 +16,8 @@ namespace Memoria.DefaultScripts
     [StatusScript(BattleStatusId.Death)]
     public class DeathStatusScript : StatusScriptBase
     {
+        public Int32 TargetGeoID;
+
         public override UInt32 Apply(BattleUnit target, BattleUnit inflicter, params Object[] parameters)
         {
             if (inflicter == null)
@@ -31,10 +34,12 @@ namespace Memoria.DefaultScripts
                         if (MonsterState.MarkOfDeath_SHP == null)
                             return btl_stat.ALTER_INVALID;
 
+                        TargetGeoID = target.Data.dms_geo_id;
                         btl2d.GetIconPosition(target, btl2d.ICON_POS_NUMBER, out Transform attachTransf, out Vector3 iconOff);
                         MonsterState.MarkOfDeath_SHP.attach = attachTransf;
                         MonsterState.MarkOfDeath_SHP.posOffset = (iconOff * 3) / 2;
                         MonsterState.MarkOfDeath_SHP.scale *= 2;
+                        target.AddDelayedModifier(UpdateMarkOfDeathSHP, null);
                         return btl_stat.ALTER_SUCCESS_NO_SET;
                     }
                     return btl_stat.ALTER_INVALID;
@@ -141,6 +146,32 @@ namespace Memoria.DefaultScripts
                 btl.sel_mode = 0;
             foreach (BattleStatusId oprStatus in (Target.PermanentStatus & BattleStatusConst.OprCount & BattleStatusId.Death.GetStatData().ClearOnApply).ToStatusList())
                 btl_stat.SetOprStatusCount(Target, oprStatus);
+            return true;
+        }
+
+        private Boolean UpdateMarkOfDeathSHP(BattleUnit unit)
+        {
+            var UnitMonsterState = unit.State().Monster;
+
+            if (UnitMonsterState.MarkOfDeath_SHP == null)
+                return false;
+
+            if (btl2d.ShouldShowSPS)
+                UnitMonsterState.MarkOfDeath_SHP.attr &= unchecked((Byte)~SPSConst.ATTR_HIDDEN);
+            else
+                UnitMonsterState.MarkOfDeath_SHP.attr |= SPSConst.ATTR_HIDDEN;
+
+            if (unit.Data.bi.disappear != 0 || TargetGeoID != unit.Data.dms_geo_id || unit.CurrentHp == 0)
+            {
+                if (UnitMonsterState.MarkOfDeath_SHP != null)
+                {
+                    UnitMonsterState.MarkOfDeath = false;
+                    UnitMonsterState.MarkOfDeath_SHP.Unload();
+                    UnitMonsterState.MarkOfDeath_SHP = null;
+                }
+                return false;
+            }
+
             return true;
         }
     }

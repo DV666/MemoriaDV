@@ -207,6 +207,10 @@ namespace Memoria.Scripts.TranceSeek
                     TranceSeekAPI.TryCriticalHit(_v);
 
                 _v.CalcHpDamage();
+
+                if (_v.Command.AbilityId == BattleAbilityId.Phoenix || _v.Command.AbilityId == BattleAbilityId.RebirthFlame || _v.Command.AbilityId == (BattleAbilityId)1582)
+                    return;
+
                 _v.Target.PenaltyShellHitRate();
                 if (_v.Command.IsShortSummon)
                     _v.Context.HitRate = _v.Context.HitRate * 2 / 3;

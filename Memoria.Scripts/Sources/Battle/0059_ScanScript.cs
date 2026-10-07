@@ -17,10 +17,9 @@ namespace Memoria.Scripts.TranceSeek
 
         public static Dictionary<KeyValuePair<Int32, Int32>, Vector3> AdjustOffsetForScan = new Dictionary<KeyValuePair<Int32, Int32>, Vector3>
         {
-            { new KeyValuePair<Int32, Int32>(4, 2), new Vector3(200, 0, 0) }, // Nightmare
+            { new KeyValuePair<Int32, Int32>(4, 2), new Vector3(200, -300, 0) }, // Nightmare
             { new KeyValuePair<Int32, Int32>(4, 3), new Vector3(200, -400, 0) }, // Thousand Fears
-            { new KeyValuePair<Int32, Int32>(144, 3), new Vector3(200, -400, 0) }, // Sand Worm
-            { new KeyValuePair<Int32, Int32>(871, 1), new Vector3(0, 200, 0) }, // Mysterious Girl
+            { new KeyValuePair<Int32, Int32>(144, 3), new Vector3(200, -400, 0) } // Sand Worm
         };
 
         public ScanScript(BattleCalculator v)
@@ -183,6 +182,7 @@ namespace Memoria.Scripts.TranceSeek
             {
                 if (greenHUD != null)
                 {
+                    ResetHUDToDefault(greenHUD);
                     btl2d.StatusMessages.Remove(greenHUD);
                     Singleton<HUDMessage>.Instance.ReleaseObject(greenHUD);
                     TargetMonster_TSVAR.ATBGreenBarHUD = null;
@@ -190,6 +190,7 @@ namespace Memoria.Scripts.TranceSeek
 
                 if (frameHUD != null)
                 {
+                    ResetHUDToDefault(frameHUD);
                     btl2d.StatusMessages.Remove(frameHUD);
                     Singleton<HUDMessage>.Instance.ReleaseObject(frameHUD);
                     TargetMonster_TSVAR.ATBFrameHUD = null;
@@ -220,13 +221,13 @@ namespace Memoria.Scripts.TranceSeek
 
             if (greenHUD == null && frameHUD == null)
             {
-                BattleStatusDataEntry statusData = FF9StateSystem.Battle.FF9Battle.status_data[BattleStatusId.Poison];
-                btl2d.GetIconPosition(mob.Data, btl2d.ICON_POS_HEAD, out Transform attachTransf, out Vector3 iconOff);
+                BattleStatusDataEntry statusData = FF9StateSystem.Battle.FF9Battle.status_data[BattleStatusId.Doom];
+                btl2d.GetIconPosition(mob.Data, btl2d.ICON_POS_NUMBER, out Transform attachTransf, out Vector3 iconOff);
 
                 Vector3 offset = Vector3.zero;
                 KeyValuePair<Int32, Int32> MobBattleId = new KeyValuePair<Int32, Int32>(FF9StateSystem.Battle.battleMapIndex, mob.Data.typeNo);
                 if (!AdjustOffsetForScan.TryGetValue(MobBattleId, out offset))
-                    offset = new Vector3(200, 150, 0);
+                    offset = new Vector3(225, 100, 0);
 
                 Vector3 ATB_HUD_Offset = statusData.SHPExtraPos + iconOff + offset;
 
@@ -282,6 +283,58 @@ namespace Memoria.Scripts.TranceSeek
             }
 
             return true;
+        }
+
+        public static void ResetHUDToDefault(HUDMessageChild hud)
+        {
+            if (hud == null)
+                return;
+
+            hud.transform.localPosition = Vector3.zero;
+            hud.transform.localScale = Vector3.one;
+            hud.Follower.clampToScreen = true;
+
+            UILabel label = hud.GetComponent<UILabel>();
+            if (label != null)
+            {
+                label.pivot = UIWidget.Pivot.Center;
+                label.alignment = NGUIText.Alignment.Center;
+                label.spacingY = 0;
+                label.depth = 3;
+            }
+        }
+
+        public static void DeleteScanHUD(BattleUnit target)
+        {
+            var MonsterState = target.State().Monster;
+            if (MonsterState.ATBGreenBarHUD != null)
+            {
+                ResetHUDToDefault(MonsterState.ATBGreenBarHUD);
+                btl2d.StatusMessages.Remove(MonsterState.ATBGreenBarHUD);
+                Singleton<HUDMessage>.Instance.ReleaseObject(MonsterState.ATBGreenBarHUD);
+                MonsterState.ATBGreenBarHUD = null;
+            }
+            if (MonsterState.ATBFrameHUD != null)
+            {
+                ResetHUDToDefault(MonsterState.ATBFrameHUD);
+                btl2d.StatusMessages.Remove(MonsterState.ATBFrameHUD);
+                Singleton<HUDMessage>.Instance.ReleaseObject(MonsterState.ATBFrameHUD);
+                MonsterState.ATBFrameHUD = null;
+            }
+            if (MonsterState.HPGreenBarHUD != null)
+            {
+                ResetHUDToDefault(MonsterState.HPGreenBarHUD);
+                btl2d.StatusMessages.Remove(MonsterState.HPGreenBarHUD);
+                Singleton<HUDMessage>.Instance.ReleaseObject(MonsterState.HPGreenBarHUD);
+                MonsterState.HPGreenBarHUD = null;
+            }
+            if (MonsterState.HPRedBarHUD != null)
+            {
+                ResetHUDToDefault(MonsterState.HPRedBarHUD);
+                btl2d.StatusMessages.Remove(MonsterState.HPRedBarHUD);
+                Singleton<HUDMessage>.Instance.ReleaseObject(MonsterState.HPRedBarHUD);
+                MonsterState.HPRedBarHUD = null;
+            }
         }
     }
 }

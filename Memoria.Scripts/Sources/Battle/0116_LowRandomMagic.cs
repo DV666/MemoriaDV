@@ -1,6 +1,7 @@
+using Memoria.Data;
 using System;
 using System.Runtime.Remoting.Contexts;
-using Memoria.Data;
+using System.Threading;
 
 namespace Memoria.Scripts.TranceSeek
 {
@@ -27,6 +28,7 @@ namespace Memoria.Scripts.TranceSeek
                 _v.Caster.Data.mot[1] = "ANH_MON_B3_185_000";
                 _v.Caster.Data.mot[2] = "ANH_MON_B3_185_000";
                 _v.Caster.PhysicalEvade = 13;
+                TranceSeekBattleDictionary.RefreshCacheStat |= _v.Caster.Id;
                 if (_v.Command.Power == 0 && _v.Command.HitRate == 111)
                 {
                     _v.Context.Flags = BattleCalcFlags.Miss;

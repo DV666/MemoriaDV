@@ -77,8 +77,8 @@ namespace Memoria.Scripts.TranceSeek
             { 4, new BestiaryDisplayEntry(335, 1) { IsBoss = true } }, // Haagen
             { 5, new BestiaryDisplayEntry(335, 2) { IsBoss = true } }, // Weimar
             { 6, new BestiaryDisplayEntry(334, 1) { IsBoss = true } }, // Steiner 3
-            { 7, new BestiaryDisplayEntry(305, 0) }, // Goblin
-            { 8, new BestiaryDisplayEntry(305, 1) }, // Fang
+            { 7, new BestiaryDisplayEntry(305, 0) { RewardItems = new[] { RegularItem.Opal, RegularItem.Opal }, RewardGils = 100 } }, // Goblin
+            { 8, new BestiaryDisplayEntry(305, 1) { RewardItems = new[] { RegularItem.Amethyst, RegularItem.Amethyst }, RewardGils = 200 } }, // Fang
             { 9, new BestiaryDisplayEntry(310, 0) }, // Dendrobium
             { 10, new BestiaryDisplayEntry(302, 0) { IsBoss = true } }, // Prison Cage
             { 11, new BestiaryDisplayEntry(301, 0) { IsBoss = true } }, // Prison Cage

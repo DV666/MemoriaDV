@@ -261,16 +261,19 @@ namespace Memoria.Scripts.TranceSeek
             foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(v.Target))
                 saFeature.TriggerOnAbility(v, "HitRateSetup", true);
 
-            AlterHitRateForStatus(v);
+            AlterHitRateForStatus(v, out Boolean DeathMark);
 
-            if (v.Context.HitRate <= Comn.random16() % 100 && !CheckInvincible(v))
+            if (DeathMark)
+                return true;
+
+            if (CheckInvincible(v) || v.Context.HitRate <= Comn.random16() % 100)
             {
                 v.Context.Flags |= BattleCalcFlags.Miss;
                 SPS_GuardStatus(v);
                 return false;
             }
 
-            if (v.Context.Evade > Comn.random16() % 100 && !CheckInvincible(v))
+            if (v.Context.Evade > Comn.random16() % 100)
             {
                 v.Context.Flags |= BattleCalcFlags.Miss;
                 SPS_GuardStatus(v);
@@ -289,15 +292,18 @@ namespace Memoria.Scripts.TranceSeek
             foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(v.Target))
                 saFeature.TriggerOnAbility(v, "HitRateSetup", true);
 
-            AlterHitRateForStatus(v);
+            AlterHitRateForStatus(v, out Boolean DeathMark);
 
-            if (v.Context.HitRate <= Comn.random16() % 100 && !CheckInvincible(v))
+            if (DeathMark)
+                return true;
+
+            if (CheckInvincible(v) || v.Context.HitRate <= Comn.random16() % 100)
             {
                 SPS_GuardStatus(v);
                 return false;
             }
 
-            if (v.Context.Evade > Comn.random16() % 100 && !CheckInvincible(v))
+            if (v.Context.Evade > Comn.random16() % 100)
             {
                 SPS_GuardStatus(v);
                 return false;
@@ -318,9 +324,9 @@ namespace Memoria.Scripts.TranceSeek
             foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(v.Target))
                 saFeature.TriggerOnAbility(v, "HitRateSetup", true);
 
-            AlterHitRateForStatus(v);
+            AlterHitRateForStatus(v, out Boolean DeathMark);
 
-            if (v.Command.HitRate > Comn.random16() % 100 && !CheckInvincible(v))
+            if (!CheckInvincible(v) && (DeathMark || v.Context.HitRate > Comn.random16() % 100))
             {
                 v.Target.TryAlterStatuses(v.Command.AbilityStatus, false, v.Caster);
                 AlterStatusDurationFromSA(v, v.Command.AbilityStatus);
@@ -329,16 +335,29 @@ namespace Memoria.Scripts.TranceSeek
             SPS_GuardStatus(v);
         }
 
-        public static void AlterHitRateForStatus(this BattleCalculator v)
+        public static void AlterHitRateForStatus(this BattleCalculator v, out Boolean DeathMark)
         {
+            DeathMark = false;
             if (OneTriggerHitRateBonus)
                 return;
 
-            if (v.Target.State().Monster.TroubleOnBoss)
-                v.Context.HitRate += 10;
+            var Target_TSVar = v.TargetState();
 
-            TranceSeekCharacterMechanic.GarnetGemMechanic(v, GarnetGemMechanic_Type.BoostMagicalEvade);
-            ReduceAccuracyEliteMonsters(v);
+            if (Target_TSVar.Monster.MarkOfDeath && Target_TSVar.Monster.MarkOfDeath_SHP != null && v.Caster.Data != v.Target.Data)
+            {
+                v.Context.Evade = 0;
+                v.Context.HitRate = 255;
+                DeathMark = true;
+            }
+            else
+            {
+                if (Target_TSVar.Monster.TroubleOnBoss)
+                    v.Context.HitRate += 10;
+
+                TranceSeekCharacterMechanic.GarnetGemMechanic(v, GarnetGemMechanic_Type.BoostMagicalEvade);
+                ReduceAccuracyEliteMonsters(v);
+            }
+
             OneTriggerHitRateBonus = true;
         }
 
@@ -438,21 +457,21 @@ namespace Memoria.Scripts.TranceSeek
         {
             v.Context.HitRate = (Int16)(v.Command.HitRate + (v.Caster.Magic >> 2) + v.Caster.Level - v.Target.Level);
 
-            //if (v.Context.HitRate > 100)
-            //    v.Context.HitRate = 100;
-
             if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Venefic))
                 TranceSeekCharacterMechanic.AmarantPassive(v);
 
-            AlterHitRateForStatus(v);
+            AlterHitRateForStatus(v, out Boolean DeathMark);
 
             if (v.Context.HitRate < 1)
                 v.Context.HitRate = 1;
 
-            v.Context.Evade = v.Target.MagicEvade;
+            if (!DeathMark)
+            {
+                v.Context.Evade = v.Target.MagicEvade;
 
-            if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Knavery_Boosted) && v.Caster.PlayerIndex == CharacterId.Zidane) // SA Knavery+
-                v.Context.Evade += v.CasterState().Zidane.Dodge;
+                if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Knavery_Boosted) && v.Caster.PlayerIndex == CharacterId.Zidane) // SA Knavery+
+                    v.Context.Evade += v.CasterState().Zidane.Dodge;
+            }
         }
 
         public static void ReduceAccuracyEliteMonsters(this BattleCalculator v, Boolean MalusForced = false)
@@ -560,7 +579,7 @@ namespace Memoria.Scripts.TranceSeek
         public static void PenaltyCommandDividedAttack(this BattleCalculator v)
         {
             if (v.Command.IsDevided)
-                v.Context.DamageModifierCount -= 2;
+                v.Context.Attack /= 2;
         }
 
         public static void CasterPenaltyMini(this BattleCalculator v)
@@ -982,7 +1001,7 @@ namespace Memoria.Scripts.TranceSeek
         public static void AlterStatusDuration(this BattleCalculator v, BattleStatus targetstatus, int NewFormula = 0, Boolean Add = true)
         {
             int Formula = 400 + v.Caster.Will * 2 - v.Target.Will;
-            if (Formula != 0)
+            if (NewFormula != 0)
                 Formula = NewFormula;
 
             foreach (BattleStatusId statusId in targetstatus.ToStatusList())
@@ -1039,7 +1058,7 @@ namespace Memoria.Scripts.TranceSeek
             List<BattleUnit> candidates = new List<BattleUnit>();
             foreach (BattleUnit monster in BattleState.EnumerateUnits())
             {
-                if (!monster.IsPlayer && monster.Data.dms_geo_id == mob.Data.dms_geo_id)
+                if (!monster.IsPlayer && monster.Data.dms_geo_id == mob.Data.dms_geo_id && !monster.IsZombie)
                 {
                     if ((monster.PermanentStatus & BattleStatus.Trance) != 0)
                     {
@@ -1223,11 +1242,15 @@ namespace Memoria.Scripts.TranceSeek
                     }                   
                 }
             }
-            if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Chemist_Boosted) && v.Target.Id != FF9StateSystem.EventState.gEventGlobal[1326])
+
+            if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Chemist_Boosted) && v.Target.Id != FF9StateSystem.EventState.gEventGlobal[1326] && (v.Command.ScriptId == 69 || v.Command.ScriptId == 70))
             {
                 v.Target.HpDamage /= 2;
                 v.Target.MpDamage /= 2;
             }
+
+            if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Doctor) && (v.Target.Flags & CalcFlag.HpRecovery) != 0 && v.Target.MpDamage == 0) // Medecin
+                v.Target.HpDamage += v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Doctor_Boosted) ? (v.Target.HpDamage / 2) : (v.Target.HpDamage / 4);
 
             if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Agreement) && v.Command.Id == BattleCommandId.MagicSword) // Entente
             {

@@ -230,6 +230,48 @@ namespace Memoria.Scripts.TranceSeek
                         }
                     }
 
+                    int dictID = 2000 + (int)unit.PlayerIndex;
+                    if (!FF9StateSystem.EventState.gScriptDictionary.TryGetValue(dictID, out Dictionary<Int32, Int32> charDict))
+                    {
+                        charDict = new Dictionary<Int32, Int32>();
+                        FF9StateSystem.EventState.gScriptDictionary.Add(dictID, charDict);
+                    }
+
+                    charDict[0] = 0; // Reset infused weapon.
+
+                    if (difficultyMode == 6)
+                    {
+                        int scenario = FF9StateSystem.EventState.ScenarioCounter;
+                        int maxLevelAllowed = 99; // Fallback
+
+                        if (scenario < 2400) maxLevelAllowed = 5;
+                        else if (scenario < 2525) maxLevelAllowed = 7;
+                        else if (scenario < 2990) maxLevelAllowed = 9;
+                        else if (scenario < 3740) maxLevelAllowed = 12;
+                        else if (scenario < 3900) maxLevelAllowed = 15;
+                        else if (scenario < 4600) maxLevelAllowed = 16;
+                        else if (scenario < 4730) maxLevelAllowed = 17;
+                        else if (scenario < 4990) maxLevelAllowed = 19;
+                        else if (scenario < 5120) maxLevelAllowed = 21;
+                        else if (scenario < 5900) maxLevelAllowed = 23;
+                        else if (scenario < 5990) maxLevelAllowed = 25;
+                        else if (scenario < 6310) maxLevelAllowed = 27;
+                        else if (scenario < 6740) maxLevelAllowed = 29;
+                        else if (scenario < 6820) maxLevelAllowed = 30;
+                        else if (scenario < 6990) maxLevelAllowed = 32;
+                        else if (scenario < 9510) maxLevelAllowed = 34;
+                        else if (scenario < 9890) maxLevelAllowed = 37;
+                        else if (scenario < 9990) maxLevelAllowed = 41;
+                        else if (scenario < 10700) maxLevelAllowed = 45;
+                        else if (scenario < 10830) maxLevelAllowed = 50;
+                        else if (scenario < 11100) maxLevelAllowed = 55;
+
+                        uint currentExp = unit.Player.exp;
+                        uint maxExpAllowed = ff9level.CharacterLevelUps[(maxLevelAllowed - 1)].ExperienceToLevel;
+                        int expMargin = (int)(maxExpAllowed > currentExp ? maxExpAllowed - currentExp : 0);
+                        charDict[4] = expMargin;
+                    }
+
                     // Poison element
                     if (ItemAffinitiesPoison.TryGetValue(unit.Weapon, out int poisonWeapon) && StateDict.EffectElement.Poison < poisonWeapon)
                         StateDict.EffectElement.Poison = poisonWeapon;
@@ -449,10 +491,6 @@ namespace Memoria.Scripts.TranceSeek
                         for (int i = 0; i < totalAAKomrade; i++)
                             dict[firstAAKomradeId + i] = 1;
                     }
-
-                    int ID = 2000 + (int)unit.PlayerIndex;
-                    if (FF9StateSystem.EventState.gScriptDictionary.ContainsKey(ID)) // Reset infused weapon.
-                        FF9StateSystem.EventState.gScriptDictionary.Remove(ID);
 
                     if (FF9StateSystem.EventState.ScenarioCounter >= 11100 && FF9StateSystem.EventState.gEventGlobal[1500] == 0) // [TODO] Remove for Disc 4 release !
                     {

@@ -25,6 +25,14 @@ namespace Memoria.Scripts.TranceSeek
                 else
                     Target_TSVar.Amarant.Duel = false;
             }
+
+            if (Target_TSVar.Monster.MarkOfDeath && Target_TSVar.Monster.MarkOfDeath_SHP != null && v.Caster.Data != v.Target.Data)
+            {
+                SoundLib.PlaySoundEffect(1895); //se520269
+                v.Target.State().Monster.MarkOfDeath = false;
+                v.Target.State().Monster.MarkOfDeath_SHP.Unload();
+                v.Target.State().Monster.MarkOfDeath_SHP = null;
+            }
         }
 
         public static void OnCommandEnd(BattleCalculator v)

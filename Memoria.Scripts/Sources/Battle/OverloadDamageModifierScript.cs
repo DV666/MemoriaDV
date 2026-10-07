@@ -75,9 +75,6 @@ namespace Memoria.Scripts.TranceSeek
                     v.Target.HpDamage *= 2;
                     Caster_TSVar.Blank.SecretIngredient--;
                 }
-
-                if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Doctor) && (v.Target.Flags & CalcFlag.HpRecovery) != 0 && v.Target.MpDamage == 0) // Medecin
-                    v.Context.DamageModifierCount += v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Doctor_Boosted) ? 2 : 1;
             }
             if (v.Target.IsPlayer)
             {
@@ -132,6 +129,9 @@ namespace Memoria.Scripts.TranceSeek
                         FF9StateSystem.EventState.gEventGlobal[1305]--;
                 }
 
+                if (Target_TSVar.Monster.MarkOfDeath && Target_TSVar.Monster.MarkOfDeath_SHP != null && v.Caster.Data != v.Target.Data && v.Caster.IsPlayer)
+                    v.Context.DamageModifierCount++;
+
                 if (v.Command.ScriptId != 118 && v.Command.ScriptId != 119 && v.Command.ScriptId != 17)  // Stone monsters
                     if (v.Target.HpDamage > 0 && TranceSeekAPI.IsAttackElement(v, EffectElement.None) && (v.Target.Flags & CalcFlag.HpRecovery) == 0 && Target_TSVar.Monster.StoneMonster)
                     {
@@ -141,8 +141,6 @@ namespace Memoria.Scripts.TranceSeek
             }
 
             TranceSeekRegularItem.SpecialItems(v);
-
-            // Log.Message("v.Context.DamageModifierCount = " + v.Context.DamageModifierCount);
 
             Single modifier_factor = 1f;
             Int32 count = v.Context.DamageModifierCount;
@@ -162,19 +160,8 @@ namespace Memoria.Scripts.TranceSeek
 
             if (!IsInvincible)
             {
-                if (Target_TSVar.Monster.MarkOfDeath && Target_TSVar.Monster.MarkOfDeath_SHP != null && (v.Target.Flags & CalcFlag.Critical) == 0 && (v.Target.HpDamage > 0 || v.Target.MpDamage > 0))
-                {
-                    v.Target.HpDamage *= 2;
-                    v.Target.MpDamage *= 2;
-                    v.Target.Flags |= CalcFlag.Critical;
-                    v.Target.Data.fig.info |= Param.FIG_INFO_HP_CRITICAL;
-                    v.Target.State().Monster.MarkOfDeath = false;
-                    v.Target.State().Monster.MarkOfDeath_SHP.Unload();
-                    v.Target.State().Monster.MarkOfDeath_SHP = null;
-                }
-
                 if ((v.Target.Flags & CalcFlag.HpAlteration) != 0)
-                    v.Target.HpDamage = (Int32)Math.Round(modifier_factor * v.Target.HpDamage);
+                    v.Target.HpDamage = (Int32)Math.Min(9999, Math.Round(modifier_factor * v.Target.HpDamage));
 
                 if (v.Target.IsUnderAnyStatus(BattleStatus.EasyKill) && v.Target.IsUnderAnyStatus(BattleStatus.Zombie))
                 {
@@ -186,12 +173,12 @@ namespace Memoria.Scripts.TranceSeek
                     }
                 }
                 if ((v.Target.Flags & CalcFlag.MpAlteration) != 0)
-                    v.Target.MpDamage = (Int32)Math.Round(modifier_factor * v.Target.MpDamage);
+                    v.Target.MpDamage = (Int32)Math.Min(9999, Math.Round(modifier_factor * v.Target.MpDamage));
 
                 if ((v.Caster.Flags & CalcFlag.HpAlteration) != 0)
-                    v.Caster.HpDamage = (Int32)Math.Round(modifier_factor * v.Caster.HpDamage);
+                    v.Caster.HpDamage = (Int32)Math.Min(9999, Math.Round(modifier_factor * v.Caster.HpDamage));
                 if ((v.Caster.Flags & CalcFlag.MpAlteration) != 0)
-                    v.Caster.MpDamage = (Int32)Math.Round(modifier_factor * v.Caster.MpDamage);
+                    v.Caster.MpDamage = (Int32)Math.Min(9999, Math.Round(modifier_factor * v.Caster.MpDamage));
 
                 if (v.Caster.State().CantKill > 0 && (v.Target.Flags & CalcFlag.HpAlteration) != 0 && v.Target.HpDamage > v.Target.CurrentHp)
                 {

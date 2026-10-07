@@ -209,7 +209,7 @@ namespace Memoria.Scripts.TranceSeek
                 sps.boneTran = _v.Target.Data.gameObject.transform.GetChildByName("bone028");
                 sps.posOffset = Vector3.zero;
                 Caster_TSVar.PolaritySPS = sps;
-                TranceSeekAPI.TryAlterCommandStatuses(_v);
+                _v.Target.RemoveStatus(_v.Command.AbilityStatus);
                 return;
                 //sps.scale = (Int32)(sps.scale * tmpSingle);
             }
@@ -376,16 +376,6 @@ namespace Memoria.Scripts.TranceSeek
             else if (_v.Command.Power == 66 && _v.Command.HitRate == 66 && (_v.Caster.Data.dms_geo_id == 66 || _v.Caster.Data.dms_geo_id == 181 || _v.Caster.Data.dms_geo_id == 2001)) // Jump (Burmecian Soldier & Fratley)
             {
                 FF9StateSystem.EventState.gEventGlobal[1305] |= (byte)_v.Caster.Id;
-            }
-            else if (_v.Command.Power == 199 && _v.Command.HitRate == 199 && _v.Command.AbilityStatus == BattleStatus.Reflect) // AntiBoom from Invincible (CD3 Kuja)
-            {
-                _v.Target.Flags = CalcFlag.HpAlteration | CalcFlag.MpAlteration;
-                _v.Target.HpDamage = (int)(_v.Target.CurrentHp - 1);
-                _v.Target.MpDamage = (int)(_v.Target.CurrentMp - 1);
-                if (_v.Target.IsUnderPermanentStatus(BattleStatus.Reflect))
-                    _v.Target.Data.stat.permanent &= ~BattleStatus.Reflect;
-
-                _v.Target.RemoveStatus(BattleStatus.Reflect);
             }
             else if (_v.Caster.Data.dms_geo_id == 146) // Quicksand mechanic
             {

@@ -391,8 +391,14 @@ namespace Memoria.Scripts.TranceSeek
                     case 658:
                     case 659:
                         return GetLeaderModelID() == 273; // Frog Mini game
+                    case 660:
+                        return modelsOnFieldCache.Contains(8);
+                    case 661:
+                        return modelsOnFieldCache.Contains(273) || modelsOnFieldCache.Contains(8);
                     case 662:
                         return GetLeaderModelID() == 273 && scenario == 5690; // Quina missing after the dialog (when the Fossil Roo opens)
+                    case 701:
+                        return scenario == 3700;
                     case 809:
                         return (scenario >= 4160 && scenario <= 4210);
                     case 810:
@@ -1216,6 +1222,12 @@ namespace Memoria.Scripts.TranceSeek
                 }
                 else
                 {
+                    if (f.PositionHistory.Count == 0) // When the leader init on a field, apply good light/slice for followers.
+                    {
+                        ApplyFollowerColor(f, GetLeaderColor());
+                        ApplyFollowerSlice(f, GetLeaderSlice());
+                    }
+
                     f.IdleTimer -= speedFactor;
 
                     if (f.IdleTimer < 0)

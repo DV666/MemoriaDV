@@ -114,6 +114,50 @@ namespace Memoria.Scripts.TranceSeek
                 dictbattle[0] = value;
             }
         }
+
+        public static int CommandPower
+        {
+            get
+            {
+                if (FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1002, out Dictionary<Int32, Int32> dictbattle))
+                    if (dictbattle.TryGetValue(10, out int CommandPowerValue))
+                        return CommandPowerValue;
+
+                return 0;
+            }
+            set
+            {
+                if (!FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1002, out Dictionary<Int32, Int32> dictbattle))
+                {
+                    dictbattle = new Dictionary<Int32, Int32>();
+                    FF9StateSystem.EventState.gScriptDictionary.Add(1002, dictbattle);
+                }
+
+                dictbattle[10] = value;
+            }
+        }
+
+        public static int CommandMPCost
+        {
+            get
+            {
+                if (FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1002, out Dictionary<Int32, Int32> dictbattle))
+                    if (dictbattle.TryGetValue(11, out int CommandMPCostValue))
+                        return CommandMPCostValue;
+
+                return 0;
+            }
+            set
+            {
+                if (!FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1002, out Dictionary<Int32, Int32> dictbattle))
+                {
+                    dictbattle = new Dictionary<Int32, Int32>();
+                    FF9StateSystem.EventState.gScriptDictionary.Add(1002, dictbattle);
+                }
+
+                dictbattle[11] = value;
+            }
+        }
     }
 
     public static class TranceSeekExtensions

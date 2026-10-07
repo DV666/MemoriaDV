@@ -155,7 +155,22 @@ namespace Memoria.Scripts.TranceSeek
                 if (_v.Target.Data.gameObject != null)
                     _v.Target.Data.gameObject.SetActive(false);
 
+                var MonsterState = _v.Target.State().Monster;
+                if (MonsterState.ATBGreenBarHUD != null)
+                {
+                    btl2d.StatusMessages.Remove(MonsterState.ATBGreenBarHUD);
+                    Singleton<HUDMessage>.Instance.ReleaseObject(MonsterState.ATBGreenBarHUD);
+                    MonsterState.ATBGreenBarHUD = null;
+                }
+                if (MonsterState.ATBFrameHUD != null)
+                {
+                    btl2d.StatusMessages.Remove(MonsterState.ATBFrameHUD);
+                    Singleton<HUDMessage>.Instance.ReleaseObject(MonsterState.ATBFrameHUD);
+                    MonsterState.ATBFrameHUD = null;
+                }
+
                 Int32 Key = FF9StateSystem.EventState.gEventGlobal[1305];
+
                 if (Summons.TryGetValue(Key, out SummonData summon))
                 {
                     GameObject newModel;

@@ -96,7 +96,7 @@ namespace Memoria.DefaultScripts
             {
                 if (inflicter.HasSupportAbilityByIndex(TranceSeekSupportAbility.Embrace)) // SA Embrace
                 {
-                    DiffPhysicalEvade = target.PhysicalEvade / 4;
+                    DiffPhysicalEvade = Math.Min(1, target.PhysicalEvade / 4);
                     if (target.IsPlayer)
                         target.PhysicalEvade = Math.Max(0, target.PhysicalEvade + DiffPhysicalEvade);
                     else
@@ -104,7 +104,7 @@ namespace Memoria.DefaultScripts
 
                     if (inflicter.HasSupportAbilityByIndex(TranceSeekSupportAbility.Embrace_Boosted))
                     {
-                        DiffMagicalEvade = target.MagicEvade / 4;
+                        DiffMagicalEvade = Math.Min(1, target.MagicEvade / 4);
                         if (target.IsPlayer)
                             target.MagicEvade = Math.Max(0, target.MagicEvade + DiffMagicalEvade);
                         else

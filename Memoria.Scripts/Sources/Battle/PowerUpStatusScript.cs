@@ -120,7 +120,7 @@ namespace Memoria.DefaultScripts
                 btl2d.StatusMessages.Remove(NumberHUD);
                 Singleton<HUDMessage>.Instance.ReleaseObject(NumberHUD);
             }
-            //Target.Strength = (Byte)BasicStrength;
+            Target.State().StackStatus.Strength = 0;
             return true;
         }
 

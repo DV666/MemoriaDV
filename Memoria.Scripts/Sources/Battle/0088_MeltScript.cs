@@ -45,6 +45,7 @@ namespace Memoria.Scripts.TranceSeek
                     {
                         if (!monster.IsPlayer)
                         {
+
                             if (monster.Data.btl_id == 16)
                             {
                                 HPZombDance1 = monster.CurrentHp - 10000 <= 0 ? 1 : monster.CurrentHp - 10000;
@@ -55,6 +56,7 @@ namespace Memoria.Scripts.TranceSeek
                             }
                             if (monster.Data.btl_id != 128)
                             {
+                                ScanScript.DeleteScanHUD(monster);
                                 if (monster.CurrentHp != 0)
                                 {
                                     monster.AddDelayedModifier(
@@ -92,6 +94,7 @@ namespace Memoria.Scripts.TranceSeek
 
             if (_v.Caster.CurrentHp != 0)
             {
+                ScanScript.DeleteScanHUD(_v.Caster);
                 _v.Caster.AddDelayedModifier(
                     null,
                     caster =>
