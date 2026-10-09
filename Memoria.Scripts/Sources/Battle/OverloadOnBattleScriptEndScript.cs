@@ -41,7 +41,7 @@ namespace Memoria.Scripts.TranceSeek
             var Target_TSVar = v.TargetState();
 
             // Mode EX
-            if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.EXMode) && v.Caster.IsUnderAnyStatus(BattleStatus.Trance))
+            if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.EXMode) && v.Caster.IsUnderAnyStatus(BattleStatus.Trance) && !TranceSeekAPI.IsCommandCounter(v))
             {
                 Int32 healPercent = v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.EXMode_Boosted) ? 50 : 25;
                 Int32 healHp = (int)(v.Caster.MaximumHp * healPercent / 100);

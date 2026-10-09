@@ -9,6 +9,7 @@ using System.Runtime.Remoting.Contexts;
 using UnityEngine;
 using static Memoria.Scripts.TranceSeek.TranceSeekBattleDictionary;
 using static Memoria.Scripts.TranceSeek.TranceSeekCharacterMechanic;
+using static SFX;
 
 namespace Memoria.Scripts.TranceSeek
 {
@@ -1080,6 +1081,11 @@ namespace Memoria.Scripts.TranceSeek
                 battleEnemy.Data.bonus_gil += (battleEnemy.Data.bonus_gil / 2);
                 battle.btl_bonus.ap *= 2;
             }
+        }
+
+        public static Boolean IsCommandCounter(BattleCalculator v)
+        {
+            return v.Command.Id == BattleCommandId.EnemyCounter || v.Command.Id == BattleCommandId.Counter || v.Command.Id == BattleCommandId.MagicCounter || v.Command.Id == BattleCommandId.AutoPotion;
         }
 
         //private static readonly HashSet<Int32> ScriptIdIgnoreInvincible = new HashSet<Int32>(new[] { 10, 13, 37, 69, 72, 143 });

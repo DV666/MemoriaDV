@@ -10,7 +10,7 @@ namespace Memoria.Scripts.TranceSeek
     /// Chakra
     /// </summary>
     [BattleScript(Id)]
-    public sealed class ChakraScript : IBattleScript
+    public sealed class ChakraScript : IBattleScript, IEstimateBattleScript
     {
         public const Int32 Id = 0037;
 
@@ -86,6 +86,22 @@ namespace Memoria.Scripts.TranceSeek
                 else
                     TranceSeekAPI.TryAlterCommandStatuses(_v);
             }
+        }
+
+        public Single RateTarget()
+        {
+            _v.Target.HpDamage = (Int32)(_v.Target.MaximumHp * _v.Command.Power / 100);
+            _v.Target.MpDamage = (Int32)(_v.Target.MaximumMp * _v.Command.Power / 100);
+
+            Single rateHP = _v.Target.HpDamage * BattleScriptDamageEstimate.RateHpMp((Int32)_v.Target.CurrentHp, (Int32)_v.Target.MaximumHp);
+            Single rateMP = _v.Target.MpDamage * BattleScriptDamageEstimate.RateHpMp((Int32)_v.Target.CurrentMp, (Int32)_v.Target.MaximumMp) * 10;
+
+            Single rate = rateHP + rateMP;
+
+            if (!_v.Target.IsPlayer)
+                rate *= -1;
+
+            return rate;
         }
     }
 }
