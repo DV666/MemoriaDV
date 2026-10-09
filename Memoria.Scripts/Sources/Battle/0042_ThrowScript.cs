@@ -69,6 +69,7 @@ namespace Memoria.Scripts.TranceSeek
                 else
                 {
                     _v.Context.AttackPower = _v.Command.Weapon.Power << 1;
+                    _v.Command.Element = _v.Command.Weapon.Element;
 
                     if (_v.Command.ItemId == TranceSeekRegularItem.Katon || _v.Command.ItemId == TranceSeekRegularItem.Suiton || _v.Command.ItemId == TranceSeekRegularItem.Raijin)
                     {
@@ -90,8 +91,6 @@ namespace Memoria.Scripts.TranceSeek
                             }
                             int strengthvalue = WeaponShape == 11 ? (Comn.random16() % _v.Caster.Strength) : _v.Caster.Strength;
                             _v.Context.Attack = (Int16)(strengthvalue + Comn.random16() % (1 + (_v.Caster.Level + _v.Caster.Strength >> 3)));
-
-                            _v.Command.Element = _v.Command.Weapon.Element;
                             if (_v.Command.Weapon.HitRate > Comn.random16() % 100)
                                 _v.Command.AbilityStatus |= _v.Command.Weapon.Status;
 
