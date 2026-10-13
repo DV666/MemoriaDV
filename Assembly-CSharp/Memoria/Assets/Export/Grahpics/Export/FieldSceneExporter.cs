@@ -1,6 +1,8 @@
+using Assets.Scripts.Common;
 using Memoria.Prime;
 using Memoria.Prime.PsdFile;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -26,44 +28,90 @@ namespace Memoria.Assets
                 var i = 0;
                 foreach (String map in CreateMapList())
                 {
-                    //if (!map.Contains("FBG_N01_ALXT_MAP016_AT_MSA_0"))
-                    //    continue;
-
                     ExportMapSafe(map);
                     i++;
-
-                    Texture2D[] allResTextures = Resources.FindObjectsOfTypeAll(typeof(Texture2D)) as Texture2D[];
-                    if (allResTextures != null)
-                    {
-                        List<Texture2D> texturesToUnload = new List<Texture2D>();
-                        foreach (Texture2D t in allResTextures)
-                            if (t != null)
-                                texturesToUnload.Add(t);
-
-                        if (texturesToUnload.Count > 0)
-                        {
-                            foreach (Texture2D t in texturesToUnload)
-                            {
-                                if (t == null)
-                                    continue;
-
-                                UnityEngine.Object.DestroyImmediate(t, true);
-                                Resources.UnloadAsset(t);
-                            }
-                        }
-                    }
-
-                    //Resources.UnloadUnusedAssets();
-                    //if (i % 100 == 0)
-                    //    System.GC.Collect();
+                    UnloadFieldTextures();
                 }
 
                 AssetManager.UseBundles = old;
-
             }
             catch (Exception ex)
             {
                 Log.Error(ex, "[FieldSceneExporter] Failed to export field resources.");
+            }
+        }
+
+        public static IEnumerator ExportSafeEnumerator()
+        {
+            if (!Configuration.Export.Field)
+            {
+                Log.Message("[FieldSceneExporter] Pass through {Configuration.Export.Field = 0}.");
+                yield break;
+            }
+
+            Boolean old = AssetManager.UseBundles;
+            AssetManager.UseBundles = true;
+
+            try
+            {
+                String[] maps = CreateMapList().ToArray();
+                Int32 total = maps.Length;
+                Int32 current = 0;
+
+                foreach (String map in maps)
+                {
+                    current++;
+                    ResourceExporter.UpdateProgress($"FieldScene : {map}", current, total);
+                    if (ResourceExporter.ShouldYield())
+                        yield return null;
+
+                    ExportMapSafe(map);
+                    UnloadFieldTextures();
+                }
+            }
+            finally
+            {
+                AssetManager.UseBundles = old;
+            }
+        }
+
+        private static void UnloadFieldTextures()
+        {
+            try
+            {
+                Texture2D[] allResTextures = Resources.FindObjectsOfTypeAll(typeof(Texture2D)) as Texture2D[];
+                if (allResTextures == null)
+                    return;
+
+                Texture fadeTex = PersistenSingleton<SceneDirector>.Instance != null
+                    ? PersistenSingleton<SceneDirector>.Instance.fadeTex
+                    : null;
+
+                List<Texture2D> texturesToUnload = new List<Texture2D>();
+                foreach (Texture2D t in allResTextures)
+                {
+                    if (t == null || t == Texture2D.whiteTexture || t == Texture2D.blackTexture || t == fadeTex)
+                        continue;
+
+                    String texName = t.name;
+                    if (!String.IsNullOrEmpty(texName) && (texName.StartsWith("Font Texture") || texName.StartsWith("GUI") || texName.StartsWith("Unity")))
+                        continue;
+
+                    texturesToUnload.Add(t);
+                }
+
+                foreach (Texture2D t in texturesToUnload)
+                {
+                    if (t == null)
+                        continue;
+
+                    UnityEngine.Object.DestroyImmediate(t, true);
+                    Resources.UnloadAsset(t);
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "[FieldSceneExporter] Failed to unload field textures.");
             }
         }
 

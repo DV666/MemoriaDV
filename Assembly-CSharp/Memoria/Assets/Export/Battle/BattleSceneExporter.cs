@@ -4,6 +4,7 @@ using Memoria.Prime;
 using Memoria.Prime.CSV;
 using Memoria.Prime.Json;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -52,6 +53,74 @@ namespace Memoria.Assets
             catch (Exception ex)
             {
                 Log.Error(ex, "[BattleSceneExporter] Failed to export field resources.");
+            }
+        }
+
+        public static IEnumerator ExportSafeEnumerator()
+        {
+            if (!Configuration.Export.Battle)
+            {
+                Log.Message("[BattleSceneExporter] Pass through {Configuration.Export.Battle = 0}.");
+                yield break;
+            }
+
+            Boolean old = AssetManager.UseBundles;
+            AssetManager.UseBundles = true;
+
+            try
+            {
+                KeyValuePair<String, Int32>[] scenes = CreateSceneList().ToArray();
+                Int32 total = scenes.Length + 2; // +2 pour Enemies et Actions
+                Int32 current = 0;
+
+                foreach (KeyValuePair<String, Int32> scene in scenes)
+                {
+                    current++;
+                    ResourceExporter.UpdateProgress($"BattleScene : {scene.Key}", current, total);
+                    if (ResourceExporter.ShouldYield())
+                        yield return null;
+
+                    FF9StateSystem.Battle.battleMapIndex = scene.Value;
+                    ExportSceneSafe(scene.Key);
+                }
+
+                current++;
+                ResourceExporter.UpdateProgress("BattleScene : Sérialisation des ennemis (CSV/JSON)...", current, total);
+                yield return null;
+                SerializeAllEnemiesSafe();
+
+                current++;
+                ResourceExporter.UpdateProgress("BattleScene : Sérialisation des actions (CSV/JSON)...", current, total);
+                yield return null;
+                SerializeAllActionsSafe();
+            }
+            finally
+            {
+                AssetManager.UseBundles = old;
+            }
+        }
+
+        private static void SerializeAllEnemiesSafe()
+        {
+            try
+            {
+                SerializeAllEnemies();
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "[BattleSceneExporter] Failed to serialize enemies.");
+            }
+        }
+
+        private static void SerializeAllActionsSafe()
+        {
+            try
+            {
+                SerializeAllActions();
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "[BattleSceneExporter] Failed to serialize actions.");
             }
         }
 
@@ -357,7 +426,12 @@ namespace Memoria.Assets
                 writer.WriteEnum("addNo", action.AddStatusNo);
                 writer.WriteInt32("mp", action.MP);
                 writer.WriteByte("type", action.Type);
-                writer.WriteUInt16("name", UInt16.Parse(action.Name));
+
+                UInt16 parsedName;
+                if (!UInt16.TryParse(action.Name, NumberStyles.Integer, CultureInfo.InvariantCulture, out parsedName))
+                    parsedName = 0;
+                writer.WriteUInt16("name", parsedName);
+
                 writer.EndObject();
             }
             writer.EndComplexArray();

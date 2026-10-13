@@ -21,6 +21,7 @@ namespace Assets.Scripts.Common
 
         public Boolean NeedFade { get; set; }
 
+        private GUIStyle _exportTextStyle;
         public static void SetTargetFrameRateForCurrentScene()
         {
             if (SceneDirector.IsBattleScene())
@@ -65,6 +66,8 @@ namespace Assets.Scripts.Common
         public static void ReplaceNow(String nextScene)
         {
             MemoriaExport();
+            if (Configuration.Export.Enabled)
+                return;
 
             if (String.IsNullOrEmpty(nextScene))
                 Log.Error($"[{nameof(SceneDirector)}] Someone tried to change the current scene [{Instance.CurrentScene}] to the invalid scene: [{nextScene}]. Stack: " + Environment.NewLine + Environment.StackTrace);
@@ -215,6 +218,10 @@ namespace Assets.Scripts.Common
             {
                 this._OnGUI_FullscreenEffect();
             }
+            if (ResourceExporter.IsExporting)
+            {
+                this._OnGUI_ExportProgress();
+            }
             if (this._logger.IsShowLog)
             {
                 this._logger.OnGUI();
@@ -229,6 +236,44 @@ namespace Assets.Scripts.Common
         private void OnDisable()
         {
             this._logger.DisableLog();
+        }
+
+        private void _OnGUI_ExportProgress()
+        {
+            if (this.fadeTex == null)
+                this.fadeTex = Texture2D.whiteTexture;
+
+            if (_exportTextStyle == null)
+            {
+                _exportTextStyle = new GUIStyle(GUI.skin.label)
+                {
+                    alignment = TextAnchor.MiddleCenter,
+                    fontSize = Mathf.Max(14, Screen.height / 45),
+                    fontStyle = FontStyle.Bold
+                };
+                _exportTextStyle.normal.textColor = Color.white;
+            }
+
+            Single barWidth = Screen.width * 0.6f;
+            Single barHeight = Mathf.Max(28f, Screen.height * 0.04f);
+            Single barX = (Screen.width - barWidth) * 0.5f;
+            Single barY = Screen.height * 0.82f;
+
+            Single progress = Mathf.Clamp01((Single)ResourceExporter.CurrentValue / ResourceExporter.MaxValue);
+
+            Color oldColor = GUI.color;
+
+            GUI.color = new Color(0.1f, 0.1f, 0.1f, 0.9f);
+            GUI.DrawTexture(new Rect(barX - 2f, barY - 2f, barWidth + 4f, barHeight + 4f), this.fadeTex);
+
+            GUI.color = new Color(0.15f, 0.45f, 0.85f, 1f);
+            GUI.DrawTexture(new Rect(barX, barY, barWidth * progress, barHeight), this.fadeTex);
+
+            GUI.color = Color.white;
+            String label = $"{ResourceExporter.CurrentResourceText} ({ResourceExporter.CurrentValue} / {ResourceExporter.MaxValue})";
+            GUI.Label(new Rect(barX, barY, barWidth, barHeight), label, _exportTextStyle);
+
+            GUI.color = oldColor;
         }
 
         private void _OnGUI_FullscreenEffect()

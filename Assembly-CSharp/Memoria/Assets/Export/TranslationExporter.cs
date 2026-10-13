@@ -1,56 +1,284 @@
-﻿using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
-using UnityEngine;
+﻿using Assets.Scripts.Common;
 using Assets.Sources.Scripts.UI.Common;
 using Memoria.Data;
 using Memoria.Prime;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
+using UnityEngine;
 
 namespace Memoria.Assets
 {
     public static class TranslationExporter
     {
-        public static void ExportSafe()
+        public static IEnumerator ExportSafeEnumerator()
         {
+            if (!Configuration.Export.Translation)
+            {
+                Log.Message("[TranslationExporter] Pass through {Configuration.Export.Translation = 0}.");
+                yield break;
+            }
+
+            String exportSymbol = Localization.CurrentSymbol;
+            String modFolder = $"ExportedTranslation{exportSymbol}/";
+            if (Directory.Exists(modFolder))
+            {
+                Log.Message($"[TranslationExporter] Translation export was skipped because a directory already exists [{modFolder}].");
+                yield break;
+            }
+
+            ResourceExporter.UpdateProgress($"Translation [{exportSymbol}] : Initialisation...", 0, 14);
+            yield return null;
+
             try
             {
-                if (!Configuration.Export.Translation)
-                {
-                    Log.Message("[TranslationExporter] Pass through {Configuration.Export.Translation = 0}.");
-                    return;
-                }
-
-                String exportSymbol = Localization.CurrentSymbol;
-                String modFolder = $"ExportedTranslation{exportSymbol}/";
-                if (Directory.Exists(modFolder))
-                {
-                    Log.Message($"[TranslationExporter] Translation export was skipped because a directory already exists [{modFolder}].");
-                    return;
-                }
-
                 InitialiseStaticBatches(exportSymbol);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Failed to initialise static batches for translation export.");
+                yield break;
+            }
 
-                ExportFieldTexts(exportSymbol, modFolder);
-                ExportBattleTexts(exportSymbol, modFolder);
-                ExportCommandTexts(exportSymbol, modFolder);
-                ExportAbilityTexts(exportSymbol, modFolder);
-                ExportSupportTexts(exportSymbol, modFolder);
-                ExportItemTexts(exportSymbol, modFolder);
-                ExportKeyItemTexts(exportSymbol, modFolder);
-                ExportLocationNames(exportSymbol, modFolder);
-                ExportCharacterNames(exportSymbol, modFolder);
-                ExportEtcTexts(exportSymbol, modFolder);
-                ExportLocalizationTexts(exportSymbol, modFolder);
+            // 1. Field Texts (granulaire)
+            yield return PersistenSingleton<SceneDirector>.Instance.StartCoroutine(ExportFieldTextsCoroutine(exportSymbol, modFolder));
 
-                ExportPlaceTitles(exportSymbol, modFolder);
+            // 2. Battle Texts (granulaire)
+            yield return PersistenSingleton<SceneDirector>.Instance.StartCoroutine(ExportBattleTextsCoroutine(exportSymbol, modFolder));
+
+            // 3 à 11. Bases de données rapides
+            KeyValuePair<String, Action>[] dbSteps = new KeyValuePair<String, Action>[]
+            {
+                new KeyValuePair<String, Action>("Commands", () => ExportCommandTexts(exportSymbol, modFolder)),
+                new KeyValuePair<String, Action>("Active Abilities", () => ExportAbilityTexts(exportSymbol, modFolder)),
+                new KeyValuePair<String, Action>("Support Abilities", () => ExportSupportTexts(exportSymbol, modFolder)),
+                new KeyValuePair<String, Action>("Items", () => ExportItemTexts(exportSymbol, modFolder)),
+                new KeyValuePair<String, Action>("Key Items", () => ExportKeyItemTexts(exportSymbol, modFolder)),
+                new KeyValuePair<String, Action>("Locations", () => ExportLocationNames(exportSymbol, modFolder)),
+                new KeyValuePair<String, Action>("Character Names", () => ExportCharacterNames(exportSymbol, modFolder)),
+                new KeyValuePair<String, Action>("UI / Etc Texts", () => ExportEtcTexts(exportSymbol, modFolder)),
+                new KeyValuePair<String, Action>("Localization", () => ExportLocalizationTexts(exportSymbol, modFolder))
+            };
+
+            for (Int32 i = 0; i < dbSteps.Length; i++)
+            {
+                ResourceExporter.UpdateProgress($"Translation [{exportSymbol}] : {dbSteps[i].Key}", i + 3, 14);
+                if (ResourceExporter.ShouldYield())
+                    yield return null;
+
+                try
+                {
+                    dbSteps[i].Value();
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex, $"[TranslationExporter] Failed on step {dbSteps[i].Key}.");
+                }
+            }
+
+            // 12. Place Titles (granulaire, lourd en textures)
+            yield return PersistenSingleton<SceneDirector>.Instance.StartCoroutine(ExportPlaceTitlesCoroutine(exportSymbol, modFolder));
+
+            // 13. Continent Titles
+            ResourceExporter.UpdateProgress($"Translation [{exportSymbol}] : Continent Titles", 13, 14);
+            yield return null;
+            try
+            {
                 ExportContinentTitles(exportSymbol, modFolder);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "[TranslationExporter] Failed to export continent titles.");
+            }
+
+            // 14. Message Atlases
+            ResourceExporter.UpdateProgress($"Translation [{exportSymbol}] : Message Atlases", 14, 14);
+            yield return null;
+            try
+            {
                 ExportMessageAtlases(exportSymbol, modFolder);
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "Failed to export translation materials.");
+                Log.Error(ex, "[TranslationExporter] Failed to export message atlases.");
             }
+        }
+
+        private static IEnumerator ExportFieldTextsCoroutine(String symbol, String modFolder)
+        {
+            Log.Message("[TranslationExporter] Exporting field texts...");
+            HashSet<Int32> zones = new HashSet<Int32>(EventEngineUtils.eventIDToMESID.Values);
+            String exportDirectoryMes = $"{modFolder}FF9_Data/EmbeddedAsset/Text/{symbol}/Field/";
+            String exportDirectoryHW = $"{modFolder}HadesWorkshop/Field/";
+            Directory.CreateDirectory(exportDirectoryMes);
+            Directory.CreateDirectory(exportDirectoryHW);
+
+            Int32 total = zones.Count;
+            Int32 current = 0;
+
+            foreach (Int32 zoneId in zones)
+            {
+                current++;
+                ResourceExporter.UpdateProgress($"Translation [{symbol}] Field : Zone {zoneId}", current, total);
+                if (ResourceExporter.ShouldYield())
+                    yield return null;
+
+                try
+                {
+                    if (!FF9TextTool.UpdateFieldTextNow(zoneId))
+                        continue;
+                    String textAsMes = "";
+                    String textAsHW = $"#HW filetype TEXT\n#HW language {symbol.ToLower()}\n#HW fileid {zoneId}\n\n";
+                    Int32 idCounter = -1;
+                    if (_sharedFieldTexts.TryGetValue(zoneId, out SharedFieldText[] sharedArray))
+                    {
+                        foreach (SharedFieldText shared in sharedArray)
+                        {
+                            idCounter = shared.EntryIndex - 1;
+                            for (Int32 i = shared.EntryIndex; i < shared.EntryIndex + shared.EntryCount; i++)
+                            {
+                                if (!FF9TextTool.MainBatch.fieldText.TryGetValue(i, out String sentence))
+                                    sentence = "";
+                                textAsMes += ProcessStringForStrtMes(ref idCounter, sentence, i);
+                            }
+                            File.WriteAllText($"{exportDirectoryMes}{shared.MesName}.mes", textAsMes);
+                            textAsMes = "";
+                        }
+                        idCounter = -1;
+                    }
+                    if (_fieldMesSetup.TryGetValue(zoneId, out SharedFieldText sharedPart))
+                    {
+                        textAsMes += sharedPart.MesName;
+                        idCounter = sharedPart.EntryCount - 1;
+                    }
+                    else
+                    {
+                        sharedPart = null;
+                    }
+                    foreach (KeyValuePair<Int32, String> pair in FF9TextTool.MainBatch.fieldText)
+                    {
+                        String sentence = pair.Value;
+                        if (sharedPart == null || pair.Key >= sharedPart.EntryCount)
+                            textAsMes += ProcessStringForStrtMes(ref idCounter, sentence, pair.Key);
+                        if (sentence.EndsWith("[ENDN]"))
+                            sentence = sentence.Substring(0, sentence.Length - 6);
+                        textAsHW += $"#HW text {pair.Key}\n{sentence}\n\n";
+                    }
+                    File.WriteAllText($"{exportDirectoryMes}{zoneId}.mes", textAsMes);
+                    File.WriteAllText($"{exportDirectoryHW}{FF9DBAll.MesDB[zoneId]}.txt", textAsHW);
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex, $"[TranslationExporter] Failed to export field text {zoneId}.");
+                }
+            }
+            Log.Message("[TranslationExporter] Done.");
+        }
+
+        private static IEnumerator ExportBattleTextsCoroutine(String symbol, String modFolder)
+        {
+            Log.Message("[TranslationExporter] Exporting battle texts...");
+            String exportDirectoryMes = $"{modFolder}FF9_Data/EmbeddedAsset/Text/{symbol}/Battle/";
+            String exportDirectoryHW = $"{modFolder}HadesWorkshop/Battle/";
+            Directory.CreateDirectory(exportDirectoryMes);
+            Directory.CreateDirectory(exportDirectoryHW);
+
+            Int32 total = FF9BattleDB.SceneData.Count();
+            Int32 current = 0;
+
+            foreach (KeyValuePair<String, Int32> battlePair in FF9BattleDB.SceneData)
+            {
+                current++;
+                ResourceExporter.UpdateProgress($"Translation [{symbol}] Battle : {battlePair.Key}", current, total);
+                if (ResourceExporter.ShouldYield())
+                    yield return null;
+
+                try
+                {
+                    Int32 battleId = battlePair.Value;
+                    if (!FF9TextTool.UpdateBattleTextNow(battleId))
+                        continue;
+                    BTL_SCENE scene = new BTL_SCENE();
+                    scene.ReadBattleScene(battlePair.Key.Substring(4));
+                    Int32 typCount = scene.header.TypCount;
+                    Int32 typAtkCount = typCount + scene.header.AtkCount;
+                    if (typAtkCount == 0)
+                        continue;
+                    String textAsMes = "";
+                    String textAsHW = $"#HW filetype TEXT_BATTLE\n#HW language {symbol.ToLower()}\n#HW fileid {battleId}\n\n";
+                    Int32 idCounter = -1;
+                    foreach (KeyValuePair<Int32, String> pair in FF9TextTool.MainBatch.battleText)
+                    {
+                        String sentence = pair.Value;
+                        Int32 strIndex = pair.Key;
+                        textAsMes += ProcessStringForStrtMes(ref idCounter, sentence, strIndex);
+                        if (sentence.EndsWith("[ENDN]"))
+                            sentence = sentence.Substring(0, sentence.Length - 6);
+                        if (strIndex < typCount)
+                            textAsHW += $"#HW enemyname {strIndex}\n{sentence}\n\n";
+                        else if (strIndex < typAtkCount)
+                            textAsHW += $"#HW attackname {strIndex - typCount}\n{sentence}\n\n";
+                        else
+                            textAsHW += $"#HW text {strIndex - typAtkCount}\n{sentence}\n\n";
+                    }
+                    File.WriteAllText($"{exportDirectoryMes}{battleId}.mes", textAsMes);
+                    File.WriteAllText($"{exportDirectoryHW}{battleId}.txt", textAsHW);
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex, $"[TranslationExporter] Failed to export battle text {battlePair.Key}.");
+                }
+            }
+            Log.Message("[TranslationExporter] Done.");
+        }
+
+        private static IEnumerator ExportPlaceTitlesCoroutine(String symbol, String modFolder)
+        {
+            Log.Message("[TranslationExporter] Exporting place titles...");
+            Int32 total = FieldMapInfo.localizeAreaTitle.dict.Count;
+            Int32 current = 0;
+
+            foreach (KeyValuePair<String, FieldMapLocalizeAreaTitleInfo> pair in FieldMapInfo.localizeAreaTitle.dict)
+            {
+                current++;
+                ResourceExporter.UpdateProgress($"Translation [{symbol}] PlaceTitle : {pair.Key}", current, total);
+                if (ResourceExporter.ShouldYield())
+                    yield return null;
+
+                try
+                {
+                    String scenePath = FieldMap.GetMapResourcePath(pair.Key);
+                    String exportDirectory = $"{modFolder}StreamingAssets/Assets/Resources/{scenePath}";
+                    Directory.CreateDirectory(exportDirectory);
+                    BGSCENE_DEF scene = new BGSCENE_DEF(true);
+                    scene.LoadResources(scenePath, pair.Key);
+                    scene.LoadLocalizationInfo(pair.Key, scenePath);
+                    for (Int32 i = pair.Value.startOvrIdx; i <= pair.Value.endOvrIdx; i++)
+                    {
+                        if (!scene.overlayList[i].isMemoria)
+                        {
+                            scene.atlas = TextureHelper.CopyAsReadable(scene.atlas, true);
+                            break;
+                        }
+                    }
+                    String bgxContent = $"USE_BASE_SCENE\nLANGUAGE: {symbol}\n\n";
+                    for (Int32 i = pair.Value.startOvrIdx; i <= pair.Value.endOvrIdx; i++)
+                    {
+                        bgxContent += $"OVERLAY\nOverlayId: {i}\n";
+                        bgxContent += scene.ExportMemoriaBGXOverlay(scene.overlayList[i], $"{exportDirectory}Title");
+                    }
+                    File.WriteAllText(exportDirectory + pair.Key + BGSCENE_DEF.MemoriaBGXExtension, bgxContent);
+                    UnityEngine.Object.DestroyImmediate(scene.atlas);
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex, $"[TranslationExporter] Failed to export place title {pair.Key}.");
+                }
+            }
+            Log.Message("[TranslationExporter] Done.");
         }
 
         private static void ExportFieldTexts(String symbol, String modFolder)

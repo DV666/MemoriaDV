@@ -1,5 +1,6 @@
 using Memoria.Prime;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
@@ -20,24 +21,7 @@ namespace Memoria.Assets
 
                 foreach (String name in GraphicResources.AtlasList.Keys)
                 {
-                    String path = GraphicResources.Embedded.GetAtlasPath(name);
-                    UIAtlas atlas = AssetManager.Load<UIAtlas>(path, true);
-                    if (atlas != null)
-                    {
-                        path = GraphicResources.Export.GetAtlasPath(name);
-                        ExportAtlasSafe(path, atlas);
-                    }
-                    else
-                    {
-                        Sprite[] spriteList = Resources.LoadAll<Sprite>(path);
-                        if (spriteList == null || spriteList.Length == 0)
-                        {
-                            Log.Message($"[GraphicResourceExporter] Failed to export '{path}' as an atlas or a sprite list");
-                            continue;
-                        }
-                        path = GraphicResources.Export.GetAtlasPath(name);
-                        ExportSpriteListSafe(path, spriteList);
-                    }
+                    ExportSingleAtlasOrSpriteListSafe(name);
                 }
 
                 CommonSPSSystem.ExportAllSPSTextures(Path.Combine(Configuration.Export.Path, "EffectSPS"));
@@ -45,6 +29,70 @@ namespace Memoria.Assets
             catch (Exception ex)
             {
                 Log.Error(ex, "[GraphicResourceExporter] Failed to export graphic resources.");
+            }
+        }
+
+        public static IEnumerator ExportSafeEnumerator()
+        {
+            if (!Configuration.Export.Graphics)
+            {
+                Log.Message("[GraphicResourceExporter] Pass through {Configuration.Export.Graphics = 0}.");
+                yield break;
+            }
+
+            Int32 total = GraphicResources.AtlasList.Keys.Count + 1;
+            Int32 current = 0;
+
+            foreach (String name in GraphicResources.AtlasList.Keys)
+            {
+                current++;
+                ResourceExporter.UpdateProgress($"Graphics : {name}", current, total);
+                if (ResourceExporter.ShouldYield())
+                    yield return null;
+
+                ExportSingleAtlasOrSpriteListSafe(name);
+            }
+
+            current++;
+            ResourceExporter.UpdateProgress("Graphics : EffectSPS", current, total);
+            yield return null;
+
+            try
+            {
+                CommonSPSSystem.ExportAllSPSTextures(Path.Combine(Configuration.Export.Path, "EffectSPS"));
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "[GraphicResourceExporter] Failed to export SPS textures.");
+            }
+        }
+
+        private static void ExportSingleAtlasOrSpriteListSafe(String name)
+        {
+            try
+            {
+                String path = GraphicResources.Embedded.GetAtlasPath(name);
+                UIAtlas atlas = AssetManager.Load<UIAtlas>(path, true);
+                if (atlas != null)
+                {
+                    path = GraphicResources.Export.GetAtlasPath(name);
+                    ExportAtlasSafe(path, atlas);
+                }
+                else
+                {
+                    Sprite[] spriteList = Resources.LoadAll<Sprite>(path);
+                    if (spriteList == null || spriteList.Length == 0)
+                    {
+                        Log.Message($"[GraphicResourceExporter] Failed to export '{path}' as an atlas or a sprite list");
+                        return;
+                    }
+                    path = GraphicResources.Export.GetAtlasPath(name);
+                    ExportSpriteListSafe(path, spriteList);
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, $"[GraphicResourceExporter] Failed to export graphic resource [{name}].");
             }
         }
 
