@@ -885,6 +885,8 @@ namespace Memoria.Scripts.TranceSeek
             {
                 if (v.Target.CanBeAttacked())
                 {
+                    v.Target.HpDamage = 0;
+                    v.Target.Flags = 0;
                     v.Target.CurrentHp = v.Target.MaximumHp;
                     btl2d.Btl2dReqSymbolMessage(v.Target.Data, "[00FF00]", TranceSeekMessages.DeathHealZombie, HUDMessage.MessageStyle.DEATH, 5);
                     SPSEffect sps = HonoluluBattleMain.battleSPS.AddSequenceSPS(20, -1, 1);

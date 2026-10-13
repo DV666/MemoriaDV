@@ -161,7 +161,7 @@ namespace Memoria.Scripts.TranceSeek
             if (!IsInvincible)
             {
                 if ((v.Target.Flags & CalcFlag.HpAlteration) != 0)
-                    v.Target.HpDamage = (Int32)Math.Min(9999, Math.Round(modifier_factor * v.Target.HpDamage));
+                    v.Target.HpDamage = (Int32)Math.Round(modifier_factor * v.Target.HpDamage);
 
                 if (v.Target.IsUnderAnyStatus(BattleStatus.EasyKill) && v.Target.IsUnderAnyStatus(BattleStatus.Zombie))
                 {
@@ -173,12 +173,12 @@ namespace Memoria.Scripts.TranceSeek
                     }
                 }
                 if ((v.Target.Flags & CalcFlag.MpAlteration) != 0)
-                    v.Target.MpDamage = (Int32)Math.Min(9999, Math.Round(modifier_factor * v.Target.MpDamage));
+                    v.Target.MpDamage = (Int32)Math.Round(modifier_factor * v.Target.MpDamage);
 
                 if ((v.Caster.Flags & CalcFlag.HpAlteration) != 0)
-                    v.Caster.HpDamage = (Int32)Math.Min(9999, Math.Round(modifier_factor * v.Caster.HpDamage));
+                    v.Caster.HpDamage = (Int32)Math.Round(modifier_factor * v.Caster.HpDamage);
                 if ((v.Caster.Flags & CalcFlag.MpAlteration) != 0)
-                    v.Caster.MpDamage = (Int32)Math.Min(9999, Math.Round(modifier_factor * v.Caster.MpDamage));
+                    v.Caster.MpDamage = (Int32)Math.Round(modifier_factor * v.Caster.MpDamage);
 
                 if (v.Caster.State().CantKill > 0 && (v.Target.Flags & CalcFlag.HpAlteration) != 0 && v.Target.HpDamage > v.Target.CurrentHp)
                 {

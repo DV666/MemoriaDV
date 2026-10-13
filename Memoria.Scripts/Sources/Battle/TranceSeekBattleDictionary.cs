@@ -510,7 +510,7 @@ namespace Memoria.Scripts.TranceSeek
         public int SoulChance { get; set; }
         public uint CasterHP_WhiteWind { get; set; }
         public Boolean OverloadEndCalled { get; set; }
-
+        public Boolean DragonAlreadyConsumed { get; set; }        
 
         public SPSEffect PolaritySPS { get; set; }
 

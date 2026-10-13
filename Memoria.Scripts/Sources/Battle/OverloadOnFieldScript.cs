@@ -106,7 +106,7 @@ namespace Memoria.Scripts.TranceSeek
             int bonus_speed = 0;
 
             bool isConditionMet = false;
-            if (FF9StateSystem.Common.FF9.fldMapNo == 2950)
+            if (FF9StateSystem.Common.FF9.fldMapNo == 2950 || FF9StateSystem.Common.FF9.fldMapNo == 2951 || FF9StateSystem.Common.FF9.fldMapNo == 2952)
             {
                 if (FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1008, out Dictionary<Int32, Int32> dict))
                 {

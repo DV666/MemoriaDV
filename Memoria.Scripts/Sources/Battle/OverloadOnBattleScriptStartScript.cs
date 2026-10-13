@@ -41,6 +41,11 @@ namespace Memoria.Scripts.TranceSeek
             TranceSeekAPI.OneTriggerHitRateBonus = false;
             TranceSeekRegularItem.SoulTriggered = false;
 
+            Boolean FirstHit = v.Command.Data.info.effect_counter == 1;
+
+            if (FirstHit)
+                Caster_TSVar.DragonAlreadyConsumed = false;
+
             if (Target_TSVar.Monster.HPBoss10000 && v.Target.CurrentHp <= 10000) // Prevent boss to die => Maybe use CustomBattleFlagsMeaning ?
                 v.Target.CurrentHp = 10000;
 
@@ -84,7 +89,7 @@ namespace Memoria.Scripts.TranceSeek
                 btl_stat.MakeStatusesPermanent(v.Caster, TranceSeekStatus.Runic, false);
                 btl_stat.MakeStatusesPermanent(v.Caster, BattleStatus.Defend, false);
             }
-            if (v.Caster.PlayerIndex == (CharacterId)12 && v.Command.Data.info.effect_counter == 1 && !v.Caster.InTrance) // Lani's Rage Mechanic
+            if (FirstHit && v.Caster.PlayerIndex == (CharacterId)12 && !v.Caster.InTrance) // Lani's Rage Mechanic
             {
                 switch (v.Command.AbilityId)
                 {
@@ -231,8 +236,8 @@ namespace Memoria.Scripts.TranceSeek
                 );
             }
 
-            if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Flexible) && v.Caster.PlayerIndex == CharacterId.Zidane && Caster_TSVar.Zidane.DaggerAttack == 0
-                && v.Command.Id != BattleCommandId.Counter && v.Command.Id != BattleCommandId.RushAttack && v.Command.Data.info.effect_counter == 1) // SA Flexible
+            if (FirstHit && v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Flexible) && v.Caster.PlayerIndex == CharacterId.Zidane && Caster_TSVar.Zidane.DaggerAttack == 0
+                && v.Command.Id != BattleCommandId.Counter && v.Command.Id != BattleCommandId.RushAttack) // SA Flexible
             {
                 if (SwitchWeaponScript.Dagger_Sword_DB.ContainsKey(v.Caster.Weapon))
                 {
@@ -337,7 +342,7 @@ namespace Memoria.Scripts.TranceSeek
                 }
             }
 
-            if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.PeaceOfMind) && v.Command.Data.info.effect_counter == 1) // SA Enchanted blade
+            if (FirstHit && v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.PeaceOfMind)) // SA Enchanted blade
             {
                 if ((v.Command.AbilityId == BattleAbilityId.Regen || v.Command.AbilityId == TranceSeekBattleAbility.Regen_Multi) && v.Caster.Weapon == RegularItem.Hamelin ||
                     (v.Command.AbilityId == BattleAbilityId.Life || v.Command.AbilityId == TranceSeekBattleAbility.Life_Multi) && v.Caster.Weapon == RegularItem.SirenFlute ||
@@ -402,7 +407,7 @@ namespace Memoria.Scripts.TranceSeek
                 );
             }
 
-            if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Offering) && v.Command.Data.info.effect_counter == 1 && v.Command.Id != BattleCommandId.Counter && v.Caster.CurrentMp < v.Caster.MaximumMp) // SA Offering
+            if (FirstHit && v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Offering) && v.Command.Id != BattleCommandId.Counter && v.Caster.CurrentMp < v.Caster.MaximumMp) // SA Offering
             {
                 v.Caster.AddDelayedModifier(
                     caster => caster.CurrentAtb < (9 * caster.MaximumAtb) / 10 || caster.CurrentAtb >= caster.MaximumAtb,
@@ -441,7 +446,7 @@ namespace Memoria.Scripts.TranceSeek
                 );
             }
 
-            if (v.Command.AbilityId == TranceSeekBattleAbility.Geirskögul && v.Command.Data.info.effect_counter == 1) // SA Enchanted blade
+            if (FirstHit && v.Command.AbilityId == TranceSeekBattleAbility.Geirskögul)
             {
                 Caster_TSVar.GeirskögulDragon = 0;
                 if (v.Target.IsUnderAnyStatus(TranceSeekStatus.Dragon))
