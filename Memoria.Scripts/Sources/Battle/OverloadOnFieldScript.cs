@@ -399,6 +399,8 @@ namespace Memoria.Scripts.TranceSeek
                         return GetLeaderModelID() == 273 && scenario == 5690; // Quina missing after the dialog (when the Fossil Roo opens)
                     case 701:
                         return scenario == 3700;
+                    case 760:
+                        return scenario == 3870 || scenario == 3880;
                     case 809:
                         return (scenario >= 4160 && scenario <= 4210);
                     case 810:

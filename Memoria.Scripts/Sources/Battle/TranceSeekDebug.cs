@@ -130,7 +130,11 @@ namespace Memoria.Scripts.TranceSeek
             private Rect _triggerBattleWindowRect = new Rect(310, 50, 300, 200);
             private string _battleIdStr = "0";
             private string _battleGroupStr = "0";
-            private bool _randomBattleGroup = false;
+
+            private bool _showTeleportFieldMenu = false;
+            private Rect _teleportFieldWindowRect = new Rect(310, 50, 320, 240);
+            private string _teleportFieldIdStr = "100";
+            private string _teleportScenarioCounterStr = "0";
 
             private int _selectedMapVarKey = 0;
             private int _selectedLocalVarKey = 0;
@@ -285,6 +289,7 @@ namespace Memoria.Scripts.TranceSeek
                 _showLearningMenu = false;
                 _showLangMenu = false;
                 _showTriggerBattleMenu = false;
+                _showTeleportFieldMenu = false;
 
                 _unitBonesVisuals.Clear();
 
@@ -357,6 +362,12 @@ namespace Memoria.Scripts.TranceSeek
                     _triggerBattleWindowRect = GUI.Window(1415, _triggerBattleWindowRect, DrawTriggerBattleMenu, "Mod : Trigger Battle");
                 }
 
+                if (_showMenu && _showTeleportFieldMenu && SceneDirector.IsFieldScene())
+                {
+                    GUI.backgroundColor = Color.black;
+                    _teleportFieldWindowRect = GUI.Window(1416, _teleportFieldWindowRect, DrawTeleportFieldMenu, "Mod : Teleport Field");
+                }
+
                 if (_showMenu && _showFieldMenu && SceneDirector.IsFieldScene())
                 {
                     GUI.backgroundColor = Color.black;
@@ -411,6 +422,7 @@ namespace Memoria.Scripts.TranceSeek
 
                 GUILayout.Space(10);
                 if (GUILayout.Button("<b>Reload AbilityFeatures</b>")) { ReloadAbilityFeatures(); GUI.FocusControl(null); }
+                if (GUILayout.Button("<b>Reload BattlePatch</b>")) { ReloadBattlePatch(); GUI.FocusControl(null); }
                 if (GUILayout.Button("<b>Reload All Texts</b>")) { ReloadAllTexts(); GUI.FocusControl(null); }
                 GUILayout.Space(15);
 
@@ -439,11 +451,25 @@ namespace Memoria.Scripts.TranceSeek
                         _showTriggerBattleMenu = t;
                         SoundLib.PlaySoundEffect(1362);
                     }
+
+                    if (GUILayout.Button(_showTeleportFieldMenu ? "<color=orange><b>Fermer Teleport Field</b></color>" : "<b>Ouvrir Teleport Field</b>"))
+                    {
+                        bool t = !_showTeleportFieldMenu;
+                        CloseAllSubMenus();
+                        _showTeleportFieldMenu = t;
+                        if (_showTeleportFieldMenu && FF9StateSystem.Common?.FF9 != null && FF9StateSystem.EventState != null)
+                        {
+                            _teleportFieldIdStr = FF9StateSystem.Common.FF9.fldMapNo.ToString();
+                            _teleportScenarioCounterStr = FF9StateSystem.EventState.ScenarioCounter.ToString();
+                        }
+                        SoundLib.PlaySoundEffect(1362);
+                    }
                 }
                 else
                 {
                     _showFieldMenu = false;
                     _showTriggerBattleMenu = false;
+                    _showTeleportFieldMenu = false;
                 }
 
                 GUILayout.Space(15);
@@ -2188,6 +2214,82 @@ namespace Memoria.Scripts.TranceSeek
                 }
             }
 
+            private void ReloadBattlePatch()
+            {
+                try
+                {
+                    Type dataPatchersType = typeof(BTL_SCENE).Assembly.GetType("Memoria.DataPatchers");
+                    if (dataPatchersType == null)
+                    {
+                        Memoria.Prime.Log.Warning("[Trance Seek Debug] Impossible de trouver le type Memoria.DataPatchers.");
+                        SoundLib.PlaySoundEffect(102);
+                        return;
+                    }
+
+                    FieldInfo battlePatchField = dataPatchersType.GetField("_battlePatch", BindingFlags.NonPublic | BindingFlags.Static);
+                    FieldInfo currentModField = dataPatchersType.GetField("CurrentModReading", BindingFlags.Public | BindingFlags.Static);
+                    MethodInfo patchBattlesMethod = dataPatchersType.GetMethod("PatchBattles", BindingFlags.NonPublic | BindingFlags.Static);
+                    MethodInfo applyBattlePatchMethod = dataPatchersType.GetMethod("ApplyBattlePatch", BindingFlags.Public | BindingFlags.Static);
+
+                    if (battlePatchField == null || patchBattlesMethod == null)
+                    {
+                        SoundLib.PlaySoundEffect(102);
+                        return;
+                    }
+
+                    System.Collections.IList patchList = battlePatchField.GetValue(null) as System.Collections.IList;
+                    if (patchList != null)
+                        patchList.Clear();
+
+                    int loadedFilesCount = 0;
+                    foreach (AssetManager.AssetFolder folder in AssetManager.FolderLowToHigh)
+                    {
+                        if (String.IsNullOrEmpty(folder.FolderPath))
+                            continue;
+
+                        if (currentModField != null)
+                            currentModField.SetValue(null, folder.FolderPath);
+
+                        if (folder.TryFindAssetInModOnDisc("BattlePatch.txt", out String battlePath, AssetManagerUtil.GetStreamingAssetsPath() + "/"))
+                        {
+                            String[] lines = System.IO.File.ReadAllLines(battlePath);
+                            patchBattlesMethod.Invoke(null, new object[] { lines });
+                            loadedFilesCount++;
+                        }
+                    }
+
+                    if (SceneDirector.IsBattleScene() && FF9StateSystem.Battle?.FF9Battle?.btl_scene != null && applyBattlePatchMethod != null)
+                    {
+                        BTL_SCENE currentScene = FF9StateSystem.Battle.FF9Battle.btl_scene;
+                        applyBattlePatchMethod.Invoke(null, new object[] { currentScene });
+
+                        if (Memoria.Configuration.Battle.SFXRework && currentScene.atk != null)
+                        {
+                            foreach (AA_DATA aa in currentScene.atk)
+                            {
+                                if (aa?.Info != null && !String.IsNullOrEmpty(aa.Info.SequenceFile))
+                                {
+                                    String sequenceText = AssetManager.LoadString(aa.Info.SequenceFile);
+                                    if (sequenceText != null)
+                                        aa.Info.VfxAction = new UnifiedBattleSequencer.BattleAction(sequenceText);
+                                }
+                            }
+                        }
+
+                        _cachedBtlName = null;
+                        _statTextCache.Clear();
+                    }
+
+                    Memoria.Prime.Log.Message($"[Trance Seek Debug] BattlePatch.txt rechargé avec succès ({loadedFilesCount} fichier(s)) !");
+                    SoundLib.PlaySoundEffect(108);
+                }
+                catch (Exception ex)
+                {
+                    Memoria.Prime.Log.Error(ex, "[Trance Seek Debug] Erreur lors du rechargement de BattlePatch.txt.");
+                    SoundLib.PlaySoundEffect(102);
+                }
+            }
+
             private void ReloadAllTexts()
             {
                 try
@@ -2729,6 +2831,81 @@ namespace Memoria.Scripts.TranceSeek
                 GUI.DragWindow();
             }
 
+            void DrawTeleportFieldMenu(int windowID)
+            {
+                GUILayout.BeginVertical("box");
+                GUILayout.Label("<b>Téléportation Field</b>", new GUIStyle(GUI.skin.label) { richText = true, alignment = TextAnchor.MiddleCenter });
+                GUILayout.Space(5);
+
+                int currentMapNo = FF9StateSystem.Common?.FF9 != null ? FF9StateSystem.Common.FF9.fldMapNo : -1;
+                int currentSc = FF9StateSystem.EventState != null ? FF9StateSystem.EventState.ScenarioCounter : -1;
+                GUILayout.Label($"<i>Actuel — Field: <color=cyan>{currentMapNo}</color> | Scenario: <color=yellow>{currentSc}</color></i>", new GUIStyle(GUI.skin.label) { richText = true, alignment = TextAnchor.MiddleCenter });
+
+                GUILayout.Space(10);
+
+                GUILayout.BeginHorizontal();
+                GUILayout.Label("Field ID:", GUILayout.Width(120));
+                _teleportFieldIdStr = GUILayout.TextField(_teleportFieldIdStr, GUILayout.Width(100));
+                GUILayout.EndHorizontal();
+
+                GUILayout.BeginHorizontal();
+                GUILayout.Label("ScenarioCounter:", GUILayout.Width(120));
+                _teleportScenarioCounterStr = GUILayout.TextField(_teleportScenarioCounterStr, GUILayout.Width(100));
+                GUILayout.EndHorizontal();
+
+                GUILayout.Space(15);
+
+                if (GUILayout.Button("Se téléporter", GUILayout.Height(40)))
+                {
+                    if (short.TryParse(_teleportFieldIdStr, out short fieldId) && fieldId > 0 &&
+                        int.TryParse(_teleportScenarioCounterStr, out int scenarioCounter) && scenarioCounter >= 0)
+                    {
+                        TeleportToField(fieldId, scenarioCounter);
+                    }
+                    else
+                    {
+                        SoundLib.PlaySoundEffect(102);
+                    }
+                }
+
+                GUILayout.EndVertical();
+                GUI.DragWindow();
+            }
+
+            private void TeleportToField(short fieldId, int scenarioCounter)
+            {
+                EventEngine ee = PersistenSingleton<EventEngine>.Instance;
+                if (ee == null || FF9StateSystem.EventState == null || FF9StateSystem.Field?.FF9Field == null)
+                {
+                    SoundLib.PlaySoundEffect(102);
+                    return;
+                }
+
+                CloseAllSubMenus();
+                _showMenu = false;
+                SoundLib.PlaySoundEffect(103);
+
+                FF9StateSystem.EventState.ScenarioCounter = scenarioCounter;
+
+                MethodInfo setNextMapMethod = typeof(EventEngine).GetMethod("SetNextMap", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+                if (setNextMapMethod != null)
+                {
+                    setNextMapMethod.Invoke(ee, new object[] { (int)fieldId });
+                }
+                else
+                {
+                    ETb.YWindow_CloseAll(true);
+                    FF9StateSystem.Field.FF9Field.loc.map.nextMapNo = fieldId;
+                }
+
+                FF9StateSystem.Common.FF9.btl_rain = 0;
+                FF9StateSystem.Field.FF9Field.loc.map.nextMode = 1;
+                FF9StateSystem.Field.FF9Field.attr |= 1U;
+                PersistenSingleton<FF9StateSystem>.Instance.attr |= 2U;
+
+                Memoria.Prime.Log.Message($"[DebugMenu] Téléportation vers Field {fieldId} avec ScenarioCounter = {scenarioCounter}.");
+            }
+
             private float DrawFloatStatUI(string k, string l, float v, int labelWidth = 20, int fieldWidth = 50)
             {
                 GUILayout.BeginHorizontal();
@@ -2880,7 +3057,45 @@ namespace Memoria.Scripts.TranceSeek
                 GUI.depth = oldDepth;
             }
 
-            private int DrawStatUI(string k, string l, int v, int w = 75) { GUILayout.BeginHorizontal(); GUILayout.Label(l, GUILayout.Width(w)); if (GUILayout.Button("-", GUILayout.Width(20))) { v--; _statTextCache[k] = v.ToString(); GUI.FocusControl(null); } if (!_statTextCache.ContainsKey(k)) _statTextCache[k] = v.ToString(); GUI.SetNextControlName(k); _statTextCache[k] = GUILayout.TextField(_statTextCache[k], GUILayout.Width(45)); if (GUILayout.Button("+", GUILayout.Width(20))) { v++; _statTextCache[k] = v.ToString(); GUI.FocusControl(null); } GUILayout.EndHorizontal(); if (int.TryParse(_statTextCache[k], out int p)) return p; return v; }
+            private int DrawStatUI(string k, string l, int v, int w = 75)
+            {
+                GUILayout.BeginHorizontal();
+                GUILayout.Label(l, GUILayout.Width(w));
+
+                if (GUILayout.Button("-", GUILayout.Width(20)))
+                {
+                    v--;
+                    _statTextCache[k] = v.ToString();
+                    GUI.FocusControl(null);
+                }
+
+                bool isFocused = GUI.GetNameOfFocusedControl() == k;
+                if (!isFocused || !_statTextCache.ContainsKey(k))
+                {
+                    _statTextCache[k] = v.ToString();
+                }
+
+                GUI.SetNextControlName(k);
+                string newText = GUILayout.TextField(_statTextCache[k], GUILayout.Width(45));
+
+                if (isFocused && newText != _statTextCache[k])
+                {
+                    _statTextCache[k] = newText;
+                    if (int.TryParse(newText, out int parsed))
+                        v = parsed;
+                }
+
+                if (GUILayout.Button("+", GUILayout.Width(20)))
+                {
+                    v++;
+                    _statTextCache[k] = v.ToString();
+                    GUI.FocusControl(null);
+                }
+
+                GUILayout.EndHorizontal();
+                return v;
+            }
+
             private string GetAbilityName(int id) { var f = typeof(TranceSeekBattleAbility).GetFields(BindingFlags.Public | BindingFlags.Static); foreach (var fi in f) if ((int)(BattleAbilityId)fi.GetValue(null) == id) return fi.Name; if (Enum.IsDefined(typeof(BattleAbilityId), id)) return Enum.GetName(typeof(BattleAbilityId), id); return "Unknown"; }
             private string GetItemName(int id)
             {
