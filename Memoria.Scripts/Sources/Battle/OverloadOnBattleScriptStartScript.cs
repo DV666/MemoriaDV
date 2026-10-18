@@ -289,17 +289,6 @@ namespace Memoria.Scripts.TranceSeek
                 v.Caster.Trance = (byte)Math.Max(0, v.Caster.Trance - TranceDelta);
             }
 
-            if (v.Caster.PlayerIndex == CharacterId.Marcus && v.Caster.InTrance) // Refresh Trance data in Player for Marcus, for AbilityFeatures.txt purpose.
-            {
-                v.Caster.AddDelayedModifier(
-                    caster => caster.CurrentAtb >= caster.MaximumAtb,
-                    caster =>
-                    {
-                        caster.Player.trance = caster.Trance;
-                    }
-                );
-            }
-
             if (v.Command.Id == TranceSeekBattleCommand.Witchcraft && !v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Wizard_Boosted)) // Witchcraft (Vivi's SA)
                 v.Command.HitRate /= 2;
 

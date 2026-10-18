@@ -365,6 +365,28 @@ namespace Memoria.Scripts.TranceSeek
     }
     public class MarcusPassives
     {
+        public int OniProgress // TODO !
+        {
+            get
+            {
+                if (FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1000, out Dictionary<Int32, Int32> dictbattle))
+                    if (dictbattle.TryGetValue(14, out int alchemyValue))
+                        return alchemyValue;
+
+                return 0;
+            }
+            set
+            {
+                if (!FF9StateSystem.EventState.gScriptDictionary.TryGetValue(1000, out Dictionary<Int32, Int32> dictbattle))
+                {
+                    dictbattle = new Dictionary<Int32, Int32>();
+                    FF9StateSystem.EventState.gScriptDictionary.Add(1000, dictbattle);
+                }
+
+                dictbattle[14] = value;
+            }
+        }
+
         public int CursedBlood { get; set; }
         public Boolean LifeOrDeath { get; set; }
     }
@@ -517,6 +539,8 @@ namespace Memoria.Scripts.TranceSeek
         public BTL_DATA CasterScanga { get; set; }
 
         public int PreviousMPCostFactor { get; set; }
+        public int MagicLampCooldown { get; set; }
+
 
         public int CantKill
         {

@@ -124,6 +124,7 @@ namespace Memoria.Scripts.TranceSeek
                 {
                     btl_cmd.SetEnemyCommand(v.Target, BattleCommandId.EnemyCounter, 3, v.Target.Id);
                 }
+                FF9StateSystem.EventState.gEventGlobal[1306] = (byte)summonchance;
                 TantarianPage = false;
             }
         }

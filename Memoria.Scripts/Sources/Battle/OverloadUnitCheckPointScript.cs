@@ -9,15 +9,15 @@ namespace Memoria.Scripts.TranceSeek
 {
     public class OverloadUnitCheckPointScript : IOverloadUnitCheckPointScript
     {
-        public static Color ColorInvigorating => new Color(0.66654f, 0.99999f, 0.6715f);
+        private Color ColorInvigorating => new Color(0.66654f, 0.99999f, 0.6715f);
+
+        private Boolean HPColored = Configuration.Mod.FolderNames.Contains("TranceSeek/Options/ColoredHP");
+        private Boolean MPColored = Configuration.Mod.FolderNames.Contains("TranceSeek/Options/ColoredMP");
 
         public BattleStatus UpdatePointStatus(BattleUnit unit)
         {
             if (!unit.IsPlayer)
                 return 0;
-
-            Boolean HPColored = Configuration.Mod.FolderNames.Contains("TranceSeek/Options/ColoredHP");
-            Boolean MPColored = Configuration.Mod.FolderNames.Contains("TranceSeek/Options/ColoredMP");
 
             Boolean isLowHP = unit.IsPlayer && unit.CurrentHp * 6 <= unit.MaximumHp;
             if (isLowHP)

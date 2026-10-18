@@ -17,7 +17,6 @@ namespace Memoria.Scripts.TranceSeek
     {
         public Boolean InitHUDMessageChild;
         public HUDMessageChild HUDToReset = null;
-        public Int32 magiclampcooldown;
 
         private BattleUnit Sister = null; // TO DELETE - After Memoria Update :) (fix cover)
         private Vector3 SisterPosition = Vector3.zero; // TO DELETE - After Memoria Update :) (fix cover)
@@ -402,7 +401,7 @@ namespace Memoria.Scripts.TranceSeek
                             btl_stat.AlterStatus(unit, StrangeCubeStatuses[Comn.random16() % StrangeCubeStatuses.Length], unit);                            
                             break;
                         case TranceSeekRegularItem.MagicLamp:
-                            magiclampcooldown = (60 - unit.Will) * UnityEngine.Random.Range(1, 11) * 100;
+                            StateDict.MagicLampCooldown = (60 - unit.Will) * UnityEngine.Random.Range(1, 11) * 100;
                             unit.AddDelayedModifier(ProcessMagicLampRecast, null);
                             break;
                         case TranceSeekRegularItem.CursedCoin:
@@ -425,9 +424,8 @@ namespace Memoria.Scripts.TranceSeek
                                         foreach (BattleUnit monsteratb in BattleState.EnumerateUnits())
                                             if (!monsteratb.IsPlayer)
                                             {
-                                                StateDict.Monster.HPBarHidden = false;
-                                                StateDict.Monster.ATBGreenBarHUD = null;
-                                                StateDict.Monster.ATBFrameHUD = null;
+                                                monsteratb.State().Monster.ATBGreenBarHUD = null;
+                                                monsteratb.State().Monster.ATBFrameHUD = null;
                                                 monsteratb.AddDelayedModifier(ScanScript.ShowATBBar, null);
                                             }
                                     }
@@ -643,13 +641,14 @@ namespace Memoria.Scripts.TranceSeek
                     if (BattleID == 838 && sb2Pattern.Monster[unit.GetSlotNo()].TypeNo == 1) // Golden Pidove (fake Sleep)
                     {
                         SPSEffect sps = HonoluluBattleMain.battleSPS.AddSequenceSPS(2, -1, 1, true);
-                        if (sps == null)
-                            return;
-                        btl2d.GetIconPosition(unit, btl2d.ICON_POS_HEAD, out Transform attachTransf, out Vector3 iconOff);
-                        sps.charTran = unit.Data.gameObject.transform;
-                        sps.boneTran = attachTransf;
-                        sps.posOffset = Vector3.zero;
-                        StateDict.PolaritySPS = sps;
+                        if (sps != null)
+                        {
+                            btl2d.GetIconPosition(unit, btl2d.ICON_POS_HEAD, out Transform attachTransf, out Vector3 iconOff);
+                            sps.charTran = unit.Data.gameObject.transform;
+                            sps.boneTran = attachTransf;
+                            sps.posOffset = Vector3.zero;
+                            StateDict.PolaritySPS = sps;
+                        }
                     }
 
                     SB2_PUT enemyPlacement = btl_scene.PatAddr[GroupeBattleID].Monster[unit.GetSlotNo()];
@@ -771,7 +770,7 @@ namespace Memoria.Scripts.TranceSeek
 
         private Boolean ProcessMagicLampRecast(BattleUnit caster)
         {
-            if (magiclampcooldown <= 0)
+            if (caster.State().MagicLampCooldown <= 0)
             {
                 BattleAbilityId SummonChoosen = MagicLampSummons[Comn.random16() % MagicLampSummons.Length];
                 ushort target = 0;
@@ -786,7 +785,7 @@ namespace Memoria.Scripts.TranceSeek
             }
             else
             {
-                magiclampcooldown -= caster.Data.cur.at_coef * BattleState.ATBTickCount;
+                caster.State().MagicLampCooldown -= caster.Data.cur.at_coef * BattleState.ATBTickCount;
             }
             return true;
         }

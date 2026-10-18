@@ -5,6 +5,7 @@ using Memoria.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using UnityEngine;
 
 namespace Memoria.Scripts.TranceSeek
@@ -21,6 +22,8 @@ namespace Memoria.Scripts.TranceSeek
 
         private static Boolean _pinkTextEnabled = Configuration.Mod.FolderNames.Contains("TranceSeek/Options/BoostedSAIndicator/PinkText");
         private static Boolean _fadingTextEnabled = Configuration.Mod.FolderNames.Contains("TranceSeek/Options/BoostedSAIndicator/Fading");
+
+        private static readonly System.Text.RegularExpressions.Regex CleanTagRegex = new System.Text.RegularExpressions.Regex(@"\[/?b\]|\[[a-fA-F0-9]{6}\]|\[HSHD\]");
 
         public static Dictionary<SupportAbility, String> BoostedSATargetNames = new Dictionary<SupportAbility, String>();
 
@@ -196,7 +199,7 @@ namespace Memoria.Scripts.TranceSeek
                             displaySupportId = boostedList[boostLevelToDisplay - 1];
 
                         String rawName = FF9TextTool.SupportAbilityName(displaySupportId);
-                        String cleanName = System.Text.RegularExpressions.Regex.Replace(rawName, @"\[/?b\]|\[[a-fA-F0-9]{6}\]|\[HSHD\]", string.Empty);
+                        String cleanName = CleanTagRegex.Replace(rawName, String.Empty);
                         String targetName = cleanName;
 
                         if (highlightTier == 2)
