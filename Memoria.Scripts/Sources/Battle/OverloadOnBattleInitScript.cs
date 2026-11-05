@@ -236,7 +236,7 @@ namespace Memoria.Scripts.TranceSeek
                         FF9StateSystem.EventState.gScriptDictionary.Add(dictID, charDict);
                     }
 
-                    charDict[0] = 0; // Reset infused weapon.
+                    StateDict.InfusedWeapon = 0; // Reset infused weapon.
 
                     if (difficultyMode == 6)
                     {
@@ -268,7 +268,7 @@ namespace Memoria.Scripts.TranceSeek
                         uint currentExp = unit.Player.exp;
                         uint maxExpAllowed = ff9level.CharacterLevelUps[(maxLevelAllowed - 1)].ExperienceToLevel;
                         int expMargin = (int)(maxExpAllowed > currentExp ? maxExpAllowed - currentExp : 0);
-                        charDict[4] = expMargin;
+                        StateDict.ExpMargin = expMargin;
                     }
 
                     // Poison element
@@ -442,19 +442,9 @@ namespace Memoria.Scripts.TranceSeek
                         case TranceSeekRegularItem.YanHorns:
                             IsVisualAccessory = true;
                             break;
-                        case TranceSeekRegularItem.CharonsRing:
-                            unit.State().SoulChance = 20;
-                            break;
-                        case TranceSeekRegularItem.ErebusRing:
-                            unit.State().SoulChance = 40;
-                            break;
-                        case TranceSeekRegularItem.ThanatosRing:
-                            unit.State().SoulChance = 60;
-                            break;
-                        case TranceSeekRegularItem.AnimaRing:
-                            unit.State().SoulChance = 80;
-                            break;
                     }
+
+                    unit.State().SoulChance = TranceSeekRegularItem.BonusSoulRing(unit.Accessory);
 
                     if (ff9item._FF9Item_Data[unit.Accessory].shape == 60)
                     {

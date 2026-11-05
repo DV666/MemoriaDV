@@ -58,6 +58,7 @@ namespace Memoria.Scripts.TranceSeek
             TranceSeekRegularItem.SpecialItemsAtEnd(v);
             TranceSeekCharacterMechanic.EikoMougMechanic(v);
             TranceSeekCharacterMechanic.HeheTriggered = false;
+            TranceSeekRegularItem.SoulTriggered = false;
 
             Caster_TSVar.SpecialSA.Propagation = 0;
             Caster_TSVar.Monster.CellularReaction = 0;

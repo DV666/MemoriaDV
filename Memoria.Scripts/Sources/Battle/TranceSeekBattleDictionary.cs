@@ -22,7 +22,45 @@ namespace Memoria.Scripts.TranceSeek
                 state = new TranceSeekFighterState();
                 States[btl] = state;
             }
+
+            if (btl.bi.player != 0)
+                state.PlayerIndex = (CharacterId)btl.GetSlotNo();
+
             return state;
+        }
+
+        public static Dictionary<Int32, Int32> GetOrCreateScriptDict(int dictId)
+        {
+            if (!FF9StateSystem.EventState.gScriptDictionary.TryGetValue(dictId, out Dictionary<Int32, Int32> dict))
+            {
+                dict = new Dictionary<Int32, Int32>();
+                FF9StateSystem.EventState.gScriptDictionary.Add(dictId, dict);
+            }
+            return dict;
+        }
+
+        public static int GetScriptDictValue(int dictId, int key, int defaultValue = 0)
+        {
+            if (FF9StateSystem.EventState.gScriptDictionary.TryGetValue(dictId, out Dictionary<Int32, Int32> dict))
+                if (dict.TryGetValue(key, out int val))
+                    return val;
+
+            return defaultValue;
+        }
+
+        public static void SetScriptDictValue(int dictId, int key, int value)
+        {
+            GetOrCreateScriptDict(dictId)[key] = value;
+        }
+
+        public static int GetCharacterDictValue(CharacterId charId, int key, int defaultValue = 0)
+        {
+            return GetScriptDictValue(2000 + (int)charId, key, defaultValue);
+        }
+
+        public static void SetCharacterDictValue(CharacterId charId, int key, int value)
+        {
+            SetScriptDictValue(2000 + (int)charId, key, value);
         }
 
         public static bool ImmuneStatusPlayer = Configuration.Mod.FolderNames.Contains("TranceSeek/Options/ImmuneStatusPlayer");
@@ -494,6 +532,44 @@ namespace Memoria.Scripts.TranceSeek
 
     public class TranceSeekFighterState
     {
+        // Dict depending on the formula 2000 + CharId
+
+        public CharacterId PlayerIndex { get; set; } = CharacterId.NONE;
+
+        public int GetCharDict(int key, int defaultValue = 0)
+        {
+            return TranceSeekBattleDictionary.GetCharacterDictValue(PlayerIndex, key, defaultValue);
+        }
+
+        public void SetCharDict(int key, int value)
+        {
+            TranceSeekBattleDictionary.SetCharacterDictValue(PlayerIndex, key, value);
+        }
+        public int InfusedWeapon
+        {
+            get => GetCharDict(0);
+            set => SetCharDict(0, value);
+        }
+        public int ExpMargin
+        {
+            get => GetCharDict(4);
+            set => SetCharDict(4, value);
+        }
+
+        public int SoulCurrentMonster
+        {
+            get => GetCharDict(5);
+            set => SetCharDict(5, value);
+        }
+
+        public int SoulChance
+        {
+            get => GetCharDict(6);
+            set => SetCharDict(6, value);
+        }
+
+        // General Dict
+
         public ZidanePassives Zidane { get; set; } = new ZidanePassives();
         public ViviPassives Vivi { get; set; } = new ViviPassives();
         public SteinerPassives Steiner { get; set; } = new SteinerPassives();
@@ -529,7 +605,6 @@ namespace Memoria.Scripts.TranceSeek
         public Boolean DodgeALL { get; set; }
         public Boolean FreezeAltEffect { get; set; } // For ice monsters or LunarCrown
         public int MascotCooldown { get; set; }
-        public int SoulChance { get; set; }
         public uint CasterHP_WhiteWind { get; set; }
         public Boolean OverloadEndCalled { get; set; }
         public Boolean DragonAlreadyConsumed { get; set; }        

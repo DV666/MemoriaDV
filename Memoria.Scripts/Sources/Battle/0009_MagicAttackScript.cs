@@ -51,7 +51,6 @@ namespace Memoria.Scripts.TranceSeek
             else
                 _v.NormalMagicParams();
 
-                
             TranceSeekAPI.CasterPenaltyMini(_v);
             TranceSeekAPI.EnemyTranceBonusAttack(_v);
             TranceSeekAPI.PenaltyShellAttack(_v);

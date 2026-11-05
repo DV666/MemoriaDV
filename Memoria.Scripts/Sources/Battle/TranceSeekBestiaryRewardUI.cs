@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Assets.Sources.Scripts.UI.Common;
 using Memoria.Prime;
@@ -8,12 +9,18 @@ namespace Memoria.Scripts.TranceSeek
 {
     public class TranceSeekBestiaryRewardUI : MonoBehaviour
     {
+        private const string FadeAnimPrefix = "[ANIM=TextRGBA,Sinus,1,Constant,2,Sinus,3,0,1,1,0]";
+        private const float PageDuration = 3f;
+
         public Vector3 PopupPosition = new Vector3(0f, -120f, 0f);
         public int PopupHeight = 400;
         public Vector3 TextPosition = new Vector3(-40f, 120f, 0f);
 
         private bool _isShowing = false;
         private GameObject _clonedPanel = null;
+        private UILabel _bodyLabel = null;
+        private int _currentMessageIndex = 0;
+        private float _pageTimer = 0f;
 
         private void Update()
         {
@@ -21,41 +28,69 @@ namespace Memoria.Scripts.TranceSeek
             if (uiManager == null)
                 return;
 
-            if (uiManager.State == UIManager.UIState.BattleResult)
+            if (uiManager.State != UIManager.UIState.BattleResult)
             {
-                BattleResultUI brUI = uiManager.BattleResultScene;
+                if (_isShowing)
+                    ClosePopup(null);
+                return;
+            }
 
-                if (brUI != null && brUI.GilAndItemPhrasePanel != null && brUI.GilAndItemPhrasePanel.activeInHierarchy)
+            BattleResultUI brUI = uiManager.BattleResultScene;
+            if (brUI == null || brUI.GilAndItemPhrasePanel == null)
+                return;
+
+            if (!_isShowing)
+            {
+                if (brUI.GilAndItemPhrasePanel.activeInHierarchy && TranceSeekBestiaryDB.PendingRewardMessages.Count > 0)
                 {
-                    if (!_isShowing && TranceSeekBestiaryDB.PendingRewardMessages.Count > 0)
-                    {
-                        ShowRewardPopup(brUI);
-                    }
-                    else if (_isShowing)
-                    {
-                        if (PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.Confirm) || Input.GetKeyDown(KeyCode.KeypadEnter))
-                        {
-                            ClosePopup();
-                        }
-                    }
+                    ShowRewardPopup(brUI);
                 }
             }
             else
             {
-                if (_isShowing)
+                if (!brUI.GilAndItemPhrasePanel.activeInHierarchy)
                 {
-                    ClosePopup();
+                    ClosePopup(brUI);
+                    return;
+                }
+
+                if (TranceSeekBestiaryDB.PendingRewardMessages.Count > 1 && _bodyLabel != null)
+                {
+                    _pageTimer -= RealTime.deltaTime;
+                    if (_pageTimer <= 0f)
+                    {
+                        _currentMessageIndex = (_currentMessageIndex + 1) % TranceSeekBestiaryDB.PendingRewardMessages.Count;
+                        UpdateDisplayedRewardMessage();
+                    }
+                }
+
+                bool confirmPressed =
+                    PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.Confirm) ||
+                    PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.Cancel) ||
+                    UIManager.Input.GetKeyTrigger(Control.Confirm) ||
+                    UIManager.Input.GetKeyTrigger(Control.Cancel) ||
+                    Input.GetKeyDown(KeyCode.Return) ||
+                    Input.GetKeyDown(KeyCode.KeypadEnter) ||
+                    Input.GetMouseButtonDown(0);
+
+                if (confirmPressed)
+                {
+                    FF9Sfx.FF9SFX_Play(103);
+                    ClosePopup(brUI);
                 }
             }
         }
 
         private void ShowRewardPopup(BattleResultUI brUI)
         {
-            _isShowing = true;
-
             HonoTweenClipping tweenComponent = brUI.TransitionPanel.transform.GetChild(4).GetComponent<HonoTweenClipping>();
             if (tweenComponent == null || tweenComponent.ClipGameObject == null)
                 return;
+
+            _isShowing = true;
+            _currentMessageIndex = 0;
+
+            brUI.Loading = true;
 
             GameObject originalPanel = tweenComponent.ClipGameObject;
 
@@ -116,24 +151,40 @@ namespace Memoria.Scripts.TranceSeek
                 bodyObj.transform.localPosition = TextPosition;
                 bodyObj.transform.localScale = Vector3.one;
 
-                UILabel bodyLabel = bodyObj.GetComponent<UILabel>();
-                if (bodyLabel != null)
+                _bodyLabel = bodyObj.GetComponent<UILabel>();
+                if (_bodyLabel != null)
                 {
-                    bodyLabel.multiLine = true;
-                    bodyLabel.overflowMethod = UILabel.Overflow.ResizeFreely;
-                    bodyLabel.alignment = NGUIText.Alignment.Center;
-                    bodyLabel.pivot = UIWidget.Pivot.Top;
-                    bodyLabel.rawText = string.Join("\n", TranceSeekBestiaryDB.PendingRewardMessages.ToArray());
-                    bodyLabel.depth = 51;
+                    _bodyLabel.multiLine = true;
+                    _bodyLabel.overflowMethod = UILabel.Overflow.ResizeFreely;
+                    _bodyLabel.alignment = NGUIText.Alignment.Center;
+                    _bodyLabel.pivot = UIWidget.Pivot.Top;
+                    _bodyLabel.depth = 51;
+                    UpdateDisplayedRewardMessage();
                 }
             }
 
             FF9Sfx.FF9SFX_Play(1043);
         }
 
-        private void ClosePopup()
+        private void UpdateDisplayedRewardMessage()
+        {
+            if (_bodyLabel == null || TranceSeekBestiaryDB.PendingRewardMessages.Count == 0)
+                return;
+
+            string blockText = TranceSeekBestiaryDB.PendingRewardMessages[_currentMessageIndex];
+            bool hasMultipleBlocks = TranceSeekBestiaryDB.PendingRewardMessages.Count > 1;
+
+            if (hasMultipleBlocks)
+                blockText = FadeAnimPrefix + blockText;
+
+            _bodyLabel.SetText(blockText);
+            _pageTimer = PageDuration;
+        }
+
+        private void ClosePopup(BattleResultUI brUI)
         {
             _isShowing = false;
+            _bodyLabel = null;
 
             if (_clonedPanel != null)
             {
@@ -143,6 +194,18 @@ namespace Memoria.Scripts.TranceSeek
             }
 
             TranceSeekBestiaryDB.PendingRewardMessages.Clear();
+
+            if (brUI != null)
+            {
+                StartCoroutine(UnlockBattleResultNextFrame(brUI));
+            }
+        }
+
+        private IEnumerator UnlockBattleResultNextFrame(BattleResultUI brUI)
+        {
+            yield return null;
+            if (brUI != null)
+                brUI.Loading = false;
         }
     }
 }

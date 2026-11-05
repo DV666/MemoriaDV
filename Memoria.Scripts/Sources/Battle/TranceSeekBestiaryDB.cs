@@ -39,7 +39,7 @@ namespace Memoria.Scripts.TranceSeek
         }
     }
 
-    public struct MonsterEncounter
+    public struct MonsterEncounter : IEquatable<MonsterEncounter>
     {
         public int BattleId;
         public int MonsterIndex;
@@ -48,6 +48,21 @@ namespace Memoria.Scripts.TranceSeek
         {
             BattleId = battleId;
             MonsterIndex = monsterIndex;
+        }
+
+        public bool Equals(MonsterEncounter other)
+        {
+            return BattleId == other.BattleId && MonsterIndex == other.MonsterIndex;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is MonsterEncounter other && Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            return (BattleId << 8) ^ MonsterIndex;
         }
     }
 

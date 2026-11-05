@@ -3,7 +3,7 @@ using System.Reflection;
 
 namespace Memoria.Scripts.TranceSeek
 {
-    public static class TranceSeekCanaryFix
+    public static class TranceSeekCanaryFix // [DV] Delete when TS will be updated to Canary / New Memoria version.
     {
         private static readonly FieldInfo SlotNoField = typeof(BTL_INFO).GetField("slot_no");
 

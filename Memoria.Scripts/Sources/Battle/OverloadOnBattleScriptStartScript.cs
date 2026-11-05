@@ -39,9 +39,8 @@ namespace Memoria.Scripts.TranceSeek
             TranceSeekBattleDictionary.CommandMPCost = v.Command.Data.aa.MP;
 
             TranceSeekAPI.OneTriggerHitRateBonus = false;
-            TranceSeekRegularItem.SoulTriggered = false;
-
             Boolean FirstHit = v.Command.Data.info.effect_counter == 1;
+            v.Context.HitRate = v.Command.HitRate;
 
             if (FirstHit)
                 Caster_TSVar.DragonAlreadyConsumed = false;

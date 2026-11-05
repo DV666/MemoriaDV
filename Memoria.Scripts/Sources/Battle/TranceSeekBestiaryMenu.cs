@@ -16,7 +16,7 @@ namespace Memoria.Scripts.TranceSeek
         private const string BestiaryGroupName = "TranceSeek.Bestiary";
         private const string BestiaryButtonName = "Bestiary Panel - Button";
 
-        private const Boolean UnlockAll = false;
+        private const Boolean UnlockAll = true;
 
         private static readonly FieldInfo ConfigFieldListField = typeof(ConfigUI).GetField("ConfigFieldList", BindingFlags.Instance | BindingFlags.NonPublic);
         private static readonly FieldInfo ConfigScrollViewField = typeof(ConfigUI).GetField("configScrollView", BindingFlags.Instance | BindingFlags.NonPublic);
@@ -51,6 +51,7 @@ namespace Memoria.Scripts.TranceSeek
 
         private GameObject _bbgModel;
         private string _currentBbgName = "";
+        private string _loadedBbgName = "";
 
         private float _bbgPosX = -6f;
         private float _bbgPosY = -250f;
@@ -91,6 +92,10 @@ namespace Memoria.Scripts.TranceSeek
         private UILabel _bestiaryTitleLabel;
         private UILabel _previewTitleLabel;
         private UILabel _returnButtonLabel;
+
+        private string _cachedPage1Header = "";
+        private string _lastAppliedAlphaTag = "";
+        private int _lastAppliedChunkIndex = -1;
 
         private void Update()
         {
@@ -335,9 +340,11 @@ namespace Memoria.Scripts.TranceSeek
             _bestiaryReturnButton.transform.localPosition = new Vector3(_buttonPosX, _buttonPosY, 0f);
 
             Transform d1 = _bestiaryReturnButton.transform.Find("DummyChoice1");
-            if (d1 != null) Destroy(d1.gameObject);
+            if (d1 != null)
+                Destroy(d1.gameObject);
             Transform d2 = _bestiaryReturnButton.transform.Find("DummyChoice2");
-            if (d2 != null) Destroy(d2.gameObject);
+            if (d2 != null)
+                Destroy(d2.gameObject);
 
             UIWidget buttonWidget = _bestiaryReturnButton.GetComponent<UIWidget>();
             if (buttonWidget != null)
@@ -544,35 +551,39 @@ namespace Memoria.Scripts.TranceSeek
             _weaponModels.Clear();
 
             DestroyModelSafely(ref _monsterModel);
-            DestroyModelSafely(ref _bbgModel);
-            Resources.UnloadUnusedAssets();
 
-            if (!string.IsNullOrEmpty(_currentBbgName))
+            if (_loadedBbgName != _currentBbgName)
             {
-                _bbgModel = ModelFactory.CreateModel($"BattleMap/BattleModel/battleMap_all/{_currentBbgName}/{_currentBbgName}", true, true, Configuration.Graphics.BattleSmoothTexture);
-                if (_bbgModel != null)
+                DestroyModelSafely(ref _bbgModel);
+                _loadedBbgName = _currentBbgName;
+
+                if (!string.IsNullOrEmpty(_currentBbgName))
                 {
-                    _bbgModel.SetActive(true);
-                    _bbgModel.transform.SetParent(_monsterCamObj.transform, false);
-                    NGUITools.SetLayer(_bbgModel, 31);
-                    Int32.TryParse(_currentBbgName.Replace("BBG_B", ""), out battlebg.nf_BbgNumber);
-                    battlebg.SetDefaultShader(_bbgModel);
-                    if (String.Equals(_currentBbgName, "BBG_B171_OBJ2"))
-                        battlebg.SetMaterialShader(_bbgModel, "PSX/BattleMap_Cystal");
-
-                    foreach (Renderer r in _bbgModel.GetComponentsInChildren<Renderer>(true))
+                    _bbgModel = ModelFactory.CreateModel($"BattleMap/BattleModel/battleMap_all/{_currentBbgName}/{_currentBbgName}", true, true, Configuration.Graphics.BattleSmoothTexture);
+                    if (_bbgModel != null)
                     {
-                        r.enabled = true;
-                        if (r is SkinnedMeshRenderer smr)
-                        {
-                            smr.updateWhenOffscreen = true;
-                            smr.localBounds = new Bounds(Vector3.zero, new Vector3(10000f, 10000f, 10000f));
-                        }
-                    }
+                        _bbgModel.SetActive(true);
+                        _bbgModel.transform.SetParent(_monsterCamObj.transform, false);
+                        NGUITools.SetLayer(_bbgModel, 31);
+                        Int32.TryParse(_currentBbgName.Replace("BBG_B", ""), out battlebg.nf_BbgNumber);
+                        battlebg.SetDefaultShader(_bbgModel);
+                        if (String.Equals(_currentBbgName, "BBG_B171_OBJ2"))
+                            battlebg.SetMaterialShader(_bbgModel, "PSX/BattleMap_Cystal");
 
-                    _bbgModel.transform.localPosition = new Vector3(_bbgPosX, _bbgPosY, _bbgPosZ);
-                    _bbgModel.transform.localRotation = Quaternion.Euler(_bbgRotX, _bbgRotY, _bbgRotZ);
-                    _bbgModel.transform.localScale = new Vector3(_bbgScale, _bbgScale, _bbgScale);
+                        foreach (Renderer r in _bbgModel.GetComponentsInChildren<Renderer>(true))
+                        {
+                            r.enabled = true;
+                            if (r is SkinnedMeshRenderer smr)
+                            {
+                                smr.updateWhenOffscreen = true;
+                                smr.localBounds = new Bounds(Vector3.zero, new Vector3(10000f, 10000f, 10000f));
+                            }
+                        }
+
+                        _bbgModel.transform.localPosition = new Vector3(_bbgPosX, _bbgPosY, _bbgPosZ);
+                        _bbgModel.transform.localRotation = Quaternion.Euler(_bbgRotX, _bbgRotY, _bbgRotZ);
+                        _bbgModel.transform.localScale = new Vector3(_bbgScale, _bbgScale, _bbgScale);
+                    }
                 }
             }
 
@@ -639,7 +650,6 @@ namespace Memoria.Scripts.TranceSeek
                                 updater.Scale = finalScale;
                                 updater.NeedsRebalance = needsRebalance;
                             }
-
                             if (_currentMonsterParam.WeaponTextureFiles != null)
                             {
                                 List<String> textureFiles = new List<String>();
@@ -666,8 +676,11 @@ namespace Memoria.Scripts.TranceSeek
                                         {
                                             Texture2D customTex = AssetManager.Load<Texture2D>(textureFiles[k], false);
                                             if (customTex != null)
-                                                weaponRenderers[k].GetComponent<Renderer>().material.mainTexture = customTex;
-
+                                            {
+                                                Material mat = weaponRenderers[k].material;
+                                                if (mat != null)
+                                                    mat.mainTexture = customTex;
+                                            }
                                         }
                                     }
                                     else
@@ -681,12 +694,20 @@ namespace Memoria.Scripts.TranceSeek
                 }
 
                 NGUITools.SetLayer(_monsterModel, 31);
-                btl_util.GeoSetABR(_monsterModel, "PSX/BattleMap_StatusEffect");
 
-                if (BlackModel)
-                    btl_util.GeoSetColor2DrawPacket(_monsterModel, 0, 0, 0, Byte.MaxValue);
-                else
-                    btl_util.GeoSetColor2DrawPacket(_monsterModel, 127, 127, 127, Byte.MaxValue);
+                Shader monsterShader = ShadersLoader.Find("PSX/BattleMap_StatusEffect");
+                Color targetColor = BlackModel ? new Color(-1f, -1f, -1f, 1f) : new Color(0.5f, 0.5f, 0.5f, 1f);
+
+                ApplyBestiaryShaderAndColor(_monsterModel, monsterShader, targetColor);
+
+                foreach (GameObject wep in _weaponModels)
+                {
+                    if (wep != null)
+                    {
+                        NGUITools.SetLayer(wep, 31);
+                        ApplyBestiaryShaderAndColor(wep, monsterShader, targetColor);
+                    }
+                }
 
                 foreach (Renderer r in _monsterModel.GetComponentsInChildren<Renderer>(true))
                 {
@@ -711,6 +732,26 @@ namespace Memoria.Scripts.TranceSeek
                     {
                         anim.wrapMode = WrapMode.Loop;
                         anim.Play(animName);
+                    }
+                }
+            }
+        }
+
+        private void ApplyBestiaryShaderAndColor(GameObject go, Shader shader, Color color)
+        {
+            if (go == null || shader == null)
+                return;
+
+            foreach (Renderer r in go.GetComponentsInChildren<Renderer>(true))
+            {
+                foreach (Material mat in r.materials)
+                {
+                    if (mat != null)
+                    {
+                        mat.shader = shader;
+                        mat.SetFloat("_Cutoff", 0.5f);
+                        mat.SetFloat("_IsPetrify", 0f);
+                        mat.SetColor("_Color", color);
                     }
                 }
             }
@@ -854,6 +895,25 @@ namespace Memoria.Scripts.TranceSeek
                 }
             }
 
+            bool mobAtLeastScanned = (UnlockAll || status >= TranceSeekBestiaryDB.StatusScanned);
+            bool mobAtLeastScannedPlus = (UnlockAll || status >= TranceSeekBestiaryDB.StatusScannedPlus);
+
+            string sAbsorb = mobAtLeastScannedPlus ? GetElementsString(_currentMonsterParam.AbsorbElement) : "???";
+            string sImmune = mobAtLeastScannedPlus ? GetElementsString(_currentMonsterParam.GuardElement) : "???";
+            string sHalf = mobAtLeastScannedPlus ? GetElementsString(_currentMonsterParam.HalfElement) : "???";
+            string sWeak = mobAtLeastScannedPlus ? GetElementsString(_currentMonsterParam.WeakElement) : "???";
+            string sCategory = mobAtLeastScanned ? GetCategoryString(_currentMonsterParam.Category) : "???";
+
+            _cachedPage1Header = $"[FFCC00]{Localization.GetWithDefault("BestiaryElemAbsorb")} :[FFFFFF]\n{sAbsorb}\n\n" +
+                                 $"[FFCC00]{Localization.GetWithDefault("BestiaryElemImmunity")} :[FFFFFF]\n{sImmune}\n\n" +
+                                 $"[FFCC00]{Localization.GetWithDefault("BestiaryElemReduction")} :[FFFFFF]\n{sHalf}\n\n" +
+                                 $"[FFCC00]{Localization.GetWithDefault("BestiaryElemWeakness")} :[FFFFFF]\n{sWeak}\n\n" +
+                                 $"[FFCC00]{Localization.GetWithDefault("BestiaryCategory")} :[FFFFFF] {sCategory}\n\n" +
+                                 $"[FFCC00]{Localization.GetWithDefault("BestiaryStatusResist")} :[FFFFFF]\n";
+
+            _lastAppliedAlphaTag = null;
+            _lastAppliedChunkIndex = -1;
+
             RefreshPageText();
         }
 
@@ -868,70 +928,67 @@ namespace Memoria.Scripts.TranceSeek
             if (UnlockAll || kills >= TranceSeekBestiaryDB.RequiredKillsForMastery)
                 status = TranceSeekBestiaryDB.StatusMastered;
 
-            string text = "";
             string pageNav = $"\n\n[A0A0A0]< Page {_currentPage + 1}/3 >[FFFFFF]";
-
-            Boolean MobAtLeastKilledOnce = (UnlockAll || (status >= TranceSeekBestiaryDB.StatusDiscovered && kills > 0));
-            Boolean MobAtLeastScanned = (UnlockAll || status >= TranceSeekBestiaryDB.StatusScanned);
-            Boolean MobAtLeastScannedPlusorMastered = (UnlockAll || status >= TranceSeekBestiaryDB.StatusScannedPlus);
-            Boolean MobAtLeastDiscovered = (UnlockAll || status >= TranceSeekBestiaryDB.StatusDiscovered || MobAtLeastKilledOnce || MobAtLeastScanned);
-
-            string monsterName = MobAtLeastDiscovered ? _currentMonsterName : "???";
-            if (status >= TranceSeekBestiaryDB.StatusMastered)
-                monsterName += " [SPRT=IconAtlas,item200_03,36,36]";
-
-            int maxHp = (int)_currentMonsterParam.MaxHP;
-            if ((_currentMonsterParam.Flags & 64) != 0)
-                maxHp = Mathf.Max(0, maxHp - 10000);
-
-            string TrueText = Localization.GetWithDefault("BestiaryTrue");
-            string FalseText = Localization.GetWithDefault("BestiaryFalse");
-            string sElite = MobAtLeastDiscovered ? (((_currentMonsterParam.Flags & 128) != 0) ? TrueText : FalseText) : "???";
-            string sBoss = MobAtLeastDiscovered ? (((_currentMonsterParam.InitialStatus & BattleStatus.EasyKill) != 0) ? TrueText : FalseText) : "???";
-
-            if (_currentDisplayEntry.MaxHP.HasValue)
-                maxHp = _currentDisplayEntry.MaxHP.Value;
-
-            int maxMp = _currentDisplayEntry.MaxMP ?? (int)_currentMonsterParam.MaxMP;
-            int speed = _currentDisplayEntry.Speed ?? _currentMonsterParam.Element.Speed;
-            int strength = _currentDisplayEntry.Strength ?? _currentMonsterParam.Element.Strength;
-            int magic = _currentDisplayEntry.Magic ?? _currentMonsterParam.Element.Magic;
-            int spirit = _currentDisplayEntry.Spirit ?? _currentMonsterParam.Element.Spirit;
-            int pDef = _currentDisplayEntry.PhysicalDefense ?? _currentMonsterParam.PhysicalDefence;
-            int pEvade = _currentDisplayEntry.PhysicalEvade ?? _currentMonsterParam.PhysicalEvade;
-            int mDef = _currentDisplayEntry.MagicalDefense ?? _currentMonsterParam.MagicalDefence;
-            int mEvade = _currentDisplayEntry.MagicalEvade ?? _currentMonsterParam.MagicalEvade;
-            int winGil = _currentDisplayEntry.WinGil ?? (int)_currentMonsterParam.WinGil;
-            int winExp = _currentDisplayEntry.WinExp ?? (int)_currentMonsterParam.WinExp;
-
-            string sHp = MobAtLeastKilledOnce ? maxHp.ToString() : "???";
-            string sMp = MobAtLeastKilledOnce ? maxMp.ToString() : "???";
-            string sSpeed = MobAtLeastScanned ? speed.ToString() : "???";
-            string sStr = MobAtLeastScanned ? strength.ToString() : "???";
-            string sMag = MobAtLeastScanned ? magic.ToString() : "???";
-            string sSpr = MobAtLeastScanned ? spirit.ToString() : "???";
-            string sPDef = MobAtLeastScanned ? pDef.ToString() : "???";
-            string sPEvade = MobAtLeastScanned ? pEvade.ToString() : "???";
-            string sMDef = MobAtLeastScanned ? mDef.ToString() : "???";
-            string sMEvade = MobAtLeastScanned ? mEvade.ToString() : "???";
-
-            string sGil = MobAtLeastScanned ? winGil.ToString() : "???";
-            string sExp = MobAtLeastScanned ? winExp.ToString() : "???";
-            string sCategory = MobAtLeastScanned ? GetCategoryString(_currentMonsterParam.Category) : "???";
 
             if (_currentPage == 0)
             {
-                text = $"[FFCC00]{Localization.GetWithDefault("BestiaryEntry")} n°{_currentMonsterId}\n" +
-                       $"[FFCC00]{Localization.GetWithDefault("BestiaryName")} :[FFFFFF] {monsterName}\n\n" +
-                       $"[FFCC00]{Localization.GetWithDefault("HPCaption")} :[FFFFFF] {sHp}               [FFCC00]{Localization.GetWithDefault("MPCaption")} :[FFFFFF] {sMp}\n" +
-                       $"[FFCC00]{Localization.GetWithDefault("Speed")} :[FFFFFF] {sSpeed}          [FFCC00]{Localization.GetWithDefault("Strength")} :[FFFFFF] {sStr}\n" +
-                       $"[FFCC00]{Localization.GetWithDefault("Magic")} :[FFFFFF] {sMag}            [FFCC00]{Localization.GetWithDefault("Spirit")} :[FFFFFF] {sSpr}\n" +
-                       $"[FFCC00]{Localization.GetWithDefault("DefenseStats")} :[FFFFFF] {sPDef}          [FFCC00]{Localization.GetWithDefault("Evade")} :[FFFFFF] {sPEvade}\n" +
-                       $"[FFCC00]{Localization.GetWithDefault("MagicDef")} :[FFFFFF] {sMDef}        [FFCC00]{Localization.GetWithDefault("MagicEva")} :[FFFFFF] {sMEvade}\n\n" +
-                       $"[FFCC00]{Localization.GetWithDefault("BattleResult04")} :[FFFFFF] {sGil}\n" +
-                       $"[FFCC00]{Localization.GetWithDefault("EXP")} :[FFFFFF] {sExp}\n\n" +
-                       $"[FFCC00]{Localization.GetWithDefault("BestiaryElite")} :[FFFFFF] {sElite}\n" +
-                       $"[FFCC00]{Localization.GetWithDefault("BestiaryBoss")} :[FFFFFF] {sBoss}\n" + pageNav;
+                Boolean MobAtLeastKilledOnce = (UnlockAll || (status >= TranceSeekBestiaryDB.StatusDiscovered && kills > 0));
+                Boolean MobAtLeastScanned = (UnlockAll || status >= TranceSeekBestiaryDB.StatusScanned);
+                Boolean MobAtLeastDiscovered = (UnlockAll || status >= TranceSeekBestiaryDB.StatusDiscovered || MobAtLeastKilledOnce || MobAtLeastScanned);
+
+                string monsterName = MobAtLeastDiscovered ? _currentMonsterName : "???";
+                if (status >= TranceSeekBestiaryDB.StatusMastered)
+                    monsterName += " [SPRT=IconAtlas,item200_03,36,36]";
+
+                int maxHp = (int)_currentMonsterParam.MaxHP;
+                if ((_currentMonsterParam.Flags & 64) != 0)
+                    maxHp = Mathf.Max(0, maxHp - 10000);
+
+                if (_currentDisplayEntry.MaxHP.HasValue)
+                    maxHp = _currentDisplayEntry.MaxHP.Value;
+
+                string TrueText = Localization.GetWithDefault("BestiaryTrue");
+                string FalseText = Localization.GetWithDefault("BestiaryFalse");
+                string sElite = MobAtLeastDiscovered ? (((_currentMonsterParam.Flags & 128) != 0) ? TrueText : FalseText) : "???";
+                string sBoss = MobAtLeastDiscovered ? (((_currentMonsterParam.InitialStatus & BattleStatus.EasyKill) != 0) ? TrueText : FalseText) : "???";
+
+                int maxMp = _currentDisplayEntry.MaxMP ?? (int)_currentMonsterParam.MaxMP;
+                int speed = _currentDisplayEntry.Speed ?? _currentMonsterParam.Element.Speed;
+                int strength = _currentDisplayEntry.Strength ?? _currentMonsterParam.Element.Strength;
+                int magic = _currentDisplayEntry.Magic ?? _currentMonsterParam.Element.Magic;
+                int spirit = _currentDisplayEntry.Spirit ?? _currentMonsterParam.Element.Spirit;
+                int pDef = _currentDisplayEntry.PhysicalDefense ?? _currentMonsterParam.PhysicalDefence;
+                int pEvade = _currentDisplayEntry.PhysicalEvade ?? _currentMonsterParam.PhysicalEvade;
+                int mDef = _currentDisplayEntry.MagicalDefense ?? _currentMonsterParam.MagicalDefence;
+                int mEvade = _currentDisplayEntry.MagicalEvade ?? _currentMonsterParam.MagicalEvade;
+                int winGil = _currentDisplayEntry.WinGil ?? (int)_currentMonsterParam.WinGil;
+                int winExp = _currentDisplayEntry.WinExp ?? (int)_currentMonsterParam.WinExp;
+
+                string sHp = MobAtLeastKilledOnce ? maxHp.ToString() : "???";
+                string sMp = MobAtLeastKilledOnce ? maxMp.ToString() : "???";
+                string sSpeed = MobAtLeastScanned ? speed.ToString() : "???";
+                string sStr = MobAtLeastScanned ? strength.ToString() : "???";
+                string sMag = MobAtLeastScanned ? magic.ToString() : "???";
+                string sSpr = MobAtLeastScanned ? spirit.ToString() : "???";
+                string sPDef = MobAtLeastScanned ? pDef.ToString() : "???";
+                string sPEvade = MobAtLeastScanned ? pEvade.ToString() : "???";
+                string sMDef = MobAtLeastScanned ? mDef.ToString() : "???";
+                string sMEvade = MobAtLeastScanned ? mEvade.ToString() : "???";
+                string sGil = MobAtLeastScanned ? winGil.ToString() : "???";
+                string sExp = MobAtLeastScanned ? winExp.ToString() : "???";
+
+                _monsterInfoLabel.rawText =
+                    $"[FFCC00]{Localization.GetWithDefault("BestiaryEntry")} n°{_currentMonsterId}\n" +
+                    $"[FFCC00]{Localization.GetWithDefault("BestiaryName")} :[FFFFFF] {monsterName}\n\n" +
+                    $"[FFCC00]{Localization.GetWithDefault("HPCaption")} :[FFFFFF] {sHp}               [FFCC00]{Localization.GetWithDefault("MPCaption")} :[FFFFFF] {sMp}\n" +
+                    $"[FFCC00]{Localization.GetWithDefault("Speed")} :[FFFFFF] {sSpeed}          [FFCC00]{Localization.GetWithDefault("Strength")} :[FFFFFF] {sStr}\n" +
+                    $"[FFCC00]{Localization.GetWithDefault("Magic")} :[FFFFFF] {sMag}            [FFCC00]{Localization.GetWithDefault("Spirit")} :[FFFFFF] {sSpr}\n" +
+                    $"[FFCC00]{Localization.GetWithDefault("DefenseStats")} :[FFFFFF] {sPDef}          [FFCC00]{Localization.GetWithDefault("Evade")} :[FFFFFF] {sPEvade}\n" +
+                    $"[FFCC00]{Localization.GetWithDefault("MagicDef")} :[FFFFFF] {sMDef}        [FFCC00]{Localization.GetWithDefault("MagicEva")} :[FFFFFF] {sMEvade}\n\n" +
+                    $"[FFCC00]{Localization.GetWithDefault("BattleResult04")} :[FFFFFF] {sGil}\n" +
+                    $"[FFCC00]{Localization.GetWithDefault("EXP")} :[FFFFFF] {sExp}\n\n" +
+                    $"[FFCC00]{Localization.GetWithDefault("BestiaryElite")} :[FFFFFF] {sElite}\n" +
+                    $"[FFCC00]{Localization.GetWithDefault("BestiaryBoss")} :[FFFFFF] {sBoss}\n" + pageNav;
             }
             else if (_currentPage == 1)
             {
@@ -944,21 +1001,19 @@ namespace Memoria.Scripts.TranceSeek
                     alphaTag = "[" + NGUIText.EncodeAlpha(alpha) + "]";
                 }
 
-                string sAbsorb = MobAtLeastScannedPlusorMastered ? GetElementsString(_currentMonsterParam.AbsorbElement) : "???";
-                string sImmune = MobAtLeastScannedPlusorMastered ? GetElementsString(_currentMonsterParam.GuardElement) : "???";
-                string sHalf = MobAtLeastScannedPlusorMastered ? GetElementsString(_currentMonsterParam.HalfElement) : "???";
-                string sWeak = MobAtLeastScannedPlusorMastered ? GetElementsString(_currentMonsterParam.WeakElement) : "???";
+                // Ne met à jour NGUI que si l'opacité ou le groupe de statuts a réellement changé
+                if (alphaTag == _lastAppliedAlphaTag && _statusChunkIndex == _lastAppliedChunkIndex)
+                    return;
 
-                text = $"[FFCC00]{Localization.GetWithDefault("BestiaryElemAbsorb")} :[FFFFFF]\n{sAbsorb}\n\n" +
-                       $"[FFCC00]{Localization.GetWithDefault("BestiaryElemImmunity")} :[FFFFFF]\n{sImmune}\n\n" +
-                       $"[FFCC00]{Localization.GetWithDefault("BestiaryElemReduction")} :[FFFFFF]\n{sHalf}\n\n" +
-                       $"[FFCC00]{Localization.GetWithDefault("BestiaryElemWeakness")} :[FFFFFF]\n{sWeak}\n\n" +
-                       $"[FFCC00]{Localization.GetWithDefault("BestiaryCategory")} :[FFFFFF] {sCategory}\n\n" +
-                       $"[FFCC00]{Localization.GetWithDefault("BestiaryStatusResist")} :[FFFFFF]\n" +
-                       alphaTag + _statusChunks[_statusChunkIndex] + "[FFFFFF]" + pageNav;
+                _lastAppliedAlphaTag = alphaTag;
+                _lastAppliedChunkIndex = _statusChunkIndex;
+
+                _monsterInfoLabel.rawText = _cachedPage1Header + alphaTag + _statusChunks[_statusChunkIndex] + "[FFFFFF]" + pageNav;
             }
             else if (_currentPage == 2)
             {
+                Boolean MobAtLeastScannedPlusorMastered = (UnlockAll || status >= TranceSeekBestiaryDB.StatusScannedPlus);
+
                 string steal0 = MobAtLeastScannedPlusorMastered ? GetItemStringWithIcon(_currentMonsterParam.StealItems[0]) : "???";
                 string steal1 = MobAtLeastScannedPlusorMastered ? GetItemStringWithIcon(_currentMonsterParam.StealItems[1]) : "???";
                 string steal2 = MobAtLeastScannedPlusorMastered ? GetItemStringWithIcon(_currentMonsterParam.StealItems[2]) : "???";
@@ -971,14 +1026,13 @@ namespace Memoria.Scripts.TranceSeek
 
                 string sCard = MobAtLeastScannedPlusorMastered ? GetCardName(_currentMonsterParam.WinCard) : "???";
 
-                text = $"[FFCC00]{Localization.GetWithDefault("BestiarySteal")} :[FFFFFF]\n" +
-                       $"{steal0}\n{steal1}\n{steal2}\n{steal3}\n\n" +
-                       $"[FFCC00]{Localization.GetWithDefault("BestiaryDrop")} :[FFFFFF]\n" +
-                       $"{drop0}\n{drop1}\n{drop2}\n{drop3}\n\n" +
-                       $"[FFCC00]{Localization.GetWithDefault("BestiaryCard")} :[FFFFFF] {sCard}" + pageNav;
+                _monsterInfoLabel.rawText =
+                    $"[FFCC00]{Localization.GetWithDefault("BestiarySteal")} :[FFFFFF]\n" +
+                    $"{steal0}\n{steal1}\n{steal2}\n{steal3}\n\n" +
+                    $"[FFCC00]{Localization.GetWithDefault("BestiaryDrop")} :[FFFFFF]\n" +
+                    $"{drop0}\n{drop1}\n{drop2}\n{drop3}\n\n" +
+                    $"[FFCC00]{Localization.GetWithDefault("BestiaryCard")} :[FFFFFF] {sCard}" + pageNav;
             }
-
-            _monsterInfoLabel.rawText = text;
         }
 
         private void RefreshLocalization()
@@ -1019,6 +1073,7 @@ namespace Memoria.Scripts.TranceSeek
 
             DestroyModelSafely(ref _monsterModel);
             DestroyModelSafely(ref _bbgModel);
+            _loadedBbgName = "";
             Resources.UnloadUnusedAssets();
         }
 
@@ -1065,7 +1120,7 @@ namespace Memoria.Scripts.TranceSeek
             if (!_isBestiaryOpen)
                 return;
 
-            FF9Sfx.FF9SFX_Play(101);
+            FF9Sfx.FF9SFX_Play(103);
 
             if (_configTitleLabel != null)
                 _configTitleLabel.rawText = _originalTitleText;
@@ -1287,7 +1342,7 @@ namespace Memoria.Scripts.TranceSeek
 
             if (ButtonGroupState.ActiveGroup == BestiaryGroupName && ButtonGroupState.ActiveButton == _bestiaryReturnButton)
             {
-                if (PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.Confirm) || PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.Cancel) || Input.GetKeyDown(KeyCode.KeypadEnter))
+                if (PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.Confirm) || PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.Cancel) || Input.GetKeyDown(KeyCode.KeypadEnter) || UIManager.Input.GetKey(Control.Confirm) || UIManager.Input.GetKey(Control.Cancel))
                 {
                     CloseBestiaryMenu(configUI);
                 }
