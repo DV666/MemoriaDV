@@ -1,16 +1,17 @@
 ﻿using Assets.Sources.Scripts.UI.Common;
 using FF9;
-using NCalc;
 using Memoria.Assets;
 using Memoria.Data;
 using Memoria.Prime;
 using Memoria.Prime.Text;
+using NCalc;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
+using UnityEngine.Networking.Types;
 
 namespace Memoria
 {
@@ -504,6 +505,32 @@ namespace Memoria
                             charWeap.Texture = entry[4];
                     }
                     btl_eqp.SecondaryWeaponData[serialNo] = charWeap;
+                }
+                else if (String.Equals(entry[0], "ModifyPlayerParty"))
+                {
+                    // eg.: ModifyPlayerParty Add 40
+                    // eg.: ModifyPlayerParty Remove 30
+                    // eg.: ModifyPlayerParty Set 1 2 3 4
+
+                    Boolean add = String.Equals(entry[1], "Add");
+                    Boolean remove = String.Equals(entry[1], "Remove");
+                    Boolean set = String.Equals(entry[1], "Set");
+
+                    if (set)
+                        PartySettingUI.ForcedParty.Clear();
+
+                    for (Int32 i = 2; i < entry.Length; i++)
+                    {
+                        if (Int32.TryParse(entry[i], out Int32 charId))
+                        {
+                            if (set)
+                                PartySettingUI.ForcedParty.Add((CharacterId)charId);
+                            else if (add)
+                                PartySettingUI.AddCharacterForParty.Add((CharacterId)charId);
+                            else if (remove)
+                                PartySettingUI.AddCharacterForParty.Remove((CharacterId)charId);
+                        }
+                    }
                 }
                 else if (String.Equals(entry[0], "3DModel"))
                 {

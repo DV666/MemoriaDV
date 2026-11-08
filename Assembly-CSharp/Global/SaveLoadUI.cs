@@ -30,14 +30,6 @@ public class SaveLoadUI : UIScene
 
             return;
         }
-
-        if (!this.isActiveAndEnabled || base.Loading || ButtonGroupState.ActiveGroup == SaveLoadUI.FileGroupButton)
-            return;
-
-        if (PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.LeftBumper) || UIManager.Input.GetKey(Control.LeftBumper))
-            ChangePage(-1);
-        else if (PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.RightBumper) || UIManager.Input.GetKey(Control.RightBumper))
-            ChangePage(1);
     }
 
     private void LoadDataStartDelgate(DataSerializerErrorCode errNo, Int32 slotID, Int32 saveID)
@@ -274,6 +266,28 @@ public class SaveLoadUI : UIScene
                 ButtonGroupState.ActiveGroup = SaveLoadUI.FileGroupButton;
             }
         }
+        return true;
+    }
+
+    public override Boolean OnKeyLeftBumper(GameObject go)
+    {
+        if (this.IsRenaming)
+            return false;
+
+        if (base.OnKeyLeftBumper(go))
+            ChangePage(-1);
+
+        return true;
+    }
+
+    public override Boolean OnKeyRightBumper(GameObject go)
+    {
+        if (this.IsRenaming)
+            return false;
+
+        if (base.OnKeyLeftBumper(go))
+            ChangePage(1);
+
         return true;
     }
 

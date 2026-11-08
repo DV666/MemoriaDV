@@ -1,9 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using Assets.Sources.Scripts.UI.Common;
+﻿using Assets.Sources.Scripts.UI.Common;
 using FF9;
-using Memoria.Data;
+using Memoria;
 using Memoria.Assets;
+using Memoria.Data;
+using System;
+using System.Collections.Generic;
 
 public class PLAYER
 {
@@ -130,6 +131,8 @@ public class PLAYER
         {
             if (String.IsNullOrEmpty(_name))
                 _name = FF9TextTool.CharacterDefaultName(info.slot_no);
+            if (Configuration.Hacks.DisableNameChoice == 2)
+                return FF9TextTool.CharacterDefaultName(info.slot_no);
             return _name;
         }
         set => _name = value;
