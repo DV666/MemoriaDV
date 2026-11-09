@@ -46,8 +46,8 @@ public class ff9item
 
     static ff9item()
     {
-        _FF9Item_Data = LoadItems();
-        _FF9Item_Info = LoadItemEffects();
+        LoadItems();
+        LoadItemEffects();
         PatchItemEquip();
         PatchItemAbility();
     }
@@ -59,12 +59,12 @@ public class ff9item
         LoadInitialItems();
     }
 
-    private static Dictionary<RegularItem, FF9ITEM_DATA> LoadItems()
+    private static void LoadItems()
     {
         try
         {
+            _FF9Item_Data = new Dictionary<RegularItem, FF9ITEM_DATA>();
             String inputPath = DataResources.Items.PureDirectory + DataResources.Items.ItemsFile;
-            Dictionary<RegularItem, FF9ITEM_DATA> result = new Dictionary<RegularItem, FF9ITEM_DATA>();
             foreach (ItemInfo[] infos in AssetManager.EnumerateCsvFromLowToHigh<ItemInfo>(inputPath))
             {
                 for (Int32 i = 0; i < infos.Length; i++)
@@ -78,20 +78,18 @@ public class ff9item
                     }
                 }
                 foreach (ItemInfo info in infos)
-                    result[info.Id] = info.ToItemData();
+                    _FF9Item_Data[info.Id] = info.Data;
             }
-            if (result.Count == 0)
+            if (_FF9Item_Data.Count == 0)
                 throw new FileNotFoundException($"Cannot load items because a file does not exist: [{DataResources.Items.Directory + DataResources.Items.ItemsFile}].", DataResources.Items.Directory + DataResources.Items.ItemsFile);
             for (Int32 i = 0; i < 256; i++)
-                if (!result.ContainsKey((RegularItem)i))
+                if (!_FF9Item_Data.ContainsKey((RegularItem)i))
                     throw new NotSupportedException($"You must define at least the 256 base items, with IDs between 0 and 255.");
-            return result;
         }
         catch (Exception ex)
         {
             Log.Error(ex, "[ff9item] Load items failed.");
             UIManager.Input.ConfirmQuit();
-            return null;
         }
     }
 
@@ -125,32 +123,30 @@ public class ff9item
         }
     }
 
-    private static Dictionary<Int32, ITEM_DATA> LoadItemEffects()
+    private static void LoadItemEffects()
     {
         try
         {
+            _FF9Item_Info = new Dictionary<Int32, ITEM_DATA>();
             String inputPath = DataResources.Items.PureDirectory + DataResources.Items.ItemEffectsFile;
-            Dictionary<Int32, ITEM_DATA> result = new Dictionary<Int32, ITEM_DATA>();
             foreach (ItemEffect[] effects in AssetManager.EnumerateCsvFromLowToHigh<ItemEffect>(inputPath))
             {
                 for (Int32 i = 0; i < effects.Length; i++)
                     if (effects[i].Id < 0)
                         effects[i].Id = i;
                 foreach (ItemEffect effect in effects)
-                    result[effect.Id] = effect.ToItemData();
+                    _FF9Item_Info[effect.Id] = effect.Data;
             }
-            if (result.Count == 0)
+            if (_FF9Item_Info.Count == 0)
                 throw new FileNotFoundException($"Cannot load item effects because a file does not exist: [{DataResources.Items.Directory + DataResources.Items.ItemEffectsFile}].", DataResources.Items.Directory + DataResources.Items.ItemEffectsFile);
             for (Int32 i = 0; i < EFFECT_COUNT; i++)
-                if (!result.ContainsKey(i))
+                if (!_FF9Item_Info.ContainsKey(i))
                     throw new NotSupportedException($"You must define at least the 32 base item effects, with IDs between 0 and 31.");
-            return result;
         }
         catch (Exception ex)
         {
             Log.Error(ex, "[ff9item] Load item effects failed.");
             UIManager.Input.ConfirmQuit();
-            return null;
         }
     }
 
@@ -567,7 +563,7 @@ public class ff9item
             case "WeaponModelId": return hasWeapon ? (Int32)GetItemWeapon(itemId).ModelId : -1;
             case "WeaponScriptId": return hasWeapon ? GetItemWeapon(itemId).Ref.ScriptId : 0;
             case "WeaponPower": return hasWeapon ? GetItemWeapon(itemId).Ref.Power : 0;
-            case "WeaponElement": return hasWeapon ? (Int32)GetItemWeapon(itemId).Ref.Elements : 0;
+            case "WeaponElement": return hasWeapon ? (Int32)GetItemWeapon(itemId).Ref.Elements.ToEffectElement() : 0;
             case "WeaponStatusRate": return hasWeapon ? GetItemWeapon(itemId).Ref.Rate : 0;
             case "WeaponOffset1": return hasWeapon ? (Int32)GetItemWeapon(itemId).Offset1 : 0;
             case "WeaponOffset2": return hasWeapon ? (Int32)GetItemWeapon(itemId).Offset2 : 0;
@@ -585,7 +581,7 @@ public class ff9item
             case "EffectDefaultOnDead": return hasEffect ? GetItemEffect(itemId).info.DefaultOnDead : false;
             case "EffectScriptId": return hasEffect ? GetItemEffect(itemId).Ref.ScriptId : 0;
             case "EffectPower": return hasEffect ? GetItemEffect(itemId).Ref.Power : 0;
-            case "EffectElement": return hasEffect ? (Int32)GetItemEffect(itemId).Ref.Elements : 0;
+            case "EffectElement": return hasEffect ? (Int32)GetItemEffect(itemId).Ref.Elements.ToEffectElement() : 0;
             case "EffectRate": return hasEffect ? GetItemEffect(itemId).Ref.Rate : 0;
             case "EffectStatus": return hasEffect ? (UInt64)GetItemEffect(itemId).status : 0;
         }

@@ -105,7 +105,7 @@ namespace FF9
 
         public static void Init()
         {
-            BattleParameterList = LoadCharacterBattleParameters();
+            LoadCharacterBattleParameters();
             foreach (CharacterBattleParameter param in BattleParameterList.Values)
             {
                 Boolean TranceAnimationPresent = true;
@@ -123,27 +123,25 @@ namespace FF9
             }
         }
 
-        private static Dictionary<CharacterSerialNumber, CharacterBattleParameter> LoadCharacterBattleParameters()
+        private static void LoadCharacterBattleParameters()
         {
             try
             {
+                BattleParameterList = new Dictionary<CharacterSerialNumber, CharacterBattleParameter>();
                 String inputPath = DataResources.Characters.PureDirectory + DataResources.Characters.CharacterBattleParametersFile;
-                Dictionary<CharacterSerialNumber, CharacterBattleParameter> result = new Dictionary<CharacterSerialNumber, CharacterBattleParameter>();
                 foreach (CharacterBattleParameter[] btlParams in AssetManager.EnumerateCsvFromLowToHigh<CharacterBattleParameter>(inputPath))
                     foreach (CharacterBattleParameter it in btlParams)
-                        result[it.Id] = it;
-                if (result.Count == 0)
+                        BattleParameterList[it.Id] = it.Data;
+                if (BattleParameterList.Count == 0)
                     throw new FileNotFoundException($"File with character battle parameters not found: [{DataResources.Characters.Directory + DataResources.Characters.CharacterBattleParametersFile}].", DataResources.Characters.Directory + DataResources.Characters.CharacterBattleParametersFile);
                 for (Int32 i = 0; i < 19; i++)
-                    if (!result.ContainsKey((CharacterSerialNumber)i))
+                    if (!BattleParameterList.ContainsKey((CharacterSerialNumber)i))
                         throw new NotSupportedException($"You must define at least the 19 battle parameters, with IDs between 0 and 18.");
-                return result;
             }
             catch (Exception ex)
             {
                 Log.Error(ex, "[btl_mot] Load character battle parameters failed.");
                 UIManager.Input.ConfirmQuit();
-                return null;
             }
         }
 
@@ -337,8 +335,8 @@ namespace FF9
                             if (!btl_util.IsBtlBusy(btl, btl_util.BusyMode.ANY_CURRENT))
                             {
                                 FF9StateGlobal ff = FF9StateSystem.Common.FF9;
-                                for (Int32 category = 0; category < 8; category++)
-                                    if (btl_util.CheckEnemyCategory(btl, (Byte)(1 << category)) && ff.categoryKillCount[category] < 9999)
+                                foreach (EnemyCategoryToken category in btl_util.getEnemyTypePtr(btl).category)
+                                    if (ff.categoryKillCount[category] < 9999)
                                         ff.categoryKillCount[category]++;
                                 if (btl.dms_geo_id >= 0)
                                     ff.modelKillCount[btl.dms_geo_id]++;

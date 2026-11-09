@@ -8,6 +8,7 @@ namespace Memoria.Data
     {
         public String Comment;
         public BattleStatusId Id;
+        public BattleStatusDataEntry Data;
 
         public Byte Priority;
 
@@ -26,49 +27,60 @@ namespace Memoria.Data
 
         public EFFECT_GLOW StatusGlowEffect = new EFFECT_GLOW();
 
-        public void ParseEntry(String[] raw, CsvMetaData metadata)
+        public static BattleStatusDataEntry GetExisting(BattleStatusId id)
         {
-            Int32 index = 0;
-            Comment = CsvParser.String(raw[index++]);
-            Id = (BattleStatusId)CsvParser.Int32(raw[index++]);
+            if (FF9BattleDB.StatusData.TryGetValue(id, out BattleStatusDataEntry result))
+                return result;
+            throw new NotSupportedException($"The option AppendMode must be used to patch existing entries but the entry {id} doesn't exist");
+        }
 
-            Priority = CsvParser.Byte(raw[index++]);
-            OprCnt = CsvParser.Byte(raw[index++]);
-            ContiCnt = CsvParser.UInt16(raw[index++]);
-            ClearOnApply = BattleStatusEntry.ParseBattleStatus(raw[index++], metadata);
-            ImmunityProvided = BattleStatusEntry.ParseBattleStatus(raw[index++], metadata);
+        public void ParseDataEntry(String[] raw, CsvMetaData metadata, ref Int32 index)
+        {
+            if (metadata.HasField("Priority")) Priority = CsvParser.Byte(raw[index++]);
+            if (metadata.HasField("OprCount")) OprCnt = CsvParser.Byte(raw[index++]);
+            if (metadata.HasField("ContiCount")) ContiCnt = CsvParser.UInt16(raw[index++]);
+            if (metadata.HasField("ClearOnApply")) ClearOnApply = BattleStatusEntry.ParseBattleStatus(raw[index++], metadata);
+            if (metadata.HasField("ImmunityProvided")) ImmunityProvided = BattleStatusEntry.ParseBattleStatus(raw[index++], metadata);
 
-            if (metadata.HasOption($"IncludeVisuals"))
+            if (metadata.HasOption("IncludeVisuals"))
             {
                 Single[] arrayf;
-                SPSEffect = CsvParser.Int32(raw[index++]);
-                SPSAttach = CsvParser.Int32(raw[index++]);
-                arrayf = CsvParser.SingleArray(raw[index++]);
-                if (arrayf.Length == 1)
-                    SPSExtraPos = new Vector3(arrayf[0], 0f, 0f);
-                else if (arrayf.Length == 2)
-                    SPSExtraPos = new Vector3(arrayf[0], 0f, arrayf[1]);
-                else if (arrayf.Length >= 3)
-                    SPSExtraPos = new Vector3(arrayf[0], arrayf[1], arrayf[2]);
-                else
-                    SPSExtraPos = default;
-                SHPEffect = CsvParser.Int32(raw[index++]);
-                SHPAttach = CsvParser.Int32(raw[index++]);
-                arrayf = CsvParser.SingleArray(raw[index++]);
-                if (arrayf.Length == 1)
-                    SHPExtraPos = new Vector3(arrayf[0], 0f, 0f);
-                else if (arrayf.Length == 2)
-                    SHPExtraPos = new Vector3(arrayf[0], 0f, arrayf[1]);
-                else if (arrayf.Length >= 3)
-                    SHPExtraPos = new Vector3(arrayf[0], arrayf[1], arrayf[2]);
-
-                StatusGlowEffect.ColorKind = CsvParser.Int32(raw[index++]);
-                StatusGlowEffect.ColorPriority = CsvParser.Int32(raw[index++]);
-                StatusGlowEffect.ColorBase = CsvParser.Int32Array(raw[index++]);
-                if (StatusGlowEffect.ColorBase.Length < 3)
-                    Array.Resize(ref StatusGlowEffect.ColorBase, 3);
+                if (metadata.HasField("SPSEffect"))
+                {
+                    SPSEffect = CsvParser.Int32(raw[index++]);
+                    SPSAttach = CsvParser.Int32(raw[index++]);
+                    arrayf = CsvParser.SingleArray(raw[index++]);
+                    if (arrayf.Length == 1)
+                        SPSExtraPos = new Vector3(arrayf[0], 0f, 0f);
+                    else if (arrayf.Length == 2)
+                        SPSExtraPos = new Vector3(arrayf[0], 0f, arrayf[1]);
+                    else if (arrayf.Length >= 3)
+                        SPSExtraPos = new Vector3(arrayf[0], arrayf[1], arrayf[2]);
+                    else
+                        SPSExtraPos = default;
+                }
+                if (metadata.HasField("SHPEffect"))
+                {
+                    SHPEffect = CsvParser.Int32(raw[index++]);
+                    SHPAttach = CsvParser.Int32(raw[index++]);
+                    arrayf = CsvParser.SingleArray(raw[index++]);
+                    if (arrayf.Length == 1)
+                        SHPExtraPos = new Vector3(arrayf[0], 0f, 0f);
+                    else if (arrayf.Length == 2)
+                        SHPExtraPos = new Vector3(arrayf[0], 0f, arrayf[1]);
+                    else if (arrayf.Length >= 3)
+                        SHPExtraPos = new Vector3(arrayf[0], arrayf[1], arrayf[2]);
+                }
+                if (metadata.HasField("GlowEffect"))
+                {
+                    StatusGlowEffect.ColorKind = CsvParser.Int32(raw[index++]);
+                    StatusGlowEffect.ColorPriority = CsvParser.Int32(raw[index++]);
+                    StatusGlowEffect.ColorBase = CsvParser.Int32Array(raw[index++]);
+                    if (StatusGlowEffect.ColorBase.Length < 3)
+                        Array.Resize(ref StatusGlowEffect.ColorBase, 3);
+                }
             }
-            else
+            else if (!metadata.IsAppendMode)
             {
                 // Setup default datas for older versions of the CSV
                 switch (Id)
@@ -157,6 +169,15 @@ namespace Memoria.Data
             }
         }
 
+        public void ParseEntry(String[] raw, CsvMetaData metadata)
+        {
+            Int32 index = 0;
+            Comment = CsvParser.String(raw[index++]);
+            Id = (BattleStatusId)CsvParser.Int32(raw[index++]);
+            Data = metadata.IsAppendMode ? GetExisting(Id) : this;
+            Data.ParseDataEntry(raw, metadata, ref index);
+        }
+
         public void WriteEntry(CsvWriter sw, CsvMetaData metadata)
         {
             sw.String(Comment);
@@ -169,7 +190,7 @@ namespace Memoria.Data
             BattleStatusEntry.WriteBattleStatus(sw, metadata, ClearOnApply);
             BattleStatusEntry.WriteBattleStatus(sw, metadata, ImmunityProvided);
 
-            if (metadata.HasOption($"IncludeVisuals"))
+            if (metadata.HasOption("IncludeVisuals"))
             {
                 sw.Int32(SPSEffect);
                 sw.Int32(SPSAttach);

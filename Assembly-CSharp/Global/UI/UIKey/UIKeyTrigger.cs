@@ -44,6 +44,7 @@ public class UIKeyTrigger : MonoBehaviour
     private Boolean F9Key => UnityXInput.Input.GetKey(KeyCode.F9);
     private Boolean F1KeyDown => UnityXInput.Input.GetKeyDown(KeyCode.F1);
     private Boolean F2KeyDown => UnityXInput.Input.GetKeyDown(KeyCode.F2);
+    private Boolean F3KeyDown => UnityXInput.Input.GetKeyDown(KeyCode.F3);
     private Boolean F4KeyDown => UnityXInput.Input.GetKeyDown(KeyCode.F4);
     private Boolean F5KeyDown => UnityXInput.Input.GetKeyDown(KeyCode.F5);
     private Boolean F9KeyDown => UnityXInput.Input.GetKeyDown(KeyCode.F9);
@@ -61,12 +62,12 @@ public class UIKeyTrigger : MonoBehaviour
         && UIManager.Input.GetKey(Control.RightBumper) && UIManager.Input.GetKey(Control.RightTrigger) && UIManager.Input.GetKey(Control.Pause) && UIManager.Input.GetKey(Control.Select);
 
     private Boolean SoftResetKeyPSXForPause => // L1 + R1 + L2 + R2 + select
-    PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.LeftBumper) && PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.LeftTrigger)
-    && PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.RightBumper) && PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.RightTrigger)
-    && PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.Select)
-    || keyCommand == Control.LeftBumper && keyCommand == Control.LeftTrigger && keyCommand == Control.RightBumper && keyCommand == Control.RightTrigger
-    && keyCommand == Control.Select || UIManager.Input.GetKey(Control.LeftBumper) && UIManager.Input.GetKey(Control.LeftTrigger)
-    && UIManager.Input.GetKey(Control.RightBumper) && UIManager.Input.GetKey(Control.RightTrigger) && UIManager.Input.GetKey(Control.Select);
+        PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.LeftBumper) && PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.LeftTrigger)
+        && PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.RightBumper) && PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.RightTrigger)
+        && PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.Select)
+        || keyCommand == Control.LeftBumper && keyCommand == Control.LeftTrigger && keyCommand == Control.RightBumper && keyCommand == Control.RightTrigger
+        && keyCommand == Control.Select || UIManager.Input.GetKey(Control.LeftBumper) && UIManager.Input.GetKey(Control.LeftTrigger)
+        && UIManager.Input.GetKey(Control.RightBumper) && UIManager.Input.GetKey(Control.RightTrigger) && UIManager.Input.GetKey(Control.Select);
 
     public UIKeyTrigger()
     {
@@ -196,7 +197,7 @@ public class UIKeyTrigger : MonoBehaviour
             return;
         if (PersistenSingleton<UIManager>.Instance.State == UIManager.UIState.Title || PersistenSingleton<UIManager>.Instance.State == UIManager.UIState.PreEnding || (PersistenSingleton<UIManager>.Instance.State == UIManager.UIState.Ending || !MBG.IsNull && !MBG.Instance.IsFinishedForDisableBooster()))
             return;
-        if (UnityXInput.Input.GetKeyDown(KeyCode.F1) || triggerType == BoosterType.HighSpeedMode)
+        if (UnityXInput.Input.GetKeyDown(KeyCode.F1) || triggerType == BoosterType.HighSpeedMode || IsStickCheatTriggered("HighSpeedMode")) 
         {
             if (!Configuration.Cheats.SpeedMode)
             {
@@ -210,7 +211,7 @@ public class UIKeyTrigger : MonoBehaviour
             PersistenSingleton<UIManager>.Instance.Booster.SetBoosterHudIcon(BoosterType.HighSpeedMode, flag);
             PersistenSingleton<UIManager>.Instance.Booster.SetBoosterButton(BoosterType.HighSpeedMode, flag);
         }
-        if (UnityXInput.Input.GetKeyDown(KeyCode.F2) || triggerType == BoosterType.BattleAssistance)
+        if (UnityXInput.Input.GetKeyDown(KeyCode.F2) || triggerType == BoosterType.BattleAssistance || IsStickCheatTriggered("BattleAssistance"))
         {
             if (!Configuration.Cheats.BattleAssistance)
             {
@@ -226,7 +227,7 @@ public class UIKeyTrigger : MonoBehaviour
             PersistenSingleton<UIManager>.Instance.Booster.SetBoosterHudIcon(BoosterType.BattleAssistance, flag);
             PersistenSingleton<UIManager>.Instance.Booster.SetBoosterButton(BoosterType.BattleAssistance, flag);
         }
-        if (UnityXInput.Input.GetKeyDown(KeyCode.F3) || triggerType == BoosterType.Attack9999)
+        if (UnityXInput.Input.GetKeyDown(KeyCode.F3) || triggerType == BoosterType.Attack9999 || IsStickCheatTriggered("Attack9999"))
         {
             if (!Configuration.Cheats.Attack9999)
             {
@@ -240,7 +241,7 @@ public class UIKeyTrigger : MonoBehaviour
             PersistenSingleton<UIManager>.Instance.Booster.SetBoosterHudIcon(BoosterType.Attack9999, flag);
             PersistenSingleton<UIManager>.Instance.Booster.SetBoosterButton(BoosterType.Attack9999, flag);
         }
-        if (UnityXInput.Input.GetKeyDown(KeyCode.F4) || triggerType == BoosterType.NoRandomEncounter)
+        if (UnityXInput.Input.GetKeyDown(KeyCode.F4) || triggerType == BoosterType.NoRandomEncounter || IsStickCheatTriggered("NoRandomEncounter"))
         {
             if (!Configuration.Cheats.NoRandomEncounter)
             {
@@ -267,7 +268,7 @@ public class UIKeyTrigger : MonoBehaviour
 
             if (!FF9StateSystem.Settings.IsMasterSkill)
             {
-                PersistenSingleton<UIManager>.Instance.Booster.ShowWaringDialog(BoosterType.MasterSkill);
+                PersistenSingleton<UIManager>.Instance.Booster.ShowWarningDialog(BoosterType.MasterSkill);
             }
             else
             {
@@ -284,7 +285,7 @@ public class UIKeyTrigger : MonoBehaviour
                 return;
             }
 
-            PersistenSingleton<UIManager>.Instance.Booster.ShowWaringDialog(BoosterType.LvMax);
+            PersistenSingleton<UIManager>.Instance.Booster.ShowWarningDialog(BoosterType.LvMax);
         }
         if (UnityXInput.Input.GetKeyDown(KeyCode.F7) && (PersistenSingleton<UIManager>.Instance.State == UIManager.UIState.FieldHUD || PersistenSingleton<UIManager>.Instance.State == UIManager.UIState.WorldHUD || PersistenSingleton<UIManager>.Instance.State == UIManager.UIState.Pause))
         {
@@ -295,7 +296,7 @@ public class UIKeyTrigger : MonoBehaviour
                 return;
             }
 
-            PersistenSingleton<UIManager>.Instance.Booster.ShowWaringDialog(BoosterType.GilMax);
+            PersistenSingleton<UIManager>.Instance.Booster.ShowWarningDialog(BoosterType.GilMax);
         }
         if (Configuration.Control.SoftReset && ((UnityXInput.Input.GetKeyDown(KeyCode.F8) && PersistenSingleton<UIManager>.Instance.IsPause) || SoftResetKeyPSXDown))
         { // Soft Reset
@@ -351,13 +352,9 @@ public class UIKeyTrigger : MonoBehaviour
             SceneDirector.Replace("Title", SceneTransition.FadeOutToBlack_FadeIn, true);
             return;
         }
-        if (UnityXInput.Input.GetKeyDown(KeyCode.F9) && Configuration.Control.TurboDialog)
-        {
-            if (TurboKey)
-                TurboKey = false;
-            else
-                TurboKey = true;
-        }
+
+        if ((UnityXInput.Input.GetKeyDown(KeyCode.F9) || IsStickCheatTriggered("TurboDialog")) && Configuration.Control.TurboDialog)
+            TurboKey = !TurboKey;
     }
 
     [DllImport("user32.dll")]
@@ -693,6 +690,15 @@ public class UIKeyTrigger : MonoBehaviour
                 OnPartySceneCommandDetected(sceneFromState);
                 return true;
             }
+            if (F3KeyDown)
+            {
+                BGSCENE_DEF scene = PersistenSingleton<EventEngine>.Instance?.fieldmap?.scene;
+                if (scene != null && PersistenSingleton<EventEngine>.Instance.gMode == 1)
+                {
+                    scene.UpdateSceneImmediately();
+                    return true;
+                }
+            }
             if (F4KeyDown)
             {
                 OnQuitCommandDetected(sceneFromState);
@@ -924,6 +930,21 @@ public class UIKeyTrigger : MonoBehaviour
                 ETb.sKey &= ~EventInput.GetKeyMaskFromControl(Control.Confirm);
                 EventInput.ReceiveInput(EventInput.GetKeyMaskFromControl(Control.Confirm));
             }
+        }
+        return false;
+    }
+
+    private Boolean IsStickCheatTriggered(String cheatName)
+    {
+        if (HonoInputManager.Instance.IsL3Pressed())
+        {
+            if (String.Equals(Configuration.Control.L3BindCheat, cheatName, StringComparison.OrdinalIgnoreCase))
+                return true;
+        }
+        if (HonoInputManager.Instance.IsR3Pressed())
+        {
+            if (String.Equals(Configuration.Control.R3BindCheat, cheatName, StringComparison.OrdinalIgnoreCase))
+                return true;
         }
         return false;
     }

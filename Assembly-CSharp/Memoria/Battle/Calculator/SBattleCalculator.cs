@@ -82,7 +82,7 @@ namespace Memoria
                         }
                         if ((command.AbilityType & 0x10) != 0 && caster.bi.player != 0) // Use weapon properties
                         {
-                            v.ApplyElementFullStack(v.Caster.WeaponElement, v.Caster.WeaponElement);
+                            v.ApplyElementFullStack(v.Caster.WeaponElementEx, v.Caster.WeaponElementEx);
                         }
                         if ((v.Context.Flags & (BattleCalcFlags.Miss | BattleCalcFlags.Guard)) != 0)
                         {
@@ -150,7 +150,9 @@ namespace Memoria
                 saFeature.TriggerOnAbility(v, "BattleScriptEnd", true);
             v.ConsumeMpAttack();
             if ((v.Context.Flags & BattleCalcFlags.Guard) != 0)
+            {
                 target.fig.info |= Param.FIG_INFO_GUARD;
+            }
             else if ((v.Context.Flags & BattleCalcFlags.Miss) != 0)
             {
                 target.fig.info |= Param.FIG_INFO_MISS;
@@ -195,6 +197,8 @@ namespace Memoria
                 if ((v.Command.AbilityCategory & 16) != 0) // Is Magical
                     v.Target.RemoveStatus(BattleStatusConst.RemoveOnMagicallyAttacked & ~v.Context.AddedStatuses);
 
+                if ((v.Context.AddedStatuses & BattleStatus.Death) != 0)
+                    v.Target.Flags &= ~CalcFlag.HpDamageOrHeal;
                 target.fig.info |= (UInt16)v.Target.Flags;
                 caster.fig.info |= (UInt16)v.Caster.Flags;
                 if (BattleCalculator.DamageModifierScript != null)

@@ -1,5 +1,6 @@
-﻿using Memoria.Prime.CSV;
-using System;
+﻿using System;
+using Memoria.Data;
+using Memoria.Prime.CSV;
 
 namespace FF9
 {
@@ -7,31 +8,54 @@ namespace FF9
     {
         public String Comment;
         public Int32 Id;
+        public ItemStats Data;
 
         public Byte dex;
         public Byte str;
         public Byte mgc;
         public Byte wpr;
-        public Byte p_up_attr;
-        public DEF_ATTR def_attr;
+        public ElementSet p_up_attr;
+        public DEF_ATTR def_attr = new DEF_ATTR();
+
+        public static ItemStats GetExisting(Int32 id)
+        {
+            if (ff9equip.ItemStatsData.TryGetValue(id, out ItemStats result))
+                return result;
+            throw new NotSupportedException($"The option AppendMode must be used to patch existing entries but the entry {id} doesn't exist");
+        }
+
+        public void ParseDataEntry(String[] raw, CsvMetaData metadata, ref Int32 index)
+        {
+            if (metadata.HasField("Speed")) dex = CsvParser.Byte(raw[index++]);
+            if (metadata.HasField("Strength")) str = CsvParser.Byte(raw[index++]);
+            if (metadata.HasField("Magic")) mgc = CsvParser.Byte(raw[index++]);
+            if (metadata.HasField("Spirit")) wpr = CsvParser.Byte(raw[index++]);
+
+            if (metadata.HasOption("UseElementList"))
+            {
+                if (metadata.HasField("BonusElement")) p_up_attr = BattleStatusEntry.ParseElementList(raw[index++]);
+                if (metadata.HasField("GuardElement")) def_attr.invalid = BattleStatusEntry.ParseElementList(raw[index++]);
+                if (metadata.HasField("AbsorbElement")) def_attr.absorb = BattleStatusEntry.ParseElementList(raw[index++]);
+                if (metadata.HasField("HalfElement")) def_attr.half = BattleStatusEntry.ParseElementList(raw[index++]);
+                if (metadata.HasField("WeakElement")) def_attr.weak = BattleStatusEntry.ParseElementList(raw[index++]);
+            }
+            else
+            {
+                if (metadata.HasField("BonusElement")) p_up_attr = new ElementSet((EffectElement)CsvParser.Byte(raw[index++]));
+                if (metadata.HasField("GuardElement")) def_attr.invalid = new ElementSet((EffectElement)CsvParser.Byte(raw[index++]));
+                if (metadata.HasField("AbsorbElement")) def_attr.absorb = new ElementSet((EffectElement)CsvParser.Byte(raw[index++]));
+                if (metadata.HasField("HalfElement")) def_attr.half = new ElementSet((EffectElement)CsvParser.Byte(raw[index++]));
+                if (metadata.HasField("WeakElement")) def_attr.weak = new ElementSet((EffectElement)CsvParser.Byte(raw[index++]));
+            }
+        }
 
         public void ParseEntry(String[] raw, CsvMetaData metadata)
         {
-            Comment = CsvParser.String(raw[0]);
-            Id = CsvParser.Int32(raw[1]);
-
-            dex = CsvParser.Byte(raw[2]);
-            str = CsvParser.Byte(raw[3]);
-            mgc = CsvParser.Byte(raw[4]);
-            wpr = CsvParser.Byte(raw[5]);
-
-            p_up_attr = CsvParser.Byte(raw[6]);
-
-            Byte invalid = CsvParser.Byte(raw[7]);
-            Byte absorb = CsvParser.Byte(raw[8]);
-            Byte half = CsvParser.Byte(raw[9]);
-            Byte weak = CsvParser.Byte(raw[10]);
-            def_attr = new DEF_ATTR(invalid, absorb, half, weak);
+            Int32 index = 0;
+            Comment = CsvParser.String(raw[index++]);
+            Id = CsvParser.Int32(raw[index++]);
+            Data = metadata.IsAppendMode ? GetExisting(Id) : this;
+            Data.ParseDataEntry(raw, metadata, ref index);
         }
 
         public void WriteEntry(CsvWriter sw, CsvMetaData metadata)
@@ -44,12 +68,11 @@ namespace FF9
             sw.Byte(mgc);
             sw.Byte(wpr);
 
-            sw.Byte(p_up_attr);
-
-            sw.Byte(def_attr.invalid);
-            sw.Byte(def_attr.absorb);
-            sw.Byte(def_attr.half);
-            sw.Byte(def_attr.weak);
+            BattleStatusEntry.WriteElementList(sw, p_up_attr);
+            BattleStatusEntry.WriteElementList(sw, def_attr.invalid);
+            BattleStatusEntry.WriteElementList(sw, def_attr.absorb);
+            BattleStatusEntry.WriteElementList(sw, def_attr.half);
+            BattleStatusEntry.WriteElementList(sw, def_attr.weak);
         }
     }
 }

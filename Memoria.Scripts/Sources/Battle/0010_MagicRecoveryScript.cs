@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace Memoria.Scripts.TranceSeek
 {
     [BattleScript(Id)]
-    public sealed class MagicRecoveryScript : IBattleScript
+    public sealed class MagicRecoveryScript : IBattleScript, IEstimateBattleScript
     {
         public const Int32 Id = 0010;
 
@@ -70,6 +70,13 @@ namespace Memoria.Scripts.TranceSeek
                     _v.Target.TryAlterSingleStatus(TranceSeekStatusId.ZombieArmor, true, _v.Caster, _v.Target.HpDamage);
                 }
             }
+
+            Single rate = _v.Target.HpDamage * BattleScriptDamageEstimate.RateHpMp((Int32)_v.Target.CurrentHp, (Int32)_v.Target.MaximumHp);
+
+            if (!_v.Target.IsPlayer)
+                rate = 0;
+
+            return rate;
         }
     }
 }

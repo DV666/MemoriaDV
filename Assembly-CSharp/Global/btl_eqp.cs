@@ -12,13 +12,17 @@ public static class btl_eqp
 
     public static void InitEquipPrivilegeAttrib(PLAYER p, BTL_DATA btl)
     {
-        btl.def_attr.invalid = (btl.def_attr.absorb = (btl.def_attr.half = (btl.def_attr.weak = (btl.p_up_attr = 0))));
+        btl.def_attr.invalid.Clear();
+        btl.def_attr.absorb.Clear();
+        btl.def_attr.half.Clear();
+        btl.def_attr.weak.Clear();
+        btl.p_up_attr.Clear();
         for (Int32 i = 0; i < 5; i++)
         {
             if (p.equip[i] != RegularItem.NoItem)
             {
                 btl_init.IncrementDefAttr(btl.def_attr, ff9equip.ItemStatsData[ff9item._FF9Item_Data[p.equip[i]].bonus].def_attr);
-                btl.p_up_attr = (Byte)(btl.p_up_attr | ff9equip.ItemStatsData[ff9item._FF9Item_Data[p.equip[i]].bonus].p_up_attr);
+                btl.p_up_attr.AddMultiple(ff9equip.ItemStatsData[ff9item._FF9Item_Data[p.equip[i]].bonus].p_up_attr);
             }
         }
     }
@@ -66,11 +70,11 @@ public static class btl_eqp
             for (Int32 i = 0; i < btl.weaponMeshCount; i++)
             {
                 btl.weaponRenderer[i] = componentsInChildren[i].GetComponent<Renderer>();
-                if (btl.weapon.CustomTexture != null && btl.weapon.CustomTexture.Length > i && !String.IsNullOrEmpty(btl.weapon.CustomTexture[i]))
+                if (btl.weapon.CustomTexture.Length > i && !String.IsNullOrEmpty(btl.weapon.CustomTexture[i]))
                     btl.weaponRenderer[i].material.mainTexture = AssetManager.Load<Texture2D>(btl.weapon.CustomTexture[i], false);
             }
         }
-        else if (btl.weapon.CustomTexture != null && btl.weapon.CustomTexture.Length > 0) // Other kind of model have no btl.weaponMeshCount
+        else if (btl.weapon.CustomTexture.Length > 0) // Other kind of model have no btl.weaponMeshCount
         {
             ModelFactory.ChangeModelTexture(mainWeapon.geo, btl.weapon.CustomTexture);
         }
