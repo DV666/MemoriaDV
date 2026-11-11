@@ -24,7 +24,7 @@ namespace Memoria.Scripts.TranceSeek
             }
 
             if (btl.bi.player != 0)
-                state.PlayerIndex = (CharacterId)btl.GetSlotNo();
+                state.PlayerIndex = (CharacterId)btl.bi.slot_no;
 
             return state;
         }

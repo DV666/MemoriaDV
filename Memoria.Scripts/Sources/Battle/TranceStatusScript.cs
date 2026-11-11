@@ -376,7 +376,7 @@ namespace Memoria.DefaultScripts
                             target.Data.gameObject.SetActive(false);
                             target.Data.gameObject = ModelFactory.CreateModel("GEO_MON_F9_MysteriousGirlBattle", true);
                             target.Data.gameObject.transform.position = position;
-                            OverloadOnBattleInitScript.InitModelAnimations(target.Data);
+                            MGSummonScript.InitModelAnimations(target.Data);
                             geo.geoScaleReset(target, true);
                             target.Data.gameObject.SetActive(true);
                         }

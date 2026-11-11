@@ -192,7 +192,7 @@ namespace Memoria.Scripts.TranceSeek
                         _v.CalcHpDamage();
                         TranceSeekAPI.RaiseTrouble(_v);
                     }
-                    if ((btl_util.getEnemyTypePtr(_v.Target.Data).category & (Int16)EnemyCategory.Stone) != 0) // TODO : Need to create an Gravity element
+                    if (btl_util.getEnemyTypePtr(_v.Target.Data).category.Contains(EnemyCategoryToken.Stone)) // TODO : Need to create an Gravity element
                         _v.Target.TryAlterStatuses(_v.Command.ItemStatus, false, _v.Caster);
                     return;
                 }            

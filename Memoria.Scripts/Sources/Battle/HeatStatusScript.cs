@@ -68,7 +68,7 @@ namespace Memoria.DefaultScripts
             if (btl != null && (cmd.Data.cmd_no < BattleCommandId.EnemyReaction || cmd.Data.cmd_no > BattleCommandId.BoundaryUpperCheck) && btl_stat.CheckStatus(btl, BattleStatus.Heat))
             {
                 BattleUnit unit = new BattleUnit(btl);
-                Boolean DontKillUnderHeat = (unit.Accessory == TranceSeekRegularItem.SolarCrown || ((byte)EffectElement.Fire & btl.def_attr.absorb) != 0 && btl.bi.player == 0);
+                Boolean DontKillUnderHeat = (unit.Accessory == TranceSeekRegularItem.SolarCrown || (btl.def_attr.absorb.Contains(ElementToken.Fire) && btl.bi.player == 0));
 
                 if (!btl_stat.CheckStatus(btl, BattleStatus.EasyKill) && !DontKillUnderHeat)
                 {

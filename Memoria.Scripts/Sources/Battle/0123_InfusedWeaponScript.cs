@@ -71,7 +71,7 @@ namespace Memoria.Scripts.TranceSeek
 
             if (btl.bi.player != 0)
             {
-                int ID = 2000 + btl.GetSlotNo();
+                int ID = 2000 + btl.bi.slot_no;
                 if (!FF9StateSystem.EventState.gScriptDictionary.TryGetValue(ID, out Dictionary<Int32, Int32> dict))
                 {
                     dict = new Dictionary<Int32, Int32>();
@@ -168,7 +168,7 @@ namespace Memoria.Scripts.TranceSeek
         {
             if (btl.bi.player != 0)
             {
-                int ID = 2000 + btl.GetSlotNo();
+                int ID = 2000 + btl.bi.slot_no;
                 if (!FF9StateSystem.EventState.gScriptDictionary.TryGetValue(ID, out Dictionary<Int32, Int32> dict))
                 {
                     dict = new Dictionary<Int32, Int32>();

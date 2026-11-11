@@ -18,9 +18,6 @@ namespace Memoria.Scripts.TranceSeek
         public Boolean InitHUDMessageChild;
         public HUDMessageChild HUDToReset = null;
 
-        private BattleUnit Sister = null; // TO DELETE - After Memoria Update :) (fix cover)
-        private Vector3 SisterPosition = Vector3.zero; // TO DELETE - After Memoria Update :) (fix cover)
-
         public void OnBattleInit()
         {
             // Zidane = 0, Vivi = 1, Eiko = 2, Kuja = 3, Necron = 4, Beatrix = 5, Ozma = 6, Garland = 7
@@ -554,23 +551,8 @@ namespace Memoria.Scripts.TranceSeek
 
                     FixMonsterIconOffset(unit);
                     FixMonsterHeightAndRadius(unit);
-                    InitModelAnimations(unit);
+                    //InitModelAnimations(unit);
                     TranceSeekBestiaryDB.UpdateMonsterStatus(BattleID, unit.Data.typeNo, TranceSeekBestiaryDB.StatusDiscovered);
-
-                    if ((BattleID == 849 && GroupeBattleID == 2)) // TO DELETE - After Memoria Update :) (fix cover)
-                    {
-                        if (unit.Data.dms_geo_id == 592)
-                        {
-                            Log.Message("[FIX DV] Fix cover visual for the battle");
-                            unit.AddDelayedModifier(FixCoverVisualForBrother, null);
-                        }
-                        else if (unit.Data.dms_geo_id == 591)
-                        {
-                            Sister = unit;
-                            SisterPosition = unit.Data.pos;
-                        }
-                    }
-
                     BattleEnemy battleEnemy = BattleEnemy.Find(unit);
 
                     if (CanOverloadTrance(unit) && GameState.ModelKillCount(unit.Data.dms_geo_id) > 0 && (GameState.ModelKillCount(unit.Data.dms_geo_id) % 10) == 0)
@@ -628,7 +610,7 @@ namespace Memoria.Scripts.TranceSeek
                         battleEnemy.Data.bonus_gil = (uint)(battleEnemy.Data.bonus_gil + ((battleEnemy.Data.bonus_gil * dictdifficulty[DifficultyParameters.Bonus_Gil]) / 100));
                     }
 
-                    if (BattleID == 838 && sb2Pattern.Monster[unit.GetSlotNo()].TypeNo == 1) // Golden Pidove (fake Sleep)
+                    if (BattleID == 838 && sb2Pattern.Monster[unit.Data.bi.slot_no].TypeNo == 1) // Golden Pidove (fake Sleep)
                     {
                         SPSEffect sps = HonoluluBattleMain.battleSPS.AddSequenceSPS(2, -1, 1, true);
                         if (sps != null)
@@ -641,7 +623,7 @@ namespace Memoria.Scripts.TranceSeek
                         }
                     }
 
-                    SB2_PUT enemyPlacement = btl_scene.PatAddr[GroupeBattleID].Monster[unit.GetSlotNo()];
+                    SB2_PUT enemyPlacement = btl_scene.PatAddr[GroupeBattleID].Monster[unit.Data.bi.slot_no];
                     SB2_MON_PARM monParam = btl_scene.MonAddr[enemyPlacement.TypeNo];
 
                     // Pad 0 (byte) => Unused (1) ; Pad 1 (uint16) => Unused (2) ; Pad 2 (uint16) => Unused (3)
@@ -732,19 +714,6 @@ namespace Memoria.Scripts.TranceSeek
                 unit.Data = null;
             }
 
-        }
-
-        private Boolean FixCoverVisualForBrother(BattleUnit brother) // TO DELETE AFTER MEMORIA UPDATE
-        {
-            if (brother.CurrentHp == 0 || Sister.CurrentHp == 0)
-                return false;
-
-            if (brother.IsCovering)
-                Sister.Data.pos[2] = SisterPosition[2] + 400f;
-            else if (Sister.Data.pos[2] != SisterPosition[2] && !btlseq.BtlSeqBusy())
-                Sister.Data.pos[2] = SisterPosition[2];
-
-            return true;
         }
 
         private Boolean CheckBossDeathForBestiary(BattleUnit boss)
@@ -838,7 +807,7 @@ namespace Memoria.Scripts.TranceSeek
 
         public static void FixMonsterIconOffset(BattleUnit btl)
         {
-            ENEMY_TYPE et = FF9StateSystem.Battle.FF9Battle.enemy[btl.GetSlotNo()].et;
+            ENEMY_TYPE et = FF9StateSystem.Battle.FF9Battle.enemy[btl.Data.bi.slot_no].et;
 
             if (MonsterIconOffsets.TryGetValue(btl.Data.dms_geo_id, out IconOffsetPatch patch))
             {
@@ -896,17 +865,6 @@ namespace Memoria.Scripts.TranceSeek
                     }
                 }
             }
-        }
-
-        public static void InitModelAnimations(BTL_DATA btl) // [MEMORIA] To be delete on next update
-        {
-            if (btl == null || btl.gameObject == null)
-                return;
-
-            if (CustomModelAnimations.TryGetValue(btl.dms_geo_id, out String[] customAnims))
-                for (Int32 i = 0; i < customAnims.Length; i++)
-                    if (!String.IsNullOrEmpty(customAnims[i]))
-                        AnimationFactory.AddAnimWithAnimatioName(btl.gameObject, customAnims[i]);
         }
 
         public static void FixMonsterHeightAndRadius(BattleUnit btl)
@@ -1059,17 +1017,6 @@ namespace Memoria.Scripts.TranceSeek
             { RegularItem.BlackBelt, 8 },
             { TranceSeekRegularItem.Onyxarmor, 4 },
             { TranceSeekRegularItem.LunarRobe, 8 }
-        };
-
-        public static readonly Dictionary<Int32, String[]> CustomModelAnimations = new Dictionary<Int32, String[]>
-        {
-            { 1206, new String[] { "ANH_MON_F9_MysteriousGirlBattle_P", "ANH_MON_F9_MysteriousGirlBattle_IDLE", "ANH_MON_F9_MysteriousGirlBattle_CAST_OG", "ANH_MON_F9_MysteriousGirlBattle_HIT", "ANH_MON_F9_MysteriousGirlBattle_CAST1", "ANH_MON_F9_MysteriousGirlBattle_CAST2", "ANH_MON_F9_MysteriousGirlBattle_CAST3" } },
-            { 1212, new String[] { "ANH_MON_F9_AsuraMG_P", "ANH_MON_F9_AsuraMG_IDLE1", "ANH_MON_F9_AsuraMG_IDLE2", "ANH_MON_F9_AsuraMG_IDLE3",
-                "ANH_MON_F9_AsuraMG_ATTACK1", "ANH_MON_F9_AsuraMG_ATTACK2", "ANH_MON_F9_AsuraMG_ATTACK3",
-                "ANH_MON_F9_AsuraMG_SWITCHHEAD_LEFT1", "ANH_MON_F9_AsuraMG_SWITCHHEAD_LEFT2", "ANH_MON_F9_AsuraMG_SWITCHHEAD_LEFT3",
-                "ANH_MON_F9_AsuraMG_SWITCHHEAD_RIGHT1", "ANH_MON_F9_AsuraMG_SWITCHHEAD_RIGHT2", "ANH_MON_F9_AsuraMG_SWITCHHEAD_RIGHT3"} },
-            { 1213, new String[] { "ANH_MON_F9_BahamutMG_P", "ANH_MON_F9_BahamutMG_IDLE", "ANH_MON_F9_BahamutMG_ATTACK", "ANH_MON_F9_BahamutMG_MEGAFLARECAST1", "ANH_MON_F9_BahamutMG_MEGAFLARECAST2", "ANH_MON_F9_BahamutMG_MEGAFLARECAST3" } }
-
         };
 
         public static class DifficultyParameters

@@ -693,7 +693,7 @@ namespace Memoria.Scripts.TranceSeek
                 atk.Ref.Power = Mathf.Clamp(DrawStatUI($"Atk_{curSeqId}_Power", "Power", atk.Ref.Power), 0, 9999);
                 atk.Ref.Rate = Mathf.Clamp(DrawStatUI($"Atk_{curSeqId}_Rate", "Hit Rate", atk.Ref.Rate), 0, 9999);
                 atk.MP = Mathf.Clamp(DrawStatUI($"Atk_{curSeqId}_MP", "MP Cost", atk.MP), 0, 9999);
-                atk.Ref.Elements = (byte)Mathf.Clamp(DrawStatUI($"Atk_{curSeqId}_Elem", "Elements", atk.Ref.Elements), 0, 255);
+                atk.Ref.Elements.SetFromUInt32((uint)Mathf.Clamp(DrawStatUI($"Atk_{curSeqId}_Elem", "Elements", (int)atk.Ref.Elements.ToUInt32()), 0, 255));
                 atk.AddStatusNo = (StatusSetId)Mathf.Clamp(DrawStatUI($"Atk_{curSeqId}_Status", "Status Set", (int)atk.AddStatusNo), 0, 255);
                 atk.Category = (byte)Mathf.Clamp(DrawStatUI($"Atk_{curSeqId}_Cat", "Category", atk.Category), 0, 255);
                 atk.Ref.ScriptId = Mathf.Clamp(DrawStatUI($"Atk_{curSeqId}_Script", "Script ID", atk.Ref.ScriptId), 0, 9999);
@@ -957,7 +957,7 @@ namespace Memoria.Scripts.TranceSeek
                             {
                                 if (cat == EnemyCategory.Other) currentCat = EnemyCategory.Other;
                                 else { if (newHasFlag) currentCat |= cat; else currentCat &= ~cat; }
-                                u.EnemyType.category = (byte)currentCat;
+                                u.EnemyType.category = new EnemyCategorySet(currentCat);
                             }
                             catCount++;
                             if (catCount % 4 == 0) { GUILayout.EndHorizontal(); GUILayout.BeginHorizontal(); }
@@ -1504,8 +1504,25 @@ namespace Memoria.Scripts.TranceSeek
                 if (GUILayout.Button(">", GUILayout.Width(40), GUILayout.Height(30))) { _currentAbilityIndex++; if (_currentAbilityIndex >= list.Count) _currentAbilityIndex = 0; _statTextCache.Clear(); GUI.FocusControl(null); }
                 GUILayout.EndHorizontal();
                 GUILayout.BeginVertical("box"); GUILayout.BeginHorizontal();
-                GUILayout.BeginVertical(GUILayout.Width(220)); a.Ref.Power = Mathf.Clamp(DrawStatUI($"PAb_{aid}_Power", "Power", a.Ref.Power), 0, 9999); a.Ref.Rate = Mathf.Clamp(DrawStatUI($"PAb_{aid}_Rate", "Hit Rate", a.Ref.Rate), 0, 9999); a.MP = Mathf.Clamp(DrawStatUI($"PAb_{aid}_MP", "MP Cost", a.MP), 0, 9999); a.Ref.Elements = (byte)Mathf.Clamp(DrawStatUI($"PAb_{aid}_Elem", "Elements", a.Ref.Elements), 0, 255); a.AddStatusNo = (StatusSetId)Mathf.Clamp(DrawStatUI($"PAb_{aid}_Status", "Status Set", (int)a.AddStatusNo), 0, 255); a.Category = (byte)Mathf.Clamp(DrawStatUI($"PAb_{aid}_Cat", "Category", a.Category), 0, 255); a.Ref.ScriptId = Mathf.Clamp(DrawStatUI($"PAb_{aid}_Script", "Script ID", a.Ref.ScriptId), 0, 9999); GUILayout.EndVertical();
-                GUILayout.BeginVertical(GUILayout.Width(220)); if (a.Info != null) { a.Info.VfxIndex = (short)Mathf.Clamp(DrawStatUI($"PAb_{aid}_Vfx", "Vfx Index", a.Info.VfxIndex), -1, 9999); a.Info.Target = (TargetType)Mathf.Clamp(DrawStatUI($"PAb_{aid}_Target", "Target", (int)a.Info.Target), 0, 255); a.Info.DisplayStats = (TargetDisplay)Mathf.Clamp(DrawStatUI($"PAb_{aid}_Disp", "Display", (int)a.Info.DisplayStats), 0, 255); GUILayout.Space(5); a.Info.DefaultAlly = GUILayout.Toggle(a.Info.DefaultAlly, "Default Ally"); a.Info.ForDead = GUILayout.Toggle(a.Info.ForDead, "For Dead"); a.Info.DefaultCamera = GUILayout.Toggle(a.Info.DefaultCamera, "Default Camera"); a.Info.DefaultOnDead = GUILayout.Toggle(a.Info.DefaultOnDead, "Default On Dead"); }
+                GUILayout.BeginVertical(GUILayout.Width(220));
+                a.Ref.Power = Mathf.Clamp(DrawStatUI($"PAb_{aid}_Power", "Power", a.Ref.Power), 0, 9999);
+                a.Ref.Rate = Mathf.Clamp(DrawStatUI($"PAb_{aid}_Rate", "Hit Rate", a.Ref.Rate), 0, 9999);
+                a.MP = Mathf.Clamp(DrawStatUI($"PAb_{aid}_MP", "MP Cost", a.MP), 0, 9999);
+                a.Ref.Elements.SetFromUInt32((uint)Mathf.Clamp(DrawStatUI($"PAb_{aid}_Elem", "Elements", (int)a.Ref.Elements.ToUInt32()), 0, 255));
+                a.AddStatusNo = (StatusSetId)Mathf.Clamp(DrawStatUI($"PAb_{aid}_Status", "Status Set", (int)a.AddStatusNo), 0, 255);
+                a.Category = (byte)Mathf.Clamp(DrawStatUI($"PAb_{aid}_Cat", "Category", a.Category), 0, 255);
+                a.Ref.ScriptId = Mathf.Clamp(DrawStatUI($"PAb_{aid}_Script", "Script ID", a.Ref.ScriptId), 0, 9999);
+                GUILayout.EndVertical();
+                GUILayout.BeginVertical(GUILayout.Width(220));
+                if (a.Info != null) { 
+                    a.Info.VfxIndex = (short)Mathf.Clamp(DrawStatUI($"PAb_{aid}_Vfx", "Vfx Index", a.Info.VfxIndex), -1, 9999);
+                    a.Info.Target = (TargetType)Mathf.Clamp(DrawStatUI($"PAb_{aid}_Target", "Target", (int)a.Info.Target), 0, 255);
+                    a.Info.DisplayStats = (TargetDisplay)Mathf.Clamp(DrawStatUI($"PAb_{aid}_Disp", "Display", (int)a.Info.DisplayStats), 0, 255);
+                    GUILayout.Space(5); a.Info.DefaultAlly = GUILayout.Toggle(a.Info.DefaultAlly, "Default Ally");
+                    a.Info.ForDead = GUILayout.Toggle(a.Info.ForDead, "For Dead");
+                    a.Info.DefaultCamera = GUILayout.Toggle(a.Info.DefaultCamera, "Default Camera");
+                    a.Info.DefaultOnDead = GUILayout.Toggle(a.Info.DefaultOnDead, "Default On Dead");
+                }
                 GUILayout.EndVertical(); GUILayout.EndHorizontal();
                 if (a.Info != null) { GUILayout.BeginHorizontal(); GUILayout.Label("SEQ File:", GUILayout.Width(75)); string ck = $"PAb_{aid}_Seq"; if (!_statTextCache.ContainsKey(ck)) _statTextCache[ck] = a.Info.SequenceFile ?? ""; _statTextCache[ck] = GUILayout.TextField(_statTextCache[ck], GUILayout.Width(250)); a.Info.SequenceFile = _statTextCache[ck]; if (GUILayout.Button("Reload")) { GUI.FocusControl(null); if (!string.IsNullOrEmpty(a.Info.SequenceFile)) { string s = AssetManager.LoadString(a.Info.SequenceFile); if (s != null) { a.Info.VfxAction = new UnifiedBattleSequencer.BattleAction(s); SoundLib.PlaySoundEffect(108); } } } GUILayout.EndHorizontal(); }
                 GUILayout.EndVertical(); GUI.DragWindow();
@@ -2193,7 +2210,7 @@ namespace Memoria.Scripts.TranceSeek
             {
                 try
                 {
-                    ff9abil._FeatureStats.Clear();
+                    //ff9abil._FeatureStats.Clear();
                     string inputPath = Memoria.Assets.DataResources.Characters.Abilities.PureDirectory + Memoria.Assets.DataResources.Characters.Abilities.SAFeaturesFile;
                     Dictionary<Memoria.Data.SupportAbility, Memoria.Data.SupportingAbilityFeature> result = new Dictionary<Memoria.Data.SupportAbility, Memoria.Data.SupportingAbilityFeature>();
 
@@ -2819,7 +2836,7 @@ namespace Memoria.Scripts.TranceSeek
 
                         _showMenu = false;
                         SoundLib.PlaySoundEffect(103);
-                        PersistenSingleton<EventEngine>.Instance.TriggerDebugBattle(battleId, groupId);
+                        //PersistenSingleton<EventEngine>.Instance.TriggerDebugBattle(battleId, groupId);
                     }
                     else
                     {

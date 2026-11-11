@@ -536,12 +536,12 @@ namespace Memoria.Scripts.TranceSeek
             play.maxDamageLimit = ff9play.FF9PLAY_DAMAGE_MAX;
             play.maxMpDamageLimit = ff9play.FF9PLAY_MPDAMAGE_MAX;
 
-            ff9play.FF9Play_SAFeature_Update(play, IsPreview);
+            ff9play.FF9Play_SAFeature_Update(play);
 
             foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(play))
                 saFeature.TriggerOnEnable(play);
 
-            EquipmentHelper.TriggerOnEnable(play);
+            //EquipmentHelper.TriggerOnEnable(play);
 
             if (IsPreview)
                 play.cur.capa = PlayGemsPreview;

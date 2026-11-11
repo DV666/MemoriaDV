@@ -267,7 +267,7 @@ namespace Memoria.Scripts.TranceSeek
                         hash = (hash * 397) ^ (long)effect.info.Target;
                         hash = (hash * 397) ^ effect.Ref.ScriptId;
                         hash = (hash * 397) ^ effect.Ref.Power;
-                        hash = (hash * 397) ^ effect.Ref.Elements;
+                        hash = (hash * 397) ^ effect.Ref.Elements.ToUInt32();
                         hash = (hash * 397) ^ effect.Ref.Rate;
                         hash = (hash * 397) ^ (long)effect.status;
                     }
@@ -281,7 +281,7 @@ namespace Memoria.Scripts.TranceSeek
                         var weap = kvp.Value;
                         hash = (hash * 397) ^ weap.Ref.ScriptId;
                         hash = (hash * 397) ^ weap.Ref.Power;
-                        hash = (hash * 397) ^ weap.Ref.Elements;
+                        hash = (hash * 397) ^ weap.Ref.Elements.ToUInt32();
                         hash = (hash * 397) ^ weap.Ref.Rate;
                         hash = (hash * 397) ^ (long)weap.Category;
                         hash = (hash * 397) ^ (long)weap.StatusIndex;

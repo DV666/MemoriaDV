@@ -152,7 +152,7 @@ namespace Memoria.Scripts.TranceSeek
 
                 if (!unit.IsPlayer)
                 {
-                    EnemyCategory cat = (EnemyCategory)btl_util.getEnemyTypePtr(unit.Data).category;
+                    EnemyCategory cat = btl_util.getEnemyTypePtr(unit.Data).category.ToEnemyCategory();
                     data += "\n └→ 🐾 Category = " + cat;
                 }
 
@@ -203,7 +203,7 @@ namespace Memoria.Scripts.TranceSeek
 
                 data += "\n └→ 💥 Power = " + attack.Ref.Power;
                 data += "\n └→ 🎯 Hit Rate = " + attack.Ref.Rate;
-                data += "\n └→ 🌊 Elements = " + (EffectElement)attack.Ref.Elements;
+                data += "\n └→ 🌊 Elements = " + attack.Ref.Elements.ToEffectElement();
                 data += "\n └→ 🧪 Add Status Set = " + attack.AddStatusNo;
                 data += "\n └→ 💧 MP Cost = " + attack.MP;
                 data += "\n └→ 🏷️ Category = " + attack.Category;

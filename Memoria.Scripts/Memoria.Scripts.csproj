@@ -519,7 +519,6 @@
     <Compile Include="Sources\Battle\TranceSeekBestiaryRewardUI.cs" />
     <Compile Include="Sources\Battle\TranceSeekDebug.cs" />
     <Compile Include="Sources\Battle\TranceSeekCheckBattleStat.cs" />
-    <Compile Include="Sources\Battle\TranceSeekCanaryFix.cs" />
     <Compile Include="Sources\Battle\TranceSeekBestiaryMenu.cs" />
     <Compile Include="Sources\Battle\TranceSeekHackShop.cs" />
     <Compile Include="Sources\Battle\TranceSeekMessages.cs" />

@@ -757,34 +757,36 @@ namespace Memoria.Scripts.TranceSeek
             }
         }
 
-        private string GetElementsString(byte flags)
+        private string GetElementsString(ElementSet elements)
         {
-            if (flags == 0)
+            if (elements == null || elements.Count == 0)
                 return Localization.GetWithDefault("BestiaryNone");
 
             List<string> elems = new List<string>();
             for (int i = 0; i < 8; i++)
-                if ((flags & (1 << i)) != 0)
+            {
+                if (elements.Contains((ElementToken)i))
                     elems.Add(UIManager.Battle.BtlGetAttrName(1 << i));
+            }
 
-            return string.Join(", ", elems.ToArray());
+            return elems.Count > 0 ? string.Join(", ", elems.ToArray()) : Localization.GetWithDefault("BestiaryNone");
         }
 
-        private string GetCategoryString(byte category)
+        private string GetCategoryString(EnemyCategorySet categories)
         {
-            if (category == 0)
+            if (categories == null || categories.Count == 0)
                 return Localization.GetWithDefault("BestiaryNone");
 
             List<string> cats = new List<string>();
             for (int i = 0; i < 8; i++)
             {
-                if ((category & (1 << i)) != 0)
+                if (categories.Contains((EnemyCategoryToken)i))
                 {
                     cats.Add(FF9TextTool.BattleLibraText(i));
                 }
             }
 
-            return string.Join(", ", cats.ToArray());
+            return cats.Count > 0 ? string.Join(", ", cats.ToArray()) : Localization.GetWithDefault("BestiaryNone");
         }
 
         private List<string> GetStatusList(BattleStatus status)
@@ -1273,7 +1275,7 @@ namespace Memoria.Scripts.TranceSeek
 
             }
 
-            if (UIManager.Input.L1Down)
+            if (ff9.Pad.kPadL1)
             {
                 _currentMonsterId -= 10;
                 if (_currentMonsterId < 1)
@@ -1281,7 +1283,7 @@ namespace Memoria.Scripts.TranceSeek
 
                 ChangeEntry = true;
             }
-            else if (UIManager.Input.R1Down)
+            else if (ff9.Pad.kPadR1)
             {
                 _currentMonsterId += 10;
                 if (_currentMonsterId > TranceSeekBestiaryDB.DisplayDatabase.Count)
@@ -1289,7 +1291,7 @@ namespace Memoria.Scripts.TranceSeek
 
                 ChangeEntry = true;
             }
-            else if (UIManager.Input.L2Down)
+            else if (ff9.Pad.kPadL2)
             {
                 int monsterId = _currentMonsterId;
 
@@ -1310,7 +1312,7 @@ namespace Memoria.Scripts.TranceSeek
                     }
                 }
             }
-            else if (UIManager.Input.R2Down)
+            else if (ff9.Pad.kPadR2)
             {
                 int monsterId = _currentMonsterId;
 

@@ -220,7 +220,7 @@ namespace Memoria.Scripts.TranceSeek
                                 AnimationFactory.AddAnimWithAnimatioName(_v.Target.Data.gameObject, currentAnim);
                         }
 
-                    OverloadOnBattleInitScript.InitModelAnimations(_v.Target);
+                    InitModelAnimations(_v.Target);
                     _v.Target.Data.bi.stop_anim = 0;
                     String animToPlay = _v.Target.Data.mot[_v.Target.Data.bi.def_idle];
                     btl_mot.setMotion(_v.Target.Data, (Byte)_v.Target.Data.bi.def_idle);
@@ -229,7 +229,7 @@ namespace Memoria.Scripts.TranceSeek
                     _v.Target.Data.dms_geo_id = (short)FF9BattleDB.GEO.GetKey(summon.ModelName);
                     OverloadOnBattleInitScript.FixMonsterIconOffset(_v.Target);
 
-                    ENEMY_TYPE et = FF9StateSystem.Battle.FF9Battle.enemy[_v.Target.GetSlotNo()].et;
+                    ENEMY_TYPE et = FF9StateSystem.Battle.FF9Battle.enemy[_v.Target.Data.bi.slot_no].et;
                     et.name = summon.BTLName;
                     et.icon_bone = summon.IconBones;
                     SFX.InitBattleParty();
@@ -323,6 +323,28 @@ namespace Memoria.Scripts.TranceSeek
                 }
             }
         }
+
+        public static void InitModelAnimations(BTL_DATA btl)
+        {
+            if (btl == null || btl.gameObject == null)
+                return;
+
+            if (CustomModelAnimations.TryGetValue(btl.dms_geo_id, out String[] customAnims))
+                for (Int32 i = 0; i < customAnims.Length; i++)
+                    if (!String.IsNullOrEmpty(customAnims[i]))
+                        AnimationFactory.AddAnimWithAnimatioName(btl.gameObject, customAnims[i]);
+        }
+
+        public static readonly Dictionary<Int32, String[]> CustomModelAnimations = new Dictionary<Int32, String[]>
+        {
+            { 1206, new String[] { "ANH_MON_F9_MysteriousGirlBattle_P", "ANH_MON_F9_MysteriousGirlBattle_IDLE", "ANH_MON_F9_MysteriousGirlBattle_CAST_OG", "ANH_MON_F9_MysteriousGirlBattle_HIT", "ANH_MON_F9_MysteriousGirlBattle_CAST1", "ANH_MON_F9_MysteriousGirlBattle_CAST2", "ANH_MON_F9_MysteriousGirlBattle_CAST3" } },
+            { 1212, new String[] { "ANH_MON_F9_AsuraMG_P", "ANH_MON_F9_AsuraMG_IDLE1", "ANH_MON_F9_AsuraMG_IDLE2", "ANH_MON_F9_AsuraMG_IDLE3",
+                "ANH_MON_F9_AsuraMG_ATTACK1", "ANH_MON_F9_AsuraMG_ATTACK2", "ANH_MON_F9_AsuraMG_ATTACK3",
+                "ANH_MON_F9_AsuraMG_SWITCHHEAD_LEFT1", "ANH_MON_F9_AsuraMG_SWITCHHEAD_LEFT2", "ANH_MON_F9_AsuraMG_SWITCHHEAD_LEFT3",
+                "ANH_MON_F9_AsuraMG_SWITCHHEAD_RIGHT1", "ANH_MON_F9_AsuraMG_SWITCHHEAD_RIGHT2", "ANH_MON_F9_AsuraMG_SWITCHHEAD_RIGHT3"} },
+            { 1213, new String[] { "ANH_MON_F9_BahamutMG_P", "ANH_MON_F9_BahamutMG_IDLE", "ANH_MON_F9_BahamutMG_ATTACK", "ANH_MON_F9_BahamutMG_MEGAFLARECAST1", "ANH_MON_F9_BahamutMG_MEGAFLARECAST2", "ANH_MON_F9_BahamutMG_MEGAFLARECAST3" } }
+
+        };
 
         public static Dictionary<Int32, GameObject> PreloadedModels = new Dictionary<Int32, GameObject>();
 
