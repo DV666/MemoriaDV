@@ -215,16 +215,32 @@ namespace Memoria.Scripts.TranceSeek
             private readonly string[] _elementModeNames = { "<color=#FF5555>Weak Element</color>", "<color=#55FF55>Half Element</color>", "<color=#5555FF>Guard Element</color>", "<color=#55FFFF>Absorb Element</color>", "<color=#FF55FF>Bonus Element</color>" };
             private Vector2 _elementScrollPos = Vector2.zero;
 
-            private static readonly KeyValuePair<string, EffectElement>[] _elementList = new KeyValuePair<string, EffectElement>[]
+            private static readonly KeyValuePair<string, ElementToken>[] _elementList = new KeyValuePair<string, ElementToken>[]
+                        {
+                new KeyValuePair<string, ElementToken>("Fire", ElementToken.Fire),
+                new KeyValuePair<string, ElementToken>("Cold", ElementToken.Cold),
+                new KeyValuePair<string, ElementToken>("Thunder", ElementToken.Thunder),
+                new KeyValuePair<string, ElementToken>("Earth", ElementToken.Earth),
+                new KeyValuePair<string, ElementToken>("Aqua", ElementToken.Aqua),
+                new KeyValuePair<string, ElementToken>("Wind", ElementToken.Wind),
+                new KeyValuePair<string, ElementToken>("Holy", ElementToken.Holy),
+                new KeyValuePair<string, ElementToken>("Darkness", ElementToken.Darkness),
+                new KeyValuePair<string, ElementToken>("<color=#B266FF>Poison</color>", TranceSeekElement.Poison),
+                new KeyValuePair<string, ElementToken>("<color=#FF66B2>Gravity</color>", TranceSeekElement.Gravity)
+                        };
+
+            private static readonly KeyValuePair<string, EnemyCategoryToken>[] _enemyCategoryList = new KeyValuePair<string, EnemyCategoryToken>[]
             {
-        new KeyValuePair<string, EffectElement>("Fire", EffectElement.Fire),
-        new KeyValuePair<string, EffectElement>("Cold", EffectElement.Cold),
-        new KeyValuePair<string, EffectElement>("Thunder", EffectElement.Thunder),
-        new KeyValuePair<string, EffectElement>("Earth", EffectElement.Earth),
-        new KeyValuePair<string, EffectElement>("Aqua", EffectElement.Aqua),
-        new KeyValuePair<string, EffectElement>("Wind", EffectElement.Wind),
-        new KeyValuePair<string, EffectElement>("Holy", EffectElement.Holy),
-        new KeyValuePair<string, EffectElement>("Darkness", EffectElement.Darkness)
+                new KeyValuePair<string, EnemyCategoryToken>("Humanoid", EnemyCategoryToken.Humanoid),
+                new KeyValuePair<string, EnemyCategoryToken>("Beast", EnemyCategoryToken.Beast),
+                new KeyValuePair<string, EnemyCategoryToken>("Devil", EnemyCategoryToken.Devil),
+                new KeyValuePair<string, EnemyCategoryToken>("Dragon", EnemyCategoryToken.Dragon),
+                new KeyValuePair<string, EnemyCategoryToken>("Undead", EnemyCategoryToken.Undead),
+                new KeyValuePair<string, EnemyCategoryToken>("Stone", EnemyCategoryToken.Stone),
+                new KeyValuePair<string, EnemyCategoryToken>("Soul", EnemyCategoryToken.Soul),
+                new KeyValuePair<string, EnemyCategoryToken>("Flight", EnemyCategoryToken.Flight),
+                new KeyValuePair<string, EnemyCategoryToken>("<color=#FFAA00>Giant</color>", TranceSeekEnemyCategory.Giant),
+                new KeyValuePair<string, EnemyCategoryToken>("<color=#FF5555>Elite</color>", TranceSeekEnemyCategory.Elite)
             };
 
             void Update()
@@ -693,7 +709,7 @@ namespace Memoria.Scripts.TranceSeek
                 atk.Ref.Power = Mathf.Clamp(DrawStatUI($"Atk_{curSeqId}_Power", "Power", atk.Ref.Power), 0, 9999);
                 atk.Ref.Rate = Mathf.Clamp(DrawStatUI($"Atk_{curSeqId}_Rate", "Hit Rate", atk.Ref.Rate), 0, 9999);
                 atk.MP = Mathf.Clamp(DrawStatUI($"Atk_{curSeqId}_MP", "MP Cost", atk.MP), 0, 9999);
-                atk.Ref.Elements.SetFromUInt32((uint)Mathf.Clamp(DrawStatUI($"Atk_{curSeqId}_Elem", "Elements", (int)atk.Ref.Elements.ToUInt32()), 0, 255));
+                atk.Ref.Elements.SetFromUInt32((uint)Mathf.Clamp(DrawStatUI($"Atk_{curSeqId}_Elem", "Elements", (int)atk.Ref.Elements.ToUInt32()), 0, 1023));
                 atk.AddStatusNo = (StatusSetId)Mathf.Clamp(DrawStatUI($"Atk_{curSeqId}_Status", "Status Set", (int)atk.AddStatusNo), 0, 255);
                 atk.Category = (byte)Mathf.Clamp(DrawStatUI($"Atk_{curSeqId}_Cat", "Category", atk.Category), 0, 255);
                 atk.Ref.ScriptId = Mathf.Clamp(DrawStatUI($"Atk_{curSeqId}_Script", "Script ID", atk.Ref.ScriptId), 0, 9999);
@@ -845,7 +861,6 @@ namespace Memoria.Scripts.TranceSeek
                 if (units.Count == 0) return;
                 if (_currentUnitIndex >= units.Count) _currentUnitIndex = 0;
 
-                // DEBUT DE LA LIGNE
                 GUILayout.BeginHorizontal();
 
                 if (GUILayout.Button("<", GUILayout.Width(40), GUILayout.Height(30))) { _currentUnitIndex--; if (_currentUnitIndex < 0) _currentUnitIndex = units.Count - 1; _statTextCache.Clear(); GUI.FocusControl(null); }
@@ -878,14 +893,19 @@ namespace Memoria.Scripts.TranceSeek
                     SoundLib.PlaySoundEffect(103);
                 }
 
-                // FIN DE LA LIGNE (Une seule fois)
                 GUILayout.EndHorizontal();
-
                 GUILayout.Space(5);
-
                 GUILayout.BeginHorizontal();
-                if (GUILayout.Button(_unitSubTab == 0 ? "<color=orange><b>Stats & Status Base</b></color>" : "Stats & Status Base", GUILayout.Height(25))) { _unitSubTab = 0; GUI.FocusControl(null); }
-                if (GUILayout.Button(_unitSubTab == 1 ? "<color=orange><b>Trance Seek State</b></color>" : "Trance Seek State", GUILayout.Height(25))) { _unitSubTab = 1; GUI.FocusControl(null); }
+                if (GUILayout.Button(_unitSubTab == 0 ? "<color=orange><b>Stats & Status Base</b></color>" : "Stats & Status Base", GUILayout.Height(25)))
+                {
+                    _unitSubTab = 0;
+                    GUI.FocusControl(null);
+                }
+                if (GUILayout.Button(_unitSubTab == 1 ? "<color=orange><b>Trance Seek State</b></color>" : "Trance Seek State", GUILayout.Height(25)))
+                { 
+                    _unitSubTab = 1;
+                    GUI.FocusControl(null);
+                }
                 GUILayout.EndHorizontal();
 
                 GUILayout.Space(5);
@@ -946,18 +966,18 @@ namespace Memoria.Scripts.TranceSeek
                     else
                     {
                         GUILayout.Label("<b>Enemy Category</b>", new GUIStyle(GUI.skin.label) { richText = true });
-                        EnemyCategory currentCat = u.Category;
+                        GUIStyle catToggleStyle = new GUIStyle(GUI.skin.toggle) { richText = true };
+                        EnemyCategorySet currentCatSet = u.EnemyType.category;
                         GUILayout.BeginHorizontal();
                         int catCount = 0;
-                        foreach (EnemyCategory cat in Enum.GetValues(typeof(EnemyCategory)))
+                        foreach (var kv in _enemyCategoryList)
                         {
-                            bool hasFlag = (cat == EnemyCategory.Other) ? currentCat == EnemyCategory.Other : (currentCat & cat) != 0;
-                            bool newHasFlag = GUILayout.Toggle(hasFlag, cat.ToString(), GUILayout.Width(115));
+                            bool hasFlag = currentCatSet.Contains(kv.Value);
+                            bool newHasFlag = GUILayout.Toggle(hasFlag, kv.Key, catToggleStyle, GUILayout.Width(115));
                             if (newHasFlag != hasFlag)
                             {
-                                if (cat == EnemyCategory.Other) currentCat = EnemyCategory.Other;
-                                else { if (newHasFlag) currentCat |= cat; else currentCat &= ~cat; }
-                                u.EnemyType.category = new EnemyCategorySet(currentCat);
+                                if (newHasFlag) currentCatSet.Add(kv.Value);
+                                else currentCatSet.Remove(kv.Value);
                             }
                             catCount++;
                             if (catCount % 4 == 0) { GUILayout.EndHorizontal(); GUILayout.BeginHorizontal(); }
@@ -1006,31 +1026,28 @@ namespace Memoria.Scripts.TranceSeek
                     GUILayout.Space(5);
                     GUILayout.BeginVertical("box");
                     GUILayout.BeginHorizontal();
-                    if (GUILayout.Button("<", GUILayout.Width(30))) { _elementMode--; if (_elementMode < 0) _elementMode = 4; }
+                    if (GUILayout.Button("<", GUILayout.Width(30))) { _elementMode--; if (_elementMode < 0) _elementMode = _elementModeNames.Length - 1; }
                     GUILayout.Label(_elementModeNames[_elementMode], new GUIStyle(GUI.skin.label) { richText = true, alignment = TextAnchor.MiddleCenter });
-                    if (GUILayout.Button(">", GUILayout.Width(30))) { _elementMode++; if (_elementMode > 4) _elementMode = 0; }
+                    if (GUILayout.Button(">", GUILayout.Width(30))) { _elementMode++; if (_elementMode >= _elementModeNames.Length) _elementMode = 0; }
                     GUILayout.EndHorizontal();
 
+                    GUIStyle elemToggleStyle = new GUIStyle(GUI.skin.toggle) { richText = true };
                     _elementScrollPos = GUILayout.BeginScrollView(_elementScrollPos, GUILayout.Height(80));
                     int colElem = 4, cElem = 0;
+                    ElementSet activeElemSet = _elementMode == 0 ? u.WeakElementEx :
+                                               _elementMode == 1 ? u.HalfElementEx :
+                                               _elementMode == 2 ? u.GuardElementEx :
+                                               _elementMode == 3 ? u.AbsorbElementEx : u.BonusElementEx;
+
                     GUILayout.BeginHorizontal();
                     foreach (var kv in _elementList)
                     {
-                        bool hElem = false;
-                        if (_elementMode == 0) hElem = (u.WeakElement & kv.Value) != 0;
-                        else if (_elementMode == 1) hElem = (u.HalfElement & kv.Value) != 0;
-                        else if (_elementMode == 2) hElem = (u.GuardElement & kv.Value) != 0;
-                        else if (_elementMode == 3) hElem = (u.AbsorbElement & kv.Value) != 0;
-                        else hElem = (u.BonusElement & kv.Value) != 0;
-
-                        bool tElem = GUILayout.Toggle(hElem, kv.Key, GUILayout.Width(100));
+                        bool hElem = activeElemSet.Contains(kv.Value);
+                        bool tElem = GUILayout.Toggle(hElem, kv.Key, elemToggleStyle, GUILayout.Width(100));
                         if (tElem != hElem)
                         {
-                            if (_elementMode == 0) { if (tElem) u.WeakElement |= kv.Value; else u.WeakElement &= ~kv.Value; }
-                            else if (_elementMode == 1) { if (tElem) u.HalfElement |= kv.Value; else u.HalfElement &= ~kv.Value; }
-                            else if (_elementMode == 2) { if (tElem) u.GuardElement |= kv.Value; else u.GuardElement &= ~kv.Value; }
-                            else if (_elementMode == 3) { if (tElem) u.AbsorbElement |= kv.Value; else u.AbsorbElement &= ~kv.Value; }
-                            else { if (tElem) u.BonusElement |= kv.Value; else u.BonusElement &= ~kv.Value; }
+                            if (tElem) activeElemSet.Add(kv.Value);
+                            else activeElemSet.Remove(kv.Value);
                         }
                         cElem++;
                         if (cElem % colElem == 0) { GUILayout.EndHorizontal(); GUILayout.BeginHorizontal(); }
@@ -1146,25 +1163,25 @@ namespace Memoria.Scripts.TranceSeek
                     GUILayout.Space(5);
 
                     GUILayout.BeginVertical("box");
-                    GUILayout.Label("<b>📈 Stacks, Gen. Passives & Elements</b>", new GUIStyle(GUI.skin.label) { richText = true });
+                    GUILayout.Label("<b>📈 Stacks, Gen. Passives & Weapon Infusion</b>", new GUIStyle(GUI.skin.label) { richText = true });
                     GUILayout.BeginHorizontal();
                     GUILayout.BeginVertical(GUILayout.Width(220));
                     state.General.Critical = DrawStatUI($"TS_{u.Id}_GenCrit", "General Crit", state.General.Critical, 110);
                     state.StackStatus.Strength = DrawStatUI($"TS_{u.Id}_StkStr", "Strength Stacks", state.StackStatus.Strength, 110);
                     state.StackStatus.Magic = DrawStatUI($"TS_{u.Id}_StkMag", "Magic Stacks", state.StackStatus.Magic, 110);
-                    state.EffectElement.Poison = DrawStatUI($"TS_{u.Id}_ElmPois", "Elem Poison", state.EffectElement.Poison, 110);
-                    state.EffectElement.Gravity = DrawStatUI($"TS_{u.Id}_ElmGrav", "Elem Gravity", state.EffectElement.Gravity, 110);
+                    int infusedMask = (int)state.EffectElement.WeaponNewElement.ToUInt32();
+                    int newInfusedMask = DrawStatUI($"TS_{u.Id}_WeaElm", "Infused Elem", infusedMask, 110);
+                    if (newInfusedMask != infusedMask)
+                        state.EffectElement.WeaponNewElement.SetFromUInt32((uint)Mathf.Clamp(newInfusedMask, 0, 1023));
                     GUILayout.EndVertical();
                     GUILayout.BeginVertical(GUILayout.Width(220));
                     state.General.TargetCount = DrawStatUI($"TS_{u.Id}_GenTrg", "Gen Target Cnt", state.General.TargetCount, 110);
                     state.StackStatus.PDefence = DrawStatUI($"TS_{u.Id}_StkPDef", "P.Def Stacks", state.StackStatus.PDefence, 110);
                     state.StackStatus.MDefence = DrawStatUI($"TS_{u.Id}_StkMDef", "M.Def Stacks", state.StackStatus.MDefence, 110);
-                    state.EffectElement.WeaponPoison = DrawStatUI($"TS_{u.Id}_WeaPois", "Weapon Poison", state.EffectElement.WeaponPoison, 110);
-                    state.EffectElement.WeaponGravity = DrawStatUI($"TS_{u.Id}_WeaGrav", "Weapon Gravity", state.EffectElement.WeaponGravity, 110);
+                    state.EffectElement.WeaponInfusedCooldown = DrawStatUI($"TS_{u.Id}_WeaCD", "Infused CD", state.EffectElement.WeaponInfusedCooldown, 110);
                     GUILayout.EndVertical();
                     GUILayout.EndHorizontal();
                     GUILayout.EndVertical();
-                    GUILayout.Space(5);
 
                     GUILayout.BeginVertical("box");
                     GUILayout.Label("<b>✨ Special SA & Items Effects</b>", new GUIStyle(GUI.skin.label) { richText = true });
@@ -1508,7 +1525,7 @@ namespace Memoria.Scripts.TranceSeek
                 a.Ref.Power = Mathf.Clamp(DrawStatUI($"PAb_{aid}_Power", "Power", a.Ref.Power), 0, 9999);
                 a.Ref.Rate = Mathf.Clamp(DrawStatUI($"PAb_{aid}_Rate", "Hit Rate", a.Ref.Rate), 0, 9999);
                 a.MP = Mathf.Clamp(DrawStatUI($"PAb_{aid}_MP", "MP Cost", a.MP), 0, 9999);
-                a.Ref.Elements.SetFromUInt32((uint)Mathf.Clamp(DrawStatUI($"PAb_{aid}_Elem", "Elements", (int)a.Ref.Elements.ToUInt32()), 0, 255));
+                a.Ref.Elements.SetFromUInt32((uint)Mathf.Clamp(DrawStatUI($"PAb_{aid}_Elem", "Elements", (int)a.Ref.Elements.ToUInt32()), 0, 1023));
                 a.AddStatusNo = (StatusSetId)Mathf.Clamp(DrawStatUI($"PAb_{aid}_Status", "Status Set", (int)a.AddStatusNo), 0, 255);
                 a.Category = (byte)Mathf.Clamp(DrawStatUI($"PAb_{aid}_Cat", "Category", a.Category), 0, 255);
                 a.Ref.ScriptId = Mathf.Clamp(DrawStatUI($"PAb_{aid}_Script", "Script ID", a.Ref.ScriptId), 0, 9999);

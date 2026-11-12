@@ -520,6 +520,8 @@
     <Compile Include="Sources\Battle\TranceSeekDebug.cs" />
     <Compile Include="Sources\Battle\TranceSeekCheckBattleStat.cs" />
     <Compile Include="Sources\Battle\TranceSeekBestiaryMenu.cs" />
+    <Compile Include="Sources\Battle\TranceSeekEnemyCategory.cs" />
+    <Compile Include="Sources\Battle\TranceSeekElement.cs" />
     <Compile Include="Sources\Battle\TranceSeekHackShop.cs" />
     <Compile Include="Sources\Battle\TranceSeekMessages.cs" />
     <Compile Include="Sources\Battle\TranceSeekWatcher.cs" />

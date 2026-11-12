@@ -315,17 +315,14 @@ namespace Memoria.Scripts.TranceSeek
             {
                 if (v.Command.Id == BattleCommandId.MagicSword)
                 {
-                    int StatusInfused = -1;
-                    int ElementInfused = (int)v.Command.Element;
-                    if (v.Command.AbilityStatus > 0)
-                        StatusInfused = (int)v.Command.AbilityStatus;
+                    ElementSet infusedElements = new ElementSet(v.Command.ElementEx);
 
                     if (v.Command.AbilityId == TranceSeekBattleAbility.MagicSword_Poison || v.Command.AbilityId == TranceSeekBattleAbility.MagicSword_Arsenic || v.Command.AbilityId == BattleAbilityId.BioSword)
-                        ElementInfused = 256;
+                        infusedElements.Add(TranceSeekElement.Poison);
                     else if (v.Command.AbilityId == TranceSeekBattleAbility.MagicSword_Quarter || v.Command.AbilityId == TranceSeekBattleAbility.MagicSword_Demi || v.Command.AbilityId == TranceSeekBattleAbility.MagicSword_Gravija)
-                        ElementInfused = 512;
+                        infusedElements.Add(TranceSeekElement.Gravity);
 
-                    InfusedWeaponScript.InfuseWeapon(v, v.Caster.Data, ElementInfused, StatusInfused);
+                    InfusedWeaponScript.InfuseWeapon(v, v.Caster.Data, infusedElements, v.Command.AbilityStatus);
                     Caster_TSVar.Steiner.SteinerEnchantedBlade = v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.EnchantedBlade_Boosted) ? 2 : 1;
                 }
             }

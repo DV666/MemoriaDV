@@ -34,14 +34,13 @@ namespace Memoria.Scripts.TranceSeek
             }
             else if (_v.Caster.Data.dms_geo_id == 338 && _v.Command.Power == 33 && _v.Command.HitRate == 33) // Hiberation - Ice Dragon
             {
-                var Caster_TSVar = _v.CasterState();
                 int OriginalPhysicalDefence = _v.Caster.PhysicalDefence;
                 int OriginalMagicalDefence = _v.Caster.MagicDefence;
                 _v.Caster.Flags |= CalcFlag.HpDamageOrHeal;
                 _v.Caster.HpDamage = 8000;
                 _v.Caster.PhysicalDefence = 254;
                 _v.Caster.MagicDefence = 254;
-                Caster_TSVar.EffectElement.Gravity |= 4;
+                _v.Caster.GuardElementEx.Add(TranceSeekElement.Gravity);
                 _v.Caster.ResistStatus |= BattleStatus.Heat;
 
                 _v.Caster.AlterStatus(TranceSeekStatus.ArmorUp | TranceSeekStatus.MentalUp, _v.Target);
@@ -54,7 +53,7 @@ namespace Memoria.Scripts.TranceSeek
                     {
                         _v.Caster.PhysicalDefence = OriginalPhysicalDefence;
                         _v.Caster.MagicDefence = OriginalMagicalDefence;
-                        Caster_TSVar.EffectElement.Gravity -= 4;
+                        _v.Caster.GuardElementEx.Remove(TranceSeekElement.Gravity);
                         _v.Caster.ResistStatus &= ~BattleStatus.Heat;
                         btl_stat.MakeStatusesPermanent(_v.Caster, BattleStatus.Freeze | BattleStatus.Regen, false);
                         _v.Caster.RemoveStatus(BattleStatus.Freeze | BattleStatus.Regen);
@@ -366,8 +365,7 @@ namespace Memoria.Scripts.TranceSeek
             {
                 _v.Target.Data.stat.invalid &= ~BattleStatus.Poison;
                 _v.Target.AlterStatus(BattleStatus.Poison, _v.Caster);
-                if ((_v.TargetState().EffectElement.Poison & 8) == 0)
-                    _v.TargetState().EffectElement.Poison = 8;
+                _v.Target.AbsorbElementEx.Add(TranceSeekElement.Poison);
             }
             else if (_v.Command.Power == 54 && _v.Command.HitRate == 54 && _v.Caster.Data.dms_geo_id == 548 && _v.Command.AbilityStatus == BattleStatus.Virus) // Germs (Friendly Nymph)
             {

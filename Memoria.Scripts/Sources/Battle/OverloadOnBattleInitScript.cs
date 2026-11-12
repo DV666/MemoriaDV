@@ -268,39 +268,6 @@ namespace Memoria.Scripts.TranceSeek
                         StateDict.ExpMargin = expMargin;
                     }
 
-                    // Poison element
-                    if (ItemAffinitiesPoison.TryGetValue(unit.Weapon, out int poisonWeapon) && StateDict.EffectElement.Poison < poisonWeapon)
-                        StateDict.EffectElement.Poison = poisonWeapon;
-
-                    if (ItemAffinitiesPoison.TryGetValue(unit.Head, out int poisonHead) && StateDict.EffectElement.Poison < poisonHead)
-                        StateDict.EffectElement.Poison = poisonHead;
-
-                    if (ItemAffinitiesPoison.TryGetValue(unit.Armor, out int poisonArmor) && StateDict.EffectElement.Poison < poisonArmor)
-                        StateDict.EffectElement.Poison = poisonArmor;
-
-                    if (ItemAffinitiesPoison.TryGetValue(unit.Wrist, out int poisonWrist) && StateDict.EffectElement.Poison < poisonWrist)
-                        StateDict.EffectElement.Poison = poisonWrist;
-
-                    if (ItemAffinitiesPoison.TryGetValue(unit.Accessory, out int poisonAccessory) && StateDict.EffectElement.Poison < poisonAccessory)
-                        StateDict.EffectElement.Poison = poisonAccessory;
-
-                    // Gravity element
-                    if (ItemAffinitiesGravity.TryGetValue(unit.Weapon, out int gravityWeapon) && StateDict.EffectElement.Gravity < gravityWeapon)
-                        StateDict.EffectElement.Gravity = gravityWeapon;
-
-                    if (ItemAffinitiesGravity.TryGetValue(unit.Head, out int gravityHead) && StateDict.EffectElement.Gravity < gravityHead)
-                        StateDict.EffectElement.Gravity = gravityHead;
-
-                    if (ItemAffinitiesGravity.TryGetValue(unit.Armor, out int gravityArmor) && StateDict.EffectElement.Gravity < gravityArmor)
-                        StateDict.EffectElement.Gravity = gravityArmor;
-
-                    if (ItemAffinitiesGravity.TryGetValue(unit.Wrist, out int gravityWrist) && StateDict.EffectElement.Gravity < gravityWrist)
-                        StateDict.EffectElement.Gravity = gravityWrist;
-
-                    if (ItemAffinitiesGravity.TryGetValue(unit.Accessory, out int gravityAccessory) && StateDict.EffectElement.Gravity < gravityAccessory)
-                        StateDict.EffectElement.Gravity = gravityAccessory;
-
-
                     if (unit.HasSupportAbilityByIndex(TranceSeekSupportAbility.Alert_Boosted)) // Alert+
                     {
                         btl_stat.AlterStatus(unit, TranceSeekStatusId.PerfectDodge, parameters: "+2");
@@ -512,7 +479,7 @@ namespace Memoria.Scripts.TranceSeek
                     {
                         FF9TextTool.SetCommandName(BattleCommandId.SwordAct, TranceSeekBattleCommand.SwdArtCMDNameVanilla[Localization.CurrentDisplaySymbol]);
                         if (FF9TextTool.DisplayBatch.commandName.TryGetValue(BattleCommandId.SwordAct, out String SwordActName))
-                            InfusedWeaponScript.CMDVanillaName[unit.Data][0] = SwordActName;
+                            StateDict.EffectElement.CMDVanillaName[0] = SwordActName;
 
                         unit.AddDelayedModifier(TranceSeekCharacterMechanic.SteinerMechanic, null);
                     }
@@ -521,10 +488,10 @@ namespace Memoria.Scripts.TranceSeek
                         FF9TextTool.SetCommandName(BattleCommandId.HolySword1, TranceSeekBattleCommand.SeikenCMDNameVanilla[Localization.CurrentDisplaySymbol]);
                         FF9TextTool.SetCommandName(BattleCommandId.HolySword2, TranceSeekBattleCommand.SeikenPlusCMDNameVanilla[Localization.CurrentDisplaySymbol]);
                         if (FF9TextTool.DisplayBatch.commandName.TryGetValue(BattleCommandId.HolySword1, out String SeikenName))
-                            InfusedWeaponScript.CMDVanillaName[unit.Data][0] = SeikenName;
+                            StateDict.EffectElement.CMDVanillaName[0] = SeikenName;
 
                         if (FF9TextTool.DisplayBatch.commandName.TryGetValue(BattleCommandId.HolySword2, out String SeikenPlusName))
-                            InfusedWeaponScript.CMDVanillaName[unit.Data][1] = SeikenPlusName;
+                            StateDict.EffectElement.CMDVanillaName[1] = SeikenPlusName;
                     }
 
                     dictspecialeffect.TryGetValue(2, out int zidaneStunt);
@@ -623,6 +590,8 @@ namespace Memoria.Scripts.TranceSeek
                         }
                     }
 
+                    /* Not used anymore (since Memoria 10/11 update) but Pad 0 and Pad 1 can be usefull for other purposes :)
+                    
                     SB2_PUT enemyPlacement = btl_scene.PatAddr[GroupeBattleID].Monster[unit.Data.bi.slot_no];
                     SB2_MON_PARM monParam = btl_scene.MonAddr[enemyPlacement.TypeNo];
 
@@ -652,7 +621,7 @@ namespace Memoria.Scripts.TranceSeek
                             StateDict.EffectElement.Gravity += 4;
                         if ((monParam.Pad1 & 128) != 0)
                             StateDict.EffectElement.Gravity += 8;
-                    }
+                    }*/
 
                     if (Configuration.Battle.Speed == 2)
                     {
@@ -686,11 +655,8 @@ namespace Memoria.Scripts.TranceSeek
             state.SpecialItem.MagicalSatchel = 3;
             state.SpecialItem.JabberworkCrestCooldown = 3;
             state.Blank.SoakedBlade = RegularItem.NoItem;
-
-            InfusedWeaponScript.WeaponNewElement[unit.Data] = EffectElement.None;
-            InfusedWeaponScript.WeaponNewCustomElement[unit.Data] = 0;
-            InfusedWeaponScript.WeaponNewStatus[unit.Data] = 0;
-            InfusedWeaponScript.CMDVanillaName[unit.Data] = new string[] { null, null };
+            state.EffectElement.ClearWeaponInfusion();
+            state.EffectElement.CMDVanillaName = new string[] { null, null };
 
             if (unit.IsPlayer)
             {
@@ -999,25 +965,6 @@ namespace Memoria.Scripts.TranceSeek
 
         private static readonly HashSet<Int32> DarkBBG = new HashSet<Int32>(new[] { 4, 5, 6, 8, 9, 12, 13, 14, 15, 16, 32, 36, 37, 38, 39, 40, 41, 42, 45, 46, 67, 68, 69, 70, 71, 72,
         80, 84, 85, 86, 87, 88, 89, 90, 100, 114, 116, 117, 118, 119, 121, 122, 128, 131, 152, 153, 155, 156, 158, 162, 163, 164, 165, 167, 168, 169, 174, 175 });
-
-        private static readonly Dictionary<RegularItem, Int32> ItemAffinitiesPoison = new Dictionary<RegularItem, Int32> // 0 = None, 1 = Weak, 2 = Half, 4 = Immune, 8 = Absorb
-        {
-            { RegularItem.MythrilArmlet, 2 },
-            { RegularItem.GoldHelm, 2 },
-            { TranceSeekRegularItem.UmbrellaShoes, 8 },
-            { TranceSeekRegularItem.CursedCoin, 4 },
-            { TranceSeekRegularItem.Onyxarmor, 2 }
-        };
-
-
-        private static readonly Dictionary<RegularItem, Int32> ItemAffinitiesGravity = new Dictionary<RegularItem, Int32>
-        {
-            { RegularItem.PlatinaArmor, 2 },
-            { RegularItem.DarkGear, 4 },
-            { RegularItem.BlackBelt, 8 },
-            { TranceSeekRegularItem.Onyxarmor, 4 },
-            { TranceSeekRegularItem.LunarRobe, 8 }
-        };
 
         public static class DifficultyParameters
         {

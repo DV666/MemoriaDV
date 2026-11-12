@@ -24,16 +24,6 @@ namespace Memoria.Scripts.TranceSeek
         {
             if (_v.Command.AbilityId == TranceSeekBattleAbility.MagicSword_Quarter || _v.Command.AbilityId == TranceSeekBattleAbility.MagicSword_Demi || _v.Command.AbilityId == TranceSeekBattleAbility.MagicSword_Gravija) // Gravity Sword
             {
-                SB2_PATTERN sb2Pattern = FF9StateSystem.Battle.FF9Battle.btl_scene.PatAddr[FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum];
-                for (Int32 i = 0; i < MagicGravityDamageScript.ImmuneGravity.GetLength(0); i++)
-                {
-                    if (FF9StateSystem.Battle.battleMapIndex == MagicGravityDamageScript.ImmuneGravity[i, 0] && sb2Pattern.Monster[_v.Target.Data.bi.slot_no].TypeNo == MagicGravityDamageScript.ImmuneGravity[i, 1])
-                    {
-                        _v.Context.Flags = BattleCalcFlags.Guard;
-                        return;
-                    }
-                }
-
                 _v.SetCommandAttack();
                 TranceSeekAPI.PenaltyCommandDividedAttack(_v);
                 if (_v.Target.IsUnderStatus(BattleStatus.Shell))

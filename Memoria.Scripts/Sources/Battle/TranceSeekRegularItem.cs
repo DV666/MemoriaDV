@@ -732,10 +732,6 @@ namespace Memoria.Scripts.TranceSeek
         public const RegularItem MandragoraSoul = (RegularItem)3018;
         public const RegularItem ClipperSoul = (RegularItem)3019;
 
-        public static readonly HashSet<RegularItem> WeaponAffinitiesPoison = new HashSet<RegularItem>(new[] { RegularItem.RuneTooth, RuneToothDagger, RegularItem.ScissorFangs });
-
-        public static readonly HashSet<RegularItem> WeaponAffinitiesGravity = new HashSet<RegularItem>(new[] { AtomosScepter });
-
         public static readonly HashSet<int> WeaponShapeDoubleHit = new HashSet<int>(new[] { 1, 111, 120, 122, 123, 124, 127, 129 });
 
         public static Boolean SoulTriggered = false;

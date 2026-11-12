@@ -19,12 +19,6 @@ namespace Memoria.Scripts.TranceSeek
 
         private readonly BattleCalculator _v;
 
-        public static Dictionary<BTL_DATA, EffectElement> WeaponNewElement = new Dictionary<BTL_DATA, EffectElement>();
-        public static Dictionary<BTL_DATA, Int32> WeaponNewCustomElement = new Dictionary<BTL_DATA, Int32>(); // 0 = None, 1 = Poison, 2 = Gravity
-        public static Dictionary<BTL_DATA, BattleStatus> WeaponNewStatus = new Dictionary<BTL_DATA, BattleStatus>();
-        public static Dictionary<BTL_DATA, string[]> CMDVanillaName = new Dictionary<BTL_DATA, string[]>();
-        public static Dictionary<BTL_DATA, int> WeaponInfusedCooldown = new Dictionary<BTL_DATA, int>();
-
         public InfusedWeaponScript(BattleCalculator v)
         {
             _v = v;
@@ -32,110 +26,104 @@ namespace Memoria.Scripts.TranceSeek
 
         public void Perform()
         {
-            WeaponNewElement[_v.Target.Data] = _v.Command.Element;
-            WeaponNewStatus[_v.Target.Data] = _v.Command.AbilityStatus;
-            _v.TargetState().Vivi.PreviousSpell = _v.Command.AbilityId; // SA Maximum infusion for Lani/Vivi
+            var targetState = _v.TargetState();
+            targetState.Vivi.PreviousSpell = _v.Command.AbilityId; // SA Maximum infusion for Lani/Vivi
 
-            int Element = (int)_v.Command.Element;
-            if (_v.Command.Element == 0 && _v.Command.AbilityId != TranceSeekBattleAbility.SFlare)
-                Element = -1;
+            ElementSet infusedElements = new ElementSet(_v.Command.ElementEx);
+            Boolean isNeutral = infusedElements.Count == 0 && _v.Command.AbilityId == TranceSeekBattleAbility.SFlare;
 
             if (_v.Command.AbilityId == TranceSeekBattleAbility.SPoison || _v.Command.AbilityId == TranceSeekBattleAbility.SBio)
-                Element = 256;
+                infusedElements.Add(TranceSeekElement.Poison);
 
-            InfuseWeapon(_v, _v.Target.Data, Element, (int)_v.Command.AbilityStatus);
+            InfuseWeapon(_v, _v.Target.Data, infusedElements, _v.Command.AbilityStatus, isNeutral);
+
             BattleStatusDataEntry statusData = FF9StateSystem.Battle.FF9Battle.status_data[BattleStatusId.Regen];
-            WeaponInfusedCooldown[_v.Target.Data] = (400 + (_v.Caster.Will * 3)) * statusData.ContiCnt;
+            targetState.EffectElement.WeaponInfusedCooldown = (400 + (_v.Caster.Will * 3)) * statusData.ContiCnt;
             _v.Target.AddDelayedModifier(InfuseWeaponCooldown, null);
         }
 
-        public static void InfuseWeapon(BattleCalculator v, BTL_DATA btl, int NewElement = -1, int NewStatus = -1)
+        public static void InfuseWeapon(BattleCalculator v, BTL_DATA btl, ElementSet newElements, BattleStatus newStatus = 0, Boolean isNeutral = false)
         {
-            if (NewElement == -1 && NewStatus == -1)
+            Boolean hasElement = (newElements != null && newElements.Count > 0) || isNeutral;
+            if (!hasElement && newStatus == 0)
                 return;
 
-            EffectElement InfusedElement = 0;
-            BattleStatus InfusedStatus = 0;
+            var state = btl.State();
+            state.EffectElement.WeaponNewElement.Clear();
 
-            if (NewElement != -1)
-            {
-                InfusedElement = (EffectElement)NewElement;
-                WeaponNewElement[btl] = InfusedElement;
-            }
+            if (newElements != null && newElements.Count > 0)
+                state.EffectElement.WeaponNewElement.AddMultiple(newElements);
 
-            if (NewStatus != -1)
-            {
-                InfusedStatus = (BattleStatus)NewStatus;
-                WeaponNewStatus[btl] = InfusedStatus;
-            }
+            state.EffectElement.WeaponNewStatus = newStatus;
 
             if (btl.bi.player != 0)
             {
-                int ID = 2000 + btl.bi.slot_no;
-                if (!FF9StateSystem.EventState.gScriptDictionary.TryGetValue(ID, out Dictionary<Int32, Int32> dict))
-                {
-                    dict = new Dictionary<Int32, Int32>();
-                    FF9StateSystem.EventState.gScriptDictionary.Add(ID, dict);
-                }
-                dict[0] = 1;
+                state.InfusedWeapon = 1; // Utilise directement ton helper (2000 + slot_no)[0] = 1
 
                 string ElementText = "";
                 string StatusText = "";
                 string DescText = VanillaAttackCMDDesc[Localization.CurrentSymbol];
                 string StatusDescText = "";
 
-                if (InfusedElement > 0)
-                    ElementText = InfusedElementCMD[InfusedElement];
+                EffectElement legacyElem = state.EffectElement.WeaponNewElement.ToEffectElement();
+                Boolean isPoison = state.EffectElement.WeaponNewElement.Contains(TranceSeekElement.Poison);
+                Boolean isGravity = state.EffectElement.WeaponNewElement.Contains(TranceSeekElement.Gravity);
 
-                if (InfusedElement > 0 && String.IsNullOrEmpty(ElementText) && NewElement != 256 && NewElement != 512)
+                if (legacyElem > 0)
+                    InfusedElementCMD.TryGetValue(legacyElem, out ElementText);
+                else if (isNeutral)
+                    ElementText = InfusedElementCMD[EffectElement.None];
+
+                if (legacyElem > 0 && String.IsNullOrEmpty(ElementText) && !isPoison && !isGravity)
                 {
                     ElementText = "[FF16F4]";
                     DescText += EffectElementCMDDesc[Localization.CurrentSymbol];
-                    Regex.Replace(DescText, "=ELEMENT=", "[FF16F4][HSHD]Multi[383838][HSHD]");
+                    DescText = Regex.Replace(DescText, "=ELEMENT=", "[FF16F4][HSHD]Multi[383838][HSHD]");
                 }
-                else
+                else if (hasElement)
                 {
                     DescText += EffectElementCMDDesc[Localization.CurrentSymbol];
                     string ReplaceElementText = "";
-                    if ((InfusedElement & EffectElement.Fire) != 0)
+
+                    if (state.EffectElement.WeaponNewElement.Contains(ElementToken.Fire))
                         ReplaceElementText = $"{ElementText}[HSHD]{FF9TextTool.BattleFollowText(0)}[383838][HSHD]";
-                    if ((InfusedElement & EffectElement.Cold) != 0)
+                    if (state.EffectElement.WeaponNewElement.Contains(ElementToken.Cold))
                         ReplaceElementText = $"{ElementText}[HSHD]{FF9TextTool.BattleFollowText(1)}[383838][HSHD]";
-                    if ((InfusedElement & EffectElement.Thunder) != 0)
+                    if (state.EffectElement.WeaponNewElement.Contains(ElementToken.Thunder))
                         ReplaceElementText = $"{ElementText}[HSHD]{FF9TextTool.BattleFollowText(2)}[383838][HSHD]";
-                    if ((InfusedElement & EffectElement.Earth) != 0)
+                    if (state.EffectElement.WeaponNewElement.Contains(ElementToken.Earth))
                         ReplaceElementText = $"{ElementText}[HSHD]{FF9TextTool.BattleFollowText(3)}[383838][HSHD]";
-                    if ((InfusedElement & EffectElement.Aqua) != 0)
+                    if (state.EffectElement.WeaponNewElement.Contains(ElementToken.Aqua))
                         ReplaceElementText = $"{ElementText}[HSHD]{FF9TextTool.BattleFollowText(4)}[383838][HSHD]";
-                    if ((InfusedElement & EffectElement.Wind) != 0)
+                    if (state.EffectElement.WeaponNewElement.Contains(ElementToken.Wind))
                         ReplaceElementText = $"{ElementText}[HSHD]{FF9TextTool.BattleFollowText(5)}[383838][HSHD]";
-                    if ((InfusedElement & EffectElement.Holy) != 0)
+                    if (state.EffectElement.WeaponNewElement.Contains(ElementToken.Holy))
                         ReplaceElementText = $"{ElementText}[HSHD]{FF9TextTool.BattleFollowText(6)}[383838][HSHD]";
-                    if ((InfusedElement & EffectElement.Darkness) != 0)
+                    if (state.EffectElement.WeaponNewElement.Contains(ElementToken.Darkness))
                         ReplaceElementText = $"{ElementText}[HSHD]{FF9TextTool.BattleFollowText(7)}[383838][HSHD]";
-                    if ((InfusedElement & EffectElement.None) != 0)
+                    if (isNeutral)
                         ReplaceElementText = $"[A85038][HSHD]{NeutralEffectElementCMDDesc[Localization.CurrentSymbol]}[383838][HSHD]";
 
-                    if (NewElement == 256) // Poison
+                    if (isPoison)
                     {
-                        WeaponNewCustomElement[btl] = 1;
                         ElementText = "[800080]";
                         DescText = Regex.Replace(DescText, "=ELEMENT=", PoisonEffectElementCMDDesc[Localization.CurrentSymbol]);
                     }
-                    else if (NewElement == 512) // Gravity
+                    else if (isGravity)
                     {
-                        WeaponNewCustomElement[btl] = 2;
                         ElementText = "[6E0C5C]";
                         DescText = Regex.Replace(DescText, "=ELEMENT=", GravityEffectElementCMDDesc[Localization.CurrentSymbol]);
                     }
                     else
+                    {
                         DescText = Regex.Replace(DescText, "=ELEMENT=", ReplaceElementText);
+                    }
                 }
 
-                if (InfusedStatus > 0)
+                if (newStatus > 0)
                 {
                     String spriteName;
-                    foreach (BattleStatusId infusedstatus in InfusedStatus.ToStatusList())
+                    foreach (BattleStatusId infusedstatus in newStatus.ToStatusList())
                         if (BattleHUD.BuffIconNames.TryGetValue(infusedstatus, out spriteName) || BattleHUD.DebuffIconNames.TryGetValue(infusedstatus, out spriteName))
                         {
                             StatusText += $" [SPRT={spriteName},48,48]";
@@ -146,6 +134,7 @@ namespace Memoria.Scripts.TranceSeek
                     DescText = Regex.Replace(DescText, "=STATUS=", StatusDescText);
                 }
 
+                int ID = 2000 + btl.bi.slot_no;
                 FF9TextTool.SetCommandName((BattleCommandId)ID, ElementText + InfusedAttackCMDName[Localization.CurrentSymbol] + StatusText);
                 FF9TextTool.SetCommandHelpDesc((BattleCommandId)ID, DescText);
             }
@@ -153,29 +142,25 @@ namespace Memoria.Scripts.TranceSeek
 
         private Boolean InfuseWeaponCooldown(BattleUnit unit)
         {
-            if (WeaponInfusedCooldown[_v.Target.Data] <= 0)
+            var unitState = unit.State();
+            if (unitState.EffectElement.WeaponInfusedCooldown <= 0)
             {
-                ClearInfuseWeapon(unit);
+                ClearInfuseWeapon(unit.Data);
                 return false;
             }
             else
-                WeaponInfusedCooldown[_v.Target.Data] -= (unit.Data.cur.at_coef * BattleState.ATBTickCount);
+                unitState.EffectElement.WeaponInfusedCooldown -= (unit.Data.cur.at_coef * BattleState.ATBTickCount);
 
             return true;
         }
 
         public static void ClearInfuseWeapon(BTL_DATA btl)
         {
+            var state = btl.State();
+            state.EffectElement.ClearWeaponInfusion();
+
             if (btl.bi.player != 0)
-            {
-                int ID = 2000 + btl.bi.slot_no;
-                if (!FF9StateSystem.EventState.gScriptDictionary.TryGetValue(ID, out Dictionary<Int32, Int32> dict))
-                {
-                    dict = new Dictionary<Int32, Int32>();
-                    FF9StateSystem.EventState.gScriptDictionary.Add(ID, dict);
-                }
-                dict[0] = 0;
-            }
+                state.InfusedWeapon = 0;
         }
 
         public static Dictionary<String, String> InfusedAttackCMDName = new Dictionary<String, String>

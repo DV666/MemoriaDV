@@ -505,12 +505,17 @@ namespace Memoria.Scripts.TranceSeek
 
     public class NewEffectElements
     {
-        public int Poison { get; set; }
-        public int WeaponPoison { get; set; }
+        public ElementSet WeaponNewElement { get; set; } = new ElementSet();
+        public BattleStatus WeaponNewStatus { get; set; } = 0;
+        public string[] CMDVanillaName { get; set; }
+        public int WeaponInfusedCooldown { get; set; }
 
-        public int Gravity { get; set; }
-        public int WeaponGravity { get; set; }
-
+        public void ClearWeaponInfusion()
+        {
+            WeaponNewElement.Clear();
+            WeaponNewStatus = 0;
+            WeaponInfusedCooldown = 0;
+        }
     }
 
     public class RollbackData

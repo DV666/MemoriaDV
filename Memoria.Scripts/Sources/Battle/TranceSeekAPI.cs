@@ -10,6 +10,7 @@ using UnityEngine;
 using static Memoria.Scripts.TranceSeek.TranceSeekBattleDictionary;
 using static Memoria.Scripts.TranceSeek.TranceSeekCharacterMechanic;
 using static SFX;
+using static TitleUI;
 
 namespace Memoria.Scripts.TranceSeek
 {
@@ -23,7 +24,7 @@ namespace Memoria.Scripts.TranceSeek
             if (Monster.bi.player != 0)
                 return false;
 
-            return (btl_util.getEnemyPtr(Monster).info.flags & 128) != 0; // Unused (8)
+            return btl_util.CheckEnemyCategory(Monster, TranceSeekEnemyCategory.Elite) || (btl_util.getEnemyPtr(Monster).info.flags & 128) != 0;
         }
 
         public static Boolean CanOverloadTrance(BTL_DATA Monster)
@@ -119,7 +120,7 @@ namespace Memoria.Scripts.TranceSeek
                 return false;
             if (v.Target.IsUnderAnyStatus(BattleStatus.EasyKill) && !EliteMonster(v.Target.Data))
                 return false;
-            if (!v.Target.IsPlayer && (v.Target.AbsorbElement & EffectElement.Cold) != 0 || v.Target.Accessory == TranceSeekRegularItem.LunarCrown)
+            if (!v.Target.IsPlayer && v.Target.AbsorbElementEx.Contains(ElementToken.Cold) || v.Target.Accessory == TranceSeekRegularItem.LunarCrown)
             {
                 v.TargetState().FreezeAltEffect = true;
                 return false;
@@ -604,15 +605,16 @@ namespace Memoria.Scripts.TranceSeek
 
         public static void BonusWeaponElement(this BattleCalculator v)
         {
-            if ((v.Caster.WeaponElement & v.Caster.BonusElement) != 0)
+            var Caster_TSVar = v.CasterState();
+            if (ElementSet.CountCommon(v.Caster.WeaponElementEx, v.Caster.BonusElementEx) > 0)
                 v.Context.DamageModifierCount++;
-            else if ((InfusedWeaponScript.WeaponNewElement[v.Caster.Data] & v.Caster.BonusElement) != 0)
+            else if (ElementSet.CountCommon(Caster_TSVar.EffectElement.WeaponNewElement, v.Caster.BonusElementEx) > 0)
                 v.Context.DamageModifierCount++;
         }
 
         public static void BonusElement(this BattleCalculator v)
         {
-            if ((v.Command.ElementForBonus & v.Caster.BonusElement) != 0)
+            if (ElementSet.CountCommon(v.Command.ElementForBonusEx, v.Caster.BonusElementEx) > 0)
                 v.Context.DamageModifierCount++;
         }
 
@@ -631,31 +633,41 @@ namespace Memoria.Scripts.TranceSeek
                 v.Target.HpDamage = reviveheal;
         }
 
+        public static Boolean IsAttackElement(this BattleCalculator v, ElementSet element)
+        {
+            var Caster_TSVar = v.CasterState();
+            ElementSet commandElement = new ElementSet(v.Command.ElementEx);
+            if (v.Command.AbilityId == BattleAbilityId.Attack)
+                commandElement.AddMultiple(v.Caster.WeaponElementEx);
+
+            ElementSet infusedElement = Caster_TSVar.EffectElement.WeaponNewElement;
+
+            if (element == null || element.Count == 0)
+                return commandElement.Count == 0 && infusedElement.Count == 0;
+            else
+                return ElementSet.CountCommon(commandElement, element) > 0 || ElementSet.CountCommon(infusedElement, element) > 0;
+        }
+
         public static Boolean IsAttackElement(this BattleCalculator v, EffectElement element)
         {
-            EffectElement CommandElement = v.Command.Element;
-            if (v.Command.AbilityId == BattleAbilityId.Attack)
-                CommandElement |= v.Caster.WeaponElement;
-
-            if (element == EffectElement.None)
-                return CommandElement == 0 && InfusedWeaponScript.WeaponNewElement[v.Caster.Data] == 0 && v.Command.ScriptId != 17 && v.Command.ScriptId != 118 && v.Command.ScriptId != 119;
-            else
-                return (CommandElement & element) != 0 || (InfusedWeaponScript.WeaponNewElement[v.Caster.Data] & element) != 0;
+            return v.IsAttackElement(new ElementSet(element));
         }
 
         public static Boolean CanAttackWeaponElementalCommand(this BattleCalculator v)
         {
             var Caster_TSVar = v.CasterState();
-            EffectElement WeaponElement = v.Caster.WeaponElement;
+            ElementSet weaponElement = new ElementSet(v.Caster.WeaponElementEx);
+            ElementSet infusedElement = Caster_TSVar.EffectElement.WeaponNewElement;
 
-            if (InfusedWeaponScript.WeaponNewElement[v.Caster.Data] != 0)
-                WeaponElement |= InfusedWeaponScript.WeaponNewElement[v.Caster.Data];
+            if (infusedElement.Count > 0)
+                weaponElement.AddMultiple(infusedElement);
 
-            CanAttackElement(v, WeaponElement);
+            if (!CanAttackElement(v, weaponElement))
+                return false;
 
-            if (InfusedWeaponScript.WeaponNewElement[v.Caster.Data] != 0)
+            if (infusedElement.Count > 0)
             {
-                if (v.Caster.PlayerIndex == (CharacterId)12 & v.Target.IsWeakElement(WeaponElement)) // SA Maximum infusion
+                if (v.Caster.PlayerIndex == (CharacterId)12 && v.Target.IsWeakElement(weaponElement)) // SA Maximum infusion
                 {
                     BattleAbilityId InfusedAA = Caster_TSVar.Vivi.PreviousSpell;
                     if (InfusedAA == TranceSeekBattleAbility.SFira || InfusedAA == TranceSeekBattleAbility.SBlizzara || InfusedAA == TranceSeekBattleAbility.SThundara || InfusedAA == TranceSeekBattleAbility.SWatera)
@@ -669,22 +681,17 @@ namespace Memoria.Scripts.TranceSeek
                 }
             }
 
-            if (((InfusedWeaponScript.WeaponNewCustomElement[v.Caster.Data] & 1) != 0) && v.Target.HasCategory(EnemyCategory.Humanoid)) // Poison
+            if (infusedElement.Contains(TranceSeekElement.Poison) && v.Target.HasCategory(EnemyCategoryToken.Humanoid)) // Poison
                 v.Context.DamageModifierCount++;
 
-            if (((InfusedWeaponScript.WeaponNewCustomElement[v.Caster.Data] & 2) != 0) && v.Target.HasCategory(EnemyCategory.Stone)) // Gravity
+            if (infusedElement.Contains(TranceSeekElement.Gravity) && v.Target.HasCategory(TranceSeekEnemyCategory.Giant)) // Gravity
                 v.Context.DamageModifierCount++;
 
             if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.EnchantedBlade) && Caster_TSVar.Steiner.SteinerEnchantedBlade > 0) // SA Enchanted blade
             {
                 Caster_TSVar.Steiner.SteinerEnchantedBlade--;
                 if (Caster_TSVar.Steiner.SteinerEnchantedBlade <= 0)
-                {
-                    InfusedWeaponScript.WeaponNewElement[v.Caster.Data] = 0;
-                    InfusedWeaponScript.WeaponNewCustomElement[v.Caster.Data] = 0;
-                    InfusedWeaponScript.WeaponNewStatus[v.Caster.Data] = 0;
                     InfusedWeaponScript.ClearInfuseWeapon(v.Caster.Data);
-                }
             }
 
             return true;
@@ -712,74 +719,61 @@ namespace Memoria.Scripts.TranceSeek
                 return false;
             }
 
-            CanAttackElement(v);
-         
-            return true;
+            return CanAttackElement(v);
         }
 
-        public static Boolean CanAttackElement(this BattleCalculator v, EffectElement Element = 0)
+        public static Boolean CanAttackElement(this BattleCalculator v, ElementSet element = null)
         {
-            if (Element == 0)
-                Element = v.Command.Element;
+            if (element == null || element.Count == 0)
+                element = v.Command.ElementEx;
+            else
+                v.Command.ElementEx.AddMultiple(element);
 
-            v.Command.Element |= Element;
-
-            if (v.Target.IsLevitate && v.Command.IsGround)
-            {
-                v.Context.Flags |= BattleCalcFlags.Miss;
+            if (!v.CanUseCommandForFlight())
                 return false;
-            }
 
             var Target_TSVar = v.TargetState();
 
-            Boolean IsWeaponPoison = false;
-            Boolean IsWeaponGravity = false;
-            if (v.Command.Id == BattleCommandId.Attack)
+            if (CanAbsorbElement(v, element))
             {
-                IsWeaponPoison = TranceSeekRegularItem.WeaponAffinitiesPoison.Contains(v.Caster.Weapon);
-                IsWeaponGravity = TranceSeekRegularItem.WeaponAffinitiesGravity.Contains(v.Caster.Weapon);
-            }
-
-            Boolean IsPoisonElement = (v.Command.ScriptId == 118 || v.Command.ScriptId == 119 || v.Command.ScriptId == 145 || IsWeaponPoison);
-            Boolean IsGravityElement = (v.Command.ScriptId == 17 || v.Command.ScriptId == 86 || IsWeaponGravity);
-
-            if (v.Target.IsGuardElement(Element) || (IsPoisonElement && (Target_TSVar.EffectElement.Poison & 4) != 0) || (IsGravityElement && (Target_TSVar.EffectElement.Gravity & 4) != 0))
-            {
-                v.Context.Flags |= BattleCalcFlags.Guard;
-                return false;
-            }
-
-            if (v.Target.IsHalfElement(Element) || (IsPoisonElement && (Target_TSVar.EffectElement.Poison & 2) != 0) || (IsGravityElement && (Target_TSVar.EffectElement.Gravity & 2) != 0))
-                v.Context.Attack /= 2;
-
-            if (v.Target.IsWeakElement(Element) || (IsPoisonElement && (Target_TSVar.EffectElement.Poison & 1) != 0) || (IsGravityElement && (Target_TSVar.EffectElement.Gravity & 1) != 0))
-                v.Context.DamageModifierCount += 2;
-
-            if (CanAbsorbElement(v, Element))
-            {
-                if (v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.DarkSide) && (Element & EffectElement.Darkness) != 0) // SA Dark side
+                if (v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.DarkSide) && element.Contains(ElementToken.Darkness)) // SA Dark side
                 {
                     v.Context.DefensePower = 0;
                     if (v.Target.HasSupportAbilityByIndex(TranceSeekSupportAbility.DarkSide_Boosted))
                         IncreaseTrance(v.Caster.Data, Comn.random16() % (v.Target.Will / 2));
                 }
             }
+
             int elementProtect = Target_TSVar.AbsorbElement;
+            ElementSet tempAbsorbSet = new ElementSet();
+            if (elementProtect > 0)
+                tempAbsorbSet.SetFromUInt32((UInt32)elementProtect);
 
-            Boolean ElementTempAbsorption = (elementProtect > 0 && (Element & (EffectElement)elementProtect) != 0);
-            Boolean NeutralTempAbsorption = (Element == 0 && (elementProtect & 8192) != 0);
+            Boolean ElementTempAbsorption = (elementProtect > 0 && ElementSet.CountCommon(element, tempAbsorbSet) > 0);
+            Boolean NeutralTempAbsorption = (element.Count == 0 && (elementProtect & 8192) != 0);
 
-            if (NeutralTempAbsorption || ElementTempAbsorption || (IsPoisonElement && ((Target_TSVar.EffectElement.Poison & 8) != 0 || v.Target.IsZombie))
-                || (IsGravityElement && (Target_TSVar.EffectElement.Gravity & 8) != 0))
+            if (ElementTempAbsorption || NeutralTempAbsorption)
                 v.Context.Flags |= BattleCalcFlags.Absorb;
 
-            v.Target.AlterStatuses(Element);
+            // Application façon ApplyElementFullStack (gère Guard, Absorb, et le cumul de tous les éléments communs)
+            if (!v.ApplyElementFullStack(element, v.Command.ElementForBonusEx))
+                return false;
+
+            if ((v.Context.Flags & BattleCalcFlags.Absorb) != 0)
+                v.Context.DefensePower = 0;
+
+            v.Target.AlterStatuses(element);
             return true;
         }
 
-        public static Boolean CanAbsorbElement(this BattleCalculator v, EffectElement element)
+        public static Boolean CanAttackElement(this BattleCalculator v, EffectElement element)
         {
-            if (TranceSeekCharacterMechanic.GarnetGemMechanic(v, GarnetGemMechanic_Type.ElementalAndHeal, element) || IsAbsorbElement(v, element))
+            return v.CanAttackElement(new ElementSet(element));
+        }
+
+        public static Boolean CanAbsorbElement(this BattleCalculator v, ElementSet element)
+        {
+            if (TranceSeekCharacterMechanic.GarnetGemMechanic(v, GarnetGemMechanic_Type.ElementalAndHeal, element.ToEffectElement()) || IsAbsorbElement(v, element))
             {
                 v.Context.Flags |= BattleCalcFlags.Absorb;
                 return true;
@@ -787,24 +781,35 @@ namespace Memoria.Scripts.TranceSeek
             return false;
         }
 
+        public static Boolean CanAbsorbElement(this BattleCalculator v, EffectElement element)
+        {
+            return v.CanAbsorbElement(new ElementSet(element));
+        }
+
+        public static Boolean IsAbsorbElement(this BattleCalculator v, ElementSet element)
+        {
+            return v.Target.IsAbsorbElement(element);
+        }
+
         public static Boolean IsAbsorbElement(this BattleCalculator v, EffectElement element)
         {
-            return (v.Target.AbsorbElement & element) != 0;
+            return v.Target.IsAbsorbElement(new ElementSet(element));
         }
 
         public static void InfusedWeaponStatus(this BattleCalculator v)
         {
-            if (InfusedWeaponScript.WeaponNewStatus[v.Caster.Data] != 0 && InfusedWeaponScript.WeaponNewStatus[v.Caster.Data] != BattleStatus.Protect && InfusedWeaponScript.WeaponNewStatus[v.Caster.Data] != BattleStatus.Shell)
+            BattleStatus infusedStatus = v.CasterState().EffectElement.WeaponNewStatus;
+            if (infusedStatus != 0 && infusedStatus != BattleStatus.Protect && infusedStatus != BattleStatus.Shell)
             {
                 if (v.Caster.IsPlayer)
                 {
                     if (v.Caster.WeaponRate > Comn.random16() % 100)
-                        v.Command.AbilityStatus |= InfusedWeaponScript.WeaponNewStatus[v.Caster.Data];
+                        v.Command.AbilityStatus |= infusedStatus;
                 }
                 else
-                    v.Command.AbilityStatus |= InfusedWeaponScript.WeaponNewStatus[v.Caster.Data];
+                    v.Command.AbilityStatus |= infusedStatus;
 
-                if ((v.Target.ResistStatus & InfusedWeaponScript.WeaponNewStatus[v.Caster.Data]) != 0 && !v.Target.IsPlayer)
+                if ((v.Target.ResistStatus & infusedStatus) != 0 && !v.Target.IsPlayer)
                     v.TargetState().TriggerSPSResistStatus = true;
             }
         }
@@ -1307,19 +1312,19 @@ namespace Memoria.Scripts.TranceSeek
             {
                 HealHP += v.Target.HpDamage / 10;
             }
-            if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.SoulDrain) && (v.Target.WeakElement & v.Command.Element) != 0) // Soul Drain
+            if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.SoulDrain) && ElementSet.CountCommon(v.Target.WeakElementEx, v.Command.ElementEx) > 0) // Soul Drain
             {
                 HealHP += v.Target.HpDamage / (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.SoulDrain_Boosted) ? 2 : 4);
             }
-            if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Reward) && (v.Target.WeakElement & v.Command.Element) != 0) // Reward
+            if (v.Caster.HasSupportAbilityByIndex(TranceSeekSupportAbility.Reward) && ElementSet.CountCommon(v.Target.WeakElementEx, v.Command.ElementEx) > 0) // Reward
             {
                 HealMP += (int)(v.Caster.MaximumMp / 25);
             }
-            if (InfusedWeaponScript.WeaponNewStatus[v.Caster.Data] == BattleStatus.Protect && (v.Command.Id == BattleCommandId.Attack || v.Command.Id == BattleCommandId.Counter)) // Drain MagiLame
+            if (Caster_TSVar.EffectElement.WeaponNewStatus == BattleStatus.Protect && (v.Command.Id == BattleCommandId.Attack || v.Command.Id == BattleCommandId.Counter)) // Drain MagiLame
             {
                 HealHP += v.Target.HpDamage / 4;
             }
-            if (InfusedWeaponScript.WeaponNewStatus[v.Caster.Data] == BattleStatus.Shell && (v.Command.Id == BattleCommandId.Attack || v.Command.Id == BattleCommandId.Counter)) // Osmose MagiLame
+            if (Caster_TSVar.EffectElement.WeaponNewStatus == BattleStatus.Shell && (v.Command.Id == BattleCommandId.Attack || v.Command.Id == BattleCommandId.Counter)) // Osmose MagiLame
             {
                 HealMP += v.Target.MpDamage / 80;
             }
