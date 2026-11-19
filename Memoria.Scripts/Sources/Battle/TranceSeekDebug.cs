@@ -1226,7 +1226,6 @@ namespace Memoria.Scripts.TranceSeek
 
                     GUILayout.BeginHorizontal();
                     state.Monster.MarkOfDeath = GUILayout.Toggle(state.Monster.MarkOfDeath, " Mark Of Death", GUILayout.Width(145));
-                    state.Monster.StoneMonster = GUILayout.Toggle(state.Monster.StoneMonster, " Stone Monster", GUILayout.Width(145));
                     GUILayout.EndHorizontal();
                     GUILayout.Space(2);
 

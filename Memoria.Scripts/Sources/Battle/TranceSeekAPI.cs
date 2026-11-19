@@ -1,16 +1,13 @@
 ﻿using FF9;
 using Memoria.Assets;
 using Memoria.Data;
-using Memoria.Prime;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Remoting.Contexts;
+using System.Threading;
 using UnityEngine;
 using static Memoria.Scripts.TranceSeek.TranceSeekBattleDictionary;
 using static Memoria.Scripts.TranceSeek.TranceSeekCharacterMechanic;
-using static SFX;
-using static TitleUI;
 
 namespace Memoria.Scripts.TranceSeek
 {
@@ -21,10 +18,7 @@ namespace Memoria.Scripts.TranceSeek
 
         public static Boolean EliteMonster(BTL_DATA Monster)
         {
-            if (Monster.bi.player != 0)
-                return false;
-
-            return btl_util.CheckEnemyCategory(Monster, TranceSeekEnemyCategory.Elite) || (btl_util.getEnemyPtr(Monster).info.flags & 128) != 0;
+            return btl_util.CheckEnemyCategory(Monster, TranceSeekEnemyCategory.Elite);
         }
 
         public static Boolean CanOverloadTrance(BTL_DATA Monster)
@@ -869,11 +863,13 @@ namespace Memoria.Scripts.TranceSeek
 
         public static Boolean CheckUnsafetyOrGuard(this BattleCalculator v)
         {
-            if (!v.Target.IsUnderAnyStatus(BattleStatus.EasyKill) || EliteMonster(v.Target.Data))
+            var Target_TSVar = v.TargetState();
+
+            if (!v.Target.IsUnderAnyStatus(BattleStatus.EasyKill) || !Target_TSVar.ImmuneDeath || !Target_TSVar.ImmuneDirectHP)
                 return true;
 
             v.Context.Flags |= BattleCalcFlags.Guard;
-            v.TargetState().TriggerSPSResistStatus = true;
+            Target_TSVar.TriggerSPSResistStatus = true;
             SPS_GuardStatus(v);
             return false;
         }
@@ -911,12 +907,14 @@ namespace Memoria.Scripts.TranceSeek
 
         public static void TryDirectHPDamage(this BattleCalculator v)
         {
+            var Target_TSVar = v.TargetState();
+
             if (v.Command.Power == 0)
             {
                 if (CheckDeathOnZombie(v))
                     return;
 
-                if (v.Target.IsUnderAnyStatus(BattleStatus.EasyKill))
+                if (v.Target.IsUnderAnyStatus(BattleStatus.EasyKill) || Target_TSVar.ImmuneDeath || Target_TSVar.ImmuneDirectHP)
                     v.Context.Flags |= BattleCalcFlags.Guard;
                 else
                     v.Target.Kill(v.Caster.Data);
@@ -1068,26 +1066,57 @@ namespace Memoria.Scripts.TranceSeek
             {
                 if (!monster.IsPlayer && monster.Data.dms_geo_id == mob.Data.dms_geo_id && !monster.IsZombie)
                 {
-                    if ((monster.PermanentStatus & BattleStatus.Trance) != 0)
+                    if ((monster.PermanentStatus & BattleStatus.Trance) != 0 || monster.State().Monster.OverTrance)
                     {
                         AlreadyOvertrance = true;
                         break;
                     }
                     else if (!monster.IsUnderAnyStatus(BattleStatus.EasyKill) && !monster.InTrance && monster.CurrentHp > 0)
+                    {
                         candidates.Add(monster);
+                    }
                 }
             }
 
             if (candidates.Count > 0 && !AlreadyOvertrance)
             {
                 BattleUnit MobToTrance = candidates[UnityEngine.Random.Range(0, candidates.Count)];
-                BattleEnemy battleEnemy = BattleEnemy.Find(MobToTrance);
-                MobToTrance.ResistStatus &= ~BattleStatus.Trance;
-                btl_stat.MakeStatusesPermanent(MobToTrance, BattleStatus.Trance);
-                battleEnemy.Data.bonus_exp *= 2;
-                battleEnemy.Data.bonus_gil += (battleEnemy.Data.bonus_gil / 2);
-                battle.btl_bonus.ap *= 2;
+                MobToTrance.State().Monster.OverTrance = true;
+
+                MobToTrance.AddDelayedModifier(
+                    mobtotrance => FF9StateSystem.Battle.FF9Battle.btl_phase < FF9StateBattleSystem.PHASE_MENU_ON
+                                   || mobtotrance.IsDisappear
+                                   || !isMeshVisible(mobtotrance.Data),
+                    mobtotrance =>
+                    {
+                        if (mobtotrance.CurrentHp == 0)
+                            return;
+
+                        BattleEnemy battleEnemy = BattleEnemy.Find(mobtotrance);
+                        mobtotrance.ResistStatus &= ~BattleStatus.Trance;
+                        btl_stat.MakeStatusesPermanent(mobtotrance, BattleStatus.Trance);
+                        battleEnemy.Data.bonus_exp *= 2;
+                        battleEnemy.Data.bonus_gil += (battleEnemy.Data.bonus_gil / 2);
+                        battle.btl_bonus.ap *= 2;
+                    }
+                );
             }
+        }
+
+        public static Boolean isMeshVisible(BTL_DATA btl)
+        {
+            if (btl.gameObject == null || !btl.gameObject.activeInHierarchy)
+                return false;
+
+            if (btl.meshIsRendering != null)
+            {
+                for (int i = 0; i < btl.meshIsRendering.Length; i++)
+                {
+                    if (btl.meshIsRendering[i] && (btl.mesh_current & (1 << i)) == 0)
+                        return true;
+                }
+            }
+            return false;
         }
 
         public static Boolean IsCommandCounter(BattleCalculator v)

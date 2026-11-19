@@ -250,16 +250,7 @@ namespace Memoria.Scripts.TranceSeek
                     return;
 
                 BTL_DATA btl = CasterUnit.Data;
-                bool isMeshVisible = false;
-                if (btl.meshIsRendering != null)
-                    for (int i = 0; i < btl.meshIsRendering.Length; i++)
-                        if (btl.meshIsRendering[i])
-                        {
-                            isMeshVisible = true;
-                            break;
-                        }
-
-                bool isVisible = btl.gameObject.activeInHierarchy &&  btl.bi.disappear == 0 && !CasterUnit.IsUnderAnyStatus(BattleStatusId.Jump) && isMeshVisible;
+                bool isVisible = btl.gameObject.activeInHierarchy && btl.bi.disappear == 0 && !CasterUnit.IsUnderAnyStatus(BattleStatusId.Jump) && TranceSeekAPI.isMeshVisible(btl);
 
                 foreach (Renderer r in _renderers)
                 {

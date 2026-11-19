@@ -2,6 +2,7 @@
 using Memoria.Data;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace Memoria.Scripts.TranceSeek
 {
@@ -133,7 +134,7 @@ namespace Memoria.Scripts.TranceSeek
                     v.Context.DamageModifierCount++;
 
                 if (v.Command.ScriptId != 118 && v.Command.ScriptId != 119 && v.Command.ScriptId != 17)  // Stone monsters
-                    if (v.Target.HpDamage > 0 && TranceSeekAPI.IsAttackElement(v, EffectElement.None) && (v.Target.Flags & CalcFlag.HpRecovery) == 0 && Target_TSVar.Monster.StoneMonster)
+                    if (btl_util.CheckEnemyCategory(v.Target, EnemyCategoryToken.Stone) && v.Target.HpDamage > 0 && TranceSeekAPI.IsAttackElement(v, EffectElement.None) && (v.Target.Flags & CalcFlag.HpRecovery) == 0)
                     {
                         v.Target.HpDamage /= 2;
                         SoundLib.PlaySoundEffect(5003); //se770003

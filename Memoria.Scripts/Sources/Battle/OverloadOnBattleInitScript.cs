@@ -589,39 +589,22 @@ namespace Memoria.Scripts.TranceSeek
                             StateDict.PolaritySPS = sps;
                         }
                     }
-
-                    /* Not used anymore (since Memoria 10/11 update) but Pad 0 and Pad 1 can be usefull for other purposes :)
-                    
+                  
                     SB2_PUT enemyPlacement = btl_scene.PatAddr[GroupeBattleID].Monster[unit.Data.bi.slot_no];
                     SB2_MON_PARM monParam = btl_scene.MonAddr[enemyPlacement.TypeNo];
 
                     // Pad 0 (byte) => Unused (1) ; Pad 1 (uint16) => Unused (2) ; Pad 2 (uint16) => Unused (3)
 
                     // Pad 1 - Unused (2)
-                    // 1 -> Weak Poison     16 -> Weak Gravity
-                    // 2 -> Half Poison     32 -> Half Gravity
-                    // 4 -> Immune Poison   64 -> Immune Gravity
-                    // 8 -> Absorb Poison   128 -> Absorb Gravity
+                    // 1 -> ImmuneDeath (for some Elite monsters like Tonberries and Mover)
 
                     if (monParam.Pad1 > 0)
                     {
                         if ((monParam.Pad1 & 1) != 0)
-                            StateDict.EffectElement.Poison += 1;
+                            StateDict.ImmuneDeath = true;
                         if ((monParam.Pad1 & 2) != 0)
-                            StateDict.EffectElement.Poison += 2;
-                        if ((monParam.Pad1 & 4) != 0)
-                            StateDict.EffectElement.Poison += 4;
-                        if ((monParam.Pad1 & 8) != 0)
-                            StateDict.EffectElement.Poison += 8;
-                        if ((monParam.Pad1 & 16) != 0)
-                            StateDict.EffectElement.Gravity += 1;
-                        if ((monParam.Pad1 & 32) != 0)
-                            StateDict.EffectElement.Gravity += 2;
-                        if ((monParam.Pad1 & 64) != 0)
-                            StateDict.EffectElement.Gravity += 4;
-                        if ((monParam.Pad1 & 128) != 0)
-                            StateDict.EffectElement.Gravity += 8;
-                    }*/
+                            StateDict.ImmuneDirectHP = true;
+                    }
 
                     if (Configuration.Battle.Speed == 2)
                     {
@@ -667,11 +650,6 @@ namespace Memoria.Scripts.TranceSeek
 
                 if (unit.PlayerIndex == CharacterId.Zidane)
                     SwitchWeaponScript.InitZidaneModel(unit);
-            }
-            else
-            {
-                if (StoneMonsters.Contains(unit.Data.dms_geo_id))
-                    state.Monster.StoneMonster = true;
             }
 
             if (TranceSeekBattleDictionary.Init)
@@ -899,8 +877,6 @@ namespace Memoria.Scripts.TranceSeek
             { 1213, new IconOffsetPatch(new SByte[] { -10, 0, -2, 4, -6, -15 }, new SByte[] { -1, -14, -10, -8, -10, 0 })} // Bahamut FF4 (MG)
 
         };
-
-        private static readonly HashSet<Int32> StoneMonsters = new HashSet<Int32> { 354, 221, 83 };
 
         public static Dictionary<KeyValuePair<Int32, Int32>, Int32> ChangeDepthBBGfromBattleID = new Dictionary<KeyValuePair<Int32, Int32>, Int32>
         {

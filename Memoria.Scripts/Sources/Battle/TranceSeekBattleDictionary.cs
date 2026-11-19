@@ -453,7 +453,6 @@ namespace Memoria.Scripts.TranceSeek
         public uint DurationDeadlyStatus { get; set; }
         public int NerfGravity { get; set; }
         public Boolean NoDodge { get; set; }
-        public Boolean StoneMonster { get; set; }
         public Boolean OverTrance { get; set; }
 
         // Scan, ATB and HPBar mechanic
@@ -612,7 +611,9 @@ namespace Memoria.Scripts.TranceSeek
         public int MascotCooldown { get; set; }
         public uint CasterHP_WhiteWind { get; set; }
         public Boolean OverloadEndCalled { get; set; }
-        public Boolean DragonAlreadyConsumed { get; set; }        
+        public Boolean DragonAlreadyConsumed { get; set; }
+        public Boolean ImmuneDeath { get; set; }
+        public Boolean ImmuneDirectHP { get; set; }
 
         public SPSEffect PolaritySPS { get; set; }
 

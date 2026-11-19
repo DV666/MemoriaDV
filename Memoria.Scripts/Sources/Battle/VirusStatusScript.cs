@@ -53,7 +53,7 @@ namespace Memoria.DefaultScripts
             if (Boss10000HP && Target.CurrentHp <= 10000)
                 return false;
 
-            if (Target.CurrentHp > 0)
+            if (Target.CurrentHp > 1)
                 Target.CurrentHp -= 1;
             else
                 Target.Kill(VirusInflicter);
